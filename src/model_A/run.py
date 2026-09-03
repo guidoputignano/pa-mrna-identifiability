@@ -1,5 +1,5 @@
 """
-Model A: saturating enzyme, linear alternative clearance.
+Model A: Michaelis-Menten enzyme, linear alternative clearance.
 
     dm/dt = s(t) - theta*g(m) - ke*m ,   g(m) = m/(Km+m)
 
@@ -8,7 +8,8 @@ Question answered: can theta be identified from clinical data?
 Produces
     fig_A1_channels          the two clearance channels and the linear regime
     fig_A2_conditioning      condition number against excursion of m
-    fig_A3_indistinguishable two patients with identical measurements
+    fig_A3_indistinguishable two patients with identical measurements, and the
+                             response of each to a selective perturbation
     fig_A4_population        deficiency of the population system against N
     fig_A5_load_error        amplification of misspecification in s
     tab_A_rank               rank against number of distinct levels
@@ -106,38 +107,76 @@ def fig_conditioning():
 
 # =====================================================================
 def fig_indistinguishable():
-    """Two patients with different biology and identical measurements."""
+    """
+    Two patients with different biology and identical measurements, and the
+    response of each to a selective perturbation.
+
+    The perturbation used is CARNITINE, which acts on the alternative channel
+    k_e and is present in every patient's chart. The enzymatic channel, which
+    is what the mRNA therapy would perturb, is shown alongside it only to make
+    the structural point: the 2x2 system solved for (theta, k_e) has the same
+    coefficient matrix whichever channel is perturbed, so its determinant
+    depends on the two metabolite levels alone and not on the channel. The
+    perturbation enters the right-hand side, not the matrix.
+    """
     thA, keA = 3000.0, 5.0
     pA = ParamsA(thA, P.Km, keA)
     s = clearance_A(10.0, pA)
     thB = 1000.0
     keB = brentq(lambda k: clearance_A(10.0, ParamsA(thB, P.Km, k)) - s, 1e-6, 1e4)
     pB = ParamsA(thB, P.Km, keB)
+    m0 = 10.0
 
-    deltas = np.linspace(0, 6000, 120)
-    mA = [steady_state(clearance_A, ParamsA(thA + d, P.Km, keA), s) for d in deltas]
-    mB = [steady_state(clearance_A, ParamsA(thB + d, P.Km, keB), s) for d in deltas]
-    mA, mB = np.array(mA), np.array(mB)
+    # accessible input: a carnitine increment on the alternative channel
+    dks = np.linspace(0, 60, 200)
+    mA_c = np.array([steady_state(clearance_A, ParamsA(thA, P.Km, keA + d), s)
+                     for d in dks])
+    mB_c = np.array([steady_state(clearance_A, ParamsA(thB, P.Km, keB + d), s)
+                     for d in dks])
+
+    # unavailable input: a therapeutic increment on the enzymatic channel
+    dths = np.linspace(0, 12000, 200)
+    mA_t = np.array([steady_state(clearance_A, ParamsA(thA + d, P.Km, keA), s)
+                     for d in dths])
+    mB_t = np.array([steady_state(clearance_A, ParamsA(thB + d, P.Km, keB), s)
+                     for d in dths])
 
     fig, ax = plt.subplots(1, 2, figsize=(8.4, 3.1))
 
-    ax[0].plot(deltas, mA, color=GREEN, label=r"A: $\theta=3000,\ k_e=5.0$")
-    ax[0].plot(deltas, mB, color=RED, ls="--", label=r"B: $\theta=1000,\ k_e=23.2$")
-    ax[0].set_xlabel(r"therapeutic increment $\Delta$")
+    ax[0].plot(dks, mA_c, color=GREEN, label=r"A: $\theta=3000,\ k_e=5.0$")
+    ax[0].plot(dks, mB_c, color=RED, ls="--",
+               label=rf"B: $\theta=1000,\ k_e={keB:.1f}$")
+    ax[0].plot([0], [m0], "o", ms=5, color=MUTED, zorder=4)
+    ax[0].text(1.5, m0 + 0.15, "identical untreated", color=MUTED, fontsize=7.5)
+    ax[0].set_xlabel(r"carnitine increment $\kappa u_c$ on $k_e$")
     ax[0].set_ylabel(r"steady-state $m$")
-    ax[0].set_title("response to a selective input on the enzymatic channel")
+    ax[0].set_title("response to the accessible selective input")
     ax[0].legend()
 
-    rel = 100 * np.abs(mA - mB) / mA
-    ax[1].plot(deltas, rel, color=BLUE)
+    # separation against the excursion actually achieved, both channels
+    exc_c = 100 * (m0 - mA_c) / m0
+    rel_c = 100 * np.abs(mA_c - mB_c) / mA_c
+    exc_t = 100 * (m0 - mA_t) / m0
+    rel_t = 100 * np.abs(mA_t - mB_t) / mA_t
+
+    ax[1].plot(exc_c, rel_c, color=BLUE, label="carnitine, acts on $k_e$")
+    ax[1].plot(exc_t, rel_t, color=AMBER, ls="--",
+               label=r"therapy, acts on $\theta$")
     ax[1].axhline(5, color=GREY, ls=":", lw=1.0)
-    ax[1].text(150, 5.3, "typical assay variability", color=GREY, fontsize=7.5)
-    ax[1].set_xlabel(r"therapeutic increment $\Delta$")
-    ax[1].set_ylabel("relative difference  [%]")
+    ax[1].text(2, 5.3, "typical assay variability", color=GREY, fontsize=7.5)
+    ax[1].set_xlabel("excursion of $m$ achieved  [%]")
+    ax[1].set_ylabel("separation between the patients  [%]")
+    ax[1].set_xlim(0, 70)
     ax[1].set_ylim(0, 8)
-    ax[1].set_title("separation stays below assay noise")
+    ax[1].set_title("the excursion decides, not the channel")
+    ax[1].legend(loc="upper left")
 
     save(fig, "fig_A3_indistinguishable")
+    for e in (10.0, 30.0, 50.0):
+        rc = np.interp(e, exc_c, rel_c)
+        rt = np.interp(e, exc_t, rel_t)
+        print(f"    at {e:.0f}% excursion: carnitine {rc:.3f}%, "
+              f"enzymatic {rt:.3f}% separation")
     return pA, pB, s
 
 

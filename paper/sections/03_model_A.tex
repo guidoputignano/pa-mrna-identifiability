@@ -89,62 +89,168 @@ $\theta$ from $k_e$.
 
 The clinical consequence is direct: two patients with substantially different enzymatic
 capacity, compensating with different degrees of alternative clearance, produce identical
-measurements. Since the therapy supplies enzyme and acts on $\theta$ alone, they require
-different treatment.
+measurements. They are nonetheless different patients, and any intervention that acts on
+one channel and not the other will separate them.
 
 The two channels separate only as $m$ approaches $K_m$ and the enzymatic term saturates
 while the linear term does not. That regime is metabolic crisis, which clinical management
 exists to prevent. \textbf{Equation \eqref{eq:Alin} is not the model}; it is an argument
 identifying where information is absent.
 
-\subsection{Therapy as a selective input}
+\subsection{Perturbation as a selective input}
+\label{sec:selective}
 
-Under mRNA replacement the capacity becomes time-varying and partially known:
+The degeneracy of \eqref{eq:Alin} is broken by moving the patient, not by measuring them
+more often. Two perturbations are selective, in the sense that each acts on one channel
+and not on the other.
 
+\begin{description}[leftmargin=1.4em, itemsep=2pt]
+\item[Carnitine.] Supplementation increases the capacity of the conjugation route and
+therefore acts on $k_e$, leaving $\theta$ untouched. Writing the increment as
+$\kappa\, u_c(t)$ with $u_c$ the recorded dose,
+\begin{equation}
+k_e(t) \;=\; \underbrace{k_e}_{\text{unknown}} \;+\;
+\underbrace{\kappa\, u_c(t)}_{\text{known up to }\kappa} .
+\label{eq:input_carn}
+\end{equation}
+Carnitine is administered to \emph{every} patient in the accessible cohort and its dose is
+recorded in the chart.
+\item[mRNA therapy.] A dose supplies enzyme and therefore acts on $\theta$, leaving $k_e$
+untouched:
 \begin{equation}
 \theta(t) \;=\; \underbrace{\theta_{\mathrm{base}}}_{\text{unknown}}
 \;+\; \underbrace{D \sum_i e^{-\lambda (t - t_i)} \mathbf{1}_{\{t \ge t_i\}}}_{\text{known: } \Delta(t)} .
 \label{eq:input}
 \end{equation}
+This input is investigational and is not administered to any accessible patient.
+\end{description}
 
-The dose supplies enzyme. It therefore acts on $\theta$ and \emph{not} on $k_e$: it is a
-selective input on one channel. Writing the equilibrium condition before and during
-therapy, with steady levels $m$ and $m'$ respectively,
+Write the equilibrium condition before and after the perturbation, with steady levels $m$
+and $m'$ respectively. Under carnitine,
 
 \begin{equation}
 \begin{aligned}
-s &= \theta\, g(m) + k_e\, m, \\
-s &= (\theta + \Delta)\, g(m') + k_e\, m',
+s &= \theta\, g(m) \;+\; k_e\, m, \\
+s &= \theta\, g(m') \;+\; k_e\, m' \;+\; \kappa u_c\, m',
+\end{aligned}
+\label{eq:twoeq_carn}
+\end{equation}
+
+and under therapy,
+
+\begin{equation}
+\begin{aligned}
+s &= \theta\, g(m) \;+\; k_e\, m, \\
+s &= \theta\, g(m') \;+\; k_e\, m' \;+\; \Delta\, g(m') .
 \end{aligned}
 \label{eq:twoeq}
 \end{equation}
 
-gives two linear equations in $(\theta, k_e)$ with determinant
+In both cases these are two linear equations in the unknown pair $(\theta, k_e)$, and in
+both cases the coefficient matrix is the same,
+\begin{equation}
+M \;=\;
+\begin{pmatrix} g(m) & m \\[2pt] g(m') & m' \end{pmatrix} ,
+\qquad
+M \begin{pmatrix} \theta \\ k_e \end{pmatrix}
+= \begin{pmatrix} s \\ s - \delta \end{pmatrix},
+\label{eq:system}
+\end{equation}
+with $\delta = \kappa u_c\, m'$ in the first case and $\delta = \Delta\, g(m')$ in the
+second. \textbf{The perturbation enters the right-hand side only.} Hence
 
 \begin{equation}
-\det \;=\; g(m)\,m' - g(m')\,m
+\det M \;=\; g(m)\,m' - g(m')\,m
 \;=\; \frac{m\,m'\,(m' - m)}{(K_m + m)(K_m + m')} .
 \label{eq:det}
 \end{equation}
 
+\begin{proposition}[The determinant does not depend on the channel]
+\label{prop:channel}
+Let the system be perturbed selectively on either channel, by any known increment, and let
+$m$ and $m'$ be the steady metabolite levels before and after. Then the $2 \times 2$ system
+for $(\theta, k_e)$ has determinant \eqref{eq:det}, which depends on $m$, $m'$ and $K_m$
+alone. It is unaffected by which channel was perturbed and by the size of the increment
+except through the level $m'$ that the increment produces.
+\end{proposition}
+
 \begin{proposition}[Formal identifiability, practical ill-conditioning]
 The determinant \eqref{eq:det} is non-zero whenever $m \neq m'$, so the pair
-$(\theta, k_e)$ is formally identifiable from steady-state data before and during therapy.
-However, when $m, m' \ll K_m$ the two denominators coincide to first order and
+$(\theta, k_e)$ is formally identifiable from steady-state data before and after a
+selective perturbation on \emph{either} channel. However, when $m, m' \ll K_m$ the two
+denominators coincide to first order and
 $\det = O\!\left((m'-m)\,m m'/K_m^2\right)$, which is small.
 \end{proposition}
 
+Proposition~\ref{prop:channel} is what makes the analysis possible now. The identifiability
+question can be posed and answered on the perturbation that is actually present in the
+records, namely carnitine, and the answer transfers unchanged to the perturbation that is
+not, namely the therapy. What has to be earned in each case is the excursion $m \to m'$;
+the channel through which it is bought is immaterial to the information obtained.
+
 A numerical illustration with $K_m = 100$: patient A with
 $(\theta, k_e) = (3000,\, 5.0)$ and patient B with $(\theta, k_e) = (1000,\, 23.2)$
-have identical untreated equilibria at $m = 10$. Under a dose doubling the enzyme,
-their new equilibria are $7.66$ and $7.73$ respectively, a difference below $1\%$,
-well under the analytical and biological variability of the assay.
+have identical unperturbed equilibria at $m = 10$. A carnitine increment of
+$\kappa u_c = 10$ moves them to $7.52$ and $7.60$, a separation of $1.0\%$. An enzymatic
+increment doubling patient A's capacity moves them to $7.66$ and $7.73$, a separation of
+$0.98\%$. Both lie well under the analytical and biological variability of the assay, and
+the near-equality of the two numbers is Proposition~\ref{prop:channel} in arithmetic.
+
+\subsection{What the accessible input costs}
+
+Proposition~\ref{prop:channel} equalises the two channels informationally. It does not
+equalise them \emph{statistically}, and the difference is the central compromise of this
+work.
+
+\begin{description}[leftmargin=1.4em, itemsep=3pt]
+\item[Carnitine is available but endogenous.] The dose is adjusted by the clinician in
+response to the patient's state: a rising biomarker or a falling free-carnitine level is
+itself the reason the dose was raised. The input is therefore correlated with the state it
+is meant to excite, which is confounding by indication. Treating $u_c$ as an exogenous
+perturbation and regressing $m$ on it is invalid, and would bias $\theta$ in a direction
+set by the prescribing rule rather than by the biology.
+\item[The therapy would be exogenous but is absent.] A dosing schedule fixed in advance by
+protocol is exogenous by construction, which is exactly the property carnitine lacks. No
+patient in the accessible cohort receives it, so the property is unavailable.
+\end{description}
+
+The way through is not to treat $u_c$ as exogenous but to isolate the part of its variation
+that is. Three quasi-exogenous instruments are present in routine care:
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item \textbf{Weight-based dose recalculation following growth.} The dose is a fixed
+      quantity per kilogram, so it steps upward when the child is weighed and the
+      prescription is refreshed. The timing is set by the clinic calendar and the child's
+      growth, not by the biomarker.
+\item \textbf{Supply interruptions.} Stock-outs, travel, and gaps in dispensing produce
+      involuntary dose reductions whose timing is unrelated to the patient's metabolic
+      state.
+\item \textbf{Changes of formulation.} A switch between preparations, or between oral and
+      intravenous administration, changes the effective $\kappa$ at a date fixed by
+      procurement rather than by indication.
+\end{enumerate}
+
+Each of these moves $u_c$ for a reason that is plausibly independent of $m$, which is what
+an instrument requires. None is randomised, and the independence is an assumption to be
+argued from the records in each case rather than assumed once.
+
+\begin{remark}[The identical structure on the other channel]
+Everything above is stated for carnitine because that is the input in the charts. By
+Proposition~\ref{prop:channel} the same equations, the same determinant and the same
+conditioning apply verbatim when the therapy supplies the perturbation instead, with
+$\delta = \Delta g(m')$ in place of $\delta = \kappa u_c m'$. What changes is only the
+statistics: the therapeutic schedule is exogenous and needs no instrument, and the
+instrumental apparatus of this subsection becomes unnecessary rather than merely
+different.
+\end{remark}
 
 \subsection{What we would like to establish}
 
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
-\item Conditions under which the therapeutic schedule, treated as a design variable,
-      yields acceptable conditioning without approaching the safety constraint.
+\item Conditions under which a perturbation schedule, treated as a design variable,
+      yields acceptable conditioning without approaching the safety constraint. By
+      Proposition~\ref{prop:channel} the design problem is the same whether the schedule
+      is one of carnitine doses or of therapeutic doses.
 \item Whether the decision-relevant quantity is better conditioned than the parameters.
       Writing the critical capacity from the equilibrium condition at peak load and
       tolerable level,

@@ -8,18 +8,27 @@ is therefore an operational definition rather than a physical parameter. Whether
 decision built on it is invariant to that arbitrariness is the central question.
 
 \paragraph{Identification.} Under what conditions is a parameter identifiable when the
-excitation required to identify it is the regime that a safety constraint forbids? Under
-therapy the excitation is supplied by the dosing schedule itself, but the schedule must be
-selected \emph{before} any response data exist: the information arrives after the moment at
-which it is required.
+excitation required to identify it is the regime that a safety constraint forbids? The
+excitation is supplied by the schedule of the selective perturbation itself, but the
+schedule must be selected \emph{before} any response data exist: the information arrives
+after the moment at which it is required.
 
-\paragraph{Design.} The safety constraint is active only at the trough preceding each dose,
-$\theta_{\mathrm{base}} + D e^{-\lambda \Delta t} > \thc$. Designing a sequence of
-administration times that guarantees this for every parameter value in an uncertainty set,
-while simultaneously contracting that set, is dual control with a state constraint whose
-defining parameter is the unknown. Violation is not an off-specification excursion but a
-hospitalisation with permanent neurological cost, so the appropriate formulation is a chance
-constraint rather than a quadratic objective.
+\paragraph{Design.} The safety constraint is active only at the trough preceding each dose
+of the perturbation, where the total clearance capacity is at its lowest and the margin
+$\theta - \thc$ is smallest. Designing a sequence of administration times that guarantees
+this for every parameter value in an uncertainty set, while simultaneously contracting that
+set, is dual control with a state constraint whose defining parameter is the unknown.
+Violation is not an off-specification excursion but a hospitalisation with permanent
+neurological cost, so the appropriate formulation is a chance constraint rather than a
+quadratic objective.
+
+\paragraph{Confounding of the accessible input.} The perturbation actually present in the
+records is carnitine, and it is endogenous: the dose responds to the patient's state. The
+design and identification questions above are therefore posed on an input that no protocol
+fixed in advance. Whether the quasi-exogenous variation listed in
+Section~\ref{sec:selective}, namely weight-based recalculation after growth, supply
+interruptions and changes of formulation, is sufficient to support the argument is a
+question about the records and not about the model, and it is answered patient by patient.
 
 \paragraph{Reduction.} A model reduction preserving the input--output response to periodic
 impulsive inputs does not obviously yield a reduced model whose parameters are identifiable
@@ -29,3 +38,16 @@ from sparse sampling. These are distinct objectives and may conflict.
 unknowns entering simultaneously, $\theta$, the population parameters, $\lambda$, and one
 amplitude per documented illness episode, attractivity of the estimator manifold becomes a
 matrix condition rather than a sign condition, and is not addressed here.
+
+\paragraph{The therapy, when it arrives.} The analysis of this note is carried out on
+carnitine because that is the selective input present in the accessible cohort. By
+Proposition~\ref{prop:channel} nothing in the identification problem distinguishes the two
+channels: the determinant depends on the metabolite levels before and after the
+perturbation and not on which channel produced them. What the mRNA therapy would add is
+therefore not new structure but a better \emph{statistical} position. Its schedule is fixed
+by protocol rather than in response to the patient, so it supplies a genuinely exogenous
+selective input, on the enzymatic channel, in a cohort where the only such input at present
+is endogenous. The instrumental apparatus needed to defend a carnitine-based argument would
+become unnecessary. That is the one respect in which the arrival of the therapy changes the
+problem posed here, and it is worth stating precisely because it is smaller than it looks:
+the conditioning, which is the actual obstruction, is unchanged.

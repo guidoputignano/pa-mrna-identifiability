@@ -157,7 +157,7 @@ genotype to residual enzymatic capacity is unconfounded. Obligate carrier parent
 retain approximately half of normal activity and are asymptomatic, provide a natural upper
 anchor.
 
-\subsection{The therapy as an input}
+\subsection{Why the therapy makes $\theta$ a decision variable}
 
 An investigational LNP-formulated mRNA therapy encoding both PCC subunits is in clinical
 development, administered intravenously every two to three weeks. Reported phase 1/2 results
@@ -167,7 +167,28 @@ reduction} as the endpoint, yielding a single recommended regimen applied unifor
 
 Genotype is not a covariate in that analysis. Since the Saudi literature documents
 genotype-dependent severity, the question of whether the uniform regimen is adequate for
-every patient is open, and is the motivation for what follows.
+every patient is open.
+
+This is the reason the residual capacity $\theta$ is treated here as a decision variable
+rather than a descriptive one. Before the therapy, knowing a patient's $\theta$ changes
+nothing that can be done for them: diet, carnitine and antibiotics are titrated against the
+biomarker, and the capacity behind it is of academic interest. With the therapy, $\theta$
+is the quantity that says how much enzyme has to be supplied and how often, so the same
+number becomes the input to a dosing decision. The rest of this note asks how much of it
+can be known before that decision has to be made.
+
+\paragraph{The cost of an unnecessary dose is not only financial.} It is tempting to read
+the question as one of expenditure, with the worst case of a uniform regimen being that
+some patients are dosed more often than they need. The phase 1/2 safety data do not support
+that reading. Infusion-related reactions were reported in $11$ of $43$ doses
+($25.6\%$). One participant who was positive for anti-PEG antibodies at baseline showed a
+fourfold rise in titre before the third dose, which is the pattern that precedes accelerated
+clearance of PEGylated particles and loss of efficacy. Every dose that a patient did not
+need is an additional exposure of an immunogenic construct, and the anticipated consequence
+of accumulated exposure is that the therapy stops working in the patient who needs it.
+Knowing $\theta$ before dosing therefore protects the therapy itself, not merely the
+budget, and it is one of the arguments for individualising a schedule rather than
+shortening it uniformly.
 
 \vspace{0.5em}
 \hrule

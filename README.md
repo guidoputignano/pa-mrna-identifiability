@@ -65,6 +65,20 @@ saturating both channels gives them the same functional form.
 precipitating illness suffices for recovery. Under C, the load must be driven
 below baseline. This is answerable from clinical notes with no new measurement.
 
+**The identification determinant does not depend on which channel is perturbed.**
+Perturb `k_e` with carnitine or `theta` with the therapy: the 2x2 system for
+`(theta, ke)` has the same coefficient matrix either way, and
+
+```
+det = g(m)*m' - g(m')*m = m*m'*(m'-m) / ((Km+m)*(Km+m'))
+```
+
+depends only on the two metabolite levels. The perturbation enters the
+right-hand side, not the matrix. So the analysis can be done now, on the input
+that is in every chart, and it transfers unchanged to the input that is in no
+chart. What the therapy would add is statistical, not structural: an exogenous
+schedule instead of one confounded by indication.
+
 ---
 
 ## Layout
@@ -157,12 +171,12 @@ Roughly in order of how much they would change the conclusions.
    construction needs a sign condition. With three parameters entering at once it
    becomes a matrix condition and existence is not guaranteed.
 
-7. **Therapy as an input.** Deliberately kept out of the model and confined to the
-   motivation, because no accessible patient is on the therapy. Standard care
-   already contains a selective input on the *alternative* channel (carnitine),
-   which is confounded by indication; the therapy supplies one on the *enzymatic*
-   channel, which is exogenous but must be scheduled before any response data
-   exist.
+7. **Defending carnitine as an instrument.** The selective input in the records
+   is endogenous: the dose responds to the patient's state. The quasi-exogenous
+   variation the argument leans on (weight-based recalculation after growth,
+   supply interruptions, changes of formulation) has to be argued from the
+   records patient by patient. This is a question about the charts, not about
+   the model.
 
 ---
 
@@ -177,7 +191,10 @@ an assumption.
 
 `k_e` is treated as a population parameter on the grounds that it does not involve
 PCC, but carnitine is also administered therapeutically at patient-specific doses,
-so in real data it is partly clinician-manipulated.
+so in real data it is partly clinician-manipulated. That manipulation is the
+working perturbation of the analysis and its weakness at the same time: the dose
+is adjusted in response to the patient's state, so it is confounded by indication
+and only its quasi-exogenous component can be used.
 
 Model C's depletion mechanism is a hypothesis. A plain two-state depletion model
 gives saturation, not decline; decline requires that replenishment itself be

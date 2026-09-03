@@ -1,0 +1,11 @@
+# LaTeX build artefacts; paper/main.pdf is tracked deliberately
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.fls
+paper/*.fdb_latexmk
+
+# Python
+__pycache__/
+*.pyc
