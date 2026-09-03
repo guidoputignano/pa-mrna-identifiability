@@ -34,8 +34,14 @@ and carries the biotin cofactor; the $\beta$ subunit is encoded by \emph{PCCB} a
 performs the carboxyl transfer. Both subunits are required, which is why pathogenic
 variants in either gene produce the same disease.
 
+\begin{adjustwidth}{-1.3cm}{-1.3cm}
 \begin{figure}[htbp]
 \centering
+
+%,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, (a) the pathway
+\begin{minipage}[t]{0.57\linewidth}
+\centering
+\resizebox{\linewidth}{!}{%
 \begin{tikzpicture}[
   box/.style={draw, rounded corners=2pt, align=center, inner sep=5pt,
               font=\small, minimum height=9mm},
@@ -53,43 +59,143 @@ variants in either gene produce the same disease.
 \node[src] (gut) at (0,-1.4) {gut flora};
 
 %, central pool
-\node[mid] (pcoa) at (5.4,0) {propionyl-CoA};
+\node[mid] (pcoa) at (4.9,0) {propionyl-CoA};
 
 \draw[ar] (aa)  -- (pcoa);
 \draw[ar] (fa)  -- (pcoa);
 \draw[ar] (gut) -- (pcoa);
 
 %, blocked enzymatic route, right
-\node[ok] (mmcoa) at (11.6,0) {methylmalonyl-CoA\\$\rightarrow$ TCA cycle};
+\node[ok] (mmcoa) at (10.4,0) {methylmalonyl-CoA\\$\rightarrow$ TCA cycle};
 \draw[ar] (pcoa) -- (mmcoa);
-\node[font=\scriptsize, align=center] at (8.5,0.75) {PCC \; $\alpha_6\beta_6$};
-\node[font=\scriptsize, align=center, red!70!black] at (8.5,-0.62) {capacity $\theta$};
-\draw[very thick, red!70!black] (8.5,-0.34) -- (8.5,0.34);
+\node[font=\scriptsize, align=center] at (7.65,0.75) {PCC \; $\alpha_6\beta_6$};
+\node[font=\scriptsize, align=center, red!70!black] at (7.65,-0.62) {capacity $\theta$};
+\draw[very thick, red!70!black] (7.65,-0.34) -- (7.65,0.34);
 
 %, escape route up
-\node[esc] (carn) at (11.3,3.0) {propionylcarnitine\\{\scriptsize urinary excretion}};
+\node[esc] (carn) at (10.1,3.0) {propionylcarnitine\\{\scriptsize urinary excretion}};
 \draw[ar, blue!55!black] (pcoa) to[out=60,in=190] (carn);
 \node[font=\scriptsize, align=center, blue!55!black, fill=white, inner sep=1pt]
-      at (7.4,1.95) {$+$ carnitine\\{\scriptsize consumed, not catalytic}};
+      at (6.7,1.95) {$+$ carnitine\\{\scriptsize consumed, not catalytic}};
 
 %, escape route down
-\node[bad] (tox) at (11.3,-3.0) {2-methylcitrate\\3-hydroxypropionate\\{\scriptsize measured biomarkers}};
+\node[bad] (tox) at (10.1,-3.0) {2-methylcitrate\\3-hydroxypropionate\\{\scriptsize measured biomarkers}};
 \draw[ar, red!60!black] (pcoa) to[out=-55,in=180] (tox);
 
 %, sequestration
-\node[bad, text width=36mm] (coa) at (4.6,-3.0)
+\node[bad, text width=34mm] (coa) at (4.1,-3.0)
      {CoA sequestration\\{\scriptsize $\Rightarrow$ PDH, $\beta$-oxidation, TCA impaired}};
 \draw[ar, red!60!black] (pcoa) -- (coa);
 
-\end{tikzpicture}
-\caption{Propionate handling. Substrate converges on propionyl-CoA from diet, endogenous
-protein catabolism, fatty acids and gut flora. The enzymatic route through PCC is
-impaired; residual capacity is denoted $\theta$. Two escape routes remain: conjugation
+\end{tikzpicture}}
+
+\vspace{0.5em}
+{\small\textbf{(a)} the pathway}
+\end{minipage}\hfill
+%,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, (b) the model
+\begin{minipage}[t]{0.40\linewidth}
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[
+  box/.style={draw, rounded corners=2pt, align=center, inner sep=5pt,
+              font=\small, minimum height=9mm},
+  pool/.style={box, fill=soft, font=\small\bfseries, minimum width=24mm},
+  enzy/.style={box, fill=green!8, draw=green!45!black!50, minimum width=26mm},
+  altc/.style={box, fill=blue!6, draw=blue!40, minimum width=26mm},
+  ar/.style={-{Stealth[length=2.2mm]}, thick},
+]
+
+\node[pool] (m) at (0,0) {$m$\\[1pt]\scriptsize\mdseries accumulated\\metabolite};
+\node[font=\small] (in) at (-2.7,0) {$s(t)$};
+\draw[ar] (in) -- (m);
+\node[font=\scriptsize, align=center] at (-1.95,0.42) {load};
+
+\node[enzy] (enz) at (-1.85,-2.5) {$\theta\, g(m)$\\{\scriptsize saturating}};
+\node[altc] (alt) at ( 1.85,-2.5) {$k_e\, m$\\{\scriptsize linear}};
+\draw[ar] (m.south) -- ++(0,-0.45) -| (enz.north);
+\draw[ar] (m.south) -- ++(0,-0.45) -| (alt.north);
+
+\node[font=\scriptsize] (o1) at (-1.85,-4.1) {eliminated};
+\node[font=\scriptsize] (o2) at ( 1.85,-4.1) {eliminated};
+\draw[ar] (enz) -- (o1);
+\draw[ar] (alt) -- (o2);
+
+\node[font=\small, align=center, blue!55!black] (carn) at (4.3,-2.5)
+     {carnitine\\$u_c(t)$};
+\draw[ar, blue!55!black] (carn) -- (alt);
+
+\end{tikzpicture}}
+
+\vspace{0.5em}
+{\small\textbf{(b)} the model}
+\end{minipage}
+
+%,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, correspondence
+\vspace{1.1em}
+{\footnotesize
+\begin{tabular}{@{}p{0.44\linewidth} p{0.16\linewidth} p{0.34\linewidth}@{}}
+\toprule
+\textbf{(a) biology} & \textbf{(b) model} & \textbf{status of the identification} \\
+\midrule
+amino acids, gut flora, protein catabolism & $s(t)$ &
+input; partially recorded \\
+intracellular propionyl-CoA & \emph{not modelled} &
+the enzyme's true substrate, never measured \\
+plasma 2-MC, 3-HP, C3 acylcarnitine & $m$ \ \textbf{[proxy]} &
+the only observable; a downstream marker, not the substrate \\
+PCC, its $V_{\max}$ & $\theta$ &
+the unknown the decision needs \\
+carnitine conjugation and renal excretion & $k_e$ &
+assumed population-level \\
+CoA sequestration & \emph{absent in A and B} &
+this is exactly what Model C reintroduces \\
+\bottomrule
+\end{tabular}}
+
+\caption{(a) Propionate handling. Substrate converges on propionyl-CoA from diet,
+endogenous protein catabolism, fatty acids and gut flora. The enzymatic route through PCC
+is impaired; residual capacity is denoted $\theta$. Two escape routes remain: conjugation
 with carnitine, which consumes a finite cofactor, and conversion to the toxic metabolites
 that are measured clinically. Accumulated propionyl-CoA sequesters free coenzyme A, which
-is a shared and limited resource.}
+is a shared and limited resource. (b) The same system as the block diagram that the
+rest of this note analyses, containing only quantities the model has. A single pool $m$ is
+filled by the load $s(t)$ and drained by two channels, one saturating and one linear, with
+carnitine entering as an input on the second. The table gives the correspondence, and
+names the two places where the reduction discards something.}
 \label{fig:pathway}
 \end{figure}
+\end{adjustwidth}
+
+\paragraph{What the reduction discards.} Panel (b) is not panel (a) with the labels
+removed. Three things are lost in passing from one to the other, and they are stated here
+rather than left for a reader to find.
+
+\begin{enumerate}[leftmargin=*, itemsep=3pt]
+\item \textbf{The state $m$ is not the enzyme's substrate.} The substrate of PCC is
+intracellular, mitochondrial propionyl-CoA, and it is never measured. What is measured is
+plasma 2-methylcitrate, 3-hydroxypropionate and C3 acylcarnitine, which are downstream
+products in a different compartment. Writing the Michaelis-Menten term as $\theta g(m)$
+with $m$ the plasma marker asserts a map between the two, and that map is an assumption,
+not a measurement. It is the single largest liberty taken in this note. Everything
+downstream inherits it, including the numerical value of $K_m$, which is therefore not the
+in vitro Michaelis constant of PCC.
+\item \textbf{Urea cycle inhibition and hyperammonemia are not modelled.} Propionyl-CoA
+inhibits N-acetylglutamate synthase and impairs ammonia elimination through a route that
+does not pass through $m$ at all. Hyperammonemia is a major part of what makes a
+decompensation dangerous and it is absent from the model. A patient can therefore be in
+serious trouble for a reason the state variable cannot express.
+\item \textbf{CoA sequestration is absent from Models A and B.} The feedback in the
+lower-left of panel (a), whereby accumulated propionyl-CoA consumes a shared cofactor and
+degrades the cell's general metabolic capacity, has no counterpart in a model whose
+clearance is a fixed function of $m$. This is not an oversight to be apologised for: it is
+precisely the mechanism Model C reintroduces, and the reason Model C is the only one of the
+three in which a crisis fails to resolve by itself.
+\end{enumerate}
+
+These are limits of the reduction, not defects of the biology, and each is a statement
+that can be checked. The first is checkable against any study relating plasma markers to
+intracellular propionyl-CoA. The second bounds what the model may be used to predict. The
+third is answered by Model C.
 
 \subsection{Why the block is damaging}
 
