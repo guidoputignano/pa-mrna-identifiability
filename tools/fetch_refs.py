@@ -162,10 +162,26 @@ def unmapped(text):
                    if ord(c) > 127 and not (0x00C0 <= ord(c) <= 0x00FF)})
 
 
+# BibTeX's month macros are three letters. CrossRef emits some months in
+# full ("month=July"), which is an undefined macro: biber warns and drops
+# the field. Map the value onto the macro standing for the same month.
+# This re-spells registrar data, it does not supply any.
+MONTHS = ("jan", "feb", "mar", "apr", "may", "jun",
+          "jul", "aug", "sep", "oct", "nov", "dec")
+
+
+def normalise_months(bibtex):
+    def sub(m):
+        macro = m.group(2).strip().lower()[:3]
+        return m.group(1) + macro if macro in MONTHS else m.group(0)
+    # Only unbraced values, which is the form the macro warning comes from.
+    return re.sub(r"(month\s*=\s*)([A-Za-z]+)", sub, bibtex)
+
+
 def sanitize(bibtex):
     for bad, good in SANITIZE.items():
         bibtex = bibtex.replace(bad, good)
-    return bibtex
+    return normalise_months(bibtex)
 
 
 # ------------------------------------------------------------------- main

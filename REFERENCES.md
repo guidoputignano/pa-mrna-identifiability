@@ -86,6 +86,14 @@ audit:
 it. If you would rather stay on `bibtex`, drop `backend=biber` and use
 `natbib` instead; the generated `.bib` works with either.
 
+The register is emitted as a `longtable`, not a `tabular`. Thirty rows of
+wrapped prose do not fit on one page and a `tabular` cannot break, so it
+runs off the bottom without complaining. `longtable` builds its alignment
+at the outer level and positions itself with `\LTleft`/`\LTright`, which
+means it does not inherit the indentation of the enclosing `adjustwidth`:
+the column widths are fractions of `\textwidth` and must sum to about
+0.88, since four inter-column gaps add roughly another 0.10.
+
 ## Adding a reference
 
 1. Find the DOI or PMID on the record itself, not from a search snippet.
@@ -96,7 +104,30 @@ it. If you would rather stay on `bibtex`, drop `backend=biber` and use
    cites it.
 
 If there is no DOI, put the entry in `refs.manual.bib` with a `note`
-recording which fields still need checking.
+recording which fields still need checking. Check first that there really
+is none: `dose_selection_poster` was assumed to have no usable identifier
+and turned out to resolve through CrossRef, which supplied an eleven-author
+list, the publisher and the year that a hand-written entry would have had
+to leave marked "unverified". Anything in `refs.manual.bib` that later
+acquires an identifier moves to `refs.sources`.
+
+## What the fetcher normalises
+
+Three transformations, all of them re-spellings of what the registrar
+returned rather than additions to it.
+
+- **Author names from PubMed.** esummary returns `Al-Hamed MH`. BibTeX
+  reads an unpunctuated name as *First Last*, making the family name `MH`
+  and rendering it `A.-H. MH`. Names are emitted as `Al-Hamed, M. H.`
+  instead. A name whose final token is not an initials group is braced, so
+  BibTeX treats it as one literal unit rather than guessing.
+- **Month macros.** CrossRef emits `month=July`. BibTeX's month macros are
+  three letters, so `July` is undefined, biber warns and drops the field.
+  It is mapped onto `jul`.
+- **Unicode.** Greek letters go to math mode, dashes and quotes to ASCII.
+  Anything non-ASCII that survives and is not a Latin-1 letter is reported
+  at the end of the run, so a new source cannot quietly introduce a
+  codepoint the build may not accept.
 
 ## Verdicts in `claims.csv`
 
