@@ -30,9 +30,34 @@ Three hypotheses about the bracketed term, each answering a different question:
 | **B** | `ke * h(m)`, Michaelis-Menten too | one, lost above the ceiling | under what condition is a tolerable steady state lost? |
 | **C** | `k * c(t) * m`, carnitine depleted | two, colliding at a fold | why does recovery require the load driven *below* baseline, not just the trigger removed? |
 
-They are alternative hypotheses, not stages of a development. Model A is the
-working model for identifiability because it is the *most favourable* case, not
-the most accurate: if identification fails there it fails a fortiori elsewhere.
+They are alternative hypotheses, not stages of a development, and they are not
+ranked by realism. Each is here for a different and specific reason.
+
+**C is the one that makes `theta_crit` well posed.** This is the point that
+matters most and it is easy to miss, because C is usually introduced as "the
+most biologically faithful of the three", which undersells it. In A and B the
+critical capacity has to be *defined* by a convention:
+
+```
+theta_crit = (s_peak - ke*m_bar) / g(m_bar)
+```
+
+with `m_bar` a clinical judgement about what metabolite level is tolerable and
+`s_peak` an unmeasured illness amplitude. In C it is *derived*: it is the theta
+at which the attractor and the separatrix merge at a saddle-node, and no
+tolerability convention appears anywhere in the construction. A cannot offer
+this because its equilibrium is never lost; B cannot because its equilibrium
+escapes to infinity instead of colliding with a second one. Only C has a second
+equilibrium for the first to collide with.
+
+**A is the most favourable case, not the most accurate.** It is the working
+model for identifiability precisely because its two clearance channels have
+maximally different functional forms. If identification fails there it fails a
+fortiori elsewhere. Its known defect is that it predicts no crisis at all.
+
+**B buys the load ceiling and pays for it.** It is what is needed to say
+anything about a steady state being lost, and the price is that both channels
+acquire the same functional form and become far harder to separate.
 
 ---
 
@@ -64,6 +89,23 @@ saturating both channels gives them the same functional form.
 **Models B and C differ in a checkable prediction.** Under B, cessation of the
 precipitating illness suffices for recovery. Under C, the load must be driven
 below baseline. This is answerable from clinical notes with no new measurement.
+
+**`theta_crit` can be defined intrinsically, and only in Model C.** It is the
+theta at which, at a given load, the maximum of the clearance curve falls to
+that load: attractor and separatrix merge at the saddle-node. Above it two
+equilibria exist, below it none. `m_bar` does not appear. The construction
+removes the clinical convention from the definition of the threshold; it does
+not remove `s_peak`, which survives in the separate question of whether an
+episode is large enough to cross the separatrix. Only the hazard reformulation
+in open item 2 removes that.
+
+**The attractor-to-separatrix distance is the safety margin**, and it was
+computed nowhere in this repository before. It says how far a patient can be
+pushed before the crisis becomes self-sustaining, closes continuously to zero
+at `theta_crit`, and diverges as theta approaches the baseline load, where the
+patient becomes unconditionally safe at that load. At the illustrative
+`theta = 300` it is 398, against `theta_crit = 167`. Neither A nor B admits
+this quantity at all.
 
 **Model B gives a condition, not a frequency.** The answer it returns is the
 inequality `s > theta + ke`, written in two quantities (`s_peak`, `m_bar`) that
@@ -98,7 +140,7 @@ src/
   common/         model definitions and plotting style, shared
   model_A/run.py  identifiability, conditioning, population anchors
   model_B/run.py  load ceiling, threshold, cost of the correction
-  model_C/run.py  bistability, separatrix, discriminating prediction
+  model_C/run.py  bistability, separatrix, intrinsic theta_crit, safety margin
 symbolic/       structural identifiability, three independent tools
   julia/          StructuralIdentifiability.jl, 8 cases
   maple/          SIAN
