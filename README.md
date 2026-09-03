@@ -27,8 +27,8 @@ Three hypotheses about the bracketed term, each answering a different question:
 | | alternative clearance | equilibria | question |
 |---|---|---|---|
 | **A** | `ke * m`, linear and unbounded | one, never lost | can `theta` be identified? |
-| **B** | `ke * h(m)`, Michaelis-Menten too | one, lost above the ceiling | when does a crisis occur? |
-| **C** | `k * c(t) * m`, carnitine depleted | two, colliding at a fold | why does a crisis not self-resolve? |
+| **B** | `ke * h(m)`, Michaelis-Menten too | one, lost above the ceiling | under what condition is a tolerable steady state lost? |
+| **C** | `k * c(t) * m`, carnitine depleted | two, colliding at a fold | why does recovery require the load driven *below* baseline, not just the trigger removed? |
 
 They are alternative hypotheses, not stages of a development. Model A is the
 working model for identifiability because it is the *most favourable* case, not
@@ -64,6 +64,12 @@ saturating both channels gives them the same functional form.
 **Models B and C differ in a checkable prediction.** Under B, cessation of the
 precipitating illness suffices for recovery. Under C, the load must be driven
 below baseline. This is answerable from clinical notes with no new measurement.
+
+**Model B gives a condition, not a frequency.** The answer it returns is the
+inequality `s > theta + ke`, written in two quantities (`s_peak`, `m_bar`) that
+are never measured, and it is silent on how often the threshold is crossed.
+Frequency is the one thing the records hold reliably. Closing that gap needs
+the hazard reformulation in open item 2, not a better threshold.
 
 **The identification determinant does not depend on which channel is perturbed.**
 Perturb `k_e` with carnitine or `theta` with the therapy: the 2x2 system for

@@ -9,15 +9,22 @@ which leaves with the product. Carnitine is a consumed reagent, not a
 catalyst. If depletion outpaces replenishment, effective clearance
 DECREASES with m rather than merely saturating, the clearance curve becomes
 non-monotone, and the system admits two equilibria: a stable one and an
-unstable one which acts as a point of no return.
+unstable one which acts as a separatrix.
 
-Question answered: why does a crisis not resolve spontaneously?
+Question answered: why does recovery require active reduction of the load
+below baseline, rather than mere removal of the trigger?
+
+Removing the trigger returns s to baseline, and at baseline the patient who
+has crossed the separatrix is still on the wrong side of it. Recovery needs
+an overshoot: either s driven BELOW baseline, which raises the separatrix
+above the patient, or m lowered directly. Under B, by contrast, returning s
+to baseline returns m to baseline.
 
 Produces
     fig_C1_phaseline    dm/dt against m, showing the two equilibria
     fig_C2_fold         bifurcation diagram with the saddle-node fold
     fig_C3_timeseries   B and C responses to an identical transient illness
-    fig_C4_hysteresis   the testable prediction: admission against discharge
+    fig_C4_basin        the basin of attraction and the two routes to recovery
 
 Run:  python src/model_C/run.py
 """
@@ -61,7 +68,7 @@ def fig_phaseline():
         ax.plot([r], [0], "o", ms=7, zorder=5,
                 color=GREEN if st else "white",
                 markeredgecolor=GREEN, markeredgewidth=1.8)
-        ax.annotate("stable\nattractor" if st else "unstable\npoint of no return",
+        ax.annotate("stable\nattractor" if st else "unstable:\nthe separatrix",
                     xy=(r, 0), xytext=(r, -220 if st else 300),
                     ha="center", fontsize=7.5, color=GREEN if st else RED,
                     arrowprops=dict(arrowstyle="-", color=GREY, lw=0.7))
@@ -141,9 +148,15 @@ def fig_basin():
     """
     There is no upper stable state in Model C: beyond the separatrix the
     metabolite grows without bound. So the clinically meaningful object is
-    not a hysteresis loop but the BASIN OF ATTRACTION, and the consequence
-    is that reducing the load alone cannot rescue a patient who has already
-    crossed. The metabolite itself must be lowered.
+    not a hysteresis loop but the BASIN OF ATTRACTION.
+
+    The consequence is the question this model answers. Removing the trigger
+    puts s back at baseline, and the separatrix at baseline load is still
+    below the patient: nothing has been recovered. Recovery needs an
+    overshoot, and the figure shows the two that standard care uses. Driving
+    s BELOW baseline raises the separatrix above the patient. Lowering m
+    directly, by haemofiltration, moves the patient below the separatrix
+    where it stands.
     """
     loads = np.linspace(250, 781, 400)
     stab_b, unst_b, ok = [], [], []

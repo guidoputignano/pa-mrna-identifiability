@@ -1,4 +1,9 @@
-\section{Model C: cofactor depletion and bistability}
+\section{Model C: cofactor depletion, and why recovery needs the load driven below
+         baseline}
+%==========================================================================
+
+\emph{Question answered: why does recovery require active reduction of the load below
+baseline, rather than mere removal of the trigger?}
 %==========================================================================
 
 \subsection{What is added}
@@ -41,15 +46,28 @@ saddle-node.
 
 \subsection{Why this would matter clinically}
 
-The unstable equilibrium is a \emph{point of no return}. Beyond it, $\dot m > 0$ even at
-baseline load, so the metabolite continues to rise after the precipitating illness has
-resolved. Recovery requires active intervention to return the patient to the left of the
-separatrix, which is precisely what intravenous glucose, carnitine and haemofiltration
-accomplish.
+The unstable equilibrium is a \emph{separatrix}. Beyond it, $\dot m > 0$ even at baseline
+load, so the metabolite continues to rise after the precipitating illness has resolved.
+Removing the trigger returns $s$ to its baseline value, and at that value the patient is
+still on the wrong side of the separatrix. Recovery therefore requires an active
+intervention that moves one of the two: either the load is driven \emph{below} baseline,
+which raises the separatrix above the patient, or the metabolite is lowered directly below
+the separatrix where it stands. These are exactly intravenous glucose with protein
+withdrawal, and haemofiltration.
 
-This predicts the observed clinical fact that decompensations do not resolve spontaneously,
-which Models A and B do not explain. An analogous depletion argument applies to free
-coenzyme A.
+\begin{remark}[Why the question is phrased this way]
+An earlier version of this note asked ``why does a crisis not resolve spontaneously'',
+which is not what the model says and is contradicted by our own
+Figure~\ref{fig:C2}: lowering the load \emph{does} recover the patient, because it raises
+the separatrix. The content of Model C is not that recovery is impossible. It is that
+recovery is not obtained by returning to the status quo ante. Removal of the trigger
+restores the vector field that the patient has already escaped, so the intervention has to
+overshoot, and the amount of overshoot is set by how far above the separatrix the patient
+sits. Models A and B predict no such requirement: in both, returning $s$ to baseline
+returns $m$ to baseline.
+\end{remark}
+
+An analogous depletion argument applies to free coenzyme A.
 
 \subsection{Why it is not the working model}
 
@@ -75,8 +93,9 @@ Models B and C differ in a clinically checkable prediction:
 \begin{center}
 \begin{tabular}{@{}ll@{}}
 \toprule
-\textbf{B} & the crisis resolves when the precipitating illness resolves \\
-\textbf{C} & beyond the separatrix the crisis is self-sustaining; intervention is required \\
+\textbf{B} & removing the trigger suffices: $s$ back to baseline returns $m$ to baseline \\
+\textbf{C} & removing the trigger does not suffice; $s$ must be driven \emph{below} baseline,
+             or $m$ lowered directly \\
 \bottomrule
 \end{tabular}
 \end{center}

@@ -4,12 +4,19 @@ Model B: both clearance channels saturating.
     dm/dt = s(t) - theta*g(m) - ke*h(m)
     g(m) = m/(Km+m) ,  h(m) = m/(Ke+m)
 
-Question answered: when does a crisis occur?
+Question answered: under what condition is a tolerable steady state lost?
 
 Total clearance is now bounded by theta + ke. If the load exceeds that
 ceiling no equilibrium exists and the metabolite diverges. Clinically the
-crisis begins earlier, when the equilibrium migrates past the tolerable
-level, so the operative threshold is s_peak > C(m_bar).
+tolerable steady state is lost earlier, when the equilibrium migrates past
+the tolerable level, so the operative threshold is s_peak > C(m_bar).
+
+NOTE the limit of that question. The model returns a CONDITION, not a
+FREQUENCY: nothing here says how often the load crosses the threshold,
+because the arrival of illness is exogenous to the vector field. Frequency
+is the one thing the records hold reliably (admissions are dated), while
+s_peak and m_bar are never measured. Removing the mismatch needs a hazard
+formulation, not a deterministic threshold. See the open items.
 
 Produces
     fig_B1_ceiling      clearance curve, ceiling, and three load lines

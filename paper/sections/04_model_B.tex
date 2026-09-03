@@ -1,4 +1,7 @@
-\section{Model B: two Michaelis-Menten channels, bounded total clearance}
+\section{Model B: bounded clearance, and the loss of a tolerable steady state}
+%==========================================================================
+
+\emph{Question answered: under what condition is a tolerable steady state lost?}
 %==========================================================================
 
 \subsection{What is added}
@@ -51,6 +54,31 @@ equilibrium migrates to metabolite levels the patient does not tolerate. The ope
 condition is $\spk > C(\bar m)$, with $\thc$ given by \eqref{eq:thcrit}.
 \end{remark}
 
+\begin{remark}[The model gives a condition, the records give a frequency]
+\label{rem:condition_not_frequency}
+The question this model answers has to be stated carefully, and an earlier version of this
+note stated it wrongly as ``when does a crisis occur''. What Model B delivers is a
+\emph{condition}, $s > \theta + k_e$, or clinically $\spk > C(\bar m)$. It does not deliver
+a \emph{rate}. Nothing in \eqref{eq:B} describes how often, or how hard, the load is
+driven above the threshold: the arrival of intercurrent illness is exogenous to the vector
+field, and a deterministic inequality has no frequency in it.
+
+The asymmetry matters because frequency is precisely what the records contain. Admissions
+are dated and reliably coded, whereas $\spk$ and $\bar m$, the two quantities the
+inequality is written in, are never measured. The model is therefore expressed in
+unobservables and asked to predict an observable it does not contain.
+
+Closing that gap means replacing the deterministic threshold by a hazard: treating the
+precipitating events as a point process with rate $\nu$, giving their amplitudes a
+distribution estimated from the data, and deriving
+\[
+\lambda_{\mathrm{MDE}}(\theta) \;=\; \nu \cdot
+\mathbb{P}\!\left(\text{episode amplitude} > \text{critical amplitude} \mid \theta\right),
+\]
+which is a quantity the admission records can actually be regressed against. This is set
+out in Section~7 and is not attempted here.
+\end{remark}
+
 \subsection{Cost of the correction}
 
 In Model A the two clearance terms have different functional forms, one Michaelis-Menten and
@@ -63,9 +91,11 @@ should be stated explicitly rather than discovered later.
 
 \subsection{Status}
 
-Model B is required for any statement about crisis onset and for the definition of $\thc$.
-It is not required for the identifiability analysis of Section 3, and is therefore not the
-working model for that purpose.
+Model B is required for any statement about the loss of a tolerable steady state and for
+the definition of $\thc$ in \eqref{eq:thcrit}. It is not required for the identifiability
+analysis of Section 3, and is therefore not the working model for that purpose. Its
+question is answered within its own terms and, by Remark~\ref{rem:condition_not_frequency},
+its answer is not yet in the units the data are recorded in.
 
 \vspace{0.5em}
 \hrule
