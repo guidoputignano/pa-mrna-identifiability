@@ -1,0 +1,30 @@
+% =====================================================================
+%  DAISY input, Model A
+%  DAISY runs under REDUCE. Verify syntax against the version manual:
+%  the format has changed between DAISY releases.
+%
+%  The input-output relation obtained by eliminating the state is
+%
+%     (Km + y) y'  =  (Km + y) s  -  theta y  -  ke y (Km + y)
+%
+%  whose coefficients form the exhaustive summary
+%
+%     { Km ,  theta + ke*Km ,  ke }
+%
+%  Injectivity of the map from (theta, Km, ke) to this triple is the
+%  hand argument in the accompanying note (Proposition 1).
+% =====================================================================
+
+WRITE "Model A: saturating enzyme + linear alternative clearance"$
+
+B_ := {s, y, m}$
+B1_ := {m}$
+C_ := {theta, Km, ke}$
+
+SEQ_ := {
+  df(m,t) = s - theta*m/(Km + m) - ke*m,
+  y = m
+}$
+
+DAISY()$
+END$

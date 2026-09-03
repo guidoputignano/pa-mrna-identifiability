@@ -1,0 +1,31 @@
+\section{Open questions}
+%==========================================================================
+
+\paragraph{Well-posedness.} Three quantities in the formulation are not measured and are
+not physiological constants: $\bar m$ (clinical convention), $\spk$ (varies with the
+precipitating event), and the map from intracellular substrate to plasma biomarker. $\thc$
+is therefore an operational definition rather than a physical parameter. Whether the
+decision built on it is invariant to that arbitrariness is the central question.
+
+\paragraph{Identification.} Under what conditions is a parameter identifiable when the
+excitation required to identify it is the regime that a safety constraint forbids? Under
+therapy the excitation is supplied by the dosing schedule itself, but the schedule must be
+selected \emph{before} any response data exist: the information arrives after the moment at
+which it is required.
+
+\paragraph{Design.} The safety constraint is active only at the trough preceding each dose,
+$\theta_{\mathrm{base}} + D e^{-\lambda \Delta t} > \thc$. Designing a sequence of
+administration times that guarantees this for every parameter value in an uncertainty set,
+while simultaneously contracting that set, is dual control with a state constraint whose
+defining parameter is the unknown. Violation is not an off-specification excursion but a
+hospitalisation with permanent neurological cost, so the appropriate formulation is a chance
+constraint rather than a quadratic objective.
+
+\paragraph{Reduction.} A model reduction preserving the input--output response to periodic
+impulsive inputs does not obviously yield a reduced model whose parameters are identifiable
+from sparse sampling. These are distinct objectives and may conflict.
+
+\paragraph{Multi-parameter case.} The scalar analysis above is complete. With several
+unknowns entering simultaneously, $\theta$, the population parameters, $\lambda$, and one
+amplitude per documented illness episode, attractivity of the estimator manifold becomes a
+matrix condition rather than a sign condition, and is not addressed here.

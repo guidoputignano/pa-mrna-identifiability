@@ -1,0 +1,124 @@
+\section{What is known, measured, and unknown}
+%==========================================================================
+
+\begin{adjustwidth}{-1.4cm}{-1.4cm}
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Epistemic status of each quantity. The \emph{Role} column gives the
+system-theoretic classification; the \emph{Status} column gives what is actually
+available from clinical records.}
+\label{tab:status}
+\begin{tabular}{@{}p{0.085\textwidth} p{0.175\textwidth} p{0.135\textwidth} p{0.20\textwidth} p{0.30\textwidth}@{}}
+\toprule
+\textbf{Quantity} & \textbf{Meaning} & \textbf{Role} & \textbf{Status} & \textbf{Source and caveat} \\
+\midrule
+$m(t)$ & accumulated toxic metabolite &
+state; the only observable &
+measured, $\approx 6$--$7$ samples/year &
+plasma 2-MC, 3-HP, C3 acylcarnitine. \emph{Proxy}: the enzyme substrate is intracellular
+propionyl-CoA, never measured \\
+\addlinespace
+$s(t)$ & propiogenic substrate load &
+exogenous disturbance, partly structured &
+partially known &
+prescribed protein intake and illness dates recorded; episode amplitudes unknown;
+unrecorded triggers exist \\
+\addlinespace
+$\theta$ & residual PCC capacity ($V_{\max}$) &
+\textbf{parameter, patient-specific, constant} &
+\textbf{unknown} &
+set by genotype; measurable \emph{ex vivo} in fibroblasts or lymphocytes, but the
+in vitro to in vivo mapping is uncertain \\
+\addlinespace
+$K_m$ & half-saturation constant &
+parameter, assumed population-level &
+unknown &
+property of the active site, assumed genotype-independent \\
+\addlinespace
+$k_e$ & non-enzymatic clearance &
+parameter, assumed population-level &
+unknown &
+carnitine conjugation and renal excretion. \emph{Caveat}: carnitine is also administered
+therapeutically, so partly clinician-manipulated \\
+\addlinespace
+$u_c(t)$ & carnitine dose &
+\textbf{input on $k_e$}, but \emph{endogenous} &
+recorded in charts &
+adjusted in response to patient state, hence confounded by indication; weight-based
+recalculation is quasi-exogenous \\
+\addlinespace
+$\Delta(t)$ & therapeutic increment to capacity &
+\textbf{input on $\theta$}, exogenous &
+\textbf{known when applied} &
+investigational; not administered in the accessible cohort. Decay rate $\lambda$
+possibly patient-specific \\
+\addlinespace
+$\bar m$ & tolerable metabolite level &
+constant in the definition of $\thc$ &
+\textbf{not measured} &
+clinical convention, not a physiological constant \\
+\addlinespace
+$\spk$ & peak substrate load in illness &
+extreme value of the disturbance &
+\textbf{not measured} &
+varies with severity of the intercurrent event \\
+\addlinespace
+$N(t)$ & decompensation events &
+counted output, threshold-triggered &
+counted and dated &
+admissions reliably coded; only a minority of all events lead to admission \\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{adjustwidth}
+
+\begin{adjustwidth}{-1.4cm}{-1.4cm}
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{The three candidate models. They are alternative hypotheses about the
+non-enzymatic clearance term, not stages of a development.}
+\label{tab:models}
+\begin{tabular}{@{}p{0.035\textwidth} p{0.235\textwidth} p{0.175\textwidth} p{0.185\textwidth} p{0.145\textwidth} p{0.13\textwidth}@{}}
+\toprule
+& \textbf{Clearance structure} & \textbf{Equilibria} & \textbf{Question answered}
+& \textbf{Cost} & \textbf{Status} \\
+\midrule
+\textbf{A} &
+$\theta g(m) + k_e m$ \newline second term linear, unbounded &
+one, stable, never lost &
+Can $\theta$ be identified from clinical data? &
+predicts no crisis at all &
+working model for identifiability \\
+\addlinespace
+\textbf{B} &
+$\theta g(m) + k_e h(m)$ \newline both saturating, ceiling $\theta + k_e$ &
+one stable, lost when load exceeds the ceiling &
+When does a crisis occur? &
+both terms share a functional form, weakening separability &
+required for $\thc$; not verified \\
+\addlinespace
+\textbf{C} &
+$\theta g(m) + k\,c(t)\,m$ \newline with $c$ depleted by elimination &
+two, stable and unstable, colliding at a saddle-node &
+Why does a crisis not resolve spontaneously? &
+adds an unmeasured state $c$ and an unknown $R$ &
+hypothesis; discriminating test available in records \\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{adjustwidth}
+
+\begin{remark}
+Models A, B and C are not stages of a development. They are alternative hypotheses about
+one term. Model A is used for the identifiability analysis because it is the version in
+which the two clearance channels have maximally different functional forms, and is
+therefore the most favourable case. Its known defect is that it predicts no crisis.
+\end{remark}
+
+\vspace{0.5em}
+\hrule
+\vspace{1em}
+
+%==========================================================================

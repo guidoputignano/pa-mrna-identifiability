@@ -1,0 +1,437 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=2.1cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{changepage}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
+
+\definecolor{codebg}{RGB}{243,242,239}
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color{codebg},
+  frame=none, breaklines=true, columns=fullflexible,
+  xleftmargin=8pt, framexleftmargin=8pt, aboveskip=8pt, belowskip=8pt
+}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+\newtheorem{corollary}{Corollary}
+
+\newcommand{\thc}{\theta_{\mathrm{crit}}}
+\newcommand{\R}{\mathbb{R}}
+
+\title{\textbf{Structural Identifiability of Model A}\\[0.3em]
+\large Analysis, tooling, and the population-level result}
+\author{Guido Putignano}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+We analyse the structural identifiability of the scalar propionate model. Three results
+follow. First, the model is \emph{globally structurally identifiable} from a single
+patient under a generic (non-constant) trajectory: the obstruction discussed previously is
+one of conditioning, not of structure. Second, the identifiability degenerates sharply as
+the trajectory approaches a steady state, and we give the rank condition and the growth of
+the condition number. Third, and of most interest, at steady state a single patient is
+\emph{not} identifiable while a cohort sharing population parameters \emph{is}, provided
+the cohort contains specific anchoring genotypes. We state the anchor condition exactly.
+The note also specifies the model in the input formats of three standard tools so that the
+symbolic results can be verified mechanically.
+\end{abstract}
+
+\vspace{1em}
+
+%=========================================================
+\section{Setting}
+%=========================================================
+
+\subsection{The model}
+
+\begin{equation}
+\dot m = s(t) - \theta\, g(m) - k_e\, m,
+\qquad g(m) = \frac{m}{K_m + m},
+\qquad y = m,
+\label{eq:A}
+\end{equation}
+
+with $p = (\theta, K_m, k_e) \in \R_{>0}^3$ the unknown parameter vector, $s(t)$ a known
+input, and $y$ the measured output.
+
+\subsection{What structural identifiability means}
+
+\begin{definition}
+Let $y(\cdot\,; p, s)$ denote the output of \eqref{eq:A} under parameter $p$ and input $s$.
+The model is \emph{globally structurally identifiable} if, for generic $p$,
+\[
+y(\cdot\,; p_1, s) = y(\cdot\,; p_2, s) \ \text{ for all admissible } s
+\quad \Longrightarrow \quad p_1 = p_2 ,
+\]
+\emph{locally identifiable} if the above holds within a neighbourhood of $p$, and
+\emph{non-identifiable} otherwise.
+\end{definition}
+
+Three points determine how the result should be read.
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item It is a property of the \emph{model structure and the observation map}, not of any
+      dataset. Noise, sampling frequency and cohort size do not enter.
+\item It assumes the ideal case: continuous, exact, noise-free measurement of $y$ over an
+      interval. It is therefore a \textbf{necessary condition}. A structurally
+      non-identifiable parameter cannot be recovered by any amount or quality of data.
+\item The converse fails. Structural identifiability says nothing about whether the
+      problem is well conditioned in practice, and Section~\ref{sec:cond} shows that here
+      it is not.
+\end{enumerate}
+
+%=========================================================
+\section{Analytical result}
+%=========================================================
+
+\subsection{Global identifiability under a generic trajectory}
+
+Since $y = m$ is measured exactly on an interval, $\dot m$ is known on that interval, and
+$s$ is known. Hence the function
+\begin{equation}
+F(m) \;:=\; s(t) - \dot m(t) \;=\; \theta\, g(m) + k_e\, m
+\label{eq:F}
+\end{equation}
+is known at every metabolite level $m$ visited by the trajectory. Clearing the denominator,
+\begin{equation}
+F(m) \;=\; \frac{k_e\, m^2 \;+\; (\theta + k_e K_m)\, m}{m + K_m} .
+\label{eq:Frational}
+\end{equation}
+
+\begin{proposition}[Global structural identifiability]
+\label{prop:global}
+If the trajectory of \eqref{eq:A} visits an interval of positive length, then
+$p = (\theta, K_m, k_e)$ is globally structurally identifiable.
+\end{proposition}
+
+\begin{proof}[Argument]
+Knowing $F$ on an interval determines the rational function \eqref{eq:Frational}, hence its
+coefficients in lowest terms: the denominator gives $K_m$, the leading numerator
+coefficient gives $k_e$, and the remaining numerator coefficient gives $\theta + k_e K_m$,
+from which $\theta$ follows. The map from $p$ to the coefficient triple
+$(K_m,\, k_e,\, \theta + k_e K_m)$ is a bijection on $\R_{>0}^3$.
+\end{proof}
+
+\begin{remark}
+This settles a question that had been treated heuristically. The degeneracy identified
+previously, namely that only the combination $\theta/K_m + k_e$ appears in the linearised
+regime, is \textbf{not} a structural obstruction. It is the leading-order behaviour of a
+structurally identifiable problem evaluated near a degenerate operating point.
+\end{remark}
+
+\subsection{Rank condition}
+
+Proposition~\ref{prop:global} requires a non-degenerate trajectory. The precise
+requirement is a rank condition on the sensitivity matrix. Writing
+\begin{equation}
+\frac{\partial F}{\partial \theta} = g(m), \qquad
+\frac{\partial F}{\partial K_m} = -\frac{\theta\, m}{(K_m + m)^2}, \qquad
+\frac{\partial F}{\partial k_e} = m ,
+\label{eq:sens}
+\end{equation}
+and collecting rows at distinct visited levels $m_1, \dots, m_r$ gives
+$S \in \R^{r \times 3}$.
+
+\begin{proposition}[Excitation requirement]
+\label{prop:rank}
+$\operatorname{rank} S = \min(r, 3)$ generically. Hence the trajectory must visit at least
+\textbf{three distinct metabolite levels} for local identifiability of all three
+parameters. One level gives rank $1$; two levels give rank $2$.
+\end{proposition}
+
+This is verified numerically in the accompanying code. It is the exact sense in which
+``the patient must be excited'': not that a crisis is required, but that the metabolite
+must occupy three distinguishable levels.
+
+\subsection{Conditioning}
+\label{sec:cond}
+
+Rank is not the operative constraint; conditioning is. Table~\ref{tab:cond} reports the
+condition number of the column-normalised sensitivity matrix as a function of the relative
+excursion of $m$ about a nominal steady state, computed at
+$(\theta, K_m, k_e) = (3000, 100, 5)$.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Condition number against relative excursion of the metabolite.}
+\label{tab:cond}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Relative excursion} & \textbf{Levels visited} & \textbf{Condition number} \\
+\midrule
+$2\%$   & $9.8,\ 10,\ 10.2$   & $2.7 \times 10^{6}$ \\
+$5\%$   & $9.5,\ 10,\ 10.5$   & $4.4 \times 10^{5}$ \\
+$10\%$  & $9,\ 10,\ 11$       & $1.1 \times 10^{5}$ \\
+$20\%$  & $8,\ 10,\ 12$       & $2.8 \times 10^{4}$ \\
+$50\%$  & $5,\ 10,\ 15$       & $5.3 \times 10^{3}$ \\
+$100\%$ & $10,\ 20,\ 30$      & $1.5 \times 10^{3}$ \\
+$500\%$ & $10,\ 60,\ 110$     & $1.5 \times 10^{2}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{corollary}
+The condition number scales approximately as the inverse square of the relative excursion.
+A clinically well-controlled patient, whose metabolite varies by a few per cent between
+visits, presents a problem conditioned at $10^{5}$ to $10^{6}$, which is beyond the
+precision of the assay.
+\end{corollary}
+
+This is the correct statement of the difficulty. The problem is not that information is
+structurally absent, but that its magnitude is inversely quadratic in the very excursion
+that clinical management is designed to suppress.
+
+%=========================================================
+\section{The population result}
+%=========================================================
+
+The preceding analysis concerns a single patient with an exciting trajectory. The clinically
+realistic case is the opposite: a cohort of patients each observed close to their own steady
+state. We now show that identifiability can be recovered at the level of the cohort.
+
+\subsection{Setting}
+
+Consider $N$ patients indexed by $i$, sharing the population parameters $K_m$ and $k_e$,
+each with an individual capacity $\theta_i$. Suppose patient $i$ is observed at a steady
+state $(s_i, m_i)$, so that
+\begin{equation}
+s_i \;=\; \theta_i\, \frac{m_i}{K_m + m_i} \;+\; k_e\, m_i,
+\qquad i = 1, \dots, N .
+\label{eq:pop}
+\end{equation}
+
+This is a system of $N$ equations in $N + 2$ unknowns, namely $\theta_1, \dots, \theta_N$
+together with $K_m$ and $k_e$. It is underdetermined with deficiency exactly $2$, regardless
+of $N$: enlarging the cohort adds one equation and one unknown simultaneously.
+
+\begin{remark}
+This is the precise version of the informal claim that individual non-identifiability may be
+resolved at population level. It is resolved only if two additional independent constraints
+are supplied. Cohort size alone never suffices.
+\end{remark}
+
+\subsection{The anchors}
+
+\begin{proposition}[Anchor condition]
+\label{prop:anchor}
+Suppose in addition that
+\begin{enumerate}[label=(\roman*), leftmargin=*, itemsep=1pt]
+\item the cohort contains at least one patient $j$ carrying a null genotype, so that
+      $\theta_j = 0$; and
+\item at least one patient $i$ is observed at two distinct steady states
+      $(s_i, m_i)$ and $(s_i', m_i')$ with $m_i \neq m_i'$.
+\end{enumerate}
+Then $K_m$, $k_e$ and every $\theta_i$ are uniquely determined.
+\end{proposition}
+
+\begin{proof}[Argument]
+From (i), \eqref{eq:pop} gives $s_j = k_e m_j$ directly, hence $k_e = s_j / m_j$: the null
+genotype removes the enzymatic term entirely and measures the alternative channel in
+isolation. With $k_e$ known, (ii) supplies two equations,
+\[
+s_i - k_e m_i = \theta_i \frac{m_i}{K_m + m_i}, \qquad
+s_i' - k_e m_i' = \theta_i \frac{m_i'}{K_m + m_i'},
+\]
+in the two remaining unknowns $(\theta_i, K_m)$, which are generically solvable since
+$m_i \neq m_i'$. With $K_m$ and $k_e$ known, each remaining equation in \eqref{eq:pop}
+determines a single $\theta_i$.
+\end{proof}
+
+\subsection{Comments on the anchors}
+
+\paragraph{Null genotypes are available.} In the Saudi series, the frameshift variant
+\emph{PCCB} c.990dupT (p.E331Xfs) occurs in 7 families and is a null allele. Frameshift and
+nonsense variants subject to nonsense-mediated decay produce no functional protein, so
+$\theta = 0$ holds by construction rather than by assumption.
+
+\paragraph{Residual carboxylation is absorbed correctly.} Older work reports that apparent
+residual propionate carboxylation in PCC-deficient cells derives from a distinct
+carboxylase rather than from a partially functional mutant PCC. Under
+Proposition~\ref{prop:anchor} this is not a confound: any such activity is an alternative
+elimination route and is therefore correctly absorbed into $k_e$, which is exactly the
+quantity the null patients measure.
+
+\paragraph{Carriers are a weak anchor.} Obligate heterozygous parents have
+$\theta \approx \theta_{\text{normal}}/2$ but, being healthy, sit at very low $m$ where
+$g(m) \approx m/K_m$. Their equation therefore reduces to
+$s \approx m\,(\theta/(2K_m) + k_e)$, which again involves only the degenerate combination.
+Carriers constrain the aggregate coefficient, not the separation. They are not a substitute
+for condition (i).
+
+\paragraph{Where the second anchor comes from.} Condition (ii) requires one patient observed
+at two distinct steady states. Candidates present in routine care:
+\begin{itemize}[leftmargin=*, itemsep=1pt]
+\item a documented change in prescribed protein intake;
+\item a change in carnitine dose, noting the confounding-by-indication caveat below;
+\item weight-based dose recalculation following growth, which is quasi-exogenous;
+\item introduction or interruption of cyclical intestinal antibiotics.
+\end{itemize}
+
+\paragraph{The weak point.} Both conditions require $s_i$ to be known. Substrate load is
+only partially recorded: prescribed intake is documented, but gut flora contribution,
+adherence and unrecorded catabolic episodes are not. Quantifying how uncertainty in $s$
+propagates into $\theta_i$ is the first extension of this analysis.
+
+\paragraph{Confounding by indication.} Carnitine dose is adjusted in response to the
+patient's state, so treating it as an exogenous perturbation is invalid. Weight-based
+recalculation and supply interruptions are the defensible instruments.
+
+%=========================================================
+\section{Verification by symbolic computation}
+%=========================================================
+
+Propositions~\ref{prop:global} and \ref{prop:rank} were obtained by hand and should be
+confirmed mechanically. Three established tools decide structural identifiability for ODE
+systems with rational right-hand sides, which \eqref{eq:A} is.
+
+\begin{adjustwidth}{-1.0cm}{-1.0cm}
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{Tools for structural identifiability of rational ODE models.}
+\label{tab:tools}
+\begin{tabular}{@{}p{0.17\textwidth} p{0.20\textwidth} p{0.28\textwidth} p{0.30\textwidth}@{}}
+\toprule
+\textbf{Tool} & \textbf{Platform} & \textbf{Method} & \textbf{Notes} \\
+\midrule
+\texttt{Structural\-Identifiability.jl}
+& Julia, open source
+& Differential algebra with Gr\"obner bases for global identifiability; Jacobian of
+truncated power series for local
+& Most modern of the three. Uniquely, it can also return \emph{identifiable functions of
+the parameters}, i.e.\ which combinations are recoverable when individual parameters are
+not. This is the function that should confirm the degenerate combination directly. Also
+supports reparametrisation. \\
+\addlinespace
+\textsc{SIAN}
+& Maple; a Julia port exists
+& Hybrid symbolic--numeric. Randomised evaluation of Taylor coefficients with Gr\"obner
+basis computation
+& Returns local and global identifiability separately, with a user-specified probability of
+correctness (e.g.\ $0.99$). Typically faster than pure differential algebra on
+moderate systems. \\
+\addlinespace
+\textsc{DAISY}
+& REDUCE
+& Differential algebra: characteristic sets by Ritt pseudodivision, yielding
+input--output relations whose coefficients form an exhaustive summary
+& The original reference implementation. Conceptually the closest to the hand argument in
+Section 2, since the input--output relation is precisely \eqref{eq:Frational} cleared of
+denominators. Older and less convenient than the alternatives. \\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{adjustwidth}
+
+\begin{remark}[Why the \texttt{find\_identifiable\_functions} capability matters]
+If the analysis of Section 2 is correct, then asking for identifiable functions under a
+constant input should return the single combination $\theta/K_m + k_e$, whereas asking under
+a generic time-varying input should return the three parameters individually. That contrast
+is the mechanical confirmation of the entire argument, and it is a one-line computation.
+\end{remark}
+
+\subsection{Model specifications}
+
+\paragraph{StructuralIdentifiability.jl.}
+\begin{lstlisting}
+using StructuralIdentifiability
+
+ode = @ODEmodel(
+    m'(t) = s(t) - theta * m(t) / (Km + m(t)) - ke * m(t),
+    y(t)  = m(t)
+)
+
+assess_local_identifiability(ode)
+assess_identifiability(ode)
+find_identifiable_functions(ode)
+\end{lstlisting}
+
+\paragraph{SIAN, Maple.}
+\begin{lstlisting}
+read "IdentifiabilityODE.mpl":
+sigma := [
+  diff(m(t), t) = s(t) - theta*m(t)/(Km + m(t)) - ke*m(t),
+  y(t) = m(t)
+]:
+IdentifiabilityODE(sigma, GetParameters(sigma), p_mod = 0.99);
+\end{lstlisting}
+
+\paragraph{DAISY.} The input--output relation obtained by clearing denominators in
+\eqref{eq:A} is
+\begin{equation}
+(K_m + y)\,\dot y \;=\; (K_m + y)\, s \;-\; \theta\, y \;-\; k_e\, y\,(K_m + y),
+\label{eq:io}
+\end{equation}
+which expands to a polynomial relation in $y, \dot y, s$ whose coefficients are
+\[
+\{\, K_m,\ \ \theta + k_e K_m,\ \ k_e \,\},
+\]
+the exhaustive summary. Injectivity of $p \mapsto$ (this triple) is Proposition
+\ref{prop:global}. The DAISY input file in the accompanying archive encodes
+\eqref{eq:A} directly; the syntax should be checked against the current DAISY manual, as
+the format has changed between releases.
+
+\subsection{Cases to run}
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item \textbf{A1.} Baseline, generic input $s(t)$. Expected: all three globally identifiable.
+\item \textbf{A2.} Constant input, $s(t) \equiv s_0$. Expected: only the degenerate
+      combination identifiable. This is the formal statement of the clinical situation.
+\item \textbf{A3.} Two patients sharing $(K_m, k_e)$ with individual $\theta_1, \theta_2$,
+      constant inputs. Tests whether cohort structure alone helps, which
+      Section 3 predicts it does not.
+\item \textbf{A4.} As A3, with $\theta_2 = 0$ imposed (null anchor). Expected: $k_e$ becomes
+      identifiable.
+\item \textbf{A5.} Carnitine as an input on the alternative channel,
+      $k_e \to k_e + \kappa\, u_c(t)$.
+\item \textbf{A6.} Therapy as an input on the enzymatic channel,
+      $\theta \to \theta + \Delta(t)$.
+\item \textbf{B.} Model B, with $k_e m$ replaced by $k_e m/(K_e + m)$. Expected: weaker,
+      since the two channels acquire the same functional form.
+\item \textbf{C.} Model C, the two-state carnitine depletion system.
+\end{enumerate}
+
+Cases A2 and A4 are the ones that matter. A2 should reproduce the degeneracy formally, and
+A4 should show that a null genotype restores identifiability of the shared parameter.
+
+%=========================================================
+\section{Open points}
+%=========================================================
+
+\begin{enumerate}[leftmargin=*, itemsep=3pt]
+\item \textbf{Propagation of uncertainty in $s$.} Both anchors assume $s_i$ known. It is
+      not. The dependence of the recovered $\theta_i$ on misspecification of $s$ is the
+      first quantity to bound.
+
+\item \textbf{Optimal experimental design under a state constraint.} Given that the
+      condition number scales as the inverse square of the excursion, and that the excursion
+      is bounded above by safety, the design question is how much information can be
+      extracted subject to never approaching $\thc$. This is where the analysis meets
+      dual control.
+
+\item \textbf{Identifiability of the decision rather than the parameters.} The clinical
+      quantity is the sign of $\theta - \thc$. Whether that comparison is better conditioned
+      than either parameter separately is open; the opposite signs with which $\theta$ and
+      $k_e$ enter the margin suggest it may be worse.
+
+\item \textbf{Multi-parameter estimator design.} The scalar Immersion and Invariance
+      construction requires a sign condition on a scalar. With three parameters entering
+      simultaneously the attractivity requirement becomes a matrix condition, and the
+      existence of a suitable design function is not guaranteed.
+\end{enumerate}
+
+\end{document}

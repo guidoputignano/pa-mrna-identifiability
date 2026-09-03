@@ -1,0 +1,157 @@
+\section{Model A: saturating enzyme, linear alternative clearance}
+%==========================================================================
+
+\subsection{Formulation}
+
+\begin{equation}
+\dot m \;=\; s(t) \;-\; \theta\, g(m) \;-\; k_e\, m,
+\qquad g(m) = \frac{m}{K_m + m}.
+\label{eq:A}
+\end{equation}
+
+\begin{description}[leftmargin=1.4em, itemsep=1pt]
+\item[$m(t)$] accumulated toxic metabolite, measured sparsely.
+\item[$s(t)$] substrate load; partially known.
+\item[$\theta$] maximal enzymatic velocity. Since most pathogenic variants reduce the
+\emph{quantity} of functional enzyme rather than the turnover number of an individual
+molecule, $\theta$ is essentially ``how much working enzyme the patient has'', and is
+therefore constant and genotype-determined.
+\item[$g(m)$] fraction of maximal velocity currently in use, $g \in [0,1)$.
+\item[$k_e m$] alternative elimination, taken proportional to $m$.
+\end{description}
+
+\subsection{Assumptions}
+
+\begin{assumption}[Constancy]
+$\theta$ is constant in time. This excludes temperature-sensitivity of destabilising
+variants, for which the amount of surviving protein could fall during febrile illness.
+Not verified.
+\end{assumption}
+
+\begin{assumption}[Population parameters]
+$K_m$ and $k_e$ do not vary with \emph{PCCA}/\emph{PCCB} genotype and may be estimated
+once across the cohort. Biochemically motivated: $K_m$ is a property of the active site,
+and $k_e$ does not involve PCC at all. Weakened by the fact that carnitine is
+administered therapeutically at patient-specific doses.
+\end{assumption}
+
+\begin{assumption}[Observable proxy]
+The measured plasma biomarker stands in for the intracellular enzyme substrate. This is a
+shortcut; the true system has at least two states with an uncertain map between them.
+\end{assumption}
+
+\subsection{The structural obstruction}
+
+In the regime in which clinically stable patients are maintained, $m \ll K_m$, so
+$g(m) \approx m/K_m$ and \eqref{eq:A} reduces to
+
+\begin{equation}
+\dot m \;\approx\; s(t) \;-\; \left(\frac{\theta}{K_m} + k_e\right) m .
+\label{eq:Alin}
+\end{equation}
+
+\begin{proposition}[Degeneracy]
+In the linear regime the system is first-order and possesses a single identifiable
+coefficient, $\theta/K_m + k_e$. No quantity of data collected in this regime separates
+$\theta$ from $k_e$.
+\end{proposition}
+
+The clinical consequence is direct: two patients with substantially different enzymatic
+capacity, compensating with different degrees of alternative clearance, produce identical
+measurements. Since the therapy supplies enzyme and acts on $\theta$ alone, they require
+different treatment.
+
+The two channels separate only as $m$ approaches $K_m$ and the enzymatic term saturates
+while the linear term does not. That regime is metabolic crisis, which clinical management
+exists to prevent. \textbf{Equation \eqref{eq:Alin} is not the model}; it is an argument
+identifying where information is absent.
+
+\subsection{Therapy as a selective input}
+
+Under mRNA replacement the capacity becomes time-varying and partially known:
+
+\begin{equation}
+\theta(t) \;=\; \underbrace{\theta_{\mathrm{base}}}_{\text{unknown}}
+\;+\; \underbrace{D \sum_i e^{-\lambda (t - t_i)} \mathbf{1}_{\{t \ge t_i\}}}_{\text{known: } \Delta(t)} .
+\label{eq:input}
+\end{equation}
+
+The dose supplies enzyme. It therefore acts on $\theta$ and \emph{not} on $k_e$: it is a
+selective input on one channel. Writing the equilibrium condition before and during
+therapy, with steady levels $m$ and $m'$ respectively,
+
+\begin{equation}
+\begin{aligned}
+s &= \theta\, g(m) + k_e\, m, \\
+s &= (\theta + \Delta)\, g(m') + k_e\, m',
+\end{aligned}
+\label{eq:twoeq}
+\end{equation}
+
+gives two linear equations in $(\theta, k_e)$ with determinant
+
+\begin{equation}
+\det \;=\; g(m)\,m' - g(m')\,m
+\;=\; \frac{m\,m'\,(m' - m)}{(K_m + m)(K_m + m')} .
+\label{eq:det}
+\end{equation}
+
+\begin{proposition}[Formal identifiability, practical ill-conditioning]
+The determinant \eqref{eq:det} is non-zero whenever $m \neq m'$, so the pair
+$(\theta, k_e)$ is formally identifiable from steady-state data before and during therapy.
+However, when $m, m' \ll K_m$ the two denominators coincide to first order and
+$\det = O\!\left((m'-m)\,m m'/K_m^2\right)$, which is small.
+\end{proposition}
+
+A numerical illustration with $K_m = 100$: patient A with
+$(\theta, k_e) = (3000,\, 5.0)$ and patient B with $(\theta, k_e) = (1000,\, 23.2)$
+have identical untreated equilibria at $m = 10$. Under a dose doubling the enzyme,
+their new equilibria are $7.66$ and $7.73$ respectively, a difference below $1\%$,
+well under the analytical and biological variability of the assay.
+
+\subsection{What we would like to establish}
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item Conditions under which the therapeutic schedule, treated as a design variable,
+      yields acceptable conditioning without approaching the safety constraint.
+\item Whether the decision-relevant quantity is better conditioned than the parameters.
+      Writing the critical capacity from the equilibrium condition at peak load and
+      tolerable level,
+      \begin{equation}
+      \spk = \thc\, g(\bar m) + k_e \bar m
+      \qquad \Longrightarrow \qquad
+      \thc = \frac{\spk - k_e \bar m}{g(\bar m)},
+      \label{eq:thcrit}
+      \end{equation}
+      the safety margin is
+      \begin{equation}
+      \theta - \thc \;=\; \theta \;-\; \frac{\spk}{g(\bar m)} \;+\; \frac{k_e \bar m}{g(\bar m)} .
+      \label{eq:margin}
+      \end{equation}
+      Note that $\theta$ and $k_e$ enter with \emph{opposite} signs, whereas the identifiable
+      combination in \eqref{eq:Alin} carries them with the same sign. Errors therefore
+      accumulate rather than cancel, and the margin is plausibly \emph{worse} conditioned
+      than either parameter. This should be established rather than assumed.
+\item Whether the decision $\theta \gtrless \thc$ is invariant under a common strictly
+      increasing reparametrisation $\varphi$ of the activity scale. If every variant is
+      distorted by the same $\varphi$, and if $\thc$ is \emph{estimated empirically on that
+      same distorted scale} rather than computed from \eqref{eq:thcrit}, then
+      $\varphi(\theta) \gtrless \varphi(\thc)$ reproduces the true decision. The
+      requirement is therefore consistency of the assay across variants, not absolute
+      calibration. The invariance fails if $\varphi$ differs by mechanism class, and does
+      not hold at all if $\thc$ is obtained structurally from quantities carrying
+      different units.
+\end{enumerate}
+
+\subsection{Known defect}
+
+Since $k_e m \to \infty$, total clearance is unbounded and every load is eventually
+balanced. Model A therefore predicts that no crisis can occur. It is adequate for the
+identifiability analysis, which concerns the stable patient, and inadequate for anything
+concerning decompensation.
+
+\vspace{0.5em}
+\hrule
+\vspace{1em}
+
+%==========================================================================

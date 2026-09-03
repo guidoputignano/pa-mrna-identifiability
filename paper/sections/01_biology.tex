@@ -1,0 +1,176 @@
+\section{Biological background}
+%==========================================================================
+
+\subsection{Cell and gene therapy in rare disease}
+
+Most rare diseases are monogenic: a single gene is defective and, as a consequence, a
+single protein is absent or non-functional. This makes them structurally different from
+common diseases, where hundreds of loci contribute small effects. It also makes them
+tractable: if one knows which protein is missing, the therapeutic objective is simply to
+restore it.
+
+Cell and gene therapies do exactly this. Rather than administering a drug that modulates
+a pathway, they supply the genetic instruction for the missing protein, either by editing
+the patient's genome, by delivering a functional copy of the gene, or by delivering
+messenger RNA that the patient's own cells translate. The last of these is transient: the
+mRNA is degraded within days, so the therapy must be re-administered indefinitely.
+
+The transience is a limitation clinically and an advantage mathematically. A permanent
+genomic correction is a single irreversible intervention. A repeated mRNA dose is a
+\emph{manipulable input}, applied on a known schedule, with a measurable response between
+administrations. It is this structure that makes the present problem a control problem.
+
+\subsection{Propionic acidemia}
+
+Propionic acidemia (PA) is an autosomal recessive disorder of propionate metabolism.
+Four amino acids (isoleucine, valine, methionine, threonine), odd-chain fatty acids, and
+propionate produced by intestinal flora all converge on a common intermediate,
+propionyl-CoA. Under normal conditions this intermediate is carboxylated to
+methylmalonyl-CoA and enters the tricarboxylic acid cycle as succinyl-CoA.
+
+The enzyme performing this step is propionyl-CoA carboxylase (PCC), a biotin-dependent
+mitochondrial dodecamer $\alpha_6\beta_6$. The $\alpha$ subunit is encoded by \emph{PCCA}
+and carries the biotin cofactor; the $\beta$ subunit is encoded by \emph{PCCB} and
+performs the carboxyl transfer. Both subunits are required, which is why pathogenic
+variants in either gene produce the same disease.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  box/.style={draw, rounded corners=2pt, align=center, inner sep=5pt,
+              font=\small, minimum height=9mm},
+  src/.style={box, fill=soft},
+  mid/.style={box, fill=white, font=\small\bfseries},
+  bad/.style={box, fill=red!8, draw=red!50},
+  esc/.style={box, fill=blue!6, draw=blue!40},
+  ok/.style={box, fill=green!8, draw=green!45!black!50},
+  ar/.style={-{Stealth[length=2.2mm]}, thick},
+]
+
+%, sources, left column
+\node[src] (aa)  at (0,1.6)  {Ile, Val, Met, Thr\\{\scriptsize dietary and catabolic}};
+\node[src] (fa)  at (0,0)    {odd-chain fatty acids};
+\node[src] (gut) at (0,-1.4) {gut flora};
+
+%, central pool
+\node[mid] (pcoa) at (5.4,0) {propionyl-CoA};
+
+\draw[ar] (aa)  -- (pcoa);
+\draw[ar] (fa)  -- (pcoa);
+\draw[ar] (gut) -- (pcoa);
+
+%, blocked enzymatic route, right
+\node[ok] (mmcoa) at (11.6,0) {methylmalonyl-CoA\\$\rightarrow$ TCA cycle};
+\draw[ar] (pcoa) -- (mmcoa);
+\node[font=\scriptsize, align=center] at (8.5,0.75) {PCC \; $\alpha_6\beta_6$};
+\node[font=\scriptsize, align=center, red!70!black] at (8.5,-0.62) {capacity $\theta$};
+\draw[very thick, red!70!black] (8.5,-0.34) -- (8.5,0.34);
+
+%, escape route up
+\node[esc] (carn) at (11.3,3.0) {propionylcarnitine\\{\scriptsize urinary excretion}};
+\draw[ar, blue!55!black] (pcoa) to[out=60,in=190] (carn);
+\node[font=\scriptsize, align=center, blue!55!black, fill=white, inner sep=1pt]
+      at (7.4,1.95) {$+$ carnitine\\{\scriptsize consumed, not catalytic}};
+
+%, escape route down
+\node[bad] (tox) at (11.3,-3.0) {2-methylcitrate\\3-hydroxypropionate\\{\scriptsize measured biomarkers}};
+\draw[ar, red!60!black] (pcoa) to[out=-55,in=180] (tox);
+
+%, sequestration
+\node[bad, text width=36mm] (coa) at (4.6,-3.0)
+     {CoA sequestration\\{\scriptsize $\Rightarrow$ PDH, $\beta$-oxidation, TCA impaired}};
+\draw[ar, red!60!black] (pcoa) -- (coa);
+
+\end{tikzpicture}
+\caption{Propionate handling. Substrate converges on propionyl-CoA from diet, endogenous
+protein catabolism, fatty acids and gut flora. The enzymatic route through PCC is
+impaired; residual capacity is denoted $\theta$. Two escape routes remain: conjugation
+with carnitine, which consumes a finite cofactor, and conversion to the toxic metabolites
+that are measured clinically. Accumulated propionyl-CoA sequesters free coenzyme A, which
+is a shared and limited resource.}
+\label{fig:pathway}
+\end{figure}
+
+\subsection{Why the block is damaging}
+
+Two mechanisms, both visible in Figure~\ref{fig:pathway}.
+
+\paragraph{Coenzyme A sequestration.} Coenzyme A is a finite, shared carrier. Accumulated
+propionyl-CoA holds a growing fraction of the cellular pool, leaving less free CoA for
+pyruvate dehydrogenase, $\beta$-oxidation and the TCA cycle. Energy production therefore
+fails not because any of those enzymes is defective, but because a shared resource has
+been consumed. This is the origin of the secondary mitochondrial dysfunction
+characteristic of the disease.
+
+\paragraph{Urea cycle inhibition.} Propionyl-CoA inhibits N-acetylglutamate synthase, the
+activator of the urea cycle. Ammonia elimination is impaired and hyperammonemia develops
+independently of the acidosis, through a separate route from the same cause.
+
+\subsection{Clinical course}
+
+Patients live in a fragile steady state maintained by protein restriction, carnitine
+supplementation and, frequently, intestinal antibiotics. Toxic metabolites are permanently
+elevated but tolerated.
+
+The dangerous events are \emph{metabolic decompensations}. They are triggered by anything
+that raises substrate load: infection, fasting, surgery, trauma, rapid growth, or a
+dietary error. The dominant mechanism is counter-intuitive. During intercurrent illness the
+patient stops eating, the body enters catabolism, and skeletal muscle protein is degraded
+for energy. Since muscle contains the four precursor amino acids, \textbf{the propionate
+load rises sharply precisely when the patient is eating nothing}. The source is internal
+and cannot be controlled by diet.
+
+The resulting crisis combines metabolic acidosis and hyperammonemia, progressing to
+lethargy, coma and, without intervention, death. Treatment is directed at each term of the
+balance: intravenous glucose to suppress catabolism, total protein withdrawal, intravenous
+carnitine, ammonia scavengers, and haemofiltration in refractory cases. Most crises
+resolve, but each leaves irreversible neurological damage, with the basal ganglia
+particularly vulnerable.
+
+Reported event rates are approximately $0.5$ decompensations per patient-year averaged
+across ages, but strongly age-dependent: around $1.4$ per patient-year between ages 3 and 6,
+falling to $0.1$ in adolescence. Critically, roughly $70\%$ of patients experience no event
+in a given observation window, so the event distribution is strongly bimodal.
+
+\subsection{The Saudi context}
+
+Consanguinity rates in Saudi Arabia are among the highest worldwide, producing founder
+variants at frequencies not seen in outbred populations. Propionic acidemia ranks among the
+four most frequent disorders in Saudi carrier screening, and was among the most prevalent
+inherited metabolic disorders in a Riyadh newborn-screening cohort of approximately 41{,}000
+($\approx 1{:}10{,}000$).
+
+A published series of 84 Saudi patients identified 16 distinct variants (7 in \emph{PCCA},
+9 in \emph{PCCB}). Two features of that series matter here:
+
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+\item The variant \emph{PCCA} c.425G$>$A (p.Gly142Asp) accounts for $70.2\%$ of families and
+      is associated with a severe, neonatal-onset phenotype.
+\item \textbf{All patients but one were homozygous.} Compound heterozygosity, which
+      elsewhere confounds genotype--phenotype correlation because two different variants
+      contribute jointly (and, for a multimeric enzyme, non-additively through intragenic
+      complementation), is essentially absent.
+\end{itemize}
+
+The second point is the methodological reason to work in this population: the map from
+genotype to residual enzymatic capacity is unconfounded. Obligate carrier parents, who
+retain approximately half of normal activity and are asymptomatic, provide a natural upper
+anchor.
+
+\subsection{The therapy as an input}
+
+An investigational LNP-formulated mRNA therapy encoding both PCC subunits is in clinical
+development, administered intravenously every two to three weeks. Reported phase 1/2 results
+indicate a substantial reduction in decompensation risk. Dose selection was performed by
+population PK/PD modelling using \emph{body weight} as the covariate and \emph{biomarker
+reduction} as the endpoint, yielding a single recommended regimen applied uniformly.
+
+Genotype is not a covariate in that analysis. Since the Saudi literature documents
+genotype-dependent severity, the question of whether the uniform regimen is adequate for
+every patient is open, and is the motivation for what follows.
+
+\vspace{0.5em}
+\hrule
+\vspace{1em}
+
+%==========================================================================

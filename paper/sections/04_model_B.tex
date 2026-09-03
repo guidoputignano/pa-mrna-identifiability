@@ -1,0 +1,65 @@
+\section{Model B: bounded total clearance}
+%==========================================================================
+
+\subsection{What is added}
+
+Model A assumes alternative clearance grows without limit. Biologically it cannot:
+carnitine is a finite cofactor and renal organic-acid transporters saturate. Model B lets
+the second term saturate as well:
+
+\begin{equation}
+\dot m \;=\; s(t) \;-\; \theta\, g(m) \;-\; k_e\, h(m),
+\qquad g(m) = \frac{m}{K_m + m}, \quad h(m) = \frac{m}{K_e + m}.
+\label{eq:B}
+\end{equation}
+
+\subsection{Consequence: a load ceiling}
+
+Total clearance $C(m) = \theta g(m) + k_e h(m)$ satisfies $C(0)=0$, is strictly increasing,
+and is \emph{bounded}:
+\begin{equation}
+C(m) \;\longrightarrow\; \theta + k_e \qquad \text{as } m \to \infty .
+\end{equation}
+
+Equilibria are solutions of $C(m) = s$. Hence:
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+$s < \theta + k_e$ & one equilibrium, stable \\
+$s > \theta + k_e$ & \textbf{no equilibrium}; $\dot m > 0$ for all $m$, unbounded growth \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}[Terminology]
+This is not a saddle-node bifurcation. No two equilibria collide; a single equilibrium
+escapes to infinity as $s \to (\theta + k_e)^-$. A genuine saddle-node requires Model C.
+\end{remark}
+
+\begin{remark}[Clinical threshold precedes the mathematical one]
+Clinically the crisis begins before the equilibrium ceases to exist, because the
+equilibrium migrates to metabolite levels the patient does not tolerate. The operative
+condition is $\spk > C(\bar m)$, with $\thc$ given by \eqref{eq:thcrit}.
+\end{remark}
+
+\subsection{Cost of the correction}
+
+In Model A the two clearance terms have different functional forms, one saturating and one
+linear, and are distinguished by that difference. In Model B both saturate, and they are
+distinguished only by $K_m \neq K_e$, i.e.\ by saturating at different metabolite levels.
+
+\textbf{The biologically more faithful model has weaker identifiability.} This trade-off
+should be stated explicitly rather than discovered later.
+
+\subsection{Status}
+
+Model B is required for any statement about crisis onset and for the definition of $\thc$.
+It is not required for the identifiability analysis of Section 3, and is therefore not the
+working model for that purpose.
+
+\vspace{0.5em}
+\hrule
+\vspace{1em}
+
+%==========================================================================

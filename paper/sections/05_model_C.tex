@@ -1,0 +1,87 @@
+\section{Model C: cofactor depletion and bistability}
+%==========================================================================
+
+\subsection{What is added}
+
+Models A and B treat alternative clearance as a fixed capacity. It is not: elimination
+proceeds by conjugating propionate with carnitine, and \textbf{each molecule eliminated
+consumes one molecule of carnitine}, which is excreted with the product. Carnitine is a
+consumed reagent, not a catalyst. Secondary carnitine deficiency is a documented feature of
+the disease and the reason carnitine supplementation is standard therapy.
+
+Promoting carnitine to a state variable:
+
+\begin{equation}
+\begin{aligned}
+\dot m &= s(t) \;-\; \theta\, g(m) \;-\; k\, c\, m, \\
+\dot c &= R \;-\; k\, c\, m,
+\end{aligned}
+\label{eq:C}
+\end{equation}
+
+with $c(t)$ available carnitine and $R$ its replenishment rate. The term $k c m$ appears in
+both equations with the same coefficient, expressing the one-to-one stoichiometry.
+
+\subsection{Consequence: positive feedback}
+
+The loop is
+\[
+m \uparrow \;\Longrightarrow\; \text{carnitine consumed} \;\Longrightarrow\;
+c \downarrow \;\Longrightarrow\; \text{clearance} \downarrow \;\Longrightarrow\; m \uparrow .
+\]
+
+If depletion outpaces replenishment, effective clearance \emph{decreases} with $m$ rather
+than merely saturating. The clearance curve becomes non-monotone, and the system admits
+\textbf{two} equilibria at moderate load: a stable one at low $m$, and an unstable one at
+higher $m$. As load rises the two approach, collide and annihilate, which is a genuine
+saddle-node.
+
+\subsection{Why this would matter clinically}
+
+The unstable equilibrium is a \emph{point of no return}. Beyond it, $\dot m > 0$ even at
+baseline load, so the metabolite continues to rise after the precipitating illness has
+resolved. Recovery requires active intervention to return the patient to the left of the
+separatrix, which is precisely what intravenous glucose, carnitine and haemofiltration
+accomplish.
+
+This predicts the observed clinical fact that decompensations do not resolve spontaneously,
+which Models A and B do not explain. An analogous depletion argument applies to free
+coenzyme A.
+
+\subsection{Why it is not the working model}
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item \textbf{Unverified.} Whether depletion is quantitatively strong enough to render
+      clearance decreasing, rather than merely saturating, has not been established. The
+      test is direct and requires no new experiment: free carnitine and the
+      acylcarnitine/free-carnitine ratio are measured routinely, so one may ask whether free
+      carnitine collapses during decompensation relative to the same patient's baseline.
+\item \textbf{Identifiability.} $k_e$ is replaced by the product $k c(t)$ with $c$ a further
+      unmeasured state and $R$ a further unknown. This worsens an already unfavourable
+      parameter-to-measurement ratio.
+\item \textbf{Incompleteness.} Equations \eqref{eq:C} omit free-carnitine excretion, renal
+      reabsorption, and the dependence of propionylcarnitine elimination on renal function.
+      Adding one state to capture half a mechanism may be worse than not adding it, since it
+      confers the appearance of having modelled depletion without having done so.
+\end{enumerate}
+
+\subsection{Testable discriminant}
+
+Models B and C differ in a clinically checkable prediction:
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{B} & the crisis resolves when the precipitating illness resolves \\
+\textbf{C} & beyond the separatrix the crisis is self-sustaining; intervention is required \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Clinical practice is consistent with C, but this is an observation and not a demonstration.
+
+\vspace{0.5em}
+\hrule
+\vspace{1em}
+
+%==========================================================================
