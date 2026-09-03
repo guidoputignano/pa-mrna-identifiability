@@ -1,0 +1,91 @@
+# =====================================================================
+#  citekey  ->  doi:10.xxxx/yyy   or   pmid:12345678
+#
+#  This is the ONLY bibliography file that is edited by hand, and it
+#  contains identifiers only. Every field in paper/refs.bib is fetched
+#  from the registrar by tools/fetch_refs.py. Nothing is typed from
+#  memory. The comment above each entry records what the source
+#  actually reports, in its own units, so that a claim can be checked
+#  against it without opening the paper.
+# =====================================================================
+
+# --- the Saudi cohort, both anchors ---------------------------------
+# 84 patients, 16 variants (7 PCCA / 9 PCCB), c.425G>A p.Gly142Asp in
+# 59 families (70.2%), c.990dupT p.E331Xfs in 7 families (8.3%),
+# all homozygous except ONE FAMILY (not one patient).
+saudi84                 pmid:30705822
+
+# --- enzymology -----------------------------------------------------
+# alpha6beta6 dodecamer; alpha carries BC + BCCP, beta the carboxyltransferase.
+pcc_structure           doi:10.1038/nature09302
+
+# Human liver PCC purified: apparent Km for propionyl-CoA 0.29 mM.
+pcc_liver_kinetics      pmid:6765947
+
+# Four variant PCCs: NO significant difference in Km for propionyl-CoA
+# vs wild type; ~half the kcat/Km; LESS THERMOSTABLE than wild type.
+pcc_variants_kinetics   pmid:15890657
+
+# --- event rates ----------------------------------------------------
+# 0.5 PPY overall; 1.4 PPY at 3-6 y; 0.1 PPY at 13-17 y; 0.2 PPY adults.
+mde_claims_us           doi:10.1186/s13023-025-03901-2
+
+# 49/50 (98%) reported MDEs; mean annualized 1.0. GAMM/PAMM hazard on
+# 3-HP + smooth time-since-last-MDE + participant random effect.
+# 50% lower 3-HP -> RR 0.7; 50% lower C3 -> RR 0.6; 2-MC -> RR 1.0 (none).
+natural_history         doi:10.1186/s13023-026-04251-3
+
+# --- crisis dynamics ------------------------------------------------
+# Propionylcarnitine, propionylglycine, propionic acid essentially
+# UNALTERED during acute decompensation; C2/C3 ratio falls ~20-fold.
+# Healthy ranges: C2 0.7-9.7 umol/L, C3 0.0-0.8 umol/L.
+amd_phenotyping         doi:10.1186/s13023-020-1347-3
+
+# Free carnitine 5.7 uM vs normal 37 +/- 8.
+carnitine_pa_child      pmid:2771511
+
+# --- the therapy ----------------------------------------------------
+# 16 participants, 346 doses / 15.69 person-years. 70% risk reduction
+# among the 8 who reported MDEs pretreatment. Single-arm.
+trial_phase12           doi:10.1038/s41586-024-07266-7
+pkpd_translational      doi:10.1089/nat.2022.0036
+mrna_moa                doi:10.1038/s41467-024-47460-9
+
+# 0.6 mg/kg biweekly selected from simulation in 1000 virtual
+# participants aged 0-36 y using body-weight distributions, with 3-HP
+# and 2-MC as the response. Conference abstract.
+# NOTE: the task sheet listed this under refs.manual.bib on the
+# assumption that it has no resolvable DOI. It does: doi.org content
+# negotiation returns full CrossRef metadata for 10.70534/JVQU8233, so
+# it belongs here, where the fields are fetched rather than typed.
+dose_selection_poster   doi:10.70534/JVQU8233
+
+# --- guidelines, epidemiology, reviews ------------------------------
+guidelines_mma_pa       doi:10.1002/jimd.12370
+epi_meta                doi:10.1186/s13023-018-0987-z
+biomarkers_review       doi:10.1002/jimd.12478
+natural_history_2012    doi:10.1016/j.ymgme.2011.09.022
+grunert55               doi:10.1186/1750-1172-8-6
+trial_challenges        doi:10.1016/j.ymgme.2023.107612
+mayo_nlp                doi:10.1016/j.ymgme.2023.107695
+pathophys_treatment     doi:10.1002/jimd.12128
+
+# --- Saudi newborn screening (the 1:10,000 claim is contested) ------
+# 40,965 newborns, Riyadh (King Fahad Medical City).
+nbs_riyadh_kfmc         doi:10.3390/ijns10040072
+
+# =====================================================================
+#  NOT YET RESOLVED. Do not cite until an identifier is confirmed.
+# =====================================================================
+# mde_emr_us          Mol Genet Metab 2025, "Metabolic decompensation events
+#                     among patients with PA across the US: a large EMR
+#                     study". 0.53 PPY; U-shaped; adults 0.72 PPY. NEEDS DOI.
+# nbs_saudi_national  J Paediatr Child Health, 775,000 newborns, PA 1:14,000.
+# nbs_psmmc           Saudi Med J 2020;41(7):703-708, PA 1:14,158.
+# residual_carboxylase  Claim that residual carboxylation in PCC-deficient
+#                     cells derives from a DISTINCT carboxylase. Source not
+#                     identified. Load-bearing for the null-genotype anchor.
+# carrier_activity    Obligate carriers retain ~50% activity, asymptomatic.
+# sampling_frequency  6-7 biomarker samples per year. No source found.
+# saudi_carrier_top4  "PA among the four most frequent disorders in Saudi
+#                     carrier screening". No source found.
