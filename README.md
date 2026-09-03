@@ -16,12 +16,18 @@ ethical to collect, before the decision has to be made.
 dm/dt = s(t) - theta * g(m) - [ alternative clearance ] ,    g(m) = m/(Km + m)
 ```
 
+`g` is the **Michaelis-Menten saturation function**. In the standard biochemical form the
+velocity of a single-substrate enzymatic reaction is `v = V_max * [S] / (Km + [S])`, so
+`theta` is the patient's residual `V_max`, `Km` is the Michaelis constant, and `g(m)` is
+the fractional saturation. The same form is the Monod function in microbial kinetics, and
+the Hill function with `n = 1`.
+
 Three hypotheses about the bracketed term, each answering a different question:
 
 | | alternative clearance | equilibria | question |
 |---|---|---|---|
 | **A** | `ke * m`, linear and unbounded | one, never lost | can `theta` be identified? |
-| **B** | `ke * h(m)`, saturating | one, lost above the ceiling | when does a crisis occur? |
+| **B** | `ke * h(m)`, Michaelis-Menten too | one, lost above the ceiling | when does a crisis occur? |
 | **C** | `k * c(t) * m`, carnitine depleted | two, colliding at a fold | why does a crisis not self-resolve? |
 
 They are alternative hypotheses, not stages of a development. Model A is the

@@ -25,18 +25,20 @@ partially known &
 prescribed protein intake and illness dates recorded; episode amplitudes unknown;
 unrecorded triggers exist \\
 \addlinespace
-$\theta$ & residual PCC capacity ($V_{\max}$) &
+$\theta$ & residual PCC capacity: the Michaelis-Menten $V_{\max}$ &
 \textbf{parameter, patient-specific, constant} &
 \textbf{unknown} &
 set by genotype; measurable \emph{ex vivo} in fibroblasts or lymphocytes, but the
 in vitro to in vivo mapping is uncertain \\
 \addlinespace
-$K_m$ & half-saturation constant &
+$K_m$ & Michaelis constant of PCC: the level at which the enzyme runs at half of
+$V_{\max}$ &
 parameter, assumed population-level &
 unknown &
 property of the active site, assumed genotype-independent \\
 \addlinespace
-$k_e$ & non-enzymatic clearance &
+$k_e$ & non-enzymatic clearance; a rate constant in Model A, the $V_{\max}$ of the
+alternative route in Model B &
 parameter, assumed population-level &
 unknown &
 carnitine conjugation and renal excretion. \emph{Caveat}: carnitine is also administered
@@ -86,14 +88,14 @@ non-enzymatic clearance term, not stages of a development.}
 & \textbf{Cost} & \textbf{Status} \\
 \midrule
 \textbf{A} &
-$\theta g(m) + k_e m$ \newline second term linear, unbounded &
+$\theta g(m) + k_e m$ \newline Michaelis-Menten enzyme, second term linear and unbounded &
 one, stable, never lost &
 Can $\theta$ be identified from clinical data? &
 predicts no crisis at all &
 working model for identifiability \\
 \addlinespace
 \textbf{B} &
-$\theta g(m) + k_e h(m)$ \newline both saturating, ceiling $\theta + k_e$ &
+$\theta g(m) + k_e h(m)$ \newline both Michaelis-Menten, ceiling $\theta + k_e$ &
 one stable, lost when load exceeds the ceiling &
 When does a crisis occur? &
 both terms share a functional form, weakening separability &

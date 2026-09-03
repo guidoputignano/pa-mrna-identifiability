@@ -1,4 +1,4 @@
-\section{Model A: saturating enzyme, linear alternative clearance}
+\section{Model A: Michaelis-Menten enzyme, linear alternative clearance}
 %==========================================================================
 
 \subsection{Formulation}
@@ -12,13 +12,44 @@
 \begin{description}[leftmargin=1.4em, itemsep=1pt]
 \item[$m(t)$] accumulated toxic metabolite, measured sparsely.
 \item[$s(t)$] substrate load; partially known.
-\item[$\theta$] maximal enzymatic velocity. Since most pathogenic variants reduce the
-\emph{quantity} of functional enzyme rather than the turnover number of an individual
-molecule, $\theta$ is essentially ``how much working enzyme the patient has'', and is
-therefore constant and genotype-determined.
-\item[$g(m)$] fraction of maximal velocity currently in use, $g \in [0,1)$.
+\item[$\theta$] the maximal enzymatic velocity $V_{\max}$ of PCC. Since most pathogenic
+variants reduce the \emph{quantity} of functional enzyme rather than the turnover number of
+an individual molecule, $\theta$ is essentially ``how much working enzyme the patient has'',
+and is therefore constant and genotype-determined.
+\item[$K_m$] the Michaelis constant of PCC, the substrate level at which the enzyme runs at
+half of $V_{\max}$.
+\item[$g(m)$] the \emph{Michaelis-Menten saturation function}, giving the fractional
+saturation of the enzyme, $g \in [0,1)$.
 \item[$k_e m$] alternative elimination, taken proportional to $m$.
 \end{description}
+
+\paragraph{The enzymatic term is Michaelis-Menten kinetics.} The function $g$ is not an
+arbitrary saturating shape. It is the Michaelis-Menten law, which in its standard
+biochemical form gives the velocity of a single-substrate enzymatic reaction as
+
+\begin{equation}
+v \;=\; \frac{V_{\max}\,[S]}{K_m + [S]},
+\label{eq:mm}
+\end{equation}
+
+with $V_{\max}$ the maximal velocity, attained when the enzyme is fully saturated, and
+$K_m$ the Michaelis constant, the substrate concentration at which $v = V_{\max}/2$.
+Identifying $V_{\max}$ with $\theta$ and $[S]$ with $m$ turns \eqref{eq:mm} into the term
+$\theta\, g(m)$ of \eqref{eq:A}, so that $\theta$ is the patient's residual $V_{\max}$,
+$K_m$ is the Michaelis constant of PCC, and $g(m)$ is the fractional saturation. The same
+functional form appears under other names in adjacent literatures: it is the Monod function
+in microbial growth kinetics, and the Hill function with cooperativity coefficient $n = 1$.
+Throughout this note the three names are used for the same object, and no cooperativity is
+assumed.
+
+\begin{remark}[Where the Michaelis-Menten form is an approximation here]
+Equation \eqref{eq:mm} is derived for a single enzyme acting on a substrate at
+quasi-steady state. PCC is a biotin-dependent dodecamer with a second substrate,
+bicarbonate, held constant here, and the substrate of \eqref{eq:mm} is the intracellular
+propionyl-CoA rather than the plasma marker $m$. The Michaelis-Menten form is retained
+because the saturating shape is what the identifiability argument turns on, not because
+the constants carry their textbook in vitro meaning.
+\end{remark}
 
 \subsection{Assumptions}
 

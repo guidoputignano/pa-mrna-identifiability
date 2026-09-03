@@ -1,4 +1,4 @@
-\section{Model B: bounded total clearance}
+\section{Model B: two Michaelis-Menten channels, bounded total clearance}
 %==========================================================================
 
 \subsection{What is added}
@@ -13,10 +13,18 @@ the second term saturate as well:
 \label{eq:B}
 \end{equation}
 
+The function $h$ is again a \emph{Michaelis-Menten saturation function}, of the same form
+\eqref{eq:mm} as $g$: $k_e$ is now the $V_{\max}$ of the alternative route, a maximal flux
+rather than a rate constant, $K_e$ is its Michaelis constant, and $h(m)$ its fractional
+saturation. As with $g$, the same shape is called the Monod function or a Hill function
+with $n = 1$. The change of meaning of $k_e$ between \eqref{eq:A} and \eqref{eq:B} is
+deliberate and is the whole content of the model: the alternative channel is promoted from
+a first-order rate law to a saturable one.
+
 \subsection{Consequence: a load ceiling}
 
-Total clearance $C(m) = \theta g(m) + k_e h(m)$ satisfies $C(0)=0$, is strictly increasing,
-and is \emph{bounded}:
+Total clearance $C(m) = \theta g(m) + k_e h(m)$ is now a sum of two Michaelis-Menten terms.
+It satisfies $C(0)=0$, is strictly increasing, and is \emph{bounded}:
 \begin{equation}
 C(m) \;\longrightarrow\; \theta + k_e \qquad \text{as } m \to \infty .
 \end{equation}
@@ -45,9 +53,10 @@ condition is $\spk > C(\bar m)$, with $\thc$ given by \eqref{eq:thcrit}.
 
 \subsection{Cost of the correction}
 
-In Model A the two clearance terms have different functional forms, one saturating and one
-linear, and are distinguished by that difference. In Model B both saturate, and they are
-distinguished only by $K_m \neq K_e$, i.e.\ by saturating at different metabolite levels.
+In Model A the two clearance terms have different functional forms, one Michaelis-Menten and
+one linear, and are distinguished by that difference. In Model B both are
+Michaelis-Menten, and they are distinguished only by $K_m \neq K_e$, that is, by having
+different Michaelis constants and therefore saturating at different metabolite levels.
 
 \textbf{The biologically more faithful model has weaker identifiability.} This trade-off
 should be stated explicitly rather than discovered later.

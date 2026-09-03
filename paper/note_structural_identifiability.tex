@@ -65,7 +65,11 @@ symbolic results can be verified mechanically.
 \end{equation}
 
 with $p = (\theta, K_m, k_e) \in \R_{>0}^3$ the unknown parameter vector, $s(t)$ a known
-input, and $y$ the measured output.
+input, and $y$ the measured output. The term $\theta g(m)$ is the Michaelis-Menten law
+$v = V_{\max}[S]/(K_m + [S])$ with $V_{\max} = \theta$ and $[S] = m$, so $\theta$ is the
+patient's residual maximal velocity, $K_m$ is the Michaelis constant of PCC, and $g$ is the
+fractional saturation. The same form is called the Monod function, or the Hill function
+with $n = 1$, elsewhere.
 
 \subsection{What structural identifiability means}
 
