@@ -190,14 +190,44 @@ Roughly in order of how much they would change the conclusions.
    only partially recorded. The current amplification factor is ~1.4; bounding it
    properly is the first extension.
 
-2. **Reformulating the crisis as a first-passage problem.** `theta_crit` is
-   presently defined through two unmeasured quantities, `s_peak` and `m_bar`.
-   Treating illness arrivals as a marked point process and deriving a hazard
-   `lambda(theta)` for decompensation would remove that arbitrariness, use the
-   reliably recorded endpoint (dated admissions), and handle the ~70% of patients
-   with no events as censored observations rather than missing data. This would
-   make the count model *derived* rather than assumed, and is probably the single
-   most valuable next step.
+2. **Reformulating the crisis as a first-passage problem.** *Probably the single
+   most valuable next step, and not started.* Model C's intrinsic threshold has
+   already removed `m_bar` from the definition of `theta_crit`. `s_peak` is still
+   there, and no sharper deterministic threshold will remove it, because the
+   quantity being asked for is not a threshold at all. The concrete structure:
+
+   ```
+   lambda_MDE(theta) = nu * P( episode amplitude > critical amplitude | theta )
+   ```
+
+   where `nu` is the arrival rate of precipitating events (infection, fasting,
+   surgery, dietary error) and the amplitude distribution is **estimated from the
+   data rather than postulated**. The critical amplitude is the smallest excursion
+   in `s` that carries the patient across the separatrix from the attractor, which
+   Model C already computes: it is the margin plotted in `fig_C5_margin`, expressed
+   in load rather than in metabolite.
+
+   What this buys, point by point:
+
+   - **It removes `s_peak` from the definition of the threshold.** A single
+     worst-case amplitude is replaced by a distribution, so nothing has to be
+     assumed about the severity of the worst illness a patient will meet.
+   - **It uses the reliable observable.** The endpoint becomes dated hospital
+     admissions, which are coded consistently, instead of sparse metabolite
+     measurements whose relation to the enzyme's substrate is itself an
+     assumption.
+   - **It treats the ~70% of patients with no events correctly.** They are
+     right-censored observations carrying real information about `theta`, not
+     missing data to be dropped or zeros to be explained away.
+   - **It makes the count model derived rather than assumed.** At present a
+     Poisson or negative-binomial count model would be imposed on the admission
+     counts by fiat. Under this construction the counting process falls out of the
+     arrival process and the crossing probability, and its overdispersion has a
+     mechanism behind it.
+
+   It would also complete the answer to Model B's question. Model B currently
+   returns a condition and the records contain a frequency; `lambda_MDE(theta)` is
+   a frequency, and it is the quantity the two can be compared in.
 
 3. **Optimal experimental design under a state constraint.** Conditioning scales
    as the inverse square of the excursion, and the excursion is bounded above by

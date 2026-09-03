@@ -7,6 +7,47 @@ precipitating event), and the map from intracellular substrate to plasma biomark
 is therefore an operational definition rather than a physical parameter. Whether the
 decision built on it is invariant to that arbitrariness is the central question.
 
+\paragraph{From a threshold to a hazard.} This is the reformulation referred to in
+Remark~\ref{rem:condition_not_frequency} and Remark~\ref{rem:intrinsic_limit}, and it is
+not attempted here. Proposition~\ref{prop:intrinsic} removes $\bar m$ from the definition
+of $\thc$ but leaves $\spk$, and no sharper deterministic threshold will remove it, because
+the quantity actually wanted is not a threshold. Treat the precipitating events as a marked
+point process with arrival rate $\nu$ and amplitudes drawn from a distribution
+\emph{estimated from the records rather than postulated}, and ask for the rate at which the
+metabolite crosses the separatrix:
+\begin{equation}
+\lambda_{\mathrm{MDE}}(\theta) \;=\; \nu \cdot
+\mathbb{P}\!\left(A > A_{\mathrm{crit}}(\theta) \mid \theta \right),
+\label{eq:hazard}
+\end{equation}
+where $A$ is the amplitude of an episode and $A_{\mathrm{crit}}(\theta)$ is the smallest
+excursion in the load that carries the patient from the attractor across the separatrix.
+Model C already supplies $A_{\mathrm{crit}}$: it is the margin of Figure~\ref{fig:C5},
+expressed in load rather than in metabolite.
+
+Four things follow, and together they are the reason this is probably the single most
+valuable next step.
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item $\spk$ leaves the definition of the threshold. A single assumed worst case is
+      replaced by a distribution, so nothing has to be asserted about the severity of the
+      worst illness a given patient will meet.
+\item The endpoint becomes the reliable observable. Dated admissions are coded
+      consistently, whereas the metabolite measurements are sparse and stand in an assumed
+      relation to the enzyme's substrate.
+\item The roughly $70\%$ of patients with no event in the observation window become
+      right-censored observations, which carry real information about $\theta$, rather than
+      missing data to be discarded or zeros to be explained away.
+\item The count model becomes \emph{derived} rather than assumed. A Poisson or
+      negative-binomial model imposed on admission counts is a modelling choice with
+      nothing behind it; under \eqref{eq:hazard} the counting process follows from the
+      arrival process and the crossing probability, and its dispersion has a mechanism.
+\end{enumerate}
+
+It would also close the gap identified in Remark~\ref{rem:condition_not_frequency}: Model B
+returns a condition and the records contain a frequency, and
+$\lambda_{\mathrm{MDE}}(\theta)$ is a frequency.
+
 \paragraph{Identification.} Under what conditions is a parameter identifiable when the
 excitation required to identify it is the regime that a safety constraint forbids? The
 excitation is supplied by the schedule of the selective perturbation itself, but the
