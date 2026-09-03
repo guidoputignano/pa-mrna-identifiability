@@ -12,6 +12,8 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from dataclasses import replace
+
 import numpy as np
 import pytest
 
@@ -146,6 +148,65 @@ def test_C_loses_equilibria_above_the_fold():
     grid = np.linspace(1e-3, 2500.0, 8000)
     roots, _ = equilibria_nonmonotone(clearance_C_quasistatic, p, 900.0, grid)
     assert len(roots) == 0
+
+
+def test_C_intrinsic_theta_crit_is_where_two_equilibria_become_none():
+    """
+    Proposition (intrinsic threshold): theta_crit_intrinsic(p, s) is the value
+    of theta at which the attractor and the separatrix merge at a saddle-node.
+    Just above it there are two equilibria; just below it there are none.
+    """
+    from model_C.run import theta_crit_intrinsic
+
+    p = ParamsC()
+    s = 600.0
+    thc = theta_crit_intrinsic(p, s)
+    assert np.isfinite(thc) and thc > 0, f"expected a positive threshold, got {thc}"
+
+    grid = np.linspace(1e-3, 30000.0, 90000)
+
+    def n_equilibria(theta):
+        q = replace(p, theta=float(theta))
+        roots, _ = equilibria_nonmonotone(clearance_C_quasistatic, q, s, grid)
+        return len(roots)
+
+    assert n_equilibria(thc * 1.01) == 2, "above the threshold: attractor and separatrix"
+    assert n_equilibria(thc * 0.99) == 0, "below the threshold: no equilibrium at all"
+
+
+def test_C_intrinsic_theta_crit_does_not_use_a_tolerable_level():
+    """
+    The point of the construction: it takes the load and the parameters, and
+    nothing else. Changing the clinical convention m_bar cannot change it,
+    because m_bar is not one of its arguments. Contrast theta_crit() above.
+    """
+    from model_C.run import theta_crit_intrinsic
+    import inspect
+
+    names = list(inspect.signature(theta_crit_intrinsic).parameters)
+    assert "m_bar" not in names
+    assert names[:2] == ["p", "s_base"]
+
+
+def test_C_margin_closes_monotonically_towards_the_threshold():
+    """The separatrix-to-attractor distance is the safety margin, and it
+    shrinks to zero as theta falls to the intrinsic threshold."""
+    from model_C.run import theta_crit_intrinsic
+
+    p = ParamsC()
+    s = 600.0
+    thc = theta_crit_intrinsic(p, s)
+    grid = np.linspace(1e-3, 30000.0, 90000)
+
+    margins = []
+    for f in (1.02, 1.2, 1.6):
+        q = replace(p, theta=thc * f)
+        roots, st = equilibria_nonmonotone(clearance_C_quasistatic, q, s, grid)
+        assert len(roots) == 2
+        margins.append(roots[1] - roots[0])
+
+    assert margins[0] < margins[1] < margins[2], f"margin should widen: {margins}"
+    assert margins[0] < 0.15 * margins[2], "margin should close near the fold"
 
 
 # ---------------------------------------------------------------- threshold

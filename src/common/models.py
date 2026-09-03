@@ -92,7 +92,15 @@ class ParamsC:
     """
     theta: float = 300.0    # residual V_max of PCC, ~10% of normal
     Km: float = 100.0       # Michaelis constant of PCC
-    R0: float = 1200.0      # maximal carnitine-mediated flux
+    R0: float = 1000.0      # maximal carnitine-mediated flux.
+                            # Was 1200, which made max_m C(m; theta=0) = 605,
+                            # above the baseline load of 600: a patient with
+                            # no residual enzyme was maintainable on the
+                            # alternative route alone, so the intrinsic fold
+                            # of theta_crit_intrinsic() sat at theta < 0. That
+                            # contradicts the severity of null genotypes. At
+                            # R0 = 1000 the alternative route alone clears
+                            # 504 at best, and theta_crit is 167.
     Mi: float = 300.0       # metabolite level at which carnitine handling
                             # is half-impaired (CoA sequestration feedback)
     Kc: float = 50.0        # Michaelis constant of the conjugation reaction

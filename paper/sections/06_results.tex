@@ -198,6 +198,34 @@ decompensations resolve on return to baseline management alone is therefore the
 question that separates the two hypotheses, and it is answerable from clinical notes.
 \end{remark}
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig_C5_margin.pdf}
+\caption{The intrinsic critical capacity, Proposition~\ref{prop:intrinsic}, computed at
+baseline load. Left: the attractor and the separatrix as functions of the residual
+capacity $\theta$, on a logarithmic metabolite axis. As $\theta$ falls the attractor rises
+and the separatrix falls, and at $\thc^{\,\mathrm{int}} = 167$ they merge in a saddle-node;
+below that value no equilibrium exists at all and the patient cannot be maintained even at
+baseline load. Nothing in this construction refers to a tolerable metabolite level: the
+threshold is a property of the model's equilibrium structure, not of a clinical convention.
+Right: the distance between the two, which is the safety margin. It is the quantity the
+clinical decision actually turns on, since it says how far the patient can be pushed before
+the crisis becomes self-sustaining, and it closes continuously to zero at the threshold. At
+the nominal $\theta = 300$ the margin is $398$. Neither Model A nor Model B admits this
+figure: A never loses its equilibrium, and B loses one to infinity rather than to a
+collision, so in neither is there a second equilibrium to measure a margin against.}
+\label{fig:C5}
+\end{figure}
+
+\begin{remark}[Why this is the contribution of Model C]
+Model C is usually introduced as the most biologically faithful of the three, and that
+framing undersells it. Its distinguishing property is not fidelity but well-posedness: it
+is the only one of the three models in which $\thc$ can be defined without importing a
+convention. In A and B the threshold is an operational choice, and
+Figure~\ref{fig:B2}~(left) shows how much of its numerical value is inherited from that
+choice. In C it is the location of a saddle-node.
+\end{remark}
+
 \begin{remark}[A second, independent check]
 The depletion mechanism predicts that free carnitine should fall sharply during
 decompensation relative to the same patient's baseline. Free carnitine and the

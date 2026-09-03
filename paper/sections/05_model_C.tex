@@ -69,6 +69,80 @@ returns $m$ to baseline.
 
 An analogous depletion argument applies to free coenzyme A.
 
+\subsection{An intrinsic definition of $\thc$}
+\label{sec:intrinsic}
+
+Models A and B define the critical capacity by \eqref{eq:thcrit},
+$\thc = (\spk - k_e \bar m)/g(\bar m)$, which imports two quantities that are never
+measured: $\bar m$, a clinical convention about what metabolite level is tolerable, and
+$\spk$, the amplitude of an illness. The convention is the more troubling of the two,
+because it is not a fact about the patient at all. Model C does not need it.
+
+Write $C(m;\theta) = \theta g(m) + \alpha(m)$ for the total clearance, with
+$\alpha(m) = R(m)\,m/(K_c+m)$ the carnitine-mediated flux. Since $\alpha$ rises, peaks and
+then decays, $C(\cdot\,;\theta)$ has an interior maximum for every $\theta$, and that
+maximum increases with $\theta$.
+
+\begin{proposition}[Intrinsic critical capacity]
+\label{prop:intrinsic}
+Fix a load $s$. Define
+\begin{equation}
+\thc^{\,\mathrm{int}}(s) \;:=\; \text{the unique } \theta \text{ such that }
+\max_{m > 0}\, C(m;\theta) \;=\; s .
+\label{eq:thcrit_int}
+\end{equation}
+Then for $\theta > \thc^{\,\mathrm{int}}(s)$ the system has exactly two equilibria at load
+$s$, a stable attractor and an unstable separatrix, and for
+$\theta < \thc^{\,\mathrm{int}}(s)$ it has none, so the metabolite diverges from every
+initial condition. At $\theta = \thc^{\,\mathrm{int}}(s)$ the two equilibria merge in a
+saddle-node.
+\end{proposition}
+
+\begin{proof}[Argument]
+Equilibria solve $C(m;\theta) = s$. The map $\theta \mapsto \max_m C(m;\theta)$ is
+continuous and strictly increasing, since $C$ is strictly increasing in $\theta$ pointwise
+and the maximum is attained in the interior, so \eqref{eq:thcrit_int} has a unique
+solution. If the maximum exceeds $s$ the horizontal line $s$ cuts the graph of $C$ twice,
+once on the rising branch, where $C$ is increasing and the equilibrium is stable, and once
+on the falling branch, where it is unstable. If the maximum is below $s$ there is no
+intersection and $\dot m = s - C > 0$ everywhere. At equality the two intersections
+coincide at the maximum, where $C' = 0$, which is the saddle-node condition.
+\end{proof}
+
+Two features of this definition are worth stating separately.
+
+\begin{itemize}[leftmargin=*, itemsep=3pt]
+\item \textbf{$\bar m$ has disappeared.} No tolerability convention enters
+\eqref{eq:thcrit_int}. The threshold is the value of $\theta$ at which the model's own
+equilibrium structure changes, and it would be the same threshold under any convention
+about which metabolite levels a clinician is willing to accept. In Models A and B no such
+definition is available, because neither has a second equilibrium to collide with: in A the
+equilibrium is never lost, and in B it escapes to infinity without annihilating. This is
+the sense in which Model C is not merely the most realistic of the three. It is the only
+one in which $\thc$ is well posed.
+\item \textbf{The margin is the object, not the threshold.} Above the threshold, what
+matters clinically is not that two equilibria exist but how far apart they are. The
+distance from the attractor to the separatrix is how far the patient can be pushed before
+the crisis becomes self-sustaining, and it closes continuously to zero at
+$\thc^{\,\mathrm{int}}$. That distance is computed and plotted in
+Figure~\ref{fig:C5}. It has no counterpart in Models A or B.
+\end{itemize}
+
+\begin{remark}[What this does not fix]
+\label{rem:intrinsic_limit}
+The construction eliminates $\bar m$. It does not eliminate $\spk$. Equation
+\eqref{eq:thcrit_int} takes the load as an argument, and the clinically operative question
+is not whether a patient is maintainable at baseline load but whether an intercurrent
+illness pushes them across the separatrix. That depends on how far and for how long the
+load is raised, which is $\spk$ and the episode duration, and neither is measured. What has
+changed is where the unmeasured quantity sits: it is no longer inside the definition of the
+threshold, where it corrupted the threshold itself, but in the separate question of whether
+a given margin is large enough. The remaining step is to stop treating episodes as a single
+worst case and give their amplitudes a distribution estimated from the records, which turns
+the deterministic crossing into a hazard. That is the reformulation set out in Section~7,
+and only it removes $\spk$.
+\end{remark}
+
 \subsection{Why it is not the working model}
 
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
