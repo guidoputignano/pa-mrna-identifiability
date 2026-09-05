@@ -251,22 +251,45 @@ second. \textbf{The perturbation enters the right-hand side only.} Hence
 \label{eq:det}
 \end{equation}
 
-\begin{proposition}[The determinant does not depend on the channel]
+\begin{proposition}[The determinant depends on the excursion alone]
 \label{prop:channel}
-Let the system be perturbed selectively on either channel, by any known increment, and let
-$m$ and $m'$ be the steady metabolite levels before and after. Then the $2 \times 2$ system
-for $(\theta, k_e)$ has determinant \eqref{eq:det}, which depends on $m$, $m'$ and $K_m$
-alone. It is unaffected by which channel was perturbed and by the size of the increment
-except through the level $m'$ that the increment produces.
+Let the system be moved from one steady state to another by any known perturbation: an
+increment on either channel, a change in the load, or any combination of these. Let $m$ and
+$m'$ be the steady metabolite levels before and after. Then in every case the
+$2 \times 2$ system for $(\theta, k_e)$ has the coefficient matrix $M$ of
+\eqref{eq:system} and the determinant \eqref{eq:det}, which depends on $m$, $m'$ and $K_m$
+alone. The perturbation enters only the right-hand side, as
+$\delta = \kappa u_c\, m'$ for carnitine, $\delta = \Delta\, g(m')$ for the therapy, and
+$\delta = s - s'$ for a change of load.
 \end{proposition}
 
 \begin{proposition}[Formal identifiability, practical ill-conditioning]
+\label{prop:illcond}
 The determinant \eqref{eq:det} is non-zero whenever $m \neq m'$, so the pair
-$(\theta, k_e)$ is formally identifiable from steady-state data before and after a
-selective perturbation on \emph{either} channel. However, when $m, m' \ll K_m$ the two
-denominators coincide to first order and
-$\det = O\!\left((m'-m)\,m m'/K_m^2\right)$, which is small.
+$(\theta, k_e)$ is formally identifiable from steady-state data before and after any such
+perturbation. Its size, however, is set by \eqref{eq:affine}. Writing the affine fit to $g$
+over the observed range as $g(m) = \gamma + \beta m$,
+\begin{equation}
+\det M \;=\; (\gamma + \beta m)\,m' - (\gamma + \beta m')\,m \;=\; \gamma\,(m' - m),
+\label{eq:detaffine}
+\end{equation}
+exactly, the $\beta m m'$ terms cancelling. With $\gamma$ the intercept of the tangent at
+$\bar m$,
+\begin{equation}
+\gamma \;=\; g(\bar m) - \bar m\, g'(\bar m) \;=\; g(\bar m)^2 ,
+\qquad\text{so}\qquad
+\det M \;=\; g(\bar m)^2\,(m' - m) .
+\label{eq:detgamma}
+\end{equation}
 \end{proposition}
+
+The determinant is therefore small for two independent reasons, and it is worth separating
+them because they are not the same clinical situation. It is proportional to the excursion
+$m' - m$, so a patient held in a narrow band gives a small determinant however far up the
+saturation curve they sit. And it is proportional to $g(\bar m)^2$, so a patient low on the
+saturation curve gives a small determinant however wide the excursion. Only a patient who is
+both excursing and appreciably saturated escapes both, and that patient is in the middle of a
+decompensation.
 
 Proposition~\ref{prop:channel} is what makes the analysis possible now. The identifiability
 question can be posed and answered on the perturbation that is actually present in the
