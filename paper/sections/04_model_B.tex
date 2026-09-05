@@ -56,8 +56,8 @@ condition is $\spk > C(\bar m)$, with $\thc$ given by \eqref{eq:thcrit}.
 
 \begin{remark}[The model gives a condition, the records give a frequency]
 \label{rem:condition_not_frequency}
-The question this model answers has to be stated carefully, and an earlier version of this
-note stated it wrongly as ``when does a crisis occur''. What Model B delivers is a
+The question this model answers has to be stated carefully, because the natural phrasing,
+``when does a crisis occur'', is not the one it answers. What Model B delivers is a
 \emph{condition}, $s > \theta + k_e$, or clinically $\spk > C(\bar m)$. It does not deliver
 a \emph{rate}. Nothing in \eqref{eq:B} describes how often, or how hard, the load is
 driven above the threshold: the arrival of intercurrent illness is exogenous to the vector
@@ -81,10 +81,18 @@ out in Section~7 and is not attempted here.
 
 \subsection{Cost of the correction}
 
-In Model A the two clearance terms have different functional forms, one Michaelis-Menten and
-one linear, and are distinguished by that difference. In Model B both are
-Michaelis-Menten, and they are distinguished only by $K_m \neq K_e$, that is, by having
-different Michaelis constants and therefore saturating at different metabolite levels.
+In Model A the two clearance terms have different functional forms, one saturating and one
+linear, and are distinguished by that difference: over any range the linear term
+contributes no curvature and the saturating term does. In Model B both saturate, and what
+separates them is only that they bend at different places. Writing the two half-saturation
+constants as $K_m$ and $K_e$, the channels are distinguishable exactly when
+$K_m \neq K_e$ by enough that the two curvatures can be told apart over the observed range,
+in the sense of \eqref{eq:affine}.
+
+Note what this does and does not assert. It is a statement about two curvature scales of
+the fitted clearance curve, not about two Michaelis constants read mechanistically:
+by Remark~\ref{rem:no_km} neither $K_m$ nor $K_e$ carries an established interpretation as
+an enzyme constant at the plasma level, and nothing here needs them to.
 
 \textbf{The biologically more faithful model has weaker identifiability.} This trade-off
 should be stated explicitly rather than discovered later.

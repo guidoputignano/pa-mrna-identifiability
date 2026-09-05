@@ -81,39 +81,91 @@ Throughout this note $m$ denotes \textbf{plasma 3-hydroxypropionate} and nothing
 is left out because it carries risk on its own scale and summing markers of different
 scales is not a defined operation. 2-MC is excluded on the stronger ground that a marker
 which does not move with risk cannot be the state whose excursion is supposed to define a
-decompensation. Writing $m$ for an unlabelled mixture of the three, as an earlier version
-of this note did, is the one substitution that would make the threshold meaningless.
+decompensation. Writing $m$ for an unlabelled mixture of the three would make the threshold
+meaningless, which is why the marker is named here rather than left to context.
 
 \subsection{The structural obstruction}
 
-In the regime in which clinically stable patients are maintained, $m \ll K_m$~\cite{pcc_liver_kinetics}, so % C23
-$g(m) \approx m/K_m$ and \eqref{eq:A} reduces to
-
-\begin{equation}
-\dot m \;\approx\; s(t) \;-\; \left(\frac{\theta}{K_m} + k_e\right) m .
-\label{eq:Alin}
-\end{equation}
+Write $C(m) = \theta\, g(m) + k_e\, m$ for the total clearance, and let
+$M = [m_{\min}, m_{\max}]$ be the range of metabolite levels a given patient actually
+visits between clinic visits. Clinical management exists to keep $M$ narrow. The
+obstruction is stated as a property of that range.
 
 \begin{proposition}[Degeneracy]
-In the linear regime the system is first-order and possesses a single identifiable
-coefficient, $\theta/K_m + k_e$. No quantity of data collected in this regime separates
-$\theta$ from $k_e$.
+\label{prop:degeneracy}
+Suppose that over the observed range $M$ the clearance is indistinguishable from an affine
+function at the resolution of the assay: there exist constants $a$ and $b$ with
+\begin{equation}
+\sup_{m \in M} \bigl| C(m) - (a + b\,m) \bigr| \;\le\; \varepsilon ,
+\label{eq:affine}
+\end{equation}
+$\varepsilon$ being the measurement error. Then data collected while the patient remains in
+$M$ determine $a$ and $b$, and nothing beyond them. The parameters enter only through the
+slope
+\begin{equation}
+b \;=\; \theta\, g'(\bar m) \;+\; k_e , \qquad \bar m \in M ,
+\label{eq:slope}
+\end{equation}
+a single scalar carrying $\theta$ and $k_e$ with the \emph{same} sign. No quantity of such
+data separates them.
 \end{proposition}
+
+\begin{proof}[Argument]
+Under \eqref{eq:affine} the map from $C$ to the data factors through $(a,b)$ up to a
+perturbation of size $\varepsilon$, so any two parameter pairs giving the same $(a,b)$
+generate observations differing by less than the assay can resolve. Since \eqref{eq:slope}
+is one equation in two unknowns, the pairs consistent with a measured $b$ form a line, and
+every point of it is compatible with the data.
+\end{proof}
 
 The clinical consequence is direct: two patients with substantially different enzymatic
 capacity, compensating with different degrees of alternative clearance, produce identical
 measurements. They are nonetheless different patients, and any intervention that acts on
 one channel and not the other will separate them.
 
-The two channels separate only as $m$ approaches $K_m$ and the enzymatic term saturates
-while the linear term does not. That regime is metabolic crisis, which clinical management
-exists to prevent. \textbf{Equation \eqref{eq:Alin} is not the model}; it is an argument
-identifying where information is absent.
+What breaks the degeneracy is curvature. The two channels are separable exactly when the
+departure of $C$ from affine over $M$ exceeds $\varepsilon$, which is to say when the
+enzymatic channel is measurably nearer saturation at the top of the observed range than at
+the bottom. That requires a wide $M$, and a wide $M$ is metabolic crisis, which management
+exists to prevent. \textbf{Condition \eqref{eq:affine} is not a modelling assumption}; it is
+a property of a particular patient's record, and it can be checked against that record
+directly.
+
+\begin{remark}[The scale on which this is stated]
+\label{rem:no_km}
+Proposition~\ref{prop:degeneracy} is deliberately conditioned on the observed clearance
+over the observed range, because the alternative route to the same conclusion is not
+available. That route would compare $m$ with $K_m$ and conclude that patients sit far below
+saturation. It cannot be taken. $K_m$ is the Michaelis constant of PCC for \emph{its}
+substrate, intracellular mitochondrial propionyl-CoA, reported as $0.29$ mM in purified
+human liver enzyme~\cite{pcc_liver_kinetics}, whereas $m$ is a plasma marker whose healthy
+concentrations are micromolar~\cite{amd_phenotyping}. % C23
+These are different molecules in different compartments. An inequality between them
+compares quantities that share no scale, so the apparent three orders of magnitude between
+the two numbers is an artefact of putting them on one axis. The objection is not that the
+margin is too narrow to rely on; it is that the comparison is not defined.
+
+Hypothesis \eqref{eq:affine} avoids it. It is a statement about the observed clearance over
+the observed range, checkable from a patient's own record, and it requires no view about
+where $K_m$ lies. What it does not buy is the mechanistic reading. Writing the enzymatic
+channel as $\theta g(m)$, with the plasma marker in place of the enzyme's substrate,
+presupposes a transfer map $\varphi$ from intracellular propionyl-CoA to plasma 3-HP under
+which $g$ keeps its Michaelis-Menten form and $K_m$ keeps its meaning. No such map is
+established, and this note does not establish one. Until one is, $K_m$ here is a fitted
+shape parameter of the plasma-level clearance curve rather than the Michaelis constant of
+PCC, and no statement of the form ``patients are maintained well below $K_m$'' is
+available.
+
+This reaches past the degeneracy argument. $\thc$ in \eqref{eq:thcrit} is computed through
+$g(\bar m)$, so it inherits the same dependence: a mechanistic reading of $K_m$ is
+load-bearing for the threshold as well. Establishing $\varphi$, or bounding how far the
+conclusions move across a plausible family of candidate maps, is a prerequisite for either.
+\end{remark}
 
 \subsection{Perturbation as a selective input}
 \label{sec:selective}
 
-The degeneracy of \eqref{eq:Alin} is broken by moving the patient, not by measuring them
+The degeneracy of \eqref{eq:slope} is broken by moving the patient, not by measuring them
 more often. Two perturbations are selective, in the sense that each acts on one channel
 and not on the other.
 
@@ -279,7 +331,7 @@ different.
       \label{eq:margin}
       \end{equation}
       Note that $\theta$ and $k_e$ enter with \emph{opposite} signs, whereas the identifiable
-      combination in \eqref{eq:Alin} carries them with the same sign. Errors therefore
+      combination in \eqref{eq:slope} carries them with the same sign. Errors therefore
       accumulate rather than cancel, and the margin is plausibly \emph{worse} conditioned
       than either parameter. This should be established rather than assumed.
 \item Whether the decision $\theta \gtrless \thc$ is invariant under a common strictly
