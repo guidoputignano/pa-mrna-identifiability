@@ -54,8 +54,36 @@ mde_emr_us              doi:10.1016/j.ymgme.2025.109111
 # supports no within-patient claim across a decompensation.
 amd_phenotyping         doi:10.1186/s13023-020-1347-3
 
-# Free carnitine 5.7 uM vs normal 37 +/- 8.
+# Free carnitine 5.7 uM vs normal 37 +/- 8; short-chain acylcarnitines 28.6
+# vs 5.7 +/- 3.5.
 carnitine_pa_child      pmid:2771511
+
+# Two PA and two MMA patients. Low plasma free carnitine, increased
+# short-chain acylcarnitines. URINARY EXCRETION OF FREE CARNITINE DECREASED,
+# while excretion of short-chain acylcarnitines, mostly propionylcarnitine,
+# INCREASED. Total carnitine decreased in skeletal muscle. Proposed mechanism:
+# mitochondrial propionylcarnitine, formed from free carnitine and excess
+# propionyl-CoA, exchanges with free cytosolic carnitine and is then lost in
+# the urine, causing secondary carnitine deficiency in the tissues.
+# NOTE: the paper is Di Donato et al., not Roe et al.
+carnitine_excretion_pa  doi:10.1016/0009-8981(84)90187-6
+
+# Carnitine given to an MMA patient increased hippurate excretion (an index of
+# intramitochondrial ATP and CoA availability), raised short-chain urinary
+# acylcarnitines, and reduced methylmalonate and methylcitrate excretion.
+# Carnitine acts by removing propionyl groups, RELEASING CoA and restoring ATP.
+# The documented direction is therefore carnitine depletion -> CoA
+# unavailability -> mitochondrial impairment, NOT the reverse.
+coa_sequestration       doi:10.1136/adc.58.11.916
+
+# Carnitine transporter solubilised from RAT renal apical (brush-border)
+# membrane and reconstituted into liposomes; "corresponds, very probably, to
+# the OCTN2 protein". First-order antiport, Na+-stimulated. "Substrate
+# analogues inhibited the transport; the most effective were acylcarnitines
+# and betaine." "Besides carnitine, only acylcarnitines and betaine were
+# efficiently translocated." Km for carnitine 0.08 mM external, 1.2 mM
+# internal. IN VITRO, RAT: the limitation is stated in the text.
+octn2_renal_transport   doi:10.1016/j.bbamem.2003.12.001
 
 # --- the therapy ----------------------------------------------------
 # 16 participants, 346 doses / 15.69 person-years. 70% risk reduction
