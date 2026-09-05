@@ -47,6 +47,24 @@ plasma level, and $K_m$ is the level at which that channel reaches half of it, a
 shape parameter of the plasma-level clearance curve. Remark~\ref{rem:no_km} sets out why
 $K_m$ cannot be read as the Michaelis constant of PCC.
 
+\paragraph{What the functional form is load-bearing for.}
+\label{sec:structure}
+The two published PK/PD models of this system are built on a different structure. The
+population model that selected the dose treats each marker as a turnover state whose
+production the therapy inhibits and whose loss is first
+order~\cite{dose_selection_poster}, and the translational model that preceded it puts the
+indirect response on the enzyme and makes the markers a direct saturating function of
+it~\cite{pkpd_translational}. % C46
+Proposition~\ref{prop:degeneracy} does not distinguish either from \eqref{eq:A}. Its
+hypothesis \eqref{eq:affine} asks only that total clearance be affine over the range a
+patient's marker visits, which a first-order loss satisfies exactly rather than to within
+assay error, and its conclusion is about what a record confined to that range contains
+rather than about which structure produced it. What is specific to \eqref{eq:A} is what a
+resolved $(a,b)$ then leaves open: the fibre of Remark~\ref{rem:fibre}, which exists because
+$a = \theta\, g(\bar m)^2$ carries $K_m$, and the cancellation in \eqref{eq:mufibre} that
+makes the margin linear along it. The obstruction survives a change of structure; this
+parametrisation of it does not.
+
 \begin{figure}[htbp]
 \centering
 \resizebox{0.90\linewidth}{!}{%
@@ -493,7 +511,7 @@ states at loads $s$ and $s'$ give $s = \theta g(m) + k_e m$ and
 $s' = \theta g(m') + k_e m'$, which is the coefficient matrix $M$ of \eqref{eq:system}
 again, so a load change carries exactly the determinant \eqref{eq:det} that a channel
 perturbation does. It is also the second anchor of Proposition~\ref{prop:anchor} seen from
-here, since one patient observed at two distinct loads is precisely this case. The
+here, since one patient observed at two distinct loads is precisely this case.
 The asymmetry lies elsewhere. The load route needs both $s$ and $s'$ known, where the
 channel route needs $s$ once together with the increment, and how much that costs is part
 of the question of Section~\ref{sec:confounding}, the substrate load being only partially

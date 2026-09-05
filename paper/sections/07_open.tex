@@ -27,8 +27,9 @@ expressed in load rather than in metabolite.
 
 The construction is partly pre-empted. The natural history study already fits a hazard of
 exactly this
-shape: a generalised additive model on 3-HP concentration, with a smooth term in the days
-since the previous event and a participant-level random effect~\cite{natural_history}. % C28
+shape: a generalised additive \emph{mixed} model on 3-HP concentration, with a smooth term
+in the days since the previous event and a participant-level random
+effect~\cite{natural_history}. % C28
 What is proposed here is a substitution within that machinery, of a mechanistic $\theta$
 with $A_{\mathrm{crit}}(\theta)$ supplied by the model, for a measured biomarker as the
 covariate carrying the risk. The statistical apparatus already exists; what it is
@@ -63,8 +64,9 @@ $\lambda_{\mathrm{MDE}}(\theta)$ is a frequency.
 \paragraph{Which marker to identify in.} Section~\ref{sec:marker} leaves the choice of
 plasma marker open, because the identifiability results do not depend on it.
 Proposition~\ref{prop:degeneracy} says what a comparison between the candidates would have
-to be conducted on. The residual capacity is carried by the intercept, and by
-\eqref{eq:thetaerr} the precision of the intercept is governed by $\bar m/\Delta$, the level
+to be conducted on. The residual capacity enters through the intercept, which by
+Remark~\ref{rem:fibre} locates it only along a fibre while fixing its relative precision,
+and by \eqref{eq:relerr} that precision is governed by $\bar m/\Delta$, the level
 a patient sits at relative to the excursion they make about it. Both of those are set by how
 the patient is managed, on that marker's own scale, so the object to be compared is a marker
 together with the management that holds a patient in a band on it, rather than a marker on

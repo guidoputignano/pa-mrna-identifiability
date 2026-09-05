@@ -9,13 +9,13 @@ Question answered: under what condition is a tolerable steady state lost?
 Total clearance is now bounded by theta + ke. If the load exceeds that
 ceiling no equilibrium exists and the metabolite diverges. Clinically the
 tolerable steady state is lost earlier, when the equilibrium migrates past
-the tolerable level, so the operative threshold is s_peak > C(m_bar).
+the tolerable level, so the operative threshold is s_peak > C(m_tol).
 
 NOTE the limit of that question. The model returns a CONDITION, not a
 FREQUENCY: nothing here says how often the load crosses the threshold,
 because the arrival of illness is exogenous to the vector field. Frequency
 is the one thing the records hold reliably (admissions are dated), while
-s_peak and m_bar are never measured. Removing the mismatch needs a hazard
+s_peak and m_tol are never measured. Removing the mismatch needs a hazard
 formulation, not a deterministic threshold. See the open items.
 
 Produces
@@ -90,7 +90,7 @@ def fig_bifurcation():
     """Equilibrium metabolite level against load. It escapes, it does not collide."""
     loads = np.linspace(50, CEIL * 0.999, 700)
     eq = np.array([steady_state(clearance_B, P, s) for s in loads])
-    m_bar = 400.0
+    m_tol = 400.0
 
     fig, ax = plt.subplots(figsize=figsize(0.49, 0.86))
     ax.plot(loads, eq, color=GREEN, lw=2.0, label="stable equilibrium")
@@ -98,13 +98,13 @@ def fig_bifurcation():
     at_point(ax, (CEIL, 0), r"$s = \theta + k_e$", dx=-4, dy=0, color=RED,
              fontsize=8, rotation=90, va="bottom", ha="right",
              annotation_clip=False)
-    ax.axhline(m_bar, color=BLUE, ls=":", lw=1.2)
-    at_point(ax, (0, m_bar), r"tolerable level $\bar m$", dx=8, dy=4,
+    ax.axhline(m_tol, color=BLUE, ls=":", lw=1.2)
+    at_point(ax, (0, m_tol), r"tolerable level $m_{\mathrm{tol}}$", dx=8, dy=4,
              color=BLUE, fontsize=8, va="bottom")
 
-    s_clin = clearance_B(m_bar, P)
-    ax.plot([s_clin], [m_bar], "o", ms=6, color=BLUE, zorder=4)
-    at_point(ax, (s_clin, m_bar), "clinical threshold\narrives first",
+    s_clin = clearance_B(m_tol, P)
+    ax.plot([s_clin], [m_tol], "o", ms=6, color=BLUE, zorder=4)
+    at_point(ax, (s_clin, m_tol), "clinical threshold\narrives first",
              dx=-14, dy=48, arrow=True, color=BLUE, fontsize=8,
              ha="right", va="bottom")
 
@@ -120,8 +120,8 @@ def fig_bifurcation():
 def fig_thetacrit():
     """theta_crit depends on two quantities that are never measured."""
     s_peaks = np.linspace(1500, 4500, 160)
-    m_bars = np.linspace(150, 900, 160)
-    S, M = np.meshgrid(s_peaks, m_bars)
+    m_tols = np.linspace(150, 900, 160)
+    S, M = np.meshgrid(s_peaks, m_tols)
     TH = (S - P.ke * h(M, P.Ke)) / g(M, P.Km)
 
     fig, ax = plt.subplots(figsize=figsize(0.47, 0.95))
@@ -132,7 +132,7 @@ def fig_thetacrit():
     # Both axis labels used to carry "(not measured)" and were clipped at
     # this panel width. The caption says it once instead.
     ax.set_xlabel(r"assumed peak load $s_{\mathrm{peak}}$")
-    ax.set_ylabel(r"assumed tolerable level $\bar m$")
+    ax.set_ylabel(r"assumed tolerable level $m_{\mathrm{tol}}$")
     ax.set_title(r"$\theta_{\mathrm{crit}}$ is an operational definition,"
                  "\nnot a physiological constant")
     save(fig, "fig_B3_thetacrit")
