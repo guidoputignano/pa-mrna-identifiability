@@ -11,7 +11,7 @@ PY      ?= python
 LATEX   ?= pdflatex
 PAPER    = paper/main
 
-.PHONY: all figures refs paper test audit clean distclean symbolic
+.PHONY: all figures refs paper paper-draft test audit clean distclean symbolic
 
 all: figures paper
 
@@ -42,6 +42,18 @@ test:
 # Non-zero while any claim is contradicted or unsourced, or any identifier
 # fails to resolve. Today it fails on 14 unresolved claims, which is the
 # correct state of the audit and not a broken build.
+# The same document with the claim-register appendix appended. The register
+# is a working artefact, so it is off in the default build.
+paper-draft: refs
+	cd paper && $(LATEX) -interaction=nonstopmode -jobname=main \
+	  "\\PassOptionsToClass{draft}{article}\\input{main}" >/dev/null
+	cd paper && biber main >/dev/null
+	cd paper && $(LATEX) -interaction=nonstopmode -jobname=main \
+	  "\\PassOptionsToClass{draft}{article}\\input{main}" >/dev/null
+	cd paper && $(LATEX) -interaction=nonstopmode -jobname=main \
+	  "\\PassOptionsToClass{draft}{article}\\input{main}" >/dev/null
+	@echo ">> built $(PAPER).pdf with the claim register"
+
 audit:
 	$(PY) tools/fetch_refs.py --check
 	$(PY) tools/claims_to_tex.py --check

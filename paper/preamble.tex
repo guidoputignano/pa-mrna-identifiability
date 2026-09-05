@@ -1,4 +1,25 @@
+% Pass the class option `draft` to include the claim-register appendix:
+%     make paper-draft
+% or  pdflatex "\PassOptionsToClass{draft}{article}\input{main}"
+% The default build omits it.
 \documentclass[11pt,a4paper]{article}
+
+% `draft` is article's own option, and it is detected here by its effect
+% rather than by reading the option list, so that it is seen whether it is
+% written into \documentclass above or handed over with \PassOptionsToClass
+% on the command line. article's draft mode sets \overfullrule; nothing else
+% in this preamble does.
+\makeatletter
+\newif\ifshowregister
+\ifdim\overfullrule>\z@ \showregistertrue \fi
+\makeatother
+
+% Both of article's draft-mode effects are now undone, so the register build
+% is otherwise identical to the default one: no rules in the margin, and no
+% blanked figures. graphicx is pulled in by tikz, so its option has to be
+% passed rather than given at load time, and passed before any package loads.
+\overfullrule=0pt
+\PassOptionsToPackage{final}{graphicx}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
