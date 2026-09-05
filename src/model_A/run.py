@@ -33,7 +33,12 @@ from common.style import save, write_table, figsize, GREEN, RED, BLUE, AMBER, GR
 P = ParamsA()
 M_OP = 10.0        # the operating point the illustrative patients are matched at
 M_TOL = 40.0       # tolerable metabolite level, a clinical convention
-S_PEAK = 1500.0    # assumed peak load in an illness
+# Illness amplitude as a MULTIPLE of the patient's own baseline load, not as an
+# absolute figure. Stated absolutely it disagreed across the note: 1500 here is
+# 4.65x this patient's baseline, where Model C's Figures 11 and 12 apply 1.42x
+# and 1.50x and its fold sits at 1.18x. The ratio is the physiological claim,
+# and each model applies it to its own parameters.
+ILLNESS_FOLD = 1.50
 ASSAY_CV = 5.0     # typical analytical and biological variability, per cent
 
 
@@ -62,15 +67,46 @@ def fibre_Km_max(a, b, m_bar=M_OP):
     return b * m_bar ** 2 / a
 
 
-def margin(theta, ke, m_tol=M_TOL, s_peak=S_PEAK, Km=None):
+def baseline_load(p: ParamsA = None, m_bar=M_OP):
+    """The load this patient balances at the operating point."""
+    return clearance_A(m_bar, P if p is None else p)
+
+
+def s_peak_default(p: ParamsA = None, m_bar=M_OP, fold=ILLNESS_FOLD):
+    return fold * baseline_load(p, m_bar)
+
+
+def margin(theta, ke, m_tol=M_TOL, s_peak=None, Km=None):
     """theta - theta_crit, the safety margin of equation (17)."""
     Km = P.Km if Km is None else Km
+    s_peak = s_peak_default() if s_peak is None else s_peak
     return theta - (s_peak - ke * m_tol) * (Km + m_tol) / m_tol
 
 
-def margin_on_fibre(a, b, Km, m_tol=M_TOL, s_peak=S_PEAK, m_bar=M_OP):
+def margin_on_fibre(a, b, Km, m_tol=M_TOL, s_peak=None, m_bar=M_OP):
     """The same margin, reached through the fibre. Linear in Km."""
     return margin(*fibre(a, b, Km, m_bar), m_tol=m_tol, s_peak=s_peak, Km=Km)
+
+
+def margin_window(a, b, m_tol=M_TOL, m_bar=M_OP):
+    """
+    The interval of s_peak on which the SIGN of the margin is undetermined.
+
+    mu is linear in the fibre coordinate, so its sign is constant along the
+    fibre unless the two endpoints disagree. They change sign at
+
+        mu(0) = 0        =>  s_peak = a + b*m_tol
+        mu(Kmax) = 0     =>  s_peak = (Kmax*S + a)/(1 + Kmax/m_tol) + b*m_tol
+
+    with S = 2a/m_bar - a*m_tol/m_bar^2 and Kmax = b*m_bar^2/a. Between them
+    the decision is not determined by the data, however wide the band. Outside
+    them it is, despite theta being unknown to a factor of a hundred or more.
+    """
+    Kmax = fibre_Km_max(a, b, m_bar)
+    S = 2 * a / m_bar - a * m_tol / m_bar ** 2
+    hi = a + b * m_tol
+    lo = (Kmax * S + a) / (1.0 + Kmax / m_tol) + b * m_tol
+    return (lo, hi) if lo <= hi else (hi, lo)
 
 
 # =====================================================================
@@ -386,66 +422,117 @@ def fig_fibre():
 # =====================================================================
 def fig_margin_fibre():
     """
-    The decision quantity is better conditioned than the parameter.
+    The decision quantity is better conditioned than the parameter, and where
+    that stops being enough.
 
-    theta is quadratic in Km along the fibre; the margin theta - theta_crit
-    is linear, the quadratic terms cancelling identically. Its whole
-    sensitivity to the non-identifiability is one slope.
+    theta is quadratic in Km along the fibre; the margin is linear, the
+    quadratic terms cancelling identically. So the SIGN of the margin is
+    constant along the fibre unless its two endpoints disagree, which happens
+    only for s_peak inside a computable window.
     """
     a0, b0 = fit_ab(P)
     Kmax = fibre_Km_max(a0, b0)
+    base = baseline_load()
+    sp0 = s_peak_default()
     Ks = np.linspace(1e-3, Kmax, 400)
-    mu = np.array([margin_on_fibre(a0, b0, K) for K in Ks])
+    mu = np.array([margin_on_fibre(a0, b0, K, s_peak=sp0) for K in Ks])
 
-    fig, ax = plt.subplots(1, 2, figsize=figsize(1.0, 0.40))
+    fig, axg = plt.subplots(2, 2, figsize=figsize(1.0, 0.76))
+    ax = axg.ravel()
+
+    # (a) the cancellation itself
     ax[0].axhspan(mu.min(), mu.max(), color=GREEN, alpha=0.07)
     ax[0].plot(Ks, mu, color=GREEN, lw=2.0)
-    ax[0].plot([P.Km], [margin_on_fibre(a0, b0, P.Km)], "o", ms=6,
+    ax[0].plot([P.Km], [margin_on_fibre(a0, b0, P.Km, s_peak=sp0)], "o", ms=6,
                color=MUTED, zorder=5)
     ax[0].axhline(0, color=RED, ls="--", lw=1.0)
-    at_point(ax[0], (P.Km, margin_on_fibre(a0, b0, P.Km)), "the true patient",
-             dx=-10, dy=-10, arrow=True, fontsize=7.5, color=MUTED,
-             ha="right", va="top")
-    corner(ax[0], "the sign of the decision\nis the same throughout",
-           "upper right", color=MUTED, fontsize=7.5)
+    at_point(ax[0], (P.Km, margin_on_fibre(a0, b0, P.Km, s_peak=sp0)),
+             "the true patient", dx=-10, dy=-10, arrow=True, fontsize=7.5,
+             color=MUTED, ha="right", va="top")
     ax[0].set_xlabel(r"$K_m$")
-    ax[0].set_ylabel(r"margin $\mu = \theta - \theta_{\mathrm{crit}}$")
-    ax[0].set_title("linear along the fibre,\nwhere $\\theta$ is quadratic")
+    ax[0].set_ylabel(r"margin $\mu$")
+    ax[0].set_title("linear along the fibre,\nwhere $\\theta$ is quadratic",
+                    fontsize=8)
 
-    # two point-matched patients, separating linearly in the tolerable level
-    thA, keA = P.theta, P.ke
+    # (b) the sign at both endpoints, swept over illness amplitude
+    lo, hi = margin_window(a0, b0)
+    folds = np.linspace(1.0, 6.0, 500)
+    e0 = np.array([margin_on_fibre(a0, b0, 1e-9, s_peak=f * base) for f in folds])
+    e1 = np.array([margin_on_fibre(a0, b0, Kmax, s_peak=f * base) for f in folds])
+    ax[1].axvspan(lo / base, hi / base, color=RED, alpha=0.12)
+    ax[1].plot(folds, e0, color=GREEN, lw=1.8, label=r"$\mu$ at $K_m \to 0$")
+    ax[1].plot(folds, e1, color=AMBER, lw=1.8, ls="--",
+               label=r"$\mu$ at $K_m = K_{\max}$")
+    ax[1].axhline(0, color=RED, ls=":", lw=1.0)
+    ax[1].axvline(ILLNESS_FOLD, color=GREY, ls=":", lw=1.0)
+    over_x(ax[1], ILLNESS_FOLD, "  Model C's illness", frac=0.34,
+           color=MUTED, fontsize=7)
+    over_x(ax[1], 0.5 * (lo + hi) / base, "sign\nundetermined", frac=0.97,
+           color=RED, fontsize=7, ha="center")
+    ax[1].set_xlabel("illness amplitude  [$\\times$ baseline load]")
+    ax[1].set_ylabel(r"margin at the fibre ends")
+    ax[1].set_title("the decision is determined\noutside one window", fontsize=8)
+    ax[1].legend(loc="lower left", fontsize=6.5, frameon=True,
+                 facecolor="white", edgecolor="none", framealpha=0.95)
+
+    # (c) how wide that window is, against the convention that sets it
+    mts = np.linspace(12.0, 320.0, 400)
+    wid = np.array([(lambda w: 100 * (w[1] - w[0]) / (0.5 * (w[0] + w[1])))
+                    (margin_window(a0, b0, x)) for x in mts])
+    ax[2].semilogx(mts, wid, color=BLUE, lw=2.0)
+    ax[2].plot([M_TOL], [np.interp(M_TOL, mts, wid)], "o", ms=6, color=MUTED,
+               zorder=5)
+    ax[2].axvline(M_OP, color=GREY, ls=":", lw=1.0)
+    over_x(ax[2], M_OP, r"  $\bar m$", frac=0.94, color=MUTED, fontsize=7)
+    at_point(ax[2], (M_TOL, np.interp(M_TOL, mts, wid)),
+             f"{np.interp(M_TOL, mts, wid):.0f}% at "
+             f"$m_{{\\mathrm{{tol}}}} = {M_TOL:.0f}$",
+             dx=10, dy=-4, arrow=True, fontsize=7, color=MUTED,
+             ha="left", va="top")
+    ax[2].set_xlabel(r"tolerable level $m_{\mathrm{tol}}$")
+    ax[2].set_ylabel("window width  [% of centre]")
+    ax[2].set_title("and it narrows as $m_{\\mathrm{tol}}$\napproaches $\\bar m$",
+                    fontsize=8)
+
+
+    # (d) two patients matched at the operating point, separating exactly
     thB = 1000.0
     keB = brentq(lambda k: clearance_A(M_OP, ParamsA(thB, P.Km, k))
                  - clearance_A(M_OP, P), 1e-6, 1e4)
     mtol = np.linspace(M_OP, 60.0, 300)
-    muA = np.array([margin(thA, keA, m_tol=x) for x in mtol])
+    muA = np.array([margin(P.theta, P.ke, m_tol=x) for x in mtol])
     muB = np.array([margin(thB, keB, m_tol=x) for x in mtol])
-    ax[1].plot(mtol, muA, color=GREEN, lw=2.0, label=r"A: $\theta = 3000$")
-    ax[1].plot(mtol, muB, color=RED, ls="--", lw=2.0,
+    ax[3].plot(mtol, muA, color=GREEN, lw=1.8, label=r"A: $\theta = 3000$")
+    ax[3].plot(mtol, muB, color=RED, ls="--", lw=1.8,
                label=rf"B: $\theta = {thB:.0f}$")
-    ax[1].axvline(M_OP, color=GREY, ls=":", lw=0.9)
-    ax[1].set_xlabel(r"tolerable level $m_{\mathrm{tol}}$")
-    ax[1].set_ylabel(r"margin $\mu$")
-    ax[1].set_title("two matched patients\nseparate linearly")
-
-    # The difference is two orders below the margins themselves, so it is flat
-    # against their scale and needs its own axis to be seen at all.
-    ax2 = ax[1].twinx()
-    ax2.plot(mtol, muA - muB, color=MUTED, lw=1.3,
-             label=r"$\mu_A - \mu_B$  (right axis)")
-    ax2.set_ylabel(r"$\mu_A - \mu_B$", color=MUTED)
-    ax2.tick_params(axis="y", colors=MUTED)
-    h1, l1 = ax[1].get_legend_handles_labels()
+    ax[3].axvline(M_OP, color=GREY, ls=":", lw=0.9)
+    ax[3].set_xlabel(r"tolerable level $m_{\mathrm{tol}}$")
+    ax[3].set_ylabel(r"margin $\mu$")
+    ax[3].set_title(r"matched patients separate as "
+                    r"$\Delta k_e (m_{\mathrm{tol}} - \bar m)$", fontsize=8)
+    ax2 = ax[3].twinx()
+    ax2.plot(mtol, muA - muB, color=MUTED, lw=1.2,
+             label=r"$\mu_A - \mu_B$ (right)")
+    ax2.set_ylabel(r"$\mu_A - \mu_B$", color=MUTED, fontsize=8)
+    ax2.tick_params(axis="y", colors=MUTED, labelsize=7)
+    h1, l1 = ax[3].get_legend_handles_labels()
     h2, l2 = ax2.get_legend_handles_labels()
-    ax[1].legend(h1 + h2, l1 + l2, loc="lower left", fontsize=7,
+    ax[3].legend(h1 + h2, l1 + l2, loc="lower left", fontsize=6.5,
                  frameon=True, facecolor="white", edgecolor="none",
                  framealpha=0.95)
+
     save(fig, "fig_A7_margin")
-    print(f"    mu over the fibre: [{mu.min():.1f}, {mu.max():.1f}], "
-          f"ratio {mu.min() / mu.max():.2f}, sign constant: "
-          f"{bool(np.all(mu < 0) or np.all(mu > 0))}")
-    print(f"    mu_A - mu_B at m_tol = 40: {muA[-1] - muB[-1]:.3f} vs "
-          f"(dke)(m_tol - m_bar) = {(keA - keB) * (mtol[-1] - M_OP):.3f}")
+    print(f"    baseline load C(m_bar) = {base:.1f}; illness at "
+          f"{ILLNESS_FOLD:.2f}x = {sp0:.1f}")
+    print(f"    mu over the fibre at that illness: [{mu.min():.1f}, {mu.max():.1f}], "
+          f"sign constant: {bool(np.all(mu > 0) or np.all(mu < 0))}")
+    print(f"    undetermined window: s_peak in ({lo:.1f}, {hi:.1f}) = "
+          f"({lo / base:.2f}x, {hi / base:.2f}x) baseline, "
+          f"width {100 * (hi - lo) / (0.5 * (lo + hi)):.1f}% of centre")
+    for x in (15.0, 40.0, 160.0):
+        w = margin_window(a0, b0, x)
+        print(f"      m_tol = {x:5.1f}: width "
+              f"{100 * (w[1] - w[0]) / (0.5 * (w[0] + w[1])):6.2f}% of centre")
 
 
 # =====================================================================

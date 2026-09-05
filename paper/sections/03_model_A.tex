@@ -101,6 +101,7 @@ intercurrent illness lie outside the assumption.
 \end{assumption}
 
 \begin{assumption}[Population parameters]
+\label{ass:pop}
 $K_m$ and $k_e$ do not vary with \emph{PCCA}/\emph{PCCB} genotype and may be estimated
 once across the cohort. The motivation for $K_m$ is that the half-saturation of the
 enzymatic channel reflects the active site rather than the amount of enzyme, and four
@@ -155,7 +156,10 @@ function at the resolution of the assay: there exist constants $a$ and $b$ with
 $\varepsilon$ being the measurement error.\footnote{$a$ and $b$ below are the tangent
 coefficients at $\bar m$. A least-squares fit over the band returns something slightly
 smaller, by $0.09\%$ at $\Delta/\bar m = 10\%$ but by $8.8\%$ at $\Delta/\bar m = 100\%$,
-computed numerically at the illustrative values. The distinction is negligible in the narrow
+computed numerically at the illustrative values. Here and throughout, $\Delta$ is the
+\emph{full width} of the band, so $\Delta/\bar m = 100\%$ means $m \in [\bar m/2,\,
+3\bar m/2]$. Read as a half-width the same phrase means $m \in [0, 2\bar m]$ and the gap is
+$35.4\%$. The distinction is negligible in the narrow
 band the proposition is about and is not negligible in the wide band it recommends buying.}
 Then data collected while the patient remains in $M$ determine $a$ and $b$, and nothing
 beyond them. With $\bar m \in M$ the point at which
@@ -188,7 +192,11 @@ k_e(K_m) = b - \frac{a\,K_m}{\bar m^{2}},
 the upper bound being where $k_e$ reaches zero. At the illustrative values $\theta$ ranges
 over a factor of $169$ along this fibre with noiseless data (Figure~\ref{fig:A6}).
 Equation~\eqref{eq:thetaerr} below is the noise on top of that, and is itself conditional on
-$g(\bar m)$, so it is a statement about $\theta$ \emph{given} $K_m$.
+$g(\bar m)$, so it is a statement about $\theta$ \emph{given} $K_m$. Nothing in Section~3
+supplies $K_m$. Assumption~\ref{ass:pop} grants only that it is shared across the cohort and
+estimable once, which is a statement about where it could come from and not that it is in
+hand, and Remark~\ref{rem:no_km} forbids importing it from in vitro work. The next paragraph
+is where it comes from.
 
 One extra datum closes the fibre outright. If $k_e$ is known, from a null genotype as in
 Proposition~\ref{prop:anchor}, then $K_m = (b - k_e)\bar m^{2}/a$ and $\theta$ follows from
@@ -551,10 +559,31 @@ this subsection becomes unnecessary.
       better conditioned than the parameter it is built from, by one order. Its whole
       sensitivity to the non-identifiability is the single coefficient in
       \eqref{eq:mufibre}, computable from the fitted $(a,b)$ without resolving $K_m$.
-      This is a change of order and not a claim of good conditioning: at the illustrative
-      values $\mu$ still varies sixfold over the admissible range of $K_m$
-      (Figure~\ref{fig:A7}). Whether its \emph{sign} is determined over that range is a
-      question each patient's record answers, and at these values it is.
+      This is a change of order and not a claim of good conditioning: $\mu$ still varies
+      several-fold over the admissible range of $K_m$ (Figure~\ref{fig:A7}). What survives
+      is the \emph{sign}, and because $\mu$ is linear the sign is constant along the whole
+      fibre unless the two endpoints disagree. They disagree only for $\spk$ inside
+      \begin{equation}
+      \spk \in \left(\;\frac{K_{\max} S + a}{1 + K_{\max}/\mtol} + b\,\mtol,
+      \;\; a + b\,\mtol \;\right),
+      \qquad S = \frac{2a}{\bar m} - \frac{a\,\mtol}{\bar m^{2}},
+      \label{eq:window}
+      \end{equation}
+      with $K_{\max} = b\bar m^{2}/a$, the two roots of $\mu(K_{\max}) = 0$ and
+      $\mu(0) = 0$. \textbf{Outside that window the decision is determined by the data even
+      though $\theta$ is not}, and at the illustrative values $\theta$ is unknown there to a
+      factor of $169$. Inside it no width of band settles the decision, because every point
+      of the fibre fits the data equally well and they do not agree on the sign.
+
+      The window is narrow where it matters. At $\mtol = 40$ it is
+      $(3.25, 3.77)$ times the patient's baseline load, $14.8\%$ wide about its centre,
+      and an illness of the amplitude Model C draws in Figures~\ref{fig:C1} and
+      \ref{fig:C2}, half again the baseline load, sits well below it with $\mu > 0$ at
+      both ends. Its width is set by the tolerable level and closes as that convention
+      approaches the band the patient is actually observed in: $1.2\%$ at $\mtol = 15$,
+      $14.8\%$ at $40$, $67\%$ at $160$. This replaces a tolerance on $\theta$, which the
+      note never states, with a question about $\spk$ and $\mtol$, which it can compute
+      from $(a, b)$ per patient.
 
       Two patients matched at $\bar m$ and sharing $K_m$ separate exactly:
       \begin{equation}

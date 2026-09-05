@@ -99,16 +99,23 @@ Proposition~\ref{prop:anchor}'s second anchor was introduced for.}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{fig_A7_margin.pdf}
-\caption{The decision quantity is better conditioned than the parameter it is built from.
-Left: the safety margin $\mu = \theta - \thc^{\mathrm{A}}$ along the same fibre. Where
-$\theta$ is quadratic in $K_m$ the margin is linear, the quadratic terms cancelling
-identically in \eqref{eq:mufibre}, so the whole sensitivity to the non-identifiability is
-one slope, computable from the fitted $(a,b)$. The improvement is one order and not a
-licence: $\mu$ still varies sixfold across the shaded range. What survives here is the
-\emph{sign}, which is constant throughout, and that is what the decision turns on. Right:
-two patients matched at the operating point, whose margins separate exactly as
+\caption{The decision quantity is better conditioned than the parameter it is built from,
+and where that stops being enough. \textbf{(a)} The safety margin
+$\mu = \theta - \thc^{\mathrm{A}}$ along the same fibre. Where $\theta$ is quadratic in
+$K_m$ the margin is linear, the quadratic terms cancelling identically in
+\eqref{eq:mufibre}, so the whole sensitivity to the non-identifiability is one slope,
+computable from the fitted $(a,b)$. The improvement is one order and not a licence: $\mu$
+still varies several-fold across the shaded range. \textbf{(b)} Because $\mu$ is linear its
+sign is constant along the fibre unless the two endpoints disagree, which happens only for
+the shaded interval of illness amplitudes, \eqref{eq:window}. Outside it the decision is
+determined although $\theta$ is not; inside it no width of band settles the decision.
+Illness amplitude is drawn as a multiple of the patient's own baseline load, and the dotted
+line is the amplitude Model C applies in Figures~\ref{fig:C1} and \ref{fig:C2}.
+\textbf{(c)} The width of that window, against the convention that sets it. It closes as
+$\mtol$ approaches the band the patient is observed in and widens without bound above it.
+\textbf{(d)} Two patients matched at the operating point, whose margins separate exactly as
 $\Delta k_e\,(\mtol - \bar m)$ and coincide only when the tolerable level is the operating
-point itself.}
+point itself. The same convention that widens the window separates the patients.}
 \label{fig:A7}
 \end{figure}
 

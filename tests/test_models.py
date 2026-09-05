@@ -303,7 +303,8 @@ def test_theta_crit_positive_iff_alt_route_cannot_carry_the_load():
 #  These tests pin the claims the paper makes about that family.
 # =========================================================================
 from model_A.run import (fit_ab, fibre, fibre_Km_max, margin,
-                         margin_on_fibre, M_OP, M_TOL, S_PEAK)
+                         margin_on_fibre, margin_window, s_peak_default,
+                         M_OP, M_TOL)
 
 
 def test_fibre_inverts_the_affine_fit():
@@ -351,7 +352,7 @@ def test_margin_is_linear_in_Km_where_theta_is_quadratic():
     assert np.max(np.abs(d2mu)) / scale < 1e-10, "mu must be linear in Km"
     assert np.max(np.abs(d2th)) > 1e-6 * abs(th).max(), "theta must not be"
     # and the closed form of (18) agrees with going round through (theta, ke)
-    P = S_PEAK - b * M_TOL
+    P = s_peak_default() - b * M_TOL
     slope = 2 * a / M_OP - P / M_TOL - a * M_TOL / M_OP ** 2
     for K in Ks:
         assert margin_on_fibre(a, b, K) == pytest.approx(slope * K + (a - P),
@@ -436,3 +437,68 @@ def test_load_error_amplification_is_a_flux_ratio_and_diverges():
     assert amps[1] == pytest.approx(1.4, rel=1e-9), "the figure's value"
     assert amps == sorted(amps), "must grow as theta falls"
     assert amps[-1] > 5.0, "and diverge at the severe end"
+
+
+def test_margin_window_endpoints_match_a_numerical_search():
+    """
+    The closed form of the undetermined window against a bisection on the
+    sign pattern at the two fibre ends. Inside it the two ends disagree, so
+    the decision is not determined by the data however wide the band.
+    """
+    from model_A.run import margin_window, fibre_Km_max, margin_on_fibre
+    p = ParamsA()
+    a, b = fit_ab(p)
+    Kmax = fibre_Km_max(a, b)
+
+    def disagree(sp, m_tol):
+        e0 = margin_on_fibre(a, b, 1e-9, m_tol=m_tol, s_peak=sp)
+        e1 = margin_on_fibre(a, b, Kmax, m_tol=m_tol, s_peak=sp)
+        return np.sign(e0) != np.sign(e1)
+
+    for m_tol in (20.0, 40.0, 80.0):
+        lo, hi = margin_window(a, b, m_tol)
+        assert not disagree(lo * 0.999, m_tol), m_tol
+        assert disagree(0.5 * (lo + hi), m_tol), m_tol
+        assert not disagree(hi * 1.001, m_tol), m_tol
+        # and the closed form is where mu vanishes at each end
+        assert margin_on_fibre(a, b, Kmax, m_tol=m_tol, s_peak=lo) == \
+            pytest.approx(0.0, abs=1e-8), m_tol
+        assert margin_on_fibre(a, b, 1e-12, m_tol=m_tol, s_peak=hi) == \
+            pytest.approx(0.0, abs=1e-6), m_tol
+
+
+def test_window_narrows_as_m_tol_approaches_the_operating_point():
+    """
+    The window is what replaces a tolerance on theta. Its width is set by the
+    convention m_tol, and it closes as that convention approaches the band the
+    patient is actually observed in.
+    """
+    from model_A.run import margin_window, M_OP
+    p = ParamsA()
+    a, b = fit_ab(p)
+    widths = []
+    for m_tol in (15.0, 20.0, 40.0, 80.0, 160.0):
+        lo, hi = margin_window(a, b, m_tol)
+        widths.append(100.0 * (hi - lo) / (0.5 * (lo + hi)))
+    assert widths == sorted(widths), f"must widen with m_tol: {widths}"
+    assert widths[0] < 2.0, "narrow when m_tol is close to m_bar"
+    assert widths[-1] > 50.0, "wide when it is far"
+
+
+def test_illness_amplitude_is_a_multiple_of_this_patients_baseline():
+    """
+    s_peak stated absolutely disagreed across the note. As a fold of baseline
+    it is one physiological claim applied to each model's own parameters, and
+    at Model C's amplitude the Model A decision is determined and safe.
+    """
+    from model_A.run import (baseline_load, s_peak_default, margin_window,
+                             margin_on_fibre, fibre_Km_max, ILLNESS_FOLD)
+    p = ParamsA()
+    a, b = fit_ab(p)
+    base = baseline_load()
+    assert base == pytest.approx(clearance_A(M_OP, p), rel=1e-12)
+    assert s_peak_default() == pytest.approx(ILLNESS_FOLD * base, rel=1e-12)
+    lo, hi = margin_window(a, b)
+    assert s_peak_default() < lo, "Model C's illness sits below the window"
+    ends = [margin_on_fibre(a, b, K) for K in (1e-9, fibre_Km_max(a, b))]
+    assert all(e > 0 for e in ends), "and the decision there is determined, safe"
