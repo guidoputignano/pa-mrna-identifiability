@@ -55,7 +55,6 @@ carnitine_pa_child      pmid:2771511
 # among the 8 who reported MDEs pretreatment. Single-arm.
 trial_phase12           doi:10.1038/s41586-024-07266-7
 pkpd_translational      doi:10.1089/nat.2022.0036
-mrna_moa                doi:10.1038/s41467-024-47460-9
 
 # 0.6 mg/kg biweekly selected from simulation in 1000 virtual
 # participants aged 0-36 y using body-weight distributions, with 3-HP
@@ -66,19 +65,11 @@ mrna_moa                doi:10.1038/s41467-024-47460-9
 # it belongs here, where the fields are fetched rather than typed.
 dose_selection_poster   doi:10.70534/JVQU8233
 
-# --- guidelines, epidemiology, reviews ------------------------------
-# Part 1 of the same review pair as pathophys_treatment. Systematic
-# analysis of the pathophysiology of each prevalent and rare complication
-# of PA and MMA; mitochondrial impairment is the common hypothesis.
+# --- pathophysiology ------------------------------------------------
+# Systematic analysis of the pathophysiology of each prevalent and rare
+# complication of PA and MMA; mitochondrial impairment is the common
+# hypothesis. Part 2 of the pair covers treatment and is not cited here.
 pathophys_complications doi:10.1002/jimd.12129
-guidelines_mma_pa       doi:10.1002/jimd.12370
-epi_meta                doi:10.1186/s13023-018-0987-z
-biomarkers_review       doi:10.1002/jimd.12478
-natural_history_2012    doi:10.1016/j.ymgme.2011.09.022
-grunert55               doi:10.1186/1750-1172-8-6
-trial_challenges        doi:10.1016/j.ymgme.2023.107612
-mayo_nlp                doi:10.1016/j.ymgme.2023.107695
-pathophys_treatment     doi:10.1002/jimd.12128
 
 # --- Saudi newborn screening: three cohorts, three incidences -------
 # 40,965 newborns, Riyadh (King Fahad Medical City). PA 1:10,241. The
@@ -94,6 +85,14 @@ nbs_psmmc               doi:10.15537/smj.2020.7.25147
 # =====================================================================
 #  NOT YET RESOLVED. Do not cite until an identifier is confirmed.
 # =====================================================================
+# Nothing here is currently blocking: every claim in the paper is sourced.
+# The entries below record checks that came back empty, so that the same
+# ground is not covered twice.
+#
+# Nine entries were removed from this file because no claim needed them:
+# guidelines_mma_pa, epi_meta, biomarkers_review, natural_history_2012,
+# grunert55, trial_challenges, mayo_nlp, mrna_moa, pathophys_treatment.
+# A reference comes back when a claim requires it, not the other way round.
 # residual_carboxylase  Claim that residual carboxylation in PCC-deficient
 #                     cells derives from a DISTINCT carboxylase. Source not
 #                     identified. NO LONGER NEEDED: the null-genotype anchor

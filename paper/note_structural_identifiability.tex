@@ -258,23 +258,34 @@ determines a single $\theta_i$.
 \subsection{Comments on the anchors}
 
 \paragraph{Null genotypes are available.} In the Saudi series, the frameshift variant
-\emph{PCCB} c.990dupT (p.E331Xfs) occurs in 7 families and is a null allele. Frameshift and
-nonsense variants subject to nonsense-mediated decay produce no functional protein, so
-$\theta = 0$ holds by construction rather than by assumption.
+\emph{PCCB} c.990dupT (p.E331Xfs) occurs in 7 families and is reported as a null allele.
 
-\paragraph{Residual carboxylation is absorbed correctly.} Older work reports that apparent
-residual propionate carboxylation in PCC-deficient cells derives from a distinct
-carboxylase rather than from a partially functional mutant PCC. Under
-Proposition~\ref{prop:anchor} this is not a confound: any such activity is an alternative
-elimination route and is therefore correctly absorbed into $k_e$, which is exactly the
-quantity the null patients measure.
+\paragraph{The anchor does not depend on why the allele is null.} It is tempting to shore
+up $\theta_j = 0$ with a molecular argument about what happens to the transcript, or to
+worry about reports of residual propionate carboxylation in PCC-deficient cells and where
+that activity comes from. Neither is needed, and the second is not a confound. Under
+Proposition~\ref{prop:anchor} the requirement is not that no propionate is eliminated by
+any route; it is only that whatever else eliminates it is not $\theta\, g(m)$. Any residual
+elimination, of whatever molecular origin, is an alternative route and is absorbed into
+$k_e$, which is exactly the quantity the null patients measure.
 
-\paragraph{Carriers are a weak anchor.} Obligate heterozygous parents have
-$\theta \approx \theta_{\text{normal}}/2$ but, being healthy, sit at very low $m$ where
-$g(m) \approx m/K_m$. Their equation therefore reduces to
-$s \approx m\,(\theta/(2K_m) + k_e)$, which again involves only the degenerate combination.
-Carriers constrain the aggregate coefficient, not the separation. They are not a substitute
-for condition (i).
+\paragraph{Carriers are not an anchor at all.} Obligate heterozygous parents are
+asymptomatic, and it is natural to want to treat them as a known point on the activity
+scale at roughly half of normal capacity. Two things stop this, and the first is decisive.
+
+\emph{Measurement.} There is no assay that places a carrier on the scale. GeneReviews
+states that quantitative plasma amino acids, urine organic acids, the acylcarnitine
+profile and fibroblast enzymatic analyses are all unreliable for the detection of
+heterozygotes. A value that cannot be measured in the individual cannot anchor anything,
+and the half-of-normal figure is an inference from gene dosage rather than an observation.
+
+\emph{Conditioning}, which would still bite if the first were solved. Being healthy,
+carriers occupy a narrow range of $m$, over which total clearance is affine to within assay
+error. Their equation therefore contributes only the slope of that affine fit, which is the
+same degenerate combination every stable patient contributes.
+
+Carriers constrain the aggregate coefficient, not the separation, and they are not a
+substitute for condition (i).
 
 \paragraph{Where the second anchor comes from.} Condition (ii) requires one patient observed
 at two distinct steady states. Candidates present in routine care:
