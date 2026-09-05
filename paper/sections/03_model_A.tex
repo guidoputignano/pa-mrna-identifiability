@@ -49,7 +49,7 @@ $K_m$ cannot be read as the Michaelis constant of PCC.
 
 \begin{figure}[htbp]
 \centering
-\resizebox{0.86\linewidth}{!}{%
+\resizebox{0.90\linewidth}{!}{%
 \begin{tikzpicture}
 \node[mpool] (m) at (0,0) {$m$\\[1pt]\scriptsize\mdseries accumulated\\metabolite};
 \node[mlabel] (in) at (-3.6,0) {$s(t)$};
@@ -135,7 +135,7 @@ This note therefore leaves $m$ as ``the plasma marker'', and the choice open.
 requires only that total clearance be affine over the range a patient's marker visits, and
 that hypothesis is stated in whichever marker is measured. The determinant
 \eqref{eq:det}, the conditioning, and the anchor structure are the same under any of the
-three. What the choice buys and costs is set out where it matters: Model C needs a definite
+three. What the choice buys and costs is set out where it matters. Model C needs a definite
 observable for its separatrix, and Section~7 records the choice itself as a design
 question.
 
@@ -383,6 +383,10 @@ $\bar m$,
 \det M \;=\; g(\bar m)^2\,(m' - m) .
 \label{eq:detgamma}
 \end{equation}
+This $\gamma$ is the intercept of Proposition~\ref{prop:degeneracy} divided by $\theta$:
+comparing with \eqref{eq:intercept}, $a = \theta\gamma$. The two propositions are about the
+same object, the tangent's intercept, one fitted to the total clearance and one to the
+saturation function alone.
 \end{proposition}
 
 The determinant is therefore small for two independent reasons, and it is worth separating
@@ -407,6 +411,7 @@ Proposition~\ref{prop:channel} in numbers, and both stay near $1\%$, which is we
 the analytical and biological variability of the assay.
 
 \subsection{What the accessible input costs}
+\label{sec:instruments}
 
 Proposition~\ref{prop:channel} equalises the two channels informationally. It does not
 equalise them \emph{statistically}, and the difference is the central compromise of this
@@ -424,8 +429,8 @@ protocol is exogenous by construction, which is exactly the property carnitine l
 patient in the accessible cohort receives it, so the property is unavailable.
 \end{description}
 
-The way through is not to treat $u_c$ as exogenous but to isolate the part of its variation
-that is. Three quasi-exogenous instruments are present in routine care:
+The way through is to isolate the part of the variation in $u_c$ that is exogenous, and to
+use only that part. Three quasi-exogenous instruments are present in routine care:
 
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
 \item \textbf{Weight-based dose recalculation following growth.} The dose is a fixed
@@ -445,15 +450,16 @@ an instrument requires.
 
 A third perturbation is present in the same records and acts on neither channel. Cyclical
 intestinal antibiotics suppress the gut-flora contribution to $s$, so they move the load
-rather than a parameter. That is not a weaker position than the two above. Two steady
+rather than a parameter. It carries the same information as the two above. Two steady
 states at loads $s$ and $s'$ give $s = \theta g(m) + k_e m$ and
 $s' = \theta g(m') + k_e m'$, which is the coefficient matrix $M$ of \eqref{eq:system}
 again, so a load change carries exactly the determinant \eqref{eq:det} that a channel
 perturbation does. It is also the second anchor of Proposition~\ref{prop:anchor} seen from
 here, since one patient observed at two distinct loads is precisely this case. The
-asymmetry lies elsewhere: the load route needs both $s$ and $s'$ known, where the channel
-route needs $s$ once together with the increment, and how much that costs is the first of
-the open questions in Section~7. Courses given on a fixed schedule are quasi-exogenous;
+The asymmetry lies elsewhere. The load route needs both $s$ and $s'$ known, where the
+channel route needs $s$ once together with the increment, and how much that costs is part
+of the question of Section~\ref{sec:confounding}, the substrate load being only partially
+recorded. Courses given on a fixed schedule are quasi-exogenous;
 courses started because a patient is deteriorating are confounded by indication exactly as
 carnitine is. None is randomised, and the independence is an assumption to be
 argued from the records in each case rather than assumed once.

@@ -107,7 +107,10 @@ admissions reliably coded; only a minority of all events lead to admission \\
 \centering
 \footnotesize
 \caption{The three candidate models. They are alternative hypotheses about the
-non-enzymatic clearance term, not stages of a development.}
+non-enzymatic clearance term, not stages of a development. $\thc$, the residual capacity
+below which a tolerable steady state cannot be held, is used here ahead of its definition:
+Models A and B define it by convention at \eqref{eq:thcrit}, and Model C intrinsically at
+\eqref{eq:thcrit_int}.}
 \label{tab:models}
 \begin{tabular}{@{}p{0.035\textwidth} p{0.235\textwidth} p{0.175\textwidth} p{0.185\textwidth} p{0.145\textwidth} p{0.13\textwidth}@{}}
 \toprule
@@ -129,13 +132,15 @@ both terms share a functional form, weakening separability &
 required for $\thc$; not verified \\
 \addlinespace
 \textbf{C} &
-$\theta g(m) + k\,c(t)\,m$ \newline with $c$ depleted by elimination &
+$\theta g(m) + k\,c(t)\,m/(K_c+m)$ \newline with $c$ consumed by conjugation and its
+replenishment impaired as $m$ rises &
 two, stable and unstable, colliding at a saddle-node &
 Why does recovery require active reduction of the load below baseline, rather than mere
 removal of the trigger? &
-adds an unmeasured state $c$ and an unknown $R$ &
-hypothesis; discriminating test available in records. The only one of the three in which
-$\thc$ is well posed \\
+adds an unmeasured state $c$ and two assumptions, the impaired replenishment $R(m)$ and the
+loss rate $\delta$ &
+hypothesis; a discriminating observable exists and is tested at group level only. The only
+one of the three in which $\thc$ is well posed \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -155,11 +160,9 @@ Model B is what is required to say anything about the loss of a tolerable steady
 and it pays for that in identifiability, since both channels acquire the same functional
 form.
 
-Model C is usually introduced as the most biologically faithful of the three, which
-undersells it. Its distinguishing property is that it is \textbf{the only one of the three
-in which $\thc$ is well posed}. In A and B the critical capacity must be defined by
-convention through $\bar m$; in C it is derived, as the point at which the attractor and
-the separatrix merge at a saddle-node. See Proposition~\ref{prop:intrinsic}.
+Model C is present for its \textbf{well-posedness}, not for its biological fidelity. It is
+the only one of the three in which $\thc$ can be defined without a clinical convention,
+and Section~\ref{sec:intrinsic} makes that precise.
 \end{remark}
 
 \vspace{0.5em}

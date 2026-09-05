@@ -125,12 +125,32 @@ def fetch_pmid(pmid):
         "year": year,
         "volume": rec.get("volume", ""),
         "number": rec.get("issue", ""),
-        "pages": rec.get("pages", ""),
+        "pages": expand_pages(rec.get("pages", "")),
         "doi": doi,
         "pmid": str(pmid),
     }
     body = ",\n".join(f"  {k} = {{{v}}}" for k, v in fields.items() if v)
     return "@article{PLACEHOLDER,\n" + body + "\n}"
+
+
+def expand_pages(pages):
+    """
+    NCBI abbreviates the closing page against the opening one: "60-5" means
+    60-65 and "27719-27" means 27719-27727. biblatex has no way to know that,
+    so it printed "pp. 60-5" in the reference list, which is wrong rather than
+    merely terse. Expand the closing number by borrowing the missing leading
+    digits from the opening one, and leave anything unrecognised alone.
+    """
+    m = re.fullmatch(r"\s*(\d+)\s*-\s*(\d+)\s*", pages or "")
+    if not m:
+        return (pages or "").strip()
+    start, end = m.group(1), m.group(2)
+    if len(end) < len(start):
+        end = start[: len(start) - len(end)] + end
+        # a borrowed prefix that runs backwards means the guess was wrong
+        if int(end) < int(start):
+            return f"{start}--{m.group(2)}"
+    return f"{start}--{end}"
 
 
 def rekey(bibtex, citekey):

@@ -166,11 +166,33 @@ def rhs_B(t, y, p: ParamsB, s):
     return [s(t) - clearance_B(m, p)]
 
 
-def rhs_C(t, y, p: ParamsC, s):
+def rhs_C(t, y, p: ParamsC, s, k=1.0, delta=0.35):
+    """
+    The two-state system of the paper, Section 5.1.
+
+    Kept in step with alt_flux_C, which is its quasi-steady reduction. The
+    earlier version of this function read p.k and p.R, neither of which
+    ParamsC defines, so it raised on any call; nothing called it and no test
+    covered it, and it still encoded the constant-replenishment model that
+    Section 5.1 shows returns a ceiling rather than a decline.
+
+    p.R0 and p.Kc are the REDUCED constants. The structural ones this system
+    needs are recovered from them through rho = delta / k, exactly inverting
+    the reduction:
+
+        R0_struct = p.R0 * (1 + rho),   Kc_struct = p.Kc * (1 + rho) / rho
+
+    so that setting c-dot = 0 here returns alt_flux_C(m) for every m. See
+    tests/test_model_C.py, which checks that against the reduction directly.
+    """
     m, c = y
-    flux = p.k * c * m
-    return [s(t) - p.theta * g(m, p.Km) - flux,
-            p.R - flux]
+    rho = delta / k
+    R0_struct = p.R0 * (1.0 + rho)
+    Kc_struct = p.Kc * (1.0 + rho) / rho
+    conj = k * c * m / (Kc_struct + m)
+    R = R0_struct / (1.0 + m / p.Mi)
+    return [s(t) - p.theta * g(m, p.Km) - conj,
+            R - conj - delta * c]
 
 
 # ---------------------------------------------------------------- equilibria

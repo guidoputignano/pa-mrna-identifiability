@@ -71,14 +71,27 @@
 }
 % A miniature of a channel's shape, drawn beside its box. `lin' for a
 % straight line, `sat' for a saturating curve.
-\newcommand{\channelglyph}[3]{%  #1 = position, #2 = colour, #3 = lin|sat
+% #3 = l linear | s saturating | n rising then falling. Model C's alternative
+% channel is the third shape, and it is the whole difference between C and B.
+\newcommand{\channelglyph}[3]{%
   \begin{scope}[shift={#1}, scale=0.62]
     \draw[gray!55, line width=0.3pt] (0,0) -- (1.15,0) (0,0) -- (0,0.8);
     \if#3l \draw[#2, line width=1.1pt] (0,0) -- (1.05,0.72);
+    \else\if#3n \draw[#2, line width=1.1pt]
+              plot[smooth] coordinates {(0,0) (0.24,0.46) (0.52,0.64) (0.80,0.48) (1.05,0.20)};
     \else   \draw[#2, line width=1.1pt]
               plot[smooth] coordinates {(0,0) (0.26,0.36) (0.58,0.58) (1.05,0.70)};
-    \fi
+    \fi\fi
   \end{scope}}
+
+% Float placement. At the defaults a figure taking half the text block plus a
+% long caption is refused a shared page and sent to a float page of its own,
+% which is what happened to the Model C diagram: it landed alone with two
+% thirds of the page blank, three pages from the section that states it.
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.7}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.85}
 
 \newcommand{\thc}{\theta_{\mathrm{crit}}}
 \newcommand{\spk}{s_{\mathrm{peak}}}

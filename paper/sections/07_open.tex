@@ -29,9 +29,9 @@ The construction is partly pre-empted. The natural history study already fits a 
 exactly this
 shape: a generalised additive model on 3-HP concentration, with a smooth term in the days
 since the previous event and a participant-level random effect~\cite{natural_history}. % C28
-What is proposed here is not that machinery. It is the substitution of a mechanistic
-$\theta$, with $A_{\mathrm{crit}}(\theta)$ supplied by the model, for a measured biomarker
-as the covariate carrying the risk. The statistical apparatus already exists; what it is
+What is proposed here is a substitution within that machinery, of a mechanistic $\theta$
+with $A_{\mathrm{crit}}(\theta)$ supplied by the model, for a measured biomarker as the
+covariate carrying the risk. The statistical apparatus already exists; what it is
 regressed on is the open question.
 
 Four things follow, and together they are the reason this is probably the single most
@@ -98,13 +98,18 @@ Violation is not an off-specification excursion but a hospitalisation with perma
 neurological cost, so the appropriate formulation is a chance constraint rather than a
 quadratic objective.
 
-\paragraph{Confounding of the accessible input.} The perturbation actually present in the
+\paragraph{Confounding of the accessible input.}
+\label{sec:confounding}
+The perturbation actually present in the
 records is carnitine, and it is endogenous: the dose responds to the patient's state. The
 design and identification questions above are therefore posed on an input that no protocol
 fixed in advance. Whether the quasi-exogenous variation listed in
-Section~\ref{sec:selective}, namely weight-based recalculation after growth, supply
+Section~\ref{sec:instruments}, namely weight-based recalculation after growth, supply
 interruptions and changes of formulation, is sufficient to support the argument is a
 question about the records and not about the model, and it is answered patient by patient.
+The load route is asked the same question and costs more: a change of load carries the same
+determinant as a channel perturbation, and it needs both loads known where the channel
+route needs one.
 
 \paragraph{Reduction.} A model reduction preserving the input--output response to periodic
 impulsive inputs does not obviously yield a reduced model whose parameters are identifiable

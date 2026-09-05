@@ -19,6 +19,7 @@ import pytest
 
 from common.models import (ParamsA, ParamsB, ParamsC, g, h,
                            clearance_A, clearance_B, clearance_C_quasistatic,
+                           alt_flux_C, rhs_C,
                            steady_state, equilibria_nonmonotone,
                            sensitivity_A, condition_number, theta_crit)
 
@@ -216,3 +217,56 @@ def test_theta_crit_depends_on_unmeasured_quantities():
     t1 = theta_crit(s_peak=500.0, m_bar=40.0, p=p)
     t2 = theta_crit(s_peak=500.0, m_bar=60.0, p=p)
     assert t1 != t2, "theta_crit must depend on the assumed tolerable level"
+
+
+# ------------------------------------------------- the two-state system
+def test_rhs_C_reduces_to_alt_flux_C():
+    """
+    The paper states Model C as two states and then works with the
+    quasi-steady reduction alpha(m). The two must agree, or Section 5's
+    propositions are about a curve the stated model does not produce, which
+    is exactly the defect this test exists to prevent reopening.
+
+    Setting c-dot = 0 in rhs_C and reading off the conjugation flux has to
+    return alt_flux_C(m) at every m.
+    """
+    from scipy.optimize import brentq
+
+    p = ParamsC()
+    k, delta = 1.0, 0.35
+    rho = delta / k
+    Kc_struct = p.Kc * (1.0 + rho) / rho
+
+    for m in (0.5, 5.0, 50.0, 300.0, 1200.0, 5000.0, 20000.0):
+        c = brentq(lambda c: rhs_C(0.0, [m, c], p, lambda t: 0.0, k, delta)[1],
+                   1e-12, 1e12)
+        flux = k * c * m / (Kc_struct + m)
+        assert flux == pytest.approx(alt_flux_C(m, p), rel=1e-10), m
+
+
+def test_rhs_C_is_callable_with_ParamsC():
+    """
+    It once read p.k and p.R, which ParamsC does not define, so it raised on
+    any call. Nothing called it and nothing caught it.
+    """
+    out = rhs_C(0.0, [100.0, 50.0], ParamsC(), lambda t: 600.0)
+    assert len(out) == 2 and all(np.isfinite(out))
+
+
+def test_constant_replenishment_gives_a_ceiling_not_a_decline():
+    """
+    Section 5.1's first claim: with R constant, the quasi-steady flux is R at
+    every m, so the alternative channel saturates and no second equilibrium
+    appears. This is why the model carries R(m) rather than R.
+    """
+    p = ParamsC()
+    m = np.array([1.0, 10.0, 100.0, 1000.0, 1e5, 1e7])
+    # constant replenishment is the Mi -> infinity limit of R(m)
+    flat = replace(p, Mi=1e12)
+    flux = alt_flux_C(m, flat)
+    assert np.all(np.diff(flux) > 0), "with constant R the flux must be increasing"
+    assert np.all(flux < p.R0), "and must stay below the ceiling"
+    assert flux[-1] == pytest.approx(p.R0, rel=1e-4), "which it approaches"
+    # while the model as stated turns over
+    real = alt_flux_C(m, p)
+    assert real[-1] < real.max(), "with R(m) the flux must come back down"

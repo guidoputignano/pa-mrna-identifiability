@@ -87,9 +87,9 @@ Section~\ref{sec:intrinsic} onwards is carried out on the reduced clearance
 $C(m;\theta) = \theta g(m) + \alpha(m)$, the carnitine state being fast relative to the
 metabolite.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
 \centering
-\resizebox{0.94\linewidth}{!}{%
+\resizebox{0.90\linewidth}{!}{%
 \begin{tikzpicture}
 \node[mpool] (m) at (0,0) {$m$\\[1pt]\scriptsize\mdseries accumulated\\metabolite};
 \node[mlabel] (in) at (-3.6,0) {$s(t)$};
@@ -111,6 +111,7 @@ metabolite.
 
 % the shared term: ONE node draining both pools
 \node[malt] (kcm) at (2.5,-2.7) {$k\, c\, m/(K_c+m)$\\[1pt]\scriptsize\mdseries consumes one $c$\\per $m$ removed};
+\channelglyph{(1.15,-4.15)}{blue!55!black}{n}
 \draw[mar, blue!55!black] (m.south east) .. controls +(0.7,-0.9) .. (kcm.north west);
 \draw[mar, blue!55!black] (c.south west) .. controls +(-0.7,-0.9) .. (kcm.north east);
 \node[msmall] (o2) at (2.5,-5.1) {eliminated together,\\as propionylcarnitine};
@@ -137,7 +138,8 @@ one-to-one stoichiometry is the mechanism: each molecule of propionate that leav
 molecule of carnitine with it. Carnitine has a second exit that propionate does not, drawn
 on the right, and without it the quasi-steady flux would not vanish with the metabolite.
 Replenishment $R(m)$ refills $c$, and the blunt-ended arrow is the feedback that matters,
-since $R$ falls as $m$ rises. Without that feedback the alternative channel would merely
+since $R$ falls as $m$ rises. The shape glyph under the conjugation channel is the third of
+the three: linear in Model A, saturating in Model B, rising and then falling here. Without that feedback the alternative channel would merely
 saturate; with it, effective clearance declines with $m$, which is what produces the second
 equilibrium.}
 \label{fig:blockC}
@@ -173,8 +175,9 @@ withdrawal, and haemofiltration.
 \begin{remark}[Why the question is phrased this way]
 The obvious phrasing, ``why does a crisis not resolve spontaneously'', is not what the
 model says, and Figure~\ref{fig:C2} contradicts it: lowering the load \emph{does} recover
-the patient, because it raises the separatrix. The content of Model C is not that recovery
-is impossible. It is that recovery is not obtained by returning to the status quo ante. Removal of the trigger
+the patient, because it raises the separatrix. What Model C says is that recovery has to be
+bought by an active intervention rather than by returning to the status quo ante. Removal of
+the trigger
 restores the vector field that the patient has already escaped, so the intervention has to
 overshoot, and the amount of overshoot is set by how far above the separatrix the patient
 sits. Models A and B predict no such requirement: in both, returning $s$ to baseline
@@ -224,13 +227,15 @@ coincide at the maximum, where $C' = 0$, which is the saddle-node condition.
 Two features of this definition are worth stating separately.
 
 \begin{itemize}[leftmargin=*, itemsep=3pt]
-\item \textbf{$\bar m$ has disappeared.} No tolerability convention enters
+\item \label{item:wellposed}\textbf{$\bar m$ has disappeared.} No tolerability convention enters
 \eqref{eq:thcrit_int}. The threshold is the value of $\theta$ at which the model's own
 equilibrium structure changes, and it would be the same threshold under any convention
 about which metabolite levels a clinician is willing to accept. In Models A and B no such
 definition is available, because neither has a second equilibrium to collide with: in A the
 equilibrium is never lost, and in B it escapes to infinity without annihilating. This is
-the sense in which Model C is the only one of the three in which $\thc$ is well posed.
+the sense in which Model C is the only one of the three in which $\thc$ is well posed, and
+it is the reason the model is in the note at all. Its biological fidelity is the usual
+reason given and the weaker one.
 \item \textbf{The margin is the clinically decisive object.} Above the threshold, what
 matters is how far apart the two equilibria are. The
 distance from the attractor to the separatrix is how far the patient can be pushed before
@@ -258,13 +263,15 @@ and only it removes $\spk$.
 \label{sec:notworking}
 
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
-\item \textbf{Unverified.} Whether depletion is quantitatively strong enough to render
-      clearance decreasing, rather than merely saturating, has not been established. The
-      test is direct and requires no new experiment, free carnitine and the
-      acylcarnitine/free-carnitine ratio being measured routinely. What is on record is a
-      fall at group level (Section~\ref{sec:discriminant}); whether it collapses within a
-      patient, relative to that patient's own baseline, and by enough to turn clearance
-      downward, is the part that is open.
+\item \textbf{Unverified.} This is the assumption named in
+      Section~\ref{sec:model_C_added}, stated as a question about data. Everything here
+      turns on replenishment being impaired enough, as the metabolite accumulates, to
+      render clearance decreasing rather than merely saturating. The test is direct and
+      requires no new experiment, free carnitine and the acylcarnitine/free-carnitine ratio
+      being measured routinely. What is on record is a fall at group level
+      (Section~\ref{sec:discriminant}); whether it collapses within a patient, relative to
+      that patient's own baseline, and by enough to turn clearance downward, is the part
+      that is open.
 \item \textbf{Identifiability.} $k_e$ is replaced by the product $k c(t)$ with $c$ a further
       unmeasured state and $R$ a further unknown. This worsens an already unfavourable
       parameter-to-measurement ratio.
