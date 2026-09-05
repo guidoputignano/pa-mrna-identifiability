@@ -631,7 +631,11 @@ and $a$ is fitted. So
 \label{eq:relerr}
 \end{equation}
 every term of which is observable. Remark~\ref{rem:fibre} leaves $\theta$ unknown to a
-factor of $169$; it leaves its \emph{relative} precision known.
+factor of $169$; it leaves its \emph{relative} precision known. The two are different
+things and they multiply. \eqref{eq:relerr} says how tightly the data pin $\theta$ down
+\emph{relative to wherever it sits}, and Remark~\ref{rem:fibre} says the note does not know
+where that is. Neither closes the other, and the fibre remains the only unquantified
+uncertainty in the location.
 
 \paragraph{What $\sigma$ and $n$ are.} The ordinate of the fit is $C = s - \dot m$, and
 neither term is measured. At the one documented schedule, six-monthly visits
@@ -644,41 +648,74 @@ Proposition~\ref{prop:degeneracy} immediate. And $n$ counts \emph{instrument eve
 quasi-exogenous carnitine steps of Section~\ref{sec:instruments}, not clinic visits, which
 is a much smaller number.
 
-\paragraph{The numbers.} At $\sigma = 5$ metabolite units and $n = 6$ such events,
-\eqref{eq:relerr} gives a relative error of $285\%$ over a $10\%$ band and $41\%$ over a
-$70\%$ one. Twenty per cent needs $\Delta = 143\%$ of $\bar m$. Condition
-\eqref{eq:affine} is checkable on the same records, and asks the same of them: a quadratic
-fit over a band of full width $\Delta$ has
-$\operatorname{sd}(\hat c_2) = \sqrt{180}\,\sigma/(\sqrt{n}\Delta^2)$ in the uniform-design
-limit, against a true $|c_2| = \theta K_m/(K_m+\bar m)^3$, so resolving the curvature at two
-standard errors needs $\Delta = 156\%$ of $\bar m$. \textbf{The instruments of
-Section~\ref{sec:instruments} reach $70\%$} (Figure~\ref{fig:A3}), about half of either
-requirement. That is the answer to ``can $\theta$ be identified from clinical data'', and it
-was previously carried only by a figure caption.
+\paragraph{The numbers, as a function of what the load is known to.} Nothing in this note
+bounds $\sigma$, so nothing below is quoted at a point. Condition \eqref{eq:affine} is
+checkable on the same records and asks the same of them: a quadratic fit over a band of full
+width $\Delta$ has $\operatorname{sd}(\hat c_2) = \sqrt{180}\,\sigma/(\sqrt{n}\Delta^2)$ in
+the uniform-design limit, against a true $|c_2| = \theta K_m/(K_m+\bar m)^3$. Taking $n = 6$
+instrument events, and writing $\sigma$ as a fraction of the recorded load:
 
-\begin{remark}[The noise is in the abscissa, and it biases the margin downward]
+\begin{center}
+\begin{tabular}{@{}rrrr@{}}
+\toprule
+$\sigma$ & rel.\ error of $\hat\theta$ & $\Delta$ for $20\%$ & $\Delta$ for curvature \\
+(\% of load) & at a $10\%$ band & precision & at $2\sigma$ \\
+\midrule
+ 2\% &  368\% &  184\% & 177\% \\
+ 5\% &  920\% &  460\% & 280\% \\
+10\% & 1841\% &  920\% & 396\% \\
+20\% & 3682\% & 1841\% & 560\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{The instruments of Section~\ref{sec:instruments} reach $70\%$}
+(Figure~\ref{fig:A3}), short of every entry in either right-hand column, and short by a
+factor that grows from about $2.5$ to about $26$ as the load becomes less well recorded.
+That is the answer to ``can $\theta$ be identified from clinical data''. It was previously
+carried only by a figure caption, and it holds conditionally: only a load known to better
+than about $1.5\%$ of baseline would bring either requirement within a factor of two of what
+the records supply, and the note says throughout that $s$ is partially recorded.
+
+\begin{remark}[The noise is in the abscissa, and the fit announces its own failure]
 \label{rem:eiv}
 At steady state the recorded load is the ordinate and the assayed metabolite the abscissa,
 so \eqref{eq:varfit} is the wrong variance: the errors are in $x$. Classical attenuation
-pulls $\hat b$ towards zero and pushes $\hat a$ up, which alone would inflate $\hat\theta$
-and make a patient look safer. It does not. $\hat k_e = \hat b - \hat a K_m/\bar m^2$
-collapses as $\hat a$ inflates, $\thc^{\mathrm{A}}$ rises with it, and the margin is
-\emph{under}estimated. Simulated at the illustrative values, $\hat\theta$ is inflated
-fourfold at $\sigma_m/\Delta = 20\%$ while $\hat\mu$ reads $-376$ against a true $+2006$:
-the sign flips, and a safe patient is estimated as unsafe. The error is conservative, and it
-is a bias rather than imprecision, worst in exactly the narrow band the stable patient
-occupies.
+pulls $\hat b$ towards zero and pushes $\hat a$ up, which alone would inflate $\hat\theta$.
+What that does to the margin depends on whether the fit is constrained. Unconstrained,
+$\hat k_e = \hat b - \hat a K_m/\bar m^2$ goes negative, $\thc^{\mathrm{A}}$ rises, and
+$\hat\mu$ appears to change sign. That reading is an artefact: a negative $k_e$ is not a
+parameter set. Imposing $k_e \ge 0$ leaves the margin biased downward by about $7\%$ at
+$\sigma_m/\Delta = 20\%$ and no more, which is small beside everything else here.
+
+What survives is better than the bias. At $\sigma_m/\Delta = 20\%$, $96\%$ of unconstrained
+fits return $\hat k_e < 0$, and that is checkable from the fit alone, with no knowledge of
+the truth. The design does not merely mislead, it reports that it has failed. A companion
+diagnostic is available to the analyst though not to the clinic: inflating $\hat a$ shrinks
+the fibre \eqref{eq:fibre0} from above, and past about $1.6$ times the true $a$ the fibre
+excludes the true $\theta$ altogether.
 \end{remark}
 
-\begin{remark}[The anchor is well conditioned; the band is what binds]
+\begin{remark}[What the anchor costs is a ratio, and it inverts for the severe patient]
 \label{rem:anchor_var}
 Proposition~\ref{prop:anchor} is demonstrated noise-free, which is the standard this section
-spends its length arguing against. Giving it a variance is favourable. A null patient has
-$\theta_j = 0$, so $s_j = k_e m_j$ and a relative error in the recorded load enters
-$\hat k_e$ one for one. Through $K_m = (b - k_e)\bar m^2/a$ and \eqref{eq:fibre0} it reaches
-$\theta$ \emph{attenuated}: $20\%$ in the load gives $4\%$ in $K_m$ and $7\%$ in $\theta$,
-a factor of about a third. The anchors do not relocate the conditioning problem. What
-remains binding is the band that has to deliver $(a,b)$ in the first place.
+spends its length arguing against. A null patient has $\theta_j = 0$, so $s_j = k_e m_j$ and
+a relative error in the recorded load enters $\hat k_e$ one for one. Through
+$K_m = (b - k_e)\bar m^2/a$ and \eqref{eq:fibre0} it reaches
+\begin{equation}
+\left|\frac{\mathrm{d}\ln K_m}{\mathrm{d}\ln k_e}\right|
+= \frac{k_e (K_m + \bar m)^2}{\theta\,K_m},
+\qquad
+\left|\frac{\mathrm{d}\ln \theta}{\mathrm{d}\ln k_e}\right|
+= \frac{2 k_e (K_m + \bar m)}{\theta}.
+\label{eq:anchorfac}
+\end{equation}
+Both scale as $1/\theta$, so this is a ratio and not a constant, the same shape as the
+load-error amplification of Figure~\ref{fig:A2}. At $\theta = 3000$ they are $0.20$ and
+$0.37$ and the anchor attenuates; they pass one at $\theta = k_e(K_m+\bar m)^2/K_m = 605$
+and $\theta = 2k_e(K_m+\bar m) = 1100$; at Model C's own $\theta = 300$ they are $2.0$ and
+$3.7$ and the anchor \emph{amplifies}. It is therefore worst for the severe patients the
+note is about, and the favourable figure belongs to the mild end of the range.
 \end{remark}
 
 \subsection{Known defect}

@@ -578,6 +578,96 @@ def delta_for_curvature(sigma, n, z=2.0, p: ParamsA = None, m_bar=M_OP):
     return np.sqrt(z * CURVATURE_CONST * sigma / (np.sqrt(n) * c2))
 
 
+def sigma_from_load(frac, p: ParamsA = None, m_bar=M_OP):
+    """
+    sigma in flux units, from a relative error in the recorded substrate load.
+
+    The ordinate of the fit is the load, so sigma belongs on that scale. An
+    earlier version passed ASSAY_CV, documented as a PERCENTAGE, as if it were
+    absolute flux units: 5 units against a baseline of 322.7 is a load known to
+    1.55%, which the note says throughout is not available. Nothing below
+    quotes a single sigma.
+    """
+    return frac * baseline_load(p, m_bar)
+
+
+# Relative errors in the recorded load worth reporting the criteria over. The
+# note says s is "partially known" and never bounds it, so the conclusion is
+# presented as a function of this rather than at a point.
+SIGMA_FRACS = (0.02, 0.05, 0.10, 0.20)
+
+
+def anchor_factor(theta=None, ke=None, Km=None, m_bar=M_OP):
+    """
+    How a relative error in the null patient's load reaches Km and theta.
+
+    |dln Km / dln ke|    = ke (Km + m_bar)^2 / (theta Km)
+    |dln theta / dln ke| = 2 ke (Km + m_bar) / theta
+
+    Both scale as 1/theta, so the anchor ATTENUATES for a mild patient and
+    AMPLIFIES for a severe one. The crossings are at theta = ke(Km+m_bar)^2/Km
+    and theta = 2 ke (Km + m_bar). This is the same shape as the load-error
+    amplification of Figure 6: a ratio, not a constant.
+    """
+    theta = P.theta if theta is None else theta
+    ke = P.ke if ke is None else ke
+    Km = P.Km if Km is None else Km
+    return (ke * (Km + m_bar) ** 2 / (theta * Km),
+            2.0 * ke * (Km + m_bar) / theta)
+
+
+def anchor_crossover(ke=None, Km=None, m_bar=M_OP):
+    """The theta at which each anchor factor passes 1."""
+    ke = P.ke if ke is None else ke
+    Km = P.Km if Km is None else Km
+    return ke * (Km + m_bar) ** 2 / Km, 2.0 * ke * (Km + m_bar)
+
+
+def eiv_fit(sigma_m, Delta, n=12, reps=1500, seed=0, p: ParamsA = None,
+            m_bar=M_OP, m_tol=M_TOL, constrain=True):
+    """
+    Errors in the abscissa, with admissibility imposed or not.
+
+    Unconstrained least squares drives ke_hat = b_hat - a_hat*Km/m_bar^2
+    negative, which is not a physical parameter set. An earlier version read a
+    sign flip in the margin off such fits; it is an artefact. What survives is
+    that the fit ANNOUNCES its own failure: ke_hat < 0 is checkable without
+    knowing the truth.
+
+    Returns a dict of means, plus the fraction of fits that are inadmissible
+    and the fraction whose implied fibre excludes the true theta.
+    """
+    from scipy.optimize import lsq_linear
+    p = P if p is None else p
+    rng = np.random.default_rng(seed)
+    sp = s_peak_default(p, m_bar)
+    mt = np.linspace(m_bar - Delta / 2, m_bar + Delta / 2, n)
+    s = clearance_A(mt, p)
+    mu, th_r, neg, out = [], [], [], []
+    for _ in range(reps):
+        mo = mt + rng.normal(0.0, sigma_m, n)
+        X = np.vstack([np.ones(n), mo]).T
+        ah, bh = np.linalg.lstsq(X, s, rcond=None)[0]
+        ke = bh - ah * p.Km / m_bar ** 2
+        neg.append(ke < 0.0)
+        hi = (ah + bh * m_bar) ** 2 / ah if ah > 0 else np.inf
+        out.append(p.theta > hi or p.theta < ah)
+        if constrain:
+            # b = ke + a*Km/m_bar^2 with ke >= 0, so the design matrix is
+            # rebuilt in (a, ke) and ke is bounded below at zero.
+            Z = np.vstack([np.ones(n) + mo * p.Km / m_bar ** 2, mo]).T
+            ah, ke = lsq_linear(Z, s, bounds=([-np.inf, 0.0],
+                                              [np.inf, np.inf])).x
+        th = ah / g(m_bar, p.Km) ** 2
+        th_r.append(th / p.theta)
+        mu.append(margin(th, ke, m_tol=m_tol, s_peak=sp, Km=p.Km))
+    return dict(mu=float(np.mean(mu)),
+                mu_true=margin(p.theta, p.ke, m_tol=m_tol, s_peak=sp, Km=p.Km),
+                theta_ratio=float(np.mean(th_r)),
+                frac_inadmissible=float(np.mean(neg)),
+                frac_theta_outside=float(np.mean(out)))
+
+
 def eiv_margin_bias(sigma_m, Delta, n=12, reps=2000, seed=0, p: ParamsA = None,
                     m_bar=M_OP, m_tol=M_TOL):
     """
@@ -630,84 +720,102 @@ def anchor_propagation(rel_s, reps=20000, seed=1, a=None, b=None, m_bar=M_OP):
 def fig_design():
     """What the design would have to deliver, and what it does deliver."""
     a0, b0 = fit_ab(P)
-    sigma, n_ss = ASSAY_CV, 6.0     # assay sd in metabolite units, and the
-                                    # number of quasi-exogenous events
-    fig, axg = plt.subplots(2, 2, figsize=figsize(1.0, 0.76))
+    n_ss = 6.0                      # quasi-exogenous events, not clinic visits
+    fig, axg = plt.subplots(2, 2, figsize=figsize(1.0, 0.78))
     ax = axg.ravel()
 
-    # (a) equation (7), finally evaluated
-    fr = np.logspace(-1.3, 0.6, 300)
-    rel = np.array([100 * rel_err_theta(sigma, n_ss, f * M_OP) for f in fr])
-    ax[0].loglog(100 * fr, rel, color=GREEN, lw=2.0)
+    # (a) equation (7), evaluated as a FAMILY over the load error, since the
+    #     note never bounds sigma and a single curve hid that.
+    fr = np.logspace(-1.3, 0.9, 300)
+    cols = [GREY, GREEN, AMBER, RED]
+    for sf, col in zip(SIGMA_FRACS, cols):
+        sg = sigma_from_load(sf)
+        ax[0].loglog(100 * fr, [100 * rel_err_theta(sg, n_ss, f * M_OP) for f in fr],
+                     color=col, lw=1.7, label=f"{100 * sf:.0f}% of load")
     ax[0].axhline(20.0, color=RED, ls="--", lw=1.0)
-    d20 = delta_for_precision(0.20, sigma, n_ss)
-    ax[0].axvline(100 * d20 / M_OP, color=RED, ls=":", lw=1.0)
     ax[0].axvspan(100 * fr[0], 70.0, color=BLUE, alpha=0.08)
     corner(ax[0], "shaded: what the\ninstruments reach", "lower left",
            color=BLUE, fontsize=7)
-    over_x(ax[0], 100 * d20 / M_OP, "  20% needs this", frac=0.94,
-           color=RED, fontsize=7)
     ax[0].set_xlabel(r"band width $\Delta$  [% of $\bar m$]")
     ax[0].set_ylabel(r"rel. error of $\hat\theta$  [%]")
-    ax[0].set_title("(7) evaluated: "
-                    f"{100 * rel_err_theta(sigma, n_ss, 0.10 * M_OP):.0f}%"
-                    " at a 10% band", fontsize=8)
+    ax[0].set_title(r"(7) evaluated, against $\sigma$", fontsize=8)
+    ax[0].legend(loc="upper right", fontsize=6, title=r"$\sigma$ as", title_fontsize=6)
 
-    # (b) the band that makes condition (3) checkable
-    sigs = np.linspace(0.5, 20.0, 200)
+    # (b) the band that makes condition (3) checkable, same family
+    sfr = np.linspace(0.005, 0.25, 200)
     for nn, col, ls in [(3, GREY, ":"), (6, GREEN, "-"), (20, BLUE, "--")]:
-        ax[1].plot(sigs, [100 * delta_for_curvature(s, nn) / M_OP for s in sigs],
-                   color=col, ls=ls, lw=1.7, label=f"$n = {nn}$")
+        ax[1].plot(100 * sfr,
+                   [100 * delta_for_curvature(sigma_from_load(x), nn) / M_OP
+                    for x in sfr], color=col, ls=ls, lw=1.7, label=f"$n = {nn}$")
     ax[1].axhline(70.0, color=BLUE, alpha=0.6, lw=1.2)
     corner(ax[1], "the instruments reach 70%", "lower right", color=BLUE,
            fontsize=7)
-    ax[1].axvline(ASSAY_CV, color=GREY, ls=":", lw=1.0)
-    ax[1].set_xlabel(r"$\sigma$  [metabolite units]")
+    ax[1].set_xlabel(r"$\sigma$  [% of the recorded load]")
     ax[1].set_ylabel(r"$\Delta$ to resolve curvature  [% of $\bar m$]")
     ax[1].set_title("condition (3) is checkable\nonly above this", fontsize=8)
     ax[1].legend(loc="upper left", fontsize=6.5)
 
-    # (c) errors in the abscissa bias the margin DOWNWARD
-    ratios = np.linspace(0.02, 0.6, 22)
+    # (c) the abscissa-noise fit announces its own failure
+    ratios = np.linspace(0.02, 0.5, 18)
     D = 0.5 * M_OP
-    got = [eiv_margin_bias(r * D, D, reps=600, seed=7) for r in ratios]
-    mu_h = np.array([q[0] for q in got])
-    mu_t = got[0][1]
-    ax[2].plot(100 * ratios, mu_h, color=RED, lw=2.0,
-               label=r"$\hat\mu$, abscissa noise")
-    ax[2].axhline(mu_t, color=GREEN, ls="--", lw=1.5, label=r"true $\mu$")
+    free = [eiv_fit(r * D, D, reps=400, seed=7, constrain=False) for r in ratios]
+    cons = [eiv_fit(r * D, D, reps=400, seed=7, constrain=True) for r in ratios]
+    ax[2].plot(100 * ratios, [q["mu"] for q in free], color=RED, ls=":", lw=1.6,
+               label=r"$\hat\mu$, fit unconstrained")
+    ax[2].plot(100 * ratios, [q["mu"] for q in cons], color=RED, lw=2.0,
+               label=r"$\hat\mu$, $k_e \geq 0$ imposed")
+    ax[2].axhline(cons[0]["mu_true"], color=GREEN, ls="--", lw=1.5,
+                  label=r"true $\mu$")
     ax[2].axhline(0.0, color=GREY, lw=0.8)
+    ax2 = ax[2].twinx()
+    ax2.plot(100 * ratios, [100 * q["frac_inadmissible"] for q in free],
+             color=MUTED, lw=1.2)
+    ax2.set_ylabel(r"fits with $\hat k_e < 0$  [%]", color=MUTED, fontsize=7)
+    ax2.tick_params(axis="y", colors=MUTED, labelsize=7)
     ax[2].set_xlabel(r"$\sigma_m / \Delta$  [%]")
     ax[2].set_ylabel(r"estimated margin $\hat\mu$")
-    ax[2].set_title("abscissa noise biases the\nmargin down, not up", fontsize=8)
-    ax[2].legend(loc="lower left", fontsize=6.5)
+    ax[2].set_title("the sign flip was an inadmissible\nfit, and it is detectable",
+                    fontsize=8)
+    ax[2].legend(loc="lower left", fontsize=6)
 
-    # (d) the null anchor propagates attenuated
-    rs = np.linspace(0.01, 0.30, 30)
-    prop = [anchor_propagation(r, reps=4000) for r in rs]
-    ax[3].plot(100 * rs, [100 * q[1] for q in prop], color=GREEN, lw=2.0,
-               label=r"into $\theta$")
-    ax[3].plot(100 * rs, [100 * q[0] for q in prop], color=AMBER, ls="--",
-               lw=1.7, label=r"into $K_m$")
-    ax[3].plot(100 * rs, 100 * rs, color=GREY, ls=":", lw=1.2, label="1:1")
-    ax[3].set_xlabel("rel. error in the null patient's load  [%]")
-    ax[3].set_ylabel("resulting rel. error  [%]")
-    ax[3].set_title("the null anchor attenuates,\nit does not amplify", fontsize=8)
-    ax[3].legend(loc="upper left", fontsize=6.5)
+    # (d) the anchor factor is a ratio, and it crosses 1
+    ths = np.logspace(np.log10(80.0), np.log10(6000.0), 300)
+    fk = [anchor_factor(theta=x)[0] for x in ths]
+    ft = [anchor_factor(theta=x)[1] for x in ths]
+    ax[3].loglog(ths, ft, color=GREEN, lw=2.0, label=r"into $\theta$")
+    ax[3].loglog(ths, fk, color=AMBER, ls="--", lw=1.7, label=r"into $K_m$")
+    ax[3].axhline(1.0, color=GREY, ls=":", lw=1.0)
+    x_km, x_th = anchor_crossover()
+    for xv, col in ((x_km, AMBER), (x_th, GREEN)):
+        ax[3].axvline(xv, color=col, ls=":", lw=0.9)
+    ax[3].plot([P.theta], [anchor_factor()[1]], "o", ms=5.5, color=MUTED, zorder=5)
+    ax[3].plot([300.0], [anchor_factor(theta=300.0)[1]], "o", ms=5.5,
+               color=RED, zorder=5)
+    at_point(ax[3], (300.0, anchor_factor(theta=300.0)[1]),
+             "Model C's $\\theta$", dx=8, dy=6, arrow=True, fontsize=7,
+             color=RED, ha="left", va="bottom")
+    ax[3].set_xlabel(r"residual capacity $\theta$")
+    ax[3].set_ylabel("amplification of load error")
+    ax[3].set_title("the anchor amplifies for\nthe severe patient", fontsize=8)
+    ax[3].legend(loc="lower left", fontsize=6.5)
 
     save(fig, "fig_A8_design")
-    print(f"    (7) evaluated at sigma={sigma}, n={n_ss:.0f}: "
-          f"{100 * rel_err_theta(sigma, n_ss, 0.10 * M_OP):.0f}% at a 10% band, "
-          f"{100 * rel_err_theta(sigma, n_ss, 0.70 * M_OP):.0f}% at 70%")
-    print(f"    Delta for 20% precision: {100 * d20 / M_OP:.0f}% of m_bar")
-    print(f"    Delta to resolve curvature at 2 sigma: "
-          f"{100 * delta_for_curvature(sigma, n_ss) / M_OP:.0f}% of m_bar")
-    mh, mt2, rt = eiv_margin_bias(0.20 * D, D, reps=4000)
-    print(f"    EIV at sigma_m/Delta = 20%: theta_hat/theta = {rt:.2f} inflated, "
-          f"but mu {mh:.0f} against a true {mt2:.0f}")
-    kk, tt = anchor_propagation(0.20)
-    print(f"    null anchor: 20% in s -> {100 * kk:.1f}% in Km, {100 * tt:.1f}% "
-          f"in theta (attenuation {tt / 0.20:.2f}x)")
+    print("    (7) evaluated, relative error of theta at a 10% band:")
+    for sf in SIGMA_FRACS:
+        sg = sigma_from_load(sf)
+        print(f"      sigma = {100 * sf:4.0f}% of load: "
+              f"{100 * rel_err_theta(sg, n_ss, 0.10 * M_OP):7.0f}%   "
+              f"20% needs Delta = {100 * delta_for_precision(0.20, sg, n_ss) / M_OP:6.0f}% "
+              f"| curvature needs "
+              f"{100 * delta_for_curvature(sg, n_ss) / M_OP:5.0f}%")
+    q = eiv_fit(0.20 * D, D, reps=1500, constrain=False)
+    r = eiv_fit(0.20 * D, D, reps=1500, constrain=True)
+    print(f"    EIV at sigma_m/Delta = 20%: unconstrained mu {q['mu']:.0f}, "
+          f"admissible mu {r['mu']:.0f}, true {r['mu_true']:.0f}; "
+          f"{100 * q['frac_inadmissible']:.0f}% of free fits have ke < 0")
+    print(f"    anchor factor into theta: {anchor_factor()[1]:.2f} at theta=3000, "
+          f"{anchor_factor(theta=300.0)[1]:.2f} at theta=300; "
+          f"crosses 1 at theta = {x_th:.0f}")
 
 
 # =====================================================================

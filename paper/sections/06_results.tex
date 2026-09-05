@@ -124,19 +124,21 @@ point itself. The same convention that widens the window separates the patients.
 \includegraphics[width=\textwidth]{fig_A8_design.pdf}
 \caption{What the design would have to deliver, against what it does, all four panels
 computed from \eqref{eq:relerr} and its companions in Section~\ref{sec:design}.
-\textbf{(a)} Equation \eqref{eq:thetaerr}, evaluated. At $\sigma = 5$ metabolite units and
-$n = 6$ instrument events the relative error of $\hat\theta$ is $285\%$ over a $10\%$ band,
-and twenty per cent needs a band of $143\%$. The shaded region is what the quasi-exogenous
-instruments of Section~\ref{sec:instruments} reach. \textbf{(b)} The band at which the
-curvature of $C$ becomes resolvable at two standard errors, which is when condition
-\eqref{eq:affine} can be checked against a record rather than assumed. It lands at $156\%$
-of $\bar m$ at the same $\sigma$ and $n$, on the far side of the same line. \textbf{(c)}
-The steady-state design puts the noise in the abscissa. Attenuation inflates $\hat\theta$,
-which alone would flatter the patient, but the margin moves the other way and changes sign
-near $\sigma_m/\Delta = 20\%$: a safe patient is estimated as unsafe.
-Remark~\ref{rem:eiv}. \textbf{(d)} The null anchor with a variance. Error in the null
-patient's recorded load enters $k_e$ one for one and reaches $\theta$ attenuated by about a
-third, so the anchor is not where the conditioning problem lives.}
+\textbf{(a)} Equation \eqref{eq:thetaerr}, evaluated, as a family over how well the
+substrate load is recorded, since nothing in the note bounds that. The shaded region is what
+the quasi-exogenous instruments of Section~\ref{sec:instruments} reach, and every curve
+crosses the $20\%$ target well outside it. \textbf{(b)} The band at which the curvature of
+$C$ becomes resolvable at two standard errors, which is when condition \eqref{eq:affine} can
+be checked against a record rather than assumed, against the same load error. It too lands
+on the far side of the same line, from about $2.5$ times outside at a load known to $2\%$ to
+about $8$ times at $20\%$. \textbf{(c)} The steady-state design puts the noise in the
+abscissa. An unconstrained fit appears to flip the sign of the margin, but it does so by
+returning $\hat k_e < 0$, which is not a parameter set; with $k_e \ge 0$ imposed the bias is
+small. The grey curve is the fraction of unconstrained fits that are inadmissible, and it is
+what makes the failure detectable from the fit alone. Remark~\ref{rem:eiv}. \textbf{(d)} The
+cost of the null anchor is a ratio, \eqref{eq:anchorfac}, not a constant. It attenuates at
+$\theta = 3000$ and amplifies below $\theta = 1100$, so it is worst for the severe patients
+the note is about, and Model C's own $\theta$ sits on the amplifying side.}
 \label{fig:A8}
 \end{figure}
 

@@ -576,3 +576,58 @@ def test_null_anchor_attenuates_load_error_into_theta():
         assert d_th < rel_s, f"must attenuate at {rel_s}"
         assert 0.25 < d_th / rel_s < 0.55, f"about a third, got {d_th / rel_s}"
         assert d_Km < d_th, "and Km moves less than theta"
+
+
+def test_sigma_is_stated_relative_to_the_recorded_load():
+    """
+    The criteria were once quoted at sigma = 5 "metabolite units", which is a
+    load known to 1.55% of baseline and not defensible. sigma belongs on the
+    ordinate's scale, and the conclusion is reported as a function of it.
+    """
+    from model_A.run import (sigma_from_load, baseline_load, rel_err_theta,
+                             delta_for_curvature, SIGMA_FRACS)
+    assert sigma_from_load(0.05) == pytest.approx(0.05 * baseline_load())
+    prev_r = prev_d = 0.0
+    for sf in SIGMA_FRACS:
+        sg = sigma_from_load(sf)
+        r = rel_err_theta(sg, 6.0, 0.10 * M_OP)
+        d = delta_for_curvature(sg, 6.0)
+        assert r > prev_r and d > prev_d, "both must worsen with sigma"
+        assert d > 0.70 * M_OP, "and stay outside what the instruments reach"
+        prev_r, prev_d = r, d
+    assert rel_err_theta(sigma_from_load(0.05), 6.0, 0.10 * M_OP) == \
+        pytest.approx(9.20, rel=1e-2), "920% at a 5% load error"
+
+
+def test_anchor_factor_inverts_below_a_computable_theta():
+    """
+    The anchor cost is a ratio scaling as 1/theta, like the load-error
+    amplification. It attenuates for a mild patient and amplifies for a severe
+    one, and Model C's own theta is on the amplifying side.
+    """
+    from model_A.run import anchor_factor, anchor_crossover
+    p = ParamsA()
+    x_km, x_th = anchor_crossover()
+    assert x_km == pytest.approx(p.ke * (p.Km + M_OP) ** 2 / p.Km, rel=1e-12)
+    assert x_th == pytest.approx(2 * p.ke * (p.Km + M_OP), rel=1e-12)
+    assert anchor_factor(theta=p.theta)[1] < 1.0, "attenuates at theta = 3000"
+    assert anchor_factor(theta=300.0)[1] > 1.0, "amplifies at Model C's theta"
+    for th in (x_km, x_th):
+        i = 0 if th == x_km else 1
+        assert anchor_factor(theta=th)[i] == pytest.approx(1.0, rel=1e-9)
+
+
+def test_abscissa_noise_sign_flip_is_an_inadmissible_fit():
+    """
+    The unconstrained margin appears to change sign. It does so by returning
+    ke < 0, which is not a parameter set. Under ke >= 0 the bias is small, and
+    the inadmissible fraction is what makes the failure detectable.
+    """
+    from model_A.run import eiv_fit
+    D = 0.5 * M_OP
+    free = eiv_fit(0.20 * D, D, reps=500, seed=7, constrain=False)
+    cons = eiv_fit(0.20 * D, D, reps=500, seed=7, constrain=True)
+    assert free["mu"] < 0 < cons["mu"], "the flip is the unconstrained fit only"
+    assert cons["mu"] < cons["mu_true"], "a small downward bias survives"
+    assert cons["mu"] > 0.85 * cons["mu_true"], "and it is small"
+    assert free["frac_inadmissible"] > 0.9, "and it is detectable"
