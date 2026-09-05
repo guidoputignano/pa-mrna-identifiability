@@ -43,8 +43,15 @@ mde_emr_us              doi:10.1016/j.ymgme.2025.109111
 
 # --- crisis dynamics ------------------------------------------------
 # Propionylcarnitine, propionylglycine, propionic acid essentially
-# UNALTERED during acute decompensation; C2/C3 ratio falls ~20-fold.
-# Healthy ranges: C2 0.7-9.7 umol/L, C3 0.0-0.8 umol/L.
+# UNALTERED during acute decompensation. Free carnitine plasma, Table 2:
+# no AMD 38.9 +/- 16.8 [7.0-93.3] n=56; AMD 22.0 +/- 12.4 [8.0-70.1] n=25;
+# P = 0.0370. Discussion advises determining free carnitine during AMD to check
+# whether supplementation is sufficient, and notes that a trend analysis on an
+# individual patient basis could increase insight.
+# Healthy ranges: C2 0.7-9.7 umol/L, C3 0.0-0.8 umol/L. NOTE: the C2/C3 ratio
+# is a patients-versus-healthy comparison. Table 2 carries no C2, C3,
+# acetylcarnitine or propionylcarnitine row tested against event status, so it
+# supports no within-patient claim across a decompensation.
 amd_phenotyping         doi:10.1186/s13023-020-1347-3
 
 # Free carnitine 5.7 uM vs normal 37 +/- 8.

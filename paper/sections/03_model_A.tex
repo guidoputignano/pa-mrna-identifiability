@@ -155,28 +155,89 @@ function at the resolution of the assay: there exist constants $a$ and $b$ with
 \label{eq:affine}
 \end{equation}
 $\varepsilon$ being the measurement error. Then data collected while the patient remains in
-$M$ determine $a$ and $b$, and nothing beyond them. The parameters enter only through the
-slope
+$M$ determine $a$ and $b$, and nothing beyond them. With $\bar m \in M$ the point at which
+the fit is taken, the two coefficients are
 \begin{equation}
-b \;=\; \theta\, g'(\bar m) \;+\; k_e , \qquad \bar m \in M ,
+a \;=\; \theta\,\bigl(g(\bar m) - \bar m\, g'(\bar m)\bigr) \;=\; \theta\, g(\bar m)^2 ,
+\label{eq:intercept}
+\end{equation}
+\begin{equation}
+b \;=\; \theta\, g'(\bar m) \;+\; k_e .
 \label{eq:slope}
 \end{equation}
-a single scalar carrying $\theta$ and $k_e$ with the \emph{same} sign. No quantity of such
-data separates them.
+The slope is a single scalar carrying $\theta$ and $k_e$ with the \emph{same} sign, and no
+quantity of such data separates them through it. The intercept carries $\theta$ alone.
 \end{proposition}
 
 \begin{proof}[Argument]
 Under \eqref{eq:affine} the map from $C$ to the data factors through $(a,b)$ up to a
 perturbation of size $\varepsilon$, so any two parameter pairs giving the same $(a,b)$
-generate observations differing by less than the assay can resolve. Since \eqref{eq:slope}
-is one equation in two unknowns, the pairs consistent with a measured $b$ form a line, and
-every point of it is compatible with the data.
+generate observations differing by less than the assay can resolve. The affine function in
+question is the tangent to $C$ at $\bar m$, whose slope is $C'(\bar m)$ and whose intercept
+is $C(\bar m) - \bar m\, C'(\bar m)$. The alternative channel contributes $k_e \bar m -
+\bar m\, k_e = 0$ to the second of these, since a line through the origin has no intercept,
+which leaves \eqref{eq:intercept}; the identity $g(\bar m) - \bar m g'(\bar m) = g(\bar m)^2$
+is a direct computation from $g(m) = m/(K_m + m)$. Since \eqref{eq:slope} is one equation in
+two unknowns, the pairs consistent with a measured $b$ alone form a line, and every point of
+it is compatible with the data.
 \end{proof}
 
-The clinical consequence is direct: two patients with substantially different enzymatic
-capacity, compensating with different degrees of alternative clearance, produce identical
-measurements. They are nonetheless different patients, and any intervention that acts on
-one channel and not the other will separate them.
+Information about the residual capacity is therefore not absent from stable-patient data.
+It is concentrated in the intercept, and the intercept is the one quantity a narrow band
+cannot deliver. It is the value the fitted line takes when extrapolated back to $m = 0$, and
+$M$ does not contain the origin. For a least-squares affine fit to $n$ points $m_i$ with
+independent errors of standard deviation $\sigma$,
+\begin{equation}
+\operatorname{Var}(\hat a) \;=\; \sigma^2\!\left[\frac{1}{n} +
+\frac{\bar m^2}{\sum_i (m_i - \bar m)^2}\right] ,
+\qquad
+\operatorname{Var}(\hat b) \;=\; \frac{\sigma^2}{\sum_i (m_i - \bar m)^2} .
+\label{eq:varfit}
+\end{equation}
+Both scale as the reciprocal of $\sum_i (m_i - \bar m)^2$, and their ratio tends to
+$\bar m^2$ as the band narrows, so the two variances carry different units and are not
+comparable to each other. What is comparable across designs is the relative error in
+$\hat\theta = \hat a / g(\bar m)^2$. Writing $\Delta$ for the width of the band and taking
+the $n$ samples spread across it, $\sum_i (m_i - \bar m)^2 \approx n\Delta^2/12$, and for
+$\Delta \ll \bar m$,
+\begin{equation}
+\frac{\operatorname{sd}(\hat\theta)}{\theta} \;\approx\;
+\frac{\sigma}{\theta}\;\sqrt{\frac{12}{n}}\;\frac{\bar m}{\Delta}\;g(\bar m)^{-2} .
+\label{eq:thetaerr}
+\end{equation}
+Three factors multiply the assay's own relative error. The sample count enters as
+$n^{-1/2}$, the extrapolation from the band back to the origin as $\bar m/\Delta$, and the
+patient's position on the saturation curve as $g(\bar m)^{-2}$. The last two are the two
+factors of the determinant $\det M = g(\bar m)^2 (m' - m)$ of
+Proposition~\ref{prop:illcond}, entering inversely, so what makes that determinant small
+makes $\hat\theta$ imprecise, by the same mechanism.
+
+The two design variables in \eqref{eq:thetaerr} both appear through
+$\sum_i (m_i - \bar m)^2 \approx n\Delta^2/12$, and they are not substitutes. At a fixed
+band width, doubling the number of visits buys a factor of $\sqrt2$ and leaves $\Delta$
+where it was; at a fixed number of visits, doubling the width of the band buys a factor of
+$2$, and doubling it again buys another. Adding visits inside a fixed band does not widen
+the band, which is why the two cannot be traded against each other. That distinction is the
+clinical content of the result. What bounds $n$ is the cost of a clinic visit, what bounds
+$\Delta$ is the safety constraint on how far a patient may be allowed to excurse, and the
+factor that carries the estimate of $\theta$ is the one the safety constraint bounds.
+
+\begin{remark}[Two conditionings, kept separate]
+\label{rem:two_scalings}
+The $\bar m/\Delta$ of \eqref{eq:thetaerr} is the conditioning of the two-coefficient affine
+fit. Figure~\ref{fig:A2} plots a different object, the condition number of the
+three-parameter sensitivity matrix for $(\theta, K_m, k_e)$, which degrades as
+$\Delta^{-2}$. The affine fit resolves two coefficients from first-order information, while
+the three-parameter problem must additionally resolve the curvature that separates $\theta$
+from $K_m$. The relation between the two scalings is not established here, and the two
+results are stated separately rather than as one.
+\end{remark}
+
+The clinical consequence is direct. Two patients with substantially different enzymatic
+capacity, compensating with different degrees of alternative clearance, share a slope, and
+what tells them apart is an intercept the band resolves poorly. They are nonetheless
+different patients, and any intervention that acts on one channel and not the other will
+separate them.
 
 What breaks the degeneracy is curvature, and it is worth spelling out why. The alternative
 channel $k_e m$ is a straight line: its slope is $k_e$ at every level of $m$. The enzymatic
@@ -184,7 +245,10 @@ channel bends, because $g$ saturates, so its slope $\theta g'(m)$ falls as $m$ r
 straight line and a bending curve can be told apart only by watching the slope change. If
 the slope of $C$ is the same at the top of $M$ as at the bottom, to within what the assay
 resolves, then the data are consistent with any straight line of that slope, and
-\eqref{eq:slope} is all they contain.
+\eqref{eq:intercept} and \eqref{eq:slope} are all they contain. The same curvature is what
+puts $\theta$ into the intercept. A channel that runs straight through the origin
+contributes nothing there, so $a$ measures the departure of the enzymatic channel from such
+a line, and it vanishes with the bending that produces it.
 
 So the two channels separate exactly when $\theta g'(m)$ changes measurably across $M$,
 which happens when the enzyme is appreciably nearer saturation at $m_{\max}$ than at

@@ -192,13 +192,16 @@ and only it removes $\spk$.
 \end{remark}
 
 \subsection{Why it is not the working model}
+\label{sec:notworking}
 
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
 \item \textbf{Unverified.} Whether depletion is quantitatively strong enough to render
       clearance decreasing, rather than merely saturating, has not been established. The
-      test is direct and requires no new experiment: free carnitine and the
-      acylcarnitine/free-carnitine ratio are measured routinely, so one may ask whether free
-      carnitine collapses during decompensation relative to the same patient's baseline.
+      test is direct and requires no new experiment, free carnitine and the
+      acylcarnitine/free-carnitine ratio being measured routinely. What is on record is a
+      fall at group level (Section~\ref{sec:discriminant}); whether it collapses within a
+      patient, relative to that patient's own baseline, and by enough to turn clearance
+      downward, is the part that is open.
 \item \textbf{Identifiability.} $k_e$ is replaced by the product $k c(t)$ with $c$ a further
       unmeasured state and $R$ a further unknown. This worsens an already unfavourable
       parameter-to-measurement ratio.
@@ -209,6 +212,7 @@ and only it removes $\spk$.
 \end{enumerate}
 
 \subsection{Testable discriminant, and the observable it has to be stated in}
+\label{sec:discriminant}
 
 Models B and C differ in a prediction about the model's state:
 
@@ -224,11 +228,10 @@ Models B and C differ in a prediction about the model's state:
 
 That is a statement about $m$, and it cannot be taken to the records in that form. Deep
 metabolic phenotyping of acute decompensation reports propionylcarnitine, propionylglycine
-and propionic acid \emph{essentially unaltered} through the event, while the C2/C3 ratio,
-acetylcarnitine to propionylcarnitine, falls by roughly twenty-fold~\cite{amd_phenotyping}. % C24
-The single marker does not move through the excursion that the discriminant is about. So
-``does the biomarker return to baseline after the illness'' is not a test of B against C;
-it is a question the measurement cannot answer either way.
+and propionic acid \emph{essentially unaltered} through the event~\cite{amd_phenotyping}. % C24
+The single marker does not move through the excursion that the discriminant is about, so
+``does the biomarker return to baseline after the illness'' is a question the measurement
+cannot answer in either direction.
 
 \begin{remark}[Scope]
 \label{rem:scope}
@@ -239,25 +242,40 @@ proxy stops tracking the state, so Model C's separatrix is a claim about the dyn
 the current observable cannot confirm or refute directly.
 \end{remark}
 
-Two quantities do move through the event and are recorded routinely, so the discriminant
-should be restated in them:
+Free carnitine does move through the event, and it is measured routinely, so the
+discriminant is restated in it. In propionic acidemia the plasma level falls from
+$38.9 \pm 16.8$ $\mu$M in samples drawn outside a decompensation ($n = 56$) to
+$22.0 \pm 12.4$ $\mu$M in samples drawn during one ($n = 25$), $P = 0.0370$, a fall of
+roughly two-fifths~\cite{amd_phenotyping}. % C38
+Chronic depletion in the stable patient is documented separately, at $5.7$ $\mu$M against a
+normal $37 \pm 8$ with short-chain acylcarnitines correspondingly
+raised~\cite{carnitine_pa_child}, % C25
+so what the event contributes is a further fall on top of a level that is already low.
 
-\begin{center}
-\begin{tabular}{@{}p{0.30\textwidth}p{0.60\textwidth}@{}}
-\toprule
-\textbf{C2/C3 ratio} & falls about twenty-fold during acute decompensation, so it
-     resolves the event that the single marker does not~\cite{amd_phenotyping} \\ % C24
-\addlinespace
-\textbf{free carnitine, within patient} & what is documented is \emph{chronic} depletion in
-     the stable patient: free carnitine $5.7$ $\mu$M against a normal $37 \pm 8$, with
-     short-chain acylcarnitines correspondingly
-     raised~\cite{carnitine_pa_child}. % C25
-     Model C asserts more than that, namely a further fall \emph{during} an event relative
-     to the same patient's own baseline. That is the untested part, and it is the part the
-     discriminant needs \\
-\bottomrule
-\end{tabular}
-\end{center}
+The same measurement is reached from the clinical side. The phenotyping study's own
+discussion advises determining free carnitine during a decompensation, to check whether
+carnitine supplementation is sufficient while the free pool is relatively
+depleted~\cite{amd_phenotyping}. % C39
+A model built to represent carnitine depletion and a recommendation written without
+reference to any model arrive at the same analyte, which makes the discriminant a
+convergence rather than a proposal.
+
+Two qualifications travel with it.
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item \textbf{The comparison is between groups of samples rather than within patients.} The
+      $25$ event samples and the $56$ non-event samples are pooled across the cohort, and no
+      paired or repeated-measures analysis is reported; the authors record that a trend
+      analysis on an individual patient basis would add insight~\cite{amd_phenotyping}. % C40
+      Model C asserts a fall relative to a patient's own baseline, and that trajectory
+      remains unmeasured.
+\item \textbf{The fall is consistent with C rather than exclusive to it.} Model B holds the
+      alternative channel at fixed capacity and says nothing about free carnitine, so the
+      observation is unpredicted by B rather than excluded by it. What C asserts beyond the
+      fall is that depletion is quantitatively strong enough to make effective clearance
+      decrease with $m$ rather than merely saturate, which is the first item of
+      Section~\ref{sec:notworking} and is still open.
+\end{enumerate}
 
 Clinical practice is consistent with C, but this is an observation and not a demonstration.
 

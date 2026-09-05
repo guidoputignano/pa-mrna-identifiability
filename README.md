@@ -91,9 +91,14 @@ Under B, cessation of the precipitating illness suffices for recovery; under C
 the load must be driven below baseline. That difference is about the model's
 state, and the measured proxy does not track the state through a crisis:
 propionylcarnitine, propionylglycine and propionic acid are essentially
-unaltered during acute decompensation, while the C2/C3 ratio falls about
-twenty-fold. The discriminant is therefore stated in the C2/C3 ratio and in the
-within-patient fall in free carnitine, not in whether C3 returns to baseline.
+unaltered during acute decompensation. The discriminant is therefore stated in
+free carnitine, which does move, falling from 38.9 +/- 16.8 uM outside an event
+(n=56) to 22.0 +/- 12.4 uM during one (n=25), P = 0.0370. Two qualifications go
+with it: the comparison is between groups of samples rather than within
+patients, and a fall is consistent with C rather than exclusive to it. The
+phenotyping study's own discussion recommends measuring free carnitine during a
+decompensation, so the model and the clinical recommendation converge on the
+same analyte.
 
 **`theta_crit` can be defined intrinsically, and only in Model C.** It is the
 theta at which, at a given load, the maximum of the clearance curve falls to
