@@ -25,8 +25,17 @@ excursion in the load that carries the patient from the attractor across the sep
 Model C already supplies $A_{\mathrm{crit}}$: it is the margin of Figure~\ref{fig:C5},
 expressed in load rather than in metabolite.
 
+The construction is partly pre-empted, and the precedent should be acknowledged rather than
+discovered by a reader. The natural history study already fits a hazard of exactly this
+shape: a generalised additive model on 3-HP concentration, with a smooth term in the days
+since the previous event and a participant-level random effect~\cite{natural_history}. % C28
+What is proposed here is not that machinery. It is the substitution of a mechanistic
+$\theta$, with $A_{\mathrm{crit}}(\theta)$ supplied by the model, for a measured biomarker
+as the covariate carrying the risk. The statistical apparatus already exists; what it is
+regressed on is the open question.
+
 Four things follow, and together they are the reason this is probably the single most
-valuable next step~\cite{natural_history}. % C28
+valuable next step.
 
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
 \item $\spk$ leaves the definition of the threshold. A single assumed worst case is
@@ -35,9 +44,13 @@ valuable next step~\cite{natural_history}. % C28
 \item The endpoint becomes the reliable observable. Dated admissions are coded
       consistently, whereas the metabolite measurements are sparse and stand in an assumed
       relation to the enzyme's substrate.
-\item The roughly $70\%$ of patients with no event in the observation window become
-      right-censored observations, which carry real information about $\theta$, rather than
-      missing data to be discarded or zeros to be explained away.
+\item The recurrent-event structure is used rather than flattened. Patients do not have one
+      event each: $49$ of $50$ participants in the natural history cohort reported at least
+      one, at a mean annualised frequency of $1.0$~\cite{natural_history}, % C08
+      and the rate varies enough between them that the study carries a participant-level
+      random effect. A hazard formulation uses every event and every event-free interval a
+      patient contributes, and makes the spread between patients a parameter to be estimated
+      instead of noise to be averaged over.
 \item The count model becomes \emph{derived} rather than assumed. A Poisson or
       negative-binomial model imposed on admission counts is a modelling choice with
       nothing behind it; under \eqref{eq:hazard} the counting process follows from the

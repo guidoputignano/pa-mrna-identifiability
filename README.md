@@ -86,9 +86,14 @@ loads supplies `Km`. Both are present in the Saudi cohort.
 number rises from 1.1e5 in Model A to 4.8e7 in Model B, a factor of ~450, because
 saturating both channels gives them the same functional form.
 
-**Models B and C differ in a checkable prediction.** Under B, cessation of the
-precipitating illness suffices for recovery. Under C, the load must be driven
-below baseline. This is answerable from clinical notes with no new measurement.
+**Models B and C differ in a checkable prediction, but not in the marker.**
+Under B, cessation of the precipitating illness suffices for recovery; under C
+the load must be driven below baseline. That difference is about the model's
+state, and the measured proxy does not track the state through a crisis:
+propionylcarnitine, propionylglycine and propionic acid are essentially
+unaltered during acute decompensation, while the C2/C3 ratio falls about
+twenty-fold. The discriminant is therefore stated in the C2/C3 ratio and in the
+within-patient fall in free carnitine, not in whether C3 returns to baseline.
 
 **`theta_crit` can be defined intrinsically, and only in Model C.** It is the
 theta at which, at a given load, the maximum of the clearance curve falls to
@@ -228,14 +233,25 @@ Roughly in order of how much they would change the conclusions.
      admissions, which are coded consistently, instead of sparse metabolite
      measurements whose relation to the enzyme's substrate is itself an
      assumption.
-   - **It treats the ~70% of patients with no events correctly.** They are
-     right-censored observations carrying real information about `theta`, not
-     missing data to be dropped or zeros to be explained away.
+   - **It uses the recurrent-event structure instead of flattening it.**
+     Patients do not have one event each: 49 of 50 participants in the natural
+     history cohort reported at least one, at a mean annualised frequency of
+     1.0, and the rate varies enough between them that the study carries a
+     participant-level random effect. A hazard formulation uses every event and
+     every event-free interval a patient contributes, and makes the spread
+     between patients a parameter rather than noise.
    - **It makes the count model derived rather than assumed.** At present a
      Poisson or negative-binomial count model would be imposed on the admission
      counts by fiat. Under this construction the counting process falls out of the
      arrival process and the crossing probability, and its overdispersion has a
      mechanism behind it.
+
+   The construction is partly pre-empted and the precedent belongs in the
+   statement of it: the natural history study already fits a hazard of this
+   shape, a GAMM on 3-HP with a smooth term in days since the previous event and
+   a participant random effect. What is proposed is not that machinery but the
+   substitution of a mechanistic `theta`, with the critical amplitude supplied by
+   Model C, for a measured biomarker as the covariate carrying the risk.
 
    It would also complete the answer to Model B's question. Model B currently
    returns a condition and the records contain a frequency; `lambda_MDE(theta)` is

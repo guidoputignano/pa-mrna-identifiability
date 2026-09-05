@@ -47,8 +47,9 @@ saddle-node.
 \subsection{Why this would matter clinically}
 
 The unstable equilibrium is a \emph{separatrix}. Beyond it, $\dot m > 0$ even at baseline
-load, so the metabolite continues to rise after the precipitating illness has
-resolved~\cite{amd_phenotyping}. % C24
+load, so the metabolite continues to rise after the precipitating illness has resolved.
+This is a statement about the model's state, not about the measured marker, and
+Remark~\ref{rem:scope} below says why the two must not be conflated here.
 Removing the trigger returns $s$ to its baseline value, and at that value the patient is
 still on the wrong side of the separatrix. Recovery therefore requires an active
 intervention that moves one of the two: either the load is driven \emph{below} baseline,
@@ -161,9 +162,9 @@ and only it removes $\spk$.
       confers the appearance of having modelled depletion without having done so.
 \end{enumerate}
 
-\subsection{Testable discriminant}
+\subsection{Testable discriminant, and the observable it has to be stated in}
 
-Models B and C differ in a clinically checkable prediction:
+Models B and C differ in a prediction about the model's state:
 
 \begin{center}
 \begin{tabular}{@{}ll@{}}
@@ -171,6 +172,41 @@ Models B and C differ in a clinically checkable prediction:
 \textbf{B} & removing the trigger suffices: $s$ back to baseline returns $m$ to baseline \\
 \textbf{C} & removing the trigger does not suffice; $s$ must be driven \emph{below} baseline,
              or $m$ lowered directly \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+That is a statement about $m$, and it cannot be taken to the records in that form. Deep
+metabolic phenotyping of acute decompensation reports propionylcarnitine, propionylglycine
+and propionic acid \emph{essentially unaltered} through the event, while the C2/C3 ratio,
+acetylcarnitine to propionylcarnitine, falls by roughly twenty-fold~\cite{amd_phenotyping}. % C24
+The single marker does not move through the excursion that the discriminant is about. So
+``does the biomarker return to baseline after the illness'' is not a test of B against C;
+it is a question the measurement cannot answer either way.
+
+\begin{remark}[Scope]
+\label{rem:scope}
+This is a limit on where the model may be read, and it should be stated plainly. The
+identifiability analysis of Section~3 concerns the \emph{stable} patient, where the
+biomarker and the state can be argued to move together, and nothing in it depends on
+tracking a crisis. The behaviour through a decompensation is exactly where the measured
+proxy stops tracking the state, so Model C's separatrix is a claim about the dynamics that
+the current observable cannot confirm or refute directly.
+\end{remark}
+
+Two quantities do move through the event and are recorded routinely, so the discriminant
+should be restated in them:
+
+\begin{center}
+\begin{tabular}{@{}p{0.30\textwidth}p{0.60\textwidth}@{}}
+\toprule
+\textbf{C2/C3 ratio} & falls about twenty-fold during acute decompensation, so it
+     resolves the event that the single marker does not~\cite{amd_phenotyping} \\ % C24
+\addlinespace
+\textbf{free carnitine, within patient} & Model C asserts depletion, not merely saturation,
+     so free carnitine should fall during the event relative to the same patient's own
+     baseline. Chronic depletion between events is documented~\cite{carnitine_pa_child}; % C25
+     the within-event fall is the part that still needs a source \\
 \bottomrule
 \end{tabular}
 \end{center}

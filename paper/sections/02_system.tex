@@ -13,12 +13,24 @@ available from clinical records.}
 \toprule
 \textbf{Quantity} & \textbf{Meaning} & \textbf{Role} & \textbf{Status} & \textbf{Source and caveat} \\
 \midrule
-$m(t)$ & accumulated toxic metabolite &
-state; the only observable &
+$m(t)$ & plasma 3-hydroxypropionate, the marker the state denotes &
+state; the observable the model is written in &
 measured, $\approx 6$--$7$ samples/year &
-plasma 2-MC, 3-HP, C3 acylcarnitine~\cite{natural_history}. % C19
-\emph{Proxy}: the enzyme
-substrate is intracellular propionyl-CoA, never measured \\
+a $50\%$ lower 3-HP is associated with a decompensation rate ratio of $0.7$
+($p<0.01$)~\cite{natural_history}. % C19
+\emph{Proxy}: the enzyme substrate is intracellular propionyl-CoA, never measured \\
+\addlinespace
+C3 & propionylcarnitine &
+a second marker, \textbf{not} interchangeable with $m$ &
+measured alongside 3-HP &
+a $50\%$ lower C3 gives a rate ratio of $0.6$ ($p=0.017$)~\cite{natural_history}: % C19
+carries risk information, but on its own scale, so it is not a substitute for 3-HP \\
+\addlinespace
+2-MC & 2-methylcitrate &
+measured, but \textbf{not} used as the state &
+measured alongside 3-HP &
+rate ratio $1.0$ ($p=0.84$)~\cite{natural_history}: % C19
+no detectable association with decompensation. Excluded from the state on that ground \\
 \addlinespace
 $s(t)$ & propiogenic substrate load &
 exogenous disturbance, partly structured &
