@@ -227,20 +227,17 @@ def test_rhs_C_reduces_to_alt_flux_C():
     propositions are about a curve the stated model does not produce, which
     is exactly the defect this test exists to prevent reopening.
 
-    Setting c-dot = 0 in rhs_C and reading off the conjugation flux has to
-    return alt_flux_C(m) at every m.
+    Under the acylcarnitine-competition form the reduction also preserves the
+    constants: the same R0 and the same Kc appear on both sides, with no
+    rescaling, so the agreement is exact rather than up to a reparametrisation.
     """
     from scipy.optimize import brentq
 
     p = ParamsC()
-    k, delta = 1.0, 0.35
-    rho = delta / k
-    Kc_struct = p.Kc * (1.0 + rho) / rho
-
-    for m in (0.5, 5.0, 50.0, 300.0, 1200.0, 5000.0, 20000.0):
-        c = brentq(lambda c: rhs_C(0.0, [m, c], p, lambda t: 0.0, k, delta)[1],
-                   1e-12, 1e12)
-        flux = k * c * m / (Kc_struct + m)
+    k = 1.0
+    for m in (0.5, 5.0, 50.0, 173.0, 1036.0, 5000.0, 20000.0):
+        c = brentq(lambda c: rhs_C(0.0, [m, c], p, lambda t: 0.0, k)[1], 1e-12, 1e12)
+        flux = k * c * m / (p.Kc + m)
         assert flux == pytest.approx(alt_flux_C(m, p), rel=1e-10), m
 
 
@@ -253,20 +250,46 @@ def test_rhs_C_is_callable_with_ParamsC():
     assert len(out) == 2 and all(np.isfinite(out))
 
 
-def test_constant_replenishment_gives_a_ceiling_not_a_decline():
+def test_conjugation_alone_gives_a_ceiling_not_a_decline():
     """
-    Section 5.1's first claim: with R constant, the quasi-steady flux is R at
-    every m, so the alternative channel saturates and no second equilibrium
-    appears. This is why the model carries R(m) rather than R.
+    Section 5.1's first claim. If conjugation were the only route out of the
+    carnitine pool, dc/dt = 0 would fix the flux at R0 for every m: no vanishing
+    at the origin and no decline. The second exit is what buys both.
     """
     p = ParamsC()
-    m = np.array([1.0, 10.0, 100.0, 1000.0, 1e5, 1e7])
-    # constant replenishment is the Mi -> infinity limit of R(m)
-    flat = replace(p, Mi=1e12)
-    flux = alt_flux_C(m, flat)
-    assert np.all(np.diff(flux) > 0), "with constant R the flux must be increasing"
-    assert np.all(flux < p.R0), "and must stay below the ceiling"
-    assert flux[-1] == pytest.approx(p.R0, rel=1e-4), "which it approaches"
-    # while the model as stated turns over
+    m = np.array([1.0, 10.0, 100.0, 1000.0, 1e5])
+    # rho0 -> 0 removes the second exit
+    none_ = replace(p, rho0=1e-9)
+    flux = alt_flux_C(m, none_)
+    assert np.all(np.abs(flux - p.R0) / p.R0 < 0.02), \
+        "with no second exit the flux should sit at R0 everywhere"
+    # with it, the flux starts at zero and comes back down
     real = alt_flux_C(m, p)
-    assert real[-1] < real.max(), "with R(m) the flux must come back down"
+    assert real[0] < 0.1 * real.max(), "must vanish as m does"
+    assert real[-1] < 0.1 * real.max(), "and must come back down"
+    assert alt_flux_C(np.array([0.0]), p)[0] == 0.0
+
+
+def test_alt_flux_ceiling_fixes_R0():
+    """
+    R0 is not free. It is set so the alternative route alone cannot carry the
+    baseline load, which is what makes theta_crit positive (Corollary 1). If
+    Kc, Mi or rho0 change, R0 has to be re-derived and this fails.
+    """
+    p = ParamsC()
+    m = np.linspace(1e-6, 2e5, 400000)
+    assert alt_flux_C(m, p).max() == pytest.approx(500.0, rel=1e-4)
+
+
+def test_theta_crit_positive_iff_alt_route_cannot_carry_the_load():
+    """Corollary 1, both directions."""
+    from model_C.run import theta_crit_intrinsic
+    p = ParamsC()
+    m = np.linspace(1e-6, 2e5, 400000)
+    s_base = 600.0
+    assert alt_flux_C(m, p).max() < s_base
+    assert theta_crit_intrinsic(p, s_base) > 0
+    # lift the alternative route above the load and the threshold goes vacuous
+    strong = replace(p, R0=p.R0 * 2.0)
+    assert alt_flux_C(m, strong).max() > s_base
+    assert np.isnan(theta_crit_intrinsic(strong, s_base))

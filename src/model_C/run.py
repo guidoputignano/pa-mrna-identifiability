@@ -125,7 +125,7 @@ def theta_crit_intrinsic(p: ParamsC, s_base, theta_hi=None):
 # =====================================================================
 def fig_phaseline():
     """The phase line. Two equilibria at baseline load, none at peak load."""
-    m = np.linspace(1e-3, 1100, 2500)
+    m = np.linspace(1e-3, 2400, 4000)
     s_base, s_peak = S_BASE, 850.0
 
     fig, ax = plt.subplots(figsize=figsize(0.49, 0.86))
@@ -136,7 +136,7 @@ def fig_phaseline():
 
     ax.axhline(0, color=MUTED, lw=0.8)
     roots, stab = equilibria_nonmonotone(clearance_C_quasistatic, PC, s_base,
-                                         grid=np.linspace(1e-3, 1100, 8000))
+                                         grid=np.linspace(1e-3, 2400, 12000))
     for r, st in zip(roots, stab):
         ax.plot([r], [0], "o", ms=7, zorder=5,
                 color=GREEN if st else "white",
@@ -158,11 +158,15 @@ def fig_phaseline():
 # =====================================================================
 def fig_fold():
     """Bifurcation diagram: the two branches collide at a fold."""
-    loads = np.linspace(250, 800, 420)
+    # Windowed on the fold. The unstable branch climbs steeply as the load
+    # falls, so starting far below the saddle-node squashes the collision,
+    # which is the whole point of the figure, into the bottom of the axes.
+    s_fold = clearance_peak(PC)[0]
+    loads = np.linspace(0.72 * s_fold, 1.004 * s_fold, 480)
     stable_s, stable_m, unst_s, unst_m = [], [], [], []
     for s in loads:
         roots, stab = equilibria_nonmonotone(clearance_C_quasistatic, PC, s,
-                                             grid=np.linspace(1e-3, 2000, 6000))
+                                             grid=np.linspace(1e-3, 8000, 24000))
         for r, st in zip(roots, stab):
             (stable_s if st else unst_s).append(s)
             (stable_m if st else unst_m).append(r)
@@ -170,15 +174,14 @@ def fig_fold():
     fig, ax = plt.subplots(figsize=figsize(0.49, 0.86))
     ax.plot(stable_s, stable_m, ".", ms=2.0, color=GREEN, label="stable branch")
     ax.plot(unst_s, unst_m, ".", ms=2.0, color=RED, label="unstable branch")
-    if unst_s:
-        s_fold = max(stable_s)
-        ax.axvline(s_fold, color=GREY, ls=":", lw=1.0)
-        ax.text(s_fold - 30, max(stable_m) * 0.9, "saddle-node", rotation=90,
-                fontsize=7.5, color=MUTED, ha="right", va="top")
+    ax.axvline(s_fold, color=GREY, ls=":", lw=1.0)
+    ax.text(s_fold - 4, 0.97 * max(unst_m), "saddle-node", rotation=90,
+            fontsize=7.5, color=MUTED, ha="right", va="top")
     ax.set_xlabel(r"substrate load $s$")
     ax.set_ylabel(r"equilibrium $m^*$")
     ax.set_title("two branches that collide,\nunlike Model B")
-    ax.legend(loc="upper left")
+    # between the branches: upper left is where the unstable one climbs
+    ax.legend(loc="center left", markerscale=4, framealpha=0.95)
     save(fig, "fig_C2_fold")
 
 
@@ -264,12 +267,15 @@ def fig_basin():
     # them at the same height and they printed on top of one another. The
     # captions carry the explanations, so the labels here name the route and
     # stop.
-    ax.text(0.915 * s_fold, 1760, "escape:\nmetabolite diverges", color=RED,
-            fontsize=8, ha="center")
+    # low in the red wedge: the upper right is now the patient's corner
+    ax.text(0.997 * s_fold, 1000, "escape:\nmetabolite\ndiverges", color=RED,
+            fontsize=8, ha="right")
     ax.text(0.66 * s_fold, 300, "recovery basin", color=GREEN, fontsize=8)
 
     # a patient who has crossed the separatrix, at BASELINE load
-    s_base, m_crisis = S_BASE, 1200.0
+    # The separatrix at baseline load now sits at about 1036, so the
+    # illustrative crisis point has to clear it visibly rather than graze it.
+    s_base, m_crisis = S_BASE, 1700.0
     ax.axvline(s_base, color=GREY, ls=":", lw=1.0)
     # Horizontal, in the empty strip above the separatrix. Rotated against
     # the line it ran into whichever label shared that column.
@@ -277,8 +283,8 @@ def fig_basin():
             ha="center", va="top")
     ax.plot([s_base], [m_crisis], "o", ms=6, color=MUTED, zorder=5)
     ax.annotate("patient above\nthe separatrix", xy=(s_base, m_crisis),
-                xytext=(s_base - 22, m_crisis + 360), fontsize=8, color=MUTED,
-                ha="right", va="bottom",
+                xytext=(s_base + 12, m_crisis + 170), fontsize=8, color=MUTED,
+                ha="left", va="bottom",
                 arrowprops=dict(arrowstyle="->", color=MUTED, lw=0.9))
 
     # route 1: push the load BELOW baseline (glucose, protein withdrawal)

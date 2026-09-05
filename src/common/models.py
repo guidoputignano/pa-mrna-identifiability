@@ -92,26 +92,32 @@ class ParamsC:
     """
     theta: float = 300.0    # residual V_max of PCC, ~10% of normal
     Km: float = 100.0       # Michaelis constant of PCC
-    # R0 and Kc below are the REDUCED constants of the paper's alpha(m),
-    # written there with hats. They are what a fit to a clearance curve
-    # returns. The structural constants of the two-state system are
-    # R0_struct = R0 (1 + rho) and Kc_struct = Kc (1 + rho) / rho, with
-    # rho = delta / k the ratio of non-conjugative carnitine loss to the
-    # conjugation rate. rho is not recoverable from alpha alone, which is
-    # why the reduced pair is what lives here.
-    R0: float = 1000.0      # maximal carnitine-mediated flux, reduced form.
-                            # Was 1200, which made max_m C(m; theta=0) = 605,
-                            # above the baseline load of 600: a patient with
-                            # no residual enzyme was maintainable on the
-                            # alternative route alone, so the intrinsic fold
-                            # of theta_crit_intrinsic() sat at theta < 0. That
-                            # contradicts the severity of null genotypes. At
-                            # R0 = 1000 the alternative route alone clears
-                            # 504 at best, and theta_crit is 167.
-    Mi: float = 300.0       # metabolite level at which carnitine handling
-                            # is half-impaired (CoA sequestration feedback)
-    Kc: float = 50.0        # half-saturation of the conjugation step,
-                            # reduced form; see the note on R0 above
+    Kc: float = 100.0       # half-saturation of the conjugation step.
+                            # ARBITRARY. There is no measurement behind it and
+                            # no reason it should equal Km beyond both being
+                            # half-saturations at the plasma level. Its cost is
+                            # bounded rather than argued away: over Kc from 25
+                            # to 800, a 32-fold range, theta_crit spans 186 to
+                            # 120, a factor of 1.56. Section 5.4 reports that.
+    Mi: float = 300.0       # metabolite level at which acylcarnitine
+                            # competition doubles the non-conjugative loss
+                            # rate: delta(m) = delta_0 (1 + m/Mi)
+    rho0: float = 0.5       # delta_0 / k, the basal non-conjugative loss
+                            # relative to the conjugation rate constant.
+                            # Bounded above by Di Donato: the drain in PA is
+                            # dominated by propionylcarnitine, so rho0 < 1.
+                            # Bounded below at about 0.35 by the same source,
+                            # since smaller values push the separatrix far
+                            # enough out that the model predicts free-carnitine
+                            # excretion RISING, which is measured falling.
+    R0: float = 1122.0085   # carnitine replenishment, CONSTANT. Not free: set
+                            # so the alternative route alone peaks at 500
+                            # against a baseline load of 600, so a patient with
+                            # theta = 0 cannot be maintained. That is the
+                            # severity of null genotypes, and it is the same
+                            # constraint that previously forced R0 down from
+                            # 1200. Changing Kc, Mi or rho0 moves the peak and
+                            # R0 has to be re-derived; test_models.py checks it.
 
 
 # ---------------------------------------------------------------- clearance
@@ -128,26 +134,27 @@ def alt_flux_C(m, p: ParamsC):
     Carnitine-mediated elimination after adiabatic elimination of the fast
     carnitine state. This is alpha(m) of the paper, Section 5.1.
 
-    Two ingredients, both needed.
+    One mechanism supplies both features the curve needs.
 
-    Impaired replenishment. A depletion model with CONSTANT replenishment,
-    dc/dt = R - (conjugation flux), gives a quasi-steady flux of exactly R:
-    saturation, not decline, hence no bistability. Decline requires that
-    replenishment itself be impaired as the metabolite accumulates. The
-    mechanism is the one already in the biology: sequestration of free
-    coenzyme A causes mitochondrial dysfunction, which degrades the cell's
-    capacity to maintain carnitine handling. We model this as
-    R(m) = R0 / (1 + m/Mi).
+    Acylcarnitines compete with free carnitine at the renal transporter that
+    recovers it from the filtrate, so the fraction recovered falls as the
+    metabolite accumulates. That gives the free pool an exit other than
+    conjugation, and that exit grows with m:
 
-    A second exit for carnitine. If conjugation were the only route out of
-    the pool, dc/dt = 0 would force the flux back to R(m) for every m, so it
-    would not vanish with the metabolite and total clearance would not pass
-    through the origin. Free carnitine also turns over by routes that do not
-    consume propionate, at rate delta, and solving dc/dt = 0 with that term
-    present produces the m/(Kc + m) factor below. Both R0 and Kc here are the
-    reduced constants; see ParamsC.
+        delta(m) = delta_0 (1 + m/Mi),    rho(m) = delta(m)/k = rho0 (1 + m/Mi)
+
+    Having a second exit at all is what makes the flux vanish at m = 0: with
+    conjugation as the only route out, dc/dt = 0 would force the flux to equal
+    the replenishment at every m, so it would not go to zero with the
+    metabolite and total clearance would not pass through the origin. The exit
+    growing with m is what makes the flux decline rather than merely saturate.
+
+    Solving dc/dt = 0 in rhs_C and substituting gives what is returned here.
+    The reduction preserves the constants: R0 and Kc appear in alpha exactly as
+    they appear in the two-state system, with no rescaling.
     """
-    return p.R0 / (1.0 + m / p.Mi) * (m / (p.Kc + m))
+    u = m / (p.Kc + m)
+    return p.R0 * u / (u + p.rho0 * (1.0 + m / p.Mi))
 
 
 def clearance_C_quasistatic(m, p: ParamsC):
@@ -166,33 +173,22 @@ def rhs_B(t, y, p: ParamsB, s):
     return [s(t) - clearance_B(m, p)]
 
 
-def rhs_C(t, y, p: ParamsC, s, k=1.0, delta=0.35):
+def rhs_C(t, y, p: ParamsC, s, k=1.0):
     """
     The two-state system of the paper, Section 5.1.
 
-    Kept in step with alt_flux_C, which is its quasi-steady reduction. The
-    earlier version of this function read p.k and p.R, neither of which
-    ParamsC defines, so it raised on any call; nothing called it and no test
-    covered it, and it still encoded the constant-replenishment model that
-    Section 5.1 shows returns a ceiling rather than a decline.
+    Kept in step with alt_flux_C, which is its quasi-steady reduction:
+    setting dc/dt = 0 here returns alt_flux_C(m) for every m, with the same
+    R0 and the same Kc. tests/test_models.py checks that directly.
 
-    p.R0 and p.Kc are the REDUCED constants. The structural ones this system
-    needs are recovered from them through rho = delta / k, exactly inverting
-    the reduction:
-
-        R0_struct = p.R0 * (1 + rho),   Kc_struct = p.Kc * (1 + rho) / rho
-
-    so that setting c-dot = 0 here returns alt_flux_C(m) for every m. See
-    tests/test_model_C.py, which checks that against the reduction directly.
+    k is the conjugation rate constant. It cancels out of the reduction, so
+    the reduced curve does not depend on it and it is a free scale here.
     """
     m, c = y
-    rho = delta / k
-    R0_struct = p.R0 * (1.0 + rho)
-    Kc_struct = p.Kc * (1.0 + rho) / rho
-    conj = k * c * m / (Kc_struct + m)
-    R = R0_struct / (1.0 + m / p.Mi)
+    conj = k * c * m / (p.Kc + m)
+    delta = p.rho0 * k * (1.0 + m / p.Mi)
     return [s(t) - p.theta * g(m, p.Km) - conj,
-            R - conj - delta * c]
+            p.R0 - conj - delta * c]
 
 
 # ---------------------------------------------------------------- equilibria
