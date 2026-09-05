@@ -62,19 +62,26 @@ returns a condition and the records contain a frequency, and
 $\lambda_{\mathrm{MDE}}(\theta)$ is a frequency.
 
 \paragraph{Which marker to identify in.} Section~\ref{sec:marker} leaves the choice of
-plasma marker open, because the identifiability results do not depend on it. That
-indifference turns the choice into a design question with an answer, and
-Proposition~\ref{prop:degeneracy} says what the answer has to optimise. The residual
-capacity is carried by the intercept alone, and by \eqref{eq:thetaerr} the intercept costs a
-factor $\bar m/\Delta$, so the marker to prefer is the one that makes that ratio smallest at
-a fixed clinical excursion, which is a property of the marker's own range and variability
-rather than of the sampling schedule. The three candidates differ on exactly that, in
-analytical variability, in how far they move between visits, and in how nearly affine the
-clearance curve is over the range each visits, and the determinant \eqref{eq:det} depends on
-the excursion a patient's marker actually makes. Which marker
-minimises the condition number of the estimation, at a fixed clinical excursion, is
-answerable against the same records the rest of this note relies on, and is a piece of work
-rather than a preference. It is worth doing before the marker is fixed by convention.
+plasma marker open, because the identifiability results do not depend on it.
+Proposition~\ref{prop:degeneracy} says what a comparison between the candidates would have
+to be conducted on. The residual capacity is carried by the intercept, and by
+\eqref{eq:thetaerr} the precision of the intercept is governed by $\bar m/\Delta$, the level
+a patient sits at relative to the excursion they make about it. Both of those are set by how
+the patient is managed, on that marker's own scale, so the object to be compared is a marker
+together with the management that holds a patient in a band on it, rather than a marker on
+its own.
+
+The three candidates plausibly differ there, in analytical variability, in how far they move
+between visits, and in how nearly affine the clearance curve is over the range each visits.
+Each of those would have to be established from records, and none of it is established here.
+Section~\ref{sec:discriminant} adds the sharper gap, that no marker is currently known to
+track the state through a decompensation at all.
+
+So the deferral in Section~\ref{sec:marker} is a result rather than an omission. What the
+identifiability analysis supplies is the quantity a comparison would be run on, $\bar m/\Delta$
+at a fixed clinical excursion; what is missing is the paired marker-and-management data to
+run it. Assembling that against the same records the rest of this note relies on is a
+well-posed piece of work, and it is worth doing before the marker is fixed by convention.
 
 \paragraph{Identification.} Under what conditions is a parameter identifiable when the
 excitation required to identify it is the regime that a safety constraint forbids? The

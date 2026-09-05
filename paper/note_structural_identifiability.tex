@@ -281,12 +281,24 @@ and the half-of-normal figure is an inference from gene dosage rather than an ob
 
 \emph{Conditioning}, which would still bite if the first were solved. Being healthy,
 carriers occupy a narrow range of $m$, over which total clearance is affine to within assay
-error. What their equation contributes is the slope of that affine fit, the same degenerate
-combination every stable patient contributes, together with an intercept that is an
-extrapolation from a band lying far from the origin and is imprecise in proportion.
+error. Writing $\bar m$ for the centre of that range, the slope of the fit is
+$\theta g'(\bar m) + k_e$, the same degenerate combination every stable patient contributes.
+The intercept is $\theta\,(g(\bar m) - \bar m\, g'(\bar m)) = \theta\, g(\bar m)^2$, the
+linear channel passing through the origin and contributing nothing to it, so a carrier does
+in principle contribute a coefficient carrying $\theta$ by itself.
 
-Carriers constrain the aggregate coefficient, not the separation, and they are not a
-substitute for condition (i).
+The conditioning of that contribution is what disqualifies them. Recovering $\theta$ from a
+fitted intercept divides by $g(\bar m)^2$, and $g$ is increasing, so the amplification a
+carrier suffers exceeds that of any patient by construction: carriers are the healthiest
+people in the cohort and therefore the lowest on the saturation curve. The factor enters
+squared, so a carrier whose $g(\bar m)$ is a third of a patient's is nine times worse placed
+on that account alone, before the narrowness of their band enters through the extrapolation
+to $m = 0$. Being asymptomatic is exactly what puts them there.
+
+Carriers therefore fail twice over, and the two failures are independent. No assay places
+them on the activity scale, and the one coefficient that would carry $\theta$ if an assay
+existed is worse conditioned for them than for anyone the model is about. They constrain the
+aggregate coefficient, not the separation, and they are not a substitute for condition (i).
 
 \paragraph{Where the second anchor comes from.} Condition (ii) requires one patient observed
 at two distinct steady states. Candidates present in routine care:
