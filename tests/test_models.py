@@ -502,3 +502,77 @@ def test_illness_amplitude_is_a_multiple_of_this_patients_baseline():
     assert s_peak_default() < lo, "Model C's illness sits below the window"
     ends = [margin_on_fibre(a, b, K) for K in (1e-9, fibre_Km_max(a, b))]
     assert all(e > 0 for e in ends), "and the decision there is determined, safe"
+
+
+# ================================================================= design
+def test_relative_precision_of_theta_is_identified_along_the_fibre():
+    """
+    Pass 2, item 1. theta_hat = a_hat/g(m_bar)^2 is a_hat times a constant,
+    so sd(theta_hat)/theta = sd(a_hat)/a and the fibre coordinate cancels.
+    Equation (7)'s g(m_bar)^-2 is not a separate unknown: it is absorbed into
+    the fitted intercept. The RELATIVE precision is identified even though
+    theta is not.
+    """
+    from model_A.run import rel_err_theta, fibre_Km_max
+    p = ParamsA()
+    a, b = fit_ab(p)
+    sigma, n, Delta = 5.0, 6.0, 0.10 * M_OP
+    direct = []
+    for Km in np.linspace(1.0, fibre_Km_max(a, b) * 0.99, 12):
+        th, _ = fibre(a, b, Km)
+        direct.append((sigma / th) * np.sqrt(12.0 / n) * (M_OP / Delta)
+                      * g(M_OP, Km) ** -2)
+    assert np.std(direct) / np.mean(direct) < 1e-12, "must be constant on the fibre"
+    assert direct[0] == pytest.approx(rel_err_theta(sigma, n, Delta), rel=1e-12)
+
+
+def test_the_band_the_design_needs_exceeds_what_the_instruments_reach():
+    """
+    Pass 2, items 1 and 4. Both criteria land near 1.5x m_bar, and the
+    quasi-exogenous instruments of Section 3.5 reach 70%. This is the answer
+    to Table 2's question and it should fail loudly if a parameter moves.
+    """
+    from model_A.run import (delta_for_precision, delta_for_curvature,
+                             CURVATURE_CONST, ASSAY_CV)
+    assert CURVATURE_CONST == pytest.approx(np.sqrt(180.0), rel=1e-12)
+    d_prec = delta_for_precision(0.20, ASSAY_CV, 6.0)
+    d_curv = delta_for_curvature(ASSAY_CV, 6.0)
+    assert 1.3 < d_prec / M_OP < 1.6, d_prec
+    assert 1.4 < d_curv / M_OP < 1.7, d_curv
+    assert min(d_prec, d_curv) > 0.70 * M_OP, "instruments must fall short"
+
+
+def test_abscissa_noise_biases_the_margin_downward():
+    """
+    Pass 2, item 3. Classical attenuation inflates theta_hat, which alone
+    would make a patient look safer. It does not: ke_hat collapses, so
+    theta_crit rises and the margin is UNDERestimated, flipping sign around
+    sigma_m/Delta ~ 0.2. The direction is measured, not assumed.
+    """
+    from model_A.run import eiv_margin_bias
+    D = 0.5 * M_OP
+    prev = None
+    for r in (0.05, 0.10, 0.20, 0.40):
+        mu_hat, mu_true, th_ratio = eiv_margin_bias(r * D, D, reps=800, seed=3)
+        assert th_ratio > 1.0, f"theta_hat inflated at r={r}"
+        assert mu_hat < mu_true, f"but the margin is biased DOWN at r={r}"
+        if prev is not None:
+            assert mu_hat < prev, "and the bias grows with the noise"
+        prev = mu_hat
+    mu_hat, mu_true, _ = eiv_margin_bias(0.30 * D, D, reps=800, seed=3)
+    assert mu_true > 0 > mu_hat, "the sign flips: safe is estimated as unsafe"
+
+
+def test_null_anchor_attenuates_load_error_into_theta():
+    """
+    Pass 2, item 5. The anchored construction with a variance. A relative
+    error in the null patient's load enters ke 1:1 and reaches theta
+    attenuated by about a third, so the anchor does not relocate the
+    conditioning problem; it is the band that remains binding.
+    """
+    from model_A.run import anchor_propagation
+    for rel_s in (0.05, 0.10, 0.20):
+        d_Km, d_th = anchor_propagation(rel_s, reps=8000)
+        assert d_th < rel_s, f"must attenuate at {rel_s}"
+        assert 0.25 < d_th / rel_s < 0.55, f"about a third, got {d_th / rel_s}"
+        assert d_Km < d_th, "and Km moves less than theta"

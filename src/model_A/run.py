@@ -536,6 +536,181 @@ def fig_margin_fibre():
 
 
 # =====================================================================
+#  What the design would have to deliver.
+#
+#  Equation (7) is derived in the note and never evaluated. These are the
+#  quantities it needs, all of them computable from fitted coefficients.
+# =====================================================================
+def rel_err_theta(sigma, n, Delta, a=None, m_bar=M_OP):
+    """
+    Relative precision of theta_hat, equation (7).
+
+    theta_hat = a_hat/g(m_bar)^2 is a_hat times a constant, so
+    sd(theta_hat)/theta = sd(a_hat)/a exactly. The g(m_bar)^-2 that appears in
+    (7) is not a separate unknown: a = theta g(m_bar)^2, so
+    (sigma/theta)*g(m_bar)^-2 IS sigma/a. The RELATIVE precision is therefore
+    identified along the whole fibre even though theta is not.
+    """
+    a = fit_ab(P)[0] if a is None else a
+    return (sigma / a) * np.sqrt(12.0 / n) * (m_bar / Delta)
+
+
+def delta_for_precision(target, sigma, n, a=None, m_bar=M_OP):
+    """Band width needed for a given relative precision on theta."""
+    a = fit_ab(P)[0] if a is None else a
+    return (sigma / a) * np.sqrt(12.0 / n) * m_bar / target
+
+
+# For a quadratic least-squares fit on a band of full width D carrying n
+# points, Var(c2_hat) = 180 sigma^2/(n D^4) in the uniform-design limit, so
+# the design constant is sqrt(180) = 13.42 rather than an order of magnitude.
+CURVATURE_CONST = np.sqrt(180.0)
+
+
+def delta_for_curvature(sigma, n, z=2.0, p: ParamsA = None, m_bar=M_OP):
+    """
+    Band width at which the curvature of C is resolvable at z standard
+    errors, which is what makes condition (3) checkable against a record.
+    The true quadratic coefficient is |C''(m_bar)/2| = theta*Km/(Km+m_bar)^3.
+    """
+    p = P if p is None else p
+    c2 = p.theta * p.Km / (p.Km + m_bar) ** 3
+    return np.sqrt(z * CURVATURE_CONST * sigma / (np.sqrt(n) * c2))
+
+
+def eiv_margin_bias(sigma_m, Delta, n=12, reps=2000, seed=0, p: ParamsA = None,
+                    m_bar=M_OP, m_tol=M_TOL):
+    """
+    Errors in the ABSCISSA, which is what the steady-state design has.
+
+    At steady state s = C(m), with s the recorded load and m the assayed
+    metabolite, so the noise sits on x. Classical attenuation pulls b_hat down
+    and pushes a_hat up. The two do not cancel in the margin: ke_hat =
+    b_hat - a_hat*Km/m_bar^2 collapses, theta_crit rises, and mu comes out
+    UNDERestimated. Returns (mean mu_hat, true mu, mean theta_hat/theta).
+    """
+    p = P if p is None else p
+    rng = np.random.default_rng(seed)
+    sp = s_peak_default(p, m_bar)
+    mt = np.linspace(m_bar - Delta / 2, m_bar + Delta / 2, n)
+    s = clearance_A(mt, p)
+    mus, ths = [], []
+    for _ in range(reps):
+        mo = mt + rng.normal(0.0, sigma_m, n)
+        X = np.vstack([np.ones(n), mo]).T
+        ah, bh = np.linalg.lstsq(X, s, rcond=None)[0]
+        th = ah / g(m_bar, p.Km) ** 2
+        ke = bh - ah * p.Km / m_bar ** 2
+        mus.append(margin(th, ke, m_tol=m_tol, s_peak=sp, Km=p.Km))
+        ths.append(th / p.theta)
+    return (float(np.mean(mus)),
+            margin(p.theta, p.ke, m_tol=m_tol, s_peak=sp, Km=p.Km),
+            float(np.mean(ths)))
+
+
+def anchor_propagation(rel_s, reps=20000, seed=1, a=None, b=None, m_bar=M_OP):
+    """
+    The strengthened Proposition 5, with a variance.
+
+    A null patient has theta = 0, so s_j = ke*m_j and a relative error in the
+    recorded load enters ke_hat 1:1. Through Km = (b-ke)*m_bar^2/a and
+    theta = a*(Km+m_bar)^2/m_bar^2 it reaches theta ATTENUATED, not amplified.
+    """
+    if a is None:
+        a, b = fit_ab(P)
+    rng = np.random.default_rng(seed)
+    ke = P.ke * (1.0 + rng.normal(0.0, rel_s, reps))
+    Km = (b - ke) * m_bar ** 2 / a
+    ok = Km > 0
+    th = a * (Km[ok] + m_bar) ** 2 / m_bar ** 2
+    return float(np.std(Km[ok]) / P.Km), float(np.std(th) / P.theta)
+
+
+# =====================================================================
+def fig_design():
+    """What the design would have to deliver, and what it does deliver."""
+    a0, b0 = fit_ab(P)
+    sigma, n_ss = ASSAY_CV, 6.0     # assay sd in metabolite units, and the
+                                    # number of quasi-exogenous events
+    fig, axg = plt.subplots(2, 2, figsize=figsize(1.0, 0.76))
+    ax = axg.ravel()
+
+    # (a) equation (7), finally evaluated
+    fr = np.logspace(-1.3, 0.6, 300)
+    rel = np.array([100 * rel_err_theta(sigma, n_ss, f * M_OP) for f in fr])
+    ax[0].loglog(100 * fr, rel, color=GREEN, lw=2.0)
+    ax[0].axhline(20.0, color=RED, ls="--", lw=1.0)
+    d20 = delta_for_precision(0.20, sigma, n_ss)
+    ax[0].axvline(100 * d20 / M_OP, color=RED, ls=":", lw=1.0)
+    ax[0].axvspan(100 * fr[0], 70.0, color=BLUE, alpha=0.08)
+    corner(ax[0], "shaded: what the\ninstruments reach", "lower left",
+           color=BLUE, fontsize=7)
+    over_x(ax[0], 100 * d20 / M_OP, "  20% needs this", frac=0.94,
+           color=RED, fontsize=7)
+    ax[0].set_xlabel(r"band width $\Delta$  [% of $\bar m$]")
+    ax[0].set_ylabel(r"rel. error of $\hat\theta$  [%]")
+    ax[0].set_title("(7) evaluated: "
+                    f"{100 * rel_err_theta(sigma, n_ss, 0.10 * M_OP):.0f}%"
+                    " at a 10% band", fontsize=8)
+
+    # (b) the band that makes condition (3) checkable
+    sigs = np.linspace(0.5, 20.0, 200)
+    for nn, col, ls in [(3, GREY, ":"), (6, GREEN, "-"), (20, BLUE, "--")]:
+        ax[1].plot(sigs, [100 * delta_for_curvature(s, nn) / M_OP for s in sigs],
+                   color=col, ls=ls, lw=1.7, label=f"$n = {nn}$")
+    ax[1].axhline(70.0, color=BLUE, alpha=0.6, lw=1.2)
+    corner(ax[1], "the instruments reach 70%", "lower right", color=BLUE,
+           fontsize=7)
+    ax[1].axvline(ASSAY_CV, color=GREY, ls=":", lw=1.0)
+    ax[1].set_xlabel(r"$\sigma$  [metabolite units]")
+    ax[1].set_ylabel(r"$\Delta$ to resolve curvature  [% of $\bar m$]")
+    ax[1].set_title("condition (3) is checkable\nonly above this", fontsize=8)
+    ax[1].legend(loc="upper left", fontsize=6.5)
+
+    # (c) errors in the abscissa bias the margin DOWNWARD
+    ratios = np.linspace(0.02, 0.6, 22)
+    D = 0.5 * M_OP
+    got = [eiv_margin_bias(r * D, D, reps=600, seed=7) for r in ratios]
+    mu_h = np.array([q[0] for q in got])
+    mu_t = got[0][1]
+    ax[2].plot(100 * ratios, mu_h, color=RED, lw=2.0,
+               label=r"$\hat\mu$, abscissa noise")
+    ax[2].axhline(mu_t, color=GREEN, ls="--", lw=1.5, label=r"true $\mu$")
+    ax[2].axhline(0.0, color=GREY, lw=0.8)
+    ax[2].set_xlabel(r"$\sigma_m / \Delta$  [%]")
+    ax[2].set_ylabel(r"estimated margin $\hat\mu$")
+    ax[2].set_title("abscissa noise biases the\nmargin down, not up", fontsize=8)
+    ax[2].legend(loc="lower left", fontsize=6.5)
+
+    # (d) the null anchor propagates attenuated
+    rs = np.linspace(0.01, 0.30, 30)
+    prop = [anchor_propagation(r, reps=4000) for r in rs]
+    ax[3].plot(100 * rs, [100 * q[1] for q in prop], color=GREEN, lw=2.0,
+               label=r"into $\theta$")
+    ax[3].plot(100 * rs, [100 * q[0] for q in prop], color=AMBER, ls="--",
+               lw=1.7, label=r"into $K_m$")
+    ax[3].plot(100 * rs, 100 * rs, color=GREY, ls=":", lw=1.2, label="1:1")
+    ax[3].set_xlabel("rel. error in the null patient's load  [%]")
+    ax[3].set_ylabel("resulting rel. error  [%]")
+    ax[3].set_title("the null anchor attenuates,\nit does not amplify", fontsize=8)
+    ax[3].legend(loc="upper left", fontsize=6.5)
+
+    save(fig, "fig_A8_design")
+    print(f"    (7) evaluated at sigma={sigma}, n={n_ss:.0f}: "
+          f"{100 * rel_err_theta(sigma, n_ss, 0.10 * M_OP):.0f}% at a 10% band, "
+          f"{100 * rel_err_theta(sigma, n_ss, 0.70 * M_OP):.0f}% at 70%")
+    print(f"    Delta for 20% precision: {100 * d20 / M_OP:.0f}% of m_bar")
+    print(f"    Delta to resolve curvature at 2 sigma: "
+          f"{100 * delta_for_curvature(sigma, n_ss) / M_OP:.0f}% of m_bar")
+    mh, mt2, rt = eiv_margin_bias(0.20 * D, D, reps=4000)
+    print(f"    EIV at sigma_m/Delta = 20%: theta_hat/theta = {rt:.2f} inflated, "
+          f"but mu {mh:.0f} against a true {mt2:.0f}")
+    kk, tt = anchor_propagation(0.20)
+    print(f"    null anchor: 20% in s -> {100 * kk:.1f}% in Km, {100 * tt:.1f}% "
+          f"in theta (attenuation {tt / 0.20:.2f}x)")
+
+
+# =====================================================================
 def table_rank():
     rows = []
     for levels in ([10.0], [10.0, 12.0], [10.0, 12.0, 14.0],
@@ -558,5 +733,6 @@ if __name__ == "__main__":
     slope = fig_load_error()
     fig_fibre()
     fig_margin_fibre()
+    fig_design()
     table_rank()
     print(f"  load-error amplification factor: {slope:.3f}")

@@ -613,6 +613,74 @@ this subsection becomes unnecessary.
       other.
 \end{enumerate}
 
+\subsection{What the design would have to deliver}
+\label{sec:design}
+
+Equation \eqref{eq:thetaerr} is derived above and not evaluated. Evaluating it
+answers the question of Table~\ref{tab:models}, and the answer is negative.
+
+\paragraph{The relative precision is identified, though the parameter is not.}
+$\hat\theta = \hat a/g(\bar m)^2$ is the fitted intercept times a constant, so
+$\operatorname{sd}(\hat\theta)/\theta = \operatorname{sd}(\hat a)/a$ exactly and the fibre
+coordinate cancels. The $g(\bar m)^{-2}$ of \eqref{eq:thetaerr} is not a separate unknown:
+since $a = \theta g(\bar m)^2$, the product $(\sigma/\theta)g(\bar m)^{-2}$ is $\sigma/a$,
+and $a$ is fitted. So
+\begin{equation}
+\frac{\operatorname{sd}(\hat\theta)}{\theta} \;\approx\;
+\frac{\sigma}{a}\,\sqrt{\frac{12}{n}}\;\frac{\bar m}{\Delta},
+\label{eq:relerr}
+\end{equation}
+every term of which is observable. Remark~\ref{rem:fibre} leaves $\theta$ unknown to a
+factor of $169$; it leaves its \emph{relative} precision known.
+
+\paragraph{What $\sigma$ and $n$ are.} The ordinate of the fit is $C = s - \dot m$, and
+neither term is measured. At the one documented schedule, six-monthly visits
+(Table~\ref{tab:epistemic}), $\dot m$ is not recoverable at all: the metabolite's time
+constant is days. The accessible design is therefore steady states, where $\dot m = 0$ and
+$C(m_i) = s_i$. Three things follow. $\sigma$ is dominated by error in the recorded
+substrate load rather than by assay variability, amplified into $\theta$ by the factor of
+Figure~\ref{fig:A2}~(right). The steady-state framing is what makes the argument for
+Proposition~\ref{prop:degeneracy} immediate. And $n$ counts \emph{instrument events}, the
+quasi-exogenous carnitine steps of Section~\ref{sec:instruments}, not clinic visits, which
+is a much smaller number.
+
+\paragraph{The numbers.} At $\sigma = 5$ metabolite units and $n = 6$ such events,
+\eqref{eq:relerr} gives a relative error of $285\%$ over a $10\%$ band and $41\%$ over a
+$70\%$ one. Twenty per cent needs $\Delta = 143\%$ of $\bar m$. Condition
+\eqref{eq:affine} is checkable on the same records, and asks the same of them: a quadratic
+fit over a band of full width $\Delta$ has
+$\operatorname{sd}(\hat c_2) = \sqrt{180}\,\sigma/(\sqrt{n}\Delta^2)$ in the uniform-design
+limit, against a true $|c_2| = \theta K_m/(K_m+\bar m)^3$, so resolving the curvature at two
+standard errors needs $\Delta = 156\%$ of $\bar m$. \textbf{The instruments of
+Section~\ref{sec:instruments} reach $70\%$} (Figure~\ref{fig:A3}), about half of either
+requirement. That is the answer to ``can $\theta$ be identified from clinical data'', and it
+was previously carried only by a figure caption.
+
+\begin{remark}[The noise is in the abscissa, and it biases the margin downward]
+\label{rem:eiv}
+At steady state the recorded load is the ordinate and the assayed metabolite the abscissa,
+so \eqref{eq:varfit} is the wrong variance: the errors are in $x$. Classical attenuation
+pulls $\hat b$ towards zero and pushes $\hat a$ up, which alone would inflate $\hat\theta$
+and make a patient look safer. It does not. $\hat k_e = \hat b - \hat a K_m/\bar m^2$
+collapses as $\hat a$ inflates, $\thc^{\mathrm{A}}$ rises with it, and the margin is
+\emph{under}estimated. Simulated at the illustrative values, $\hat\theta$ is inflated
+fourfold at $\sigma_m/\Delta = 20\%$ while $\hat\mu$ reads $-376$ against a true $+2006$:
+the sign flips, and a safe patient is estimated as unsafe. The error is conservative, and it
+is a bias rather than imprecision, worst in exactly the narrow band the stable patient
+occupies.
+\end{remark}
+
+\begin{remark}[The anchor is well conditioned; the band is what binds]
+\label{rem:anchor_var}
+Proposition~\ref{prop:anchor} is demonstrated noise-free, which is the standard this section
+spends its length arguing against. Giving it a variance is favourable. A null patient has
+$\theta_j = 0$, so $s_j = k_e m_j$ and a relative error in the recorded load enters
+$\hat k_e$ one for one. Through $K_m = (b - k_e)\bar m^2/a$ and \eqref{eq:fibre0} it reaches
+$\theta$ \emph{attenuated}: $20\%$ in the load gives $4\%$ in $K_m$ and $7\%$ in $\theta$,
+a factor of about a third. The anchors do not relocate the conditioning problem. What
+remains binding is the band that has to deliver $(a,b)$ in the first place.
+\end{remark}
+
 \subsection{Known defect}
 
 Since $k_e m \to \infty$, total clearance is unbounded and every load is eventually
