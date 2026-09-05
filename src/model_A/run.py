@@ -39,7 +39,7 @@ M_TOL = 40.0       # tolerable metabolite level, a clinical convention
 # and 1.50x and its fold sits at 1.18x. The ratio is the physiological claim,
 # and each model applies it to its own parameters.
 ILLNESS_FOLD = 1.50
-ASSAY_CV = 5.0     # typical analytical and biological variability, per cent
+ASSAY_CV = 5.0     # per cent, never flux units. A sigma comes from sigma_from_load().
 
 
 # =====================================================================
