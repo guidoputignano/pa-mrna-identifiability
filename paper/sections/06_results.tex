@@ -143,14 +143,13 @@ fails in Model A it fails a fortiori in Model B.
 \clearpage
 %---------------------------------------------------------------
 \subsection{Model C: depletion, a testable prediction, and a well-posed threshold}
+\label{sec:resultsC}
 
-A two-state depletion model with constant replenishment does not in fact produce
-bistability. Setting $\dot c = 0$ in $\dot c = R - k c m$ gives a quasi-steady flux of
-exactly $R$, which is saturation and not decline. Decline requires that replenishment
-itself be impaired as the metabolite accumulates. The mechanism is already present in
-the biology: sequestration of free coenzyme A causes mitochondrial dysfunction, which
-degrades the cell's capacity to sustain carnitine handling. We therefore take
-$R(m) = R_0/(1 + m/M_i)$, and the resulting effective clearance rises, peaks and falls.
+The figures below are computed on the reduced clearance
+$C(m;\theta) = \theta g(m) + \alpha(m)$ of \eqref{eq:alpha}, obtained from the two-state
+system \eqref{eq:C} by solving $\dot c = 0$. What makes $\alpha$ non-monotone is the
+impaired replenishment \eqref{eq:Rm}, and Section~\ref{sec:model_C_added} sets out why
+stoichiometric consumption on its own would return a ceiling instead.
 
 \begin{figure}[htbp]
 \centering

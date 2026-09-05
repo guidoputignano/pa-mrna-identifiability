@@ -7,28 +7,85 @@ baseline, rather than mere removal of the trigger?}
 %==========================================================================
 
 \subsection{What is added}
+\label{sec:model_C_added}
 
 Models A and B treat alternative clearance as a fixed capacity. Elimination proceeds by
 conjugating propionate with carnitine, and \textbf{each molecule eliminated consumes one
 molecule of carnitine}, which is excreted with the product. Carnitine is consumed
-stoichiometrically and returns unavailable for the next molecule. Secondary carnitine deficiency is a documented feature of
-the disease and the reason carnitine supplementation is standard therapy.
+stoichiometrically and returns unavailable for the next molecule. Secondary carnitine
+deficiency is a documented feature of the disease and the reason carnitine supplementation
+is standard therapy.
 
-Promoting carnitine to a state variable:
+\paragraph{Stoichiometric consumption gives a ceiling, not a decline.} Promote carnitine to
+a state $c$, let the conjugation reaction draw on it, and replenish the pool at a constant
+rate $R$. Setting $\dot c = 0$ then fixes the conjugation flux at $R$, whatever the
+metabolite is doing. The alternative channel acquires a ceiling, Model B is recovered, and
+no second equilibrium appears. Consuming a replenished cofactor is not on its own the
+mechanism this section is about.
 
+\paragraph{What produces a decline is impairment of the replenishment.} The chain begins in
+the biology of Section~\ref{sec:pa}. Accumulated propionyl-CoA sequesters free coenzyme A,
+a finite shared carrier, leaving less for pyruvate dehydrogenase, $\beta$-oxidation and the
+TCA cycle, and mitochondrial impairment is the common thread through the systematic review
+of complications in these two disorders. Model C adds one link to that chain: a cell whose
+energy metabolism is failing maintains its carnitine pool less well, so the accumulation
+that consumes carnitine also degrades the capacity to replace it. That link is a modelling
+assumption rather than a reported finding, and everything in this section rests on it.
+Written as a replenishment that falls with the metabolite,
+\begin{equation}
+R(m) \;=\; \frac{R_0}{1 + m/M_i},
+\label{eq:Rm}
+\end{equation}
+with $R_0$ the unimpaired replenishment and $M_i$ the metabolite level at which it is
+halved.
+
+\paragraph{The model.} Writing $c(t)$ for available carnitine,
 \begin{equation}
 \begin{aligned}
-\dot m &= s(t) \;-\; \theta\, g(m) \;-\; k\, c\, m, \\
-\dot c &= R \;-\; k\, c\, m,
+\dot m &= s(t) \;-\; \theta\, g(m) \;-\; k\, c\, \frac{m}{K_c + m}, \\[2pt]
+\dot c &= R(m) \;-\; k\, c\, \frac{m}{K_c + m} \;-\; \delta\, c ,
 \end{aligned}
 \label{eq:C}
 \end{equation}
+with $K_c$ the half-saturation of the conjugation step and $\delta$ the rate at which free
+carnitine leaves the pool by routes other than conjugation. The conjugation term
+$k c\, m/(K_c+m)$ is the one the two equations share, and it enters both with the same
+coefficient, which is the one-to-one stoichiometry: a molecule of propionate leaves only
+with a molecule of carnitine. The two equations are otherwise not symmetric, because
+carnitine has a second exit that propionate does not. Free carnitine turns over whether or
+not there is propionate to conjugate, and $\delta c$ is that turnover. It is a second
+modelling assumption, alongside the impaired replenishment above, and no source consulted
+here establishes a first-order loss term of this form.
 
-with $c(t)$ available carnitine and $R$ its replenishment rate. The term $k c m$ appears in
-both equations with the same coefficient, expressing the one-to-one stoichiometry. The
-enzymatic term $\theta g(m)$ is unchanged and remains Michaelis-Menten in shape, with
+The enzymatic term $\theta g(m)$ is unchanged and remains Michaelis-Menten in shape, with
 $\theta$ and $K_m$ carrying the meanings of Section~3; only the alternative channel is
 re-specified.
+
+\paragraph{The reduction the rest of the section uses.} The $\delta c$ term is what makes
+the reduction non-trivial. Without it, $\dot c = 0$ forces the conjugation flux to equal
+$R(m)$ at every $m$, so the flux would not vanish with the metabolite and total clearance
+would not pass through the origin. With it, solving $\dot c = 0$ for $c$ and substituting
+gives a quasi-steady alternative flux
+\begin{equation}
+\alpha(m) \;=\; \frac{\hat R_0}{1 + m/M_i}\;\frac{m}{\hat K_c + m},
+\qquad
+\hat R_0 = \frac{R_0}{1+\rho}, \quad
+\hat K_c = \frac{\rho\, K_c}{1+\rho}, \quad
+\rho = \delta/k .
+\label{eq:alpha}
+\end{equation}
+The hatted constants are the ones a fit to clearance data would return, and they are the
+ones the figures of Section~\ref{sec:resultsC} are computed with. The constants of
+\eqref{eq:C} are not recoverable from $\alpha$ alone: the map
+$(R_0, K_c, \rho) \mapsto (\hat R_0, \hat K_c)$ loses one combination, so $\rho$ is not
+identifiable from the reduced curve. This is the same kind of degeneracy the note is about,
+one level down.
+
+$\alpha$ vanishes at $m = 0$, rises while the conjugation step is filling, and then falls
+with $R$. That shape is what the rest of this section turns on. Everything from
+Section~\ref{sec:intrinsic} onwards is carried out on the reduced clearance
+$C(m;\theta) = \theta g(m) + \alpha(m)$, the carnitine state being fast relative to the
+metabolite.
 
 \begin{figure}[htbp]
 \centering
@@ -53,11 +110,17 @@ re-specified.
 \draw[mar] (enz) -- (o1);
 
 % the shared term: ONE node draining both pools
-\node[malt] (kcm) at (2.8,-2.7) {$k\, c\, m$\\[1pt]\scriptsize\mdseries consumes one $c$\\per $m$ removed};
+\node[malt] (kcm) at (2.5,-2.7) {$k\, c\, m/(K_c+m)$\\[1pt]\scriptsize\mdseries consumes one $c$\\per $m$ removed};
 \draw[mar, blue!55!black] (m.south east) .. controls +(0.7,-0.9) .. (kcm.north west);
 \draw[mar, blue!55!black] (c.south west) .. controls +(-0.7,-0.9) .. (kcm.north east);
-\node[msmall] (o2) at (2.8,-5.1) {eliminated together,\\as propionylcarnitine};
+\node[msmall] (o2) at (2.5,-5.1) {eliminated together,\\as propionylcarnitine};
 \draw[mar] (kcm) -- (o2);
+
+% carnitine's second exit, which propionate does not share
+\node[malt] (dc) at (6.9,-2.7) {$\delta\, c$\\[1pt]\scriptsize\mdseries turnover not\\coupled to $m$};
+\draw[mar, blue!55!black] (c.south east) .. controls +(0.6,-0.9) .. (dc.north);
+\node[msmall] (o3) at (6.9,-5.1) {lost from the pool};
+\draw[mar] (dc) -- (o3);
 
 % the feedback that makes clearance decline rather than saturate
 \draw[red!60!black, thick, -{Bar[width=2.4mm]}]
@@ -69,12 +132,14 @@ re-specified.
 \caption{Model C as a block diagram. The pool $m$, the load $s(t)$ and the enzymatic
 channel are placed and coloured as in Figures~\ref{fig:blockA} and \ref{fig:blockB}, and
 everything else differs. Carnitine is promoted from a rate constant to a second state $c$,
-and the elimination term $k\,c\,m$ is drawn as a single node draining both pools, because
-the one-to-one stoichiometry is the mechanism: each molecule of propionate that leaves
-takes a molecule of carnitine with it. Replenishment $R(m)$ refills $c$, and the blunt-ended
-arrow is the feedback that matters, since $R$ falls as $m$ rises. Without that feedback the
-alternative channel would merely saturate; with it, effective clearance declines with $m$,
-which is what produces the second equilibrium.}
+and the conjugation term is drawn as a single node draining both pools, because the
+one-to-one stoichiometry is the mechanism: each molecule of propionate that leaves takes a
+molecule of carnitine with it. Carnitine has a second exit that propionate does not, drawn
+on the right, and without it the quasi-steady flux would not vanish with the metabolite.
+Replenishment $R(m)$ refills $c$, and the blunt-ended arrow is the feedback that matters,
+since $R$ falls as $m$ rises. Without that feedback the alternative channel would merely
+saturate; with it, effective clearance declines with $m$, which is what produces the second
+equilibrium.}
 \label{fig:blockC}
 \end{figure}
 
@@ -116,8 +181,6 @@ sits. Models A and B predict no such requirement: in both, returning $s$ to base
 returns $m$ to baseline.
 \end{remark}
 
-An analogous depletion argument applies to free coenzyme A.
-
 \subsection{An intrinsic definition of $\thc$}
 \label{sec:intrinsic}
 
@@ -127,10 +190,10 @@ measured: $\bar m$, a clinical convention about what metabolite level is tolerab
 $\spk$, the amplitude of an illness. The convention is the more troubling of the two,
 because it is not a fact about the patient at all. Model C does not need it.
 
-Write $C(m;\theta) = \theta g(m) + \alpha(m)$ for the total clearance, with
-$\alpha(m) = R(m)\,m/(K_c+m)$ the carnitine-mediated flux. Since $\alpha$ rises, peaks and
-then decays, $C(\cdot\,;\theta)$ has an interior maximum for every $\theta$, and that
-maximum increases with $\theta$.
+Write $C(m;\theta) = \theta g(m) + \alpha(m)$ for the total clearance, with $\alpha$ the
+carnitine-mediated flux \eqref{eq:alpha}. Since $\alpha$ rises, peaks and then decays,
+$C(\cdot\,;\theta)$ has an interior maximum for every $\theta$, and that maximum increases
+with $\theta$.
 
 \begin{proposition}[Intrinsic critical capacity]
 \label{prop:intrinsic}
@@ -205,8 +268,9 @@ and only it removes $\spk$.
 \item \textbf{Identifiability.} $k_e$ is replaced by the product $k c(t)$ with $c$ a further
       unmeasured state and $R$ a further unknown. This worsens an already unfavourable
       parameter-to-measurement ratio.
-\item \textbf{Incompleteness.} Equations \eqref{eq:C} omit free-carnitine excretion, renal
-      reabsorption, and the dependence of propionylcarnitine elimination on renal function.
+\item \textbf{Incompleteness.} Equations \eqref{eq:C} carry loss of free carnitine only as
+      the lumped rate $\delta$, and omit renal reabsorption and the dependence of
+      propionylcarnitine elimination on renal function.
       Adding one state to capture half a mechanism may be worse than not adding it, since it
       confers the appearance of having modelled depletion without having done so.
 \end{enumerate}

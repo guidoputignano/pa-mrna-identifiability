@@ -92,7 +92,14 @@ class ParamsC:
     """
     theta: float = 300.0    # residual V_max of PCC, ~10% of normal
     Km: float = 100.0       # Michaelis constant of PCC
-    R0: float = 1000.0      # maximal carnitine-mediated flux.
+    # R0 and Kc below are the REDUCED constants of the paper's alpha(m),
+    # written there with hats. They are what a fit to a clearance curve
+    # returns. The structural constants of the two-state system are
+    # R0_struct = R0 (1 + rho) and Kc_struct = Kc (1 + rho) / rho, with
+    # rho = delta / k the ratio of non-conjugative carnitine loss to the
+    # conjugation rate. rho is not recoverable from alpha alone, which is
+    # why the reduced pair is what lives here.
+    R0: float = 1000.0      # maximal carnitine-mediated flux, reduced form.
                             # Was 1200, which made max_m C(m; theta=0) = 605,
                             # above the baseline load of 600: a patient with
                             # no residual enzyme was maintainable on the
@@ -103,7 +110,8 @@ class ParamsC:
                             # 504 at best, and theta_crit is 167.
     Mi: float = 300.0       # metabolite level at which carnitine handling
                             # is half-impaired (CoA sequestration feedback)
-    Kc: float = 50.0        # Michaelis constant of the conjugation reaction
+    Kc: float = 50.0        # half-saturation of the conjugation step,
+                            # reduced form; see the note on R0 above
 
 
 # ---------------------------------------------------------------- clearance
@@ -118,15 +126,26 @@ def clearance_B(m, p: ParamsB):
 def alt_flux_C(m, p: ParamsC):
     """
     Carnitine-mediated elimination after adiabatic elimination of the fast
-    carnitine state.
+    carnitine state. This is alpha(m) of the paper, Section 5.1.
 
-    A plain two-state depletion model,  dc/dt = R - k c m,  gives a
-    quasi-steady flux of exactly R: saturation, not decline, hence no
-    bistability. Decline requires that replenishment itself be impaired as
-    the metabolite accumulates. The mechanism is the one already in the
-    biology: sequestration of free coenzyme A causes mitochondrial
-    dysfunction, which degrades the cell's capacity to maintain carnitine
-    handling. We model this as R(m) = R0 / (1 + m/Mi).
+    Two ingredients, both needed.
+
+    Impaired replenishment. A depletion model with CONSTANT replenishment,
+    dc/dt = R - (conjugation flux), gives a quasi-steady flux of exactly R:
+    saturation, not decline, hence no bistability. Decline requires that
+    replenishment itself be impaired as the metabolite accumulates. The
+    mechanism is the one already in the biology: sequestration of free
+    coenzyme A causes mitochondrial dysfunction, which degrades the cell's
+    capacity to maintain carnitine handling. We model this as
+    R(m) = R0 / (1 + m/Mi).
+
+    A second exit for carnitine. If conjugation were the only route out of
+    the pool, dc/dt = 0 would force the flux back to R(m) for every m, so it
+    would not vanish with the metabolite and total clearance would not pass
+    through the origin. Free carnitine also turns over by routes that do not
+    consume propionate, at rate delta, and solving dc/dt = 0 with that term
+    present produces the m/(Kc + m) factor below. Both R0 and Kc here are the
+    reduced constants; see ParamsC.
     """
     return p.R0 / (1.0 + m / p.Mi) * (m / (p.Kc + m))
 
