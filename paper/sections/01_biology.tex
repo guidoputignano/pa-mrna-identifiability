@@ -104,8 +104,8 @@ input; partially recorded \\
 intracellular propionyl-CoA & \emph{not modelled} &
 the enzyme's true substrate, never measured \\
 a plasma marker of propionate accumulation, which one left open & $m$ \ \textbf{[proxy]} &
-the only observable; a downstream marker rather than the substrate
-(Section~\ref{sec:marker}) \\
+the only observable; a downstream product, one compartment removed from the
+substrate (Section~\ref{sec:marker}) \\
 PCC, its maximal velocity & $\theta$ &
 the unknown the decision needs \\
 carnitine conjugation and renal excretion & $k_e$ &
@@ -128,7 +128,7 @@ is introduced: Figures~\ref{fig:blockA}, \ref{fig:blockB} and \ref{fig:blockC}.}
 \end{figure}
 \end{adjustwidth}
 
-\paragraph{What the reduction discards.} Three things are lost in passing from the pathway
+\paragraph{The reduction's cost.} Three things are lost in passing from the pathway
 to any of the three models.
 
 \begin{enumerate}[leftmargin=*, itemsep=3pt]
@@ -145,8 +145,8 @@ inhibits N-acetylglutamate synthase, the activator of the urea cycle, and impair
 elimination through a route that does not pass through $m$ at
 all~\cite{pathophys_complications}. % C02
 Hyperammonemia is a major part of what makes a decompensation dangerous. The model speaks
-to the accumulation of $m$ and to the capacity that clears it, and not to the ammonia arm of
-a crisis.
+to the accumulation of $m$ and to the capacity that clears it. The ammonia arm of a crisis
+lies outside it.
 \item \textbf{CoA sequestration is absent from Models A and B.} The feedback in the
 lower left of Figure~\ref{fig:pathway}, whereby accumulated propionyl-CoA consumes a
 shared cofactor and
@@ -205,9 +205,8 @@ In the claims study the rate is approximately $0.5$ decompensations per patient-
 averaged across ages~\cite{mde_claims_us}, % C05
 and strongly age-dependent: around $1.4$ per patient-year between ages 3 and 6, falling to
 $0.1$ between 13 and 17~\cite{mde_claims_us}. % C06
-The profile is \emph{U-shaped} rather than monotonically decreasing, the same series
-reporting the rate rising again in adulthood to $0.2$ per
-patient-year~\cite{mde_claims_us}. % C07
+The profile is \emph{U-shaped}: the same series reports the rate rising again in adulthood
+to $0.2$ per patient-year~\cite{mde_claims_us}. % C07
 The electronic-record study finds the same shape and a considerably higher adult figure,
 $0.72$ per patient-year against $0.22$ to $0.34$ between ages 2 and
 18~\cite{mde_emr_us}. % C31
@@ -215,8 +214,8 @@ Events are also not rare within the population: in the natural history cohort 49
 participants ($98\%$) reported at least one, with annualised rates of $2.6$ and $2.4$ below
 age two against $0.2$ between 12 and 18, and $1.2$ in early-onset against $0.3$ in
 late-onset disease~\cite{natural_history}. % C43
-Patients therefore contribute repeated events rather than one apiece, and the rate at which
-they do so differs substantially from patient to patient.
+Patients therefore contribute repeated events, and the rate at which they do so differs
+substantially from patient to patient.
 
 \subsection{The Saudi context}
 
@@ -240,7 +239,7 @@ centre~\cite{nbs_riyadh_kfmc}. % C47
 
 A published series of 84 Saudi patients identified 16 distinct variants (7 in \emph{PCCA},
 9 in \emph{PCCB})~\cite{saudi84}. % C11
-Two features of that series matter here:
+Two features of that series bear on the identification:
 
 \begin{itemize}[leftmargin=*, itemsep=2pt]
 \item The variant \emph{PCCA} c.425G$>$A (p.Gly142Asp) accounts for $70.2\%$ of families and
@@ -281,9 +280,9 @@ fourfold by the pre-dose sample for the third dose and return to baseline by mon
 12~\cite{trial_phase12}, % C36
 and both bear on any schedule chosen patient by patient.
 
-This is the reason the residual capacity $\theta$ is treated here as a decision variable
-rather than a descriptive one. Before the therapy, diet, carnitine and antibiotics are
-titrated against the biomarker, and this note names no pre-therapy decision that knowing
+This is the reason the residual capacity $\theta$ is treated here as a decision variable.
+Before the therapy, diet, carnitine and antibiotics are titrated against the biomarker,
+and this note names no pre-therapy decision that knowing
 $\theta$ would change. With the therapy, $\theta$ is the quantity that says how much enzyme
 has to be supplied and how often, so the same number becomes the input to a dosing
 decision. The rest of this note asks how much of it

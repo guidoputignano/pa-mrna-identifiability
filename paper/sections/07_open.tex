@@ -4,7 +4,7 @@
 \paragraph{Well-posedness.} Three quantities in the formulation are not measured and are
 not physiological constants: $\mtol$ (clinical convention), $\spk$ (varies with the
 precipitating event), and the map from intracellular substrate to plasma biomarker. $\thc$
-is therefore an operational definition rather than a physical parameter. Whether the
+is therefore an operational definition; it is not a physical parameter. Whether the
 decision built on it is invariant to that arbitrariness is the central question.
 
 \paragraph{From a threshold to a hazard.} This is the reformulation referred to in
@@ -23,7 +23,7 @@ metabolite crosses the separatrix:
 where $A$ is the amplitude of an episode and $A_{\mathrm{crit}}(\theta)$ is the smallest
 excursion in the load that carries the patient from the attractor across the separatrix.
 Model C already supplies $A_{\mathrm{crit}}$: it is the margin of Figure~\ref{fig:C5},
-expressed in load rather than in metabolite.
+converted from metabolite into load.
 
 The construction is partly pre-empted. The natural history study already fits a hazard of
 exactly this
@@ -35,7 +35,7 @@ with $A_{\mathrm{crit}}(\theta)$ supplied by the model, for a measured biomarker
 covariate carrying the risk. The statistical apparatus already exists; what it is
 regressed on is the open question.
 
-Four things follow.
+Four consequences:
 
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
 \item $\spk$ leaves the definition of the threshold. A single assumed worst case is
@@ -44,14 +44,14 @@ Four things follow.
 \item The endpoint becomes the reliable observable. Dated admissions are coded
       consistently, whereas the metabolite measurements are sparse and stand in an assumed
       relation to the enzyme's substrate.
-\item The recurrent-event structure is used rather than flattened. Patients do not have one
+\item The recurrent-event structure is used. Patients do not have one
       event each: $49$ of $50$ participants in the natural history cohort reported at least
       one, at a mean annualised frequency of $1.0$~\cite{natural_history}, % C08
       and the rate varies enough between them that the study carries a participant-level
       random effect. A hazard formulation uses every event and every event-free interval a
       patient contributes, and makes the spread between patients a parameter to be estimated
       instead of noise to be averaged over.
-\item The count model becomes \emph{derived} rather than assumed. A Poisson or
+\item The count model becomes \emph{derived}. A Poisson or
       negative-binomial model imposed on admission counts is a modelling choice with
       nothing behind it; under \eqref{eq:hazard} the counting process follows from the
       arrival process and the crossing probability, and its dispersion has a mechanism.
@@ -107,7 +107,7 @@ design and identification questions above are therefore posed on an input that n
 fixed in advance. Whether the quasi-exogenous variation listed in
 Section~\ref{sec:instruments}, namely weight-based recalculation after growth, supply
 interruptions and changes of formulation, is sufficient to support the argument is a
-question about the records and not about the model, and it is answered patient by patient.
+question for the records, and it is answered patient by patient.
 The load route is asked the same question and costs more: a change of load carries the same
 determinant as a channel perturbation, and it needs both loads known where the channel
 route needs one.
@@ -127,7 +127,7 @@ Proposition~\ref{prop:channel} nothing in the identification problem distinguish
 channels: the determinant depends on the metabolite levels before and after the
 perturbation and not on which channel produced them. What the mRNA therapy would add is
 therefore not new structure but a better \emph{statistical} position. Its schedule is fixed
-by protocol rather than in response to the patient, so it supplies a genuinely exogenous
+by protocol, with no reference to the patient's state, so it supplies a genuinely exogenous
 selective input, on the enzymatic channel, in a cohort where the only such input at present
 is endogenous. The instrumental apparatus needed to defend a carnitine-based argument would
 become unnecessary. The conditioning, which is the actual obstruction, is unchanged.

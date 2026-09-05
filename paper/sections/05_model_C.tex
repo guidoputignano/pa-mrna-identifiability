@@ -64,15 +64,15 @@ constants: $R_0$ and $K_c$ enter \eqref{eq:alpha} exactly as they enter \eqref{e
 no rescaling, and $k$ cancels. Everything from Section~\ref{sec:intrinsic} onwards is
 carried out on $C(m;\theta) = \theta g(m) + \alpha(m)$.
 
-\paragraph{The constants.} They are illustrative. Two are fixed by constraints rather than
-chosen. $R_0$ is set so the alternative route alone peaks at $500$ against a baseline load
+\paragraph{The constants.} They are illustrative, and a constraint fixes two of them
+outright. $R_0$ is set so the alternative route alone peaks at $500$ against a baseline load
 of $600$, so that a patient with $\theta = 0$ cannot be maintained, which the severity of
 null genotypes requires. $\rho_0 = 0.5$ sits in the window the next paragraph leaves open.
 $K_c$ is arbitrary: it is set equal to $K_m$, and there is no measurement behind that and no
 reason the half-saturation of a conjugation reaction should match that of an enzyme.
 Section~\ref{sec:intrinsic} reports what the arbitrariness costs.
 
-\paragraph{What the model predicts about carnitine excretion, and what is measured.}
+\paragraph{Carnitine excretion, predicted and measured.}
 Absolute urinary free carnitine is the filtered load times the fraction not recovered. In
 \eqref{eq:C} the filtered load is proportional to $c$ and the loss flux is $\delta(m)\,c$,
 so the fraction rises as $1 + m/M_i$ while the load falls with the plasma level. Free
@@ -80,8 +80,8 @@ carnitine of $5.7$~$\mu$M against a normal $37 \pm 8$~\cite{carnitine_pa_child} 
 makes the load $6.5$ times lower, and at the attractor the fraction rises only $1.3$-fold,
 so the model predicts absolute excretion at about a fifth of normal. That is the direction
 measured~\cite{carnitine_excretion_pa}. % C41
-The prediction fails only above $m \approx 1650$, some $1.6$ times the separatrix. This is a
-constraint the model satisfies rather than a result it derives, and it is what excludes
+The prediction fails only above $m \approx 1650$, some $1.6$ times the separatrix. The model
+satisfies this constraint; it does not derive it, and the constraint is what excludes
 $\rho_0$ below about $0.35$, where the separatrix moves far enough out to reverse the sign.
 
 \begin{figure}[!htbp]
@@ -178,8 +178,7 @@ glucose with protein withdrawal, and haemofiltration.
 The obvious phrasing, ``why does a crisis not resolve spontaneously'', is not what the
 model says, and Figure~\ref{fig:C2} contradicts it: lowering the load \emph{does} recover
 the patient, because it raises the separatrix. What Model C says is that recovery has to be
-bought by an active intervention rather than by returning to the status quo ante. Removal of
-the trigger
+bought by an active intervention. Removal of the trigger
 restores the vector field that the patient has already escaped, so the intervention has to
 overshoot, and the amount of overshoot is set by how far above the separatrix the patient
 sits. Models A and B predict no such requirement: in both, returning $s$ to baseline
@@ -226,7 +225,7 @@ intersection and $\dot m = s - C > 0$ everywhere. At equality the two intersecti
 coincide at the maximum, where $C' = 0$, which is the saddle-node condition.
 \end{proof}
 
-Two features of this definition matter separately.
+Two consequences, independent of each other:
 
 \begin{itemize}[leftmargin=*, itemsep=3pt]
 \item \label{item:wellposed}\textbf{$\mtol$ has disappeared.} No tolerability convention enters
@@ -271,16 +270,16 @@ Figures~\ref{fig:C1} and \ref{fig:C2} are $42\%$ and $50\%$ above baseline, clea
 factors of $2.4$ and $2.8$. The margin of Figure~\ref{fig:C5} is measured in metabolite and
 is large; the excursion that consumes it is measured in load and is not.
 
-\begin{remark}[What the arbitrary constant costs]
+\begin{remark}[The cost of $K_c$]
 \label{rem:kc}
 $K_c$ has no measurement behind it, and no reason the half-saturation of a conjugation
-reaction should equal that of an enzyme. Its cost is bounded rather than argued away: over
+reaction should equal that of an enzyme. Its cost is bounded: over
 $K_c$ from $25$ to $800$, a thirty-two-fold range, $\thc^{\,\mathrm{int}}$ spans $186$ to
 $120$, a factor of $1.56$. The threshold is weakly sensitive to a constant the note cannot
 pin down, which is the most that can be said for it.
 \end{remark}
 
-\begin{remark}[What this does not fix]
+\begin{remark}[The limit of the construction]
 \label{rem:intrinsic_limit}
 The construction eliminates $\mtol$. It does not eliminate $\spk$. Equation
 \eqref{eq:thcrit_int} takes the load as an argument, and the clinically operative question
@@ -302,13 +301,13 @@ and only it removes $\spk$.
 \item \textbf{Unverified.} This is the assumption named in
       Section~\ref{sec:model_C_added}, stated as a question about data. Everything here
       turns on replenishment being impaired enough, as the metabolite accumulates, to
-      render clearance decreasing rather than merely saturating. The test is direct and
+      render clearance decreasing. The test is direct and
       requires no new experiment, free carnitine and the acylcarnitine/free-carnitine ratio
       being measured routinely. What is on record is a fall at group level
       (Section~\ref{sec:discriminant}); whether it collapses within a patient, relative to
       that patient's own baseline, and by enough to turn clearance downward, is the part
       that is open.
-\item \textbf{Identifiability, traded rather than worsened.} $k_e$ is replaced by a
+\item \textbf{Identifiability, traded.} $k_e$ is replaced by a
       channel carrying four constants, $R_0$, $K_c$, $M_i$ and $\rho_0$, which worsens an
       already unfavourable parameter-to-measurement ratio. It also removes the specific
       degeneracy Model A has. The fibre of Remark~\ref{rem:fibre} exists because Model A's
@@ -321,7 +320,7 @@ and only it removes $\spk$.
       $(a,b)$ runs from $300$ to $457$, a factor of $1.52$, and above
       $K_c \approx 200$ no admissible solution exists at all. So $K_c$ costs about as much
       in identification as Remark~\ref{rem:kc} shows it costs in $\thc$, and the data
-      bound it from above rather than leaving it free. The identifiability of Model C is
+      bound it from above. The identifiability of Model C is
       not otherwise analysed in this note.
 \item \textbf{The competition is documented in vitro.} It is measured in a transporter
       solubilised from \emph{rat} renal brush-border membrane and reconstituted into
@@ -386,24 +385,24 @@ A model built to represent carnitine depletion and a recommendation written with
 reference to any model arrive at the same analyte, which makes the discriminant a
 convergence rather than a proposal.
 
-Two qualifications travel with it.
+Two qualifications on it:
 
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
-\item \textbf{The comparison is between groups of samples rather than within patients.} The
+\item \textbf{The comparison pools samples across the cohort.} The
       $25$ event samples and the $56$ non-event samples are pooled across the cohort, and no
       paired or repeated-measures analysis is reported; the authors record that a trend
       analysis on an individual patient basis would add insight~\cite{amd_phenotyping}. % C40
       Model C asserts a fall relative to a patient's own baseline, and that trajectory
       remains unmeasured.
-\item \textbf{The fall is consistent with C rather than exclusive to it.} Model B holds the
-      alternative channel at fixed capacity and says nothing about free carnitine, so the
-      observation is unpredicted by B rather than excluded by it. What C asserts beyond the
+\item \textbf{C is not the only model the fall fits.} Model B holds the
+      alternative channel at fixed capacity and says nothing about free carnitine, so B
+      neither predicts the observation nor excludes it. What C asserts beyond the
       fall is that depletion is quantitatively strong enough to make effective clearance
-      decrease with $m$ rather than merely saturate, which is the first item of
+      decrease with $m$, which is the first item of
       Section~\ref{sec:notworking} and is still open.
 \end{enumerate}
 
-Clinical practice is consistent with C, but this is an observation and not a demonstration.
+Clinical practice is consistent with C, but this is an observation and no more.
 
 \vspace{0.5em}
 \hrule
