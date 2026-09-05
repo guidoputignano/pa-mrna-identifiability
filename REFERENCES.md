@@ -38,6 +38,19 @@ serves anonymous requests from a slower pool.
 Both scripts take `--check`, which exits non-zero when something is
 unresolved. Wire that into CI so an unsourced claim fails the build.
 
+`claims_to_tex.py --check` also closes the loop in both directions between
+the register and the paper:
+
+- **forwards**, every citekey a row names has an entry in `refs.bib`, so a
+  row cannot point at a source the bibliography does not carry;
+- **backwards**, every `\cite{}` key in `paper/**/*.tex` has at least one
+  row, so a citation cannot enter the paper without a claim recorded
+  against it.
+
+An unauthorised citation fails the build exactly as an unresolved claim
+does. A mistyped citekey trips both directions at once, which is the
+signature to look for.
+
 ## LaTeX wiring
 
 In `paper/preamble.tex`, after `hyperref`:

@@ -13,12 +13,15 @@ Usage:
 
 import argparse
 import csv
+import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "paper" / "claims.csv"
 OUT = ROOT / "results" / "tables" / "tab_claims.tex"
+BIB = ROOT / "paper" / "refs.bib"
+TEXDIR = ROOT / "paper"
 
 ORDER = {"contradicted": 0, "unsourced": 1, "matches-with-drift": 2, "matches": 3}
 MARK = {
@@ -33,6 +36,45 @@ def esc(s):
     for a, b in [("&", r"\&"), ("%", r"\%"), ("_", r"\_"), ("#", r"\#")]:
         s = s.replace(a, b)
     return s
+
+
+def citekeys(row):
+    """A row may name more than one source; C17 and C29 do."""
+    return [k.strip() for k in row["citekey"].split(",") if k.strip()]
+
+
+def cross_check(rows):
+    """
+    Both directions between the register and the paper.
+
+    Forwards: every citekey the register names has an entry in refs.bib, so a
+    row cannot point at a source the bibliography does not carry.
+
+    Backwards: every \cite key in paper/**/*.tex has at least one row, so a
+    citation cannot enter the paper without a claim recorded against it. An
+    unauthorised citation fails the build exactly as an unresolved claim does.
+
+    Returns a list of problems, empty when both hold.
+    """
+    problems = []
+
+    declared = {k for r in rows for k in citekeys(r)}
+    if BIB.exists():
+        in_bib = set(re.findall(r"@\w+\s*\{\s*([^,\s]+)\s*,", BIB.read_text()))
+        for key in sorted(declared - in_bib):
+            owners = ", ".join(r["id"] for r in rows if key in citekeys(r))
+            problems.append(f"citekey {key!r} ({owners}) is not in refs.bib")
+    else:
+        problems.append(f"{BIB.relative_to(ROOT)} missing: run tools/fetch_refs.py")
+
+    for tex in sorted(TEXDIR.rglob("*.tex")):
+        for group in re.findall(r"\\cite\{([^}]*)\}", tex.read_text()):
+            for key in (k.strip() for k in group.split(",")):
+                if key and key not in declared:
+                    problems.append(
+                        f"{tex.relative_to(ROOT)} cites {key!r}, "
+                        f"which no row in claims.csv authorises")
+    return problems
 
 
 def main():
@@ -87,9 +129,19 @@ def main():
     for v, n in counts.items():
         print(f"  {v:20s} {n}")
 
+    problems = cross_check(rows)
+    for msg in problems:
+        print(f"  ! {msg}")
+
     unresolved = counts["contradicted"] + counts["unsourced"]
-    if args.check and unresolved:
-        sys.exit(f"\n{unresolved} claims unresolved")
+    if args.check and (unresolved or problems):
+        why = []
+        if unresolved:
+            why.append(f"{unresolved} claims unresolved")
+        if problems:
+            why.append(f"{len(problems)} register/paper mismatch"
+                       f"{'es' if len(problems) > 1 else ''}")
+        sys.exit("\n" + "; ".join(why))
 
 
 if __name__ == "__main__":

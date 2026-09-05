@@ -173,7 +173,9 @@ make figures     # regenerate all figures and tables (seconds)
 make refs        # fetch paper/refs.bib, render the claim register
 make paper       # build paper/main.pdf (runs refs first)
 make test        # assert the structural claims still hold
-make audit       # non-zero while any claim is contradicted or unsourced
+make audit       # non-zero while any claim is contradicted or unsourced,
+                 # any citekey is missing from refs.bib, or any \cite in the
+                 # paper has no row in the register
 make all
 ```
 
