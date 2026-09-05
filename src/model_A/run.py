@@ -27,31 +27,35 @@ from scipy.optimize import brentq, least_squares
 
 from common.models import (ParamsA, g, clearance_A, steady_state,
                            sensitivity_A, condition_number)
-from common.style import save, write_table, figsize, GREEN, RED, BLUE, AMBER, GREY, MUTED
+from common.style import save, write_table, figsize, GREEN, RED, BLUE, AMBER, GREY, MUTED, corner, over_x, at_point
 
 
 P = ParamsA()
+ASSAY_CV = 5.0     # typical analytical and biological variability, per cent
 
 
 # =====================================================================
 def fig_channels():
     """The two clearance channels. In the low-m band only their sum is seen."""
     m = np.linspace(0, 600, 600)
+    # Band edges named once, so the shading and its label cannot drift apart.
+    band_hi, op_hi = 40.0, 25.0
     enz = P.theta * g(m, P.Km)
     alt = P.ke * m
     tot = enz + alt
 
     fig, ax = plt.subplots(1, 2, figsize=figsize(1.0, 0.40))
 
-    ax[0].axvspan(0, 40, color=BLUE, alpha=0.06)
+    ax[0].axvspan(0, band_hi, color=BLUE, alpha=0.06)
     ax[0].plot(m, enz, color=GREEN, label=r"enzymatic  $\theta\,g(m)$")
     ax[0].plot(m, alt, color=AMBER, label=r"alternative  $k_e m$")
     ax[0].axhline(P.theta, color=GREEN, ls=":", lw=0.9)
-    ax[0].text(560, P.theta + 60, r"$\theta$", color=GREEN, fontsize=9)
+    at_point(ax[0], (m[-1], P.theta), r"$\theta$", dx=-4, dy=5,
+             color=GREEN, fontsize=9, ha="right", va="bottom")
     # The band is the range a stable patient's marker actually visits. Labelling
     # it "m << Km" would compare a plasma marker with an intracellular enzyme
     # constant, which is the comparison the paper declines to make.
-    ax[0].text(6, 2700, "observed\nrange", color=BLUE, fontsize=8)
+    over_x(ax[0], band_hi * 1.4, "observed\nrange", frac=0.80, color=BLUE)
     ax[0].set_xlabel(r"metabolite $m$")
     ax[0].set_ylabel("elimination flux")
     ax[0].set_title("the two channels")
@@ -64,17 +68,17 @@ def fig_channels():
               - clearance_A(m_op, P), 1e-6, 1e4)
     P2 = ParamsA(1000.0, P.Km, keB)
 
-    ax[1].axvspan(0, 25, color=BLUE, alpha=0.06)
+    ax[1].axvspan(0, op_hi, color=BLUE, alpha=0.06)
     ax[1].plot(m, clearance_A(m, P), color=GREEN,
                label=r"A: $\theta=3000,\ k_e=5.0$")
     ax[1].plot(m, clearance_A(m, P2), color=RED, ls="--",
                label=rf"B: $\theta=1000,\ k_e={keB:.1f}$")
     ax[1].plot([m_op], [clearance_A(m_op, P)], "o", ms=5, color=MUTED, zorder=4)
-    ax[1].annotate("identical here", xy=(m_op, clearance_A(m_op, P)),
-                   xytext=(m_op + 45, clearance_A(m_op, P) - 250),
-                   fontsize=7.5, color=MUTED,
-                   arrowprops=dict(arrowstyle="->", color=MUTED, lw=0.8))
-    ax[1].text(3, 3400, "operating\nregime", color=BLUE, fontsize=7.5)
+    at_point(ax[1], (m_op, clearance_A(m_op, P)), "identical here",
+             dx=26, dy=-16, arrow=True, fontsize=7.5, color=MUTED,
+             ha="left", va="top")
+    over_x(ax[1], op_hi * 1.4, "operating\nregime", frac=0.97, color=BLUE,
+           fontsize=7.5)
     ax[1].set_xlim(0, 300)
     ax[1].set_ylim(0, 4200)
     ax[1].set_xlabel(r"metabolite $m$")
@@ -101,7 +105,7 @@ def fig_conditioning():
     ax.loglog(spreads * 100, ref, color=GREY, ls="--", lw=1.0,
               label=r"slope $-2$")
     ax.axvspan(1, 10, color=RED, alpha=0.07)
-    ax.text(1.3, conds[-1] * 3, "clinically\nstable patient", color=RED, fontsize=7.5)
+    corner(ax, "clinically\nstable patient", "lower left", color=RED, fontsize=7.5)
     ax.set_xlabel("relative excursion of $m$  [%]")
     ax.set_ylabel("condition number")
     ax.set_title("conditioning degrades quadratically\nas the patient is stabilised")
@@ -152,7 +156,8 @@ def fig_indistinguishable():
     ax[0].plot(dks, mB_c, color=RED, ls="--",
                label=rf"B: $\theta=1000,\ k_e={keB:.1f}$")
     ax[0].plot([0], [m0], "o", ms=5, color=MUTED, zorder=4)
-    ax[0].text(1.5, m0 + 0.15, "identical untreated", color=MUTED, fontsize=7.5)
+    at_point(ax[0], (0.0, m0), "identical untreated", dx=9, dy=-5,
+             color=MUTED, fontsize=7.5, ha="left", va="top")
     ax[0].set_xlabel(r"carnitine increment $\kappa u_c$ on $k_e$")
     ax[0].set_ylabel(r"steady-state $m$")
     ax[0].set_title("response to carnitine")
@@ -167,8 +172,9 @@ def fig_indistinguishable():
     ax[1].plot(exc_c, rel_c, color=BLUE, label="carnitine, acts on $k_e$")
     ax[1].plot(exc_t, rel_t, color=AMBER, ls="--",
                label=r"therapy, acts on $\theta$")
-    ax[1].axhline(5, color=GREY, ls=":", lw=1.0)
-    ax[1].text(2, 5.3, "typical assay variability", color=GREY, fontsize=7.5)
+    ax[1].axhline(ASSAY_CV, color=GREY, ls=":", lw=1.0)
+    at_point(ax[1], (0.0, ASSAY_CV), "typical assay variability", dx=8, dy=4,
+             color=GREY, fontsize=7.5, ha="left", va="bottom")
     ax[1].set_xlabel("excursion of $m$ achieved  [%]")
     ax[1].set_ylabel("separation between the patients  [%]")
     ax[1].set_xlim(0, 70)
@@ -197,9 +203,9 @@ def fig_population(N_max=30, seed=0):
     ax[0].plot(Ns, unknowns, color=RED, label="unknowns  $N+2$")
     ax[0].plot(Ns, equations, color=GREEN, label="equations  $N$")
     ax[0].fill_between(Ns, equations, unknowns, color=RED, alpha=0.08)
-    ax[0].annotate("deficiency 2\nfor every $N$", xy=(22, 23),
-                   xytext=(13.5, 3.5), color=RED, fontsize=8, ha="center",
-                   arrowprops=dict(arrowstyle="->", color=RED, lw=0.9))
+    at_point(ax[0], (0.7 * N_max, 0.7 * N_max + 1), "deficiency 2\nfor every $N$",
+             dx=-6, dy=-40, arrow=True, color=RED, fontsize=8,
+             ha="center", va="top")
     ax[0].set_xlabel("cohort size $N$")
     ax[0].set_ylabel("count")
     ax[0].set_title("cohort size does not help")

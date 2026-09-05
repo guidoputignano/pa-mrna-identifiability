@@ -45,12 +45,14 @@ from scipy.optimize import brentq, minimize_scalar
 from common.models import (ParamsB, ParamsC, g, clearance_B,
                            clearance_C_quasistatic, equilibria_nonmonotone,
                            steady_state)
-from common.style import save, figsize, GREEN, RED, BLUE, AMBER, GREY, MUTED
+from common.style import (save, figsize, GREEN, RED, BLUE, AMBER, GREY, MUTED,
+                          corner, over_x, at_point)
 
 
 PC = ParamsC()
 PB = ParamsB()
 S_BASE = 600.0          # baseline substrate load, illustrative
+Y_MAX = 2600.0          # top of the basin panel, named once
 
 # Model B matched to Model C at the same operating point, for a fair
 # comparison: same theta and Km, alternative route saturating instead of
@@ -141,10 +143,15 @@ def fig_phaseline():
         ax.plot([r], [0], "o", ms=7, zorder=5,
                 color=GREEN if st else "white",
                 markeredgecolor=GREEN, markeredgewidth=1.8)
-        ax.annotate("stable\nattractor" if st else "unstable:\nthe separatrix",
-                    xy=(r, 0), xytext=(r, -220 if st else 300),
-                    ha="center", fontsize=7.5, color=GREEN if st else RED,
-                    arrowprops=dict(arrowstyle="-", color=GREY, lw=0.7))
+        # Offset in POINTS from the equilibrium, and nudged inward from the
+        # left spine: the attractor sits near m = 0, so a centred label there
+        # runs off the axis.
+        at_point(ax, (r, 0),
+                 "stable\nattractor" if st else "unstable:\nthe separatrix",
+                 dx=6 if st else 0, dy=-34 if st else 42,
+                 ha="left" if st else "center", va="top" if st else "bottom",
+                 fontsize=7.5, color=GREEN if st else RED,
+                 arrowprops=dict(arrowstyle="-", color=GREY, lw=0.7))
 
     ax.set_xlabel(r"metabolite $m$")
     ax.set_ylabel(r"$dm/dt$")
@@ -175,18 +182,25 @@ def fig_fold():
     ax.plot(stable_s, stable_m, ".", ms=2.0, color=GREEN, label="stable branch")
     ax.plot(unst_s, unst_m, ".", ms=2.0, color=RED, label="unstable branch")
     ax.axvline(s_fold, color=GREY, ls=":", lw=1.0)
-    ax.text(s_fold - 4, 0.97 * max(unst_m), "saddle-node", rotation=90,
-            fontsize=7.5, color=MUTED, ha="right", va="top")
+    over_x(ax, s_fold, "saddle-node", frac=0.97, rotation=90, fontsize=7.5,
+           color=MUTED, ha="right", va="top")
     ax.set_xlabel(r"substrate load $s$")
     ax.set_ylabel(r"equilibrium $m^*$")
     ax.set_title("two branches that collide,\nunlike Model B")
-    # between the branches: upper left is where the unstable one climbs
-    ax.legend(loc="center left", markerscale=4, framealpha=0.95)
+    # The free wedge is below the unstable branch and above the stable one.
+    # Anchored in axes fractions, so it stays there when the fold moves.
+    ax.legend(loc="lower left", bbox_to_anchor=(0.02, 0.14), markerscale=4,
+              fontsize=7.5, frameon=True, facecolor="white", edgecolor="none",
+              framealpha=0.95)
     save(fig, "fig_C2_fold")
 
 
 # =====================================================================
-def _simulate(rhs, m0, T=160.0, illness=(20.0, 34.0), s_base=S_BASE, s_ill=900.0):
+ILLNESS = (20.0, 34.0)   # the transient illness window, shared by the
+                         # simulation, the shading and the label
+
+
+def _simulate(rhs, m0, T=160.0, illness=ILLNESS, s_base=S_BASE, s_ill=900.0):
     def s(t):
         return s_ill if illness[0] <= t <= illness[1] else s_base
     sol = solve_ivp(lambda t, y: [s(t) - rhs(y[0])], (0, T), [m0],
@@ -209,14 +223,14 @@ def fig_timeseries():
     # The label belongs over the pulse it names. In the lower panel it had to
     # share a log axis with two curves and a legend, and touched whichever
     # moved.
-    ax[0].text(27, sC.max() * 1.10, "illness", ha="center", va="bottom",
-               fontsize=7.5, color=MUTED)
+    at_point(ax[0], (0.5 * (ILLNESS[0] + ILLNESS[1]), sC.max()), "illness",
+             dy=5, ha="center", va="bottom", fontsize=7.5, color=MUTED)
     ax[0].set_ylim(top=sC.max() * 1.45)
     ax[0].set_title("identical illness,\ntwo clearance hypotheses")
 
     ax[1].plot(tt, mB, color=GREEN, label="Model B: returns to baseline")
     ax[1].plot(tt, mC, color=RED, ls="--", label="Model C: does not return")
-    ax[1].axvspan(20, 34, color=AMBER, alpha=0.12)
+    ax[1].axvspan(*ILLNESS, color=AMBER, alpha=0.12)
     ax[1].set_xlabel("time  [days]")
     ax[1].set_ylabel(r"metabolite $m$")
     ax[1].set_yscale("log")
@@ -256,57 +270,50 @@ def fig_basin():
     ok = np.array(ok); stab_b = np.array(stab_b); unst_b = np.array(unst_b)
 
     fig, ax = plt.subplots(figsize=figsize(0.50, 0.88))
-    ax.fill_between(ok, unst_b, 3000, color=RED, alpha=0.10)
+    # Four labelled annotations plus a legend never fitted this panel at
+    # print size: they collided with each other, with the separatrix and with
+    # the region shading. The plot now carries only pointers, two numbered
+    # arrows and one marker, and the caption says what they are. The two
+    # regions move into the legend rather than floating as text.
+    import matplotlib.patches as mpatches
+    ax.fill_between(ok, unst_b, Y_MAX, color=RED, alpha=0.10)
     ax.fill_between(ok, 0, unst_b, color=GREEN, alpha=0.08)
     ax.plot(ok, stab_b, color=GREEN, lw=2.0, label="attractor")
     ax.plot(ok, unst_b, color=RED, lw=2.0, ls="--", label="separatrix")
-    # Every label below is placed against one of four free regions: the red
-    # wedge above the separatrix on the right, the green basin along the
-    # bottom, the band between the horizontal arrow and the separatrix, and
-    # the strip left of the baseline line. The earlier version put three of
-    # them at the same height and they printed on top of one another. The
-    # captions carry the explanations, so the labels here name the route and
-    # stop.
-    # low in the red wedge: the upper right is now the patient's corner
-    ax.text(0.997 * s_fold, 1000, "escape:\nmetabolite\ndiverges", color=RED,
-            fontsize=8, ha="right")
-    ax.text(0.66 * s_fold, 300, "recovery basin", color=GREEN, fontsize=8)
 
     # a patient who has crossed the separatrix, at BASELINE load
-    # The separatrix at baseline load now sits at about 1036, so the
-    # illustrative crisis point has to clear it visibly rather than graze it.
     s_base, m_crisis = S_BASE, 1700.0
     ax.axvline(s_base, color=GREY, ls=":", lw=1.0)
-    # Horizontal, in the empty strip above the separatrix. Rotated against
-    # the line it ran into whichever label shared that column.
-    ax.text(s_base, 2560, "baseline load", color=MUTED, fontsize=7.5,
-            ha="center", va="top")
+    over_x(ax, s_base, "baseline load", frac=0.985, color=MUTED, fontsize=7.5,
+           ha="center")
     ax.plot([s_base], [m_crisis], "o", ms=6, color=MUTED, zorder=5)
-    ax.annotate("patient above\nthe separatrix", xy=(s_base, m_crisis),
-                xytext=(s_base + 12, m_crisis + 170), fontsize=8, color=MUTED,
-                ha="left", va="bottom",
-                arrowprops=dict(arrowstyle="->", color=MUTED, lw=0.9))
 
     # route 1: push the load BELOW baseline (glucose, protein withdrawal)
     s_rescue = 0.62 * s_fold
     ax.annotate("", xy=(s_rescue, m_crisis), xytext=(s_base, m_crisis),
                 arrowprops=dict(arrowstyle="->", color=AMBER, lw=1.8))
-    ax.text(0.5 * (s_rescue + s_base), m_crisis - 130, "suppress catabolism",
-            color=AMBER, fontsize=7.5, ha="center", va="top")
+    at_point(ax, (s_rescue, m_crisis), "1", dx=14, dy=-7, color=AMBER,
+             fontsize=9, fontweight="bold", ha="left", va="top")
 
     # route 2: lower the metabolite directly
     ax.annotate("", xy=(s_base, 60), xytext=(s_base, m_crisis),
                 arrowprops=dict(arrowstyle="->", color=BLUE, lw=1.8))
-    ax.text(s_base - 12, 640, "haemofiltration", color=BLUE,
-            fontsize=7.5, ha="right", va="center")
+    at_point(ax, (s_base, 0.5 * m_crisis), "2", dx=-6, color=BLUE,
+             fontsize=9, fontweight="bold", ha="right", va="center")
+
+    handles, labels = ax.get_legend_handles_labels()
+    handles += [mpatches.Patch(facecolor=GREEN, alpha=0.25),
+                mpatches.Patch(facecolor=RED, alpha=0.25)]
+    labels += ["recovery basin", "escape"]
+    ax.legend(handles, labels, loc="upper left", fontsize=7,
+              handlelength=1.6, labelspacing=0.35,
+              frameon=True, facecolor="white", edgecolor="none", framealpha=0.95)
 
     ax.set_xlabel(r"substrate load $s$")
     ax.set_ylabel(r"metabolite $m$")
-    ax.set_ylim(0, 2600)
+    ax.set_ylim(0, Y_MAX)
     ax.set_title("recovery requires pushing the load below baseline,\n"
                  "not merely removing the trigger")
-    # Upper left is the one corner no curve and no label reaches.
-    ax.legend(loc="upper left", framealpha=0.95)
     save(fig, "fig_C4_basin")
     print("    The model reproduces standard care: intravenous glucose lowers s")
     print("    below baseline, which raises the separatrix above the patient and")
@@ -353,11 +360,12 @@ def fig_margin():
     ax[0].plot(th_ok, attr, color=GREEN, lw=2.0, label="attractor")
     ax[0].plot(th_ok, sep, color=RED, lw=2.0, ls="--", label="separatrix")
     ax[0].axvline(thc, color=MUTED, ls=":", lw=1.2)
-    ax[0].annotate(r"$\theta_{\mathrm{crit}}$" + f" = {thc:.0f}:"
-                   "\nthe two curves merge",
-                   xy=(th_ok[0], 0.5 * (attr[0] + sep[0])),
-                   xytext=(thc + 55, 620), fontsize=7.5, color=MUTED,
-                   arrowprops=dict(arrowstyle="->", color=MUTED, lw=0.9))
+    # Anchored to the merge point and offset in POINTS, so it keeps its
+    # clearance whatever theta_crit turns out to be.
+    at_point(ax[0], (th_ok[0], 0.5 * (attr[0] + sep[0])),
+             r"$\theta_{\mathrm{crit}}$" + f" = {thc:.0f}:" "\nthe curves merge",
+             dx=16, dy=0, arrow=True, fontsize=7.5, color=MUTED,
+             ha="left", va="center")
     ax[0].plot([PC.theta], [attr[np.argmin(abs(th_ok - PC.theta))]], "o", ms=5,
                color=MUTED, zorder=5)
     ax[0].plot([PC.theta], [sep[np.argmin(abs(th_ok - PC.theta))]], "o", ms=5,
@@ -373,12 +381,12 @@ def fig_margin():
     ax[1].fill_between(th_ok, 0, margin, color=BLUE, alpha=0.08)
     i = np.argmin(abs(th_ok - PC.theta))
     ax[1].plot([PC.theta], [margin[i]], "o", ms=5.5, color=MUTED, zorder=5)
-    ax[1].annotate(f"nominal patient\nmargin = {margin[i]:.0f}",
-                   xy=(PC.theta, margin[i]), xytext=(PC.theta - 20, margin[i] + 380),
-                   fontsize=7.5, color=MUTED,
-                   arrowprops=dict(arrowstyle="->", color=MUTED, lw=0.9))
-    ax[1].text(thc + 8, margin.max() * 0.82,
-               "margin vanishes:\nsaddle-node", color=MUTED, fontsize=7.5)
+    at_point(ax[1], (PC.theta, margin[i]),
+             f"nominal patient\nmargin = {margin[i]:.0f}",
+             dx=10, dy=34, arrow=True, fontsize=7.5, color=MUTED,
+             ha="left", va="bottom")
+    over_x(ax[1], thc, "margin vanishes:\nsaddle-node", frac=0.97,
+           color=MUTED, fontsize=7.5, ha="left")
     ax[1].set_xlabel(r"residual capacity $\theta$")
     ax[1].set_ylabel("separatrix $-$ attractor")
     ax[1].set_title("the safety margin, at baseline load")

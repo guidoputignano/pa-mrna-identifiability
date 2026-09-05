@@ -37,40 +37,48 @@ import matplotlib.pyplot as plt
 from common.models import (ParamsA, ParamsB, g, h, clearance_A, clearance_B,
                            steady_state, sensitivity_A, sensitivity_B,
                            condition_number)
-from common.style import save, figsize, GREEN, RED, BLUE, AMBER, GREY, MUTED
+from common.style import (save, figsize, GREEN, RED, BLUE, AMBER, GREY, MUTED,
+                          corner, over_x, at_point)
 
 
 P = ParamsB()
 CEIL = P.theta + P.ke
+M_MAX = 3000.0     # right edge of the Model B panels, named once
 
 
 # =====================================================================
 def fig_ceiling():
     """Total clearance is bounded; loads above the ceiling admit no equilibrium."""
-    m = np.linspace(0, 3000, 1500)
+    m = np.linspace(0, M_MAX, 1500)
     C = clearance_B(m, P)
 
     fig, ax = plt.subplots(figsize=figsize(0.49, 0.86))
     ax.plot(m, C, color=GREEN, lw=2.2, label=r"total clearance $C(m)$")
     ax.axhline(CEIL, color=GREEN, ls=":", lw=1.1)
-    ax.text(2980, CEIL + 70, r"ceiling $\theta + k_e$", color=GREEN,
-            fontsize=7.5, ha="right")
+    # The band between the ceiling and the peak-load line is only about 7pt
+    # tall on the page, and the clearance curve crowds it from below, so the
+    # label is cut to the symbol. The title already supplies the word.
+    at_point(ax, (M_MAX, CEIL), r"$\theta + k_e$", dx=-3, dy=3,
+             color=GREEN, fontsize=7.5, ha="right", va="bottom")
 
-    # Label placement is per-line: the clearance curve rises across the middle
-    # of the panel, so a single x for all three would put one of them on it.
-    for s, col, lab, ls, x, dy, va in [
-            (1500, BLUE, "baseline load", "-", 1200, 80, "bottom"),
-            (2900, AMBER, "moderate illness", "-", 1500, -90, "top"),
-            (3600, RED, "peak load: no equilibrium", "--", 1200, 80, "bottom")]:
+    # Each label clears its own line by a fixed number of POINTS, so the gap
+    # is the same on the page whatever the axis limits become. x is data,
+    # because the clearance curve crosses the middle of the panel and a single
+    # x for all three would put one of them on it.
+    for s, col, lab, ls, x, side in [
+            (1500, BLUE, "baseline load", "-", 1200, +1),
+            (2900, AMBER, "moderate illness", "-", 1500, -1),
+            (3600, RED, "peak load: no equilibrium", "--", 300, +1)]:
         ax.axhline(s, color=col, lw=1.4, ls=ls)
         me = steady_state(clearance_B, P, s)
         if np.isfinite(me):
             ax.plot([me], [s], "o", ms=5.5, color=col, zorder=4)
-        ax.text(x, s + dy, lab, color=col, fontsize=7.5, va=va)
+        at_point(ax, (x, s), lab, dy=4 * side, color=col, fontsize=7.5,
+                 va="bottom" if side > 0 else "top")
 
     ax.set_xlabel(r"metabolite $m$")
     ax.set_ylabel("flux")
-    ax.set_xlim(0, 3000)
+    ax.set_xlim(0, M_MAX)
     ax.set_ylim(0, 4200)
     ax.legend(loc="lower right", fontsize=7.5)
     ax.set_title("bounded clearance: above the ceiling\nthere is no steady state")
@@ -87,16 +95,18 @@ def fig_bifurcation():
     fig, ax = plt.subplots(figsize=figsize(0.49, 0.86))
     ax.plot(loads, eq, color=GREEN, lw=2.0, label="stable equilibrium")
     ax.axvline(CEIL, color=RED, ls="--", lw=1.3)
-    ax.text(CEIL - 60, 1700, r"$s = \theta + k_e$", color=RED,
-            fontsize=8, rotation=90, va="top", ha="right")
+    at_point(ax, (CEIL, 0), r"$s = \theta + k_e$", dx=-4, dy=0, color=RED,
+             fontsize=8, rotation=90, va="bottom", ha="right",
+             annotation_clip=False)
     ax.axhline(m_bar, color=BLUE, ls=":", lw=1.2)
-    ax.text(120, m_bar + 60, r"tolerable level $\bar m$", color=BLUE, fontsize=8)
+    at_point(ax, (0, m_bar), r"tolerable level $\bar m$", dx=8, dy=4,
+             color=BLUE, fontsize=8, va="bottom")
 
     s_clin = clearance_B(m_bar, P)
     ax.plot([s_clin], [m_bar], "o", ms=6, color=BLUE, zorder=4)
-    ax.annotate("clinical threshold\narrives first", xy=(s_clin, m_bar),
-                xytext=(s_clin - 1400, m_bar + 900), color=BLUE, fontsize=8,
-                arrowprops=dict(arrowstyle="->", color=BLUE, lw=0.9))
+    at_point(ax, (s_clin, m_bar), "clinical threshold\narrives first",
+             dx=-14, dy=48, arrow=True, color=BLUE, fontsize=8,
+             ha="right", va="bottom")
 
     ax.set_xlabel(r"substrate load $s$")
     ax.set_ylabel(r"equilibrium $m^*$")
@@ -119,8 +129,10 @@ def fig_thetacrit():
     cl = ax.contour(S, M, TH, levels=8, colors="white", linewidths=0.6)
     ax.clabel(cl, inline=True, fontsize=6.5, fmt="%.0f")
     fig.colorbar(cs, ax=ax, label=r"$\theta_{\mathrm{crit}}$")
-    ax.set_xlabel(r"assumed peak load $s_{\mathrm{peak}}$  (not measured)")
-    ax.set_ylabel(r"assumed tolerable level $\bar m$  (not measured)")
+    # Both axis labels used to carry "(not measured)" and were clipped at
+    # this panel width. The caption says it once instead.
+    ax.set_xlabel(r"assumed peak load $s_{\mathrm{peak}}$")
+    ax.set_ylabel(r"assumed tolerable level $\bar m$")
     ax.set_title(r"$\theta_{\mathrm{crit}}$ is an operational definition,"
                  "\nnot a physiological constant")
     save(fig, "fig_B3_thetacrit")
