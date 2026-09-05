@@ -24,6 +24,46 @@ with $n = 1$. The change of meaning of $k_e$ between \eqref{eq:A} and \eqref{eq:
 deliberate and is the whole content of the model: the alternative channel is promoted from
 a first-order rate law to a saturable one.
 
+\begin{figure}[htbp]
+\centering
+\resizebox{0.86\linewidth}{!}{%
+\begin{tikzpicture}
+\node[mpool] (m) at (0,0) {$m$\\[1pt]\scriptsize\mdseries accumulated\\metabolite};
+\node[mlabel] (in) at (-3.6,0) {$s(t)$};
+\draw[mar] (in) -- (m);
+\node[msmall] at (-2.4,0.42) {load};
+
+\node[menzy] (enz) at (-2.3,-2.7) {$\theta\, g(m)$\\{\scriptsize saturating}};
+\channelglyph{(-3.55,-4.15)}{green!45!black}{s}
+
+\node[malt] (alt) at (2.3,-2.7) {$k_e\, h(m)$\\{\scriptsize saturating}};
+\channelglyph{(1.15,-4.15)}{blue!55!black}{s}
+
+\draw[mar] (m.south) -- ++(0,-0.55) -| (enz.north);
+\draw[mar] (m.south) -- ++(0,-0.55) -| (alt.north);
+
+\node[msmall] (o1) at (-2.3,-5.0) {eliminated};
+\node[msmall] (o2) at ( 2.3,-5.0) {eliminated};
+\draw[mar] (enz) -- (o1);
+\draw[mar] (alt) -- (o2);
+
+\node[mlabel, green!45!black] (thr) at (-6.6,-2.7) {therapy\\$\Delta(t)$};
+\draw[mar, green!45!black] (thr) -- (enz);
+\node[mlabel, blue!55!black] (carn) at (6.6,-2.7) {carnitine\\$u_c(t)$};
+\draw[mar, blue!55!black] (carn) -- (alt);
+
+\node[msmall, red!60!black, align=center] at (0,-6.0)
+     {total clearance now bounded by $\theta + k_e$};
+\end{tikzpicture}}
+\caption{Model B as a block diagram, drawn to the same grammar as
+Figure~\ref{fig:blockA}. Everything is unchanged except the alternative channel, which now
+saturates rather than growing without limit; the two shape glyphs beside the channels are
+the whole content of the model. Both channels bending is what bounds total clearance, and
+also what costs the identification, since the channels are then separated only by bending
+at different places.}
+\label{fig:blockB}
+\end{figure}
+
 \subsection{Consequence: a load ceiling}
 
 Total clearance $C(m) = \theta g(m) + k_e h(m)$ is now a sum of two Michaelis-Menten terms.

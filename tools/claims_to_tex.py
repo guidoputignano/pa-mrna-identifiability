@@ -33,7 +33,21 @@ MARK = {
 
 
 def esc(s):
-    for a, b in [("&", r"\&"), ("%", r"\%"), ("_", r"\_"), ("#", r"\#")]:
+    """
+    Escape a register cell for LaTeX.
+
+    claims.csv is plain prose, so every LaTeX special has to be neutralised,
+    not just the four that happened to appear first. A source value quoting
+    "R^2" put the table into math mode and broke the build, and because the
+    appendix only renders under the draft option, `make paper` stayed green
+    while `make paper-draft` failed. Backslash goes first, or the escapes
+    introduced below would themselves be escaped.
+    """
+    for a, b in [("\\", r"\textbackslash{}"),
+                 ("{", r"\{"), ("}", r"\}"),
+                 ("&", r"\&"), ("%", r"\%"), ("_", r"\_"), ("#", r"\#"),
+                 ("$", r"\$"),
+                 ("^", r"\textasciicircum{}"), ("~", r"\textasciitilde{}")]:
         s = s.replace(a, b)
     return s
 

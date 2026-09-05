@@ -52,6 +52,34 @@
 \newtheorem{remark}{Remark}
 \newtheorem{proposition}{Proposition}
 
+% ---------------------------------------------------------------------
+%  Shared grammar for the three model block diagrams, Sections 3, 4 and 5.
+%  Defined once so the three are directly comparable: the pool m, the load
+%  s(t) and the enzymatic channel sit in the same place and carry the same
+%  colours in all three. Only the alternative channel differs, and in
+%  Model C the second state.
+% ---------------------------------------------------------------------
+\tikzset{
+  mblock/.style   = {draw, rounded corners=2pt, align=center, inner sep=5pt,
+                     font=\small, minimum height=9mm},
+  mpool/.style    = {mblock, fill=soft, font=\small\bfseries, minimum width=25mm},
+  menzy/.style    = {mblock, fill=green!8,  draw=green!45!black!50, minimum width=27mm},
+  malt/.style     = {mblock, fill=blue!6,   draw=blue!40,           minimum width=27mm},
+  mlabel/.style   = {font=\small, align=center},
+  msmall/.style   = {font=\scriptsize, align=center},
+  mar/.style      = {-{Stealth[length=2.2mm]}, thick},
+}
+% A miniature of a channel's shape, drawn beside its box. `lin' for a
+% straight line, `sat' for a saturating curve.
+\newcommand{\channelglyph}[3]{%  #1 = position, #2 = colour, #3 = lin|sat
+  \begin{scope}[shift={#1}, scale=0.62]
+    \draw[gray!55, line width=0.3pt] (0,0) -- (1.15,0) (0,0) -- (0,0.8);
+    \if#3l \draw[#2, line width=1.1pt] (0,0) -- (1.05,0.72);
+    \else   \draw[#2, line width=1.1pt]
+              plot[smooth] coordinates {(0,0) (0.26,0.36) (0.58,0.58) (1.05,0.70)};
+    \fi
+  \end{scope}}
+
 \newcommand{\thc}{\theta_{\mathrm{crit}}}
 \newcommand{\spk}{s_{\mathrm{peak}}}
 

@@ -39,10 +39,9 @@ variants in either gene produce the same disease.
 \begin{figure}[htbp]
 \centering
 
-%,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, (a) the pathway
-\begin{minipage}[t]{0.57\linewidth}
+\begin{minipage}{\linewidth}
 \centering
-\resizebox{\linewidth}{!}{%
+\resizebox{0.92\linewidth}{!}{%
 \begin{tikzpicture}[
   box/.style={draw, rounded corners=2pt, align=center, inner sep=5pt,
               font=\small, minimum height=9mm},
@@ -90,45 +89,6 @@ variants in either gene produce the same disease.
 
 \end{tikzpicture}}
 
-\vspace{0.5em}
-{\small\textbf{(a)} the pathway}
-\end{minipage}\hfill
-%,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, (b) the model
-\begin{minipage}[t]{0.40\linewidth}
-\centering
-\resizebox{\linewidth}{!}{%
-\begin{tikzpicture}[
-  box/.style={draw, rounded corners=2pt, align=center, inner sep=5pt,
-              font=\small, minimum height=9mm},
-  pool/.style={box, fill=soft, font=\small\bfseries, minimum width=24mm},
-  enzy/.style={box, fill=green!8, draw=green!45!black!50, minimum width=26mm},
-  altc/.style={box, fill=blue!6, draw=blue!40, minimum width=26mm},
-  ar/.style={-{Stealth[length=2.2mm]}, thick},
-]
-
-\node[pool] (m) at (0,0) {$m$\\[1pt]\scriptsize\mdseries accumulated\\metabolite};
-\node[font=\small] (in) at (-2.7,0) {$s(t)$};
-\draw[ar] (in) -- (m);
-\node[font=\scriptsize, align=center] at (-1.95,0.42) {load};
-
-\node[enzy] (enz) at (-1.85,-2.5) {$\theta\, g(m)$\\{\scriptsize saturating}};
-\node[altc] (alt) at ( 1.85,-2.5) {$k_e\, m$\\{\scriptsize linear}};
-\draw[ar] (m.south) -- ++(0,-0.45) -| (enz.north);
-\draw[ar] (m.south) -- ++(0,-0.45) -| (alt.north);
-
-\node[font=\scriptsize] (o1) at (-1.85,-4.1) {eliminated};
-\node[font=\scriptsize] (o2) at ( 1.85,-4.1) {eliminated};
-\draw[ar] (enz) -- (o1);
-\draw[ar] (alt) -- (o2);
-
-\node[font=\small, align=center, blue!55!black] (carn) at (4.3,-2.5)
-     {carnitine\\$u_c(t)$};
-\draw[ar, blue!55!black] (carn) -- (alt);
-
-\end{tikzpicture}}
-
-\vspace{0.5em}
-{\small\textbf{(b)} the model}
 \end{minipage}
 
 %,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,, correspondence
@@ -136,15 +96,16 @@ variants in either gene produce the same disease.
 {\footnotesize
 \begin{tabular}{@{}p{0.44\linewidth} p{0.16\linewidth} p{0.34\linewidth}@{}}
 \toprule
-\textbf{(a) biology} & \textbf{(b) model} & \textbf{status of the identification} \\
+\textbf{biology} & \textbf{model} & \textbf{status of the identification} \\
 \midrule
 amino acids, gut flora, protein catabolism & $s(t)$ &
 input; partially recorded \\
 intracellular propionyl-CoA & \emph{not modelled} &
 the enzyme's true substrate, never measured \\
-plasma 2-MC, 3-HP, C3 acylcarnitine & $m$ \ \textbf{[proxy]} &
-the only observable; a downstream marker, not the substrate \\
-PCC, its $V_{\max}$ & $\theta$ &
+a plasma marker of propionate accumulation, which one left open & $m$ \ \textbf{[proxy]} &
+the only observable; a downstream marker rather than the substrate
+(Section~\ref{sec:marker}) \\
+PCC, its maximal velocity & $\theta$ &
 the unknown the decision needs \\
 carnitine conjugation and renal excretion & $k_e$ &
 assumed population-level \\
@@ -153,28 +114,28 @@ this is exactly what Model C reintroduces \\
 \bottomrule
 \end{tabular}}
 
-\caption{(a) Propionate handling. Substrate converges on propionyl-CoA from diet,
-endogenous protein catabolism, fatty acids and gut flora. The enzymatic route through PCC
-is impaired; residual capacity is denoted $\theta$. Two escape routes remain: conjugation
-with carnitine, which consumes a finite cofactor, and conversion to the toxic metabolites
-that are measured clinically. Accumulated propionyl-CoA sequesters free coenzyme A, which
-is a shared and limited resource. (b) The same system as the block diagram that the
-rest of this note analyses, containing only quantities the model has. A single pool $m$ is
-filled by the load $s(t)$ and drained by two channels, one saturating and one linear, with
-carnitine entering as an input on the second. The table gives the correspondence, and
-names the two places where the reduction discards something.}
+\caption{Propionate handling. Substrate converges on propionyl-CoA from diet, endogenous
+protein catabolism, fatty acids and gut flora. The enzymatic route through PCC is impaired;
+residual capacity is denoted $\theta$. Two escape routes remain: conjugation with carnitine,
+which consumes a finite cofactor, and conversion to the toxic metabolites that are measured
+clinically. Accumulated propionyl-CoA sequesters free coenzyme A, which is a shared and
+limited resource. The table maps this onto the quantities the models carry, and names the
+places where the reduction discards something. Each of the three models draws the
+right-hand side of that map differently, and each is given its own block diagram where it
+is introduced: Figures~\ref{fig:blockA}, \ref{fig:blockB} and \ref{fig:blockC}.}
 \label{fig:pathway}
 \end{figure}
 \end{adjustwidth}
 
-\paragraph{What the reduction discards.} Three things are lost in passing from panel (a)
-to panel (b).
+\paragraph{What the reduction discards.} Three things are lost in passing from the pathway
+to any of the three models.
 
 \begin{enumerate}[leftmargin=*, itemsep=3pt]
 \item \textbf{The state $m$ is not the enzyme's substrate.} The substrate of PCC is
-intracellular, mitochondrial propionyl-CoA, and it is never measured. What is measured is
-plasma 2-methylcitrate, 3-hydroxypropionate and C3 acylcarnitine, which are downstream
-products in a different compartment. Writing the Michaelis-Menten term as $\theta g(m)$
+intracellular, mitochondrial propionyl-CoA, and it is never measured. What is measured is a
+plasma marker, 2-methylcitrate or 3-hydroxypropionate or C3 acylcarnitine, each a
+downstream product in a different compartment; which of them $m$ denotes is left open in
+Section~\ref{sec:marker}. Writing the Michaelis-Menten term as $\theta g(m)$
 with $m$ the plasma marker asserts a map between the two, and that map is an assumption,
 not a measurement. It is the single largest liberty taken in this note. Everything
 downstream inherits it, including the numerical value of $K_m$, which is therefore not the
@@ -187,7 +148,8 @@ decompensation dangerous, and the model is silent on it. This bounds what the mo
 predicts: it speaks to the accumulation of $m$ and to the capacity that clears it, and not
 to the ammonia arm of a crisis.
 \item \textbf{CoA sequestration is absent from Models A and B.} The feedback in the
-lower-left of panel (a), whereby accumulated propionyl-CoA consumes a shared cofactor and
+lower left of Figure~\ref{fig:pathway}, whereby accumulated propionyl-CoA consumes a
+shared cofactor and
 degrades the cell's general metabolic capacity, has no counterpart in a model whose
 clearance is a fixed function of $m$. Coenzyme A is a finite, shared carrier, and
 accumulated propionyl-CoA holds a growing fraction of the cellular pool, leaving less for

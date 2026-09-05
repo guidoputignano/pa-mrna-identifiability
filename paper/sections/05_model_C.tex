@@ -30,6 +30,54 @@ enzymatic term $\theta g(m)$ is unchanged and remains Michaelis-Menten in shape,
 $\theta$ and $K_m$ carrying the meanings of Section~3; only the alternative channel is
 re-specified.
 
+\begin{figure}[htbp]
+\centering
+\resizebox{0.94\linewidth}{!}{%
+\begin{tikzpicture}
+\node[mpool] (m) at (0,0) {$m$\\[1pt]\scriptsize\mdseries accumulated\\metabolite};
+\node[mlabel] (in) at (-3.6,0) {$s(t)$};
+\draw[mar] (in) -- (m);
+\node[msmall] at (-2.4,0.42) {load};
+
+% second state, drawn as a pool like m
+\node[mpool] (c) at (5.6,0) {$c$\\[1pt]\scriptsize\mdseries available\\carnitine};
+\node[mlabel] (rep) at (9.6,0) {$R(m)$};
+\draw[mar] (rep) -- (c);
+\node[msmall] at (8.0,0.42) {replenishment};
+
+% enzymatic channel, in the same place and colour as in A and B
+\node[menzy] (enz) at (-2.3,-2.7) {$\theta\, g(m)$\\{\scriptsize saturating}};
+\channelglyph{(-3.55,-4.15)}{green!45!black}{s}
+\draw[mar] (m.south) -- ++(0,-0.55) -| (enz.north);
+\node[msmall] (o1) at (-2.3,-5.0) {eliminated};
+\draw[mar] (enz) -- (o1);
+
+% the shared term: ONE node draining both pools
+\node[malt] (kcm) at (2.8,-2.7) {$k\, c\, m$\\[1pt]\scriptsize\mdseries consumes one $c$\\per $m$ removed};
+\draw[mar, blue!55!black] (m.south east) .. controls +(0.7,-0.9) .. (kcm.north west);
+\draw[mar, blue!55!black] (c.south west) .. controls +(-0.7,-0.9) .. (kcm.north east);
+\node[msmall] (o2) at (2.8,-5.1) {eliminated together,\\as propionylcarnitine};
+\draw[mar] (kcm) -- (o2);
+
+% the feedback that makes clearance decline rather than saturate
+\draw[red!60!black, thick, -{Bar[width=2.4mm]}]
+      (m.north) -- ++(0,1.7) -| (8.0,0.95);
+\node[msmall, red!60!black, fill=white, inner sep=2pt] at (4.3,1.62)
+     {rising $m$ impairs replenishment: the loop that turns\\
+      saturation into decline, and creates the separatrix};
+\end{tikzpicture}}
+\caption{Model C as a block diagram. The pool $m$, the load $s(t)$ and the enzymatic
+channel are placed and coloured as in Figures~\ref{fig:blockA} and \ref{fig:blockB}, and
+everything else differs. Carnitine is promoted from a rate constant to a second state $c$,
+and the elimination term $k\,c\,m$ is drawn as a single node draining both pools, because
+the one-to-one stoichiometry is the mechanism: each molecule of propionate that leaves
+takes a molecule of carnitine with it. Replenishment $R(m)$ refills $c$, and the blunt-ended
+arrow is the feedback that matters, since $R$ falls as $m$ rises. Without that feedback the
+alternative channel would merely saturate; with it, effective clearance declines with $m$,
+which is what produces the second equilibrium.}
+\label{fig:blockC}
+\end{figure}
+
 \subsection{Consequence: positive feedback}
 
 The loop is
