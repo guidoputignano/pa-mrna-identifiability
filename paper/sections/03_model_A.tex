@@ -23,9 +23,9 @@ saturation of the enzyme, $g \in [0,1)$.
 \item[$k_e m$] alternative elimination, taken proportional to $m$.
 \end{description}
 
-\paragraph{The enzymatic term is Michaelis-Menten kinetics.} The function $g$ is not an
-arbitrary saturating shape. It is the Michaelis-Menten law, which in its standard
-biochemical form gives the velocity of a single-substrate enzymatic reaction as
+\paragraph{The enzymatic term is Michaelis-Menten kinetics.} The function $g$ is the
+Michaelis-Menten law, which in its standard biochemical form gives the velocity of a
+single-substrate enzymatic reaction as
 
 \begin{equation}
 v \;=\; \frac{V_{\max}\,[S]}{K_m + [S]},
@@ -54,17 +54,16 @@ the constants carry their textbook in vitro meaning.
 \subsection{Assumptions}
 
 \begin{assumption}[Constancy]
-$\theta$ is constant in time.
+$\theta$ is constant in time, over the afebrile range in which the analysis is conducted.
 
-There is direct evidence against this, and it should be recorded as a known risk rather
-than as an open question. Four variant PCCs expressed and characterised in vitro were
-\emph{less thermostable} than the wild-type enzyme~\cite{pcc_variants_kinetics}. % C22
-If that carries over in vivo, the amount of surviving protein falls when the patient is
-febrile, which is precisely when the substrate load rises, so $\theta$ would be lowest
-exactly when it is most needed. The assumption is retained because the analysis is
-conducted on the stable patient, where body temperature is not excursing, and because no
-in vivo measurement of the effect exists. It should not be carried into any statement
-about behaviour during intercurrent illness.
+The restriction is required by the kinetics. Four variant PCCs expressed and characterised
+in vitro are \emph{less thermostable} than the wild-type
+enzyme~\cite{pcc_variants_kinetics}. % C22
+Carried over in vivo, the amount of surviving protein falls when the patient is febrile,
+which is when the substrate load also rises, placing $\theta$ at its lowest when it is most
+needed. The analysis here concerns the stable patient, whose body temperature is not
+excursing, and the effect has no in vivo measurement. Statements about behaviour during
+intercurrent illness lie outside the assumption.
 \end{assumption}
 
 \begin{assumption}[Population parameters]
@@ -89,8 +88,8 @@ Throughout this note $m$ denotes \textbf{plasma 3-hydroxypropionate} and nothing
 is left out because it carries risk on its own scale and summing markers of different
 scales is not a defined operation. 2-MC is excluded on the stronger ground that a marker
 which does not move with risk cannot be the state whose excursion is supposed to define a
-decompensation. Writing $m$ for an unlabelled mixture of the three would make the threshold
-meaningless, which is why the marker is named here rather than left to context.
+decompensation. An unlabelled mixture of the three would leave the threshold without a
+scale to be measured on.
 
 \subsection{The structural obstruction}
 
@@ -131,12 +130,22 @@ capacity, compensating with different degrees of alternative clearance, produce 
 measurements. They are nonetheless different patients, and any intervention that acts on
 one channel and not the other will separate them.
 
-What breaks the degeneracy is curvature. The two channels are separable exactly when the
-departure of $C$ from affine over $M$ exceeds $\varepsilon$, which is to say when the
-enzymatic channel is measurably nearer saturation at the top of the observed range than at
-the bottom. That requires a wide $M$, and a wide $M$ is metabolic crisis, which management
-exists to prevent. \textbf{Condition \eqref{eq:affine} is not a modelling assumption}; it is
-a property of a particular patient's record, and it can be checked against that record
+What breaks the degeneracy is curvature, and it is worth spelling out why. The alternative
+channel $k_e m$ is a straight line: its slope is $k_e$ at every level of $m$. The enzymatic
+channel bends, because $g$ saturates, so its slope $\theta g'(m)$ falls as $m$ rises. A
+straight line and a bending curve can be told apart only by watching the slope change. If
+the slope of $C$ is the same at the top of $M$ as at the bottom, to within what the assay
+resolves, then the data are consistent with any straight line of that slope, and
+\eqref{eq:slope} is all they contain.
+
+So the two channels separate exactly when $\theta g'(m)$ changes measurably across $M$,
+which happens when the enzyme is appreciably nearer saturation at $m_{\max}$ than at
+$m_{\min}$. A narrow $M$ cannot deliver that: over a short interval every smooth curve
+looks straight, and the smaller the interval the more nearly it does. Widening $M$ is the
+only route, and widening $M$ means letting the metabolite climb, which is the beginning of
+a decompensation. The information the identification needs and the excursion clinical
+management exists to prevent are the same thing. \textbf{Condition \eqref{eq:affine} is a
+property of a particular patient's record}, and it can be checked against that record
 directly.
 
 \begin{remark}[The scale on which this is stated]
@@ -261,13 +270,12 @@ records, namely carnitine, and the answer transfers unchanged to the perturbatio
 not, namely the therapy. What has to be earned in each case is the excursion $m \to m'$;
 the channel through which it is bought is immaterial to the information obtained.
 
-A numerical illustration with $K_m = 100$: patient A with
-$(\theta, k_e) = (3000,\, 5.0)$ and patient B with $(\theta, k_e) = (1000,\, 23.2)$
-have identical unperturbed equilibria at $m = 10$. A carnitine increment of
-$\kappa u_c = 10$ moves them to $7.52$ and $7.60$, a separation of $1.0\%$. An enzymatic
-increment doubling patient A's capacity moves them to $7.66$ and $7.73$, a separation of
-$0.98\%$. Both lie well under the analytical and biological variability of the assay, and
-the near-equality of the two numbers is Proposition~\ref{prop:channel} in arithmetic.
+Figure~\ref{fig:A3} carries the arithmetic. Two patients with threefold different
+enzymatic capacity, indistinguishable before the perturbation, are driven apart by a
+carnitine increment and by an enzymatic increment in turn, and the separation achieved is
+plotted against the excursion in $m$ that each buys. The two curves coincide, which is
+Proposition~\ref{prop:channel} in numbers, and both stay near $1\%$, which is well under
+the analytical and biological variability of the assay.
 
 \subsection{What the accessible input costs}
 
@@ -311,10 +319,9 @@ argued from the records in each case rather than assumed once.
 Everything above is stated for carnitine because that is the input in the charts. By
 Proposition~\ref{prop:channel} the same equations, the same determinant and the same
 conditioning apply verbatim when the therapy supplies the perturbation instead, with
-$\delta = \Delta g(m')$ in place of $\delta = \kappa u_c m'$. What changes is only the
-statistics: the therapeutic schedule is exogenous and needs no instrument, and the
-instrumental apparatus of this subsection becomes unnecessary rather than merely
-different.
+$\delta = \Delta g(m')$ in place of $\delta = \kappa u_c m'$. The statistics change. A
+therapeutic schedule is exogenous and needs no instrument, so the instrumental apparatus of
+this subsection becomes unnecessary.
 \end{remark}
 
 \subsection{What we would like to establish}

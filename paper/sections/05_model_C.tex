@@ -8,10 +8,10 @@ baseline, rather than mere removal of the trigger?}
 
 \subsection{What is added}
 
-Models A and B treat alternative clearance as a fixed capacity. It is not: elimination
-proceeds by conjugating propionate with carnitine, and \textbf{each molecule eliminated
-consumes one molecule of carnitine}, which is excreted with the product. Carnitine is a
-consumed reagent, not a catalyst. Secondary carnitine deficiency is a documented feature of
+Models A and B treat alternative clearance as a fixed capacity. Elimination proceeds by
+conjugating propionate with carnitine, and \textbf{each molecule eliminated consumes one
+molecule of carnitine}, which is excreted with the product. Carnitine is consumed
+stoichiometrically and returns unavailable for the next molecule. Secondary carnitine deficiency is a documented feature of
 the disease and the reason carnitine supplementation is standard therapy.
 
 Promoting carnitine to a state variable:
@@ -119,10 +119,9 @@ equilibrium structure changes, and it would be the same threshold under any conv
 about which metabolite levels a clinician is willing to accept. In Models A and B no such
 definition is available, because neither has a second equilibrium to collide with: in A the
 equilibrium is never lost, and in B it escapes to infinity without annihilating. This is
-the sense in which Model C is not merely the most realistic of the three. It is the only
-one in which $\thc$ is well posed.
-\item \textbf{The margin is the object, not the threshold.} Above the threshold, what
-matters clinically is not that two equilibria exist but how far apart they are. The
+the sense in which Model C is the only one of the three in which $\thc$ is well posed.
+\item \textbf{The margin is the clinically decisive object.} Above the threshold, what
+matters is how far apart the two equilibria are. The
 distance from the attractor to the separatrix is how far the patient can be pushed before
 the crisis becomes self-sustaining, and it closes continuously to zero at
 $\thc^{\,\mathrm{int}}$. That distance is computed and plotted in
@@ -185,8 +184,7 @@ it is a question the measurement cannot answer either way.
 
 \begin{remark}[Scope]
 \label{rem:scope}
-This is a limit on where the model may be read, and it should be stated plainly. The
-identifiability analysis of Section~3 concerns the \emph{stable} patient, where the
+The identifiability analysis of Section~3 concerns the \emph{stable} patient, where the
 biomarker and the state can be argued to move together, and nothing in it depends on
 tracking a crisis. The behaviour through a decompensation is exactly where the measured
 proxy stops tracking the state, so Model C's separatrix is a claim about the dynamics that

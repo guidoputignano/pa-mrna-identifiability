@@ -167,9 +167,8 @@ names the two places where the reduction discards something.}
 \end{figure}
 \end{adjustwidth}
 
-\paragraph{What the reduction discards.} Panel (b) is not panel (a) with the labels
-removed. Three things are lost in passing from one to the other, and they are stated here
-rather than left for a reader to find.
+\paragraph{What the reduction discards.} Three things are lost in passing from panel (a)
+to panel (b).
 
 \begin{enumerate}[leftmargin=*, itemsep=3pt]
 \item \textbf{The state $m$ is not the enzyme's substrate.} The substrate of PCC is
@@ -183,20 +182,16 @@ in vitro Michaelis constant of PCC.
 \item \textbf{Urea cycle inhibition and hyperammonemia are not modelled.} Propionyl-CoA
 inhibits N-acetylglutamate synthase and impairs ammonia elimination through a route that
 does not pass through $m$ at all. Hyperammonemia is a major part of what makes a
-decompensation dangerous and it is absent from the model. A patient can therefore be in
-serious trouble for a reason the state variable cannot express.
+decompensation dangerous, and the model is silent on it. This bounds what the model
+predicts: it speaks to the accumulation of $m$ and to the capacity that clears it, and not
+to the ammonia arm of a crisis.
 \item \textbf{CoA sequestration is absent from Models A and B.} The feedback in the
 lower-left of panel (a), whereby accumulated propionyl-CoA consumes a shared cofactor and
 degrades the cell's general metabolic capacity, has no counterpart in a model whose
-clearance is a fixed function of $m$. This is not an oversight to be apologised for: it is
-precisely the mechanism Model C reintroduces, and the reason Model C is the only one of the
-three in which a crisis fails to resolve by itself.
+clearance is a fixed function of $m$. Model C reintroduces precisely this mechanism, and
+it is why Model C is the only one of the three in which a crisis fails to resolve by
+itself.
 \end{enumerate}
-
-These are limits of the reduction, not defects of the biology, and each is a statement
-that can be checked. The first is checkable against any study relating plasma markers to
-intracellular propionyl-CoA. The second bounds what the model may be used to predict. The
-third is answered by Model C.
 
 \subsection{Why the block is damaging}
 
@@ -204,9 +199,8 @@ Two mechanisms, both visible in Figure~\ref{fig:pathway}.
 
 \paragraph{Coenzyme A sequestration.} Coenzyme A is a finite, shared carrier. Accumulated
 propionyl-CoA holds a growing fraction of the cellular pool, leaving less free CoA for
-pyruvate dehydrogenase, $\beta$-oxidation and the TCA cycle. Energy production therefore
-fails not because any of those enzymes is defective, but because a shared resource has
-been consumed. This is the origin of the secondary mitochondrial dysfunction
+pyruvate dehydrogenase, $\beta$-oxidation and the TCA cycle. Energy production fails
+through the exhaustion of that shared resource, with every one of those enzymes intact. This is the origin of the secondary mitochondrial dysfunction
 characteristic of the disease, and mitochondrial impairment is the common thread running
 through the systematic review of complications in these two
 disorders~\cite{pathophys_complications}. % C03
@@ -298,8 +292,7 @@ Two features of that series matter here:
 
 The second point is the methodological reason to work in this population: the map from
 genotype to residual enzymatic capacity is unconfounded~\cite{saudi84}. % C13
-That unconfounding is bought at a price in generalisability, which should be stated in the
-same breath. The series is $81\%$ \emph{PCCA} (68 of 84 patients) against $19\%$
+That unconfounding is bought at a price in generalisability. The series is $81\%$ \emph{PCCA} (68 of 84 patients) against $19\%$
 \emph{PCCB}, where the two genes contribute roughly equally to propionic acidemia
 worldwide~\cite{saudi84,genereviews_pa}. % C29
 Anything estimated here is estimated predominantly on \emph{PCCA} biology.
@@ -329,18 +322,24 @@ is the quantity that says how much enzyme has to be supplied and how often, so t
 number becomes the input to a dosing decision. The rest of this note asks how much of it
 can be known before that decision has to be made.
 
-\paragraph{The cost of an unnecessary dose is not only financial.} It is tempting to read
-the question as one of expenditure, with the worst case of a uniform regimen being that
-some patients are dosed more often than they need. The phase 1/2 safety data do not support
-that reading. Infusion-related reactions were reported in $11$ of $43$ doses
-($25.6\%$). One participant who was positive for anti-PEG antibodies at baseline showed a
-fourfold rise in titre before the third dose, which is the pattern that precedes accelerated
-clearance of PEGylated particles and loss of efficacy. Every dose that a patient did not
-need is an additional exposure of an immunogenic construct, and the anticipated consequence
-of accumulated exposure is that the therapy stops working in the patient who needs it.
-Knowing $\theta$ before dosing therefore protects the therapy itself, not merely the
-budget, and it is one of the arguments for individualising a schedule rather than
-shortening it uniformly.
+\paragraph{Each dose carries an exposure cost.} A uniform regimen dosed more often than a
+given patient needs is usually read as a question of expenditure. The phase 1/2 safety data
+add a second cost. Infusion-related reactions occurred in $5$ of $16$ participants and in
+$18$ of the $346$ doses administered ($5.2\%$), all grade 1 or
+2~\cite{trial_phase12}. % C34
+Their frequency varied with the regimen rather than being uniform across it, from $17.8\%$
+of doses on the three-weekly schedule to none on the two-weekly schedule at the same
+dose~\cite{trial_phase12}. % C35
+One participant, anti-PEG antibody positive at baseline, had titres rise at least fourfold
+by the pre-dose sample for the third dose, then return to baseline by month
+12~\cite{trial_phase12}; % C36
+that participant experienced reactions on $11$ of $43$ doses ($25.6\%$), continued
+treatment, and reported no further reactions for more than a year.
+
+The trial reports no loss of efficacy attributable to that antibody response, and this note
+claims none. What the data support is narrower and still relevant: dosing is not free of
+reaction risk, the risk depends on the schedule, and a schedule chosen without reference to
+$\theta$ is chosen without reference to how much enzyme a given patient needs.
 
 \vspace{0.5em}
 \hrule

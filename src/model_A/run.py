@@ -48,7 +48,10 @@ def fig_channels():
     ax[0].plot(m, alt, color=AMBER, label=r"alternative  $k_e m$")
     ax[0].axhline(P.theta, color=GREEN, ls=":", lw=0.9)
     ax[0].text(560, P.theta + 60, r"$\theta$", color=GREEN, fontsize=9)
-    ax[0].text(6, 2700, r"$m \ll K_m$", color=BLUE, fontsize=8)
+    # The band is the range a stable patient's marker actually visits. Labelling
+    # it "m << Km" would compare a plasma marker with an intracellular enzyme
+    # constant, which is the comparison the paper declines to make.
+    ax[0].text(6, 2700, "observed\nrange", color=BLUE, fontsize=8)
     ax[0].set_xlabel(r"metabolite $m$")
     ax[0].set_ylabel("elimination flux")
     ax[0].set_title("the two channels")
