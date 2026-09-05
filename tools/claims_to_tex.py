@@ -57,6 +57,28 @@ def citekeys(row):
     return [k.strip() for k in row["citekey"].split(",") if k.strip()]
 
 
+# A claim-id comment must be the last thing on its line. LaTeX discards
+# everything after `%` including the newline, so `... % C02 Some text` silently
+# deletes "Some text" and joins what follows straight onto the citation. The
+# source looks correct and the loss is visible only in the PDF, which is how one
+# such line survived until a full read-through. `make audit` now fails on it.
+CLAIM_COMMENT = re.compile(r"(?<!\\)%\s*C\d+\b(?P<rest>.*)$")
+TRAILING_IDS = re.compile(r"^(?:[,;]?\s*C\d+\b)*\s*$")
+
+
+def check_claim_comments():
+    """Every `% Cxx` marker sits at end of line, with nothing after it."""
+    problems = []
+    for tex in sorted(TEXDIR.rglob("*.tex")):
+        for n, line in enumerate(tex.read_text().splitlines(), 1):
+            m = CLAIM_COMMENT.search(line)
+            if m and not TRAILING_IDS.match(m.group("rest")):
+                problems.append(
+                    f"{tex.relative_to(ROOT)}:{n} has text after a claim id, "
+                    f"which LaTeX discards: {m.group('rest').strip()!r}")
+    return problems
+
+
 def cross_check(rows):
     """
     Both directions between the register and the paper.
@@ -143,7 +165,7 @@ def main():
     for v, n in counts.items():
         print(f"  {v:20s} {n}")
 
-    problems = cross_check(rows)
+    problems = cross_check(rows) + check_claim_comments()
     for msg in problems:
         print(f"  ! {msg}")
 

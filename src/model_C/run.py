@@ -203,17 +203,24 @@ def fig_timeseries():
     ax[0].fill_between(tt, 0, sC, color=AMBER, alpha=0.25, step="mid")
     ax[0].plot(tt, sC, color=AMBER, lw=1.2)
     ax[0].set_ylabel(r"load $s(t)$")
+    # The label belongs over the pulse it names. In the lower panel it had to
+    # share a log axis with two curves and a legend, and touched whichever
+    # moved.
+    ax[0].text(27, sC.max() * 1.10, "illness", ha="center", va="bottom",
+               fontsize=7.5, color=MUTED)
+    ax[0].set_ylim(top=sC.max() * 1.45)
     ax[0].set_title("identical illness,\ntwo clearance hypotheses")
 
     ax[1].plot(tt, mB, color=GREEN, label="Model B: returns to baseline")
     ax[1].plot(tt, mC, color=RED, ls="--", label="Model C: does not return")
     ax[1].axvspan(20, 34, color=AMBER, alpha=0.12)
-    ax[1].text(27, ax[1].get_ylim()[1] * 0.05, "illness", ha="center",
-               fontsize=7.5, color=MUTED)
     ax[1].set_xlabel("time  [days]")
     ax[1].set_ylabel(r"metabolite $m$")
     ax[1].set_yscale("log")
-    ax[1].legend(loc="upper left")
+    # Headroom before the legend, or the box lands on the Model C curve where
+    # it climbs. On a log axis the factor is decades, not units.
+    ax[1].set_ylim(top=max(mB.max(), mC.max()) * 30)
+    ax[1].legend(loc="upper left", framealpha=0.95)
     save(fig, "fig_C3_timeseries")
 
 
@@ -250,39 +257,50 @@ def fig_basin():
     ax.fill_between(ok, 0, unst_b, color=GREEN, alpha=0.08)
     ax.plot(ok, stab_b, color=GREEN, lw=2.0, label="attractor")
     ax.plot(ok, unst_b, color=RED, lw=2.0, ls="--", label="separatrix")
-    ax.text(0.945 * s_fold, 1450, "escape:\nmetabolite diverges", color=RED,
+    # Every label below is placed against one of four free regions: the red
+    # wedge above the separatrix on the right, the green basin along the
+    # bottom, the band between the horizontal arrow and the separatrix, and
+    # the strip left of the baseline line. The earlier version put three of
+    # them at the same height and they printed on top of one another. The
+    # captions carry the explanations, so the labels here name the route and
+    # stop.
+    ax.text(0.915 * s_fold, 1760, "escape:\nmetabolite diverges", color=RED,
             fontsize=8, ha="center")
-    ax.text(0.63 * s_fold, 130, "recovery basin", color=GREEN, fontsize=8)
+    ax.text(0.66 * s_fold, 300, "recovery basin", color=GREEN, fontsize=8)
 
     # a patient who has crossed the separatrix, at BASELINE load
     s_base, m_crisis = S_BASE, 1200.0
     ax.axvline(s_base, color=GREY, ls=":", lw=1.0)
-    ax.text(s_base + 6, 2500, "baseline load", color=MUTED, fontsize=7.5, rotation=90,
-            va="top")
+    # Horizontal, in the empty strip above the separatrix. Rotated against
+    # the line it ran into whichever label shared that column.
+    ax.text(s_base, 2560, "baseline load", color=MUTED, fontsize=7.5,
+            ha="center", va="top")
     ax.plot([s_base], [m_crisis], "o", ms=6, color=MUTED, zorder=5)
-    ax.annotate("patient above the separatrix\nat baseline load", xy=(s_base, m_crisis),
-                xytext=(s_base - 130, m_crisis + 900), fontsize=8, color=MUTED,
+    ax.annotate("patient above\nthe separatrix", xy=(s_base, m_crisis),
+                xytext=(s_base - 22, m_crisis + 360), fontsize=8, color=MUTED,
+                ha="right", va="bottom",
                 arrowprops=dict(arrowstyle="->", color=MUTED, lw=0.9))
 
     # route 1: push the load BELOW baseline (glucose, protein withdrawal)
     s_rescue = 0.62 * s_fold
     ax.annotate("", xy=(s_rescue, m_crisis), xytext=(s_base, m_crisis),
                 arrowprops=dict(arrowstyle="->", color=AMBER, lw=1.8))
-    ax.text(s_rescue - 8, m_crisis - 620, "suppress catabolism:\nraises the "
-            "separatrix\nabove the patient", color=AMBER, fontsize=7.5, va="top")
+    ax.text(0.5 * (s_rescue + s_base), m_crisis - 130, "suppress catabolism",
+            color=AMBER, fontsize=7.5, ha="center", va="top")
 
     # route 2: lower the metabolite directly
     ax.annotate("", xy=(s_base, 60), xytext=(s_base, m_crisis),
                 arrowprops=dict(arrowstyle="->", color=BLUE, lw=1.8))
-    ax.text(s_base - 8, 250, "haemofiltration:\nlowers $m$ directly", color=BLUE,
-            fontsize=7.5, ha="right")
+    ax.text(s_base - 12, 640, "haemofiltration", color=BLUE,
+            fontsize=7.5, ha="right", va="center")
 
     ax.set_xlabel(r"substrate load $s$")
     ax.set_ylabel(r"metabolite $m$")
     ax.set_ylim(0, 2600)
     ax.set_title("recovery requires pushing the load below baseline,\n"
                  "not merely removing the trigger")
-    ax.legend(loc="upper right")
+    # Upper left is the one corner no curve and no label reaches.
+    ax.legend(loc="upper left", framealpha=0.95)
     save(fig, "fig_C4_basin")
     print("    The model reproduces standard care: intravenous glucose lowers s")
     print("    below baseline, which raises the separatrix above the patient and")
