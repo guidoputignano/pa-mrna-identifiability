@@ -161,19 +161,18 @@ it, or it does not enter.
 
 ## Current state
 
-30 claims: 9 match, 7 drift, 7 contradicted, 7 unsourced.
+29 claims: 27 match, 2 drift, none contradicted, none unsourced.
 
-The seven contradicted rows are not typos. Four of them change the
-argument:
+The two drift rows are C02 (N-acetylglutamate synthase inhibition) and C03
+(coenzyme A sequestration). Both cite the systematic review of PA and MMA
+complications, whose scope was verified from its abstract; the specific
+mechanisms could not be checked because the full text was not accessible.
+They are recorded as drift rather than as matches for that reason alone.
 
-- **C08** the "70 percent experience no event" figure is the wrong way
-  round. Open item 2 uses it as motivation.
-- **C19** 2-MC, 3-HP and C3 are treated as one quantity in Table 1, but
-  only two of the three carry a risk signal.
-- **C23** the `m << Km` inequality compares plasma C3 with an
-  intracellular propionyl-CoA constant. The degeneracy result rests on it.
-- **C24** the measured biomarker does not rise through a decompensation,
-  which is what both Model B and Model C predict.
+Six claims left the paper rather than being sourced, and the reasons are in
+the unresolved block of `refs.sources`: the distinct-carboxylase argument for
+the null anchor, the ~50% residual activity of obligate carriers, the
+nonsense-mediated-decay premise, the Saudi carrier-screening top-four claim,
+the 70% event-free figure, and the 6-7 samples per year figure. In each case
+the check was run first and the source was not there.
 
-Resolve these before extending the models. C23 and C24 are the two that
-decide whether the current state variable is the right one.

@@ -35,6 +35,12 @@ mde_claims_us           doi:10.1186/s13023-025-03901-2
 # 50% lower 3-HP -> RR 0.7; 50% lower C3 -> RR 0.6; 2-MC -> RR 1.0 (none).
 natural_history         doi:10.1186/s13023-026-04251-3
 
+# 269 patients, TriNetX electronic records 2015-2022. MDE = metabolic
+# acidosis and/or hyperammonemia in an inpatient or ER setting.
+# 0.53 PPY overall; U-shaped: 0.58 PPY at 0 to <2 y, 0.22-0.34 PPY at
+# 2-18 y, 0.72 PPY in adults. 47.6% had at least one MDE in any setting.
+mde_emr_us              doi:10.1016/j.ymgme.2025.109111
+
 # --- crisis dynamics ------------------------------------------------
 # Propionylcarnitine, propionylglycine, propionic acid essentially
 # UNALTERED during acute decompensation; C2/C3 ratio falls ~20-fold.
@@ -61,6 +67,10 @@ mrna_moa                doi:10.1038/s41467-024-47460-9
 dose_selection_poster   doi:10.70534/JVQU8233
 
 # --- guidelines, epidemiology, reviews ------------------------------
+# Part 1 of the same review pair as pathophys_treatment. Systematic
+# analysis of the pathophysiology of each prevalent and rare complication
+# of PA and MMA; mitochondrial impairment is the common hypothesis.
+pathophys_complications doi:10.1002/jimd.12129
 guidelines_mma_pa       doi:10.1002/jimd.12370
 epi_meta                doi:10.1186/s13023-018-0987-z
 biomarkers_review       doi:10.1002/jimd.12478
@@ -70,22 +80,36 @@ trial_challenges        doi:10.1016/j.ymgme.2023.107612
 mayo_nlp                doi:10.1016/j.ymgme.2023.107695
 pathophys_treatment     doi:10.1002/jimd.12128
 
-# --- Saudi newborn screening (the 1:10,000 claim is contested) ------
-# 40,965 newborns, Riyadh (King Fahad Medical City).
+# --- Saudi newborn screening: three cohorts, three incidences -------
+# 40,965 newborns, Riyadh (King Fahad Medical City). PA 1:10,241. The
+# authors note that false positives can inflate incidence estimates.
 nbs_riyadh_kfmc         doi:10.3390/ijns10040072
+# 775,000 newborns, 139 hospitals, national programme. PA 1:14,000 and
+# the highest incidence among the inborn errors screened.
+nbs_saudi_national      doi:10.1111/jpc.13469
+# 56,632 infants, Prince Sultan Military Medical City, Riyadh.
+# Propionic aciduria the most common metabolic disorder, 1:14,158.
+nbs_psmmc               doi:10.15537/smj.2020.7.25147
 
 # =====================================================================
 #  NOT YET RESOLVED. Do not cite until an identifier is confirmed.
 # =====================================================================
-# mde_emr_us          Mol Genet Metab 2025, "Metabolic decompensation events
-#                     among patients with PA across the US: a large EMR
-#                     study". 0.53 PPY; U-shaped; adults 0.72 PPY. NEEDS DOI.
-# nbs_saudi_national  J Paediatr Child Health, 775,000 newborns, PA 1:14,000.
-# nbs_psmmc           Saudi Med J 2020;41(7):703-708, PA 1:14,158.
 # residual_carboxylase  Claim that residual carboxylation in PCC-deficient
 #                     cells derives from a DISTINCT carboxylase. Source not
-#                     identified. Load-bearing for the null-genotype anchor.
+#                     identified. NO LONGER NEEDED: the null-genotype anchor
+#                     now rests on the structure of the model, under which any
+#                     residual elimination is absorbed into k_e whatever its
+#                     molecular origin. The claim is out of the paper.
 # carrier_activity    Obligate carriers retain ~50% activity, asymptomatic.
-# sampling_frequency  6-7 biomarker samples per year. No source found.
+#                     CHECKED and NOT FOUND. saudi84 does not discuss carrier
+#                     activity. GeneReviews NBK92946 states that heterozygotes
+#                     are asymptomatic but also that "fibroblast enzymatic
+#                     analyses are not reliable for detection of
+#                     heterozygotes", which undercuts the ~50% anchor rather
+#                     than supporting it. The claim is out of the paper.
+# nmd_frameshift      Frameshift variants with a premature termination codon
+#                     are subject to nonsense-mediated decay. CHECKED: neither
+#                     GeneReviews NBK92946 nor saudi84 states it. The claim is
+#                     out of the paper; the anchor does not need it.
 # saudi_carrier_top4  "PA among the four most frequent disorders in Saudi
-#                     carrier screening". No source found.
+#                     carrier screening". No source found. Out of the paper.
