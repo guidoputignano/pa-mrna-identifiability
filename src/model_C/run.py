@@ -45,7 +45,7 @@ from scipy.optimize import brentq, minimize_scalar
 from common.models import (ParamsB, ParamsC, g, clearance_B,
                            clearance_C_quasistatic, equilibria_nonmonotone,
                            steady_state)
-from common.style import save, GREEN, RED, BLUE, AMBER, GREY, MUTED
+from common.style import save, figsize, GREEN, RED, BLUE, AMBER, GREY, MUTED
 
 
 PC = ParamsC()
@@ -128,7 +128,7 @@ def fig_phaseline():
     m = np.linspace(1e-3, 1100, 2500)
     s_base, s_peak = S_BASE, 850.0
 
-    fig, ax = plt.subplots(figsize=(5.6, 3.5))
+    fig, ax = plt.subplots(figsize=figsize(0.49, 0.86))
     for s, col, lab, ls in [(s_base, GREEN, "baseline load", "-"),
                             (s_peak, RED, "peak load", "--")]:
         dm = s - np.array([clearance_C_quasistatic(x, PC) for x in m])
@@ -149,8 +149,8 @@ def fig_phaseline():
     ax.set_xlabel(r"metabolite $m$")
     ax.set_ylabel(r"$dm/dt$")
     ax.set_ylim(-320, 480)
-    ax.set_title("depletion makes clearance non-monotone, creating a separatrix")
-    ax.legend(loc="upper left")
+    ax.set_title("depletion makes clearance non-monotone,\ncreating a separatrix")
+    ax.legend(loc="lower right", fontsize=7.5)
     save(fig, "fig_C1_phaseline")
     print(f"    equilibria at baseline load: {np.round(roots,1)}  stable={stab}")
 
@@ -167,7 +167,7 @@ def fig_fold():
             (stable_s if st else unst_s).append(s)
             (stable_m if st else unst_m).append(r)
 
-    fig, ax = plt.subplots(figsize=(5.4, 3.5))
+    fig, ax = plt.subplots(figsize=figsize(0.49, 0.86))
     ax.plot(stable_s, stable_m, ".", ms=2.0, color=GREEN, label="stable branch")
     ax.plot(unst_s, unst_m, ".", ms=2.0, color=RED, label="unstable branch")
     if unst_s:
@@ -177,7 +177,7 @@ def fig_fold():
                 fontsize=7.5, color=MUTED, ha="right", va="top")
     ax.set_xlabel(r"substrate load $s$")
     ax.set_ylabel(r"equilibrium $m^*$")
-    ax.set_title("two branches that collide, unlike Model B")
+    ax.set_title("two branches that collide,\nunlike Model B")
     ax.legend(loc="upper left")
     save(fig, "fig_C2_fold")
 
@@ -198,12 +198,12 @@ def fig_timeseries():
     tt, mB, sB = _simulate(lambda x: clearance_B(x, PB2), m0=m0)
     tt, mC, sC = _simulate(lambda x: clearance_C_quasistatic(x, PC), m0=m0)
 
-    fig, ax = plt.subplots(2, 1, figsize=(5.8, 4.4), sharex=True,
+    fig, ax = plt.subplots(2, 1, figsize=figsize(0.48, 1.05), sharex=True,
                            gridspec_kw={"height_ratios": [1, 2.4]})
     ax[0].fill_between(tt, 0, sC, color=AMBER, alpha=0.25, step="mid")
     ax[0].plot(tt, sC, color=AMBER, lw=1.2)
     ax[0].set_ylabel(r"load $s(t)$")
-    ax[0].set_title("identical transient illness, two clearance hypotheses")
+    ax[0].set_title("identical illness,\ntwo clearance hypotheses")
 
     ax[1].plot(tt, mB, color=GREEN, label="Model B: returns to baseline")
     ax[1].plot(tt, mC, color=RED, ls="--", label="Model C: does not return")
@@ -245,7 +245,7 @@ def fig_basin():
             stab_b.append(roots[st][0]); unst_b.append(roots[~st][0]); ok.append(s)
     ok = np.array(ok); stab_b = np.array(stab_b); unst_b = np.array(unst_b)
 
-    fig, ax = plt.subplots(figsize=(5.6, 3.6))
+    fig, ax = plt.subplots(figsize=figsize(0.50, 0.88))
     ax.fill_between(ok, unst_b, 3000, color=RED, alpha=0.10)
     ax.fill_between(ok, 0, unst_b, color=GREEN, alpha=0.08)
     ax.plot(ok, stab_b, color=GREEN, lw=2.0, label="attractor")
@@ -268,8 +268,8 @@ def fig_basin():
     s_rescue = 0.62 * s_fold
     ax.annotate("", xy=(s_rescue, m_crisis), xytext=(s_base, m_crisis),
                 arrowprops=dict(arrowstyle="->", color=AMBER, lw=1.8))
-    ax.text(s_rescue - 8, m_crisis + 150, "suppress catabolism:\nraises the "
-            "separatrix\nabove the patient", color=AMBER, fontsize=7.5)
+    ax.text(s_rescue - 8, m_crisis - 620, "suppress catabolism:\nraises the "
+            "separatrix\nabove the patient", color=AMBER, fontsize=7.5, va="top")
 
     # route 2: lower the metabolite directly
     ax.annotate("", xy=(s_base, 60), xytext=(s_base, m_crisis),
@@ -323,7 +323,7 @@ def fig_margin():
     th_ok = np.array(th_ok); attr = np.array(attr); sep = np.array(sep)
     margin = sep - attr
 
-    fig, ax = plt.subplots(1, 2, figsize=(8.6, 3.3))
+    fig, ax = plt.subplots(1, 2, figsize=figsize(1.0, 0.40))
 
     ax[0].fill_between(th_ok, attr, sep, color=GREEN, alpha=0.10)
     ax[0].plot(th_ok, attr, color=GREEN, lw=2.0, label="attractor")

@@ -13,26 +13,34 @@ available from clinical records.}
 \toprule
 \textbf{Quantity} & \textbf{Meaning} & \textbf{Role} & \textbf{Status} & \textbf{Source and caveat} \\
 \midrule
-$m(t)$ & plasma 3-hydroxypropionate, the marker the state denotes &
-state; the observable the model is written in &
+$m(t)$ & a plasma marker of propionate accumulation; which one is left open &
+state; the only observable &
 measured sparsely; the one documented schedule is six-monthly study
 visits~\cite{natural_history} % C20
 &
+Sections 3 and 4 do not depend on the choice (Section~\ref{sec:marker}). \emph{Proxy}: the
+enzyme substrate is intracellular propionyl-CoA, never measured \\
+\addlinespace
+3-HP & 3-hydroxypropionate &
+candidate for $m$ &
+measured routinely &
 a $50\%$ lower 3-HP is associated with a decompensation rate ratio of $0.7$
-($p<0.01$)~\cite{natural_history}. % C19
-\emph{Proxy}: the enzyme substrate is intracellular propionyl-CoA, never measured \\
+($p<0.01$)~\cite{natural_history} % C19
+\\
 \addlinespace
 C3 & propionylcarnitine &
-a second marker, \textbf{not} interchangeable with $m$ &
-measured alongside 3-HP &
-a $50\%$ lower C3 gives a rate ratio of $0.6$ ($p=0.017$)~\cite{natural_history}: % C19
-carries risk information, but on its own scale, so it is not a substitute for 3-HP \\
+candidate for $m$ &
+measured routinely &
+a $50\%$ lower C3 gives a rate ratio of $0.6$ ($p=0.017$)~\cite{natural_history}, on its
+own scale. Reported essentially unaltered through an acute
+decompensation~\cite{amd_phenotyping} \\
 \addlinespace
 2-MC & 2-methylcitrate &
-measured, but \textbf{not} used as the state &
-measured alongside 3-HP &
-rate ratio $1.0$ ($p=0.84$)~\cite{natural_history}: % C19
-no detectable association with decompensation. Excluded from the state on that ground \\
+candidate for $m$ &
+measured routinely &
+rate ratio $1.0$ ($p=0.84$) for decompensation~\cite{natural_history}, yet among the
+strongest correlates of plasma ammonia during an
+event~\cite{amd_phenotyping} \\
 \addlinespace
 $s(t)$ & propiogenic substrate load &
 exogenous disturbance, partly structured &
@@ -40,17 +48,17 @@ partially known &
 prescribed protein intake and illness dates recorded; episode amplitudes unknown;
 unrecorded triggers exist \\
 \addlinespace
-$\theta$ & residual PCC capacity: the Michaelis-Menten $V_{\max}$ &
+$\theta$ & residual capacity of the enzymatic channel, its maximal velocity &
 \textbf{parameter, patient-specific, constant} &
 \textbf{unknown} &
 set by genotype; measurable \emph{ex vivo} in fibroblasts or lymphocytes, but the
 in vitro to in vivo mapping is uncertain \\
 \addlinespace
-$K_m$ & Michaelis constant of PCC: the level at which the enzyme runs at half of
-$V_{\max}$ &
+$K_m$ & half-saturation level of the enzymatic channel &
 parameter, assumed population-level &
 unknown &
-property of the active site, assumed genotype-independent \\
+a shape parameter of the plasma-level clearance curve, fitted rather than imported; not
+the in vitro Michaelis constant of PCC \\
 \addlinespace
 $k_e$ & non-enzymatic clearance; a rate constant in Model A, the $V_{\max}$ of the
 alternative route in Model B &

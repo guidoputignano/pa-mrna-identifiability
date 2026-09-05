@@ -12,6 +12,22 @@ TABDIR = ROOT / "results" / "tables"
 FIGDIR.mkdir(parents=True, exist_ok=True)
 TABDIR.mkdir(parents=True, exist_ok=True)
 
+# Text block of the paper: A4 with 2.1cm margins, in inches.
+TEXTWIDTH_IN = (21.0 - 2 * 2.1) / 2.54
+
+
+def figsize(frac, aspect=0.85):
+    """
+    Figure size for a figure printed at `frac` of the paper's text block.
+
+    Figures are generated at the size they are printed. Drawing one larger and
+    letting includegraphics shrink it scales the type down with the axes: at
+    frac = 0.49 an 8pt annotation reaches the page at under 5pt.
+    """
+    w = frac * TEXTWIDTH_IN
+    return (w, w * aspect)
+
+
 INK = "#1a1a1a"
 MUTED = "#5a5a5a"
 GREEN = "#1baf7a"
@@ -22,13 +38,16 @@ GREY = "#9a9890"
 
 plt.rcParams.update({
     "figure.dpi": 130,
+    # Figures are now drawn at printed size, so panels are narrow and titles
+    # collide without automatic spacing.
+    "figure.autolayout": True,
     "savefig.dpi": 200,
     "savefig.bbox": "tight",
     "font.family": "serif",
     "font.serif": ["DejaVu Serif"],
     "font.size": 9,
     "axes.labelsize": 9,
-    "axes.titlesize": 9.5,
+    "axes.titlesize": 8.5,
     "axes.spines.top": False,
     "axes.spines.right": False,
     "axes.edgecolor": "#b8b6ae",

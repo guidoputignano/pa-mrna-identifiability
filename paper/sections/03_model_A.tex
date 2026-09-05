@@ -12,14 +12,13 @@
 \begin{description}[leftmargin=1.4em, itemsep=1pt]
 \item[$m(t)$] accumulated toxic metabolite, measured sparsely.
 \item[$s(t)$] substrate load; partially known.
-\item[$\theta$] the maximal enzymatic velocity $V_{\max}$ of PCC. Since most pathogenic
-variants reduce the \emph{quantity} of functional enzyme rather than the turnover number of
-an individual molecule, $\theta$ is essentially ``how much working enzyme the patient has'',
-and is therefore constant and genotype-determined.
-\item[$K_m$] the Michaelis constant of PCC, the substrate level at which the enzyme runs at
-half of $V_{\max}$.
-\item[$g(m)$] the \emph{Michaelis-Menten saturation function}, giving the fractional
-saturation of the enzyme, $g \in [0,1)$.
+\item[$\theta$] the capacity of the enzymatic channel, its maximal velocity. Since most
+pathogenic variants reduce the \emph{quantity} of functional enzyme rather than the turnover
+number of an individual molecule, $\theta$ is essentially ``how much working enzyme the
+patient has'', and is therefore constant and genotype-determined.
+\item[$K_m$] the half-saturation level of that channel: a shape parameter of the clearance
+curve at the plasma level, fitted rather than imported (Remark~\ref{rem:no_km}).
+\item[$g(m)$] the \emph{Michaelis-Menten saturation function}, $g \in [0,1)$.
 \item[$k_e m$] alternative elimination, taken proportional to $m$.
 \end{description}
 
@@ -35,21 +34,18 @@ v \;=\; \frac{V_{\max}\,[S]}{K_m + [S]},
 with $V_{\max}$ the maximal velocity, attained when the enzyme is fully saturated, and
 $K_m$ the Michaelis constant, the substrate concentration at which $v = V_{\max}/2$.
 Identifying $V_{\max}$ with $\theta$ and $[S]$ with $m$ turns \eqref{eq:mm} into the term
-$\theta\, g(m)$ of \eqref{eq:A}, so that $\theta$ is the patient's residual $V_{\max}$,
-$K_m$ is the Michaelis constant of PCC, and $g(m)$ is the fractional saturation. The same
-functional form appears under other names in adjacent literatures: it is the Monod function
-in microbial growth kinetics, and the Hill function with cooperativity coefficient $n = 1$.
-Throughout this note the three names are used for the same object, and no cooperativity is
-assumed.
+$\theta\, g(m)$ of \eqref{eq:A}. The same functional form appears under other names in
+adjacent literatures: it is the Monod function in microbial growth kinetics, and the Hill
+function with cooperativity coefficient $n = 1$. Throughout this note the three names are
+used for the same object, and no cooperativity is assumed. PCC has a second substrate,
+bicarbonate, which is held constant here.
 
-\begin{remark}[Where the Michaelis-Menten form is an approximation here]
-Equation \eqref{eq:mm} is derived for a single enzyme acting on a substrate at
-quasi-steady state. PCC is a biotin-dependent dodecamer with a second substrate,
-bicarbonate, held constant here, and the substrate of \eqref{eq:mm} is the intracellular
-propionyl-CoA rather than the plasma marker $m$. The Michaelis-Menten form is retained
-because the saturating shape is what the identifiability argument turns on, not because
-the constants carry their textbook in vitro meaning.
-\end{remark}
+The identification carries over the \emph{shape} and not the constants. Equation
+\eqref{eq:mm} is a law about an enzyme and its own substrate, and $m$ is a plasma marker;
+$\theta$ is accordingly the residual capacity of the enzymatic channel measured at the
+plasma level, and $K_m$ is the level at which that channel reaches half of it, a fitted
+shape parameter of the plasma-level clearance curve. Remark~\ref{rem:no_km} sets out why
+$K_m$ cannot be read as the Michaelis constant of PCC.
 
 \subsection{Assumptions}
 
@@ -68,8 +64,12 @@ intercurrent illness lie outside the assumption.
 
 \begin{assumption}[Population parameters]
 $K_m$ and $k_e$ do not vary with \emph{PCCA}/\emph{PCCB} genotype and may be estimated
-once across the cohort. Biochemically motivated: $K_m$ is a property of the active
-site~\cite{pcc_variants_kinetics}, and $k_e$ does not involve PCC at all. % C21
+once across the cohort. The motivation for $K_m$ is that the half-saturation of the
+enzymatic channel reflects the active site rather than the amount of enzyme, and four
+variant PCCs show no significant difference in their in vitro $K_m$ for propionyl-CoA
+against wild type~\cite{pcc_variants_kinetics}. % C21
+Whether that carries to the plasma level is the question of Remark~\ref{rem:no_km}. For
+$k_e$ the motivation is that the alternative channel does not involve PCC at all. % C21
 Weakened by the fact that carnitine is
 administered therapeutically at patient-specific doses.
 \end{assumption}
@@ -79,17 +79,27 @@ The measured plasma biomarker stands in for the intracellular enzyme substrate. 
 shortcut; the true system has at least two states with an uncertain map between them.
 \end{assumption}
 
-\paragraph{Which marker $m$ is.} Three markers are reported together in this disease, and
-they are not interchangeable. In the natural history cohort a $50\%$ lower 3-HP is
-associated with a decompensation rate ratio of $0.7$ ($p<0.01$) and a $50\%$ lower C3 with
-$0.6$ ($p=0.017$), whereas 2-methylcitrate shows no detectable association at all: rate
+\paragraph{What the choice of marker would cost.}
+\label{sec:marker}
+Three markers are reported together in this disease, and they are not interchangeable.
+Over a three-year natural history cohort, a $50\%$ lower 3-HP is associated with a
+decompensation rate ratio of $0.7$ ($p<0.01$) and a $50\%$ lower C3 with $0.6$
+($p=0.017$), while 2-methylcitrate shows no association with decompensation at all: rate
 ratio $1.0$, $p=0.84$~\cite{natural_history}. % C19
-Throughout this note $m$ denotes \textbf{plasma 3-hydroxypropionate} and nothing else. C3
-is left out because it carries risk on its own scale and summing markers of different
-scales is not a defined operation. 2-MC is excluded on the stronger ground that a marker
-which does not move with risk cannot be the state whose excursion is supposed to define a
-decompensation. An unlabelled mixture of the three would leave the threshold without a
-scale to be measured on.
+Deep phenotyping of acute decompensation gives a different ordering. There C3 is among the
+diagnostic biomarkers reported essentially unaltered through the event, while 2-MC is among
+the strongest correlates of plasma ammonia during it~\cite{amd_phenotyping}. % C37
+A marker that predicts the next event and a marker that tracks the current one need not be
+the same marker.
+
+This note therefore leaves $m$ as ``the plasma marker'', and the choice open.
+\textbf{Nothing in Sections 3 and 4 depends on it.} Proposition~\ref{prop:degeneracy}
+requires only that total clearance be affine over the range a patient's marker visits, and
+that hypothesis is stated in whichever marker is measured. The determinant
+\eqref{eq:det}, the conditioning, and the anchor structure are the same under any of the
+three. What the choice buys and costs is set out where it matters: Model C needs a definite
+observable for its separatrix, and Section~7 records the choice itself as a design
+question.
 
 \subsection{The structural obstruction}
 
@@ -150,33 +160,27 @@ directly.
 
 \begin{remark}[The scale on which this is stated]
 \label{rem:no_km}
-Proposition~\ref{prop:degeneracy} is deliberately conditioned on the observed clearance
-over the observed range, because the alternative route to the same conclusion is not
-available. That route would compare $m$ with $K_m$ and conclude that patients sit far below
-saturation. It cannot be taken. $K_m$ is the Michaelis constant of PCC for \emph{its}
-substrate, intracellular mitochondrial propionyl-CoA, reported as $0.29$ mM in purified
-human liver enzyme~\cite{pcc_liver_kinetics}, whereas $m$ is a plasma marker whose healthy
-concentrations are micromolar~\cite{amd_phenotyping}. % C23
-These are different molecules in different compartments. An inequality between them
-compares quantities that share no scale, so the apparent three orders of magnitude between
-the two numbers is an artefact of putting them on one axis. The objection is not that the
-margin is too narrow to rely on; it is that the comparison is not defined.
+Proposition~\ref{prop:degeneracy} is conditioned on the observed clearance over the
+observed range. The alternative would be to compare $m$ with $K_m$ and conclude that
+patients sit far below saturation, and that comparison is unavailable here.
 
-Hypothesis \eqref{eq:affine} avoids it. It is a statement about the observed clearance over
-the observed range, checkable from a patient's own record, and it requires no view about
-where $K_m$ lies. What it does not buy is the mechanistic reading. Writing the enzymatic
-channel as $\theta g(m)$, with the plasma marker in place of the enzyme's substrate,
-presupposes a transfer map $\varphi$ from intracellular propionyl-CoA to plasma 3-HP under
-which $g$ keeps its Michaelis-Menten form and $K_m$ keeps its meaning. No such map is
-established, and this note does not establish one. Until one is, $K_m$ here is a fitted
-shape parameter of the plasma-level clearance curve rather than the Michaelis constant of
-PCC, and no statement of the form ``patients are maintained well below $K_m$'' is
-available.
+$K_m$ in \eqref{eq:mm} is the Michaelis constant of PCC for its own substrate,
+intracellular mitochondrial propionyl-CoA, reported as $0.29$ mM in purified human liver
+enzyme~\cite{pcc_liver_kinetics}. The state $m$ is a plasma marker at micromolar
+concentrations~\cite{amd_phenotyping}. % C23
+These are different molecules in different compartments, so the inequality has no common
+scale to be evaluated on and the gap between the two numbers measures nothing.
 
-This reaches past the degeneracy argument. $\thc$ in \eqref{eq:thcrit} is computed through
-$g(\bar m)$, so it inherits the same dependence: a mechanistic reading of $K_m$ is
-load-bearing for the threshold as well. Establishing $\varphi$, or bounding how far the
-conclusions move across a plausible family of candidate maps, is a prerequisite for either.
+Hypothesis \eqref{eq:affine} requires no view about where $K_m$ lies. What it forgoes is
+the mechanistic reading. Writing the enzymatic channel as $\theta g(m)$, with a plasma
+marker in place of the enzyme's substrate, presupposes a transfer map $\psi$ from
+intracellular propionyl-CoA to the marker under which $g$ keeps its Michaelis-Menten form.
+This note does not establish one, so $K_m$ here is a fitted shape parameter of the
+plasma-level clearance curve.
+
+$\thc$ in \eqref{eq:thcrit} is computed through $g(\bar m)$ and inherits the same
+dependence. Establishing $\psi$, or bounding how far the conclusions move across a family
+of candidate maps, is a prerequisite for reading either mechanistically.
 \end{remark}
 
 \subsection{Perturbation as a selective input}
@@ -312,7 +316,21 @@ that is. Three quasi-exogenous instruments are present in routine care:
 \end{enumerate}
 
 Each of these moves $u_c$ for a reason that is plausibly independent of $m$, which is what
-an instrument requires. None is randomised, and the independence is an assumption to be
+an instrument requires.
+
+A third perturbation is present in the same records and acts on neither channel. Cyclical
+intestinal antibiotics suppress the gut-flora contribution to $s$, so they move the load
+rather than a parameter. That is not a weaker position than the two above. Two steady
+states at loads $s$ and $s'$ give $s = \theta g(m) + k_e m$ and
+$s' = \theta g(m') + k_e m'$, which is the coefficient matrix $M$ of \eqref{eq:system}
+again, so a load change carries exactly the determinant \eqref{eq:det} that a channel
+perturbation does. It is also the second anchor of Proposition~\ref{prop:anchor} seen from
+here, since one patient observed at two distinct loads is precisely this case. The
+asymmetry lies elsewhere: the load route needs both $s$ and $s'$ known, where the channel
+route needs $s$ once together with the increment, and how much that costs is the first of
+the open questions in Section~7. Courses given on a fixed schedule are quasi-exogenous;
+courses started because a patient is deteriorating are confounded by indication exactly as
+carnitine is. None is randomised, and the independence is an assumption to be
 argued from the records in each case rather than assumed once.
 
 \begin{remark}[The identical structure on the other channel]
@@ -355,9 +373,17 @@ this subsection becomes unnecessary.
       same distorted scale} rather than computed from \eqref{eq:thcrit}, then
       $\varphi(\theta) \gtrless \varphi(\thc)$ reproduces the true decision. The
       requirement is therefore consistency of the assay across variants, not absolute
-      calibration. The invariance fails if $\varphi$ differs by mechanism class, and does
-      not hold at all if $\thc$ is obtained structurally from quantities carrying
-      different units.
+      calibration. The invariance fails if $\varphi$ differs by mechanism class. It also
+      fails whenever $\thc$ is computed rather than estimated on the distorted scale,
+      because \eqref{eq:thcrit} is not equivariant under $\varphi$: in general
+      $\varphi\!\left((\spk - k_e \bar m)/g(\bar m)\right)$ differs from the expression
+      obtained by substituting $\varphi(k_e)$ into the same formula, so the two sides of
+      the comparison are transported differently. Note that this pulls against
+      Proposition~\ref{prop:intrinsic}: the intrinsic $\thc$ is a structural construction,
+      defined by where the fold of $C(\cdot\,;\theta)$ falls, and that location is not
+      preserved by a monotone rescaling of the activity axis. Well-posedness and
+      invariance are bought from different accounts here, and buying one spends the
+      other.
 \end{enumerate}
 
 \subsection{Known defect}

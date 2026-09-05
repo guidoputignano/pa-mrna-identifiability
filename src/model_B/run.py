@@ -37,7 +37,7 @@ import matplotlib.pyplot as plt
 from common.models import (ParamsA, ParamsB, g, h, clearance_A, clearance_B,
                            steady_state, sensitivity_A, sensitivity_B,
                            condition_number)
-from common.style import save, GREEN, RED, BLUE, AMBER, GREY, MUTED
+from common.style import save, figsize, GREEN, RED, BLUE, AMBER, GREY, MUTED
 
 
 P = ParamsB()
@@ -50,24 +50,30 @@ def fig_ceiling():
     m = np.linspace(0, 3000, 1500)
     C = clearance_B(m, P)
 
-    fig, ax = plt.subplots(figsize=(5.4, 3.4))
+    fig, ax = plt.subplots(figsize=figsize(0.49, 0.86))
     ax.plot(m, C, color=GREEN, lw=2.2, label=r"total clearance $C(m)$")
     ax.axhline(CEIL, color=GREEN, ls=":", lw=1.1)
-    ax.text(2450, CEIL + 60, r"ceiling $\theta + k_e$", color=GREEN, fontsize=8)
+    ax.text(2980, CEIL + 70, r"ceiling $\theta + k_e$", color=GREEN,
+            fontsize=7.5, ha="right")
 
-    for s, col, lab, ls in [(1500, BLUE, "baseline load", "-"),
-                            (2900, AMBER, "moderate illness", "-"),
-                            (3600, RED, "peak load: no equilibrium", "--")]:
+    # Label placement is per-line: the clearance curve rises across the middle
+    # of the panel, so a single x for all three would put one of them on it.
+    for s, col, lab, ls, x, dy, va in [
+            (1500, BLUE, "baseline load", "-", 1200, 80, "bottom"),
+            (2900, AMBER, "moderate illness", "-", 1500, -90, "top"),
+            (3600, RED, "peak load: no equilibrium", "--", 1200, 80, "bottom")]:
         ax.axhline(s, color=col, lw=1.4, ls=ls)
         me = steady_state(clearance_B, P, s)
         if np.isfinite(me):
             ax.plot([me], [s], "o", ms=5.5, color=col, zorder=4)
-        ax.text(2450, s + 60, lab, color=col, fontsize=8)
+        ax.text(x, s + dy, lab, color=col, fontsize=7.5, va=va)
 
     ax.set_xlabel(r"metabolite $m$")
     ax.set_ylabel("flux")
-    ax.set_ylim(0, 4000)
-    ax.set_title("bounded clearance: above the ceiling there is no steady state")
+    ax.set_xlim(0, 3000)
+    ax.set_ylim(0, 4200)
+    ax.legend(loc="lower right", fontsize=7.5)
+    ax.set_title("bounded clearance: above the ceiling\nthere is no steady state")
     save(fig, "fig_B1_ceiling")
 
 
@@ -78,7 +84,7 @@ def fig_bifurcation():
     eq = np.array([steady_state(clearance_B, P, s) for s in loads])
     m_bar = 400.0
 
-    fig, ax = plt.subplots(figsize=(5.4, 3.4))
+    fig, ax = plt.subplots(figsize=figsize(0.49, 0.86))
     ax.plot(loads, eq, color=GREEN, lw=2.0, label="stable equilibrium")
     ax.axvline(CEIL, color=RED, ls="--", lw=1.3)
     ax.text(CEIL - 60, 1700, r"$s = \theta + k_e$", color=RED,
@@ -95,7 +101,7 @@ def fig_bifurcation():
     ax.set_xlabel(r"substrate load $s$")
     ax.set_ylabel(r"equilibrium $m^*$")
     ax.set_ylim(0, 2200)
-    ax.set_title("the equilibrium escapes to infinity, it does not annihilate")
+    ax.set_title("the equilibrium escapes to infinity,\nit does not annihilate")
     ax.legend(loc="upper left")
     save(fig, "fig_B2_bifurcation")
 
@@ -108,7 +114,7 @@ def fig_thetacrit():
     S, M = np.meshgrid(s_peaks, m_bars)
     TH = (S - P.ke * h(M, P.Ke)) / g(M, P.Km)
 
-    fig, ax = plt.subplots(figsize=(5.2, 3.6))
+    fig, ax = plt.subplots(figsize=figsize(0.47, 0.95))
     cs = ax.contourf(S, M, TH, levels=18, cmap="RdYlGn_r", alpha=0.85)
     cl = ax.contour(S, M, TH, levels=8, colors="white", linewidths=0.6)
     ax.clabel(cl, inline=True, fontsize=6.5, fmt="%.0f")
@@ -131,13 +137,13 @@ def fig_cost():
         lv = m0 * np.array([1.0, 1 + sp, 1 + 2 * sp, 1 + 3 * sp])
         cA.append(condition_number(sensitivity_A, PA, lv[:3]))
         cB.append(condition_number(sensitivity_B, P, lv))
-    fig, ax = plt.subplots(figsize=(4.8, 3.3))
+    fig, ax = plt.subplots(figsize=figsize(0.50, 0.86))
     ax.loglog(spreads * 100, cA, color=GREEN, label="Model A  (3 parameters)")
     ax.loglog(spreads * 100, cB, color=RED, ls="--",
               label="Model B  (4 parameters)")
     ax.set_xlabel("relative excursion of $m$  [%]")
     ax.set_ylabel("condition number")
-    ax.set_title("the more faithful model is the harder one to identify")
+    ax.set_title("the more faithful model is\nthe harder one to identify")
     ax.grid(True, which="both", alpha=0.4)
     ax.legend()
     save(fig, "fig_B4_cost")
