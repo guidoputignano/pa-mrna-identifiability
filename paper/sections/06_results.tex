@@ -12,10 +12,13 @@ structure and orders of magnitude, not any particular patient.
 \caption{Left: the two elimination channels. The enzymatic term saturates at
 $\theta$ while the alternative term does not, and this difference in functional
 form is the only thing distinguishing them. In the shaded band, where clinically
-stable patients are maintained, both are approximately linear. Right: two parameter
-sets that produce identical total clearance at the operating point and diverge
-only well outside it. These two patients differ threefold in enzymatic capacity and
-are indistinguishable from measurements taken where they live.}
+stable patients are maintained, both are approximately linear. Right: two patients on
+the fibre of Remark~\ref{rem:fibre}, agreeing in \emph{both} the value and the slope of
+total clearance at the operating point and differing only at second order. They differ
+threefold in enzymatic capacity and carry different $K_m$, and no affine fit over a band
+around that point tells them apart. Matching the value alone would have left them with
+different intercepts, which Proposition~\ref{prop:degeneracy} says is the discriminating
+quantity, so a point-matched pair illustrates a weaker degeneracy than the one claimed.}
 \label{fig:A1}
 \end{figure}
 
@@ -33,17 +36,21 @@ are indistinguishable from measurements taken where they live.}
 the relative excursion of the metabolite, on log axes. The slope is $-2$: conditioning
 degrades quadratically as the patient is stabilised, and a patient varying by a few
 per cent between visits presents a problem conditioned at $10^{5}$ to $10^{6}$.
-Right: an error in the assumed substrate load propagates into $\theta$ with an
-amplification factor of approximately $1.4$, because the enzymatic term is recovered
-as a difference of two larger quantities.}
+Right: an error in the assumed substrate load propagates into $\theta$ amplified by
+$C(\bar m)/\theta g(\bar m)$, total clearance over enzymatic clearance, because the
+enzymatic term is recovered as a difference of two larger quantities. That ratio is not a
+property of the model. It is $1.4$ at these illustrative values only because most of the
+flux goes through the enzyme, it reaches $7$ at $\theta = 100$, and it diverges as
+$\theta \to 0$, so the amplification is worst for exactly the patients the note is
+about.}
 \label{fig:A2}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{fig_A3_indistinguishable.pdf}
-\caption{Left: a selective perturbation renders the two patients of Figure~\ref{fig:A1}
-formally distinguishable. The perturbation shown is carnitine, which acts on the
+\caption{Left: a selective perturbation renders two patients matched at the operating
+point formally distinguishable. The perturbation shown is carnitine, which acts on the
 alternative channel $k_e$ and is administered to every patient in the accessible cohort.
 The separation remains near $1\%$ across the plausible dose range, well below assay
 variability: formal identifiability and practical identifiability part company here.
@@ -58,14 +65,51 @@ the analysis to be conducted on the input that exists rather than the one that d
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{fig_A4_population.pdf}
-\caption{Left: at steady state a cohort of $N$ patients sharing the population
-parameters yields $N$ equations in $N+2$ unknowns. The deficiency is two for every
-$N$: enlarging the cohort adds an equation and an unknown simultaneously and never
-helps. Right: with two anchors the system closes exactly. A null genotype supplies
-$k_e$ directly, since its equation loses the enzymatic term entirely; one patient
-observed at two distinct loads then supplies $K_m$; every remaining $\theta_i$
-follows from a single equation. Recovery is exact in the noise-free case.}
+\caption{Left: \textbf{one steady state per patient}. A cohort of $N$ patients sharing the
+population parameters yields $N$ equations in $N+2$ unknowns, and the deficiency is two for
+every $N$, so enlarging the cohort adds an equation and an unknown together. This is the
+counting for a single observation each, and it is not the data model
+Proposition~\ref{prop:degeneracy} is built on. A patient observed over a band supplies two
+coefficients, giving $2N$ equations in $N+2$ unknowns, determined at $N = 2$ and
+overdetermined beyond: two patients alone give
+$K_m = (b_2 - b_1)/(a_2/\bar m_2^2 - a_1/\bar m_1^2)$, whenever the denominator is
+non-zero, without either patient moving. What limits cohort closure is therefore the
+conditioning of the intercepts and not the counting. Right: with two anchors the
+single-observation system closes exactly. A null genotype supplies $k_e$ directly, since
+its equation loses the enzymatic term; one patient observed at two distinct loads then
+supplies $K_m$; every remaining $\theta_i$ follows from a single equation. Recovery is
+exact in the noise-free case.}
 \label{fig:A4}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig_A6_fibre.pdf}
+\caption{What a perfectly resolved band still leaves open,
+Remark~\ref{rem:fibre}. Left: the residual capacities consistent with a known $(a,b)$,
+against the $K_m$ that indexes them. With noiseless data $\theta$ spans a factor of $169$,
+and the true patient is one point on that curve. Right: the same fibre in $k_e$, which
+reaches zero at $K_m = b\bar m^2/a$ and bounds the family from above. A null genotype fixes
+$k_e$ and collapses the fibre to a point, recovering $K_m$ and $\theta$ exactly and without
+a second steady state. The band that resolves $(a,b)$ does the work that
+Proposition~\ref{prop:anchor}'s second anchor was introduced for.}
+\label{fig:A6}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig_A7_margin.pdf}
+\caption{The decision quantity is better conditioned than the parameter it is built from.
+Left: the safety margin $\mu = \theta - \thc^{\mathrm{A}}$ along the same fibre. Where
+$\theta$ is quadratic in $K_m$ the margin is linear, the quadratic terms cancelling
+identically in \eqref{eq:mufibre}, so the whole sensitivity to the non-identifiability is
+one slope, computable from the fitted $(a,b)$. The improvement is one order and not a
+licence: $\mu$ still varies sixfold across the shaded range. What survives here is the
+\emph{sign}, which is constant throughout, and that is what the decision turns on. Right:
+two patients matched at the operating point, whose margins separate exactly as
+$\Delta k_e\,(\mtol - \bar m)$ and coincide only when the tolerable level is the operating
+point itself.}
+\label{fig:A7}
 \end{figure}
 
 \begin{proposition}[Anchor condition]
@@ -79,6 +123,14 @@ uniquely determined.
 Both anchors are present in the Saudi series: the frameshift variant \emph{PCCB}
 c.990dupT occurs in seven families and is a null allele~\cite{saudi84}, and documented changes in % C26
 prescribed protein intake supply the second condition.
+
+The second condition can be dispensed with. Proposition~\ref{prop:anchor} counts one
+observation per patient. Under the band model of Proposition~\ref{prop:degeneracy} each
+patient supplies two coefficients, and by Remark~\ref{rem:fibre} a null genotype's $k_e$
+then closes the fibre without anyone being moved to a second steady state. Two patients with
+bands and no null genotype suffice as well, since $(a_i, b_i)$ for $i = 1, 2$ give $K_m$
+directly. What the excursion buys is not the counting but the conditioning of the
+intercepts, which is the subject of \eqref{eq:thetaerr}.
 
 What justifies setting $\theta_j = 0$ for the null patients is structural, and it is worth
 being explicit that no claim about residual enzyme activity is needed. The construction

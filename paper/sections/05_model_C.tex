@@ -190,8 +190,8 @@ returns $m$ to baseline.
 \label{sec:intrinsic}
 
 Models A and B define the critical capacity by \eqref{eq:thcrit},
-$\thc = (\spk - k_e \bar m)/g(\bar m)$, which imports two quantities that are never
-measured: $\bar m$, a clinical convention about what metabolite level is tolerable, and
+and \eqref{eq:thcritB}, which import two quantities that are never
+measured: $\mtol$, a clinical convention about what metabolite level is tolerable, and
 $\spk$, the amplitude of an illness. The convention is the more troubling of the two,
 because it is not a fact about the patient at all. Model C does not need it.
 
@@ -229,7 +229,7 @@ coincide at the maximum, where $C' = 0$, which is the saddle-node condition.
 Two features of this definition matter separately.
 
 \begin{itemize}[leftmargin=*, itemsep=3pt]
-\item \label{item:wellposed}\textbf{$\bar m$ has disappeared.} No tolerability convention enters
+\item \label{item:wellposed}\textbf{$\mtol$ has disappeared.} No tolerability convention enters
 \eqref{eq:thcrit_int}. The threshold is the value of $\theta$ at which the model's own
 equilibrium structure changes, and it would be the same threshold under any convention
 about which metabolite levels a clinician is willing to accept. In Models A and B no such
@@ -282,7 +282,7 @@ pin down, which is the most that can be said for it.
 
 \begin{remark}[What this does not fix]
 \label{rem:intrinsic_limit}
-The construction eliminates $\bar m$. It does not eliminate $\spk$. Equation
+The construction eliminates $\mtol$. It does not eliminate $\spk$. Equation
 \eqref{eq:thcrit_int} takes the load as an argument, and the clinically operative question
 is not whether a patient is maintainable at baseline load but whether an intercurrent
 illness pushes them across the separatrix. That depends on how far and for how long the

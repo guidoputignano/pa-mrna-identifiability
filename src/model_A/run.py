@@ -31,7 +31,46 @@ from common.style import save, write_table, figsize, GREEN, RED, BLUE, AMBER, GR
 
 
 P = ParamsA()
+M_OP = 10.0        # the operating point the illustrative patients are matched at
+M_TOL = 40.0       # tolerable metabolite level, a clinical convention
+S_PEAK = 1500.0    # assumed peak load in an illness
 ASSAY_CV = 5.0     # typical analytical and biological variability, per cent
+
+
+# =====================================================================
+#  The fibre of observationally identical patients.
+#
+#  A band of data fixes the affine fit (a, b) of Proposition 1 and nothing
+#  more. Since a = theta g(m_bar)^2 and b = theta g'(m_bar) + ke both carry
+#  Km, a known (a, b) leaves a one-parameter family, not a point. These are
+#  its parametrisation and its endpoints.
+# =====================================================================
+def fit_ab(p: ParamsA, m_bar=M_OP):
+    """The tangent intercept and slope of total clearance at m_bar."""
+    gm = g(m_bar, p.Km)
+    gp = p.Km / (p.Km + m_bar) ** 2
+    return p.theta * gm ** 2, p.theta * gp + p.ke
+
+
+def fibre(a, b, Km, m_bar=M_OP):
+    """The (theta, ke) on the fibre at this Km. Inverts fit_ab exactly."""
+    return a * (Km + m_bar) ** 2 / m_bar ** 2, b - a * Km / m_bar ** 2
+
+
+def fibre_Km_max(a, b, m_bar=M_OP):
+    """Where ke reaches zero, which bounds the fibre from above."""
+    return b * m_bar ** 2 / a
+
+
+def margin(theta, ke, m_tol=M_TOL, s_peak=S_PEAK, Km=None):
+    """theta - theta_crit, the safety margin of equation (17)."""
+    Km = P.Km if Km is None else Km
+    return theta - (s_peak - ke * m_tol) * (Km + m_tol) / m_tol
+
+
+def margin_on_fibre(a, b, Km, m_tol=M_TOL, s_peak=S_PEAK, m_bar=M_OP):
+    """The same margin, reached through the fibre. Linear in Km."""
+    return margin(*fibre(a, b, Km, m_bar), m_tol=m_tol, s_peak=s_peak, Km=Km)
 
 
 # =====================================================================
@@ -61,20 +100,23 @@ def fig_channels():
     ax[0].set_title("the two channels")
     ax[0].legend(loc="lower right")
 
-    # two parameter sets that agree in the operating regime and differ outside
-    from scipy.optimize import brentq as _bq
-    m_op = 10.0
-    keB = _bq(lambda k: clearance_A(m_op, ParamsA(1000.0, P.Km, k))
-              - clearance_A(m_op, P), 1e-6, 1e4)
-    P2 = ParamsA(1000.0, P.Km, keB)
+    # A TANGENT-matched partner, not merely a point-matched one. Matching the
+    # value alone leaves the two patients with different intercepts, and
+    # Proposition 1 says the intercept is the discriminating quantity, so the
+    # old pair illustrated a weaker degeneracy than the one being claimed.
+    # This partner sits on the fibre of Remark 4: same a, same b, different Km.
+    m_op = M_OP
+    a0, b0 = fit_ab(P)
+    thB, keB = fibre(a0, b0, 50.0)
+    P2 = ParamsA(thB, 50.0, keB)
 
     ax[1].axvspan(0, op_hi, color=BLUE, alpha=0.06)
     ax[1].plot(m, clearance_A(m, P), color=GREEN,
                label=r"A: $\theta=3000,\ k_e=5.0$")
     ax[1].plot(m, clearance_A(m, P2), color=RED, ls="--",
-               label=rf"B: $\theta=1000,\ k_e={keB:.1f}$")
+               label=rf"B: $\theta={thB:.0f},\ K_m=50,\ k_e={keB:.1f}$")
     ax[1].plot([m_op], [clearance_A(m_op, P)], "o", ms=5, color=MUTED, zorder=4)
-    at_point(ax[1], (m_op, clearance_A(m_op, P)), "identical here",
+    at_point(ax[1], (m_op, clearance_A(m_op, P)), "same value\nand slope",
              dx=26, dy=-16, arrow=True, fontsize=7.5, color=MUTED,
              ha="left", va="top")
     over_x(ax[1], op_hi * 1.4, "operating\nregime", frac=0.97, color=BLUE,
@@ -82,7 +124,7 @@ def fig_channels():
     ax[1].set_xlim(0, 300)
     ax[1].set_ylim(0, 4200)
     ax[1].set_xlabel(r"metabolite $m$")
-    ax[1].set_title("same clearance where they live")
+    ax[1].set_title("identical to first order\nwhere they live")
     ax[1].legend(loc="lower right")
 
     save(fig, "fig_A1_channels")
@@ -260,19 +302,150 @@ def fig_load_error():
     th_hat = np.array([(s * (1 + e) - ke * m) * (Km + m) / m for e in eps])
     rel = 100 * (th_hat - theta) / theta
 
-    fig, ax = plt.subplots(figsize=figsize(0.48, 0.88))
-    ax.plot(eps * 100, rel, color=BLUE)
-    ax.plot(eps * 100, eps * 100, color=GREY, ls="--", lw=1.0,
-            label="no amplification")
-    ax.axhline(0, color=GREY, lw=0.6)
-    ax.axvline(0, color=GREY, lw=0.6)
+    fig, ax = plt.subplots(1, 2, figsize=figsize(1.0, 0.40))
+    ax[0].plot(eps * 100, rel, color=BLUE)
+    ax[0].plot(eps * 100, eps * 100, color=GREY, ls="--", lw=1.0,
+               label="no amplification")
+    ax[0].axhline(0, color=GREY, lw=0.6)
+    ax[0].axvline(0, color=GREY, lw=0.6)
     slope = np.polyfit(eps * 100, rel, 1)[0]
-    ax.set_xlabel(r"error in assumed load $s$  [%]")
-    ax.set_ylabel(r"resulting error in $\theta$  [%]")
-    ax.set_title(f"amplification factor  $\\approx$ {slope:.2f}")
-    ax.legend()
+    ax[0].set_xlabel(r"error in assumed load $s$  [%]")
+    ax[0].set_ylabel(r"resulting error in $\theta$  [%]")
+    ax[0].set_title(f"at $\\theta = {theta:.0f}$: factor {slope:.2f}")
+    ax[0].legend()
+
+    # The factor is not a property of the model. It is C(m)/(theta g(m)),
+    # total clearance over enzymatic clearance, so it is 1.4 only because
+    # these illustrative values put most of the flux through the enzyme. It
+    # diverges as theta -> 0, which is the severe end of the disease.
+    ths = np.logspace(np.log10(30.0), np.log10(6000.0), 300)
+    amp = np.array([clearance_A(m, ParamsA(T, Km, ke)) / (T * g(m, Km))
+                    for T in ths])
+    ax[1].loglog(ths, amp, color=RED)
+    ax[1].plot([theta], [clearance_A(m, p) / (theta * g(m, Km))], "o",
+               ms=5.5, color=MUTED, zorder=5)
+    at_point(ax[1], (theta, clearance_A(m, p) / (theta * g(m, Km))),
+             "left panel", dx=10, dy=10, arrow=True, fontsize=7.5, color=MUTED,
+             ha="left", va="bottom")
+    ax[1].axhline(1.0, color=GREY, ls=":", lw=0.9)
+    ax[1].set_xlabel(r"residual capacity $\theta$")
+    ax[1].set_ylabel(r"$C(m)\,/\,\theta g(m)$")
+    ax[1].set_title("the factor is a flux ratio,\nand diverges as $\\theta$ falls")
     save(fig, "fig_A5_load_error")
+    print(f"    amplification C(m)/(theta g(m)) at theta = "
+          f"{theta:.0f}: {clearance_A(m, p) / (theta * g(m, Km)):.3f}; "
+          f"at theta = 100: "
+          f"{clearance_A(m, ParamsA(100.0, Km, ke)) / (100.0 * g(m, Km)):.3f}")
     return slope
+
+
+# =====================================================================
+def fig_fibre():
+    """
+    What a perfectly resolved band still leaves open.
+
+    (a, b) known exactly is a curve in parameter space, not a point, because
+    both coefficients carry Km. This is that curve.
+    """
+    a0, b0 = fit_ab(P)
+    Kmax = fibre_Km_max(a0, b0)
+    Ks = np.linspace(1e-3, Kmax, 400)
+    th = np.array([fibre(a0, b0, K)[0] for K in Ks])
+    kes = np.array([fibre(a0, b0, K)[1] for K in Ks])
+
+    fig, ax = plt.subplots(1, 2, figsize=figsize(1.0, 0.40))
+    ax[0].semilogy(Ks, th, color=GREEN, lw=2.0)
+    ax[0].plot([P.Km], [P.theta], "o", ms=6, color=MUTED, zorder=5)
+    at_point(ax[0], (P.Km, P.theta), "the true patient", dx=-12, dy=-12,
+             arrow=True, fontsize=7.5, color=MUTED, ha="right", va="top")
+    ax[0].set_xlabel(r"$K_m$")
+    ax[0].set_ylabel(r"$\theta$ consistent with $(a,b)$")
+    ax[0].set_title(f"one band, {th.max() / th.min():.0f}-fold in "
+                    r"$\theta$" "\nwith noiseless data")
+
+    ax[1].plot(Ks, kes, color=AMBER, lw=2.0)
+    ax[1].plot([P.Km], [P.ke], "o", ms=6, color=MUTED, zorder=5)
+    ax[1].axhline(0, color=GREY, lw=0.8)
+    at_point(ax[1], (Kmax, 0.0), r"$k_e = 0$ bounds the fibre", dx=-6, dy=8,
+             arrow=True, fontsize=7.5, color=MUTED, ha="right", va="bottom")
+    ax[1].plot([P.Km], [P.ke], "o", ms=6, color=MUTED, zorder=5)
+    corner(ax[1], "a null genotype fixes $k_e$,\nand one point on this line\n"
+                  "is the whole parameter set",
+           "upper right", color=MUTED, fontsize=7.5)
+    ax[1].set_xlabel(r"$K_m$")
+    ax[1].set_ylabel(r"$k_e$ consistent with $(a,b)$")
+    ax[1].set_title("and the anchor that closes it")
+    save(fig, "fig_A6_fibre")
+    print(f"    fibre: Km in (0, {Kmax:.3f}], theta in "
+          f"[{th.min():.2f}, {th.max():.1f}], span {th.max() / th.min():.1f}x")
+    Km_rec = (b0 - P.ke) * M_OP ** 2 / a0
+    print(f"    null-genotype closure: Km = {Km_rec:.6f}, "
+          f"theta = {fibre(a0, b0, Km_rec)[0]:.3f}")
+
+
+# =====================================================================
+def fig_margin_fibre():
+    """
+    The decision quantity is better conditioned than the parameter.
+
+    theta is quadratic in Km along the fibre; the margin theta - theta_crit
+    is linear, the quadratic terms cancelling identically. Its whole
+    sensitivity to the non-identifiability is one slope.
+    """
+    a0, b0 = fit_ab(P)
+    Kmax = fibre_Km_max(a0, b0)
+    Ks = np.linspace(1e-3, Kmax, 400)
+    mu = np.array([margin_on_fibre(a0, b0, K) for K in Ks])
+
+    fig, ax = plt.subplots(1, 2, figsize=figsize(1.0, 0.40))
+    ax[0].axhspan(mu.min(), mu.max(), color=GREEN, alpha=0.07)
+    ax[0].plot(Ks, mu, color=GREEN, lw=2.0)
+    ax[0].plot([P.Km], [margin_on_fibre(a0, b0, P.Km)], "o", ms=6,
+               color=MUTED, zorder=5)
+    ax[0].axhline(0, color=RED, ls="--", lw=1.0)
+    at_point(ax[0], (P.Km, margin_on_fibre(a0, b0, P.Km)), "the true patient",
+             dx=-10, dy=-10, arrow=True, fontsize=7.5, color=MUTED,
+             ha="right", va="top")
+    corner(ax[0], "the sign of the decision\nis the same throughout",
+           "upper right", color=MUTED, fontsize=7.5)
+    ax[0].set_xlabel(r"$K_m$")
+    ax[0].set_ylabel(r"margin $\mu = \theta - \theta_{\mathrm{crit}}$")
+    ax[0].set_title("linear along the fibre,\nwhere $\\theta$ is quadratic")
+
+    # two point-matched patients, separating linearly in the tolerable level
+    thA, keA = P.theta, P.ke
+    thB = 1000.0
+    keB = brentq(lambda k: clearance_A(M_OP, ParamsA(thB, P.Km, k))
+                 - clearance_A(M_OP, P), 1e-6, 1e4)
+    mtol = np.linspace(M_OP, 60.0, 300)
+    muA = np.array([margin(thA, keA, m_tol=x) for x in mtol])
+    muB = np.array([margin(thB, keB, m_tol=x) for x in mtol])
+    ax[1].plot(mtol, muA, color=GREEN, lw=2.0, label=r"A: $\theta = 3000$")
+    ax[1].plot(mtol, muB, color=RED, ls="--", lw=2.0,
+               label=rf"B: $\theta = {thB:.0f}$")
+    ax[1].axvline(M_OP, color=GREY, ls=":", lw=0.9)
+    ax[1].set_xlabel(r"tolerable level $m_{\mathrm{tol}}$")
+    ax[1].set_ylabel(r"margin $\mu$")
+    ax[1].set_title("two matched patients\nseparate linearly")
+
+    # The difference is two orders below the margins themselves, so it is flat
+    # against their scale and needs its own axis to be seen at all.
+    ax2 = ax[1].twinx()
+    ax2.plot(mtol, muA - muB, color=MUTED, lw=1.3,
+             label=r"$\mu_A - \mu_B$  (right axis)")
+    ax2.set_ylabel(r"$\mu_A - \mu_B$", color=MUTED)
+    ax2.tick_params(axis="y", colors=MUTED)
+    h1, l1 = ax[1].get_legend_handles_labels()
+    h2, l2 = ax2.get_legend_handles_labels()
+    ax[1].legend(h1 + h2, l1 + l2, loc="lower left", fontsize=7,
+                 frameon=True, facecolor="white", edgecolor="none",
+                 framealpha=0.95)
+    save(fig, "fig_A7_margin")
+    print(f"    mu over the fibre: [{mu.min():.1f}, {mu.max():.1f}], "
+          f"ratio {mu.min() / mu.max():.2f}, sign constant: "
+          f"{bool(np.all(mu < 0) or np.all(mu > 0))}")
+    print(f"    mu_A - mu_B at m_tol = 40: {muA[-1] - muB[-1]:.3f} vs "
+          f"(dke)(m_tol - m_bar) = {(keA - keB) * (mtol[-1] - M_OP):.3f}")
 
 
 # =====================================================================
@@ -296,5 +469,7 @@ if __name__ == "__main__":
     fig_indistinguishable()
     fig_population()
     slope = fig_load_error()
+    fig_fibre()
+    fig_margin_fibre()
     table_rank()
     print(f"  load-error amplification factor: {slope:.3f}")

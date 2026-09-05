@@ -152,8 +152,13 @@ function at the resolution of the assay: there exist constants $a$ and $b$ with
 \sup_{m \in M} \bigl| C(m) - (a + b\,m) \bigr| \;\le\; \varepsilon ,
 \label{eq:affine}
 \end{equation}
-$\varepsilon$ being the measurement error. Then data collected while the patient remains in
-$M$ determine $a$ and $b$, and nothing beyond them. With $\bar m \in M$ the point at which
+$\varepsilon$ being the measurement error.\footnote{$a$ and $b$ below are the tangent
+coefficients at $\bar m$. A least-squares fit over the band returns something slightly
+smaller, by $0.09\%$ at $\Delta/\bar m = 10\%$ but by $8.8\%$ at $\Delta/\bar m = 100\%$,
+computed numerically at the illustrative values. The distinction is negligible in the narrow
+band the proposition is about and is not negligible in the wide band it recommends buying.}
+Then data collected while the patient remains in $M$ determine $a$ and $b$, and nothing
+beyond them. With $\bar m \in M$ the point at which
 the fit is taken, the two coefficients are
 \begin{equation}
 a \;=\; \theta\,\bigl(g(\bar m) - \bar m\, g'(\bar m)\bigr) \;=\; \theta\, g(\bar m)^2 ,
@@ -164,13 +169,39 @@ b \;=\; \theta\, g'(\bar m) \;+\; k_e .
 \label{eq:slope}
 \end{equation}
 The slope is a single scalar carrying $\theta$ and $k_e$ with the \emph{same} sign, and no
-quantity of such data separates them through it. The intercept carries $\theta$ alone.
+quantity of such data separates them through it. The intercept is free of $k_e$, and given
+$K_m$ it determines $\theta$.
 \end{proposition}
 
+\begin{remark}[What the intercept does not deliver]
+\label{rem:fibre}
+The intercept carries $K_m$ as well, through $g(\bar m)$, and Remark~\ref{rem:no_km}
+forbids importing $K_m$ from in vitro work. So $(a,b)$ known \emph{exactly} still leaves a
+one-parameter family. Inverting \eqref{eq:intercept} and \eqref{eq:slope},
+\begin{equation}
+\theta(K_m) = \frac{a\,(K_m+\bar m)^2}{\bar m^{2}},
+\qquad
+k_e(K_m) = b - \frac{a\,K_m}{\bar m^{2}},
+\qquad 0 < K_m \le \frac{b\,\bar m^{2}}{a},
+\label{eq:fibre0}
+\end{equation}
+the upper bound being where $k_e$ reaches zero. At the illustrative values $\theta$ ranges
+over a factor of $169$ along this fibre with noiseless data (Figure~\ref{fig:A6}).
+Equation~\eqref{eq:thetaerr} below is the noise on top of that, and is itself conditional on
+$g(\bar m)$, so it is a statement about $\theta$ \emph{given} $K_m$.
+
+One extra datum closes the fibre outright. If $k_e$ is known, from a null genotype as in
+Proposition~\ref{prop:anchor}, then $K_m = (b - k_e)\bar m^{2}/a$ and $\theta$ follows from
+\eqref{eq:fibre0}, exactly and with no second steady state required. The band that resolves
+$(a,b)$ does the work that Proposition~\ref{prop:anchor}'s second anchor was introduced for.
+\end{remark}
+
 \begin{proof}[Argument]
-Under \eqref{eq:affine} the map from $C$ to the data factors through $(a,b)$ up to a
-perturbation of size $\varepsilon$, so any two parameter pairs giving the same $(a,b)$
-generate observations differing by less than the assay can resolve. The affine function in
+The data here are steady states, where $s = C(m)$ pointwise, so under \eqref{eq:affine}
+the map from $C$ to the data factors through $(a,b)$ up to a perturbation of size
+$\varepsilon$, and any two parameter pairs giving the same $(a,b)$ generate observations
+differing by less than the assay can resolve. For trajectories rather than steady states the
+same conclusion needs a Gr\"onwall bound, which is not given here. The affine function in
 question is the tangent to $C$ at $\bar m$, whose slope is $C'(\bar m)$ and whose intercept
 is $C(\bar m) - \bar m\, C'(\bar m)$. The alternative channel contributes $k_e \bar m -
 \bar m\, k_e = 0$ to the second of these, since a line through the origin has no intercept,
@@ -182,7 +213,8 @@ it is compatible with the data.
 
 Information about the residual capacity is therefore not absent from stable-patient data.
 It is concentrated in the intercept, and the intercept is the one quantity a narrow band
-cannot deliver. It is the value the fitted line takes when extrapolated back to $m = 0$, and
+cannot deliver. What follows conditions on $K_m$, for the reason set out in
+Remark~\ref{rem:fibre}. It is the value the fitted line takes when extrapolated back to $m = 0$, and
 $M$ does not contain the origin. For a least-squares affine fit to $n$ points $m_i$ with
 independent errors of standard deviation $\sigma$,
 \begin{equation}
@@ -277,7 +309,7 @@ intracellular propionyl-CoA to the marker under which $g$ keeps its Michaelis-Me
 This note does not establish one, so $K_m$ here is a fitted shape parameter of the
 plasma-level clearance curve.
 
-$\thc$ in \eqref{eq:thcrit} is computed through $g(\bar m)$ and inherits the same
+$\thc^{\mathrm{A}}$ in \eqref{eq:thcrit} is computed through $g(\mtol)$ and inherits the same
 dependence. Establishing $\psi$, or bounding how far the conclusions move across a family
 of candidate maps, is a prerequisite for reading either mechanistically.
 \end{remark}
@@ -357,39 +389,40 @@ increment on either channel, a change in the load, or any combination of these. 
 $m'$ be the steady metabolite levels before and after. Then in every case the
 $2 \times 2$ system for $(\theta, k_e)$ has the coefficient matrix $M$ of
 \eqref{eq:system} and the determinant \eqref{eq:det}, which depends on $m$, $m'$ and $K_m$
-alone. The perturbation enters only the right-hand side, as
+alone. The system is two equations in two unknowns given $K_m$; with $K_m$ unknown it is two
+equations in three, and Remark~\ref{rem:fibre} is where that is resolved. The perturbation enters only the right-hand side, as
 $\delta = \kappa u_c\, m'$ for carnitine, $\delta = \Delta\, g(m')$ for the therapy, and
 $\delta = s - s'$ for a change of load.
 \end{proposition}
 
 \begin{proposition}[Formal identifiability, practical ill-conditioning]
 \label{prop:illcond}
-The determinant \eqref{eq:det} is non-zero whenever $m \neq m'$, so the pair
-$(\theta, k_e)$ is formally identifiable from steady-state data before and after any such
-perturbation. Its size, however, is set by \eqref{eq:affine}. Writing the affine fit to $g$
-over the observed range as $g(m) = \gamma + \beta m$,
+\emph{Given $K_m$}, the determinant \eqref{eq:det} is non-zero whenever $m \neq m'$, so the
+pair $(\theta, k_e)$ is identifiable from steady-state data before and after any such
+perturbation. It factorises exactly, with no fit and no hypothesis:
 \begin{equation}
-\det M \;=\; (\gamma + \beta m)\,m' - (\gamma + \beta m')\,m \;=\; \gamma\,(m' - m),
-\label{eq:detaffine}
+\det M \;=\; g(m)\,m' - g(m')\,m \;=\; g(m)\,g(m')\,(m' - m).
+\label{eq:detexact}
 \end{equation}
-exactly, the $\beta m m'$ terms cancelling. With $\gamma$ the intercept of the tangent at
-$\bar m$,
+Over a band narrow enough for \eqref{eq:affine} the two saturations coalesce, and
 \begin{equation}
-\gamma \;=\; g(\bar m) - \bar m\, g'(\bar m) \;=\; g(\bar m)^2 ,
-\qquad\text{so}\qquad
-\det M \;=\; g(\bar m)^2\,(m' - m) .
+\det M \;\approx\; g(\bar m)^2\,(m' - m),
 \label{eq:detgamma}
 \end{equation}
-This $\gamma$ is the intercept of Proposition~\ref{prop:degeneracy} divided by $\theta$:
-comparing with \eqref{eq:intercept}, $a = \theta\gamma$. The two propositions are about the
-same object, the tangent's intercept, one fitted to the total clearance and one to the
-saturation function alone.
+the geometric mean read at the midpoint. Comparing with \eqref{eq:intercept},
+$g(\bar m)^2 = a/\theta$: the two propositions are about the same object, one fitted to the
+total clearance and one to the saturation function alone.
 \end{proposition}
+
+The approximation in \eqref{eq:detgamma} is not free. At $m = 8$ and $m' = 14$ with
+$K_m = 100$, a $55\%$ excursion, it overstates \eqref{eq:detexact} by $8\%$, so the
+narrow-band form flatters the conditioning exactly where the note recommends widening the
+band.
 
 The determinant is small for two independent reasons, which are different clinical
 situations. It is proportional to the excursion $m' - m$, so a patient held in a narrow band
 gives a small determinant however far up the saturation curve they sit, and proportional to
-$g(\bar m)^2$, so a patient low on the curve gives a small determinant however wide the
+$g(m)g(m')$, so a patient low on the curve gives a small determinant however wide the
 excursion. Only a patient who is
 both excursing and appreciably saturated escapes both, and that patient is in the middle of a
 decompensation.
@@ -485,20 +518,53 @@ this subsection becomes unnecessary.
       Writing the critical capacity from the equilibrium condition at peak load and
       tolerable level,
       \begin{equation}
-      \spk = \thc\, g(\bar m) + k_e \bar m
+      \spk = \thc^{\mathrm{A}}\, g(\mtol) + k_e \mtol
       \qquad \Longrightarrow \qquad
-      \thc = \frac{\spk - k_e \bar m}{g(\bar m)},
+      \thc^{\mathrm{A}} = \frac{\spk - k_e \mtol}{g(\mtol)},
       \label{eq:thcrit}
       \end{equation}
       the safety margin is
       \begin{equation}
-      \theta - \thc \;=\; \theta \;-\; \frac{\spk}{g(\bar m)} \;+\; \frac{k_e \bar m}{g(\bar m)} .
+      \mu \;=\; \theta - \thc^{\mathrm{A}} \;=\; \theta \;-\; \frac{\spk}{g(\mtol)}
+      \;+\; \frac{k_e \mtol}{g(\mtol)} .
       \label{eq:margin}
       \end{equation}
-      Note that $\theta$ and $k_e$ enter with \emph{opposite} signs, whereas the identifiable
-      combination in \eqref{eq:slope} carries them with the same sign. Errors therefore
-      accumulate rather than cancel, and the margin is plausibly \emph{worse} conditioned
-      than either parameter. This should be established rather than assumed.
+      Both parameters enter \eqref{eq:margin} with a \emph{positive} coefficient, and
+      \eqref{eq:slope} carries them positively too, so moving along the direction the data
+      cannot resolve raises one and lowers the other and their contributions to $\mu$
+      partially cancel. Parametrising that direction by $K_m$, the fitted pair $(a,b)$ of
+      \eqref{eq:intercept} and \eqref{eq:slope} gives
+      \begin{equation}
+      \theta(K_m) = \frac{a\,(K_m + \bar m)^2}{\bar m^{2}},
+      \qquad
+      k_e(K_m) = b - \frac{a\,K_m}{\bar m^{2}},
+      \label{eq:fibre}
+      \end{equation}
+      and substituting into \eqref{eq:margin}, with $P = \spk - b\,\mtol$,
+      \begin{equation}
+      \mu(K_m) \;=\; K_m\left[\frac{2a}{\bar m} - \frac{P}{\mtol}
+      - \frac{a\,\mtol}{\bar m^{2}}\right] \;+\; (a - P).
+      \label{eq:mufibre}
+      \end{equation}
+      The $K_m^2$ terms cancel identically. The margin is \emph{linear} along the
+      unidentified direction where $\theta$ is quadratic in it, so the decision quantity is
+      better conditioned than the parameter it is built from, by one order. Its whole
+      sensitivity to the non-identifiability is the single coefficient in
+      \eqref{eq:mufibre}, computable from the fitted $(a,b)$ without resolving $K_m$.
+      This is a change of order and not a claim of good conditioning: at the illustrative
+      values $\mu$ still varies sixfold over the admissible range of $K_m$
+      (Figure~\ref{fig:A7}). Whether its \emph{sign} is determined over that range is a
+      question each patient's record answers, and at these values it is.
+
+      Two patients matched at $\bar m$ and sharing $K_m$ separate exactly:
+      \begin{equation}
+      \mu_A - \mu_B \;=\; (k_{e,A} - k_{e,B})\,(\mtol - \bar m),
+      \label{eq:musplit}
+      \end{equation}
+      since point-matching forces
+      $\theta_A - \theta_B = -(k_{e,A} - k_{e,B})(K_m + \bar m)$. Two observationally
+      identical patients diverge linearly in how far the tolerable level sits above the
+      operating point, and coincide when $\mtol = \bar m$.
 \item Whether the decision $\theta \gtrless \thc$ is invariant under a common strictly
       increasing reparametrisation $\varphi$ of the activity scale. If every variant is
       distorted by the same $\varphi$, and if $\thc$ is \emph{estimated empirically on that
@@ -508,7 +574,7 @@ this subsection becomes unnecessary.
       calibration. The invariance fails if $\varphi$ differs by mechanism class. It also
       fails whenever $\thc$ is computed rather than estimated on the distorted scale,
       because \eqref{eq:thcrit} is not equivariant under $\varphi$: in general
-      $\varphi\!\left((\spk - k_e \bar m)/g(\bar m)\right)$ differs from the expression
+      $\varphi\!\left((\spk - k_e \mtol)/g(\mtol)\right)$ differs from the expression
       obtained by substituting $\varphi(k_e)$ into the same formula, so the two sides of
       the comparison are transported differently. Note that this pulls against
       Proposition~\ref{prop:intrinsic}: the intrinsic $\thc$ is a structural construction,

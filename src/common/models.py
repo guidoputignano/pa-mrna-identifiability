@@ -251,12 +251,21 @@ def condition_number(sens_fn, p, levels):
 
 
 # ---------------------------------------------------------------- threshold
-def theta_crit(s_peak, m_bar, p: ParamsA):
+def theta_crit(s_peak, m_tol, p: ParamsA):
     """
-    Critical capacity: the value of V_max (theta) at which, under peak load,
-    the equilibrium sits exactly at the tolerable metabolite level.
+    Critical capacity, MODEL A: the value of V_max (theta) at which, under
+    peak load, the equilibrium sits exactly at the tolerable metabolite level.
 
-    Note that this definition imports two quantities that are not measured,
-    s_peak and m_bar. See the note for why this matters.
+    The argument is m_tol, not m_bar. They were the same name and they are
+    different quantities: m_bar is the point the affine fit of Proposition 1
+    is taken at, and the sample mean of the observed band; m_tol is a clinical
+    convention about what level is tolerable. Equation (17) mixed them.
+
+    Model B's alternative channel saturates, so its critical capacity is
+    (s_peak - ke*h(m_tol))/g(m_tol) and not this. That is what
+    model_B/run.py::fig_thetacrit computes.
+
+    This definition imports two quantities that are not measured, s_peak and
+    m_tol. See the note for why that matters.
     """
-    return (s_peak - p.ke * m_bar) / g(m_bar, p.Km)
+    return (s_peak - p.ke * m_tol) / g(m_tol, p.Km)

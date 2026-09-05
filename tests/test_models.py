@@ -179,7 +179,7 @@ def test_C_intrinsic_theta_crit_does_not_use_a_tolerable_level():
     """
     The point of the construction: it takes the load and the parameters, and
     nothing else. Changing the clinical convention m_bar cannot change it,
-    because m_bar is not one of its arguments. Contrast theta_crit() above.
+    because m_tol is not one of its arguments. Contrast theta_crit() above.
     """
     from model_C.run import theta_crit_intrinsic
     import inspect
@@ -214,8 +214,8 @@ def test_C_margin_closes_monotonically_towards_the_threshold():
 def test_theta_crit_depends_on_unmeasured_quantities():
     """A sanity check on the definition, and a reminder of its weakness."""
     p = ParamsA()
-    t1 = theta_crit(s_peak=500.0, m_bar=40.0, p=p)
-    t2 = theta_crit(s_peak=500.0, m_bar=60.0, p=p)
+    t1 = theta_crit(s_peak=500.0, m_tol=40.0, p=p)
+    t2 = theta_crit(s_peak=500.0, m_tol=60.0, p=p)
     assert t1 != t2, "theta_crit must depend on the assumed tolerable level"
 
 
@@ -293,3 +293,146 @@ def test_theta_crit_positive_iff_alt_route_cannot_carry_the_load():
     strong = replace(p, R0=p.R0 * 2.0)
     assert alt_flux_C(m, strong).max() > s_base
     assert np.isnan(theta_crit_intrinsic(strong, s_base))
+
+
+# ================================================================= Model A
+#  The fibre of observationally identical patients, and what survives on it.
+#
+#  A band fixes the affine fit (a, b) of Proposition 1 and nothing more. Both
+#  coefficients carry Km, so a known (a, b) leaves a one-parameter family.
+#  These tests pin the claims the paper makes about that family.
+# =========================================================================
+from model_A.run import (fit_ab, fibre, fibre_Km_max, margin,
+                         margin_on_fibre, M_OP, M_TOL, S_PEAK)
+
+
+def test_fibre_inverts_the_affine_fit():
+    """Every point of the fibre reproduces the same (a, b) it came from."""
+    p = ParamsA()
+    a, b = fit_ab(p)
+    for Km in (5.0, 25.0, 60.0, 100.0, 115.0):
+        th, ke = fibre(a, b, Km)
+        a2, b2 = fit_ab(ParamsA(th, Km, ke))
+        assert a2 == pytest.approx(a, rel=1e-12), Km
+        assert b2 == pytest.approx(b, rel=1e-12), Km
+
+
+def test_fibre_extent_is_wide_with_noiseless_data():
+    """
+    Proposition 1 says the intercept is free of ke. It is not free of Km, and
+    the span that leaves is the point of Remark 4.
+    """
+    p = ParamsA()
+    a, b = fit_ab(p)
+    Kmax = fibre_Km_max(a, b)
+    assert Kmax == pytest.approx(b * M_OP ** 2 / a, rel=1e-12)
+    assert fibre(a, b, Kmax)[1] == pytest.approx(0.0, abs=1e-9), "ke vanishes there"
+    lo, hi = fibre(a, b, 1e-9)[0], fibre(a, b, Kmax)[0]
+    assert hi / lo > 100.0, f"span was only {hi / lo:.1f}x"
+    assert lo < p.theta < hi, "the true patient must lie on its own fibre"
+
+
+def test_margin_is_linear_in_Km_where_theta_is_quadratic():
+    """
+    The correction to Section 3.6 item 2. theta is quadratic along the fibre
+    and the margin is linear: the quadratic terms cancel identically, so the
+    second difference of mu is zero to machine precision while that of theta
+    is not.
+    """
+    p = ParamsA()
+    a, b = fit_ab(p)
+    Ks = np.linspace(1.0, fibre_Km_max(a, b) * 0.99, 9)
+    h = Ks[1] - Ks[0]
+    mu = np.array([margin_on_fibre(a, b, K) for K in Ks])
+    th = np.array([fibre(a, b, K)[0] for K in Ks])
+    d2mu = np.diff(mu, 2)
+    d2th = np.diff(th, 2)
+    scale = max(abs(mu).max(), 1.0)
+    assert np.max(np.abs(d2mu)) / scale < 1e-10, "mu must be linear in Km"
+    assert np.max(np.abs(d2th)) > 1e-6 * abs(th).max(), "theta must not be"
+    # and the closed form of (18) agrees with going round through (theta, ke)
+    P = S_PEAK - b * M_TOL
+    slope = 2 * a / M_OP - P / M_TOL - a * M_TOL / M_OP ** 2
+    for K in Ks:
+        assert margin_on_fibre(a, b, K) == pytest.approx(slope * K + (a - P),
+                                                         rel=1e-10), K
+
+
+def test_matched_patients_separate_as_dke_times_mtol_minus_mbar():
+    """
+    Equation (19), exactly. Two patients matched in value at the operating
+    point and sharing Km differ in margin by (ke_A - ke_B)(m_tol - m_bar),
+    and coincide when the tolerable level is the operating point.
+    """
+    from scipy.optimize import brentq
+    p = ParamsA()
+    thB = 1000.0
+    keB = brentq(lambda k: clearance_A(M_OP, ParamsA(thB, p.Km, k))
+                 - clearance_A(M_OP, p), 1e-9, 1e5)
+    for m_tol in (M_OP, 21.0, 40.0, 75.0):
+        lhs = (margin(p.theta, p.ke, m_tol=m_tol)
+               - margin(thB, keB, m_tol=m_tol))
+        rhs = (p.ke - keB) * (m_tol - M_OP)
+        assert lhs == pytest.approx(rhs, abs=1e-9), m_tol
+
+
+def test_null_anchor_closes_the_fibre_without_a_second_steady_state():
+    """
+    The strengthened form of Proposition 5. One band plus a known ke recovers
+    Km and theta exactly. No patient is moved to a second load.
+    """
+    p = ParamsA()
+    a, b = fit_ab(p)
+    Km_rec = (b - p.ke) * M_OP ** 2 / a
+    th_rec, ke_rec = fibre(a, b, Km_rec)
+    assert Km_rec == pytest.approx(p.Km, rel=1e-12)
+    assert th_rec == pytest.approx(p.theta, rel=1e-12)
+    assert ke_rec == pytest.approx(p.ke, rel=1e-12)
+
+
+def test_two_patients_with_bands_close_the_system():
+    """
+    Figure 8's counting assumes one observation per patient. Under the band
+    model two patients supply four coefficients for three unknowns, and they
+    close it without either of them moving.
+    """
+    p = ParamsA()
+    pA = ParamsA(3000.0, p.Km, p.ke)
+    pB = ParamsA(1000.0, p.Km, p.ke)
+    a1, b1 = fit_ab(pA)
+    a2, b2 = fit_ab(pB)
+    Km = (b2 - b1) / (a2 / M_OP ** 2 - a1 / M_OP ** 2)
+    ke = b1 - a1 * Km / M_OP ** 2
+    assert Km == pytest.approx(p.Km, rel=1e-10)
+    assert ke == pytest.approx(p.ke, rel=1e-10)
+    assert fibre(a1, b1, Km)[0] == pytest.approx(pA.theta, rel=1e-10)
+    assert fibre(a2, b2, Km)[0] == pytest.approx(pB.theta, rel=1e-10)
+
+
+def test_det_M_factorises_exactly():
+    """
+    Equation (14) with no affine hypothesis. The narrow-band form g(m_bar)^2
+    is its midpoint approximation, and it is not free over a wide band.
+    """
+    Km = ParamsA().Km
+    for m, mp in [(8.0, 14.0), (10.0, 10.5), (5.0, 200.0), (40.0, 90.0)]:
+        lhs = g(m, Km) * mp - g(mp, Km) * m
+        assert lhs == pytest.approx(g(m, Km) * g(mp, Km) * (mp - m), rel=1e-13)
+    # the approximation error grows with the excursion
+    approx8 = g(11.0, Km) ** 2 * 6.0
+    exact8 = g(8.0, Km) * g(14.0, Km) * 6.0
+    assert 0.05 < (approx8 - exact8) / exact8 < 0.11, "about 8% at m=8, m'=14"
+
+
+def test_load_error_amplification_is_a_flux_ratio_and_diverges():
+    """
+    The 1.4 of Figure 6 is C(m)/(theta g(m)), not a constant of the model.
+    """
+    Km, ke, m = 100.0, 5.0, 20.0
+    amps = []
+    for th in (3000.0, 1500.0, 400.0, 100.0):
+        q = ParamsA(th, Km, ke)
+        amps.append(clearance_A(m, q) / (th * g(m, Km)))
+    assert amps[1] == pytest.approx(1.4, rel=1e-9), "the figure's value"
+    assert amps == sorted(amps), "must grow as theta falls"
+    assert amps[-1] > 5.0, "and diverge at the severe end"

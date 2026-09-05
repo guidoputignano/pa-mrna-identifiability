@@ -89,20 +89,27 @@ escapes to infinity as $s \to (\theta + k_e)^-$. A genuine saddle-node requires 
 \begin{remark}[Clinical threshold precedes the mathematical one]
 Clinically the crisis begins before the equilibrium ceases to exist, because the
 equilibrium migrates to metabolite levels the patient does not tolerate. The operative
-condition is $\spk > C(\bar m)$, with $\thc$ given by \eqref{eq:thcrit}.
+condition is $\spk > C(\mtol)$, and the critical capacity is not
+\eqref{eq:thcrit} but its Model B counterpart,
+\begin{equation}
+\thc^{\mathrm{B}} \;=\; \frac{\spk - k_e\, h(\mtol)}{g(\mtol)},
+\label{eq:thcritB}
+\end{equation}
+the alternative channel now saturating. Figure~\ref{fig:B2}~(left) plots
+\eqref{eq:thcritB}, not \eqref{eq:thcrit}.
 \end{remark}
 
 \begin{remark}[The model gives a condition, the records give a frequency]
 \label{rem:condition_not_frequency}
 The question this model answers has to be stated carefully, because the natural phrasing,
 ``when does a crisis occur'', asks for something else. What Model B delivers is a
-\emph{condition}, $s > \theta + k_e$, or clinically $\spk > C(\bar m)$. It does not deliver
+\emph{condition}, $s > \theta + k_e$, or clinically $\spk > C(\mtol)$. It does not deliver
 a \emph{rate}. Nothing in \eqref{eq:B} describes how often, or how hard, the load is
 driven above the threshold: the arrival of intercurrent illness is exogenous to the vector
 field, and a deterministic inequality has no frequency in it.
 
 The asymmetry matters because frequency is precisely what the records contain. Admissions
-are dated and reliably coded, whereas $\spk$ and $\bar m$, the two quantities the
+are dated and reliably coded, whereas $\spk$ and $\mtol$, the two quantities the
 inequality is written in, are never measured. The model is therefore expressed in
 unobservables and asked to predict an observable it does not contain.
 
@@ -136,7 +143,7 @@ enzyme constant at the plasma level, and nothing here needs them to.
 \subsection{Status}
 
 Model B is required for any statement about the loss of a tolerable steady state and for
-the definition of $\thc$ in \eqref{eq:thcrit}. The identifiability analysis of Section 3
+the definition of $\thc^{\mathrm{B}}$ in \eqref{eq:thcritB}. The identifiability analysis of Section 3
 runs on Model A instead, which is the more favourable case. Model B's own question is
 answered within its own terms, and by Remark~\ref{rem:condition_not_frequency} the answer is
 not yet in the units the data are recorded in.
