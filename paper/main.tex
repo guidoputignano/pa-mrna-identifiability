@@ -27,4 +27,18 @@
 \clearpage
 \input{sections/07_open}
 
+\clearpage
+\printbibliography[title={References}]
+
+\ifshowregister
+\appendix
+\section{Claim register}
+Every factual assertion in this note, its source, and whether the source
+says what the assertion says. Rows are ordered worst first.
+\begin{adjustwidth}{-1.4cm}{-1.4cm}
+\footnotesize
+\input{../results/tables/tab_claims}
+\end{adjustwidth}
+\fi
+
 \end{document}

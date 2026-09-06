@@ -9,15 +9,24 @@ which leaves with the product. Carnitine is a consumed reagent, not a
 catalyst. If depletion outpaces replenishment, effective clearance
 DECREASES with m rather than merely saturating, the clearance curve becomes
 non-monotone, and the system admits two equilibria: a stable one and an
-unstable one which acts as a point of no return.
+unstable one which acts as a separatrix.
 
-Question answered: why does a crisis not resolve spontaneously?
+Question answered: why does recovery require active reduction of the load
+below baseline, rather than mere removal of the trigger?
+
+Removing the trigger returns s to baseline, and at baseline the patient who
+has crossed the separatrix is still on the wrong side of it. Recovery needs
+an overshoot: either s driven BELOW baseline, which raises the separatrix
+above the patient, or m lowered directly. Under B, by contrast, returning s
+to baseline returns m to baseline.
 
 Produces
     fig_C1_phaseline    dm/dt against m, showing the two equilibria
     fig_C2_fold         bifurcation diagram with the saddle-node fold
     fig_C3_timeseries   B and C responses to an identical transient illness
-    fig_C4_hysteresis   the testable prediction: admission against discharge
+    fig_C4_basin        the basin of attraction and the two routes to recovery
+    fig_C5_margin       attractor, separatrix and the margin between them
+                        against theta, with the intrinsic theta_crit
 
 Run:  python src/model_C/run.py
 """
@@ -26,29 +35,102 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from dataclasses import replace
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
+from scipy.optimize import brentq, minimize_scalar
 
 from common.models import (ParamsB, ParamsC, g, clearance_B,
-                           clearance_C_quasistatic, equilibria_nonmonotone)
-from common.style import save, GREEN, RED, BLUE, AMBER, GREY, MUTED
+                           clearance_C_quasistatic, equilibria_nonmonotone,
+                           steady_state)
+from common.style import (save, figsize, GREEN, RED, BLUE, AMBER, GREY, MUTED,
+                          corner, over_x, at_point)
 
 
 PC = ParamsC()
 PB = ParamsB()
+S_BASE = 600.0          # baseline substrate load, illustrative
+Y_MAX = 2600.0          # top of the basin panel, named once
+
 # Model B matched to Model C at the same operating point, for a fair
-# comparison: same theta, alternative route saturating instead of declining.
-PB2 = ParamsB(theta=PC.theta, Km=PC.Km, ke=520.0, Ke=50.0)
+# comparison: same theta and Km, alternative route saturating instead of
+# declining, and ke chosen so that the two models put the patient at the SAME
+# baseline attractor. Matching the operating point is the whole purpose of the
+# comparison, so ke is solved for rather than guessed.
+_M_BASE_C = equilibria_nonmonotone(clearance_C_quasistatic, PC, S_BASE,
+                                   np.linspace(1e-3, 3000.0, 12000))[0][0]
+_KE_B = brentq(lambda ke: clearance_B(_M_BASE_C,
+                                      ParamsB(PC.theta, PC.Km, ke, 50.0)) - S_BASE,
+               1.0, 1e5)
+PB2 = ParamsB(theta=PC.theta, Km=PC.Km, ke=_KE_B, Ke=50.0)
+
+
+# =====================================================================
+def clearance_peak(p: ParamsC, theta=None):
+    """
+    The maximum of the Model C clearance curve, and where it occurs.
+
+    C(m) = theta*g(m) + alt(m) rises from zero, peaks, and then decays back
+    towards theta, so the maximum is interior. Its value is the largest load
+    the patient can balance at all: the saddle-node in the load sits exactly
+    there.
+    """
+    q = p if theta is None else replace(p, theta=float(theta))
+    grid = np.linspace(1e-6, 6000.0, 30000)
+    C = clearance_C_quasistatic(grid, q)
+    i = int(np.argmax(C))
+    lo = grid[max(i - 1, 0)]
+    hi = grid[min(i + 1, len(grid) - 1)]
+    r = minimize_scalar(lambda m: -clearance_C_quasistatic(m, q),
+                        bounds=(lo, hi), method="bounded")
+    return float(-r.fun), float(r.x)
+
+
+def theta_crit_intrinsic(p: ParamsC, s_base, theta_hi=None):
+    """
+    The theta at which the fold occurs at the given load. Defined by the
+    dynamics, not by a clinical convention.
+
+    At load s_base the equilibria of Model C are the solutions of
+    C(m; theta) = s_base. Lowering theta lowers C everywhere, so it lowers the
+    peak of C. theta_crit_intrinsic is the theta at which that peak has fallen
+    exactly to s_base: attractor and separatrix merge at the saddle-node, and
+    below it no equilibrium exists at all and the patient cannot be maintained
+    at baseline load.
+
+    The point of the construction is what it does NOT contain. The definition
+    in Model B,
+
+        theta_crit = (s_peak - ke*m_bar) / g(m_bar),
+
+    imports two quantities that are never measured: m_bar, a clinical
+    convention, and s_peak, the amplitude of an illness. The definition here
+    imports neither m_bar nor any tolerability convention: the threshold is
+    the point at which the model's own equilibrium structure changes. It does
+    still take the load as an argument, so s has not been eliminated, only
+    m_bar. See the remark in the paper.
+
+    Returns nan when even a null patient (theta = 0) can balance s_base, in
+    which case the fold lies at negative theta and the quantity is vacuous.
+    """
+    f = lambda th: clearance_peak(p, th)[0] - s_base
+    if f(0.0) >= 0.0:
+        return float("nan")
+    hi = theta_hi if theta_hi is not None else max(4.0 * s_base, 1.0)
+    while f(hi) < 0.0 and hi < 1e9:
+        hi *= 2.0
+    return float(brentq(f, 0.0, hi, xtol=1e-10, rtol=1e-12))
 
 
 # =====================================================================
 def fig_phaseline():
     """The phase line. Two equilibria at baseline load, none at peak load."""
-    m = np.linspace(1e-3, 1100, 2500)
-    s_base, s_peak = 600.0, 850.0
+    m = np.linspace(1e-3, 2400, 4000)
+    s_base, s_peak = S_BASE, 850.0
 
-    fig, ax = plt.subplots(figsize=(5.6, 3.5))
+    fig, ax = plt.subplots(figsize=figsize(0.49, 0.86))
     for s, col, lab, ls in [(s_base, GREEN, "baseline load", "-"),
                             (s_peak, RED, "peak load", "--")]:
         dm = s - np.array([clearance_C_quasistatic(x, PC) for x in m])
@@ -56,21 +138,26 @@ def fig_phaseline():
 
     ax.axhline(0, color=MUTED, lw=0.8)
     roots, stab = equilibria_nonmonotone(clearance_C_quasistatic, PC, s_base,
-                                         grid=np.linspace(1e-3, 1100, 8000))
+                                         grid=np.linspace(1e-3, 2400, 12000))
     for r, st in zip(roots, stab):
         ax.plot([r], [0], "o", ms=7, zorder=5,
                 color=GREEN if st else "white",
                 markeredgecolor=GREEN, markeredgewidth=1.8)
-        ax.annotate("stable\nattractor" if st else "unstable\npoint of no return",
-                    xy=(r, 0), xytext=(r, -220 if st else 300),
-                    ha="center", fontsize=7.5, color=GREEN if st else RED,
-                    arrowprops=dict(arrowstyle="-", color=GREY, lw=0.7))
+        # Offset in POINTS from the equilibrium, and nudged inward from the
+        # left spine: the attractor sits near m = 0, so a centred label there
+        # runs off the axis.
+        at_point(ax, (r, 0),
+                 "stable\nattractor" if st else "unstable:\nthe separatrix",
+                 dx=6 if st else 0, dy=-34 if st else 42,
+                 ha="left" if st else "center", va="top" if st else "bottom",
+                 fontsize=7.5, color=GREEN if st else RED,
+                 arrowprops=dict(arrowstyle="-", color=GREY, lw=0.7))
 
     ax.set_xlabel(r"metabolite $m$")
     ax.set_ylabel(r"$dm/dt$")
     ax.set_ylim(-320, 480)
-    ax.set_title("depletion makes clearance non-monotone, creating a separatrix")
-    ax.legend(loc="upper left")
+    ax.set_title("depletion makes clearance non-monotone,\ncreating a separatrix")
+    ax.legend(loc="lower right", fontsize=7.5)
     save(fig, "fig_C1_phaseline")
     print(f"    equilibria at baseline load: {np.round(roots,1)}  stable={stab}")
 
@@ -78,32 +165,42 @@ def fig_phaseline():
 # =====================================================================
 def fig_fold():
     """Bifurcation diagram: the two branches collide at a fold."""
-    loads = np.linspace(250, 800, 420)
+    # Windowed on the fold. The unstable branch climbs steeply as the load
+    # falls, so starting far below the saddle-node squashes the collision,
+    # which is the whole point of the figure, into the bottom of the axes.
+    s_fold = clearance_peak(PC)[0]
+    loads = np.linspace(0.72 * s_fold, 1.004 * s_fold, 480)
     stable_s, stable_m, unst_s, unst_m = [], [], [], []
     for s in loads:
         roots, stab = equilibria_nonmonotone(clearance_C_quasistatic, PC, s,
-                                             grid=np.linspace(1e-3, 2000, 6000))
+                                             grid=np.linspace(1e-3, 8000, 24000))
         for r, st in zip(roots, stab):
             (stable_s if st else unst_s).append(s)
             (stable_m if st else unst_m).append(r)
 
-    fig, ax = plt.subplots(figsize=(5.4, 3.5))
+    fig, ax = plt.subplots(figsize=figsize(0.49, 0.86))
     ax.plot(stable_s, stable_m, ".", ms=2.0, color=GREEN, label="stable branch")
     ax.plot(unst_s, unst_m, ".", ms=2.0, color=RED, label="unstable branch")
-    if unst_s:
-        s_fold = max(stable_s)
-        ax.axvline(s_fold, color=GREY, ls=":", lw=1.0)
-        ax.text(s_fold - 30, max(stable_m) * 0.9, "saddle-node", rotation=90,
-                fontsize=7.5, color=MUTED, ha="right", va="top")
+    ax.axvline(s_fold, color=GREY, ls=":", lw=1.0)
+    over_x(ax, s_fold, "saddle-node", frac=0.97, rotation=90, fontsize=7.5,
+           color=MUTED, ha="right", va="top")
     ax.set_xlabel(r"substrate load $s$")
     ax.set_ylabel(r"equilibrium $m^*$")
-    ax.set_title("two branches that collide, unlike Model B")
-    ax.legend(loc="upper left")
+    ax.set_title("two branches that collide,\nunlike Model B")
+    # The free wedge is below the unstable branch and above the stable one.
+    # Anchored in axes fractions, so it stays there when the fold moves.
+    ax.legend(loc="lower left", bbox_to_anchor=(0.02, 0.14), markerscale=4,
+              fontsize=7.5, frameon=True, facecolor="white", edgecolor="none",
+              framealpha=0.95)
     save(fig, "fig_C2_fold")
 
 
 # =====================================================================
-def _simulate(rhs, m0, T=160.0, illness=(20.0, 34.0), s_base=600.0, s_ill=900.0):
+ILLNESS = (20.0, 34.0)   # the transient illness window, shared by the
+                         # simulation, the shading and the label
+
+
+def _simulate(rhs, m0, T=160.0, illness=ILLNESS, s_base=S_BASE, s_ill=900.0):
     def s(t):
         return s_ill if illness[0] <= t <= illness[1] else s_base
     sol = solve_ivp(lambda t, y: [s(t) - rhs(y[0])], (0, T), [m0],
@@ -114,25 +211,33 @@ def _simulate(rhs, m0, T=160.0, illness=(20.0, 34.0), s_base=600.0, s_ill=900.0)
 
 def fig_timeseries():
     """The discriminating prediction, as a simulation."""
-    tt, mB, sB = _simulate(lambda x: clearance_B(x, PB2), m0=47.0)
-    tt, mC, sC = _simulate(lambda x: clearance_C_quasistatic(x, PC), m0=47.0)
+    m0 = _M_BASE_C          # the shared baseline attractor, by construction
+    tt, mB, sB = _simulate(lambda x: clearance_B(x, PB2), m0=m0)
+    tt, mC, sC = _simulate(lambda x: clearance_C_quasistatic(x, PC), m0=m0)
 
-    fig, ax = plt.subplots(2, 1, figsize=(5.8, 4.4), sharex=True,
+    fig, ax = plt.subplots(2, 1, figsize=figsize(0.48, 1.05), sharex=True,
                            gridspec_kw={"height_ratios": [1, 2.4]})
     ax[0].fill_between(tt, 0, sC, color=AMBER, alpha=0.25, step="mid")
     ax[0].plot(tt, sC, color=AMBER, lw=1.2)
     ax[0].set_ylabel(r"load $s(t)$")
-    ax[0].set_title("identical transient illness, two clearance hypotheses")
+    # The label belongs over the pulse it names. In the lower panel it had to
+    # share a log axis with two curves and a legend, and touched whichever
+    # moved.
+    at_point(ax[0], (0.5 * (ILLNESS[0] + ILLNESS[1]), sC.max()), "illness",
+             dy=5, ha="center", va="bottom", fontsize=7.5, color=MUTED)
+    ax[0].set_ylim(top=sC.max() * 1.45)
+    ax[0].set_title("identical illness,\ntwo clearance hypotheses")
 
     ax[1].plot(tt, mB, color=GREEN, label="Model B: returns to baseline")
     ax[1].plot(tt, mC, color=RED, ls="--", label="Model C: does not return")
-    ax[1].axvspan(20, 34, color=AMBER, alpha=0.12)
-    ax[1].text(27, ax[1].get_ylim()[1] * 0.05, "illness", ha="center",
-               fontsize=7.5, color=MUTED)
+    ax[1].axvspan(*ILLNESS, color=AMBER, alpha=0.12)
     ax[1].set_xlabel("time  [days]")
     ax[1].set_ylabel(r"metabolite $m$")
     ax[1].set_yscale("log")
-    ax[1].legend(loc="upper left")
+    # Headroom before the legend, or the box lands on the Model C curve where
+    # it climbs. On a log axis the factor is decades, not units.
+    ax[1].set_ylim(top=max(mB.max(), mC.max()) * 30)
+    ax[1].legend(loc="upper left", framealpha=0.95)
     save(fig, "fig_C3_timeseries")
 
 
@@ -141,55 +246,74 @@ def fig_basin():
     """
     There is no upper stable state in Model C: beyond the separatrix the
     metabolite grows without bound. So the clinically meaningful object is
-    not a hysteresis loop but the BASIN OF ATTRACTION, and the consequence
-    is that reducing the load alone cannot rescue a patient who has already
-    crossed. The metabolite itself must be lowered.
+    not a hysteresis loop but the BASIN OF ATTRACTION.
+
+    The consequence is the question this model answers. Removing the trigger
+    puts s back at baseline, and the separatrix at baseline load is still
+    below the patient: nothing has been recovered. Recovery needs an
+    overshoot, and the figure shows the two that standard care uses. Driving
+    s BELOW baseline raises the separatrix above the patient. Lowering m
+    directly, by haemofiltration, moves the patient below the separatrix
+    where it stands.
     """
-    loads = np.linspace(250, 781, 400)
+    # The separatrix exists only for theta < s < max_m C(m), since total
+    # clearance tends to theta from above: below theta it never falls back
+    # through s, and above the peak there is no equilibrium at all.
+    s_fold = clearance_peak(PC)[0]          # the saddle-node in the load
+    loads = np.linspace(0.60 * s_fold, 0.999 * s_fold, 400)
     stab_b, unst_b, ok = [], [], []
     for s in loads:
         roots, st = equilibria_nonmonotone(clearance_C_quasistatic, PC, s,
-                                           grid=np.linspace(1e-3, 3000, 6000))
+                                           grid=np.linspace(1e-3, 20000, 60000))
         if st.sum() and (~st).sum():
             stab_b.append(roots[st][0]); unst_b.append(roots[~st][0]); ok.append(s)
     ok = np.array(ok); stab_b = np.array(stab_b); unst_b = np.array(unst_b)
 
-    fig, ax = plt.subplots(figsize=(5.6, 3.6))
-    ax.fill_between(ok, unst_b, 3000, color=RED, alpha=0.10)
+    fig, ax = plt.subplots(figsize=figsize(0.50, 0.88))
+    # Four labelled annotations plus a legend never fitted this panel at
+    # print size: they collided with each other, with the separatrix and with
+    # the region shading. The plot now carries only pointers, two numbered
+    # arrows and one marker, and the caption says what they are. The two
+    # regions move into the legend rather than floating as text.
+    import matplotlib.patches as mpatches
+    ax.fill_between(ok, unst_b, Y_MAX, color=RED, alpha=0.10)
     ax.fill_between(ok, 0, unst_b, color=GREEN, alpha=0.08)
     ax.plot(ok, stab_b, color=GREEN, lw=2.0, label="attractor")
     ax.plot(ok, unst_b, color=RED, lw=2.0, ls="--", label="separatrix")
-    ax.text(300, 1600, "escape:\nmetabolite diverges", color=RED, fontsize=8)
-    ax.text(300, 120, "recovery basin", color=GREEN, fontsize=8)
 
     # a patient who has crossed the separatrix, at BASELINE load
-    s_base, m_crisis = 600.0, 1200.0
+    s_base, m_crisis = S_BASE, 1700.0
     ax.axvline(s_base, color=GREY, ls=":", lw=1.0)
-    ax.text(s_base + 6, 2400, "baseline load", color=MUTED, fontsize=7.5, rotation=90,
-            va="top")
+    over_x(ax, s_base, "baseline load", frac=0.985, color=MUTED, fontsize=7.5,
+           ha="center")
     ax.plot([s_base], [m_crisis], "o", ms=6, color=MUTED, zorder=5)
-    ax.annotate("patient above the separatrix\nat baseline load", xy=(s_base, m_crisis),
-                xytext=(s_base + 30, m_crisis + 800), fontsize=8, color=MUTED,
-                arrowprops=dict(arrowstyle="->", color=MUTED, lw=0.9))
 
     # route 1: push the load BELOW baseline (glucose, protein withdrawal)
-    ax.annotate("", xy=(430, m_crisis), xytext=(s_base, m_crisis),
+    s_rescue = 0.62 * s_fold
+    ax.annotate("", xy=(s_rescue, m_crisis), xytext=(s_base, m_crisis),
                 arrowprops=dict(arrowstyle="->", color=AMBER, lw=1.8))
-    ax.text(408, m_crisis + 140, "suppress catabolism:\nraises the separatrix\n"
-            "above the patient", color=AMBER, fontsize=7.5)
+    at_point(ax, (s_rescue, m_crisis), "1", dx=14, dy=-7, color=AMBER,
+             fontsize=9, fontweight="bold", ha="left", va="top")
 
     # route 2: lower the metabolite directly
     ax.annotate("", xy=(s_base, 60), xytext=(s_base, m_crisis),
                 arrowprops=dict(arrowstyle="->", color=BLUE, lw=1.8))
-    ax.text(s_base + 10, 420, "haemofiltration:\nlowers $m$ directly", color=BLUE,
-            fontsize=7.5)
+    at_point(ax, (s_base, 0.5 * m_crisis), "2", dx=-6, color=BLUE,
+             fontsize=9, fontweight="bold", ha="right", va="center")
+
+    handles, labels = ax.get_legend_handles_labels()
+    handles += [mpatches.Patch(facecolor=GREEN, alpha=0.25),
+                mpatches.Patch(facecolor=RED, alpha=0.25)]
+    labels += ["recovery basin", "escape"]
+    ax.legend(handles, labels, loc="upper left", fontsize=7,
+              handlelength=1.6, labelspacing=0.35,
+              frameon=True, facecolor="white", edgecolor="none", framealpha=0.95)
 
     ax.set_xlabel(r"substrate load $s$")
     ax.set_ylabel(r"metabolite $m$")
-    ax.set_ylim(0, 2600)
+    ax.set_ylim(0, Y_MAX)
     ax.set_title("recovery requires pushing the load below baseline,\n"
                  "not merely removing the trigger")
-    ax.legend(loc="upper right")
     save(fig, "fig_C4_basin")
     print("    The model reproduces standard care: intravenous glucose lowers s")
     print("    below baseline, which raises the separatrix above the patient and")
@@ -200,9 +324,85 @@ def fig_basin():
     print("    decompensations resolve on return to baseline management alone.")
 
 
+# =====================================================================
+def fig_margin():
+    """
+    The safety margin against theta, at baseline load.
+
+    Everything here is a property of the model at a fixed load. As theta
+    falls, the attractor rises and the separatrix falls, and the distance
+    between them, which is how far the patient can be pushed before the
+    crisis becomes self-sustaining, closes to zero at theta_crit_intrinsic.
+    That distance is the clinically decisive quantity and it is what the
+    threshold of Model B never displays, because Model B has no separatrix.
+
+    The upper end of the range is equally structural. As theta approaches the
+    baseline load the separatrix escapes to infinity and the patient becomes
+    unconditionally safe at that load: total clearance tends to theta from
+    above, so it never falls back through s.
+    """
+    thc = theta_crit_intrinsic(PC, S_BASE)
+    thetas = np.linspace(thc * 1.002, 0.86 * S_BASE, 260)
+    grid = np.linspace(1e-3, 30000.0, 90000)
+
+    th_ok, attr, sep = [], [], []
+    for th in thetas:
+        q = replace(PC, theta=float(th))
+        roots, st = equilibria_nonmonotone(clearance_C_quasistatic, q, S_BASE, grid)
+        if st.sum() and (~st).sum():
+            th_ok.append(th); attr.append(roots[st][0]); sep.append(roots[~st][0])
+    th_ok = np.array(th_ok); attr = np.array(attr); sep = np.array(sep)
+    margin = sep - attr
+
+    fig, ax = plt.subplots(1, 2, figsize=figsize(1.0, 0.40))
+
+    ax[0].fill_between(th_ok, attr, sep, color=GREEN, alpha=0.10)
+    ax[0].plot(th_ok, attr, color=GREEN, lw=2.0, label="attractor")
+    ax[0].plot(th_ok, sep, color=RED, lw=2.0, ls="--", label="separatrix")
+    ax[0].axvline(thc, color=MUTED, ls=":", lw=1.2)
+    # Anchored to the merge point and offset in POINTS, so it keeps its
+    # clearance whatever theta_crit turns out to be.
+    at_point(ax[0], (th_ok[0], 0.5 * (attr[0] + sep[0])),
+             r"$\theta_{\mathrm{crit}}$" + f" = {thc:.0f}:" "\nthe curves merge",
+             dx=16, dy=0, arrow=True, fontsize=7.5, color=MUTED,
+             ha="left", va="center")
+    ax[0].plot([PC.theta], [attr[np.argmin(abs(th_ok - PC.theta))]], "o", ms=5,
+               color=MUTED, zorder=5)
+    ax[0].plot([PC.theta], [sep[np.argmin(abs(th_ok - PC.theta))]], "o", ms=5,
+               color=MUTED, zorder=5)
+    ax[0].set_yscale("log")
+    ax[0].set_xlabel(r"residual capacity $\theta$")
+    ax[0].set_ylabel(r"metabolite $m$")
+    ax[0].set_title("the two equilibria collide at the fold")
+    ax[0].legend(loc="upper left")
+
+    ax[1].plot(th_ok, margin, color=BLUE, lw=2.0)
+    ax[1].axvline(thc, color=MUTED, ls=":", lw=1.2)
+    ax[1].fill_between(th_ok, 0, margin, color=BLUE, alpha=0.08)
+    i = np.argmin(abs(th_ok - PC.theta))
+    ax[1].plot([PC.theta], [margin[i]], "o", ms=5.5, color=MUTED, zorder=5)
+    at_point(ax[1], (PC.theta, margin[i]),
+             f"nominal patient\nmargin = {margin[i]:.0f}",
+             dx=10, dy=34, arrow=True, fontsize=7.5, color=MUTED,
+             ha="left", va="bottom")
+    over_x(ax[1], thc, "margin vanishes:\nsaddle-node", frac=0.97,
+           color=MUTED, fontsize=7.5, ha="left")
+    ax[1].set_xlabel(r"residual capacity $\theta$")
+    ax[1].set_ylabel("separatrix $-$ attractor")
+    ax[1].set_title("the safety margin, at baseline load")
+
+    save(fig, "fig_C5_margin")
+    print(f"    theta_crit_intrinsic at s = {S_BASE:.0f}: {thc:.2f}")
+    print(f"    at the nominal theta = {PC.theta:.0f}: attractor "
+          f"{attr[i]:.1f}, separatrix {sep[i]:.1f}, margin {margin[i]:.1f}")
+    print("    m_bar does NOT appear anywhere in this construction. s does.")
+    return thc
+
+
 if __name__ == "__main__":
     print("MODEL C")
     fig_phaseline()
     fig_fold()
     fig_timeseries()
     fig_basin()
+    fig_margin()

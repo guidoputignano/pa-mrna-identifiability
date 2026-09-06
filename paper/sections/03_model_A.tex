@@ -1,4 +1,4 @@
-\section{Model A: saturating enzyme, linear alternative clearance}
+\section{Model A: Michaelis-Menten enzyme, linear alternative clearance}
 %==========================================================================
 
 \subsection{Formulation}
@@ -12,26 +12,122 @@
 \begin{description}[leftmargin=1.4em, itemsep=1pt]
 \item[$m(t)$] accumulated toxic metabolite, measured sparsely.
 \item[$s(t)$] substrate load; partially known.
-\item[$\theta$] maximal enzymatic velocity. Since most pathogenic variants reduce the
-\emph{quantity} of functional enzyme rather than the turnover number of an individual
-molecule, $\theta$ is essentially ``how much working enzyme the patient has'', and is
-therefore constant and genotype-determined.
-\item[$g(m)$] fraction of maximal velocity currently in use, $g \in [0,1)$.
+\item[$\theta$] the capacity of the enzymatic channel, its maximal velocity. Since most
+pathogenic variants reduce the \emph{quantity} of functional enzyme rather than the turnover
+number of an individual molecule, $\theta$ is essentially ``how much working enzyme the
+patient has'', and is therefore constant and genotype-determined.
+\item[$K_m$] the half-saturation level of that channel: a shape parameter of the clearance
+curve at the plasma level, fitted here (Remark~\ref{rem:no_km}).
+\item[$g(m)$] the \emph{Michaelis-Menten saturation function}, $g \in [0,1)$.
 \item[$k_e m$] alternative elimination, taken proportional to $m$.
 \end{description}
+
+\paragraph{The enzymatic term is Michaelis-Menten kinetics.} The function $g$ is the
+Michaelis-Menten law, which in its standard biochemical form gives the velocity of a
+single-substrate enzymatic reaction as
+
+\begin{equation}
+v \;=\; \frac{V_{\max}\,[S]}{K_m + [S]},
+\label{eq:mm}
+\end{equation}
+
+with $V_{\max}$ the maximal velocity, attained when the enzyme is fully saturated, and
+$K_m$ the Michaelis constant, the substrate concentration at which $v = V_{\max}/2$.
+Identifying $V_{\max}$ with $\theta$ and $[S]$ with $m$ turns \eqref{eq:mm} into the term
+$\theta\, g(m)$ of \eqref{eq:A}. The same functional form appears under other names in
+adjacent literatures: it is the Monod function in microbial growth kinetics, and the Hill
+function with cooperativity coefficient $n = 1$. Throughout this note the three names are
+used for the same object, and no cooperativity is assumed. PCC has a second substrate,
+bicarbonate, which is held constant here.
+
+The identification carries over the \emph{shape} and not the constants. Equation
+\eqref{eq:mm} is a law about an enzyme and its own substrate, and $m$ is a plasma marker;
+$\theta$ is accordingly the residual capacity of the enzymatic channel measured at the
+plasma level, and $K_m$ is the level at which that channel reaches half of it, a fitted
+shape parameter of the plasma-level clearance curve. Remark~\ref{rem:no_km} sets out why
+$K_m$ cannot be read as the Michaelis constant of PCC.
+
+\paragraph{The load-bearing part of the form.}
+\label{sec:structure}
+The two published PK/PD models of this system are built on a different structure. The
+population model that selected the dose treats each marker as a turnover state whose
+production the therapy inhibits and whose loss is first
+order~\cite{dose_selection_poster}, and the translational model that preceded it puts the
+indirect response on the enzyme and makes the markers a direct saturating function of
+it~\cite{pkpd_translational}. % C46
+Proposition~\ref{prop:degeneracy} does not distinguish either from \eqref{eq:A}. Its
+hypothesis \eqref{eq:affine} asks only that total clearance be affine over the range a
+patient's marker visits, which a first-order loss satisfies exactly, with no appeal to
+assay error, and its conclusion is about what a record confined to that range contains,
+whatever structure produced it. What is specific to \eqref{eq:A} is what a
+resolved $(a,b)$ then leaves open: the fibre of Remark~\ref{rem:fibre}, which exists because
+$a = \theta\, g(\bar m)^2$ carries $K_m$, and the cancellation in \eqref{eq:mufibre} that
+makes the margin linear along it. The obstruction survives a change of structure; this
+parametrisation of it does not.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{0.90\linewidth}{!}{%
+\begin{tikzpicture}
+\node[mpool] (m) at (0,0) {$m$\\[1pt]\scriptsize\mdseries accumulated\\metabolite};
+\node[mlabel] (in) at (-3.6,0) {$s(t)$};
+\draw[mar] (in) -- (m);
+\node[msmall] at (-2.4,0.42) {load};
+
+\node[menzy] (enz) at (-2.3,-2.7) {$\theta\, g(m)$\\{\scriptsize saturating}};
+\channelglyph{(-3.55,-4.15)}{green!45!black}{s}
+
+\node[malt] (alt) at (2.3,-2.7) {$k_e\, m$\\{\scriptsize linear}};
+\channelglyph{(1.15,-4.15)}{blue!55!black}{l}
+
+\draw[mar] (m.south) -- ++(0,-0.55) -| (enz.north);
+\draw[mar] (m.south) -- ++(0,-0.55) -| (alt.north);
+
+\node[msmall] (o1) at (-2.3,-5.0) {eliminated};
+\node[msmall] (o2) at ( 2.3,-5.0) {eliminated};
+\draw[mar] (enz) -- (o1);
+\draw[mar] (alt) -- (o2);
+
+\node[mlabel, green!45!black] (thr) at (-6.6,-2.7) {therapy\\$\Delta(t)$};
+\draw[mar, green!45!black] (thr) -- (enz);
+\node[mlabel, blue!55!black] (carn) at (6.6,-2.7) {carnitine\\$u_c(t)$};
+\draw[mar, blue!55!black] (carn) -- (alt);
+\end{tikzpicture}}
+\caption{Model A as a block diagram. One pool $m$, filled by the load $s(t)$ and drained by
+two channels. The enzymatic channel saturates at $\theta$; the alternative channel is
+linear in $m$, and that difference in shape is the only thing separating them
+(Proposition~\ref{prop:degeneracy}). The two selective inputs are drawn together because
+Proposition~\ref{prop:channel} makes them interchangeable: carnitine acts on $k_e$ and is
+recorded for every patient, the therapy would act on $\theta$ and is administered to none,
+and the identification problem cannot tell which one moved the patient.}
+\label{fig:blockA}
+\end{figure}
 
 \subsection{Assumptions}
 
 \begin{assumption}[Constancy]
-$\theta$ is constant in time. This excludes temperature-sensitivity of destabilising
-variants, for which the amount of surviving protein could fall during febrile illness.
-Not verified.
+$\theta$ is constant in time, over the afebrile range in which the analysis is conducted.
+
+The restriction is required by the kinetics. Four variant PCCs expressed and characterised
+in vitro are \emph{less thermostable} than the wild-type
+enzyme~\cite{pcc_variants_kinetics}. % C22
+Carried over in vivo, the amount of surviving protein falls when the patient is febrile,
+which is when the substrate load also rises, placing $\theta$ at its lowest when it is most
+needed. The analysis here concerns the stable patient, whose body temperature is not
+excursing, and the effect has no in vivo measurement. Statements about behaviour during
+intercurrent illness lie outside the assumption.
 \end{assumption}
 
 \begin{assumption}[Population parameters]
+\label{ass:pop}
 $K_m$ and $k_e$ do not vary with \emph{PCCA}/\emph{PCCB} genotype and may be estimated
-once across the cohort. Biochemically motivated: $K_m$ is a property of the active site,
-and $k_e$ does not involve PCC at all. Weakened by the fact that carnitine is
+once across the cohort. The motivation for $K_m$ is that the half-saturation of the
+enzymatic channel is a property of the active site, which the amount of enzyme leaves
+untouched, and four variant PCCs show no significant difference in their in vitro $K_m$
+for propionyl-CoA against wild type~\cite{pcc_variants_kinetics}. % C21
+Whether that carries to the plasma level is the question of Remark~\ref{rem:no_km}. For
+$k_e$ the motivation is that the alternative channel does not involve PCC at all. % C21
+Weakened by the fact that carnitine is
 administered therapeutically at patient-specific doses.
 \end{assumption}
 
@@ -40,108 +136,605 @@ The measured plasma biomarker stands in for the intracellular enzyme substrate. 
 shortcut; the true system has at least two states with an uncertain map between them.
 \end{assumption}
 
+\paragraph{The three markers.}
+\label{sec:marker}
+Three markers are reported together in this disease, and they are not interchangeable.
+Over a three-year natural history cohort, a $50\%$ lower 3-HP is associated with a
+decompensation rate ratio of $0.7$ ($p<0.01$) and a $50\%$ lower C3 with $0.6$
+($p=0.017$), while 2-methylcitrate shows no association with decompensation at all: rate
+ratio $1.0$, $p=0.84$~\cite{natural_history}. % C19
+Deep phenotyping of acute decompensation gives a different ordering. There C3 is among the
+diagnostic biomarkers reported essentially unaltered through the event, while 2-MC is among
+the strongest correlates of plasma ammonia during it~\cite{amd_phenotyping}. % C37
+A marker that predicts the next event and a marker that tracks the current one need not be
+the same marker.
+
+This note therefore leaves $m$ as ``the plasma marker'' and the choice open, because
+nothing in Sections 3 and 4 depends on it. Proposition~\ref{prop:degeneracy} requires only
+that total clearance be affine over the range a patient's marker visits, and that hypothesis
+is stated in whichever marker is measured. The determinant \eqref{eq:det}, the conditioning
+and the anchor structure are the same under any of the three. Model C needs a definite
+observable for its separatrix, and Section~7 records the choice as a design question.
+
 \subsection{The structural obstruction}
 
-In the regime in which clinically stable patients are maintained, $m \ll K_m$, so
-$g(m) \approx m/K_m$ and \eqref{eq:A} reduces to
-
-\begin{equation}
-\dot m \;\approx\; s(t) \;-\; \left(\frac{\theta}{K_m} + k_e\right) m .
-\label{eq:Alin}
-\end{equation}
+Write $C(m) = \theta\, g(m) + k_e\, m$ for the total clearance, and let
+$M = [m_{\min}, m_{\max}]$ be the range of metabolite levels a given patient actually
+visits between clinic visits. Clinical management exists to keep $M$ narrow. The
+obstruction is stated as a property of that range.
 
 \begin{proposition}[Degeneracy]
-In the linear regime the system is first-order and possesses a single identifiable
-coefficient, $\theta/K_m + k_e$. No quantity of data collected in this regime separates
-$\theta$ from $k_e$.
+\label{prop:degeneracy}
+Suppose that over the observed range $M$ the clearance is indistinguishable from an affine
+function at the resolution of the assay: there exist constants $a$ and $b$ with
+\begin{equation}
+\sup_{m \in M} \bigl| C(m) - (a + b\,m) \bigr| \;\le\; \varepsilon ,
+\label{eq:affine}
+\end{equation}
+$\varepsilon$ being the measurement error.\footnote{$a$ and $b$ below are the tangent
+coefficients at $\bar m$. A least-squares fit over the band returns something slightly
+smaller, by $0.09\%$ at $\Delta/\bar m = 10\%$ but by $8.8\%$ at $\Delta/\bar m = 100\%$,
+computed numerically at the illustrative values. Here and throughout, $\Delta$ is the
+\emph{full width} of the band, so $\Delta/\bar m = 100\%$ means $m \in [\bar m/2,\,
+3\bar m/2]$. Read as a half-width the same phrase means $m \in [0, 2\bar m]$ and the gap is
+$35.4\%$. The distinction is negligible in the narrow
+band the proposition is about and is not negligible in the wide band it recommends buying.}
+Then data collected while the patient remains in $M$ determine $a$ and $b$, and nothing
+beyond them. With $\bar m \in M$ the point at which
+the fit is taken, the two coefficients are
+\begin{equation}
+a \;=\; \theta\,\bigl(g(\bar m) - \bar m\, g'(\bar m)\bigr) \;=\; \theta\, g(\bar m)^2 ,
+\label{eq:intercept}
+\end{equation}
+\begin{equation}
+b \;=\; \theta\, g'(\bar m) \;+\; k_e .
+\label{eq:slope}
+\end{equation}
+The slope is a single scalar carrying $\theta$ and $k_e$ with the \emph{same} sign, and no
+quantity of such data separates them through it. The intercept is free of $k_e$, and given
+$K_m$ it determines $\theta$.
 \end{proposition}
 
-The clinical consequence is direct: two patients with substantially different enzymatic
-capacity, compensating with different degrees of alternative clearance, produce identical
-measurements. Since the therapy supplies enzyme and acts on $\theta$ alone, they require
-different treatment.
+\begin{remark}[The fibre the intercept leaves open]
+\label{rem:fibre}
+The intercept carries $K_m$ as well, through $g(\bar m)$, and Remark~\ref{rem:no_km}
+forbids importing $K_m$ from in vitro work. So $(a,b)$ known \emph{exactly} still leaves a
+one-parameter family. Inverting \eqref{eq:intercept} and \eqref{eq:slope},
+\begin{equation}
+\theta(K_m) = \frac{a\,(K_m+\bar m)^2}{\bar m^{2}},
+\qquad
+k_e(K_m) = b - \frac{a\,K_m}{\bar m^{2}},
+\qquad 0 < K_m \le \frac{b\,\bar m^{2}}{a},
+\label{eq:fibre0}
+\end{equation}
+the upper bound being where $k_e$ reaches zero. At the illustrative values $\theta$ ranges
+over a factor of $169$ along this fibre with noiseless data (Figure~\ref{fig:A6}).
+Equation~\eqref{eq:thetaerr} below is the noise on top of that, and is itself conditional on
+$g(\bar m)$, so it is a statement about $\theta$ \emph{given} $K_m$. Nothing in Section~3
+supplies $K_m$. Assumption~\ref{ass:pop} grants only that it is shared across the cohort and
+estimable once, which says where it could come from without putting it in
+hand, and Remark~\ref{rem:no_km} forbids importing it from in vitro work. The next paragraph
+is where it comes from.
 
-The two channels separate only as $m$ approaches $K_m$ and the enzymatic term saturates
-while the linear term does not. That regime is metabolic crisis, which clinical management
-exists to prevent. \textbf{Equation \eqref{eq:Alin} is not the model}; it is an argument
-identifying where information is absent.
+One extra datum closes the fibre outright. If $k_e$ is known, from a null genotype as in
+Proposition~\ref{prop:anchor}, then $K_m = (b - k_e)\bar m^{2}/a$ and $\theta$ follows from
+\eqref{eq:fibre0}, exactly and with no second steady state required. The band that resolves
+$(a,b)$ does the work that Proposition~\ref{prop:anchor}'s second anchor was introduced for.
+\end{remark}
 
-\subsection{Therapy as a selective input}
+\begin{proof}[Argument]
+The data here are steady states, where $s = C(m)$ pointwise, so under \eqref{eq:affine}
+the map from $C$ to the data factors through $(a,b)$ up to a perturbation of size
+$\varepsilon$, and any two parameter pairs giving the same $(a,b)$ generate observations
+differing by less than the assay can resolve. For trajectories the
+same conclusion needs a Gr\"onwall bound, which is not given here. The affine function in
+question is the tangent to $C$ at $\bar m$, whose slope is $C'(\bar m)$ and whose intercept
+is $C(\bar m) - \bar m\, C'(\bar m)$. The alternative channel contributes $k_e \bar m -
+\bar m\, k_e = 0$ to the second of these, since a line through the origin has no intercept,
+which leaves \eqref{eq:intercept}; the identity $g(\bar m) - \bar m g'(\bar m) = g(\bar m)^2$
+is a direct computation from $g(m) = m/(K_m + m)$. Since \eqref{eq:slope} is one equation in
+two unknowns, the pairs consistent with a measured $b$ alone form a line, and every point of
+it is compatible with the data.
+\end{proof}
 
-Under mRNA replacement the capacity becomes time-varying and partially known:
+Information about the residual capacity is therefore not absent from stable-patient data.
+It is concentrated in the intercept, and the intercept is the one quantity a narrow band
+cannot deliver. What follows conditions on $K_m$, for the reason set out in
+Remark~\ref{rem:fibre}. It is the value the fitted line takes when extrapolated back to $m = 0$, and
+$M$ does not contain the origin. For a least-squares affine fit to $n$ points $m_i$ with
+independent errors of standard deviation $\sigma$,
+\begin{equation}
+\operatorname{Var}(\hat a) \;=\; \sigma^2\!\left[\frac{1}{n} +
+\frac{\bar m^2}{\sum_i (m_i - \bar m)^2}\right] ,
+\qquad
+\operatorname{Var}(\hat b) \;=\; \frac{\sigma^2}{\sum_i (m_i - \bar m)^2} .
+\label{eq:varfit}
+\end{equation}
+Both scale as the reciprocal of $\sum_i (m_i - \bar m)^2$, and their ratio tends to
+$\bar m^2$ as the band narrows, so the two variances carry different units and are not
+comparable to each other. What is comparable across designs is the relative error in
+$\hat\theta = \hat a / g(\bar m)^2$. Writing $\Delta$ for the width of the band and taking
+the $n$ samples spread across it, $\sum_i (m_i - \bar m)^2 \approx n\Delta^2/12$, and for
+$\Delta \ll \bar m$,
+\begin{equation}
+\frac{\operatorname{sd}(\hat\theta)}{\theta} \;\approx\;
+\frac{\sigma}{\theta}\;\sqrt{\frac{12}{n}}\;\frac{\bar m}{\Delta}\;g(\bar m)^{-2} .
+\label{eq:thetaerr}
+\end{equation}
+Three factors multiply the assay's own relative error. The sample count enters as
+$n^{-1/2}$, the extrapolation from the band back to the origin as $\bar m/\Delta$, and the
+patient's position on the saturation curve as $g(\bar m)^{-2}$. The last two are the two
+factors of the determinant $\det M = g(\bar m)^2 (m' - m)$ of
+Proposition~\ref{prop:illcond}, entering inversely, so what makes that determinant small
+makes $\hat\theta$ imprecise, by the same mechanism.
 
+The two design variables in \eqref{eq:thetaerr} both appear through
+$\sum_i (m_i - \bar m)^2 \approx n\Delta^2/12$, and they are not substitutes. At a fixed
+band width, doubling the number of visits buys a factor of $\sqrt2$ and leaves $\Delta$
+where it was; at a fixed number of visits, doubling the width of the band buys a factor of
+$2$, and doubling it again buys another. Adding visits inside a fixed band does not widen
+the band, which is why the two cannot be traded against each other. That distinction is the
+clinical content of the result. What bounds $n$ is the cost of a clinic visit, what bounds
+$\Delta$ is the safety constraint on how far a patient may be allowed to excurse, and the
+factor that carries the estimate of $\theta$ is the one the safety constraint bounds.
+
+\begin{remark}[Two conditionings, kept separate]
+\label{rem:two_scalings}
+The $\bar m/\Delta$ of \eqref{eq:thetaerr} is the conditioning of the two-coefficient affine
+fit. Figure~\ref{fig:A2} plots a different object, the condition number of the
+three-parameter sensitivity matrix for $(\theta, K_m, k_e)$, which degrades as
+$\Delta^{-2}$. The affine fit resolves two coefficients from first-order information, while
+the three-parameter problem must additionally resolve the curvature that separates $\theta$
+from $K_m$. The relation between the two scalings is not established here, and the two
+results are stated separately.
+\end{remark}
+
+The clinical consequence is direct. Two patients with substantially different enzymatic
+capacity, compensating with different degrees of alternative clearance, share a slope, and
+what tells them apart is an intercept the band resolves poorly. They are nonetheless
+different patients, and any intervention that acts on one channel and not the other will
+separate them.
+
+What breaks the degeneracy is curvature. The alternative
+channel $k_e m$ is a straight line: its slope is $k_e$ at every level of $m$. The enzymatic
+channel bends, because $g$ saturates, so its slope $\theta g'(m)$ falls as $m$ rises. A
+straight line and a bending curve can be told apart only by watching the slope change. If
+the slope of $C$ is the same at the top of $M$ as at the bottom, to within what the assay
+resolves, then the data are consistent with any straight line of that slope, and
+\eqref{eq:intercept} and \eqref{eq:slope} are all they contain. The same curvature is what
+puts $\theta$ into the intercept. A channel that runs straight through the origin
+contributes nothing there, so $a$ measures the departure of the enzymatic channel from such
+a line, and it vanishes with the bending that produces it.
+
+So the two channels separate exactly when $\theta g'(m)$ changes measurably across $M$,
+which happens when the enzyme is appreciably nearer saturation at $m_{\max}$ than at
+$m_{\min}$. A narrow $M$ cannot deliver that: over a short interval every smooth curve looks
+straight. Widening $M$ is the only route, and it means letting the metabolite climb, which
+is the beginning of a decompensation. The information the identification needs and the excursion clinical
+management exists to prevent are the same thing. \textbf{Condition \eqref{eq:affine} is a
+property of a particular patient's record}, and it can be checked against that record
+directly.
+
+\begin{remark}[The scale on which this is stated]
+\label{rem:no_km}
+Proposition~\ref{prop:degeneracy} is conditioned on the observed clearance over the
+observed range. The alternative would be to compare $m$ with $K_m$ and conclude that
+patients sit far below saturation, and that comparison is unavailable here.
+
+$K_m$ in \eqref{eq:mm} is the Michaelis constant of PCC for its own substrate,
+intracellular mitochondrial propionyl-CoA, reported as $0.29$ mM in purified human liver
+enzyme~\cite{pcc_liver_kinetics}. The state $m$ is a plasma marker at micromolar
+concentrations~\cite{amd_phenotyping}. % C23
+These are different molecules in different compartments, so the inequality has no common
+scale to be evaluated on and the gap between the two numbers measures nothing.
+
+Hypothesis \eqref{eq:affine} requires no view about where $K_m$ lies. What it forgoes is
+the mechanistic reading. Writing the enzymatic channel as $\theta g(m)$, with a plasma
+marker in place of the enzyme's substrate, presupposes a transfer map $\psi$ from
+intracellular propionyl-CoA to the marker under which $g$ keeps its Michaelis-Menten form.
+This note does not establish one, so $K_m$ here is a fitted shape parameter of the
+plasma-level clearance curve.
+
+$\thc^{\mathrm{A}}$ in \eqref{eq:thcrit} is computed through $g(\mtol)$ and inherits the same
+dependence. Establishing $\psi$, or bounding how far the conclusions move across a family
+of candidate maps, is a prerequisite for reading either mechanistically.
+\end{remark}
+
+\subsection{Perturbation as a selective input}
+\label{sec:selective}
+
+The degeneracy of \eqref{eq:slope} is broken by moving the patient, not by measuring them
+more often. Two perturbations are selective, in the sense that each acts on one channel
+alone.
+
+\begin{description}[leftmargin=1.4em, itemsep=2pt]
+\item[Carnitine.] Supplementation increases the capacity of the conjugation route and
+therefore acts on $k_e$, leaving $\theta$ untouched. Writing the increment as
+$\kappa\, u_c(t)$ with $u_c$ the recorded dose,
+\begin{equation}
+k_e(t) \;=\; \underbrace{k_e}_{\text{unknown}} \;+\;
+\underbrace{\kappa\, u_c(t)}_{\text{known up to }\kappa} .
+\label{eq:input_carn}
+\end{equation}
+Carnitine is administered to \emph{every} patient in the accessible cohort and its dose is
+recorded in the chart.
+\item[mRNA therapy.] A dose supplies enzyme and therefore acts on $\theta$, leaving $k_e$
+untouched:
 \begin{equation}
 \theta(t) \;=\; \underbrace{\theta_{\mathrm{base}}}_{\text{unknown}}
 \;+\; \underbrace{D \sum_i e^{-\lambda (t - t_i)} \mathbf{1}_{\{t \ge t_i\}}}_{\text{known: } \Delta(t)} .
 \label{eq:input}
 \end{equation}
+This input is investigational and is not administered to any accessible patient.
+\end{description}
 
-The dose supplies enzyme. It therefore acts on $\theta$ and \emph{not} on $k_e$: it is a
-selective input on one channel. Writing the equilibrium condition before and during
-therapy, with steady levels $m$ and $m'$ respectively,
+Write the equilibrium condition before and after the perturbation, with steady levels $m$
+and $m'$ respectively. Under carnitine,
 
 \begin{equation}
 \begin{aligned}
-s &= \theta\, g(m) + k_e\, m, \\
-s &= (\theta + \Delta)\, g(m') + k_e\, m',
+s &= \theta\, g(m) \;+\; k_e\, m, \\
+s &= \theta\, g(m') \;+\; k_e\, m' \;+\; \kappa u_c\, m',
+\end{aligned}
+\label{eq:twoeq_carn}
+\end{equation}
+
+and under therapy,
+
+\begin{equation}
+\begin{aligned}
+s &= \theta\, g(m) \;+\; k_e\, m, \\
+s &= \theta\, g(m') \;+\; k_e\, m' \;+\; \Delta\, g(m') .
 \end{aligned}
 \label{eq:twoeq}
 \end{equation}
 
-gives two linear equations in $(\theta, k_e)$ with determinant
+In both cases these are two linear equations in the unknown pair $(\theta, k_e)$, and in
+both cases the coefficient matrix is the same,
+\begin{equation}
+M \;=\;
+\begin{pmatrix} g(m) & m \\[2pt] g(m') & m' \end{pmatrix} ,
+\qquad
+M \begin{pmatrix} \theta \\ k_e \end{pmatrix}
+= \begin{pmatrix} s \\ s - \delta \end{pmatrix},
+\label{eq:system}
+\end{equation}
+with $\delta = \kappa u_c\, m'$ in the first case and $\delta = \Delta\, g(m')$ in the
+second. \textbf{The perturbation enters the right-hand side only.} Hence
 
 \begin{equation}
-\det \;=\; g(m)\,m' - g(m')\,m
+\det M \;=\; g(m)\,m' - g(m')\,m
 \;=\; \frac{m\,m'\,(m' - m)}{(K_m + m)(K_m + m')} .
 \label{eq:det}
 \end{equation}
 
-\begin{proposition}[Formal identifiability, practical ill-conditioning]
-The determinant \eqref{eq:det} is non-zero whenever $m \neq m'$, so the pair
-$(\theta, k_e)$ is formally identifiable from steady-state data before and during therapy.
-However, when $m, m' \ll K_m$ the two denominators coincide to first order and
-$\det = O\!\left((m'-m)\,m m'/K_m^2\right)$, which is small.
+\begin{proposition}[The determinant depends on the excursion alone]
+\label{prop:channel}
+Let the system be moved from one steady state to another by any known perturbation: an
+increment on either channel, a change in the load, or any combination of these. Let $m$ and
+$m'$ be the steady metabolite levels before and after. Then in every case the
+$2 \times 2$ system for $(\theta, k_e)$ has the coefficient matrix $M$ of
+\eqref{eq:system} and the determinant \eqref{eq:det}, which depends on $m$, $m'$ and $K_m$
+alone. The system is two equations in two unknowns given $K_m$; with $K_m$ unknown it is two
+equations in three, and Remark~\ref{rem:fibre} is where that is resolved. The perturbation enters only the right-hand side, as
+$\delta = \kappa u_c\, m'$ for carnitine, $\delta = \Delta\, g(m')$ for the therapy, and
+$\delta = s - s'$ for a change of load.
 \end{proposition}
 
-A numerical illustration with $K_m = 100$: patient A with
-$(\theta, k_e) = (3000,\, 5.0)$ and patient B with $(\theta, k_e) = (1000,\, 23.2)$
-have identical untreated equilibria at $m = 10$. Under a dose doubling the enzyme,
-their new equilibria are $7.66$ and $7.73$ respectively, a difference below $1\%$,
-well under the analytical and biological variability of the assay.
+\begin{proposition}[Formal identifiability, practical ill-conditioning]
+\label{prop:illcond}
+\emph{Given $K_m$}, the determinant \eqref{eq:det} is non-zero whenever $m \neq m'$, so the
+pair $(\theta, k_e)$ is identifiable from steady-state data before and after any such
+perturbation. It factorises exactly, with no fit and no hypothesis:
+\begin{equation}
+\det M \;=\; g(m)\,m' - g(m')\,m \;=\; g(m)\,g(m')\,(m' - m).
+\label{eq:detexact}
+\end{equation}
+Over a band narrow enough for \eqref{eq:affine} the two saturations coalesce, and
+\begin{equation}
+\det M \;\approx\; g(\bar m)^2\,(m' - m),
+\label{eq:detgamma}
+\end{equation}
+the geometric mean read at the midpoint. Comparing with \eqref{eq:intercept},
+$g(\bar m)^2 = a/\theta$: the two propositions are about the same object, one fitted to the
+total clearance and one to the saturation function alone.
+\end{proposition}
+
+The approximation in \eqref{eq:detgamma} is not free. At $m = 8$ and $m' = 14$ with
+$K_m = 100$, a $55\%$ excursion, it overstates \eqref{eq:detexact} by $8\%$, so the
+narrow-band form flatters the conditioning exactly where the note recommends widening the
+band.
+
+The determinant is small for two independent reasons, which are different clinical
+situations. It is proportional to the excursion $m' - m$, so a patient held in a narrow band
+gives a small determinant however far up the saturation curve they sit, and proportional to
+$g(m)g(m')$, so a patient low on the curve gives a small determinant however wide the
+excursion. Only a patient who is
+both excursing and appreciably saturated escapes both, and that patient is in the middle of a
+decompensation.
+
+Proposition~\ref{prop:channel} is what makes the analysis possible now. The identifiability
+question can be posed and answered on the perturbation that is actually present in the
+records, namely carnitine, and the answer transfers unchanged to the perturbation that is
+not, namely the therapy. What has to be earned in each case is the excursion $m \to m'$;
+the channel through which it is bought is immaterial to the information obtained.
+
+Figure~\ref{fig:A3} carries the arithmetic. Two patients with threefold different
+enzymatic capacity, indistinguishable before the perturbation, are driven apart by a
+carnitine increment and by an enzymatic increment in turn, and the separation achieved is
+plotted against the excursion in $m$ that each buys. The two curves coincide, which is
+Proposition~\ref{prop:channel} in numbers, and both stay near $1\%$, which is well under
+the analytical and biological variability of the assay.
+
+\subsection{What the accessible input costs}
+\label{sec:instruments}
+
+Proposition~\ref{prop:channel} equalises the two channels informationally. It does not
+equalise them \emph{statistically}, and the difference is the central compromise of this
+work.
+
+\begin{description}[leftmargin=1.4em, itemsep=3pt]
+\item[Carnitine is available but endogenous.] The dose is adjusted by the clinician in
+response to the patient's state: a rising biomarker or a falling free-carnitine level is
+itself the reason the dose was raised. The input is therefore correlated with the state it
+is meant to excite, which is confounding by indication. Treating $u_c$ as an exogenous
+perturbation and regressing $m$ on it is invalid, and would bias $\theta$ in a direction
+set by the prescribing rule.
+\item[The therapy would be exogenous but is absent.] A dosing schedule fixed in advance by
+protocol is exogenous by construction, which is exactly the property carnitine lacks. No
+patient in the accessible cohort receives it, so the property is unavailable.
+\end{description}
+
+The way through is to isolate the part of the variation in $u_c$ that is exogenous, and to
+use only that part. Three quasi-exogenous instruments are present in routine care:
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item \textbf{Weight-based dose recalculation following growth.} The dose is a fixed
+      quantity per kilogram, so it steps upward when the child is weighed and the
+      prescription is refreshed. The timing is set by the clinic calendar and the child's
+      growth, not by the biomarker.
+\item \textbf{Supply interruptions.} Stock-outs, travel, and gaps in dispensing produce
+      involuntary dose reductions whose timing is unrelated to the patient's metabolic
+      state.
+\item \textbf{Changes of formulation.} A switch between preparations, or between oral and
+      intravenous administration, changes the effective $\kappa$ at a date fixed by
+      procurement, with no reference to the patient's state.
+\end{enumerate}
+
+Each of these moves $u_c$ for a reason that is plausibly independent of $m$, which is what
+an instrument requires.
+
+A third perturbation is present in the same records and acts on neither channel. Cyclical
+intestinal antibiotics suppress the gut-flora contribution to $s$, so they move the load
+rather than a parameter. It carries the same information as the two above. Two steady
+states at loads $s$ and $s'$ give $s = \theta g(m) + k_e m$ and
+$s' = \theta g(m') + k_e m'$, which is the coefficient matrix $M$ of \eqref{eq:system}
+again, so a load change carries exactly the determinant \eqref{eq:det} that a channel
+perturbation does. It is also the second anchor of Proposition~\ref{prop:anchor} seen from
+here, since one patient observed at two distinct loads is precisely this case.
+The asymmetry lies elsewhere. The load route needs both $s$ and $s'$ known, where the
+channel route needs $s$ once together with the increment, and how much that costs is part
+of the question of Section~\ref{sec:confounding}, the substrate load being only partially
+recorded. Courses given on a fixed schedule are quasi-exogenous;
+courses started because a patient is deteriorating are confounded by indication exactly as
+carnitine is. None is randomised, and the independence is an assumption to be
+argued from the records in each case.
+
+\begin{remark}[The identical structure on the other channel]
+Everything above is stated for carnitine because that is the input in the charts. By
+Proposition~\ref{prop:channel} the same equations, the same determinant and the same
+conditioning apply verbatim when the therapy supplies the perturbation instead, with
+$\delta = \Delta g(m')$ in place of $\delta = \kappa u_c m'$. The statistics change. A
+therapeutic schedule is exogenous and needs no instrument, so the instrumental apparatus of
+this subsection becomes unnecessary.
+\end{remark}
 
 \subsection{What we would like to establish}
 
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
-\item Conditions under which the therapeutic schedule, treated as a design variable,
-      yields acceptable conditioning without approaching the safety constraint.
+\item Conditions under which a perturbation schedule, treated as a design variable,
+      yields acceptable conditioning without approaching the safety constraint. By
+      Proposition~\ref{prop:channel} the design problem is the same whether the schedule
+      is one of carnitine doses or of therapeutic doses. What such a schedule has to buy is
+      already fixed by \eqref{eq:intercept} and \eqref{eq:thetaerr}. The residual capacity
+      is carried by the intercept, and the intercept is bought by the width of the band,
+      where adding visits inside a fixed band does not widen it, so a schedule is to be
+      judged on the excursion it produces.
 \item Whether the decision-relevant quantity is better conditioned than the parameters.
       Writing the critical capacity from the equilibrium condition at peak load and
       tolerable level,
       \begin{equation}
-      \spk = \thc\, g(\bar m) + k_e \bar m
+      \spk = \thc^{\mathrm{A}}\, g(\mtol) + k_e \mtol
       \qquad \Longrightarrow \qquad
-      \thc = \frac{\spk - k_e \bar m}{g(\bar m)},
+      \thc^{\mathrm{A}} = \frac{\spk - k_e \mtol}{g(\mtol)},
       \label{eq:thcrit}
       \end{equation}
       the safety margin is
       \begin{equation}
-      \theta - \thc \;=\; \theta \;-\; \frac{\spk}{g(\bar m)} \;+\; \frac{k_e \bar m}{g(\bar m)} .
+      \mu \;=\; \theta - \thc^{\mathrm{A}} \;=\; \theta \;-\; \frac{\spk}{g(\mtol)}
+      \;+\; \frac{k_e \mtol}{g(\mtol)} .
       \label{eq:margin}
       \end{equation}
-      Note that $\theta$ and $k_e$ enter with \emph{opposite} signs, whereas the identifiable
-      combination in \eqref{eq:Alin} carries them with the same sign. Errors therefore
-      accumulate rather than cancel, and the margin is plausibly \emph{worse} conditioned
-      than either parameter. This should be established rather than assumed.
+      Both parameters enter \eqref{eq:margin} with a \emph{positive} coefficient, and
+      \eqref{eq:slope} carries them positively too, so moving along the direction the data
+      cannot resolve raises one and lowers the other and their contributions to $\mu$
+      partially cancel. Parametrising that direction by $K_m$, the fitted pair $(a,b)$ of
+      \eqref{eq:intercept} and \eqref{eq:slope} gives
+      \begin{equation}
+      \theta(K_m) = \frac{a\,(K_m + \bar m)^2}{\bar m^{2}},
+      \qquad
+      k_e(K_m) = b - \frac{a\,K_m}{\bar m^{2}},
+      \label{eq:fibre}
+      \end{equation}
+      and substituting into \eqref{eq:margin}, with $P = \spk - b\,\mtol$,
+      \begin{equation}
+      \mu(K_m) \;=\; K_m\left[\frac{2a}{\bar m} - \frac{P}{\mtol}
+      - \frac{a\,\mtol}{\bar m^{2}}\right] \;+\; (a - P).
+      \label{eq:mufibre}
+      \end{equation}
+      The $K_m^2$ terms cancel identically. The margin is \emph{linear} along the
+      unidentified direction where $\theta$ is quadratic in it, so the decision quantity is
+      better conditioned than the parameter it is built from, by one order. Its whole
+      sensitivity to the non-identifiability is the single coefficient in
+      \eqref{eq:mufibre}, computable from the fitted $(a,b)$ without resolving $K_m$.
+      This is a change of order and not a claim of good conditioning: $\mu$ still varies
+      several-fold over the admissible range of $K_m$ (Figure~\ref{fig:A7}). What survives
+      is the \emph{sign}, and because $\mu$ is linear the sign is constant along the whole
+      fibre unless the two endpoints disagree. They disagree only for $\spk$ inside
+      \begin{equation}
+      \spk \in \left(\;\frac{K_{\max} S + a}{1 + K_{\max}/\mtol} + b\,\mtol,
+      \;\; a + b\,\mtol \;\right),
+      \qquad S = \frac{2a}{\bar m} - \frac{a\,\mtol}{\bar m^{2}},
+      \label{eq:window}
+      \end{equation}
+      with $K_{\max} = b\bar m^{2}/a$, the two roots of $\mu(K_{\max}) = 0$ and
+      $\mu(0) = 0$. \textbf{Outside that window the decision is determined by the data even
+      though $\theta$ is not}, and at the illustrative values $\theta$ is unknown there to a
+      factor of $169$. Inside it no width of band settles the decision, because every point
+      of the fibre fits the data equally well and they do not agree on the sign.
+
+      The window is narrow where it matters. At $\mtol = 40$ it is
+      $(3.25, 3.77)$ times the patient's baseline load, $14.8\%$ wide about its centre,
+      and an illness of the amplitude Model C draws in Figures~\ref{fig:C1} and
+      \ref{fig:C2}, half again the baseline load, sits well below it with $\mu > 0$ at
+      both ends. Its width is set by the tolerable level and closes as that convention
+      approaches the band the patient is actually observed in: $1.2\%$ at $\mtol = 15$,
+      $14.8\%$ at $40$, $67\%$ at $160$. This replaces a tolerance on $\theta$, which the
+      note never states, with a question about $\spk$ and $\mtol$, which it can compute
+      from $(a, b)$ per patient.
+
+      Two patients matched at $\bar m$ and sharing $K_m$ separate exactly:
+      \begin{equation}
+      \mu_A - \mu_B \;=\; (k_{e,A} - k_{e,B})\,(\mtol - \bar m),
+      \label{eq:musplit}
+      \end{equation}
+      since point-matching forces
+      $\theta_A - \theta_B = -(k_{e,A} - k_{e,B})(K_m + \bar m)$. Two observationally
+      identical patients diverge linearly in how far the tolerable level sits above the
+      operating point, and coincide when $\mtol = \bar m$.
 \item Whether the decision $\theta \gtrless \thc$ is invariant under a common strictly
       increasing reparametrisation $\varphi$ of the activity scale. If every variant is
       distorted by the same $\varphi$, and if $\thc$ is \emph{estimated empirically on that
       same distorted scale} rather than computed from \eqref{eq:thcrit}, then
       $\varphi(\theta) \gtrless \varphi(\thc)$ reproduces the true decision. The
       requirement is therefore consistency of the assay across variants, not absolute
-      calibration. The invariance fails if $\varphi$ differs by mechanism class, and does
-      not hold at all if $\thc$ is obtained structurally from quantities carrying
-      different units.
+      calibration. The invariance fails if $\varphi$ differs by mechanism class. It also
+      fails whenever $\thc$ is computed on the distorted scale,
+      because \eqref{eq:thcrit} is not equivariant under $\varphi$: in general
+      $\varphi\!\left((\spk - k_e \mtol)/g(\mtol)\right)$ differs from the expression
+      obtained by substituting $\varphi(k_e)$ into the same formula, so the two sides of
+      the comparison are transported differently. Note that this pulls against
+      Proposition~\ref{prop:intrinsic}: the intrinsic $\thc$ is a structural construction,
+      defined by where the fold of $C(\cdot\,;\theta)$ falls, and that location is not
+      preserved by a monotone rescaling of the activity axis. Well-posedness and
+      invariance are bought from different accounts here, and buying one spends the
+      other.
 \end{enumerate}
+
+\subsection{What the design would have to deliver}
+\label{sec:design}
+
+Equation \eqref{eq:thetaerr} is derived above and left unevaluated. Evaluating it
+answers the question of Table~\ref{tab:models}, and the answer is negative.
+
+\paragraph{The relative precision is identified, though the parameter is not.}
+$\hat\theta = \hat a/g(\bar m)^2$ is the fitted intercept times a constant, so
+$\operatorname{sd}(\hat\theta)/\theta = \operatorname{sd}(\hat a)/a$ exactly and the fibre
+coordinate cancels. The $g(\bar m)^{-2}$ of \eqref{eq:thetaerr} is not a separate unknown:
+since $a = \theta g(\bar m)^2$, the product $(\sigma/\theta)g(\bar m)^{-2}$ is $\sigma/a$,
+and $a$ is fitted. So
+\begin{equation}
+\frac{\operatorname{sd}(\hat\theta)}{\theta} \;\approx\;
+\frac{\sigma}{a}\,\sqrt{\frac{12}{n}}\;\frac{\bar m}{\Delta},
+\label{eq:relerr}
+\end{equation}
+every term of which is observable. Remark~\ref{rem:fibre} leaves $\theta$ unknown to a
+factor of $169$; it leaves its \emph{relative} precision known. The two are different
+things and they multiply. \eqref{eq:relerr} says how tightly the data pin $\theta$ down
+\emph{relative to wherever it sits}, and Remark~\ref{rem:fibre} says the note does not know
+where that is. Neither closes the other, and the fibre remains the only unquantified
+uncertainty in the location.
+
+\paragraph{$\sigma$ and $n$.} The ordinate of the fit is $C = s - \dot m$, and
+neither term is measured. At the one documented schedule, six-monthly visits
+(Table~\ref{tab:epistemic}), $\dot m$ is not recoverable at all: the metabolite's time
+constant is days. The accessible design is therefore steady states, where $\dot m = 0$ and
+$C(m_i) = s_i$. $\sigma$ is then dominated by error in the recorded substrate load, with
+assay variability a smaller term, and is amplified into $\theta$ by the factor of
+Figure~\ref{fig:A2}~(right). The steady-state framing is what makes the argument for
+Proposition~\ref{prop:degeneracy} immediate. And $n$ counts \emph{instrument events}, the
+quasi-exogenous carnitine steps of Section~\ref{sec:instruments}, not clinic visits, which
+is a much smaller number.
+
+\paragraph{The numbers, as a function of what the load is known to.} Nothing in this note
+bounds $\sigma$, so nothing below is quoted at a point. Condition \eqref{eq:affine} is
+checkable on the same records and asks the same of them: a quadratic fit over a band of full
+width $\Delta$ has $\operatorname{sd}(\hat c_2) = \sqrt{180}\,\sigma/(\sqrt{n}\Delta^2)$ in
+the uniform-design limit, against a true $|c_2| = \theta K_m/(K_m+\bar m)^3$. Taking $n = 6$
+instrument events, and writing $\sigma$ as a fraction of the recorded load:
+
+\begin{center}
+\begin{tabular}{@{}rrrr@{}}
+\toprule
+$\sigma$ & rel.\ error of $\hat\theta$ & $\Delta$ for $20\%$ & $\Delta$ for curvature \\
+(\% of load) & at a $10\%$ band & precision & at $2\sigma$ \\
+\midrule
+ 2\% &  368\% &  184\% & 177\% \\
+ 5\% &  920\% &  460\% & 280\% \\
+10\% & 1841\% &  920\% & 396\% \\
+20\% & 3682\% & 1841\% & 560\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{The instruments of Section~\ref{sec:instruments} reach $70\%$}
+(Figure~\ref{fig:A3}), short of every entry in either right-hand column, and short by a
+factor that grows from about $2.5$ to about $26$ as the load becomes less well recorded.
+That is the answer to ``can $\theta$ be identified from clinical data''. It was previously
+carried only by a figure caption, and it holds conditionally: only a load known to better
+than about $1.5\%$ of baseline would bring either requirement within a factor of two of what
+the records supply, and the note says throughout that $s$ is partially recorded.
+
+\begin{remark}[The noise is in the abscissa, and the fit announces its own failure]
+\label{rem:eiv}
+At steady state the recorded load is the ordinate and the assayed metabolite the abscissa,
+so \eqref{eq:varfit} is the wrong variance: the errors are in $x$. Classical attenuation
+pulls $\hat b$ towards zero and pushes $\hat a$ up, which alone would inflate $\hat\theta$.
+What that does to the margin depends on whether the fit is constrained. Unconstrained,
+$\hat k_e = \hat b - \hat a K_m/\bar m^2$ goes negative, $\thc^{\mathrm{A}}$ rises, and
+$\hat\mu$ appears to change sign. That reading is an artefact: a negative $k_e$ is not a
+parameter set. Imposing $k_e \ge 0$ leaves the margin biased downward by about $7\%$ at
+$\sigma_m/\Delta = 20\%$ and no more, which is small beside everything else here.
+
+What survives is better than the bias. At $\sigma_m/\Delta = 20\%$, $96\%$ of unconstrained
+fits return $\hat k_e < 0$, and that is checkable from the fit alone, with no knowledge of
+the truth. The design does not merely mislead, it reports that it has failed. A companion
+diagnostic is available to the analyst though not to the clinic: inflating $\hat a$ shrinks
+the fibre \eqref{eq:fibre0} from above, and past about $1.6$ times the true $a$ the fibre
+excludes the true $\theta$ altogether.
+\end{remark}
+
+\begin{remark}[The anchor's cost, a ratio that inverts for the severe patient]
+\label{rem:anchor_var}
+Proposition~\ref{prop:anchor} is demonstrated noise-free, which is the standard this section
+spends its length arguing against. A null patient has $\theta_j = 0$, so $s_j = k_e m_j$ and
+a relative error in the recorded load enters $\hat k_e$ one for one. Through
+$K_m = (b - k_e)\bar m^2/a$ and \eqref{eq:fibre0} it reaches
+\begin{equation}
+\left|\frac{\mathrm{d}\ln K_m}{\mathrm{d}\ln k_e}\right|
+= \frac{k_e (K_m + \bar m)^2}{\theta\,K_m},
+\qquad
+\left|\frac{\mathrm{d}\ln \theta}{\mathrm{d}\ln k_e}\right|
+= \frac{2 k_e (K_m + \bar m)}{\theta}.
+\label{eq:anchorfac}
+\end{equation}
+Both scale as $1/\theta$, so this is a ratio, the same shape as the
+load-error amplification of Figure~\ref{fig:A2}. At $\theta = 3000$ they are $0.20$ and
+$0.37$ and the anchor attenuates; they pass one at $\theta = k_e(K_m+\bar m)^2/K_m = 605$
+and $\theta = 2k_e(K_m+\bar m) = 1100$; at Model C's own $\theta = 300$ they are $2.0$ and
+$3.7$ and the anchor \emph{amplifies}. It is therefore worst for the severe patients the
+note is about, and the favourable figure belongs to the mild end of the range.
+\end{remark}
 
 \subsection{Known defect}
 

@@ -16,17 +16,48 @@ ethical to collect, before the decision has to be made.
 dm/dt = s(t) - theta * g(m) - [ alternative clearance ] ,    g(m) = m/(Km + m)
 ```
 
+`g` is the **Michaelis-Menten saturation function**. In the standard biochemical form the
+velocity of a single-substrate enzymatic reaction is `v = V_max * [S] / (Km + [S])`, so
+`theta` is the patient's residual `V_max`, `Km` is the Michaelis constant, and `g(m)` is
+the fractional saturation. The same form is the Monod function in microbial kinetics, and
+the Hill function with `n = 1`.
+
 Three hypotheses about the bracketed term, each answering a different question:
 
 | | alternative clearance | equilibria | question |
 |---|---|---|---|
 | **A** | `ke * m`, linear and unbounded | one, never lost | can `theta` be identified? |
-| **B** | `ke * h(m)`, saturating | one, lost above the ceiling | when does a crisis occur? |
-| **C** | `k * c(t) * m`, carnitine depleted | two, colliding at a fold | why does a crisis not self-resolve? |
+| **B** | `ke * h(m)`, Michaelis-Menten too | one, lost above the ceiling | under what condition is a tolerable steady state lost? |
+| **C** | `k * c(t) * m`, carnitine depleted | two, colliding at a fold | why does recovery require the load driven *below* baseline, not just the trigger removed? |
 
-They are alternative hypotheses, not stages of a development. Model A is the
-working model for identifiability because it is the *most favourable* case, not
-the most accurate: if identification fails there it fails a fortiori elsewhere.
+They are alternative hypotheses, not stages of a development, and they are not
+ranked by realism. Each is here for a different and specific reason.
+
+**C is the one that makes `theta_crit` well posed.** This is the point that
+matters most and it is easy to miss, because C is usually introduced as "the
+most biologically faithful of the three", which undersells it. In A and B the
+critical capacity has to be *defined* by a convention:
+
+```
+theta_crit = (s_peak - ke*m_bar) / g(m_bar)
+```
+
+with `m_bar` a clinical judgement about what metabolite level is tolerable and
+`s_peak` an unmeasured illness amplitude. In C it is *derived*: it is the theta
+at which the attractor and the separatrix merge at a saddle-node, and no
+tolerability convention appears anywhere in the construction. A cannot offer
+this because its equilibrium is never lost; B cannot because its equilibrium
+escapes to infinity instead of colliding with a second one. Only C has a second
+equilibrium for the first to collide with.
+
+**A is the most favourable case, not the most accurate.** It is the working
+model for identifiability precisely because its two clearance channels have
+maximally different functional forms. If identification fails there it fails a
+fortiori elsewhere. Its known defect is that it predicts no crisis at all.
+
+**B buys the load ceiling and pays for it.** It is what is needed to say
+anything about a steady state being lost, and the price is that both channels
+acquire the same functional form and become far harder to separate.
 
 ---
 
@@ -55,9 +86,56 @@ loads supplies `Km`. Both are present in the Saudi cohort.
 number rises from 1.1e5 in Model A to 4.8e7 in Model B, a factor of ~450, because
 saturating both channels gives them the same functional form.
 
-**Models B and C differ in a checkable prediction.** Under B, cessation of the
-precipitating illness suffices for recovery. Under C, the load must be driven
-below baseline. This is answerable from clinical notes with no new measurement.
+**Models B and C differ in a checkable prediction, but not in the marker.**
+Under B, cessation of the precipitating illness suffices for recovery; under C
+the load must be driven below baseline. That difference is about the model's
+state, and the measured proxy does not track the state through a crisis:
+propionylcarnitine, propionylglycine and propionic acid are essentially
+unaltered during acute decompensation. The discriminant is therefore stated in
+free carnitine, which does move, falling from 38.9 +/- 16.8 uM outside an event
+(n=56) to 22.0 +/- 12.4 uM during one (n=25), P = 0.0370. Two qualifications go
+with it: the comparison is between groups of samples rather than within
+patients, and a fall is consistent with C rather than exclusive to it. The
+phenotyping study's own discussion recommends measuring free carnitine during a
+decompensation, so the model and the clinical recommendation converge on the
+same analyte.
+
+**`theta_crit` can be defined intrinsically, and only in Model C.** It is the
+theta at which, at a given load, the maximum of the clearance curve falls to
+that load: attractor and separatrix merge at the saddle-node. Above it two
+equilibria exist, below it none. `m_bar` does not appear. The construction
+removes the clinical convention from the definition of the threshold; it does
+not remove `s_peak`, which survives in the separate question of whether an
+episode is large enough to cross the separatrix. Only the hazard reformulation
+in open item 2 removes that.
+
+**The attractor-to-separatrix distance is the safety margin**, and it was
+computed nowhere in this repository before. It says how far a patient can be
+pushed before the crisis becomes self-sustaining, closes continuously to zero
+at `theta_crit`, and diverges as theta approaches the baseline load, where the
+patient becomes unconditionally safe at that load. At the illustrative
+`theta = 300` it is 398, against `theta_crit = 167`. Neither A nor B admits
+this quantity at all.
+
+**Model B gives a condition, not a frequency.** The answer it returns is the
+inequality `s > theta + ke`, written in two quantities (`s_peak`, `m_bar`) that
+are never measured, and it is silent on how often the threshold is crossed.
+Frequency is the one thing the records hold reliably. Closing that gap needs
+the hazard reformulation in open item 2, not a better threshold.
+
+**The identification determinant does not depend on which channel is perturbed.**
+Perturb `k_e` with carnitine or `theta` with the therapy: the 2x2 system for
+`(theta, ke)` has the same coefficient matrix either way, and
+
+```
+det = g(m)*m' - g(m')*m = m*m'*(m'-m) / ((Km+m)*(Km+m'))
+```
+
+depends only on the two metabolite levels. The perturbation enters the
+right-hand side, not the matrix. So the analysis can be done now, on the input
+that is in every chart, and it transfers unchanged to the input that is in no
+chart. What the therapy would add is statistical, not structural: an exogenous
+schedule instead of one confounded by indication.
 
 ---
 
@@ -72,11 +150,14 @@ src/
   common/         model definitions and plotting style, shared
   model_A/run.py  identifiability, conditioning, population anchors
   model_B/run.py  load ceiling, threshold, cost of the correction
-  model_C/run.py  bistability, separatrix, discriminating prediction
+  model_C/run.py  bistability, separatrix, intrinsic theta_crit, safety margin
 symbolic/       structural identifiability, three independent tools
   julia/          StructuralIdentifiability.jl, 8 cases
   maple/          SIAN
   daisy/          DAISY
+tools/
+  fetch_refs.py   builds paper/refs.bib from CrossRef and PubMed
+  claims_to_tex.py  renders paper/claims.csv as the claim register appendix
 results/
   figures/        every figure in the paper, regenerated by `make figures`
   tables/         LaTeX tables generated from code
@@ -94,10 +175,21 @@ regenerated from `src/`.
 pip install -r requirements.txt
 
 make figures     # regenerate all figures and tables (seconds)
-make paper       # build paper/main.pdf
+make refs        # fetch paper/refs.bib, render the claim register
+make paper       # build paper/main.pdf (runs refs first)
 make test        # assert the structural claims still hold
+make audit       # non-zero while any claim is contradicted or unsourced,
+                 # any citekey is missing from refs.bib, or any \cite in the
+                 # paper has no row in the register
 make all
 ```
+
+`make audit` currently **fails**, on 14 unresolved claims. That is the
+state of the audit, not a broken build. See `REFERENCES.md`: no citation
+in this repository is typed by hand, and no factual claim goes into the
+paper without a row in `paper/claims.csv` saying whether the source
+actually says it. Seven rows are contradicted by the work they cite, and
+those sentences are left standing until each is deliberately revised.
 
 Structural identifiability needs Julia and is slower:
 
@@ -122,14 +214,55 @@ Roughly in order of how much they would change the conclusions.
    only partially recorded. The current amplification factor is ~1.4; bounding it
    properly is the first extension.
 
-2. **Reformulating the crisis as a first-passage problem.** `theta_crit` is
-   presently defined through two unmeasured quantities, `s_peak` and `m_bar`.
-   Treating illness arrivals as a marked point process and deriving a hazard
-   `lambda(theta)` for decompensation would remove that arbitrariness, use the
-   reliably recorded endpoint (dated admissions), and handle the ~70% of patients
-   with no events as censored observations rather than missing data. This would
-   make the count model *derived* rather than assumed, and is probably the single
-   most valuable next step.
+2. **Reformulating the crisis as a first-passage problem.** *Probably the single
+   most valuable next step, and not started.* Model C's intrinsic threshold has
+   already removed `m_bar` from the definition of `theta_crit`. `s_peak` is still
+   there, and no sharper deterministic threshold will remove it, because the
+   quantity being asked for is not a threshold at all. The concrete structure:
+
+   ```
+   lambda_MDE(theta) = nu * P( episode amplitude > critical amplitude | theta )
+   ```
+
+   where `nu` is the arrival rate of precipitating events (infection, fasting,
+   surgery, dietary error) and the amplitude distribution is **estimated from the
+   data rather than postulated**. The critical amplitude is the smallest excursion
+   in `s` that carries the patient across the separatrix from the attractor, which
+   Model C already computes: it is the margin plotted in `fig_C5_margin`, expressed
+   in load rather than in metabolite.
+
+   What this buys, point by point:
+
+   - **It removes `s_peak` from the definition of the threshold.** A single
+     worst-case amplitude is replaced by a distribution, so nothing has to be
+     assumed about the severity of the worst illness a patient will meet.
+   - **It uses the reliable observable.** The endpoint becomes dated hospital
+     admissions, which are coded consistently, instead of sparse metabolite
+     measurements whose relation to the enzyme's substrate is itself an
+     assumption.
+   - **It uses the recurrent-event structure instead of flattening it.**
+     Patients do not have one event each: 49 of 50 participants in the natural
+     history cohort reported at least one, at a mean annualised frequency of
+     1.0, and the rate varies enough between them that the study carries a
+     participant-level random effect. A hazard formulation uses every event and
+     every event-free interval a patient contributes, and makes the spread
+     between patients a parameter rather than noise.
+   - **It makes the count model derived rather than assumed.** At present a
+     Poisson or negative-binomial count model would be imposed on the admission
+     counts by fiat. Under this construction the counting process falls out of the
+     arrival process and the crossing probability, and its overdispersion has a
+     mechanism behind it.
+
+   The construction is partly pre-empted and the precedent belongs in the
+   statement of it: the natural history study already fits a hazard of this
+   shape, a GAMM on 3-HP with a smooth term in days since the previous event and
+   a participant random effect. What is proposed is not that machinery but the
+   substitution of a mechanistic `theta`, with the critical amplitude supplied by
+   Model C, for a measured biomarker as the covariate carrying the risk.
+
+   It would also complete the answer to Model B's question. Model B currently
+   returns a condition and the records contain a frequency; `lambda_MDE(theta)` is
+   a frequency, and it is the quantity the two can be compared in.
 
 3. **Optimal experimental design under a state constraint.** Conditioning scales
    as the inverse square of the excursion, and the excursion is bounded above by
@@ -151,12 +284,12 @@ Roughly in order of how much they would change the conclusions.
    construction needs a sign condition. With three parameters entering at once it
    becomes a matrix condition and existence is not guaranteed.
 
-7. **Therapy as an input.** Deliberately kept out of the model and confined to the
-   motivation, because no accessible patient is on the therapy. Standard care
-   already contains a selective input on the *alternative* channel (carnitine),
-   which is confounded by indication; the therapy supplies one on the *enzymatic*
-   channel, which is exogenous but must be scheduled before any response data
-   exist.
+7. **Defending carnitine as an instrument.** The selective input in the records
+   is endogenous: the dose responds to the patient's state. The quasi-exogenous
+   variation the argument leans on (weight-based recalculation after growth,
+   supply interruptions, changes of formulation) has to be argued from the
+   records patient by patient. This is a question about the charts, not about
+   the model.
 
 ---
 
@@ -171,7 +304,10 @@ an assumption.
 
 `k_e` is treated as a population parameter on the grounds that it does not involve
 PCC, but carnitine is also administered therapeutically at patient-specific doses,
-so in real data it is partly clinician-manipulated.
+so in real data it is partly clinician-manipulated. That manipulation is the
+working perturbation of the analysis and its weakness at the same time: the dose
+is adjusted in response to the patient's state, so it is confounded by indication
+and only its quasi-exogenous component can be used.
 
 Model C's depletion mechanism is a hypothesis. A plain two-state depletion model
 gives saturation, not decline; decline requires that replenishment itself be

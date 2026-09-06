@@ -5,7 +5,7 @@
 \begin{table}[htbp]
 \centering
 \footnotesize
-\caption{Epistemic status of each quantity. The \emph{Role} column gives the
+\caption{\label{tab:epistemic}Epistemic status of each quantity. The \emph{Role} column gives the
 system-theoretic classification; the \emph{Status} column gives what is actually
 available from clinical records.}
 \label{tab:status}
@@ -13,11 +13,34 @@ available from clinical records.}
 \toprule
 \textbf{Quantity} & \textbf{Meaning} & \textbf{Role} & \textbf{Status} & \textbf{Source and caveat} \\
 \midrule
-$m(t)$ & accumulated toxic metabolite &
+$m(t)$ & a plasma marker of propionate accumulation; which one is left open &
 state; the only observable &
-measured, $\approx 6$--$7$ samples/year &
-plasma 2-MC, 3-HP, C3 acylcarnitine. \emph{Proxy}: the enzyme substrate is intracellular
-propionyl-CoA, never measured \\
+measured sparsely; the one documented schedule is six-monthly study
+visits~\cite{natural_history} % C20
+&
+Sections 3 and 4 do not depend on the choice (Section~\ref{sec:marker}). \emph{Proxy}: the
+enzyme substrate is intracellular propionyl-CoA, never measured \\
+\addlinespace
+3-HP & 3-hydroxypropionate &
+candidate for $m$ &
+measured routinely &
+a $50\%$ lower 3-HP is associated with a decompensation rate ratio of $0.7$
+($p<0.01$)~\cite{natural_history} % C19
+\\
+\addlinespace
+C3 & propionylcarnitine &
+candidate for $m$ &
+measured routinely &
+a $50\%$ lower C3 gives a rate ratio of $0.6$ ($p=0.017$)~\cite{natural_history}, on its
+own scale. Reported essentially unaltered through an acute
+decompensation~\cite{amd_phenotyping} \\
+\addlinespace
+2-MC & 2-methylcitrate &
+candidate for $m$ &
+measured routinely &
+rate ratio $1.0$ ($p=0.84$) for decompensation~\cite{natural_history}, yet among the
+strongest correlates of plasma ammonia during an
+event~\cite{amd_phenotyping} \\
 \addlinespace
 $s(t)$ & propiogenic substrate load &
 exogenous disturbance, partly structured &
@@ -25,36 +48,42 @@ partially known &
 prescribed protein intake and illness dates recorded; episode amplitudes unknown;
 unrecorded triggers exist \\
 \addlinespace
-$\theta$ & residual PCC capacity ($V_{\max}$) &
+$\theta$ & residual capacity of the enzymatic channel, its maximal velocity &
 \textbf{parameter, patient-specific, constant} &
 \textbf{unknown} &
 set by genotype; measurable \emph{ex vivo} in fibroblasts or lymphocytes, but the
 in vitro to in vivo mapping is uncertain \\
 \addlinespace
-$K_m$ & half-saturation constant &
+$K_m$ & half-saturation level of the enzymatic channel &
 parameter, assumed population-level &
 unknown &
-property of the active site, assumed genotype-independent \\
+a shape parameter of the plasma-level clearance curve, obtained by fitting; the in vitro
+Michaelis constant of PCC is a different quantity \\
 \addlinespace
-$k_e$ & non-enzymatic clearance &
+$k_e$ & non-enzymatic clearance; a rate constant in Model A, the $V_{\max}$ of the
+alternative route in Model B &
 parameter, assumed population-level &
 unknown &
 carnitine conjugation and renal excretion. \emph{Caveat}: carnitine is also administered
 therapeutically, so partly clinician-manipulated \\
 \addlinespace
 $u_c(t)$ & carnitine dose &
-\textbf{input on $k_e$}, but \emph{endogenous} &
-recorded in charts &
-adjusted in response to patient state, hence confounded by indication; weight-based
-recalculation is quasi-exogenous \\
+\textbf{input on $k_e$}, selective but \emph{endogenous}; the working perturbation of
+this note &
+recorded in charts, present in every patient &
+adjusted in response to patient state, hence confounded by indication. Quasi-exogenous
+instruments: weight-based recalculation after growth, supply interruptions, changes of
+formulation \\
 \addlinespace
 $\Delta(t)$ & therapeutic increment to capacity &
-\textbf{input on $\theta$}, exogenous &
-\textbf{known when applied} &
-investigational; not administered in the accessible cohort. Decay rate $\lambda$
-possibly patient-specific \\
+\textbf{input on $\theta$}, selective and exogenous &
+\textbf{not administered in the accessible cohort} &
+investigational. Structurally interchangeable with $u_c$: by
+Proposition~\ref{prop:channel} the determinant of the identification problem is the same
+for both channels, so the analysis is carried out on $u_c$ and transfers to $\Delta$.
+Decay rate $\lambda$ possibly patient-specific \\
 \addlinespace
-$\bar m$ & tolerable metabolite level &
+$\mtol$ & tolerable metabolite level &
 constant in the definition of $\thc$ &
 \textbf{not measured} &
 clinical convention, not a physiological constant \\
@@ -77,8 +106,11 @@ admissions reliably coded; only a minority of all events lead to admission \\
 \begin{table}[htbp]
 \centering
 \footnotesize
-\caption{The three candidate models. They are alternative hypotheses about the
-non-enzymatic clearance term, not stages of a development.}
+\caption{The three candidate models, alternative hypotheses about the non-enzymatic
+clearance term rather than stages of a development. $\thc$, the residual capacity
+below which a tolerable steady state cannot be held, is used here ahead of its definition:
+Models A and B define it by convention at \eqref{eq:thcrit}, and Model C intrinsically at
+\eqref{eq:thcrit_int}.}
 \label{tab:models}
 \begin{tabular}{@{}p{0.035\textwidth} p{0.235\textwidth} p{0.175\textwidth} p{0.185\textwidth} p{0.145\textwidth} p{0.13\textwidth}@{}}
 \toprule
@@ -86,35 +118,49 @@ non-enzymatic clearance term, not stages of a development.}
 & \textbf{Cost} & \textbf{Status} \\
 \midrule
 \textbf{A} &
-$\theta g(m) + k_e m$ \newline second term linear, unbounded &
+$\theta g(m) + k_e m$ \newline Michaelis-Menten enzyme, second term linear and unbounded &
 one, stable, never lost &
 Can $\theta$ be identified from clinical data? &
 predicts no crisis at all &
 working model for identifiability \\
 \addlinespace
 \textbf{B} &
-$\theta g(m) + k_e h(m)$ \newline both saturating, ceiling $\theta + k_e$ &
+$\theta g(m) + k_e h(m)$ \newline both Michaelis-Menten, ceiling $\theta + k_e$ &
 one stable, lost when load exceeds the ceiling &
-When does a crisis occur? &
+Under what condition is a tolerable steady state lost? &
 both terms share a functional form, weakening separability &
 required for $\thc$; not verified \\
 \addlinespace
 \textbf{C} &
-$\theta g(m) + k\,c(t)\,m$ \newline with $c$ depleted by elimination &
+$\theta g(m) + k\,c(t)\,m/(K_c+m)$ \newline with $c$ consumed by conjugation and lost
+faster as $m$ rises &
 two, stable and unstable, colliding at a saddle-node &
-Why does a crisis not resolve spontaneously? &
-adds an unmeasured state $c$ and an unknown $R$ &
-hypothesis; discriminating test available in records \\
+Why does recovery require active reduction of the load below baseline, rather than mere
+removal of the trigger? &
+adds an unmeasured state $c$, and rests on a competition documented only in vitro &
+hypothesis; a discriminating observable exists and is tested at group level only. The only
+one of the three in which $\thc$ is well posed \\
 \bottomrule
 \end{tabular}
 \end{table}
 \end{adjustwidth}
 
-\begin{remark}
-Models A, B and C are not stages of a development. They are alternative hypotheses about
-one term. Model A is used for the identifiability analysis because it is the version in
-which the two clearance channels have maximally different functional forms, and is
-therefore the most favourable case. Its known defect is that it predicts no crisis.
+\begin{remark}[The role of each model]
+Models A, B and C are alternative hypotheses about one term, each present for a different
+reason. They are not stages of a development and are not ranked by realism.
+
+Model A is used for the identifiability analysis because it is the version in which the
+two clearance channels have maximally different functional forms, and is therefore the
+\emph{most favourable} case. Accuracy is not what recommends it, and its known defect is
+that it predicts no crisis.
+
+Model B is what is required to say anything about the loss of a tolerable steady state,
+and it pays for that in identifiability, since both channels acquire the same functional
+form.
+
+Model C is present for its \textbf{well-posedness}, not for its biological fidelity. It is
+the only one of the three in which $\thc$ can be defined without a clinical convention,
+and Section~\ref{sec:intrinsic} makes that precise.
 \end{remark}
 
 \vspace{0.5em}

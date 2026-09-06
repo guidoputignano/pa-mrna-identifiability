@@ -39,8 +39,8 @@
 \noindent
 We analyse the structural identifiability of the scalar propionate model. Three results
 follow. First, the model is \emph{globally structurally identifiable} from a single
-patient under a generic (non-constant) trajectory: the obstruction discussed previously is
-one of conditioning, not of structure. Second, the identifiability degenerates sharply as
+patient under a generic (non-constant) trajectory: the obstruction is one of conditioning,
+not of structure. Second, the identifiability degenerates sharply as
 the trajectory approaches a steady state, and we give the rank condition and the growth of
 the condition number. Third, and of most interest, at steady state a single patient is
 \emph{not} identifiable while a cohort sharing population parameters \emph{is}, provided
@@ -65,7 +65,11 @@ symbolic results can be verified mechanically.
 \end{equation}
 
 with $p = (\theta, K_m, k_e) \in \R_{>0}^3$ the unknown parameter vector, $s(t)$ a known
-input, and $y$ the measured output.
+input, and $y$ the measured output. The term $\theta g(m)$ is the Michaelis-Menten law
+$v = V_{\max}[S]/(K_m + [S])$ with $V_{\max} = \theta$ and $[S] = m$, so $\theta$ is the
+patient's residual maximal velocity, $K_m$ is the Michaelis constant of PCC, and $g$ is the
+fractional saturation. The same form is called the Monod function, or the Hill function
+with $n = 1$, elsewhere.
 
 \subsection{What structural identifiability means}
 
@@ -126,9 +130,9 @@ $(K_m,\, k_e,\, \theta + k_e K_m)$ is a bijection on $\R_{>0}^3$.
 \end{proof}
 
 \begin{remark}
-This settles a question that had been treated heuristically. The degeneracy identified
-previously, namely that only the combination $\theta/K_m + k_e$ appears in the linearised
-regime, is \textbf{not} a structural obstruction. It is the leading-order behaviour of a
+This settles a question that is easily treated heuristically. The degeneracy of the
+linearised regime, in which only one combination of $\theta$ and $k_e$ appears, is
+\textbf{not} a structural obstruction. It is the leading-order behaviour of a
 structurally identifiable problem evaluated near a degenerate operating point.
 \end{remark}
 
@@ -254,23 +258,47 @@ determines a single $\theta_i$.
 \subsection{Comments on the anchors}
 
 \paragraph{Null genotypes are available.} In the Saudi series, the frameshift variant
-\emph{PCCB} c.990dupT (p.E331Xfs) occurs in 7 families and is a null allele. Frameshift and
-nonsense variants subject to nonsense-mediated decay produce no functional protein, so
-$\theta = 0$ holds by construction rather than by assumption.
+\emph{PCCB} c.990dupT (p.E331Xfs) occurs in 7 families and is reported as a null allele.
 
-\paragraph{Residual carboxylation is absorbed correctly.} Older work reports that apparent
-residual propionate carboxylation in PCC-deficient cells derives from a distinct
-carboxylase rather than from a partially functional mutant PCC. Under
-Proposition~\ref{prop:anchor} this is not a confound: any such activity is an alternative
-elimination route and is therefore correctly absorbed into $k_e$, which is exactly the
-quantity the null patients measure.
+\paragraph{The anchor does not depend on why the allele is null.} It is tempting to shore
+up $\theta_j = 0$ with a molecular argument about what happens to the transcript, or to
+worry about reports of residual propionate carboxylation in PCC-deficient cells and where
+that activity comes from. Neither is needed, and the second is not a confound. Under
+Proposition~\ref{prop:anchor} the requirement is not that no propionate is eliminated by
+any route; it is only that whatever else eliminates it is not $\theta\, g(m)$. Any residual
+elimination, of whatever molecular origin, is an alternative route and is absorbed into
+$k_e$, which is exactly the quantity the null patients measure.
 
-\paragraph{Carriers are a weak anchor.} Obligate heterozygous parents have
-$\theta \approx \theta_{\text{normal}}/2$ but, being healthy, sit at very low $m$ where
-$g(m) \approx m/K_m$. Their equation therefore reduces to
-$s \approx m\,(\theta/(2K_m) + k_e)$, which again involves only the degenerate combination.
-Carriers constrain the aggregate coefficient, not the separation. They are not a substitute
-for condition (i).
+\paragraph{Carriers are not an anchor at all.} Obligate heterozygous parents are
+asymptomatic, and it is natural to want to treat them as a known point on the activity
+scale at roughly half of normal capacity. Two things stop this, and the first is decisive.
+
+\emph{Measurement.} There is no assay that places a carrier on the scale. GeneReviews
+states that quantitative plasma amino acids, urine organic acids, the acylcarnitine
+profile and fibroblast enzymatic analyses are all unreliable for the detection of
+heterozygotes. A value that cannot be measured in the individual cannot anchor anything,
+and the half-of-normal figure is an inference from gene dosage rather than an observation.
+
+\emph{Conditioning}, which would still bite if the first were solved. Being healthy,
+carriers occupy a narrow range of $m$, over which total clearance is affine to within assay
+error. Writing $\bar m$ for the centre of that range, the slope of the fit is
+$\theta g'(\bar m) + k_e$, the same degenerate combination every stable patient contributes.
+The intercept is $\theta\,(g(\bar m) - \bar m\, g'(\bar m)) = \theta\, g(\bar m)^2$, the
+linear channel passing through the origin and contributing nothing to it, so a carrier does
+in principle contribute a coefficient carrying $\theta$ by itself.
+
+The conditioning of that contribution is what disqualifies them. Recovering $\theta$ from a
+fitted intercept divides by $g(\bar m)^2$, and $g$ is increasing, so the amplification a
+carrier suffers exceeds that of any patient by construction: carriers are the healthiest
+people in the cohort and therefore the lowest on the saturation curve. The factor enters
+squared, so a carrier whose $g(\bar m)$ is a third of a patient's is nine times worse placed
+on that account alone, before the narrowness of their band enters through the extrapolation
+to $m = 0$. Being asymptomatic is exactly what puts them there.
+
+Carriers therefore fail twice over, and the two failures are independent. No assay places
+them on the activity scale, and the one coefficient that would carry $\theta$ if an assay
+existed is worse conditioned for them than for anyone the model is about. They constrain the
+aggregate coefficient, not the separation, and they are not a substitute for condition (i).
 
 \paragraph{Where the second anchor comes from.} Condition (ii) requires one patient observed
 at two distinct steady states. Candidates present in routine care:

@@ -1,16 +1,25 @@
 \begin{abstract}
 \noindent
-This note states a control-theoretic problem arising in the individualised dosing of
-an mRNA enzyme-replacement therapy for a monogenic metabolic disease. The clinical
-decision is the choice of a dosing interval. The quantity that determines it is the
-patient's residual enzymatic capacity, which is never measured. We formulate three
-candidate models of increasing biological fidelity, state explicitly what is known,
-measured and unknown in each, and identify the structural obstruction: in the
-operating regime in which patients are clinically maintained, the enzymatic and
-non-enzymatic clearance terms are not separable. The therapy acts selectively on the
-enzymatic channel and therefore renders the system formally identifiable, but the
-resulting problem is severely ill-conditioned. We quantify this and list the
-questions that remain open.
+The clinical decision in mRNA enzyme replacement for propionic acidemia is a dosing
+interval. It is set by the patient's residual enzymatic capacity, which is never measured.
+We ask how much of it the records can recover.
+
+Over the narrow band a stable patient's marker visits, total clearance is indistinguishable
+from a straight line at assay resolution. The capacity survives only in that line's
+intercept, which the band reaches by extrapolation and which carries the half-saturation
+constant with it. Its location is unresolved across two orders of magnitude; its relative
+precision is not.
+
+The decision survives this. The safety margin is linear along the unresolved direction
+where the capacity is quadratic in it. Its sign is therefore fixed, except for illness
+amplitudes inside a window we compute.
+
+The capacity itself is not recovered. A selective perturbation identifies the system
+formally, and the determinant turns on the excursion in the marker and the half-saturation
+constant, not on which channel produced it. The question is therefore posed on carnitine
+and answered for the therapy. The excursion it requires exceeds what the accessible
+perturbations produce by a factor of about $2.5$ to $26$, widening as the substrate load is
+more poorly recorded.
 \end{abstract}
 
 \vspace{0.5em}

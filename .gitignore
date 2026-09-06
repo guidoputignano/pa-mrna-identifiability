@@ -1,0 +1,20 @@
+# LaTeX build artefacts; paper/main.pdf is tracked deliberately
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.bbl
+paper/*.bcf
+paper/*.blg
+paper/*.run.xml
+
+# Reference pipeline. refs.bib IS committed so the paper builds offline;
+# the cache and the failure list are local state.
+.refcache.json
+paper/refs.todo
+
+# Python
+__pycache__/
+*.pyc

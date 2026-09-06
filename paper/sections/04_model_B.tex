@@ -1,4 +1,7 @@
-\section{Model B: bounded total clearance}
+\section{Model B: bounded clearance, and the loss of a tolerable steady state}
+%==========================================================================
+
+\emph{Question answered: under what condition is a tolerable steady state lost?}
 %==========================================================================
 
 \subsection{What is added}
@@ -13,10 +16,56 @@ the second term saturate as well:
 \label{eq:B}
 \end{equation}
 
+The function $h$ is again a \emph{Michaelis-Menten saturation function} of the form
+\eqref{eq:mm}: $k_e$ is now the $V_{\max}$ of the alternative route, a maximal flux rather
+than a rate constant, $K_e$ its half-saturation level, and $h(m)$ its fractional saturation.
+The change of meaning of $k_e$ between \eqref{eq:A} and \eqref{eq:B} is the content of the
+model, promoting the alternative channel from a first-order rate law to a saturable one.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{0.90\linewidth}{!}{%
+\begin{tikzpicture}
+\node[mpool] (m) at (0,0) {$m$\\[1pt]\scriptsize\mdseries accumulated\\metabolite};
+\node[mlabel] (in) at (-3.6,0) {$s(t)$};
+\draw[mar] (in) -- (m);
+\node[msmall] at (-2.4,0.42) {load};
+
+\node[menzy] (enz) at (-2.3,-2.7) {$\theta\, g(m)$\\{\scriptsize saturating}};
+\channelglyph{(-3.55,-4.15)}{green!45!black}{s}
+
+\node[malt] (alt) at (2.3,-2.7) {$k_e\, h(m)$\\{\scriptsize saturating}};
+\channelglyph{(1.15,-4.15)}{blue!55!black}{s}
+
+\draw[mar] (m.south) -- ++(0,-0.55) -| (enz.north);
+\draw[mar] (m.south) -- ++(0,-0.55) -| (alt.north);
+
+\node[msmall] (o1) at (-2.3,-5.0) {eliminated};
+\node[msmall] (o2) at ( 2.3,-5.0) {eliminated};
+\draw[mar] (enz) -- (o1);
+\draw[mar] (alt) -- (o2);
+
+\node[mlabel, green!45!black] (thr) at (-6.6,-2.7) {therapy\\$\Delta(t)$};
+\draw[mar, green!45!black] (thr) -- (enz);
+\node[mlabel, blue!55!black] (carn) at (6.6,-2.7) {carnitine\\$u_c(t)$};
+\draw[mar, blue!55!black] (carn) -- (alt);
+
+\node[msmall, red!60!black, align=center] at (0,-6.0)
+     {total clearance now bounded by $\theta + k_e$};
+\end{tikzpicture}}
+\caption{Model B as a block diagram, drawn to the same grammar as
+Figure~\ref{fig:blockA}. Everything is unchanged except the alternative channel, which now
+saturates rather than growing without limit; the two shape glyphs beside the channels are
+the whole content of the model. Both channels bending is what bounds total clearance, and
+also what costs the identification, since the channels are then separated only by bending
+at different places.}
+\label{fig:blockB}
+\end{figure}
+
 \subsection{Consequence: a load ceiling}
 
-Total clearance $C(m) = \theta g(m) + k_e h(m)$ satisfies $C(0)=0$, is strictly increasing,
-and is \emph{bounded}:
+Total clearance $C(m) = \theta g(m) + k_e h(m)$ is now a sum of two Michaelis-Menten terms.
+It satisfies $C(0)=0$, is strictly increasing, and is \emph{bounded}:
 \begin{equation}
 C(m) \;\longrightarrow\; \theta + k_e \qquad \text{as } m \to \infty .
 \end{equation}
@@ -33,30 +82,71 @@ $s > \theta + k_e$ & \textbf{no equilibrium}; $\dot m > 0$ for all $m$, unbounde
 \end{center}
 
 \begin{remark}[Terminology]
-This is not a saddle-node bifurcation. No two equilibria collide; a single equilibrium
+No two equilibria collide here; a single equilibrium
 escapes to infinity as $s \to (\theta + k_e)^-$. A genuine saddle-node requires Model C.
 \end{remark}
 
 \begin{remark}[Clinical threshold precedes the mathematical one]
 Clinically the crisis begins before the equilibrium ceases to exist, because the
 equilibrium migrates to metabolite levels the patient does not tolerate. The operative
-condition is $\spk > C(\bar m)$, with $\thc$ given by \eqref{eq:thcrit}.
+condition is $\spk > C(\mtol)$, and the critical capacity is not
+\eqref{eq:thcrit} but its Model B counterpart,
+\begin{equation}
+\thc^{\mathrm{B}} \;=\; \frac{\spk - k_e\, h(\mtol)}{g(\mtol)},
+\label{eq:thcritB}
+\end{equation}
+the alternative channel now saturating. Figure~\ref{fig:B2}~(left) plots
+\eqref{eq:thcritB}, not \eqref{eq:thcrit}.
+\end{remark}
+
+\begin{remark}[The model gives a condition, the records give a frequency]
+\label{rem:condition_not_frequency}
+The question this model answers has to be stated carefully, because the natural phrasing,
+``when does a crisis occur'', asks for something else. What Model B delivers is a
+\emph{condition}, $s > \theta + k_e$, or clinically $\spk > C(\mtol)$. It does not deliver
+a \emph{rate}. Nothing in \eqref{eq:B} describes how often, or how hard, the load is
+driven above the threshold: the arrival of intercurrent illness is exogenous to the vector
+field, and a deterministic inequality has no frequency in it.
+
+The asymmetry matters because frequency is precisely what the records contain. Admissions
+are dated and reliably coded, whereas $\spk$ and $\mtol$, the two quantities the
+inequality is written in, are never measured. The model is therefore expressed in
+unobservables and asked to predict an observable it does not contain.
+
+Closing that gap means replacing the deterministic threshold by a hazard: treating the
+precipitating events as a point process with rate $\nu$, giving their amplitudes a
+distribution estimated from the data, and deriving
+\[
+\lambda_{\mathrm{MDE}}(\theta) \;=\; \nu \cdot
+\mathbb{P}\!\left(\text{episode amplitude} > \text{critical amplitude} \mid \theta\right),
+\]
+which is a quantity the admission records can actually be regressed against. This is set
+out in Section~7 and is not attempted here.
 \end{remark}
 
 \subsection{Cost of the correction}
 
 In Model A the two clearance terms have different functional forms, one saturating and one
-linear, and are distinguished by that difference. In Model B both saturate, and they are
-distinguished only by $K_m \neq K_e$, i.e.\ by saturating at different metabolite levels.
+linear, and are distinguished by that difference: over any range the linear term
+contributes no curvature and the saturating term does. In Model B both saturate, and what
+separates them is only that they bend at different places. Writing the two half-saturation
+constants as $K_m$ and $K_e$, the channels are distinguishable exactly when
+$K_m \neq K_e$ by enough that the two curvatures can be told apart over the observed range,
+in the sense of \eqref{eq:affine}.
 
-\textbf{The biologically more faithful model has weaker identifiability.} This trade-off
-should be stated explicitly rather than discovered later.
+This concerns two curvature scales of the fitted clearance curve. By
+Remark~\ref{rem:no_km} neither $K_m$ nor $K_e$ carries an established interpretation as an
+enzyme constant at the plasma level, and nothing here needs them to.
+
+\textbf{The biologically more faithful model has weaker identifiability.}
 
 \subsection{Status}
 
-Model B is required for any statement about crisis onset and for the definition of $\thc$.
-It is not required for the identifiability analysis of Section 3, and is therefore not the
-working model for that purpose.
+Model B is required for any statement about the loss of a tolerable steady state and for
+the definition of $\thc^{\mathrm{B}}$ in \eqref{eq:thcritB}. The identifiability analysis of Section 3
+runs on Model A instead, which is the more favourable case. Model B's own question is
+answered within its own terms, and by Remark~\ref{rem:condition_not_frequency} the answer is
+not yet in the units the data are recorded in.
 
 \vspace{0.5em}
 \hrule
