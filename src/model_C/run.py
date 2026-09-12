@@ -42,7 +42,7 @@ import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 from scipy.optimize import brentq, minimize_scalar
 
-from common.models import (ParamsB, ParamsC, g, clearance_B,
+from common.models import (ParamsB, ParamsC, g, alt_flux_C, clearance_B,
                            clearance_C_quasistatic, equilibria_nonmonotone,
                            steady_state)
 from common.style import (save, figsize, GREEN, RED, BLUE, AMBER, GREY, MUTED,
@@ -86,6 +86,39 @@ def clearance_peak(p: ParamsC, theta=None):
     r = minimize_scalar(lambda m: -clearance_C_quasistatic(m, q),
                         bounds=(lo, hi), method="bounded")
     return float(-r.fun), float(r.x)
+
+
+def alt_peak(p: ParamsC):
+    """The maximum of the alternative route alone, and where it occurs."""
+    from common.models import alt_flux_C
+    grid = np.linspace(1e-6, 6e4, 200000)
+    v = alt_flux_C(grid, p)
+    i = int(np.argmax(v))
+    lo, hi = grid[max(i - 1, 0)], grid[min(i + 1, len(grid) - 1)]
+    r = minimize_scalar(lambda m: -alt_flux_C(m, p), bounds=(lo, hi),
+                        method="bounded")
+    return float(-r.fun), float(r.x)
+
+
+def R0_for_peak(p: ParamsC, target=500.0):
+    """
+    The replenishment that puts the alternative route's peak at `target`.
+
+    R0 is NOT a free constant: it is fixed by requiring that the alternative
+    route alone cannot carry the baseline load, so that a patient with no
+    residual enzyme is not maintainable. alpha is exactly proportional to R0,
+    so this is one evaluation and not a search.
+
+    Every sensitivity analysis in this module re-derives R0 through this
+    function after moving Kc, Mi or rho0. Holding R0 fixed while moving one of
+    those three moves the peak as well, which breaks the constraint that
+    defines R0, and reports the sensitivity of theta_crit to the calibration
+    as though it were sensitivity to the shape constant. That conflation is
+    what made M_i look nine times more expensive than K_c when, on the same
+    footing, it is cheaper.
+    """
+    pk, _ = alt_peak(replace(p, R0=1.0))
+    return float(target / pk)
 
 
 def theta_crit_intrinsic(p: ParamsC, s_base, theta_hi=None):
@@ -399,6 +432,203 @@ def fig_margin():
     return thc
 
 
+# =====================================================================
+def shape_sensitivity(alt_target=500.0):
+    """
+    What the three unmeasured shape constants cost, on one footing.
+
+    Remark 12 bounded K_c and stopped there. M_i and rho_0 have exactly the
+    same epistemic status -- no measurement, chosen -- and M_i was not even
+    written down, so Figure 16 could not be reproduced from the paper.
+
+    Two columns, and the difference between them is the point.
+
+      R0 re-derived   the constraint that fixes R0 is held, so only the SHAPE
+                      of the alternative route moves. This is the admissible
+                      sweep: a parameter set that violates the constraint is
+                      not a parameter set.
+      R0 held         the constraint is broken, so the peak of alpha moves
+                      with the shape constant and carries theta_crit with it.
+
+    On the admissible footing all three constants are cheap and M_i is cheaper
+    than K_c. On the inadmissible one rho_0 is catastrophic and M_i is second.
+    The paper's own 1.56 for K_c is an R0-re-derived number, so the two were
+    never comparable.
+
+    The margin is reported alongside, because it is a different story: the
+    separatrix sits where alpha has decayed, and alpha decays on the scale of
+    M_i, so the margin inherits M_i almost linearly where theta_crit does not.
+    """
+    out = {}
+    for name, field, vals in (("K_c", "Kc", (25, 50, 100, 200, 400, 800)),
+                              ("M_i", "Mi", (150, 212, 300, 424, 600, 849, 1200)),
+                              ("rho_0", "rho0", (0.35, 0.4, 0.5, 0.7, 0.9, 1.0))):
+        rec = []
+        for v in vals:
+            q = replace(PC, **{field: float(v)})
+            q_cal = replace(q, R0=R0_for_peak(q, alt_target))
+            tc_cal = theta_crit_intrinsic(q_cal, S_BASE)
+            tc_raw = theta_crit_intrinsic(q, S_BASE)
+            mg = margin_at(q_cal, PC.theta)
+            rec.append((v, tc_cal, tc_raw, mg))
+        out[name] = rec
+    return out
+
+
+def margin_at(p: ParamsC, theta, s=S_BASE):
+    """Separatrix minus attractor at this theta and load, or nan if none."""
+    q = replace(p, theta=float(theta))
+    roots, st = equilibria_nonmonotone(clearance_C_quasistatic, q, s,
+                                       np.linspace(1e-3, 3e5, 400000))
+    st = np.asarray(st, dtype=bool)
+    if st.sum() and (~st).sum():
+        return float(roots[~st][0] - roots[st][0])
+    return float("nan")
+
+
+def table_shape():
+    """Render the sensitivity of theta_crit and the margin to the shape constants."""
+    from common.style import write_table
+    d = shape_sensitivity()
+    rows = []
+    for name, rec in d.items():
+        cal = [r[1] for r in rec if np.isfinite(r[1])]
+        raw = [r[2] for r in rec if np.isfinite(r[2])]
+        mgs = [r[3] for r in rec if np.isfinite(r[3])]
+        n_vac = sum(1 for r in rec if not np.isfinite(r[2]))
+        span = lambda xs: f"{min(xs):.0f}--{max(xs):.0f}" if xs else "---"
+        fac = lambda xs: f"{max(xs) / min(xs):.2f}" if xs else "---"
+        rows.append([
+            f"${name.replace('_', '_{') + '}' if '_' in name else name}$".replace("$K_{c}$", "$K_c$"),
+            f"{rec[0][0]:g}--{rec[-1][0]:g}",
+            f"{rec[-1][0] / rec[0][0]:.0f}$\\times$",
+            fac(cal), fac(raw),
+            f"{n_vac:d}", fac(mgs),
+        ])
+    write_table("tab_C_shape",
+                ["constant", "range swept", "range", "$\\thc$, $R_0$ re-derived",
+                 "$\\thc$, $R_0$ held", "vacuous", "margin, $R_0$ re-derived"],
+                rows,
+                note="factors are max/min over the swept range; 'vacuous' counts "
+                     "sweep points at which a null-genotype patient becomes "
+                     "maintainable and the threshold ceases to exist")
+    print("    shape-constant sensitivity of theta_crit and of the margin:")
+    for name, rec in d.items():
+        cal = [r[1] for r in rec if np.isfinite(r[1])]
+        mgs = [r[3] for r in rec if np.isfinite(r[3])]
+        print(f"      {name:>6}: theta_crit {min(cal):7.1f}..{max(cal):7.1f} "
+              f"(factor {max(cal)/min(cal):5.2f})   margin {min(mgs):8.1f}..{max(mgs):8.1f} "
+              f"(factor {max(mgs)/min(mgs):5.2f})")
+    return rows
+
+
+def linearise_at_attractor(p: ParamsC = None, s=None):
+    """
+    The tangent (a, b) of the parent model's total clearance at its attractor.
+
+    Reported alongside what Model A's intercept identity would give, because
+    the two are not the same object and the note previously wrote as though
+    they were. a = theta g(m_bar)^2 holds only when the alternative channel is
+    linear through the origin. alpha is not, and its own intercept term
+    alpha(m) - m alpha'(m) is the larger part of a here by a factor of six.
+    """
+    p = PC if p is None else p
+    s = S_BASE if s is None else s
+    roots, st = equilibria_nonmonotone(clearance_C_quasistatic, p, s,
+                                       np.linspace(1e-3, 3e4, 120000))
+    st = np.asarray(st, dtype=bool)
+    mbar = float(roots[st][0])
+    d = 1e-4 * mbar
+    C = lambda m: p.theta * g(m, p.Km) + alt_flux_C(m, p)
+    b = (C(mbar + d) - C(mbar - d)) / (2 * d)
+    a = C(mbar) - mbar * b
+    ap = (alt_flux_C(mbar + d, p) - alt_flux_C(mbar - d, p)) / (2 * d)
+    return dict(m_bar=mbar, a=a, b=b,
+                a_enzymatic=p.theta * g(mbar, p.Km) ** 2,
+                a_alternative=alt_flux_C(mbar, p) - mbar * ap,
+                alpha=alt_flux_C(mbar, p), alpha_prime=ap)
+
+
+def recover_from_ab(a, b, m_bar, p: ParamsC):
+    """
+    (theta, K_m) from a fitted tangent, GIVEN alpha. Unique when it exists.
+
+    This is why the parent model has no fibre: alpha is curved, so it
+    contributes to both coefficients, and subtracting its contribution leaves
+    an enzymatic (a_e, b_e) from which a_e/b_e = m_bar^2/K_m fixes K_m
+    outright. Inadmissibility is informative rather than a failure: it says
+    the assumed alpha already accounts for more of the intercept, or more of
+    the slope, than the record contains.
+    """
+    d = 1e-4 * m_bar
+    ap = (alt_flux_C(m_bar + d, p) - alt_flux_C(m_bar - d, p)) / (2 * d)
+    a_e = a - (alt_flux_C(m_bar, p) - m_bar * ap)
+    b_e = b - ap
+    if a_e <= 0.0:
+        return None, None, "alpha already owns the intercept"
+    Km = m_bar ** 2 * b_e / a_e
+    if Km <= 0.0:
+        return None, None, "alpha already owns the slope"
+    return a_e * (Km + m_bar) ** 2 / m_bar ** 2, Km, "ok"
+
+
+def identification_cost_of_Kc(values=(25, 50, 100, 150, 200, 300, 400, 800),
+                              rederive=True):
+    """
+    What K_c costs in the theta recovered from one fitted tangent.
+
+    The published figures for this -- 300 to 457, a factor of 1.52, and no
+    admissible solution above K_c = 200 -- do not reproduce under either
+    convention. With the calibration held the admissible window is two-sided
+    and tight, K_c between about 100 and 300, and inside it theta moves by
+    1.41. The bound being two-sided is the useful part: the record excludes
+    most of the range Remark 12 sweeps.
+    """
+    lin = linearise_at_attractor()
+    out = []
+    for Kc in values:
+        q = replace(PC, Kc=float(Kc))
+        if rederive:
+            q = replace(q, R0=R0_for_peak(q))
+        th, Km, why = recover_from_ab(lin["a"], lin["b"], lin["m_bar"], q)
+        out.append((Kc, th, Km, why))
+    ok = [r[1] for r in out if r[1] is not None]
+    print(f"    K_c and the recovered theta ({'calibration held' if rederive else 'R0 held'}):")
+    for Kc, th, Km, why in out:
+        print(f"      K_c={Kc:5.0f}: " + ("inadmissible -- " + why if th is None
+                                          else f"theta={th:8.2f}  Km={Km:8.2f}"))
+    if ok:
+        print(f"      -> admissible theta spans {min(ok):.1f}..{max(ok):.1f}, "
+              f"factor {max(ok)/min(ok):.2f}")
+    return out
+
+
+def collapse_check(n=12, seed=0):
+    """
+    Is theta_crit a function of the peak of alpha alone?
+
+    Sample the three shape constants over their whole admissible ranges, hold
+    the calibration, and see how much of theta_crit is left moving. The answer
+    is a factor of about 1.4 over three constants spanning a 32-fold, a
+    13-fold and a 3-fold range between them, which is the case for saying that
+    the threshold's exposure is concentrated in the one quantity the clinic
+    can argue about -- whether a null genotype is maintainable -- and not in
+    three constants nobody has measured.
+    """
+    rng = np.random.default_rng(seed)
+    tcs = []
+    for _ in range(n):
+        q = replace(PC, Kc=float(10 ** rng.uniform(1.4, 2.9)),
+                    Mi=float(10 ** rng.uniform(2.0, 3.1)),
+                    rho0=float(rng.uniform(0.35, 1.0)))
+        q = replace(q, R0=R0_for_peak(q))
+        tcs.append(theta_crit_intrinsic(q, S_BASE))
+    tcs = [t for t in tcs if np.isfinite(t)]
+    print(f"    collapse: {len(tcs)} random shape sets at a held calibration give "
+          f"theta_crit {min(tcs):.1f}..{max(tcs):.1f}, factor {max(tcs)/min(tcs):.2f}")
+    return min(tcs), max(tcs)
+
+
 if __name__ == "__main__":
     print("MODEL C")
     fig_phaseline()
@@ -406,3 +636,6 @@ if __name__ == "__main__":
     fig_timeseries()
     fig_basin()
     fig_margin()
+    table_shape()
+    collapse_check()
+    identification_cost_of_Kc()

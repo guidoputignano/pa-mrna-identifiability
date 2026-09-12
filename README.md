@@ -78,6 +78,18 @@ to 1e6, beyond assay precision.
 **Cohort size alone never helps.** N patients at steady state sharing the
 population parameters give N equations in N+2 unknowns. Deficiency 2 for every N.
 
+**The precision of `theta` has a floor no band width beats.** `Var(a_hat)` has a
+`1/n` term that the published derivation dropped, and the metabolite's
+positivity caps a band at twice the operating point, so
+`sd(theta)/theta >= c(n) sigma/(a sqrt n)` with `c(n) <= 2`. The design question
+therefore splits: a floor on the number of perturbation events, set by sigma
+alone, and only above it a requirement on the excursion. At six events the floor
+is 53% even at a load recorded to 2%; 20% precision needs 43 events there.
+
+**Assay variability is the larger noise term whenever the load is well
+recorded.** At steady state an abscissa error acts like an ordinate error
+`b sigma_m`, and the two balance at `CV = 1.08 x (load error)`.
+
 **Two anchors close it exactly.** A null genotype supplies `ke` directly, since
 its equation loses the enzymatic term. One patient observed at two distinct
 loads supplies `Km`. Both are present in the Saudi cohort.
@@ -109,13 +121,15 @@ not remove `s_peak`, which survives in the separate question of whether an
 episode is large enough to cross the separatrix. Only the hazard reformulation
 in open item 2 removes that.
 
-**The attractor-to-separatrix distance is the safety margin**, and it was
-computed nowhere in this repository before. It says how far a patient can be
-pushed before the crisis becomes self-sustaining, closes continuously to zero
-at `theta_crit`, and diverges as theta approaches the baseline load, where the
-patient becomes unconditionally safe at that load. At the illustrative
-`theta = 300` it is 398, against `theta_crit = 167`. Neither A nor B admits
-this quantity at all.
+**The attractor-to-separatrix distance is the safety margin.** It says how far
+a patient can be pushed before the crisis becomes self-sustaining, closes
+continuously to zero at `theta_crit`, and diverges as theta approaches the
+baseline load, where the patient becomes unconditionally safe at that load. At
+the illustrative `theta = 300` it is 954, against `theta_crit = 151`. Neither A
+nor B admits this quantity at all. **Read it as an order of magnitude, not as a
+value**: over an 8x range in `M_i` the margin runs 509 to 3275, where
+`theta_crit` moves by 1.37x. The threshold is robust to the shape constants and
+the margin is not.
 
 **Model B gives a condition, not a frequency.** The answer it returns is the
 inequality `s > theta + ke`, written in two quantities (`s_peak`, `m_bar`) that
@@ -123,7 +137,8 @@ are never measured, and it is silent on how often the threshold is crossed.
 Frequency is the one thing the records hold reliably. Closing that gap needs
 the hazard reformulation in open item 2, not a better threshold.
 
-**The identification determinant does not depend on which channel is perturbed.**
+**The identification determinant does not depend on which channel is perturbed
+-- given `Km`, and only given `Km`.**
 Perturb `k_e` with carnitine or `theta` with the therapy: the 2x2 system for
 `(theta, ke)` has the same coefficient matrix either way, and
 
@@ -132,10 +147,24 @@ det = g(m)*m' - g(m')*m = m*m'*(m'-m) / ((Km+m)*(Km+m'))
 ```
 
 depends only on the two metabolite levels. The perturbation enters the
-right-hand side, not the matrix. So the analysis can be done now, on the input
-that is in every chart, and it transfers unchanged to the input that is in no
-chart. What the therapy would add is statistical, not structural: an exogenous
-schedule instead of one confounded by indication.
+right-hand side, not the matrix.
+
+This carries to the observability Gramian of the trajectory, and it carries
+exactly as far as it is written. Given `Km`, the two channels differ by at most
+5% in `det G` at a matched trajectory, always favouring the therapy, because
+the sensitivity forcings are functions of the state alone and only the shared
+decay rate differs: `J_therapy - J_carnitine = -kappa u g(m) <= 0`. Posing the
+question on carnitine is conservative.
+
+**With `Km` unknown it fails**, by six orders of magnitude in `det G` and 46x
+to 807x in `sd(ln theta)`. The `Km` sensitivity is forced by
+`-(theta + Delta(t)) Km dg/dKm`, a prefactor the therapy modulates and carnitine
+cannot. So **the excursion is channel-blind and the curvature is not**: carnitine
+buys the excursion, and only a perturbation multiplying the enzymatic term buys
+the curvature -- or an excursion carrying the patient into the neighbourhood of
+`Km`, which is the excursion clinical management exists to prevent. Since the
+fibre below exists precisely because `Km` is unknown, the two central results
+are in tension in the form they were written.
 
 ---
 

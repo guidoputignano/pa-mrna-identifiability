@@ -136,25 +136,68 @@ The measured plasma biomarker stands in for the intracellular enzyme substrate. 
 shortcut; the true system has at least two states with an uncertain map between them.
 \end{assumption}
 
-\paragraph{The three markers.}
+\paragraph{The marker is 3-hydroxypropionate.}
 \label{sec:marker}
-Three markers are reported together in this disease, and they are not interchangeable.
-Over a three-year natural history cohort, a $50\%$ lower 3-HP is associated with a
-decompensation rate ratio of $0.7$ ($p<0.01$) and a $50\%$ lower C3 with $0.6$
-($p=0.017$), while 2-methylcitrate shows no association with decompensation at all: rate
-ratio $1.0$, $p=0.84$~\cite{natural_history}. % C19
-Deep phenotyping of acute decompensation gives a different ordering. There C3 is among the
-diagnostic biomarkers reported essentially unaltered through the event, while 2-MC is among
-the strongest correlates of plasma ammonia during it~\cite{amd_phenotyping}. % C37
-A marker that predicts the next event and a marker that tracks the current one need not be
-the same marker.
+Earlier drafts left $m$ as ``the plasma marker'' on the grounds that nothing in Sections 3
+and 4 depends on the choice. That is true of the algebra and false of the decision the note
+is built around, because the three candidates differ in whether they are associated with the
+endpoint at all. The choice is fixed here, and the reasons are decision-relevant rather than
+analytical.
 
-This note therefore leaves $m$ as ``the plasma marker'' and the choice open, because
-nothing in Sections 3 and 4 depends on it. Proposition~\ref{prop:degeneracy} requires only
-that total clearance be affine over the range a patient's marker visits, and that hypothesis
-is stated in whichever marker is measured. The determinant \eqref{eq:det}, the conditioning
-and the anchor structure are the same under any of the three. Model C needs a definite
-observable for its separatrix, and Section~7 records the choice as a design question.
+\textbf{The endpoint.} Over a three-year natural history cohort, a $50\%$ \emph{lower}
+plasma 3-HP is associated with a decompensation rate ratio of $0.7$ (95\% CI $0.6$ to $0.9$,
+$p<0.01$); a $50\%$ lower C3 with $0.6$ ($p=0.017$); and 2-methylcitrate shows no
+association at all, rate ratio $1.0$, $p=0.84$~\cite{natural_history}. % C19
+The conditioning of those ratios is worth stating explicitly because reading it the other
+way inverts the conclusion. The ratio is attached to a lower concentration, so a rate ratio
+below one means \emph{fewer events when the marker is lower}: 3-HP is a risk marker in the
+expected direction for a toxic overflow metabolite, not a protective one.
+
+\textbf{C3 is excluded on the perturbation, and the argument is structural.} C3 is
+propionylcarnitine, the product of the carnitine conjugation route. Carnitine
+supplementation therefore \emph{raises} C3 while lowering the organic acids, so the
+selective perturbation of Section~\ref{sec:selective} enters the observation with the wrong
+sign on that channel: the input the whole identification rests on would appear to worsen the
+patient. No arrangement of the algebra repairs that, and it disqualifies C3 whatever its
+rate ratio.
+
+\textbf{2-MC is excluded on the endpoint, and its strength lies in the arm this note
+excludes.} 2-MC is among the strongest correlates of plasma ammonia \emph{during} an
+event~\cite{amd_phenotyping}, % C37
+and by Remark~\ref{rem:scope} the behaviour through a decompensation is precisely where the
+analysis here does not go. A marker that tracks the current crisis and a marker that
+predicts the next one need not be the same marker, and this note is about the second.
+
+\textbf{3-HP carries C3's immunity without its defect.} It is not a carnitine conjugate, so
+the sign argument above does not touch it; it has the association with the endpoint that
+2-MC lacks; and it is the covariate the natural history study's own longitudinal hazard is
+already fitted on~\cite{natural_history}, % C28
+so the reformulation in Section~7 substitutes into machinery that exists rather than
+proposing new machinery.
+
+\begin{remark}[A marker panel, and whether the identifiability budget affords one]
+\label{rem:panel}
+The trial measures four markers together, 3-HP, 2-MC, C3 and
+$n$-propionylglycine~\cite{trial_phase12}, which invites a multi-output observation model:
+one latent pool, a channel-specific gain onto each marker, at a cost of one scaling
+parameter per channel. Whether that is affordable is an identifiability-budget question, and
+the budget answers it.
+
+With $J$ channels observed as scaled copies of one pool, and \emph{independent} assay noise
+on each, the assay contribution to $\sigma$ averages down as $J^{-1/2}$. The error in the
+recorded load does not average at all: it is common to every channel, because every channel
+is fitted against the same ordinate. So by \eqref{eq:crossover} the panel pays exactly in
+the regime where the assay term dominates, which is where the load is well recorded, and
+pays nothing where it is not. At a load recorded to $2\%$ a four-marker panel cuts $\sigma$
+by $1.65$; at $10\%$ it cuts it by $1.07$ and at $20\%$ by $1.02$.
+
+The recommendation is therefore conditional and in that order: \textbf{buy the load record
+first, and the panel only after}. A panel bought first is bought against a noise term it
+cannot touch. Fitting the four channels also costs three gains, and two of the four are
+excluded above on grounds the averaging does not repair, so the honest version of the panel
+is 3-HP and $n$-propionylglycine, a glycine conjugate that carnitine does not raise, with
+$J = 2$ and a factor of $1.31$ at a load recorded to $2\%$, falling to $1.05$ at $10\%$.
+\end{remark}
 
 \subsection{The structural obstruction}
 
@@ -162,6 +205,26 @@ Write $C(m) = \theta\, g(m) + k_e\, m$ for the total clearance, and let
 $M = [m_{\min}, m_{\max}]$ be the range of metabolite levels a given patient actually
 visits between clinic visits. Clinical management exists to keep $M$ narrow. The
 obstruction is stated as a property of that range.
+
+\paragraph{Two conventions, fixed here because everything downstream turns on them.}
+$\Delta = m_{\max} - m_{\min}$ is the \textbf{full width} of $M$, not a half-width, and
+$\bar m$ is the point the affine fit is taken at and the sample mean of the band. Together
+they carry a constraint that Section~\ref{sec:design} previously walked past. The
+metabolite cannot be negative, so $m_{\min} \ge 0$ and
+\begin{equation}
+\frac{\Delta}{\bar m} \;\le\; 2 .
+\label{eq:bandceiling}
+\end{equation}
+\textbf{A band wider than twice the operating point does not exist.} Design figures quoted
+as band widths above $200\%$ of $\bar m$ describe an interval whose foot is below zero, and
+Section~\ref{sec:design} is where that matters.
+
+The convention also moves a number. The gap between the tangent at $\bar m$ and a
+least-squares fit over the band is $0.09\%$ at $\Delta/\bar m = 10\%$ and $8.8\%$ at
+$\Delta/\bar m = 100\%$, where the latter means $m \in [\bar m/2,\, 3\bar m/2]$. Read as a
+half-width the same phrase would mean $m \in [0,\, 2\bar m]$ and the gap would be $35.4\%$,
+four times larger. The distinction is negligible in the narrow band the next proposition is
+about and is not negligible in the wide band it recommends buying.
 
 \begin{proposition}[Degeneracy]
 \label{prop:degeneracy}
@@ -171,14 +234,8 @@ function at the resolution of the assay: there exist constants $a$ and $b$ with
 \sup_{m \in M} \bigl| C(m) - (a + b\,m) \bigr| \;\le\; \varepsilon ,
 \label{eq:affine}
 \end{equation}
-$\varepsilon$ being the measurement error.\footnote{$a$ and $b$ below are the tangent
-coefficients at $\bar m$. A least-squares fit over the band returns something slightly
-smaller, by $0.09\%$ at $\Delta/\bar m = 10\%$ but by $8.8\%$ at $\Delta/\bar m = 100\%$,
-computed numerically at the illustrative values. Here and throughout, $\Delta$ is the
-\emph{full width} of the band, so $\Delta/\bar m = 100\%$ means $m \in [\bar m/2,\,
-3\bar m/2]$. Read as a half-width the same phrase means $m \in [0, 2\bar m]$ and the gap is
-$35.4\%$. The distinction is negligible in the narrow
-band the proposition is about and is not negligible in the wide band it recommends buying.}
+$\varepsilon$ being the measurement error. ($a$ and $b$ below are the tangent coefficients
+at $\bar m$; the preceding paragraph gives what a least-squares fit returns instead.)
 Then data collected while the patient remains in $M$ determine $a$ and $b$, and nothing
 beyond them. With $\bar m \in M$ the point at which
 the fit is taken, the two coefficients are
@@ -421,6 +478,50 @@ $\delta = \kappa u_c\, m'$ for carnitine, $\delta = \Delta\, g(m')$ for the ther
 $\delta = s - s'$ for a change of load.
 \end{proposition}
 
+\begin{remark}[How far channel-blindness carries, and where it stops]
+\label{rem:channel_scope}
+Proposition~\ref{prop:channel} is proven at steady state and for the pair $(\theta, k_e)$.
+Both restrictions have been checked against the trajectory, because the use the note makes
+of the proposition -- the question posed on carnitine and answered for the therapy --
+quietly drops them.
+
+\textbf{The steady-state restriction is harmless.} Integrating the model with its relative
+sensitivities and comparing the observability Gramians of two inputs chosen to produce the
+\emph{same} trajectory, the $(\theta, k_e)$ sub-Gramians differ by at most $5\%$ in
+determinant and $2.3\%$ in $\operatorname{sd}(\ln\hat\theta)$, over excursions from $5\%$ to
+$76\%$. The mechanism is exact rather than numerical. The two sensitivity forcings,
+$-\theta g(m)$ and $-k_e m$, are functions of the state alone and are therefore identically
+channel-blind; the only channel dependence anywhere is the decay rate they share, and at a
+matched trajectory
+\begin{equation}
+J_{\Delta}(t) - J_{u_c}(t) \;=\; -\,\kappa u_c(t)\, g(m(t)) \;\le\; 0 .
+\label{eq:jgap}
+\end{equation}
+The therapeutic input decays the sensitivities more slowly, so it returns the larger
+Gramian, always. Posing the question on carnitine is therefore \emph{conservative}: it
+understates what the therapy would deliver, by a few per cent.
+
+\textbf{The two-parameter restriction is not harmless, and it is the one the note relies
+on.} Adding $K_m$ to the parameter vector -- which is the situation Remark~\ref{rem:fibre}
+describes, since the fibre exists precisely because $K_m$ is unknown -- the two channels
+stop being interchangeable by six orders of magnitude in $\det G$ and by a factor of $46$ to
+$807$ in $\operatorname{sd}(\ln\hat\theta)$. The reason is structural. The $K_m$ sensitivity
+is forced by $-(\theta + \Delta(t))\,K_m\,\partial g/\partial K_m$, and that prefactor is
+modulated by the therapeutic input and constant under carnitine. The ratio of the $K_m$
+forcing to the $\theta$ forcing is $-(1 + \Delta(t)/\theta)\,K_m/(K_m + m)$: the therapy
+moves it at will, and carnitine can move it only through $m$. At an operating point with
+$\bar m/K_m = 0.1$ the two sensitivities are collinear to $|\!\cos| = 0.99994$ under
+carnitine and $0.967$ under the therapy.
+
+\textbf{So the excursion is channel-blind and the curvature is not.} Carnitine buys the
+excursion, which is what Proposition~\ref{prop:channel} says and what is true. It cannot buy
+the separation of $\theta$ from $K_m$ except through the state, and it buys that only by
+carrying the patient into the neighbourhood of $K_m$: moving the operating point from
+$m/K_m = 0.1$ to $m/K_m = 2$ drops the collinearity to $0.982$ and raises $\det G$ by
+fifteen orders of magnitude. That excursion is the one clinical management exists to
+prevent, which is the obstruction of Section~\ref{sec:structure} arriving by a second route.
+\end{remark}
+
 \begin{proposition}[Formal identifiability, practical ill-conditioning]
 \label{prop:illcond}
 \emph{Given $K_m$}, the determinant \eqref{eq:det} is non-zero whenever $m \neq m'$, so the
@@ -631,6 +732,42 @@ this subsection becomes unnecessary.
       other.
 \end{enumerate}
 
+\begin{remark}[Which threshold the cancellation is proven against, and what that costs]
+\label{rem:which_threshold}
+The cancellation in \eqref{eq:mufibre} is derived against $\thc^{\mathrm{A}}$ of
+\eqref{eq:thcrit}, which imports $\mtol$, a clinical convention. Proposition
+\ref{prop:intrinsic} defines a threshold that does not. The natural question is whether the
+cancellation survives the substitution, and it does not, for a reason worth stating
+precisely: \textbf{the premise is absent, not the conclusion false}.
+
+The cancellation is a statement about a degeneracy. It says that along the one-parameter
+family a band leaves open, the margin is linear where $\theta$ is quadratic. In the model
+Proposition~\ref{prop:intrinsic} lives in, that family does not exist. The alternative
+channel there is curved, so it contributes to \emph{both} coefficients of an affine fit, and
+subtracting its contribution leaves an enzymatic pair $(a_e, b_e)$ from which
+$K_m = \bar m^2 b_e/a_e$ follows outright. Given $\alpha$, a fitted tangent determines
+$(\theta, K_m)$ uniquely, to machine precision at the illustrative constants. There is no
+fibre for a margin to be linear along.
+
+So the margin result is stated here for the operational threshold, and that is a limitation
+rather than a choice. Two things go with it.
+
+First, \textbf{the identity $a = \theta g(\bar m)^2$ is a property of this model and not of
+the one it is a reduction of.} It holds when the alternative channel is linear through the
+origin. Under the parent model the intercept is
+$a = \theta g(\bar m)^2 + [\alpha(\bar m) - \bar m\,\alpha'(\bar m)]$, and at the nominal
+constants the second term is $374$ against the first's $61$. The alternative channel owns
+the intercept there, which is exactly the term the capacity was supposed to be carried by.
+
+Second, \textbf{the intrinsic threshold does not eliminate the convention; it relocates
+it.} What leaves is $\mtol$, an analytical tolerance with nothing behind it. What arrives is
+$\alpha$'s constants: $K_c$ and $M_i$, which nothing measures, $\rho_0$, and above all the
+calibration that fixes $R_0$, which is the claim that a patient with no residual enzyme
+cannot be maintained at baseline load. The relocation is a real gain, because that last one
+is a clinical assertion a clinician can dispute, where $\mtol$ is a number chosen to make a
+formula close. It is not an elimination, and Remark~\ref{rem:shape} prices what arrives.
+\end{remark}
+
 \subsection{What the design would have to deliver}
 \label{sec:design}
 
@@ -659,41 +796,87 @@ uncertainty in the location.
 neither term is measured. At the one documented schedule, six-monthly visits
 (Table~\ref{tab:epistemic}), $\dot m$ is not recoverable at all: the metabolite's time
 constant is days. The accessible design is therefore steady states, where $\dot m = 0$ and
-$C(m_i) = s_i$. $\sigma$ is then dominated by error in the recorded substrate load, with
-assay variability a smaller term, and is amplified into $\theta$ by the factor of
-Figure~\ref{fig:A2}~(right). The steady-state framing is what makes the argument for
+$C(m_i) = s_i$. The steady-state framing is what makes the argument for
 Proposition~\ref{prop:degeneracy} immediate. And $n$ counts \emph{instrument events}, the
 quasi-exogenous carnitine steps of Section~\ref{sec:instruments}, not clinic visits, which
 is a much smaller number.
 
+\paragraph{Two noise terms, and which one binds.} At steady state the ordinate is the
+recorded load and the abscissa is the assayed metabolite, so an abscissa error $\sigma_m$
+acts on the fit like an ordinate error $b\,\sigma_m$ and the two add in quadrature. The two
+terms balance when
+\begin{equation}
+b\,\mathrm{CV}\,\bar m \;=\; f\, C(\bar m),
+\qquad\text{i.e.}\qquad
+\mathrm{CV} \;=\; \frac{C(\bar m)}{b\,\bar m}\, f \;\approx\; 1.08\, f ,
+\label{eq:crossover}
+\end{equation}
+with $f$ the relative error in the recorded load, because $b\bar m$ and $C(\bar m)$ differ
+by under $8\%$ at these values. \textbf{The assay term therefore dominates at every load
+recorded to better than roughly the assay's own coefficient of variation.} An earlier
+version of this paragraph asserted the reverse without checking it. At a load recorded to
+$2\%$ and a $5\%$ assay the assay term is $14.9$ against the load's $6.5$, and the total
+$\sigma$ is two and a half times what the load alone would give.
+
+\paragraph{The variance has a floor, and \eqref{eq:thetaerr} dropped it.} Equation
+\eqref{eq:varfit} has two terms and \eqref{eq:thetaerr} keeps only the second. The first is
+$1/n$, and it does not move with the band width, so it binds in exactly the wide-band regime
+this section recommends buying. Writing $S = \sum_i (m_i - \bar m)^2$,
+\begin{equation}
+\frac{\operatorname{sd}(\hat\theta)}{\theta} \;=\; \frac{\sigma}{a}
+\sqrt{\frac{1}{n} + \frac{\bar m^2}{S}}
+\;\;\ge\;\; \frac{c(n)\,\sigma}{a\sqrt n},
+\qquad
+c(n) = \sqrt{1 + \frac{3(n-1)}{n+1}} \;\le\; 2 ,
+\label{eq:floor}
+\end{equation}
+for $n$ evenly spaced samples, the bound following from \eqref{eq:bandceiling} and attained
+only as the band's foot reaches $m = 0$. The best any design supported on $[L, H]$ can do is
+$\operatorname{sd}(\hat a) = \sigma (H+L)/(\sqrt n (H-L))$, obtained by splitting the samples
+between the two ends in the optimal proportion, which is $c(n) \to 1$: an evenly spaced band
+is at worst a factor of two off the best use of the same excursion, and neither escapes
+$\sigma/(a\sqrt n)$.
+
+The consequence is a change of kind rather than of value. \textbf{The design requirement
+splits into two pieces that do not trade against each other}: a floor on $n$, set by
+$\sigma$ alone, below which no excursion whatever delivers the precision; and, above that
+floor, a requirement on the excursion. The published version of this section had no floor
+in it, and so could quote band widths of $460\%$, $920\%$ and $1841\%$ of $\bar m$ as design
+requirements. By \eqref{eq:bandceiling} none of those is a band.
+
 \paragraph{The numbers, as a function of what the load is known to.} Nothing in this note
-bounds $\sigma$, so nothing below is quoted at a point. Condition \eqref{eq:affine} is
-checkable on the same records and asks the same of them: a quadratic fit over a band of full
-width $\Delta$ has $\operatorname{sd}(\hat c_2) = \sqrt{180}\,\sigma/(\sqrt{n}\Delta^2)$ in
-the uniform-design limit, against a true $|c_2| = \theta K_m/(K_m+\bar m)^3$. Taking $n = 6$
-instrument events, and writing $\sigma$ as a fraction of the recorded load:
+bounds $f$, so nothing below is quoted at a point. The second criterion is that condition
+\eqref{eq:affine} be checkable on the same records: a quadratic fit has
+$\operatorname{sd}(\hat c_2)$ against a true $|c_2| = \theta K_m/(K_m+\bar m)^3$, and it is
+stated here as \emph{the top of the excursion} rather than as a band width, because the
+curvature of $C$ is at high $m$, so that band must run upward, and because the top of the
+excursion is what a safety constraint bounds and what a clinician can be asked for. Taking
+$n = 6$ instrument events and a $5\%$ assay:
 
 \begin{center}
-\begin{tabular}{@{}rrrr@{}}
-\toprule
-$\sigma$ & rel.\ error of $\hat\theta$ & $\Delta$ for $20\%$ & $\Delta$ for curvature \\
-(\% of load) & at a $10\%$ band & precision & at $2\sigma$ \\
-\midrule
- 2\% &  368\% &  184\% & 177\% \\
- 5\% &  920\% &  460\% & 280\% \\
-10\% & 1841\% &  920\% & 396\% \\
-20\% & 3682\% & 1841\% & 560\% \\
-\bottomrule
-\end{tabular}
+\scriptsize
+\input{../results/tables/tab_A_design}
 \end{center}
 
-\textbf{The instruments of Section~\ref{sec:instruments} reach $70\%$}
-(Figure~\ref{fig:A3}), short of every entry in either right-hand column, and short by a
-factor that grows from about $2.5$ to about $26$ as the load becomes less well recorded.
-That is the answer to ``can $\theta$ be identified from clinical data''. It was previously
-carried only by a figure caption, and it holds conditionally: only a load known to better
-than about $1.5\%$ of baseline would bring either requirement within a factor of two of what
-the records supply, and the note says throughout that $s$ is partially recorded.
+Three readings, in order of how much they change the conclusion.
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item \textbf{At six instrument events the question of $20\%$ precision does not arise.}
+      The floor is $53\%$ even at a load recorded to $2\%$. Reaching $20\%$ needs $43$
+      instrument events at that load and $714$ at a load recorded to $20\%$, and $n$ counts
+      quasi-exogenous carnitine steps, of which a chart holds a handful.
+\item \textbf{The curvature criterion asks the patient to go up, and the instruments only
+      take them down.} Carnitine supplementation raises clearance and lowers $m$; so does a
+      weight-based dose increase after growth, and so do the cyclical antibiotics. The one
+      instrument in Section~\ref{sec:instruments} that raises $m$ is an involuntary dose
+      reduction, whose amplitude is set by a stock-out rather than by a design. The
+      requirement is an excursion to between $2.9$ and $5.4$ times the operating point, and
+      it is not that the instruments fall short of it by a factor; it is that they move the
+      patient the other way.
+\item \textbf{The earlier ``short by a factor of about $2.5$ to $26$'' is superseded.} It
+      compared a requirement stated as $\Delta/\bar m$ with an achievement stated as
+      $\Delta/m_{\max}$, and it was computed against a $\sigma$ carrying only the load term.
+\end{enumerate}
 
 \begin{remark}[The noise is in the abscissa, and the fit announces its own failure]
 \label{rem:eiv}

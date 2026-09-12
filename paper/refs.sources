@@ -85,6 +85,17 @@ coa_sequestration       doi:10.1136/adc.58.11.916
 # internal. IN VITRO, RAT: the limitation is stated in the text.
 octn2_renal_transport   doi:10.1016/j.bbamem.2003.12.001
 
+# --- the reference standard for capacity ----------------------------
+# Modified 1-13C-propionate breath test in 57 MMA subjects (19 transplant
+# recipients) and 16 healthy volunteers. Isotopomer enrichment 13CO2/12CO2 in
+# exhaled breath after an enteral bolus of sodium-1-13C-propionate, normalised
+# for CO2 production. TEST REPEATABILITY: mean coefficient of variation 6.9%
+# in controls and 12.8% in patients, "despite widely variable serum
+# methylmalonic acid concentrations in the patients". Lower oxidation in
+# mut0 and cblB; near normal in cblA and mut-; complete restoration to
+# control levels after liver transplant. NOTE: the cohort is MMA, NOT PA.
+breath_test_mma         doi:10.1038/s41436-021-01143-8
+
 # --- the therapy ----------------------------------------------------
 # 16 participants, 346 doses / 15.69 person-years. 70% risk reduction
 # among the 8 who reported MDEs pretreatment. Single-arm.

@@ -1,0 +1,30 @@
+\begin{tabular}{@{}p{0.07\textwidth} p{0.07\textwidth} p{0.20\textwidth} p{0.07\textwidth} p{0.45\textwidth}@{}}
+\toprule
+\textbf{Symbol} & \textbf{Value} & \textbf{Meaning} & \textbf{Source} & \textbf{What fixes it, or what assuming it costs} \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{The local identification model}} \\
+\addlinespace[2pt]
+$\bar m$ & 10 & operating point: the level management holds the patient at & \textsc{assumed} & illustrative. Every design quantity is reported relative to it, so its absolute value cancels out of the conclusions \\
+$\theta$ & 3000 & residual capacity of the enzymatic channel & \textsc{assumed} & illustrative. It is the quantity the note says cannot be identified, so no conclusion may depend on its value \\
+$K_m$ & 100 & half-saturation of the enzymatic channel, at the plasma level & \textsc{assumed} & illustrative, and \emph{not} the in vitro Michaelis constant of PCC ($0.29$ mM for propionyl-CoA), which is a different molecule in a different compartment. The ratio $\bar m/K_m = 0.1$ is what the excitation condition is stated against \\
+$k_e$ & 5 & alternative clearance rate constant & \textsc{assumed} & illustrative. Chosen so the enzymatic channel carries most of the flux, which is the favourable case for identification \\
+$\mtol$ & 40 & tolerable metabolite level & \textsc{assumed} & a clinical convention, not a property of the patient. The width of the undetermined window runs $1.2\%$ to $67\%$ as it moves, so this is the most expensive assumption in the local model \\
+$\spk/s_{\mathrm{base}}$ & 1.50 & illness amplitude, as a fold of the patient's own baseline load & \textsc{assumed} & stated as a fold rather than absolutely, because an absolute figure disagreed between sections. Model C's own fold sits at 1.18 \\
+$\kappa$ & not assigned & gain from recorded carnitine dose onto $k_e$ & \textsc{assumed} & never assigned a value. Only the product $\kappa u_c$ enters, as a lumped increment on $k_e$, and every figure varies that product directly. Proposition~\ref{prop:illcond} is conditional on it: an unknown $\kappa$ leaves the carnitine route two equations in four unknowns \\
+$\lambda$ & not assigned & decay rate of the therapeutic increment & \textsc{assumed} & never assigned a value and never used numerically. It enters only the statement of \eqref{eq:input}. The dosing interval it would have to be read against is the biweekly schedule selected for mRNA-3927 \\
+$\sigma$ & a family & standard deviation of the ordinate of the fit & \textsc{assumed} & deliberately not assigned. Every design conclusion is reported as a function of it, because nothing in this note bounds how well the substrate load is recorded. The assay contributes $b\,\sigma_m$ to the same total \\
+$\mathrm{CV}$ & 5\% & analytical variability of the marker assay & \textsc{assumed} & illustrative, and a \emph{percentage}: it is never absolute flux. It enters the ordinate as $b\,\mathrm{CV}\,\bar m$ \\
+\addlinespace
+\midrule
+\multicolumn{5}{@{}l}{\emph{The parent model and its equilibrium reduction}} \\
+\addlinespace[2pt]
+$\theta$ & 300 & residual capacity, parent model & \textsc{assumed} & illustrative, about $10\%$ of normal. Chosen to sit above $\thc^{\,\mathrm{int}}$ so the patient has a margin to measure \\
+$K_m$ & 100 & half-saturation of the enzymatic channel & \textsc{assumed} & as above, and shared with the local model so the two can be compared \\
+$K_c$ & 100 & half-saturation of the conjugation step & \textsc{assumed} & no measurement, and no reason a conjugation reaction should share an enzyme's half-saturation. Cost bounded in Remark~\ref{rem:shape} \\
+$M_i$ & 300 & metabolite level at which acylcarnitine competition doubles the non-conjugative loss & \textsc{assumed} & no measurement. Previously not written down anywhere, which is why Figure~\ref{fig:C5} could not be reproduced from the paper. Cost bounded in Remark~\ref{rem:shape} \\
+$\rho_0$ & 0.50 & basal non-conjugative loss relative to conjugation, $\delta_0/k$ & \textsc{assumed} & no direct measurement. Bounded above by $1$, since the carnitine drain in this disease is dominated by propionylcarnitine, and below by the measured direction of free-carnitine excretion \\
+$R_0$ & 1122.0 & carnitine replenishment & \textsc{derived} & \textbf{not free}. Fixed by requiring the alternative route alone to peak at $500$ against a baseline load of $600$, so that a patient with $\theta = 0$ cannot be maintained. Changing $K_c$, $M_i$ or $\rho_0$ moves that peak and $R_0$ must be re-derived \\
+$s_{\mathrm{base}}$ & 600 & baseline propiogenic load & \textsc{assumed} & illustrative. Sets the scale everything else in the parent model is quoted against \\
+$k$ & cancels & conjugation rate constant & \textsc{derived} & drops out of the quasi-steady reduction \eqref{eq:alpha} exactly, so the reduced clearance does not depend on it and it is a free scale in the two-state system \\
+\bottomrule
+\end{tabular}

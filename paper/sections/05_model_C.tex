@@ -64,13 +64,25 @@ constants: $R_0$ and $K_c$ enter \eqref{eq:alpha} exactly as they enter \eqref{e
 no rescaling, and $k$ cancels. Everything from Section~\ref{sec:intrinsic} onwards is
 carried out on $C(m;\theta) = \theta g(m) + \alpha(m)$.
 
-\paragraph{The constants.} They are illustrative, and a constraint fixes two of them
-outright. $R_0$ is set so the alternative route alone peaks at $500$ against a baseline load
-of $600$, so that a patient with $\theta = 0$ cannot be maintained, which the severity of
-null genotypes requires. $\rho_0 = 0.5$ sits in the window the next paragraph leaves open.
-$K_c$ is arbitrary: it is set equal to $K_m$, and there is no measurement behind that and no
-reason the half-saturation of a conjugation reaction should match that of an enzyme.
-Section~\ref{sec:intrinsic} reports what the arbitrariness costs.
+\paragraph{The constants.} Every one of them is in Table~\ref{tab:params} with its value and
+its source, which is a correction and not a formality: $M_i$ was previously stated nowhere
+in this note, so Figure~\ref{fig:C5} could not be reproduced from the paper, and its value
+had to be recovered from the arithmetic of the paragraph after next. It is $M_i = 300$.
+
+One constraint fixes $R_0$ outright. It is set so the alternative route alone peaks at $500$
+against a baseline load of $600$, so that a patient with $\theta = 0$ cannot be maintained,
+which the severity of null genotypes requires. $R_0$ is therefore \emph{not} a free
+constant, and $\alpha$ is exactly proportional to it, so moving $K_c$, $M_i$ or $\rho_0$
+moves the peak and $R_0$ must be re-derived. A sensitivity analysis that holds $R_0$ while
+moving one of the other three is sweeping parameter sets that violate the model's own
+calibration, and reports the sensitivity to that calibration as though it were sensitivity
+to the shape constant. Remark~\ref{rem:shape} keeps the two apart.
+
+$K_c$, $M_i$ and $\rho_0$ have no measurement behind any of them. $K_c$ is set equal to
+$K_m$, and there is no reason the half-saturation of a conjugation reaction should match that
+of an enzyme; $M_i$ is the level at which acylcarnitine competition doubles the
+non-conjugative loss, and nothing measures it; $\rho_0 = 0.5$ sits inside a window the next
+paragraph leaves open. Remark~\ref{rem:shape} reports what all three cost.
 
 \paragraph{Carnitine excretion, predicted and measured.}
 Absolute urinary free carnitine is the filtered load times the fraction not recovered. In
@@ -80,9 +92,17 @@ carnitine of $5.7$~$\mu$M against a normal $37 \pm 8$~\cite{carnitine_pa_child} 
 makes the load $6.5$ times lower, and at the attractor the fraction rises only $1.3$-fold,
 so the model predicts absolute excretion at about a fifth of normal. That is the direction
 measured~\cite{carnitine_excretion_pa}. % C41
-The prediction fails only above $m \approx 1650$, some $1.6$ times the separatrix. The model
-satisfies this constraint; it does not derive it, and the constraint is what excludes
-$\rho_0$ below about $0.35$, where the separatrix moves far enough out to reverse the sign.
+The prediction fails once $1 + m/M_i$ exceeds $37/5.7$, that is above
+$m \approx 5.5\,M_i = 1650$, some $1.6$ times the separatrix. This paragraph is the
+arithmetic $M_i$ had to be recovered from, and it is now reproducible from
+Table~\ref{tab:params} instead.
+
+The model satisfies the constraint; it does not derive it. What the constraint excludes is
+$\rho_0$ below $0.20$, where the separatrix moves far enough out to reverse the sign. An
+earlier version of this sentence put that bound at $0.35$, which is the answer obtained by
+holding $R_0$ while moving $\rho_0$: that sweep breaks the calibration above, and is the
+same conflation Remark~\ref{rem:shape} separates. The constraint does not bound $M_i$ at
+all, in either direction, over any range worth sweeping.
 
 \begin{figure}[!htbp]
 \centering
@@ -270,13 +290,48 @@ Figures~\ref{fig:C1} and \ref{fig:C2} are $42\%$ and $50\%$ above baseline, clea
 factors of $2.4$ and $2.8$. The margin of Figure~\ref{fig:C5} is measured in metabolite and
 is large; the excursion that consumes it is measured in load and is not.
 
-\begin{remark}[The cost of $K_c$]
-\label{rem:kc}
-$K_c$ has no measurement behind it, and no reason the half-saturation of a conjugation
-reaction should equal that of an enzyme. Its cost is bounded: over
-$K_c$ from $25$ to $800$, a thirty-two-fold range, $\thc^{\,\mathrm{int}}$ spans $186$ to
-$120$, a factor of $1.56$. The threshold is weakly sensitive to a constant the note cannot
-pin down, which is the most that can be said for it.
+\begin{remark}[What the three unmeasured shape constants cost, and where the cost actually
+falls]
+\label{rem:shape}
+$K_c$, $M_i$ and $\rho_0$ have the same status: chosen, with no measurement behind any of
+them. An earlier version of this remark bounded $K_c$ and stopped, which left the impression
+that $K_c$ was the expensive one. It is not, and the ordering is not the interesting part
+of the answer.
+
+\begin{center}
+\scriptsize
+\input{../results/tables/tab_C_shape}
+\end{center}
+
+Three things follow, and the second is the one that matters.
+
+\textbf{First, on a common footing all three are cheap, and $M_i$ is cheaper than $K_c$.}
+Holding the calibration that fixes $R_0$, an eight-fold range in $M_i$ moves
+$\thc^{\,\mathrm{int}}$ by a factor of $1.37$ against $K_c$'s $1.56$ over thirty-two-fold,
+and $\rho_0$ across its whole admissible window moves it by $1.6\%$. Sweeping the three
+together over those ranges leaves $\thc^{\,\mathrm{int}}$ inside a factor of $1.4$.
+\textbf{The threshold is very nearly a function of the peak of $\alpha$ alone}, so its
+exposure is concentrated not in three constants nobody has measured but in one clinical
+claim: that a patient with no residual enzyme cannot be maintained at baseline load. That
+claim can be argued with a clinician. The shape constants cannot.
+
+The column beside it is what happens when $R_0$ is held instead. The apparent sensitivity
+inflates by an order of magnitude and the ordering reverses, $\rho_0$ becoming the worst of
+the three by a factor of nine hundred, and at one end of each sweep the threshold goes
+vacuous. None of that is sensitivity to the shape constant; it is the peak of $\alpha$
+crossing the baseline load, which the calibration exists to prevent.
+
+\textbf{Second, the margin is not protected the way the threshold is.} The separatrix sits
+where $\alpha$ has decayed, and $\alpha$ decays on the scale of $M_i$, so the margin
+inherits $M_i$ almost linearly where $\thc^{\,\mathrm{int}}$ does not: over the same
+eight-fold range it runs from $509$ to $3275$. Figure~\ref{fig:C5} quotes $954$. That figure
+should be read as an order of magnitude and not as a value, and the quantity
+Section~\ref{sec:intrinsic} calls ``the clinically decisive object'' is the one this model
+pins down least well.
+
+\textbf{Third, the well-posedness claim survives and the quantitative claim does not.}
+Proposition~\ref{prop:intrinsic} is a structural statement and no shape constant touches it.
+What the constants move is where the threshold sits and how much room is left above it.
 \end{remark}
 
 \begin{remark}[The limit of the construction]
@@ -315,12 +370,17 @@ and only it removes $\spk$.
       an affine fit; Model C's is curved, contributes to both coefficients, and
       \emph{given $\alpha$} the pair $(a,b)$ determines $(\theta, K_m)$ outright. That
       proviso carries weight, because $\alpha$ contains $K_c$, which
-      Remark~\ref{rem:kc} calls arbitrary. Letting $K_c$ run over the same
-      thirty-two-fold range that remark uses, the $\theta$ recovered from one fitted
-      $(a,b)$ runs from $300$ to $457$, a factor of $1.52$, and above
-      $K_c \approx 200$ no admissible solution exists at all. So $K_c$ costs about as much
-      in identification as Remark~\ref{rem:kc} shows it costs in $\thc$, and the data
-      bound it from above. The identifiability of Model C is
+      Remark~\ref{rem:shape} calls arbitrary. Letting $K_c$ run over the same
+      thirty-two-fold range that remark uses, with the calibration held, \textbf{most of
+      that range is inadmissible and the bound is two-sided}: below $K_c \approx 100$ the
+      assumed $\alpha$ already accounts for more of the fitted intercept than the record
+      contains, and above $K_c \approx 300$ it accounts for more of the slope. Inside the
+      window the $\theta$ recovered from one fitted $(a,b)$ runs from $213$ to $300$, a
+      factor of $1.41$. Earlier figures for this ($300$ to $457$, a factor of $1.52$, and no
+      admissible solution above $K_c \approx 200$) do not reproduce under either convention
+      and are withdrawn. The two-sided bound is the useful part, and it is a real piece of
+      information: a record that fixes $(a,b)$ excludes nine-tenths of the range the
+      arbitrariness of $K_c$ nominally spans. The identifiability of Model C is
       not otherwise analysed in this note.
 \item \textbf{The competition is documented in vitro.} It is measured in a transporter
       solubilised from \emph{rat} renal brush-border membrane and reconstituted into

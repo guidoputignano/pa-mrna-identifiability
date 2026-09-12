@@ -20,7 +20,189 @@ than quoted.
 | `79ea21f` | C46 recorded as drift rather than a match. "Whose loss is first order" is the definition of the model class Gao names and not something that abstract states, it carrying no PD equations and no biomarker parameters. Same standard as C02 and C03. |
 | `894ae04` | The abstract's flat "severely ill-conditioned in either case" replaced by the factor §3.7 computes, widening from about 2.5 to about 26 as the load is less well recorded. §7's Design paragraph made a risk, matching §1.3, which strengthens it: a chance constraint is the right formulation for a probabilistic harm. The Saudi spread read correctly: the three rates rest on 4, 4 and an unprinted count near 55, their exact Poisson 95% intervals are 1:4,000-1:37,587, 1:5,530-1:51,962 and 1:10,826-1:18,705, and the national interval lies inside both others, so "the spread is about 40%" was reading sampling noise as disagreement. The warrant is now that four events cannot resolve an incidence and that ascertainment does most damage to a numerator of four, C47 replacing the false-positive caveat, which the source raises about biotinidase rather than about PA. |
 
-## Still open
+## Pass 3: the five blockers
+
+Five items had to be settled before any restructuring, because each of them
+moves a number the restructure would otherwise be built on. All five are
+closed. One of them changes what can be claimed and is flagged for a decision.
+
+### 0.1 `M_i`, Figure 16, and the sensitivity of the shape constants
+
+`M_i` was never assigned a value in the paper. It is `300`, and the text's own
+excretion arithmetic (`m ~ 1650`, a 1.3-fold rise at the attractor, 1.6 times
+the separatrix, "about a fifth of normal") reproduces exactly at that value, so
+the number was recoverable but never written. It is now in `tab_params`, which
+is generated from the dataclasses rather than typed beside them.
+
+**The reported ~9x swing in `theta_crit` over an 8x range in `M_i` does not
+survive.** It is an artefact of holding `R0` while moving `M_i`, which breaks
+the constraint that defines `R0` (the alternative route must peak below the
+baseline load, so a null genotype is not maintainable). The published 1.56x for
+`K_c` is an `R0`-re-derived number, so the two were never on the same footing.
+On the admissible footing:
+
+| constant | range | `theta_crit`, calibration held | `theta_crit`, `R0` held | margin, calibration held |
+|---|---|---|---|---|
+| `K_c` | 25-800, 32x | **1.56x** | 6.27x, vacuous at one end | 3.69x |
+| `M_i` | 150-1200, 8x | **1.37x** | 21.3x, vacuous at one end | **6.44x** |
+| `rho_0` | 0.35-1.0 | **1.02x** | 967x, vacuous at one end | 1.48x |
+
+Two consequences. Sweeping all three together at a held calibration leaves
+`theta_crit` inside a factor of 1.39 (12 random sets), so **the threshold is
+very nearly a function of the peak of `alpha` alone** and its exposure sits in
+one clinical claim rather than three unmeasured constants. And **the margin is
+not protected the way the threshold is**: the separatrix sits where `alpha` has
+decayed, `alpha` decays on the scale of `M_i`, and the margin runs 509 to 3275
+over the same 8x range. Figure 16 quotes 954 flat.
+
+Same convention error found in two more places, both corrected. The `rho_0`
+lower bound "about 0.35" is an `R0`-held number; re-derived it is 0.195. And
+§5.5 item 2's "theta from 300 to 457, a factor of 1.52, no admissible solution
+above `K_c` ~ 200" does not reproduce under either convention: the admissible
+window is two-sided, roughly `K_c` in [100, 300], and inside it theta runs 213
+to 300, a factor of 1.41.
+
+### 0.2 `Delta`, and a floor the design table did not have
+
+`Delta` is the full width; the definition is now at first use, with the
+tangent-versus-least-squares gap (0.09% at 10%, 8.8% at 100% full width, 35.4%
+read as a half-width) beside it. All three reproduce.
+
+The convention was the smaller problem. **A band is `[m_bar - Delta/2, m_bar +
+Delta/2]` and `m` cannot be negative, so `Delta/m_bar <= 2`.** The published
+table quoted 460%, 920% and 1841% as design requirements. None of those is a
+band.
+
+Underneath that is a real error. `Var(a_hat) = sigma^2 [1/n + m_bar^2/S]` and
+equation (7) keeps only the second term. The first binds exactly in the
+wide-band regime the section recommends buying, so
+
+    sd(theta)/theta >= c(n) sigma/(a sqrt n),   c(n) = sqrt(1 + 3(n-1)/(n+1)) <= 2
+
+for an evenly spaced design, and `>= sigma/(a sqrt n)` for any design at all.
+The best use of an excursion has the closed form `sd(a_hat) = sigma (H+L) /
+(sqrt(n) (H-L))`, checked against brute force.
+
+So **the design requirement splits into two pieces that do not trade against
+each other**: a floor on `n` set by `sigma` alone, below which no excursion
+delivers the precision; and above it, a requirement on the excursion. At six
+instrument events the floor is 53% even at a load recorded to 2%; 20% precision
+needs 43 events there and 714 at a load recorded to 20%.
+
+The curvature criterion is restated as the **top of the excursion**, 2.9 to 5.4
+times the operating point, because the bending of `C` is at high `m`. The
+instruments of §3.5 move the patient *down*. The earlier "short by a factor of
+about 2.5 to 26" is withdrawn: it compared a requirement in `Delta/m_bar` with
+an achievement in `Delta/m_max`, against a sigma carrying only the load term.
+
+### 0.3 The Gramian. **GATE: survives as stated, fails as used.**
+
+Proposition 2 generalises to the observability Gramian exactly as far as it is
+written, and no further.
+
+*Given `Km`*, it survives. At a matched trajectory the `(theta, ke)`
+sub-Gramians differ by at most 5% in determinant and 2.3% in
+`sd(ln theta_hat)`, over excursions from 5% to 76%, always favouring the
+therapy. The mechanism is exact: the sensitivity forcings `-theta g(m)` and
+`-ke m` are functions of the state alone and are identically channel-blind, and
+the only channel dependence is the shared decay rate, with
+`J_therapy - J_carnitine = -kappa u g(m) <= 0` (verified to 1.5e-5). Posing the
+question on carnitine is therefore conservative.
+
+*With `Km` unknown* — which is the paper's actual situation, since the fibre of
+Remark 2 exists precisely because `Km` is unknown — **it fails**, by six orders
+of magnitude in `det G` and by a factor of 46 to 807 in `sd(ln theta_hat)`. The
+`Km` sensitivity is forced by `-(theta + Delta(t)) Km dg/dKm`, and that
+prefactor is modulated by the therapeutic input and constant under carnitine.
+Collinearity `|corr(q_theta, q_Km)|` is 0.99994 under carnitine against 0.967
+under the therapy.
+
+**The excursion is channel-blind; the curvature is not.** Carnitine buys the
+excursion. Only a perturbation that multiplies the enzymatic term buys the
+curvature, or an excursion carrying the patient into the neighbourhood of `Km`:
+moving the operating point from `m/Km = 0.1` to `m/Km = 2` drops the
+collinearity to 0.982 and raises `det G` by fifteen orders of magnitude.
+
+This is recorded in the paper as a remark scoping Proposition 2, which is
+correct under any plan. What it changes is the *use* the paper makes of the
+proposition, and that needs a decision before the restructure.
+
+### 0.4 Which `theta_crit` the margin theorem is proven against
+
+**Stated as a limitation, because the alternative has no premise.** The
+cancellation is a statement about a degeneracy, and the parent model does not
+have that degeneracy: its alternative channel is curved, contributes to both
+coefficients, and given `alpha` a fitted tangent determines `(theta, Km)`
+uniquely, to machine precision. There is no fibre for a margin to be linear
+along.
+
+Two things follow. `a = theta g(m_bar)^2` is a property of the *local* model,
+not of the parent: under the parent the intercept is `theta g^2 + [alpha -
+m alpha']`, and the second term is 374 against the first's 61 at the nominal
+constants. And the intrinsic threshold does not eliminate the convention, it
+relocates it: `m_tol` leaves, `alpha`'s constants and the `R0` calibration
+arrive. That is a gain, because the calibration is a clinical claim a clinician
+can dispute where `m_tol` is a number chosen to make a formula close. It is not
+an elimination.
+
+### 0.5 The marker is 3-HP
+
+The direction check the handoff asked for resolves in 3-HP's favour, and the
+concern behind it was a misreading of the conditioning. The rate ratio is
+attached to a **lower** concentration: "a 50% lower plasma 3-HP concentration
+was associated with a 30% lower frequency of MDEs (RR 0.7; 95% CI 0.6, 0.9;
+p < 0.01)". So RR < 1 means fewer events when the marker is lower. 3-HP is a
+risk marker in the expected direction for a toxic overflow metabolite, not a
+protective one.
+
+C3 stays excluded on the structural argument (it is the conjugation product, so
+carnitine raises it while lowering the organic acids and the perturbation of
+§3.4 enters with the wrong sign). 2-MC is excluded on the endpoint: RR 1.0,
+p = 0.84, and its strength is as a correlate of plasma ammonia *during* an
+event, which is the arm Remark 14 excludes.
+
+**The multi-output panel is affordable only conditionally, and the condition is
+the load record.** With `J` channels as scaled copies of one pool, independent
+assay noise averages as `J^-1/2` and the load error does not, because every
+channel is fitted against the same ordinate. A four-marker panel cuts sigma by
+1.65 at a load recorded to 2% and by 1.02 at 20%. Buy the load record first.
+
+### 2.2 The assay-versus-load crossover, recomputed
+
+§3.7's "assay variability a smaller term" is false at the good end. An abscissa
+error acts like an ordinate error `b sigma_m`, and `b m_bar` is within 8% of the
+baseline load, so the two balance at `CV = 1.08 f`: **the assay term dominates
+at every load recorded to better than roughly the assay's own CV.** At a load
+recorded to 2% and a 5% assay it is 14.9 against 6.5.
+
+## Still open after pass 3
+
+1. **The Gramian gate needs a decision.** Outcome 3 as planned said the analysis
+   is posed on carnitine and answered for the therapy. That is valid given
+   `Km` and invalid without it, and the paper's own central result is that
+   `Km` is not available. The recommended resolution is to scope the claim and
+   promote the failure, since "the excursion is channel-blind and the curvature
+   is not" is the excitation condition the restructure is built on, arriving
+   earlier and derived rather than asserted.
+2. **A defensible bound on the load record.** Unchanged from pass 2, and now
+   carrying more weight: it sets both the floor on `n` and whether the marker
+   panel is worth buying.
+3. **The hazard reformulation.** Unchanged.
+4. **Whether the parent model's four constants are a net gain.** Sharpened: the
+   record bounds `K_c` from both sides, but the margin is exposed to `M_i` at a
+   factor of 6.4 where the threshold is exposed at 1.37.
+
+## A fourth failure mode, added to the three above
+
+- **A sensitivity swept off a broken constraint.** `R0` is defined by a
+  constraint and three separate numbers in the paper were computed by holding
+  it while moving a constant that moves it. Each time, most of the reported
+  sensitivity was the constraint breaking rather than the constant mattering,
+  and in one case the ordering of the constants reversed. The rule now is that
+  a derived constant is re-derived inside every sweep, in code, and
+  `R0_for_peak` exists so that it cannot be forgotten.
+
+## Still open (pass 2)
 
 1. **A defensible bound on `sigma`.** Every conclusion in §3.7 is conditional on how well the substrate load is recorded, and the note never bounds it. The abstract now says so rather than asserting a flat verdict, which makes the gap visible from the first page instead of only in §3.7. Prescribed protein intake is documented; gut flora and unrecorded triggers are not. Until this is bounded from the records the identifiability answer is a family of curves rather than a number.
 2. **The hazard reformulation of §7.** `s_peak` and `m_tol` are now the binding arbitrariness rather than identifiability, and `lambda_MDE(theta) = nu P(A > A_crit(theta))` is what removes both. The natural history study already fits a hazard of that shape on a measured biomarker; what is proposed is substituting a mechanistic `theta`. Not attempted.
