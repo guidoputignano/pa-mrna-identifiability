@@ -1,15 +1,32 @@
-\section{Model C: cofactor depletion, and why recovery needs the load driven below
-         baseline}
+\section{The dynamic model, and its equilibrium reduction}
+\label{sec:dynamic}
 %==========================================================================
 
-\emph{Question answered: why does recovery require active reduction of the load below
-baseline, rather than mere removal of the trigger?}
+\emph{One model, at the resolution where it is a differential equation. Everything after
+this section is a reduction of it, and the reductions are named for what they do rather
+than lettered.}
 %==========================================================================
 
-\subsection{What is added}
+\subsection{What the model contains}
 \label{sec:model_C_added}
 
-Models A and B treat alternative clearance as a fixed capacity. Elimination proceeds by
+The state is the plasma marker, the enzymatic channel is Michaelis-Menten in it, the therapy
+enters as a time-varying increment to the capacity driven by a known dosing schedule, and
+the propiogenic load is an unknown input:
+\begin{equation}
+\dot m \;=\; L(t) + L_0 \;-\; \bigl(\theta + \Delta(t)\bigr) g(m) \;-\; \alpha(m),
+\qquad g(m) = \frac{m}{K_m+m}.
+\label{eq:parent}
+\end{equation}
+The rest of this section is about $\alpha$, the alternative clearance channel, because that
+is the only term the three candidate structures ever disagreed about. Two facts about
+\eqref{eq:parent} are settled first and are not revisited: $\theta$ absorbs the maximal
+velocity, so it \emph{is} the residual $V_{\max}$ and not a fraction of a population one
+(Section~\ref{sec:pinned}); and $L_0$, the unrecorded part of the load, is carried as an
+unknown rather than assumed away, which Remark~\ref{rem:load_bearing} shows is what makes
+the identification problem well posed at all.
+
+\paragraph{Why $\alpha$ is not a rate constant.} Elimination proceeds by
 conjugating propionate with carnitine, and \textbf{each molecule eliminated consumes one
 molecule of carnitine}, which is excreted with the product. In two patients with propionic
 acidemia and two with methylmalonic aciduria, urinary excretion of free carnitine was
@@ -150,8 +167,8 @@ all, in either direction, over any range worth sweeping.
      {rising $m$ means more acylcarnitine competing for the renal\\
       transporter, so less filtered carnitine is recovered};
 \end{tikzpicture}}
-\caption{Model C as a block diagram. The pool $m$, the load $s(t)$ and the enzymatic
-channel are placed and coloured as in Figures~\ref{fig:blockA} and \ref{fig:blockB}, and
+\caption{The dynamic model as a block diagram. The pool $m$, the load $s(t)$ and the enzymatic
+channel are placed and coloured as in Figure~\ref{fig:blockA}, and
 everything else differs. Carnitine is promoted from a rate constant to a second state $c$,
 and the conjugation term is drawn as a single node draining both pools, because the
 one-to-one stoichiometry is the mechanism: each molecule of propionate that leaves takes a
@@ -161,7 +178,8 @@ the model: acylcarnitine rising with $m$ competes for the renal transporter, so 
 filtered carnitine is recovered and that exit widens. Having a second exit at all is what
 makes the flux vanish with the metabolite; the exit widening is what makes it decline rather
 than saturate. The shape glyph under the conjugation channel is the third of the three,
-linear in Model A, saturating in Model B, rising and then falling here.}
+linear in the local reduction, saturating under the ceiling hypothesis, rising and then
+falling here.}
 \label{fig:blockC}
 \end{figure}
 
@@ -197,22 +215,102 @@ glucose with protein withdrawal, and haemofiltration.
 \begin{remark}[Why the question is phrased this way]
 The obvious phrasing, ``why does a crisis not resolve spontaneously'', is not what the
 model says, and Figure~\ref{fig:C2} contradicts it: lowering the load \emph{does} recover
-the patient, because it raises the separatrix. What Model C says is that recovery has to be
+the patient, because it raises the separatrix. What the model says is that recovery has to be
 bought by an active intervention. Removal of the trigger
 restores the vector field that the patient has already escaped, so the intervention has to
 overshoot, and the amount of overshoot is set by how far above the separatrix the patient
-sits. Models A and B predict no such requirement: in both, returning $s$ to baseline
+sits. Neither reduced structure predicts this: in both, returning $s$ to baseline
 returns $m$ to baseline.
+\end{remark}
+
+\subsection{The reduction hierarchy, verified}
+\label{sec:hierarchy}
+
+Three objects are in play and they are not three models. They are one model read at three
+resolutions, and the relations between them were checked symbolically and numerically
+rather than asserted, because one of the three does not hold.
+
+\begin{description}[leftmargin=1.6em, itemsep=3pt]
+\item[The dynamic model.] Equation \eqref{eq:parent} with the two-state carnitine system
+\eqref{eq:C} behind it. \textbf{Verified:} solving $\dot c = 0$ and substituting returns
+\eqref{eq:alpha} exactly, symbolically, with $k$ entering only through $\rho_0 = \delta_0/k$.
+\item[The equilibrium reduction.] Setting $\dot m = 0$ gives $L = \theta g(m) + \alpha(m)$,
+whose solutions are the attractor and the separatrix, and whose fold defines
+$\thc^{\,\mathrm{int}}$. \textbf{Verified:} integrating the two-state system from below the
+separatrix settles on the reduced attractor to fourteen digits, and from above it diverges;
+the peak of $C$ at $\theta = \thc^{\,\mathrm{int}}$ equals the load to ten digits.
+\item[The local identification model.] Section~\ref{sec:local}, over the band a managed
+patient visits. \textbf{Not verified, and it does not hold as a reduction:}
+Remark~\ref{rem:not_a_reduction} says what does.
+\end{description}
+
+\begin{remark}[The local model is not a reduction of this one, and that is why it is the
+favourable case]
+\label{rem:not_a_reduction}
+It would be convenient if Section~\ref{sec:local} were \eqref{eq:parent} linearised about
+the operating point. It is not, and the check is one line. The tangent to
+$C = \theta g + \alpha$ at $\bar m$ has intercept
+\begin{equation}
+a \;=\; \theta\, g(\bar m)^2 \;+\; \bigl[\alpha(\bar m) - \bar m\,\alpha'(\bar m)\bigr],
+\label{eq:parent_intercept}
+\end{equation}
+so the local model's identity $a = \theta g(\bar m)^2$ holds \emph{only} when the second
+bracket vanishes, that is only when the alternative channel is a straight line through the
+origin. At the illustrative constants the bracket is $374$ against the enzymatic term's
+$61$: \textbf{the alternative channel owns six-sevenths of the intercept}, which is the term
+the residual capacity was supposed to be carried by.
+
+What the local model is, then, is \eqref{eq:parent} with $\alpha$ replaced by $k_e m$. That
+replacement is not an approximation of this model; it is a different hypothesis about one
+term. It is retained because it is the \emph{most favourable} case for identification, for a
+reason now sharper than the one this note used to give. A curved $\alpha$ contributes to
+both coefficients of an affine fit, so given $\alpha$ the pair $(a,b)$ determines
+$(\theta, K_m)$ outright --- verified to machine precision --- and the fibre of
+Remark~\ref{rem:fibre} does not exist. A straight $\alpha$ contributes to neither, and the
+fibre appears. \textbf{The degeneracy the note is about is a property of the most favourable
+structure}, so it is not an artefact of the awkward one.
+
+The proviso carries weight in the other direction. ``Given $\alpha$'' means given four
+constants, and Remark~\ref{rem:shape} prices them. What the record does supply is a
+two-sided bound: fitting $(a,b)$ excludes all but roughly $K_c \in [100, 300]$, and inside
+that window the recovered $\theta$ moves by a factor of $1.41$.
+\end{remark}
+
+\begin{remark}[The hypothesis with a ceiling instead of a fold]
+\label{rem:ceiling}
+A third structure was carried through earlier drafts as a separate model and is now a
+single hypothesis about $\alpha$, because that is all it ever was. Let the alternative
+channel saturate rather than decline: $\alpha(m) = k_e h(m)$ with $h(m) = m/(K_e+m)$. Then
+total clearance is bounded by $\theta + k_e$, loads below that ceiling admit one stable
+equilibrium and loads above it admit none.
+
+It is kept for exactly two purposes and neither needs a section.
+
+First, \textbf{it is the null against which the fold is testable}. Under a ceiling, removing
+the precipitating illness returns the load to baseline and the marker follows it back; under
+a fold, the patient who has crossed the separatrix stays across it and recovery has to be
+bought by driving the load \emph{below} baseline. That is the discriminant of
+Section~\ref{sec:discriminant}, and it has no content without the null.
+
+Second, \textbf{it prices biological fidelity in the identification.} Once both channels
+saturate they share a functional form and are separated only by bending in different places:
+at a ten per cent excursion the condition number rises from $1.1\times10^{5}$ to
+$4.8\times10^{7}$, a factor of about $450$. The note's own $\alpha$ is curved too, so this
+is a property of the dynamic model and not of a discarded alternative.
+
+No equilibrium collides with another here; a single equilibrium escapes to infinity as the
+load approaches the ceiling. A genuine saddle-node needs a non-monotone $\alpha$, which is
+what \eqref{eq:alpha} supplies.
 \end{remark}
 
 \subsection{An intrinsic definition of $\thc$}
 \label{sec:intrinsic}
 
-Models A and B define the critical capacity by \eqref{eq:thcrit},
-and \eqref{eq:thcritB}, which import two quantities that are never
-measured: $\mtol$, a clinical convention about what metabolite level is tolerable, and
+The local reduction defines the critical capacity by \eqref{eq:thcrit}, and the hypothesis
+with a ceiling (Remark~\ref{rem:ceiling}) by its own counterpart. Both import two quantities
+that are never measured: $\mtol$, a clinical convention about what metabolite level is tolerable, and
 $\spk$, the amplitude of an illness. The convention is the more troubling of the two,
-because it is not a fact about the patient at all. Model C does not need it.
+because it is not a fact about the patient at all. The equilibrium reduction does not need it.
 
 Write $C(m;\theta) = \theta g(m) + \alpha(m)$ for the total clearance, with $\alpha$ the
 carnitine-mediated flux \eqref{eq:alpha}. Since $\alpha$ rises, peaks and then decays,
@@ -251,10 +349,10 @@ Two consequences, independent of each other:
 \item \label{item:wellposed}\textbf{$\mtol$ has disappeared.} No tolerability convention enters
 \eqref{eq:thcrit_int}. The threshold is the value of $\theta$ at which the model's own
 equilibrium structure changes, and it would be the same threshold under any convention
-about which metabolite levels a clinician is willing to accept. In Models A and B no such
+about which metabolite levels a clinician is willing to accept. Under the reduced structures no such
 definition is available, because neither has a second equilibrium to collide with: in A the
 equilibrium is never lost, and in B it escapes to infinity without annihilating. This is
-the sense in which Model C is the only one of the three in which $\thc$ is well posed, and
+the sense in which only the equilibrium reduction makes $\thc$ well posed, and
 it is the reason the model is in the note at all. Its biological fidelity is the usual
 reason given and the weaker one.
 \item \textbf{The margin is the clinically decisive object.} Above the threshold, what
@@ -262,7 +360,7 @@ matters is how far apart the two equilibria are. The
 distance from the attractor to the separatrix is how far the patient can be pushed before
 the crisis becomes self-sustaining, and it closes continuously to zero at
 $\thc^{\,\mathrm{int}}$. That distance is computed and plotted in
-Figure~\ref{fig:C5}. It has no counterpart in Models A or B.
+Figure~\ref{fig:C5}. It has no counterpart under either reduced structure.
 \end{itemize}
 
 \begin{corollary}[When the threshold exists]
@@ -278,7 +376,7 @@ against a baseline load of $600$, giving $\thc^{\,\mathrm{int}} = 151$; raising 
 enough to lift that peak past $600$ would make null genotypes maintainable, which the
 clinical picture excludes.
 
-\paragraph{The excursion an illness has to make.} Model C exists to say why recovery needs
+\paragraph{The excursion an illness has to make.} The fold exists to say why recovery needs
 more than removal of the trigger, and that requires an illness to be able to strand the
 patient in the first place. A sustained load below the fold cannot. At any
 $s < s_{\mathrm{fold}}$ the system settles on an attractor lying below the separatrix at
@@ -365,9 +463,9 @@ and only it removes $\spk$.
 \item \textbf{Identifiability, traded.} $k_e$ is replaced by a
       channel carrying four constants, $R_0$, $K_c$, $M_i$ and $\rho_0$, which worsens an
       already unfavourable parameter-to-measurement ratio. It also removes the specific
-      degeneracy Model A has. The fibre of Remark~\ref{rem:fibre} exists because Model A's
+      degeneracy the local reduction has. The fibre of Remark~\ref{rem:fibre} exists because its
       alternative channel is exactly linear and so contributes nothing to the intercept of
-      an affine fit; Model C's is curved, contributes to both coefficients, and
+      an affine fit; $\alpha$ is curved, contributes to both coefficients, and
       \emph{given $\alpha$} the pair $(a,b)$ determines $(\theta, K_m)$ outright. That
       proviso carries weight, because $\alpha$ contains $K_c$, which
       Remark~\ref{rem:shape} calls arbitrary. Letting $K_c$ run over the same
@@ -380,7 +478,7 @@ and only it removes $\spk$.
       admissible solution above $K_c \approx 200$) do not reproduce under either convention
       and are withdrawn. The two-sided bound is the useful part, and it is a real piece of
       information: a record that fixes $(a,b)$ excludes nine-tenths of the range the
-      arbitrariness of $K_c$ nominally spans. The identifiability of Model C is
+      arbitrariness of $K_c$ nominally spans. The identifiability of the dynamic model is
       not otherwise analysed in this note.
 \item \textbf{The competition is documented in vitro.} It is measured in a transporter
       solubilised from \emph{rat} renal brush-border membrane and reconstituted into
@@ -399,7 +497,7 @@ and only it removes $\spk$.
 \subsection{Testable discriminant, and the observable it has to be stated in}
 \label{sec:discriminant}
 
-Models B and C differ in a prediction about the model's state:
+The ceiling hypothesis and the fold differ in a prediction about the model's state:
 
 \begin{center}
 \begin{tabular}{@{}ll@{}}
@@ -423,7 +521,7 @@ cannot answer in either direction.
 The identifiability analysis of Section~3 concerns the \emph{stable} patient, where the
 biomarker and the state can be argued to move together, and nothing in it depends on
 tracking a crisis. The behaviour through a decompensation is exactly where the measured
-proxy stops tracking the state, so Model C's separatrix is a claim about the dynamics that
+proxy stops tracking the state, so the separatrix is a claim about the dynamics that
 the current observable cannot confirm or refute directly.
 \end{remark}
 
@@ -452,9 +550,9 @@ Two qualifications on it:
       $25$ event samples and the $56$ non-event samples are pooled across the cohort, and no
       paired or repeated-measures analysis is reported; the authors record that a trend
       analysis on an individual patient basis would add insight~\cite{amd_phenotyping}. % C40
-      Model C asserts a fall relative to a patient's own baseline, and that trajectory
+      The model asserts a fall relative to a patient's own baseline, and that trajectory
       remains unmeasured.
-\item \textbf{C is not the only model the fall fits.} Model B holds the
+\item \textbf{The fold is not the only structure the fall fits.} A ceiling holds the
       alternative channel at fixed capacity and says nothing about free carnitine, so B
       neither predicts the observation nor excludes it. What C asserts beyond the
       fall is that depletion is quantitatively strong enough to make effective clearance

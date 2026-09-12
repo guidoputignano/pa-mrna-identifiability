@@ -67,6 +67,28 @@ def fibre_Km_max(a, b, m_bar=M_OP):
     return b * m_bar ** 2 / a
 
 
+def fibre_span(a, b, m_bar=M_OP):
+    """
+    How many fold theta spans along the fibre. Closed form, and observable.
+
+    theta(K_m) = a(K_m + m_bar)^2/m_bar^2 on 0 < K_m <= K_max = b m_bar^2/a, so
+
+        span = theta(K_max)/theta(0) = (1 + b m_bar / a)^2 = (C(m_bar)/a)^2 ,
+
+    the second equality because the tangent satisfies a + b m_bar = C(m_bar).
+    At steady state C(m_bar) is the RECORDED LOAD and a is the FITTED
+    INTERCEPT, so both are observable and the span is computable per patient
+    without knowing a single parameter.
+
+    That turns the illustrative 169 into a per-patient diagnostic. It is the
+    square of the ratio of the load the patient carries to the part of the
+    clearance curve that extrapolates back to the origin, so it is large
+    exactly when the operating point sits far down the saturation curve, which
+    is where management puts it.
+    """
+    return (1.0 + b * m_bar / a) ** 2
+
+
 def baseline_load(p: ParamsA = None, m_bar=M_OP):
     """The load this patient balances at the operating point."""
     return clearance_A(m_bar, P if p is None else p)
@@ -414,6 +436,8 @@ def fig_fibre():
     save(fig, "fig_A6_fibre")
     print(f"    fibre: Km in (0, {Kmax:.3f}], theta in "
           f"[{th.min():.2f}, {th.max():.1f}], span {th.max() / th.min():.1f}x")
+    print(f"    closed form (1 + b m_bar/a)^2 = (C(m_bar)/a)^2 = "
+          f"{fibre_span(a0, b0):.2f}x   [load {baseline_load():.2f}, intercept {a0:.3f}]")
     Km_rec = (b0 - P.ke) * M_OP ** 2 / a0
     print(f"    null-genotype closure: Km = {Km_rec:.6f}, "
           f"theta = {fibre(a0, b0, Km_rec)[0]:.3f}")

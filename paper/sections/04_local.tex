@@ -1,4 +1,10 @@
-\section{Model A: Michaelis-Menten enzyme, linear alternative clearance}
+\section{The local identification model}
+\label{sec:local}
+%==========================================================================
+
+\emph{The same model, read over the band a managed patient's marker actually visits. This
+is where the identifiability question is posed, and Remark~\ref{rem:not_a_reduction} says
+exactly how it relates to the model it is read from.}
 %==========================================================================
 
 \subsection{Formulation}
@@ -21,49 +27,6 @@ curve at the plasma level, fitted here (Remark~\ref{rem:no_km}).
 \item[$g(m)$] the \emph{Michaelis-Menten saturation function}, $g \in [0,1)$.
 \item[$k_e m$] alternative elimination, taken proportional to $m$.
 \end{description}
-
-\paragraph{The enzymatic term is Michaelis-Menten kinetics.} The function $g$ is the
-Michaelis-Menten law, which in its standard biochemical form gives the velocity of a
-single-substrate enzymatic reaction as
-
-\begin{equation}
-v \;=\; \frac{V_{\max}\,[S]}{K_m + [S]},
-\label{eq:mm}
-\end{equation}
-
-with $V_{\max}$ the maximal velocity, attained when the enzyme is fully saturated, and
-$K_m$ the Michaelis constant, the substrate concentration at which $v = V_{\max}/2$.
-Identifying $V_{\max}$ with $\theta$ and $[S]$ with $m$ turns \eqref{eq:mm} into the term
-$\theta\, g(m)$ of \eqref{eq:A}. The same functional form appears under other names in
-adjacent literatures: it is the Monod function in microbial growth kinetics, and the Hill
-function with cooperativity coefficient $n = 1$. Throughout this note the three names are
-used for the same object, and no cooperativity is assumed. PCC has a second substrate,
-bicarbonate, which is held constant here.
-
-The identification carries over the \emph{shape} and not the constants. Equation
-\eqref{eq:mm} is a law about an enzyme and its own substrate, and $m$ is a plasma marker;
-$\theta$ is accordingly the residual capacity of the enzymatic channel measured at the
-plasma level, and $K_m$ is the level at which that channel reaches half of it, a fitted
-shape parameter of the plasma-level clearance curve. Remark~\ref{rem:no_km} sets out why
-$K_m$ cannot be read as the Michaelis constant of PCC.
-
-\paragraph{The load-bearing part of the form.}
-\label{sec:structure}
-The two published PK/PD models of this system are built on a different structure. The
-population model that selected the dose treats each marker as a turnover state whose
-production the therapy inhibits and whose loss is first
-order~\cite{dose_selection_poster}, and the translational model that preceded it puts the
-indirect response on the enzyme and makes the markers a direct saturating function of
-it~\cite{pkpd_translational}. % C46
-Proposition~\ref{prop:degeneracy} does not distinguish either from \eqref{eq:A}. Its
-hypothesis \eqref{eq:affine} asks only that total clearance be affine over the range a
-patient's marker visits, which a first-order loss satisfies exactly, with no appeal to
-assay error, and its conclusion is about what a record confined to that range contains,
-whatever structure produced it. What is specific to \eqref{eq:A} is what a
-resolved $(a,b)$ then leaves open: the fibre of Remark~\ref{rem:fibre}, which exists because
-$a = \theta\, g(\bar m)^2$ carries $K_m$, and the cancellation in \eqref{eq:mufibre} that
-makes the margin linear along it. The obstruction survives a change of structure; this
-parametrisation of it does not.
 
 \begin{figure}[htbp]
 \centering
@@ -93,7 +56,7 @@ parametrisation of it does not.
 \node[mlabel, blue!55!black] (carn) at (6.6,-2.7) {carnitine\\$u_c(t)$};
 \draw[mar, blue!55!black] (carn) -- (alt);
 \end{tikzpicture}}
-\caption{Model A as a block diagram. One pool $m$, filled by the load $s(t)$ and drained by
+\caption{The local identification model as a block diagram. One pool $m$, filled by the load $s(t)$ and drained by
 two channels. The enzymatic channel saturates at $\theta$; the alternative channel is
 linear in $m$, and that difference in shape is the only thing separating them
 (Proposition~\ref{prop:degeneracy}). The two selective inputs are drawn together because
@@ -264,8 +227,26 @@ k_e(K_m) = b - \frac{a\,K_m}{\bar m^{2}},
 \qquad 0 < K_m \le \frac{b\,\bar m^{2}}{a},
 \label{eq:fibre0}
 \end{equation}
-the upper bound being where $k_e$ reaches zero. At the illustrative values $\theta$ ranges
-over a factor of $169$ along this fibre with noiseless data (Figure~\ref{fig:A6}).
+the upper bound being where $k_e$ reaches zero.
+
+\textbf{How wide the fibre is, in closed form and in observable quantities.} Evaluating
+\eqref{eq:fibre0} at its two endpoints, the span of $\theta$ is
+\begin{equation}
+\frac{\theta(K_{\max})}{\theta(0^+)}
+\;=\; \left(1 + \frac{b\,\bar m}{a}\right)^{\!2}
+\;=\; \left(\frac{C(\bar m)}{a}\right)^{\!2},
+\label{eq:span}
+\end{equation}
+the second equality because the tangent satisfies $a + b\,\bar m = C(\bar m)$. At steady
+state $C(\bar m)$ is the \emph{recorded load} and $a$ is the \emph{fitted intercept}, so
+both are observable and \textbf{the span is computable for a given patient without knowing a
+single parameter}. It is the square of the ratio of the load the patient carries to the part
+of the clearance curve that extrapolates back to the origin, so it is large exactly when the
+operating point sits far down the saturation curve --- which is where management puts it.
+
+At the illustrative values this is $(322.7/24.79)^2 = 169$, which is the factor this note
+used to quote as an illustration. It is not an illustration: it is a per-patient diagnostic,
+and a clinician with a fitted band and a diet record can compute it.
 Equation~\eqref{eq:thetaerr} below is the noise on top of that, and is itself conditional on
 $g(\bar m)$, so it is a statement about $\theta$ \emph{given} $K_m$. Nothing in Section~3
 supplies $K_m$. Assumption~\ref{ass:pop} grants only that it is shared across the cohort and
@@ -334,17 +315,6 @@ the band, which is why the two cannot be traded against each other. That distinc
 clinical content of the result. What bounds $n$ is the cost of a clinic visit, what bounds
 $\Delta$ is the safety constraint on how far a patient may be allowed to excurse, and the
 factor that carries the estimate of $\theta$ is the one the safety constraint bounds.
-
-\begin{remark}[Two conditionings, kept separate]
-\label{rem:two_scalings}
-The $\bar m/\Delta$ of \eqref{eq:thetaerr} is the conditioning of the two-coefficient affine
-fit. Figure~\ref{fig:A2} plots a different object, the condition number of the
-three-parameter sensitivity matrix for $(\theta, K_m, k_e)$, which degrades as
-$\Delta^{-2}$. The affine fit resolves two coefficients from first-order information, while
-the three-parameter problem must additionally resolve the curvature that separates $\theta$
-from $K_m$. The relation between the two scalings is not established here, and the two
-results are stated separately.
-\end{remark}
 
 The clinical consequence is direct. Two patients with substantially different enzymatic
 capacity, compensating with different degrees of alternative clearance, share a slope, and
@@ -524,9 +494,15 @@ prevent, which is the obstruction of Section~\ref{sec:structure} arriving by a s
 
 \begin{proposition}[Formal identifiability, practical ill-conditioning]
 \label{prop:illcond}
-\emph{Given $K_m$}, the determinant \eqref{eq:det} is non-zero whenever $m \neq m'$, so the
-pair $(\theta, k_e)$ is identifiable from steady-state data before and after any such
-perturbation. It factorises exactly, with no fit and no hypothesis:
+\emph{Given $K_m$ and the input gain}, the determinant \eqref{eq:det} is non-zero whenever
+$m \neq m'$, so the pair $(\theta, k_e)$ is identifiable from steady-state data before and
+after any such perturbation. The second proviso was previously left implicit and is not
+free: the right-hand side of \eqref{eq:system} is $\delta = \kappa u_c m'$ for carnitine,
+and $\kappa$ is never assigned a value anywhere in this note (Table~\ref{tab:params}), so on
+that channel the system is two equations in \emph{three} unknowns before $K_m$ is even
+raised. On the therapeutic channel $\delta = \Delta g(m')$ and $\Delta$ is known from the
+dosing schedule, which is a second respect, alongside
+Remark~\ref{rem:channel_scope}, in which the two channels are not interchangeable. It factorises exactly, with no fit and no hypothesis:
 \begin{equation}
 \det M \;=\; g(m)\,m' - g(m')\,m \;=\; g(m)\,g(m')\,(m' - m).
 \label{eq:detexact}
@@ -696,7 +672,7 @@ this subsection becomes unnecessary.
 
       The window is narrow where it matters. At $\mtol = 40$ it is
       $(3.25, 3.77)$ times the patient's baseline load, $14.8\%$ wide about its centre,
-      and an illness of the amplitude Model C draws in Figures~\ref{fig:C1} and
+      and an illness of the amplitude the equilibrium reduction draws in Figures~\ref{fig:C1} and
       \ref{fig:C2}, half again the baseline load, sits well below it with $\mu > 0$ at
       both ends. Its width is set by the tolerable level and closes as that convention
       approaches the band the patient is actually observed in: $1.2\%$ at $\mtol = 15$,
@@ -713,8 +689,8 @@ this subsection becomes unnecessary.
       $\theta_A - \theta_B = -(k_{e,A} - k_{e,B})(K_m + \bar m)$. Two observationally
       identical patients diverge linearly in how far the tolerable level sits above the
       operating point, and coincide when $\mtol = \bar m$.
-\item Whether the decision $\theta \gtrless \thc$ is invariant under a common strictly
-      increasing reparametrisation $\varphi$ of the activity scale. If every variant is
+\item \label{sec:invariance}Whether the decision $\theta \gtrless \thc$ is invariant under a
+      common strictly increasing reparametrisation $\varphi$ of the activity scale. If every variant is
       distorted by the same $\varphi$, and if $\thc$ is \emph{estimated empirically on that
       same distorted scale} rather than computed from \eqref{eq:thcrit}, then
       $\varphi(\theta) \gtrless \varphi(\thc)$ reproduces the true decision. The
@@ -897,6 +873,24 @@ the fibre \eqref{eq:fibre0} from above, and past about $1.6$ times the true $a$ 
 excludes the true $\theta$ altogether.
 \end{remark}
 
+\begin{remark}[The one excursion-free route, and why it is kept]
+\label{rem:anchor_kept}
+The null-genotype anchor is the only construction in this note that recovers $\theta$
+without an excursion: a patient with $\theta_j = 0$ has $s_j = k_e m_j$ outright, and by
+Remark~\ref{rem:fibre} a known $k_e$ collapses the fibre to a point. Everything else here
+is built on excursions, so the anchor has to be either promoted or explained.
+
+\textbf{It is kept, as a remark, because it has the same shape as the note's main
+argument.} Remark~\ref{rem:anchor_var} prices it, and the price inverts: the anchor
+\emph{attenuates} a load error for a mild patient and \emph{amplifies} it for a severe one,
+crossing one at $\theta \approx 1100$ and reaching $3.7$ at the $\theta = 300$ the
+equilibrium reduction uses. So the one route that needs no excursion works for the patients
+who need it least, which is the same inverse-usefulness the excitation condition has: the
+information is easiest to get from the patients whose management is going worst. Retiring it
+would remove an instance of the paper's own pattern; promoting it would misrepresent what it
+delivers for the severe patient.
+\end{remark}
+
 \begin{remark}[The anchor's cost, a ratio that inverts for the severe patient]
 \label{rem:anchor_var}
 Proposition~\ref{prop:anchor} is demonstrated noise-free, which is the standard this section
@@ -914,7 +908,7 @@ $K_m = (b - k_e)\bar m^2/a$ and \eqref{eq:fibre0} it reaches
 Both scale as $1/\theta$, so this is a ratio, the same shape as the
 load-error amplification of Figure~\ref{fig:A2}. At $\theta = 3000$ they are $0.20$ and
 $0.37$ and the anchor attenuates; they pass one at $\theta = k_e(K_m+\bar m)^2/K_m = 605$
-and $\theta = 2k_e(K_m+\bar m) = 1100$; at Model C's own $\theta = 300$ they are $2.0$ and
+and $\theta = 2k_e(K_m+\bar m) = 1100$; at the parent's own $\theta = 300$ they are $2.0$ and
 $3.7$ and the anchor \emph{amplifies}. It is therefore worst for the severe patients the
 note is about, and the favourable figure belongs to the mild end of the range.
 \end{remark}
@@ -922,7 +916,7 @@ note is about, and the favourable figure belongs to the mild end of the range.
 \subsection{Known defect}
 
 Since $k_e m \to \infty$, total clearance is unbounded and every load is eventually
-balanced. Model A therefore predicts that no crisis can occur. It is adequate for the
+balanced. The local reduction therefore predicts that no crisis can occur. It is adequate for the
 identifiability analysis, which concerns the stable patient, and inadequate for anything
 concerning decompensation.
 

@@ -1,0 +1,18 @@
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{quantity} & \textbf{requirement} & \textbf{why} \\
+\midrule
+marker & plasma 3-hydroxypropionate & endpoint association (RR 0.7, 95\% CI 0.6--0.9) and immunity to the carnitine sign reversal that disqualifies C3 \\
+second channel & $n$-propionylglycine, optional & a glycine conjugate, so carnitine does not raise it. Worth adding only after the load record is good enough for the assay term to bind \\
+sampling interval & $\le$ 4 days through any excursion; 14-day cycles otherwise & the inter-dose recovery is the only excursion a fixed schedule supplies, and six-monthly visits do not resolve it \\
+excursion, required & $m$ to reach 14.6$\,\bar m$ from the operating point, or a band of fold range 9.1 straddling $K_m$ & the excitation condition. Below it the band is degenerate in the lumped ratio; above $K_m$ it is degenerate in $\theta$ against the load \\
+excursion, available & inter-dose recovery reaches a fold of about 2.6, downward & so the required excursion is not available from the schedule alone \\
+load record & protein intake to $\le 5\%$, dated, with enteral and parenteral sources separated & the load's unrecorded component is what makes saturation degenerate, and it is the noise term a marker panel cannot average away \\
+labelled-propionate test & once per patient at entry, repeated at any dose change & the only measurement that anchors capacity independently of level. Reference precision 12.8\% in patients \\
+assay precision & coefficient of variation $\le$ 5\%, reported on the log scale & a constant CV is a constant variance on the log scale, which is the only scale on which $\sigma$ has unambiguous units \\
+instrument events & $n \ge 77$ per patient for $20\%$ on $\theta$ & the floor is set by $\sigma$ alone and no excursion beats it \\
+cohort & $N \ge 3,121$ to place the fraction with $\mu<0$ within $\pm 10$ points, at the accessible design's sign error of 41\% near the boundary & sized on the sign error of $\mu$, not on a confidence interval for $\theta$. Per-patient misclassification attenuates the fraction towards one half and inflates the corrected variance by $(1-2p)^{-2}$, which diverges as $p \to 1/2$ \\
+the asymmetry & the two errors are not equal and the costly one is larger & at equal $|\mu|$ either side of the boundary the simulated error is $6\%$ for treating a patient who did not need it and $53\%$ for failing to treat one who did. The design fails towards declaring patients safe \\
+\bottomrule
+\end{tabular}
+% the terminal specification; every row is generated

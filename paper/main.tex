@@ -19,13 +19,31 @@
 
 \input{sections/01_biology}
 \input{sections/02_system}
-\input{sections/03_model_A}
-\input{sections/04_model_B}
-\input{sections/05_model_C}
+% The three sections that follow are one model at three levels of reduction,
+% in the order the reduction runs: the dynamic model, the equilibrium
+% reduction obtained by setting mdot = 0, and the local identification model
+% obtained by linearising over the band a managed patient visits. They were
+% once called Models C, C and A, and the letters are gone because they hid
+% the fact that two of them are the same model read at different resolutions.
+\input{sections/03_dynamic}
+\input{sections/04_local}
 \clearpage
-\input{sections/06_results}
+\input{sections/06_excitation}
+\input{sections/07_design}
 \clearpage
-\input{sections/07_open}
+\input{sections/08_specification}
+\input{sections/09_validation}
+\clearpage
+\input{sections/10_results}
+\clearpage
+\input{sections/11_open}
+
+\clearpage
+\appendix
+\input{sections/A1_supplementary}
+
+\clearpage
+\input{sections/A2_reproducibility}
 
 \clearpage
 \printbibliography[title={References}]

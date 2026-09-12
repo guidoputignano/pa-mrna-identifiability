@@ -1,38 +1,40 @@
 \begin{abstract}
 \noindent
 The clinical decision in mRNA enzyme replacement for propionic acidemia is a dosing
-interval. It is set by the patient's residual enzymatic capacity, which is never measured.
-We ask how much of it the records can recover.
+interval, and it is set by a quantity nobody measures: the patient's residual enzymatic
+capacity. What the decision actually turns on is not that capacity but the \emph{sign} of
+its margin against the patient's own propiogenic load. We ask what a clinical record can
+deliver, and answer in the units a protocol is written in.
 
-Over the narrow band a stable patient's marker visits, total clearance is indistinguishable
-from a straight line at assay resolution. The capacity survives only in that line's
-intercept, which the band reaches by extrapolation and which carries the half-saturation
-constant with it. Its location is unresolved across two orders of magnitude; its relative
-precision is not.
+Marker levels cannot deliver the capacity. Over the band a stable patient's marker visits,
+total clearance is indistinguishable from a straight line at assay resolution, and the
+capacity survives only in that line's intercept, which the band reaches by extrapolation.
+The residual family is a fibre whose width is $\left(C(\bar m)/a\right)^2$, the recorded
+load over the fitted intercept, squared: an observable quantity, $169$ at our illustrative
+values. Independently, oxidative capacity assayed by breath test is near-identical in
+patients whose serum markers differ widely~\cite{breath_test_mma}. % C48
 
-The decision survives this. The safety margin is linear along the unresolved direction
-where the capacity is quadratic in it. Its sign is therefore fixed, except for illness
-amplitudes inside a window we compute.
+The decision survives what the parameter does not, but asymmetrically. Simulating the
+accessible design, the estimated capacity ranges over three orders of magnitude while the
+sign of the margin is right $99.8\%$ of the time for a patient with margin --- and wrong
+$53\%$ of the time for a patient without one, at the same distance from the boundary. The
+estimator fails towards declaring patients safe.
 
-The capacity itself is not recovered, and the design that would recover it fails in two ways
-at once. The precision of the intercept has a floor set by the number of perturbation events
-alone, which no width of band beats: at six events and a load recorded to $2\%$, that floor
-is $53\%$, and $20\%$ precision needs forty-three events. Resolving the curvature that
-separates the two channels needs the marker carried to between three and five times its
-operating level, and the perturbations available in a chart move the patient the other way.
+What would fix it is an excitation condition, and it is not the one a sampling schedule
+supplies. Both ends of the saturation curve are degenerate: below the half-saturation level
+only a lumped ratio is identifiable, and above it the capacity is confounded with the
+unrecorded component of the load, which is the worse failure because it loses the target
+rather than a nuisance. Identifiability therefore requires \emph{traversing} the
+half-saturation level, and the excitation is maximised when the band straddles it in
+geometric mean, at $(\sqrt r - 1)/(\sqrt r + 1)$ for a fold range $r$.
 
-The conflation the analysis turns on has been measured directly. Propionate oxidation
-assayed by breath test is near-identical in patients whose serum markers differ widely, and
-repeats at a coefficient of variation of $6.9\%$ in controls and $12.8\%$ in
-patients~\cite{breath_test_mma}. Capacity and marker level are different quantities, and the
-second does not report the first.
-
-A selective perturbation identifies the system formally, and the determinant turns on the
-excursion and the half-saturation constant rather than on which channel produced it, so the
-question can be posed on carnitine and answered for the therapy. That interchangeability
-holds given the half-saturation constant and fails without it, by orders of magnitude:
-carnitine buys the excursion, and only a perturbation on the enzymatic channel, or an
-excursion reaching the half-saturation level itself, buys the curvature.
+\textbf{Time does not buy this.} Sampling every two days for two years, under the trial's
+biweekly schedule, improves the capacity's precision by a tenth of a decade over four clinic
+visits; the same number of samples placed to straddle the half-saturation level improves it
+by two decades. Of the excursions a record contains, only a decompensation comes within a
+factor of two of what the decision requires. \textbf{The excitation is available only from
+the event the therapy exists to prevent}, and the paper ends in the one-page data
+specification that follows from saying so.
 \end{abstract}
 
 \vspace{0.5em}

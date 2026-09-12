@@ -1,0 +1,68 @@
+% =====================================================================
+%  Supplementary material. Everything here was in the main text and was
+%  moved out in the restructure, on one criterion: it is not a link in the
+%  chain from the target claim to the data specification. Nothing is
+%  deleted, and every cross-reference into it still resolves.
+% =====================================================================
+\section{Supplementary: material moved out of the main text}
+\label{sec:supp}
+
+\subsection{The enzymatic term is Michaelis-Menten kinetics}
+
+\paragraph{The enzymatic term is Michaelis-Menten kinetics.} The function $g$ is the
+Michaelis-Menten law, which in its standard biochemical form gives the velocity of a
+single-substrate enzymatic reaction as
+
+\begin{equation}
+v \;=\; \frac{V_{\max}\,[S]}{K_m + [S]},
+\label{eq:mm}
+\end{equation}
+
+with $V_{\max}$ the maximal velocity, attained when the enzyme is fully saturated, and
+$K_m$ the Michaelis constant, the substrate concentration at which $v = V_{\max}/2$.
+Identifying $V_{\max}$ with $\theta$ and $[S]$ with $m$ turns \eqref{eq:mm} into the term
+$\theta\, g(m)$ of \eqref{eq:A}. The same functional form appears under other names in
+adjacent literatures: it is the Monod function in microbial growth kinetics, and the Hill
+function with cooperativity coefficient $n = 1$. Throughout this note the three names are
+used for the same object, and no cooperativity is assumed. PCC has a second substrate,
+bicarbonate, which is held constant here.
+
+The identification carries over the \emph{shape} and not the constants. Equation
+\eqref{eq:mm} is a law about an enzyme and its own substrate, and $m$ is a plasma marker;
+$\theta$ is accordingly the residual capacity of the enzymatic channel measured at the
+plasma level, and $K_m$ is the level at which that channel reaches half of it, a fitted
+shape parameter of the plasma-level clearance curve. Remark~\ref{rem:no_km} sets out why
+$K_m$ cannot be read as the Michaelis constant of PCC.
+
+\subsection{How this relates to the two published PK/PD models}
+
+\paragraph{The load-bearing part of the form.}
+\label{sec:structure}
+The two published PK/PD models of this system are built on a different structure. The
+population model that selected the dose treats each marker as a turnover state whose
+production the therapy inhibits and whose loss is first
+order~\cite{dose_selection_poster}, and the translational model that preceded it puts the
+indirect response on the enzyme and makes the markers a direct saturating function of
+it~\cite{pkpd_translational}. % C46
+Proposition~\ref{prop:degeneracy} does not distinguish either from \eqref{eq:A}. Its
+hypothesis \eqref{eq:affine} asks only that total clearance be affine over the range a
+patient's marker visits, which a first-order loss satisfies exactly, with no appeal to
+assay error, and its conclusion is about what a record confined to that range contains,
+whatever structure produced it. What is specific to \eqref{eq:A} is what a
+resolved $(a,b)$ then leaves open: the fibre of Remark~\ref{rem:fibre}, which exists because
+$a = \theta\, g(\bar m)^2$ carries $K_m$, and the cancellation in \eqref{eq:mufibre} that
+makes the margin linear along it. The obstruction survives a change of structure; this
+parametrisation of it does not.
+
+\subsection{Two conditionings, kept separate}
+
+\begin{remark}[Two conditionings, kept separate]
+\label{rem:two_scalings}
+The $\bar m/\Delta$ of \eqref{eq:thetaerr} is the conditioning of the two-coefficient affine
+fit. Figure~\ref{fig:A2} plots a different object, the condition number of the
+three-parameter sensitivity matrix for $(\theta, K_m, k_e)$, which degrades as
+$\Delta^{-2}$. The affine fit resolves two coefficients from first-order information, while
+the three-parameter problem must additionally resolve the curvature that separates $\theta$
+from $K_m$. The relation between the two scalings is not established here, and the two
+results are stated separately.
+\end{remark}

@@ -15,10 +15,15 @@ PAPER    = paper/main
 
 all: figures paper
 
+# The three model modules keep their old directory names; the paper no longer
+# uses the letters. model_C is the dynamic model and its equilibrium
+# reduction, model_A is the local identification model, model_B is the
+# alternative hypothesis with a ceiling (one remark in the paper now).
 figures:
-	@echo ">> Model A"; $(PY) src/model_A/run.py
-	@echo ">> Model B"; $(PY) src/model_B/run.py
-	@echo ">> Model C"; $(PY) src/model_C/run.py
+	@echo ">> the dynamic model and its equilibrium reduction"; $(PY) src/model_C/run.py
+	@echo ">> the local identification model";                  $(PY) src/model_A/run.py
+	@echo ">> the ceiling hypothesis";                          $(PY) src/model_B/run.py
+	@echo ">> the design (slow: the decision characteristic is simulated)"; $(PY) src/design/run.py
 
 refs:
 	$(PY) tools/fetch_refs.py

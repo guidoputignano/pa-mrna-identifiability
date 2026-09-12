@@ -202,6 +202,136 @@ recorded to 2% and a 5% assay it is 14.9 against 6.5.
   a derived constant is re-derived inside every sweep, in code, and
   `R0_for_peak` exists so that it cannot be forgotten.
 
+## Pass 4: the restructure
+
+The letters are gone. One model at three resolutions, in the order the reduction runs, and
+each section is now a link in the chain from the clinical claim to the data specification.
+Figure~1 of the paper draws that chain as a dependency graph, and anything not reachable
+from the top of it was moved to the supplementary appendix rather than deleted.
+
+### 1.1 The hierarchy. Half the gate passes.
+
+**Passes.** Solving `dc/dt = 0` in the two-state system returns `alpha` exactly and
+symbolically, with `k` surviving only inside `rho_0 = delta_0/k`. Integrating the full
+two-state system from below the separatrix lands on the reduced attractor to 14 digits and
+from above it escapes. The peak of `C` at `theta_crit` equals the load to 10 digits. **The
+equilibrium reduction is the former Model C.**
+
+**Fails.** The local model is NOT the linearisation of the parent. The tangent intercept is
+`a = theta g^2 + [alpha - m alpha']`, so `a = theta g(m_bar)^2` needs `alpha` linear through
+the origin, and the second bracket is 374 against 61 at the nominal constants. No term was
+added to force agreement. The honest statement is now in the paper: the local model is the
+parent with one term replaced, that replacement is what creates the fibre, and it is
+therefore the favourable case.
+
+### 1.6 The excitation condition, corrected and proved
+
+The earlier phrasing was wrong in its second clause. Both ends are degenerate and they fail
+differently: below `Km` only the lumped ratio survives, above it `theta` enters only as
+`L0 - theta` and is confounded with the unrecorded load. Losing a nuisance parameter is
+survivable; losing the target is not.
+
+The parametrisation is pinned before anything is proved: `theta` absorbs `V_max`.
+
+With `phi(m) = Km/(Km+m)`, the excitation is `E = phi(lo) - phi(hi)`, and at fixed fold
+range `r` it is maximised at `sqrt(lo*hi) = Km` **exactly**, where
+`E_max(r) = (sqrt(r)-1)/(sqrt(r)+1)`. A band of the same fold range sitting a decade below
+`Km` throws away a factor of three in `E` and a factor of 2,099 in `sd(ln theta)`.
+
+The optimum is interior ONLY because the load is partly unrecorded. With it known exactly,
+`sd(ln theta)` falls monotonically into saturation and there is no design problem beyond
+safety. That is what makes the load record the first row of the specification.
+
+### 1.8 The covariance collapse. **The gate fails, and that is the result.**
+
+Exact information filter for constant parameters, no process noise on `theta` by
+construction. Under the biweekly schedule over two years:
+
+| design | n | sd(ln theta) |
+|---|---|---|
+| six-monthly | 4 | 0.545 |
+| one cycle, 2-daily | 7 | 0.540 |
+| 2-daily for two years | 365 | 0.489 |
+| same 365, straddling `Km` | 365 | **0.004** |
+
+Ninety times the sampling buys a tenth of a decade; the load recorded ten times better buys
+another 5%; placement buys 122x. **The dense design does not collapse.** It was not tuned
+until it did.
+
+The EKF written first is not used and the reason is recorded rather than hidden: the marker
+equilibrates in 0.81 h against a 3.5-day dose half-life, so it is quasi-steady at any
+realistic sampling instant, a design is described by the levels it visits, and the
+information filter is exact. The one exception is a 0.91-hour window after each dose, which
+is now a row in the specification.
+
+### 1.9 The estimand is a decision, and the two errors are wildly asymmetric
+
+| illness | mu | which error | simulated | delta method would say |
+|---|---|---|---|---|
+| 1.50x | +2006 | treat unneeded | 0.2% | 39.5% |
+| 2.98x | +339 | treat unneeded | 6.0% | 36.1% |
+| 3.58x | -339 | **fail to treat** | **52.5%** | 42.3% |
+| 5.50x | -2513 | fail to treat | 26.0% | 40.4% |
+
+**The estimator fails towards declaring patients safe.** At equal distance from the
+boundary the costly error is nine times the cheap one, and it does not close with distance.
+The mechanism was already in the note: abscissa noise inflates `a_hat`, hence `theta_hat`,
+hence `mu_hat`.
+
+A delta-method tail is nearly flat at 40% and is wrong in both directions, because `mu_hat`
+is not symmetric about `mu`: the design's near-null direction is very nearly the direction
+along which `mu` is monotone and of one sign. **That is the margin theorem showing up in
+the estimator**, and propagating a Gaussian would have thrown it away. Both numbers are
+reported so the gap stays visible.
+
+### 1.7 and the terminal deliverable
+
+Against a requirement of `E ~ 0.50`: inter-dose recovery 0.049, carnitine steps 0.062,
+antibiotics 0.034, supply interruptions 0.047, labelled bolus 0.076, decompensation 0.354.
+The routine sources deliver a fifth to a quarter of what their own fold range could, so they
+are in the wrong PLACE and not merely too narrow. **The excitation the decision needs is
+available only from the event the therapy exists to prevent.**
+
+The cohort row settles it. At a 41% sign error near the boundary, placing the fraction with
+`mu < 0` within ten points needs about 3,100 patients against a trial of 16. That is not a
+recruitment problem.
+
+### 1.4, 1.5 and the rest
+
+- **Fibre span, closed form, promoted.** `(1 + b m_bar/a)^2 = (C(m_bar)/a)^2`: recorded load
+  over fitted intercept, squared. Both observable, so the 169 is a per-patient diagnostic
+  rather than an illustration.
+- **The null-genotype anchor is kept, as a named remark.** It is the only excursion-free
+  route and it amplifies load error for exactly the severe patients the note is about. The
+  one route needing no excursion works for the patients who need it least, which is the same
+  inverse-usefulness shape as the main argument.
+- **Proposition 3's clause** is now "given `Km` AND the input gain": `kappa` is never
+  assigned, so on the carnitine channel the system is two equations in three unknowns before
+  `Km` is raised.
+- **`lambda`, `T_dose` and `D` are assigned**, with sources. `lambda` was named and never
+  given a value, which made 1.8 unrunnable.
+
+## Still open after pass 4
+
+1. **The load record.** Now the first row of the specification rather than a caveat: it is
+   what makes the saturated end degenerate, it is the noise term a marker panel cannot
+   average away, and it sets the floor on `n`.
+2. **A PA breath-test cohort.** The reference standard in the validation protocol is
+   transferred from MMA. Confirming whether a PA series exists is a prerequisite.
+3. **The hazard reformulation.** Unchanged, and now clearly the route by which `s_peak`
+   leaves the decision boundary that Section 7 shows the design cannot resolve.
+4. **Whether any ethical design meets the excitation condition.** The note now says what is
+   required and that nothing accessible supplies it. It does not say what would.
+
+## A fifth failure mode
+
+- **A linearisation that discards the result it was meant to measure.** The delta-method
+  tail on `mu` says the decision is a coin flip at every amplitude. The simulation says it
+  is right 99.8% of the time on one side and wrong 53% on the other. The Gaussian was
+  symmetric about a quantity whose sampling distribution is one-sided, and the one-sidedness
+  was the paper's own margin theorem. A propagated covariance is not a substitute for
+  simulating the estimand you actually report.
+
 ## Still open (pass 2)
 
 1. **A defensible bound on `sigma`.** Every conclusion in §3.7 is conditional on how well the substrate load is recorded, and the note never bounds it. The abstract now says so rather than asserting a flat verdict, which makes the gap visible from the first page instead of only in §3.7. Prescribed protein intake is documented; gut flora and unrecorded triggers are not. Until this is bounded from the records the identifiability answer is a family of curves rather than a number.

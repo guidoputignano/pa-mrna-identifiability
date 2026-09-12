@@ -10,163 +10,135 @@ ethical to collect, before the decision has to be made.
 
 ---
 
-## The model, in one line
+## The model, at three resolutions
+
+One model. The letters A, B and C are gone, because two of the three were the same model
+read at different resolutions and the third was a hypothesis about one term.
 
 ```
-dm/dt = s(t) - theta * g(m) - [ alternative clearance ] ,    g(m) = m/(Km + m)
+dm/dt = L(t) + L0 - (theta + Delta(t)) * g(m) - alpha(m),    g(m) = m/(Km + m)
 ```
 
-`g` is the **Michaelis-Menten saturation function**. In the standard biochemical form the
-velocity of a single-substrate enzymatic reaction is `v = V_max * [S] / (Km + [S])`, so
-`theta` is the patient's residual `V_max`, `Km` is the Michaelis constant, and `g(m)` is
-the fractional saturation. The same form is the Monod function in microbial kinetics, and
-the Hill function with `n = 1`.
+`g` is the **Michaelis-Menten saturation function** and `theta` **absorbs** the maximal
+velocity: it *is* the patient's residual `V_max`, not a fraction of a population one.
+`Delta(t)` is the therapeutic increment, known from the dosing schedule. `L0` is the
+**unrecorded** part of the propiogenic load, carried as an unknown — which turns out to be
+what makes the problem well posed at all.
 
-Three hypotheses about the bracketed term, each answering a different question:
+| resolution | obtained by | what it is for |
+|---|---|---|
+| **the dynamic model** | as written | the trajectory, the Gramian, the excitation condition |
+| **the equilibrium reduction** | `dm/dt = 0` | the fold, `theta_crit`, the safety margin |
+| **the local identification model** | `alpha(m) -> ke*m`, over the visited band | the fibre, the margin theorem, the design |
 
-| | alternative clearance | equilibria | question |
-|---|---|---|---|
-| **A** | `ke * m`, linear and unbounded | one, never lost | can `theta` be identified? |
-| **B** | `ke * h(m)`, Michaelis-Menten too | one, lost above the ceiling | under what condition is a tolerable steady state lost? |
-| **C** | `k * c(t) * m`, carnitine depleted | two, colliding at a fold | why does recovery require the load driven *below* baseline, not just the trigger removed? |
+**The third is NOT a reduction of the first**, and the check is one line. The tangent
+intercept of `theta*g + alpha` at the operating point is
+`a = theta*g^2 + [alpha - m*alpha']`, so the local model's identity `a = theta*g(m_bar)^2`
+holds only when the alternative channel is a straight line through the origin. At the
+illustrative constants the second bracket is 374 against the enzymatic term's 61: the
+alternative channel owns six-sevenths of the intercept. The local model is therefore the
+*parent with one term replaced*, and it is retained because that replacement is the **most
+favourable** case: a curved `alpha` contributes to both fitted coefficients and closes the
+fibre, a straight one contributes to neither and opens it.
 
-They are alternative hypotheses, not stages of a development, and they are not
-ranked by realism. Each is here for a different and specific reason.
-
-**C is the one that makes `theta_crit` well posed.** This is the point that
-matters most and it is easy to miss, because C is usually introduced as "the
-most biologically faithful of the three", which undersells it. In A and B the
-critical capacity has to be *defined* by a convention:
-
-```
-theta_crit = (s_peak - ke*m_bar) / g(m_bar)
-```
-
-with `m_bar` a clinical judgement about what metabolite level is tolerable and
-`s_peak` an unmeasured illness amplitude. In C it is *derived*: it is the theta
-at which the attractor and the separatrix merge at a saddle-node, and no
-tolerability convention appears anywhere in the construction. A cannot offer
-this because its equilibrium is never lost; B cannot because its equilibrium
-escapes to infinity instead of colliding with a second one. Only C has a second
-equilibrium for the first to collide with.
-
-**A is the most favourable case, not the most accurate.** It is the working
-model for identifiability precisely because its two clearance channels have
-maximally different functional forms. If identification fails there it fails a
-fortiori elsewhere. Its known defect is that it predicts no crisis at all.
-
-**B buys the load ceiling and pays for it.** It is what is needed to say
-anything about a steady state being lost, and the price is that both channels
-acquire the same functional form and become far harder to separate.
+A fourth structure, `alpha(m) = ke*h(m)` with a ceiling instead of a fold, survives as one
+remark. It is the null against which the fold is testable, and it prices biological
+fidelity in the identification (a factor of ~450 in condition number).
 
 ---
 
-## Results so far
+## Results
 
-**Model A is globally structurally identifiable.** The obstruction is
-conditioning, not structure. Knowing `m(t)` and `s(t)` determines the rational
-function `F(m) = theta*g(m) + ke*m`, whose coefficients recover all three
-parameters.
+### The chain
 
-**Three distinct metabolite levels are required.** A patient held at a single
-steady state gives rank 1.
+**The decision is a sign, not a value.** What matters clinically is the sign of
+`mu = theta - theta_crit` for a patient under that patient's own load.
 
-**Conditioning degrades quadratically** as the patient is stabilised. A patient
-varying by a few per cent between visits presents a problem conditioned at 1e5
-to 1e6, beyond assay precision.
+**A band determines the affine fit and nothing more.** Over the range a managed patient
+visits, total clearance is indistinguishable from a line at assay resolution.
 
-**Cohort size alone never helps.** N patients at steady state sharing the
-population parameters give N equations in N+2 unknowns. Deficiency 2 for every N.
+**The fibre's width is observable, in closed form.**
+`span = (1 + b*m_bar/a)^2 = (C(m_bar)/a)^2` — the recorded load over the fitted intercept,
+squared. 169 at the illustrative values, and **computable per patient without knowing a
+single parameter**.
 
-**The precision of `theta` has a floor no band width beats.** `Var(a_hat)` has a
-`1/n` term that the published derivation dropped, and the metabolite's
-positivity caps a band at twice the operating point, so
-`sd(theta)/theta >= c(n) sigma/(a sqrt n)` with `c(n) <= 2`. The design question
-therefore splits: a floor on the number of perturbation events, set by sigma
-alone, and only above it a requirement on the excursion. At six events the floor
-is 53% even at a load recorded to 2%; 20% precision needs 43 events there.
+**The sign survives what the value does not — asymmetrically.** The `Km^2` terms cancel
+along the fibre, so `mu` is linear where `theta` is quadratic. Simulating the accessible
+design, `theta_hat` spans three orders of magnitude while the sign of `mu` is right 99.8%
+of the time for a patient *with* margin and wrong **53%** of the time for one without, at
+the same distance from the boundary. **The estimator fails towards declaring patients
+safe**, because the abscissa noise inflates `theta_hat` and `mu_hat` inherits it.
 
-**Assay variability is the larger noise term whenever the load is well
-recorded.** At steady state an abscissa error acts like an ordinate error
-`b sigma_m`, and the two balance at `CV = 1.08 x (load error)`.
+**Both ends of the saturation curve are degenerate, and they fail differently.** Below
+`Km` only the lumped ratio `theta/Km + ke` is identifiable. Above it, `theta` enters only
+through `L0 - theta`, so with the load partly unrecorded the target parameter is confounded
+with the load. Losing a nuisance parameter is survivable; losing the target is not.
 
-**Two anchors close it exactly.** A null genotype supplies `ke` directly, since
-its equation loses the enzymatic term. One patient observed at two distinct
-loads supplies `Km`. Both are present in the Saudi cohort.
+**The excitation is maximised straddling `Km`, with a closed form.** With
+`phi(m) = Km/(Km+m)`, the band `[lo, hi]` delivers `E = phi(lo) - phi(hi)`, maximised at
+`sqrt(lo*hi) = Km` exactly, where `E_max(r) = (sqrt(r)-1)/(sqrt(r)+1)` for fold range `r`.
+**The requirement is a band around `Km`, not a threshold above it.**
 
-**Biological fidelity costs identifiability.** At a 10% excursion the condition
-number rises from 1.1e5 in Model A to 4.8e7 in Model B, a factor of ~450, because
-saturating both channels gives them the same functional form.
+**Time does not buy it. Placement does.** An augmented-state estimator with **no process
+noise on `theta`**, under the trial's biweekly schedule over two years:
 
-**Models B and C differ in a checkable prediction, but not in the marker.**
-Under B, cessation of the precipitating illness suffices for recovery; under C
-the load must be driven below baseline. That difference is about the model's
-state, and the measured proxy does not track the state through a crisis:
-propionylcarnitine, propionylglycine and propionic acid are essentially
-unaltered during acute decompensation. The discriminant is therefore stated in
-free carnitine, which does move, falling from 38.9 +/- 16.8 uM outside an event
-(n=56) to 22.0 +/- 12.4 uM during one (n=25), P = 0.0370. Two qualifications go
-with it: the comparison is between groups of samples rather than within
-patients, and a fall is consistent with C rather than exclusive to it. The
-phenotyping study's own discussion recommends measuring free carnitine during a
-decompensation, so the model and the clinical recommendation converge on the
-same analyte.
+| design | n | sd(ln theta) |
+|---|---|---|
+| six-monthly clinic visits | 4 | 0.545 |
+| one dose cycle, every 2 days | 7 | 0.540 |
+| every 2 days for two years | 365 | 0.489 |
+| *the same 365 samples straddling `Km`* | 365 | **0.004** |
 
-**`theta_crit` can be defined intrinsically, and only in Model C.** It is the
-theta at which, at a given load, the maximum of the clearance curve falls to
-that load: attractor and separatrix merge at the saddle-node. Above it two
-equilibria exist, below it none. `m_bar` does not appear. The construction
-removes the clinical convention from the definition of the threshold; it does
-not remove `s_peak`, which survives in the separate question of whether an
-episode is large enough to cross the separatrix. Only the hazard reformulation
-in open item 2 removes that.
+Ninety times the sampling buys a tenth of a decade. Recording the load ten times better
+(0.5%) buys another 5%. Placement buys a factor of 122. The dense design was expected to
+collapse the covariance and **did not** — that is the result, not a tuning failure.
 
-**The attractor-to-separatrix distance is the safety margin.** It says how far
-a patient can be pushed before the crisis becomes self-sustaining, closes
-continuously to zero at `theta_crit`, and diverges as theta approaches the
-baseline load, where the patient becomes unconditionally safe at that load. At
-the illustrative `theta = 300` it is 954, against `theta_crit = 151`. Neither A
-nor B admits this quantity at all. **Read it as an order of magnitude, not as a
-value**: over an 8x range in `M_i` the margin runs 509 to 3275, where
-`theta_crit` moves by 1.37x. The threshold is robust to the shape constants and
-the margin is not.
+**Only a decompensation approaches the excitation required.** Against a requirement of
+`E ~ 0.50`: inter-dose recovery 0.049, carnitine dose steps 0.062, antibiotics 0.034,
+supply interruptions 0.047, labelled-propionate bolus 0.076 — and a decompensation 0.354.
+The routine sources deliver a fifth to a quarter of what their own fold range *could*,
+because they sit an order of magnitude below `Km`. **The excitation the decision needs is
+available only from the event the therapy exists to prevent.**
 
-**Model B gives a condition, not a frequency.** The answer it returns is the
-inequality `s > theta + ke`, written in two quantities (`s_peak`, `m_bar`) that
-are never measured, and it is silent on how often the threshold is crossed.
-Frequency is the one thing the records hold reliably. Closing that gap needs
-the hazard reformulation in open item 2, not a better threshold.
+**No cohort rescues it.** At the accessible design the sign error near the boundary is 41%,
+and correcting a fraction for misclassification inflates its variance by `(1-2p)^-2`.
+Placing the fraction with `mu < 0` within ten points needs **about 3,100 patients**. The
+phase 1/2 trial enrolled 16.
 
-**The identification determinant does not depend on which channel is perturbed
--- given `Km`, and only given `Km`.**
-Perturb `k_e` with carnitine or `theta` with the therapy: the 2x2 system for
-`(theta, ke)` has the same coefficient matrix either way, and
+### Supporting results
 
-```
-det = g(m)*m' - g(m')*m = m*m'*(m'-m) / ((Km+m)*(Km+m'))
-```
+**The determinant is blind to the channel — given `Km`, and only given `Km`.** At a matched
+trajectory the `(theta, ke)` Gramians differ by under 5%, always favouring the therapy,
+because the sensitivity forcings are functions of the state alone and only the shared decay
+rate differs: `J_therapy - J_carnitine = -kappa*u*g(m) <= 0`. With `Km` unknown — which is
+the paper's own situation — it fails by six orders of magnitude in `det G` and 46x to 807x
+in `sd(ln theta)`: the `Km` sensitivity carries `theta + Delta(t)`, a prefactor only the
+therapy modulates. **Carnitine buys the excursion; it does not buy the curvature.**
 
-depends only on the two metabolite levels. The perturbation enters the
-right-hand side, not the matrix.
+**The intercept variance has a floor no band width beats.** `Var(a_hat)` has a `1/n` term
+the published derivation dropped, and `m >= 0` caps a band at twice the operating point, so
+`sd(theta)/theta >= c(n)*sigma/(a*sqrt(n))` with `c(n) <= 2`. The design question splits
+into a floor on the number of perturbation events and, above it, an excursion requirement.
 
-This carries to the observability Gramian of the trajectory, and it carries
-exactly as far as it is written. Given `Km`, the two channels differ by at most
-5% in `det G` at a matched trajectory, always favouring the therapy, because
-the sensitivity forcings are functions of the state alone and only the shared
-decay rate differs: `J_therapy - J_carnitine = -kappa u g(m) <= 0`. Posing the
-question on carnitine is conservative.
+**Assay variability is the larger noise term whenever the load is well recorded.** The two
+balance at `CV = 1.08 x (load error)`. A marker panel averages the assay term as `J^-1/2`
+and cannot touch the load term, so **buy the load record before the panel**.
 
-**With `Km` unknown it fails**, by six orders of magnitude in `det G` and 46x
-to 807x in `sd(ln theta)`. The `Km` sensitivity is forced by
-`-(theta + Delta(t)) Km dg/dKm`, a prefactor the therapy modulates and carnitine
-cannot. So **the excursion is channel-blind and the curvature is not**: carnitine
-buys the excursion, and only a perturbation multiplying the enzymatic term buys
-the curvature -- or an excursion carrying the patient into the neighbourhood of
-`Km`, which is the excursion clinical management exists to prevent. Since the
-fibre below exists precisely because `Km` is unknown, the two central results
-are in tension in the form they were written.
+**`theta_crit` is nearly a function of one clinical claim.** Holding the calibration that
+fixes `R0`, sweeping `Kc`, `Mi` and `rho_0` over their whole ranges moves `theta_crit` by a
+factor of 1.39. **The margin is not so protected**: it runs 509 to 3275 over an 8x range in
+`Mi`, so Figure 16's 954 is an order of magnitude, not a value.
 
----
+**The marker is 3-HP.** RR 0.7 (95% CI 0.6–0.9, p < 0.01) per 50% *lower* concentration — a
+risk marker in the expected direction. C3 is excluded structurally (carnitine raises it
+while lowering the organic acids, reversing the perturbation's sign); 2-MC on the endpoint
+(RR 1.0, p = 0.84), its strength being as a correlate of ammonia *during* an event, which
+is the arm the model excludes.
+
+**The conflation is measured, not argued.** Propionate oxidation by breath test is
+near-identical in patients whose serum markers differ widely, repeating at CV 6.9%
+(controls) and 12.8% (patients). The cohort is MMA, not PA, and no PA breath-test series
+has been located.
 
 ## Layout
 
@@ -176,10 +148,15 @@ paper/          LaTeX source, split by section
   sections/       one file per section; 06_results pulls in the figures
   note_structural_identifiability.tex   standalone note with the propositions
 src/
-  common/         model definitions and plotting style, shared
-  model_A/run.py  identifiability, conditioning, population anchors
-  model_B/run.py  load ceiling, threshold, cost of the correction
-  model_C/run.py  bistability, separatrix, intrinsic theta_crit, safety margin
+  common/models.py      the kinetics and the three clearance structures
+  common/params.py      every constant, with a source column; generates tab_params
+  common/dynamics.py    the sensitivity system and the observability Gramian
+  common/excitation.py  phi, E, E_max, and the design quantities
+  model_C/run.py  THE DYNAMIC MODEL and its equilibrium reduction
+  model_A/run.py  THE LOCAL IDENTIFICATION MODEL: the fibre, the margin, the floor
+  model_B/run.py  the ceiling hypothesis (one remark in the paper)
+  design/run.py   the excitation figure, the covariance collapse, the decision
+                  characteristic, the excursion table, the data specification
 symbolic/       structural identifiability, three independent tools
   julia/          StructuralIdentifiability.jl, 8 cases
   maple/          SIAN

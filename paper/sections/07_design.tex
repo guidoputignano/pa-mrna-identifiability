@@ -1,0 +1,185 @@
+\section{The design: where the excitation can be bought, and what it decides}
+\label{sec:designsec}
+%==========================================================================
+
+\emph{Section~\ref{sec:excitation} says what a trajectory has to do. This section asks
+what the accessible trajectories actually do, and what decision the answer supports.}
+
+\subsection{What does not collapse, stays}
+\label{sec:collapse}
+
+The estimator here is the exact information filter for constant parameters,
+\begin{equation}
+P_k^{-1} \;=\; P_0^{-1} \;+\; \sum_{i \le k} \frac{q(m_i)\,q(m_i)^{\!\top}}{\sigma^2},
+\label{eq:infofilter}
+\end{equation}
+on the augmented coordinates $(\ln\theta, \ln K_m, L_0)$, none of which carries dynamics.
+\textbf{There is no process noise on $\theta$, and that is a construction rather than a
+setting.} A random walk on $\theta$ manufactures a finite stationary covariance in a
+direction the data may never see, which is precisely the error this note exists to warn
+about; with \eqref{eq:infofilter}, what does not collapse stays visibly uncollapsed.
+
+An extended Kalman filter on the joint state was written first and is not used, for a
+reason worth recording. The marker's time constant is
+$\bigl(\theta g'(\bar m) + k_e\bigr)^{-1}$, which is $0.81$ hours at the illustrative
+values, against a therapeutic increment decaying with a half-life of $3.5$ days: a
+separation of $104$. The marker is therefore in quasi-steady state at every sampling
+instant a clinic could use, a design is fully described by the \emph{levels} it visits, and
+\eqref{eq:infofilter} is exact rather than approximate. The code measures the separation
+rather than asserting it, and returns one number a protocol needs: after a dose the marker
+is within $5\%$ of quasi-steady in $0.91$ hours and tracks to within $5\%$ thereafter, so a
+sample drawn inside that first hour is not a steady state and does not belong in a
+steady-state fit.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig_D2_collapse.pdf}
+\caption{Three sampling designs under the biweekly dosing schedule, over two years.
+\textbf{Left:} $\operatorname{sd}(\ln\hat\theta)$ as samples arrive. \textbf{Right:} the
+one-sigma ellipse in $(\ln\theta, \ln K_m)$ at the end. Sampling ninety times more often
+buys a tenth of a decade; the ellipses stay long and stay aligned, which is the fibre of
+Remark~\ref{rem:fibre} seen in the estimator. Nothing here is tuned to produce that: the
+dense design was expected to collapse and did not.}
+\label{fig:D2}
+\end{figure}
+
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}lrlrr@{}}
+\toprule
+\textbf{design} & $n$ & \textbf{levels visited} &
+$\operatorname{sd}(\ln\hat\theta)$ & $\operatorname{corr}(\ln\hat\theta, \ln \hat K_m)$ \\
+\midrule
+six-monthly clinic visits          &   4 & $6.26$--$8.46$ & $0.545$ & $+0.986$ \\
+one dose cycle, every two days     &   7 & $3.51$--$8.54$ & $0.540$ & $+0.986$ \\
+every two days for two years       & 365 & $3.36$--$8.54$ & $0.489$ & $+0.999$ \\
+\addlinespace
+\emph{the same $365$ samples straddling $K_m$} & 365 & $50$--$200$ & $\mathbf{0.004}$ & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{The gate fails, and the failure is the result.} The design that catches the
+inter-dose recovery was expected to collapse the covariance and does not: ninety times the
+sampling effort moves $\operatorname{sd}(\ln\hat\theta)$ from $0.545$ to $0.489$. Recording
+the load ten times better --- to $0.5\%$, which nobody can do --- moves it to $0.467$. The
+same number of samples placed to straddle $K_m$ moves it to $0.004$, a factor of $122$.
+
+So \textbf{the obstruction is placement, not density and not precision}, which is
+Proposition~\ref{prop:straddle} arriving from the estimator's side. Sampling a patient more
+often inside the band management holds them in is close to worthless, and this is the
+quantitative form of the warning: a study that buys sampling frequency instead of excursion
+has bought nothing, and a filter carrying process noise on $\theta$ would not have said so.
+
+\subsection{Where the excitation could come from}
+\label{sec:excursion_table}
+
+Each accessible source of variation moves the marker by a known amount, in a known
+direction, from a known place. Table~\ref{tab:excursion} evaluates \eqref{eq:E} on each.
+
+\begin{adjustwidth}{-1.0cm}{-1.0cm}
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{\label{tab:excursion}Excitation available from each source, against the
+$E \approx 0.50$ the decision requires. Direction matters: the curvature is at high $m$, and
+most of what a chart contains moves the patient the other way. The last column is how much
+of the excitation a band of that fold range \emph{could} have delivered if it had straddled
+$K_m$, so it separates being too narrow from being in the wrong place.}
+\input{../results/tables/tab_D_excursion}
+\end{table}
+\end{adjustwidth}
+
+Three readings.
+
+\begin{enumerate}[leftmargin=*, itemsep=3pt]
+\item \textbf{Everything routine is in the wrong place, not merely too narrow.} The
+inter-dose recovery, the carnitine dose steps and the cyclical antibiotics all deliver
+between a fifth and a quarter of what their own fold range could deliver, because they
+happen an order of magnitude below $K_m$. Widening them does not fix that.
+\item \textbf{Only a decompensation gets close, and it is still short.} An excursion from
+the operating point to eight times it reaches $E = 0.35$ against the $0.50$ required, and it
+does so at $74\%$ of what that fold range could deliver, because it at least moves towards
+$K_m$. \textbf{The excitation the decision needs is available only from the event the
+treatment exists to prevent}, and even then not in full.
+\item \textbf{A labelled-propionate bolus is the one designed source, and it is small.}
+Doubling the marker from the operating point reaches $E = 0.076$. Its value is not the
+excitation it supplies but that it measures capacity on a different axis entirely, which is
+the subject of Section~\ref{sec:validation}.
+\end{enumerate}
+
+\subsection{The estimand is a decision, and the decision survives what the parameter does not}
+\label{sec:decision}
+
+Confidence intervals on $\theta$ are the wrong output. The clinical question is the
+\emph{sign} of $\mu = \theta - \thc$, and its two errors are not interchangeable: treating a
+patient who does not need it costs an infusion and a venous line, and failing to treat one
+who does costs a decompensation. Figure~\ref{fig:D3} is the operating characteristic of that
+decision.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig_D3_decision.pdf}
+\caption{The probability of getting the sign of $\mu$ wrong, by simulation, as a patient of
+fixed biology is swept across the decision boundary by the illness amplitude. Left of the
+dotted line the error is a patient treated who did not need it; right of it, a patient left
+untreated who did. Each panel varies one thing a protocol controls.}
+\label{fig:D3}
+\end{figure}
+
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}rrlrr@{}}
+\toprule
+\textbf{illness} & $\mu$ & \textbf{which error} & \textbf{simulated} &
+\textbf{a delta method would say} \\
+\midrule
+$1.50\times$ & $+2006$ & treat unneeded & $0.2\%$  & $39.5\%$ \\
+$2.50\times$ & $+876$  & treat unneeded & $0.2\%$  & $38.8\%$ \\
+$2.98\times$ & $+339$  & treat unneeded & $6.0\%$  & $36.1\%$ \\
+\addlinespace
+$3.58\times$ & $-339$  & fail to treat  & $\mathbf{52.5\%}$ & $42.3\%$ \\
+$4.00\times$ & $-818$  & fail to treat  & $31.8\%$ & $41.1\%$ \\
+$5.50\times$ & $-2513$ & fail to treat  & $26.0\%$ & $40.4\%$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{The two errors are not the same size, and the larger one is the one that costs a
+patient a decompensation.} At equal distance from the boundary --- $|\mu| = 339$ on either
+side --- the simulated error is $6\%$ for treating a patient who did not need it and $53\%$
+for failing to treat one who did. The asymmetry does not close with distance: at
+$|\mu| = 2513$ on the unsafe side the error is still $26\%$, where at $|\mu| = 2006$ on the
+safe side it is $0.2\%$. \textbf{The estimator fails towards declaring patients safe.} The
+mechanism is already in this note: by Remark~\ref{rem:eiv} the abscissa noise inflates
+$\hat a$ and hence $\hat\theta$, and $\hat\mu = \hat\theta - \thc$ inherits that bias
+whole.
+
+The simulated error exceeds $10\%$ for every illness amplitude from $3.10\times$ baseline
+upward, which is the whole region at and beyond the decision boundary at $3.28\times$. A
+protocol reporting this design's answer would be reporting a test that is nearly reliable
+where it does not matter and close to a coin toss where it does.
+
+\begin{remark}[Why this is simulated and not propagated]
+\label{rem:no_delta}
+A delta-method calculation, propagating the estimator's covariance to $\mu$ and reporting
+$\Phi(-|\mu|/\operatorname{sd}(\hat\mu))$, is available and is wrong here, in a way that
+matters. At the accessible design $\operatorname{sd}(\hat\mu)/|\mu| = 3.7$, so a Gaussian
+of that width crosses zero about $39\%$ of the time. Simulating the same model instead,
+$\hat\theta$ ranges over three orders of magnitude across replicates --- the design really
+is that bad --- and $\hat\mu$ never changes sign.
+
+The two disagree because $\hat\mu$ is not symmetric about $\mu$. The design's near-null
+direction is very nearly the direction along which $\mu$ is monotone and of one sign, so the
+sampling distribution of $\hat\mu$ is heavily skewed and does not cross zero anything like
+as often as its standard deviation suggests. \textbf{That is the margin theorem of
+\eqref{eq:mufibre} showing up in the estimator}, and taking the Gaussian tail at face value
+would throw away the one favourable result this note has. Both numbers are reported by the
+code so that the gap stays visible.
+\end{remark}
+
+\vspace{0.5em}
+\hrule
+\vspace{1em}
+
+%==========================================================================

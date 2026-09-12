@@ -1,0 +1,94 @@
+\section{A validation protocol, and the objection it has to answer}
+\label{sec:validation}
+%==========================================================================
+
+\emph{This is a protocol, not a completed study. Nothing in it has been run.}
+
+\subsection{The obvious objection}
+\label{sec:why_not_breath}
+
+A reader who has followed Section~\ref{sec:spec} to its last row should ask the obvious
+question: \textbf{if a breath test measures oxidative capacity directly, why identify
+anything from records at all?}
+
+The question is fair and it has three answers, in decreasing order of how much they settle.
+
+\paragraph{Capacity is not margin.} The breath test measures how fast a patient oxidises a
+labelled bolus. What the dosing decision turns on is whether that capacity exceeds what the
+patient's \emph{own} load demands, which is $\mu = \theta - \thc$ and not $\theta$. The
+threshold carries $\spk$ and the tolerable level, or in the equilibrium reduction the fold
+of the patient's own clearance curve; either way it is a property of the patient's load and
+diet, which the test does not see. A test result of ``forty per cent of normal oxidation''
+does not say whether this patient, on this protein intake, has margin.
+
+\paragraph{The test is not where the patients are.} The cohort a dosing decision has to be
+made in is the cohort that exists: children on chronic management, in clinics that measure
+acylcarnitines and organic acids and do not perform stable-isotope breath tests. A method
+that requires an instrument nobody has is a method for a later cohort. The records exist
+now, which is the whole reason this note is written on carnitine.
+
+\paragraph{Scale transfer is not established.} The published test is in methylmalonic
+acidemia~\cite{breath_test_mma}, % C48
+where the block is one step further down the same pathway. Whether its reading maps onto
+$\theta$ as this note defines it --- a maximal velocity at the plasma level, in a marker's
+units --- is exactly the transfer question Remark~\ref{rem:no_km} refuses to assume
+elsewhere, and it would be inconsistent to assume it here.
+
+\textbf{None of this makes the test dispensable.} It makes it the reference standard rather
+than the replacement, which is what a validation protocol needs.
+
+\subsection{The protocol}
+
+\paragraph{Design.} Paired, within patient, single arm. Each participant supplies (i) a
+marker-based estimate of $\theta$ from a record meeting Table~\ref{tab:spec}, and (ii) a
+$1$-$^{13}$C-propionate breath test at the same visit. The comparison is of the two
+estimates on a common scale, after the monotone rescaling of Section~\ref{sec:invariance},
+so what is being validated is \emph{agreement up to a consistent distortion}, which is all
+the decision requires.
+
+\paragraph{Data per patient.} Exactly Table~\ref{tab:spec}: the marker on the specified
+sampling schedule through at least one excursion, the load recorded to the stated precision
+with enteral and parenteral sources separated, and one breath test at entry with a repeat at
+any dose change.
+
+\paragraph{Pre-specified agreement threshold.} The comparison is declared successful if the
+limits of agreement on the log scale lie inside $\pm \ln 2$, that is if the two methods
+agree within a factor of two on $\theta$. That is a weak threshold by the standards of assay
+validation and a demanding one here, because Remark~\ref{rem:fibre} says a perfectly
+resolved band still leaves $\theta$ open across a factor given by \eqref{eq:span}, which at
+the illustrative values is $169$.
+
+\paragraph{Power, against the reference standard's own precision.} The breath test's
+repeatability is a coefficient of variation of $6.9\%$ in controls and $12.8\%$ in
+patients~\cite{breath_test_mma}. % C48
+A validation cannot resolve agreement more finely than the reference standard resolves
+itself, so $12.8\%$ is a floor on the width of any limits of agreement, whatever the marker
+side contributes. Two consequences follow and both should be stated before any data are
+collected. First, a study powered to detect disagreement smaller than about a quarter
+(roughly two reference standard deviations) is not powered against anything. Second, the
+marker side's contribution is the quantity of Section~\ref{sec:collapse}, and at the
+accessible designs it is an order of magnitude larger than the reference standard's, so the
+study would be measuring the marker method's imprecision and not the agreement between two
+comparable methods.
+
+\paragraph{What would make the protocol worth running.} Only a cohort in which the excursion
+requirement of Table~\ref{tab:excursion} is met, which by Section~\ref{sec:excursion_table}
+means a cohort observed through decompensations with the load recorded throughout. That is a
+natural history study with a sampling protocol attached, not a new experiment.
+
+\begin{remark}[A gap in the literature that the protocol depends on]
+\label{rem:no_pa_breath}
+\textbf{No published propionic acidemia breath-test cohort has been located.} The cohort
+cited here is methylmalonic acidemia~\cite{breath_test_mma}, % C48
+and the protocol above is written as though an equivalent series existed in PA. Confirming
+whether one does, and if not what it would take to establish the test in this disease, is a
+prerequisite rather than a detail. Until it is settled, the reference standard in the
+protocol is an assumed one, and the $12.8\%$ quoted as its precision is transferred from an
+adjacent disorder on the same pathway.
+\end{remark}
+
+\vspace{0.5em}
+\hrule
+\vspace{1em}
+
+%==========================================================================

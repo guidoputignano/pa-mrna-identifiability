@@ -1,0 +1,96 @@
+\section{The data specification}
+\label{sec:spec}
+%==========================================================================
+
+\emph{This is the page the rest of the note is written to reach. Every row is generated from
+the model code, and every row is a consequence of something proved above rather than a
+recommendation of good practice.}
+
+\begin{adjustwidth}{-1.2cm}{-1.2cm}
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{\label{tab:spec}What a record would have to contain for the sign of $\mu$ to be
+decidable. Quantities are given in observable units, not in multiples of $K_m$, because
+$K_m$ is not known; where a requirement depends on it, the row says what the dependence is.}
+\input{../results/tables/tab_D_spec}
+\end{table}
+\end{adjustwidth}
+
+\subsection{Reading it}
+
+Four of the rows carry most of the weight, and they are ordered by what has to happen first.
+
+\paragraph{The load record comes first, and not because it is easy.} By
+Remark~\ref{rem:load_bearing} the unrecorded component of the propiogenic load is what makes
+the saturated end degenerate. Without it, saturation would be the best place to measure and
+the design problem would be a safety problem alone. With it, the optimum is interior and the
+whole excitation argument follows. It is also, by \eqref{eq:crossover}, the noise term that
+a marker panel cannot average away, so buying channels before buying the load record is
+buying against a term that does not move.
+
+\paragraph{The excursion is the binding constraint, and it is not available.} The decision
+needs $E \approx 0.50$. The routine sources in Table~\ref{tab:excursion} deliver between
+$0.03$ and $0.08$, and deliver only a fifth to a quarter of what their own fold range could,
+because they sit an order of magnitude below $K_m$. A decompensation delivers $0.35$, at
+$74\%$ of its own potential, and is the only accessible source within a factor of two of the
+requirement. \textbf{The excitation the decision needs is available only from the event the
+therapy exists to prevent.} This is the paper's obstruction in the units a protocol is
+written in, and no amount of sampling frequency substitutes for it
+(Section~\ref{sec:collapse}).
+
+\paragraph{Sampling density is worth very little, and sampling placement is worth a factor
+of a hundred.} Two-daily sampling for two years buys a tenth of a decade over four clinic
+visits. The same number of samples placed to straddle $K_m$ buys two decades. A protocol
+with a fixed budget should spend it on where the patient is when sampled, not on how often.
+The one density requirement that is real is negative: do not sample within an hour of a
+dose, because the marker is not at steady state there and a steady-state fit does not apply
+to it.
+
+\paragraph{The breath test is the only row that does not depend on the excursion.} Every
+other requirement is a way of extracting capacity from level, and by
+Proposition~\ref{prop:excitation} that extraction is degenerate at both ends of the curve.
+A labelled-propionate test measures oxidation directly, on an axis the marker does not
+share. Its reported repeatability, a coefficient of variation of $6.9\%$ in controls and
+$12.8\%$ in patients~\cite{breath_test_mma}, % C48
+is the reference precision any validation of a marker-based estimate has to be powered
+against, and Section~\ref{sec:validation} is where that is made a protocol.
+
+\paragraph{The cohort row is the one that settles it.} At the accessible design the sign
+error near the decision boundary is $41\%$, and correcting a fraction for per-patient
+misclassification inflates its variance by $(1-2p)^{-2}$. Placing the fraction of patients
+with $\mu<0$ within ten percentage points then needs \textbf{about three thousand
+patients}. The phase 1/2 trial enrolled sixteen~\cite{trial_phase12}, and at a newborn
+incidence around $1{:}14{,}000$ even in the highest-reported population the requirement is
+not a recruitment problem, it is an arithmetic impossibility. That number is not a criticism
+of the trial. It is what the specification is for: \textbf{the design has to change, because
+no cohort rescues it.}
+
+\subsection{What the specification does not ask for}
+
+Three things are deliberately absent, and each corresponds to a result above rather than an
+oversight.
+
+\begin{itemize}[leftmargin=*, itemsep=3pt]
+\item \textbf{A target confidence interval on $\theta$.} Section~\ref{sec:decision} says the
+estimand is a sign, that the sign survives designs which leave $\theta$ unknown to three
+orders of magnitude, and that a Gaussian interval on $\mu$ misrepresents the decision in the
+pessimistic direction. A specification written against an interval on $\theta$ would demand
+data nobody can collect in order to answer a question nobody asked.
+\item \textbf{A larger cohort as a substitute for excursion.} $N$ patients at one steady
+state each give $N$ equations in $N+2$ unknowns. Cohort size buys precision on the shared
+parameters once each patient supplies a band, and it does not buy excitation, which is a
+property of a single patient's trajectory.
+\item \textbf{A value for $K_m$.} Remark~\ref{rem:no_km} forbids importing one from in vitro
+work, and the specification is written so that it does not need one: every excursion
+requirement is stated as a multiple of the patient's own operating level, which is
+observable, and the $K_m$-dependence is carried in the row rather than resolved. The
+excursion table is the one place where $K_m$ enters numerically, and it enters as the
+quantity being estimated.
+\end{itemize}
+
+\vspace{0.5em}
+\hrule
+\vspace{1em}
+
+%==========================================================================

@@ -80,10 +80,21 @@ LOCAL = [
                  r"increment on $k_e$, and every figure varies that product directly. "
                  r"Proposition~\ref{prop:illcond} is conditional on it: an unknown $\kappa$ "
                  r"leaves the carnitine route two equations in four unknowns"),
-    Row(r"$\lambda$", "not assigned", "decay rate of the therapeutic increment",
-        ASSUMED, r"never assigned a value and never used numerically. It enters only the "
-                 r"statement of \eqref{eq:input}. The dosing interval it would have to be read "
-                 r"against is the biweekly schedule selected for mRNA-3927"),
+    Row(r"$\lambda$", r"$\ln 2/3.5$ d$^{-1}$",
+        "decay rate of the therapeutic increment",
+        ASSUMED, r"a $3.5$-day half-life, so the increment has decayed sixteen-fold by the "
+                 r"next dose and the inter-dose recovery is an excursion rather than a "
+                 r"ripple. Nothing measures it. It was previously named and never assigned, "
+                 r"which made Section~\ref{sec:collapse} unrunnable; its only role is to set "
+                 r"how much excursion a fixed schedule creates, and "
+                 r"Table~\ref{tab:excursion} reports the answer"),
+    Row(r"$T_{\mathrm{dose}}$", "14 d", "interval between therapeutic doses",
+        LITERATURE, r"the biweekly schedule selected for mRNA-3927 by model-informed dose "
+                    r"selection~\cite{dose_selection_poster}. Adopted rather than assumed"),
+    Row(r"$D$", "6000", "size of one therapeutic increment",
+        ASSUMED, r"chosen so the marker falls by about half at peak effect, the order of the "
+                 r"reductions reported in the phase 1/2 interim "
+                 r"analysis~\cite{trial_phase12}. Only the excursion it produces is used"),
     Row(r"$\sigma$", "a family", "standard deviation of the ordinate of the fit",
         ASSUMED, r"deliberately not assigned. Every design conclusion is reported as a function "
                  r"of it, because nothing in this note bounds how well the substrate load is "

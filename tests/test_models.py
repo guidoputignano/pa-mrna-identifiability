@@ -997,3 +997,286 @@ def test_a_marker_panel_averages_the_assay_term_and_not_the_load_term():
     assert gain_bad < 1.1, gain_bad
     # and it never beats what a perfectly recorded load would give
     assert sigma_total(0.02, channels=64) > 0.02 * 322.0
+
+
+# =========================================================================
+#  PASS 4 -- the restructure. The excitation condition, the reduction
+#  hierarchy, the design, and the decision.
+# =========================================================================
+
+# ------------------------------------------------- 1.1  the hierarchy
+def test_the_two_state_system_reduces_to_the_quasi_steady_flux_symbolically():
+    """
+    Solving dc/dt = 0 in the two-state system returns alpha exactly, and the
+    conjugation rate constant k survives only inside rho_0 = delta_0/k.
+    """
+    import sympy as sp
+    m, c, k, R0, Kc, Mi, d0 = sp.symbols("m c k R_0 K_c M_i delta_0", positive=True)
+    conj = k * c * m / (Kc + m)
+    c_star = sp.solve(sp.Eq(R0 - conj - d0 * (1 + m / Mi) * c, 0), c)[0]
+    alpha = sp.simplify(conj.subs(c, c_star))
+    u = m / (Kc + m)
+    alpha_paper = R0 * u / (u + (d0 / k) * (1 + m / Mi))
+    assert sp.simplify(alpha - alpha_paper) == 0
+    # k appears only as the ratio: substituting rho_0 removes it entirely
+    rho0 = sp.Symbol("rho_0", positive=True)
+    assert k not in sp.simplify(alpha.subs(d0, rho0 * k)).free_symbols
+
+
+def test_the_two_state_system_settles_on_the_reduced_equilibria():
+    """
+    Integrating the full two-state system from below the separatrix lands on
+    the attractor of the reduced clearance; from above it, it escapes. This is
+    the equilibrium reduction verified numerically rather than asserted.
+    """
+    from scipy.integrate import solve_ivp
+    from model_C.run import PC, S_BASE
+    roots, st = equilibria_nonmonotone(clearance_C_quasistatic, PC, S_BASE,
+                                       np.linspace(1e-3, 3e4, 120000))
+    st = np.asarray(st, dtype=bool)
+    attractor, separatrix = float(roots[st][0]), float(roots[~st][0])
+    for m0, expect_escape in ((0.5 * attractor, False), (1.2 * separatrix, True)):
+        sol = solve_ivp(lambda t, y: rhs_C(t, y, PC, lambda _: S_BASE),
+                        (0, 4000.0), [m0, PC.R0], rtol=1e-10, atol=1e-12,
+                        method="LSODA")
+        end = float(sol.y[0, -1])
+        if expect_escape:
+            assert end > 10 * separatrix, end
+        else:
+            assert end == pytest.approx(attractor, rel=1e-6), end
+
+
+def test_the_ode_equilibrium_matches_the_closed_form_reduction():
+    """Pass 2.1: an integrated steady state equals the algebraic one."""
+    from scipy.integrate import solve_ivp
+    from model_C.run import PC, S_BASE
+    roots, st = equilibria_nonmonotone(clearance_C_quasistatic, PC, S_BASE,
+                                       np.linspace(1e-3, 3e4, 120000))
+    st = np.asarray(st, dtype=bool)
+    attractor = float(roots[st][0])
+    assert clearance_C_quasistatic(attractor, PC) == pytest.approx(S_BASE, rel=1e-9)
+    sol = solve_ivp(lambda t, y: [S_BASE - clearance_C_quasistatic(y[0], PC)],
+                    (0, 2000.0), [0.3 * attractor], rtol=1e-11, atol=1e-13,
+                    method="LSODA")
+    assert float(sol.y[0, -1]) == pytest.approx(attractor, rel=1e-8)
+
+
+def test_halving_the_step_does_not_move_the_quasi_steady_level():
+    """
+    Pass 2.1: the integrator's step must not be carrying the answer. Euler is
+    for the write-up; computation uses an adaptive stiff-capable solver, and
+    this is the check that says so.
+    """
+    from scipy.integrate import solve_ivp
+    import design.run as D
+    Lb = D.load(0.0)
+    rhs = lambda t, y: [Lb - (D.P.theta + float(D.delta(t))) * y[0]
+                        / (D.P.Km + y[0]) - D.P.ke * y[0]]
+    ends = []
+    for ms in (0.05, 0.025):
+        sol = solve_ivp(rhs, (0.0, 10.0), [D.quasi_steady_level(0.0)],
+                        rtol=1e-9, atol=1e-12, method="Radau", max_step=ms)
+        ends.append(float(sol.y[0, -1]))
+    assert abs(ends[0] - ends[1]) / ends[0] < 1e-6, ends
+    assert ends[0] == pytest.approx(float(D.quasi_steady_level(10.0)), rel=0.01)
+
+
+# ------------------------------------------------- 1.4  the fibre span
+def test_the_fibre_span_is_the_recorded_load_over_the_fitted_intercept_squared():
+    """
+    (1 + b m_bar/a)^2 = (C(m_bar)/a)^2, both observable. This is what turns
+    the illustrative 169 into a per-patient diagnostic.
+    """
+    from model_A.run import (fit_ab, fibre, fibre_Km_max, fibre_span,
+                             baseline_load, P, M_OP)
+    a, b = fit_ab(P)
+    Kmax = fibre_Km_max(a, b)
+    brute = fibre(a, b, Kmax)[0] / fibre(a, b, 1e-12)[0]
+    assert fibre_span(a, b) == pytest.approx(brute, rel=1e-9)
+    assert fibre_span(a, b) == pytest.approx((baseline_load() / a) ** 2, rel=1e-12)
+    assert fibre_span(a, b) == pytest.approx(169.4, rel=1e-3)
+
+
+# ------------------------------------------------- 1.6  the excitation
+def test_both_asymptotes_are_degenerate_and_they_fail_differently():
+    """
+    Proposition: both ends of the saturation curve are degenerate, and the
+    near-null direction is different at each. The degeneracy is asymptotic, so
+    the statement is about conditioning and about WHICH direction goes flat,
+    not about exact rank at a finite level.
+    """
+    from common.excitation import sensitivities
+    th, Km, ke = 3000.0, 100.0, 5.0
+
+    def svd_of(levels):
+        Q = sensitivities(np.asarray(levels, float), th, Km, ke)
+        Q = Q / np.linalg.norm(Q, axis=0)
+        _, sv, Vt = np.linalg.svd(Q, full_matrices=False)
+        return sv, Vt
+
+    sv_lo, V_lo = svd_of(np.geomspace(1e-4, 1e-3, 12) * Km)
+    sv_mid, _ = svd_of(np.geomspace(0.5, 2.0, 12) * Km)
+    sv_hi, V_hi = svd_of(np.geomspace(1e4, 1e5, 12) * Km)
+    assert sv_lo[0] / sv_lo[-1] > 1e5, sv_lo
+    assert sv_hi[0] / sv_hi[-1] > 1e5, sv_hi
+    assert sv_mid[0] / sv_mid[-1] < 1e3, sv_mid
+
+    # LOW end: TWO directions go flat, and neither involves the load bias --
+    # theta, K_m and k_e all collapse onto m and only their lumped ratio
+    # survives. The clearance stays constrained; its decomposition does not.
+    assert sv_lo[0] / sv_lo[-2] > 1e3, sv_lo
+    assert abs(V_lo[-1][3]) < 0.1 and abs(V_lo[-2][3]) < 0.1
+
+    # HIGH end: ONE direction goes flat and it is theta against the load bias.
+    # The target parameter is what is lost, which is the worse failure.
+    assert sv_hi[0] / sv_hi[-2] < 1e3, sv_hi
+    v = V_hi[-1]
+    assert abs(v[0]) > 0.3 and abs(v[3]) > 0.3, v
+    assert np.sign(v[0]) != np.sign(v[3]), v
+    assert abs(v[1]) < 0.1, v
+
+
+def test_the_excitation_is_maximised_straddling_K_m_geometrically():
+    """
+    E_max(r) = (sqrt(r)-1)/(sqrt(r)+1), attained at sqrt(m_lo m_hi) = K_m.
+    Checked against a brute-force search over placement.
+    """
+    from common.excitation import excitation, excitation_max, optimal_band, fold_range_for
+    Km = 100.0
+    for r in (1.5, 2.0, 10.0, 100.0):
+        lo_star, hi_star = optimal_band(r, Km)
+        assert np.sqrt(lo_star * hi_star) == pytest.approx(Km, rel=1e-12)
+        best = max(excitation(c / np.sqrt(r), c * np.sqrt(r), Km)
+                   for c in np.geomspace(1e-3 * Km, 1e3 * Km, 4001))
+        assert excitation_max(r) == pytest.approx(best, rel=1e-3)
+        assert excitation(lo_star, hi_star, Km) == pytest.approx(excitation_max(r), rel=1e-12)
+        assert fold_range_for(excitation_max(r)) == pytest.approx(r, rel=1e-9)
+
+
+def test_placement_beats_width_by_orders_of_magnitude():
+    """
+    The band the illustrative patient is held in throws away a factor of three
+    in E by placement alone, and far more than that in sd(ln theta).
+    """
+    from common.excitation import excitation, excitation_max, sd_log_theta, band_levels
+    th, Km, ke, m_bar = 3000.0, 100.0, 5.0, 10.0
+    here = excitation(m_bar / np.sqrt(2), m_bar * np.sqrt(2), Km)
+    assert excitation_max(2.0) / here == pytest.approx(3.0, abs=0.15)
+    best = min(sd_log_theta(band_levels(c, 2.0, 9), th, Km, ke)
+               for c in np.geomspace(0.02, 100.0, 400) * Km)
+    assert sd_log_theta(band_levels(m_bar, 2.0, 9), th, Km, ke) / best > 1000
+
+
+def test_the_optimum_is_interior_only_because_the_load_is_unrecorded():
+    """
+    With the load known exactly, sd(ln theta) falls monotonically into
+    saturation and there is no interior optimum. It is the unrecorded load
+    that creates the upper obstruction.
+    """
+    from common.excitation import sd_log_theta, band_levels
+    th, Km, ke = 3000.0, 100.0, 5.0
+    cen = np.geomspace(0.05, 50.0, 40) * Km
+    known = [sd_log_theta(band_levels(c, 2.0, 9), th, Km, ke, load_bias=False)
+             for c in cen]
+    biased = [sd_log_theta(band_levels(c, 2.0, 9), th, Km, ke, load_bias=True)
+              for c in cen]
+    assert all(b <= a * (1 + 1e-9) for a, b in zip(known, known[1:])), "must be monotone"
+    i = int(np.argmin(biased))
+    assert 0 < i < len(cen) - 1, "must be interior"
+
+
+# ------------------------------------------------- 1.8 / 1.9  the design
+def test_the_dense_design_does_not_collapse_and_placement_is_why():
+    """
+    THE 1.8 GATE, recorded as it fell. Ninety times the sampling buys a tenth
+    of a decade; the same samples placed to straddle K_m buy two decades.
+    """
+    import design.run as D
+    import model_A.run as LOC
+    sigma = LOC.sigma_total(D.LOAD_FRAC, D.ASSAY_CV)
+    sparse = D.quasi_steady_level(np.arange(180.0, 731.0, 180.0))
+    dense = D.quasi_steady_level(np.arange(0.0, 730.0, 2.0))
+    placed = np.geomspace(D.P.Km / 2.0, D.P.Km * 2.0, len(dense))
+    s_sparse = np.sqrt(D._filter(sparse, sigma)[-1][0, 0])
+    s_dense = np.sqrt(D._filter(dense, sigma)[-1][0, 0])
+    s_placed = np.sqrt(D._filter(placed, sigma)[-1][0, 0])
+    assert s_dense > 0.20, "the gate: the dense design does not reach the target"
+    assert s_sparse / s_dense < 1.3, "and density buys almost nothing"
+    assert s_dense / s_placed > 50, "where placement buys everything"
+
+
+def test_the_marker_is_quasi_steady_except_just_after_a_dose():
+    """
+    The separation of time scales that makes the information filter exact,
+    and the sampling exclusion window that goes with it.
+    """
+    import design.run as D
+    settle, worst = D.quasi_steady_check()
+    assert 0.0 < settle * 24 < 6.0, settle * 24
+    assert worst < 0.06, worst
+
+
+def test_the_two_decision_errors_are_asymmetric_and_the_costly_one_is_larger():
+    """
+    1.9. At equal distance from the boundary the error of failing to treat is
+    far larger than the error of treating unnecessarily, because the abscissa
+    noise biases theta_hat upward and mu_hat inherits it.
+    """
+    import design.run as D
+    from common.models import clearance_A
+    base = clearance_A(D.M_BAR, D.P)
+    lv = np.geomspace(D.M_BAR, 5 * D.M_BAR, 9)
+    safe = D.sign_error(lv, D.P.theta, D.P.Km, D.P.ke, reps=200, seed=7,
+                        s_peak=2.98 * base)
+    unsafe = D.sign_error(lv, D.P.theta, D.P.Km, D.P.ke, reps=200, seed=7,
+                          s_peak=3.58 * base)
+    assert safe["mu"] > 0 > unsafe["mu"]
+    assert abs(safe["mu"] + unsafe["mu"]) < 0.05 * abs(safe["mu"]), \
+        "the two points must be near-matched in distance from the boundary"
+    assert unsafe["p"] > 3 * safe["p"], (safe["p"], unsafe["p"])
+
+
+def test_a_gaussian_tail_on_mu_misrepresents_the_decision():
+    """
+    The delta method is nearly flat at about 40% while the simulated error
+    runs from under 1% to over 50%. Keeping both is what makes the gap
+    visible, and the gap is the margin theorem.
+    """
+    import design.run as D
+    import model_A.run as LOC
+    from common.models import clearance_A
+    base = clearance_A(D.M_BAR, D.P)
+    sigma = LOC.sigma_total(D.LOAD_FRAC, D.ASSAY_CV)
+    lv = np.geomspace(D.M_BAR, 5 * D.M_BAR, 9)
+    sim = D.sign_error(lv, D.P.theta, D.P.Km, D.P.ke, reps=200, seed=8,
+                       s_peak=1.5 * base)["p"]
+    lin = D.sign_error_linear(lv, D.P.theta, D.P.Km, D.P.ke, sigma,
+                              s_peak=1.5 * base)["p"]
+    assert sim < 0.05 and lin > 0.30, (sim, lin)
+
+
+def test_the_cohort_size_diverges_as_the_sign_error_approaches_a_half():
+    """A record that cannot decide the sign cannot be rescued by more patients."""
+    import design.run as D
+    assert D.cohort_size(0.02) < D.cohort_size(0.2) < D.cohort_size(0.45)
+    assert not np.isfinite(D.cohort_size(0.5))
+    assert not np.isfinite(D.cohort_size(0.6))
+
+
+def test_only_a_decompensation_approaches_the_required_excitation():
+    """
+    The excursion table's conclusion, asserted rather than left to a caption.
+    """
+    import design.run as D
+    from common.excitation import excitation, excitation_max
+    rows = {name: (lo, hi) for name, lo, hi, _ in D.excursion_sources()}
+    Es = {n: excitation(lo, hi, D.P.Km) for n, (lo, hi) in rows.items()}
+    worst = max(v for k, v in Es.items() if "decompensation" not in k)
+    best = Es[[k for k in Es if "decompensation" in k][0]]
+    assert best > 4 * worst, (best, worst)
+    # and the routine sources are in the wrong PLACE, not merely too narrow
+    for name, (lo, hi) in rows.items():
+        if "decompensation" in name:
+            continue
+        frac = excitation(lo, hi, D.P.Km) / excitation_max(hi / lo)
+        assert frac < 0.5, (name, frac)
