@@ -68,36 +68,20 @@ and the identification problem cannot tell which one moved the patient.}
 
 \subsection{Assumptions}
 
-\begin{assumption}[Constancy]
-$\theta$ is constant in time, over the afebrile range in which the analysis is conducted.
+Three assumptions, stated here and warranted in Appendix~\ref{sec:supp}.
+\textbf{Constancy}: $\theta$ is constant over the afebrile range, which is a restriction the
+kinetics require, since variant PCCs are \emph{less} thermostable than wild
+type~\cite{pcc_variants_kinetics} % C22
+and would therefore be at their weakest when the load is at its highest.
+\textbf{Population parameters}: $K_m$ and $k_e$ do not vary with genotype and may be
+estimated once across the cohort, motivated for $K_m$ by the absence of a significant in
+vitro difference between variant and wild-type enzyme~\cite{pcc_variants_kinetics} % C21
+and for $k_e$ by the alternative channel not involving PCC --- weakened by carnitine being
+administered at patient-specific doses. \textbf{Observable proxy}: the measured marker
+stands in for the intracellular substrate, which is a shortcut, since the true system has at
+least two states with an uncertain map between them.
 
-The restriction is required by the kinetics. Four variant PCCs expressed and characterised
-in vitro are \emph{less thermostable} than the wild-type
-enzyme~\cite{pcc_variants_kinetics}. % C22
-Carried over in vivo, the amount of surviving protein falls when the patient is febrile,
-which is when the substrate load also rises, placing $\theta$ at its lowest when it is most
-needed. The analysis here concerns the stable patient, whose body temperature is not
-excursing, and the effect has no in vivo measurement. Statements about behaviour during
-intercurrent illness lie outside the assumption.
-\end{assumption}
 
-\begin{assumption}[Population parameters]
-\label{ass:pop}
-$K_m$ and $k_e$ do not vary with \emph{PCCA}/\emph{PCCB} genotype and may be estimated
-once across the cohort. The motivation for $K_m$ is that the half-saturation of the
-enzymatic channel is a property of the active site, which the amount of enzyme leaves
-untouched, and four variant PCCs show no significant difference in their in vitro $K_m$
-for propionyl-CoA against wild type~\cite{pcc_variants_kinetics}. % C21
-Whether that carries to the plasma level is the question of Remark~\ref{rem:no_km}. For
-$k_e$ the motivation is that the alternative channel does not involve PCC at all. % C21
-Weakened by the fact that carnitine is
-administered therapeutically at patient-specific doses.
-\end{assumption}
-
-\begin{assumption}[Observable proxy]
-The measured plasma biomarker stands in for the intracellular enzyme substrate. This is a
-shortcut; the true system has at least two states with an uncertain map between them.
-\end{assumption}
 
 \paragraph{The marker is 3-hydroxypropionate.}
 \label{sec:marker}
@@ -249,7 +233,8 @@ used to quote as an illustration. It is not an illustration: it is a per-patient
 and a clinician with a fitted band and a diet record can compute it.
 Equation~\eqref{eq:thetaerr} below is the noise on top of that, and is itself conditional on
 $g(\bar m)$, so it is a statement about $\theta$ \emph{given} $K_m$. Nothing in Section~3
-supplies $K_m$. Assumption~\ref{ass:pop} grants only that it is shared across the cohort and
+supplies $K_m$. The population assumption above grants only that it is shared across the
+cohort and
 estimable once, which says where it could come from without putting it in
 hand, and Remark~\ref{rem:no_km} forbids importing it from in vitro work. The next paragraph
 is where it comes from.
@@ -546,65 +531,20 @@ the analytical and biological variability of the assay.
 \subsection{What the accessible input costs}
 \label{sec:instruments}
 
-Proposition~\ref{prop:channel} equalises the two channels informationally. It does not
-equalise them \emph{statistically}, and the difference is the central compromise of this
-work.
+Proposition~\ref{prop:channel} equalises the two channels informationally, given $K_m$. It
+does not equalise them \emph{statistically}, and that is the central compromise of this
+work: the carnitine dose is adjusted in response to the patient's state, so it is confounded
+by indication, where a therapeutic schedule fixed in advance is exogenous by construction
+and is administered to nobody accessible.
 
-\begin{description}[leftmargin=1.4em, itemsep=3pt]
-\item[Carnitine is available but endogenous.] The dose is adjusted by the clinician in
-response to the patient's state: a rising biomarker or a falling free-carnitine level is
-itself the reason the dose was raised. The input is therefore correlated with the state it
-is meant to excite, which is confounding by indication. Treating $u_c$ as an exogenous
-perturbation and regressing $m$ on it is invalid, and would bias $\theta$ in a direction
-set by the prescribing rule.
-\item[The therapy would be exogenous but is absent.] A dosing schedule fixed in advance by
-protocol is exogenous by construction, which is exactly the property carnitine lacks. No
-patient in the accessible cohort receives it, so the property is unavailable.
-\end{description}
-
-The way through is to isolate the part of the variation in $u_c$ that is exogenous, and to
-use only that part. Three quasi-exogenous instruments are present in routine care:
-
-\begin{enumerate}[leftmargin=*, itemsep=2pt]
-\item \textbf{Weight-based dose recalculation following growth.} The dose is a fixed
-      quantity per kilogram, so it steps upward when the child is weighed and the
-      prescription is refreshed. The timing is set by the clinic calendar and the child's
-      growth, not by the biomarker.
-\item \textbf{Supply interruptions.} Stock-outs, travel, and gaps in dispensing produce
-      involuntary dose reductions whose timing is unrelated to the patient's metabolic
-      state.
-\item \textbf{Changes of formulation.} A switch between preparations, or between oral and
-      intravenous administration, changes the effective $\kappa$ at a date fixed by
-      procurement, with no reference to the patient's state.
-\end{enumerate}
-
-Each of these moves $u_c$ for a reason that is plausibly independent of $m$, which is what
-an instrument requires.
-
-A third perturbation is present in the same records and acts on neither channel. Cyclical
-intestinal antibiotics suppress the gut-flora contribution to $s$, so they move the load
-rather than a parameter. It carries the same information as the two above. Two steady
-states at loads $s$ and $s'$ give $s = \theta g(m) + k_e m$ and
-$s' = \theta g(m') + k_e m'$, which is the coefficient matrix $M$ of \eqref{eq:system}
-again, so a load change carries exactly the determinant \eqref{eq:det} that a channel
-perturbation does. It is also the second anchor of Proposition~\ref{prop:anchor} seen from
-here, since one patient observed at two distinct loads is precisely this case.
-The asymmetry lies elsewhere. The load route needs both $s$ and $s'$ known, where the
-channel route needs $s$ once together with the increment, and how much that costs is part
-of the question of Section~\ref{sec:confounding}, the substrate load being only partially
-recorded. Courses given on a fixed schedule are quasi-exogenous;
-courses started because a patient is deteriorating are confounded by indication exactly as
-carnitine is. None is randomised, and the independence is an assumption to be
-argued from the records in each case.
-
-\begin{remark}[The identical structure on the other channel]
-Everything above is stated for carnitine because that is the input in the charts. By
-Proposition~\ref{prop:channel} the same equations, the same determinant and the same
-conditioning apply verbatim when the therapy supplies the perturbation instead, with
-$\delta = \Delta g(m')$ in place of $\delta = \kappa u_c m'$. The statistics change. A
-therapeutic schedule is exogenous and needs no instrument, so the instrumental apparatus of
-this subsection becomes unnecessary.
-\end{remark}
+The way through is to use only the quasi-exogenous part of the variation in $u_c$. Three
+such instruments are present in routine care, and \textbf{their directions matter more than
+the note previously noticed}: weight-based dose recalculation after growth raises the dose
+and \emph{lowers} $m$; cyclical intestinal antibiotics lower the load and lower $m$; only a
+supply interruption raises $m$, and its amplitude is set by a stock-out rather than by a
+design. A change of load carries the same determinant as a channel perturbation and costs
+more, needing both loads known where the channel route needs one. None is randomised.
+Appendix~\ref{sec:supp} gives each in full, and Table~\ref{tab:excursion} prices them.
 
 \subsection{What we would like to establish}
 
@@ -689,23 +629,16 @@ this subsection becomes unnecessary.
       $\theta_A - \theta_B = -(k_{e,A} - k_{e,B})(K_m + \bar m)$. Two observationally
       identical patients diverge linearly in how far the tolerable level sits above the
       operating point, and coincide when $\mtol = \bar m$.
-\item \label{sec:invariance}Whether the decision $\theta \gtrless \thc$ is invariant under a
-      common strictly increasing reparametrisation $\varphi$ of the activity scale. If every variant is
-      distorted by the same $\varphi$, and if $\thc$ is \emph{estimated empirically on that
-      same distorted scale} rather than computed from \eqref{eq:thcrit}, then
-      $\varphi(\theta) \gtrless \varphi(\thc)$ reproduces the true decision. The
-      requirement is therefore consistency of the assay across variants, not absolute
-      calibration. The invariance fails if $\varphi$ differs by mechanism class. It also
-      fails whenever $\thc$ is computed on the distorted scale,
-      because \eqref{eq:thcrit} is not equivariant under $\varphi$: in general
-      $\varphi\!\left((\spk - k_e \mtol)/g(\mtol)\right)$ differs from the expression
-      obtained by substituting $\varphi(k_e)$ into the same formula, so the two sides of
-      the comparison are transported differently. Note that this pulls against
-      Proposition~\ref{prop:intrinsic}: the intrinsic $\thc$ is a structural construction,
-      defined by where the fold of $C(\cdot\,;\theta)$ falls, and that location is not
-      preserved by a monotone rescaling of the activity axis. Well-posedness and
-      invariance are bought from different accounts here, and buying one spends the
-      other.
+\item \label{sec:invariance}Whether the decision $\theta \gtrless \thc$ is invariant under
+      a common strictly increasing reparametrisation of the activity scale. It is, provided
+      $\thc$ is \emph{estimated empirically on the same distorted scale} rather than
+      computed from \eqref{eq:thcrit}, so the requirement is assay \emph{consistency} across
+      variants and not absolute calibration. It fails if the distortion differs by mechanism
+      class, and it fails whenever $\thc$ is computed rather than estimated, because
+      \eqref{eq:thcrit} is not equivariant. Appendix~\ref{sec:supp} gives the argument, and
+      records that this pulls against Proposition~\ref{prop:intrinsic}: an intrinsic
+      threshold is a structural location, and a monotone rescaling of the activity axis does
+      not preserve it. Well-posedness and invariance are bought from different accounts.
 \end{enumerate}
 
 \begin{remark}[Which threshold the cancellation is proven against, and what that costs]
@@ -915,10 +848,10 @@ note is about, and the favourable figure belongs to the mild end of the range.
 
 \subsection{Known defect}
 
-Since $k_e m \to \infty$, total clearance is unbounded and every load is eventually
-balanced. The local reduction therefore predicts that no crisis can occur. It is adequate for the
+Since $k_e m \to \infty$, total clearance is unbounded and every load is eventually balanced,
+so the local reduction predicts that no crisis can occur. It is adequate for the
 identifiability analysis, which concerns the stable patient, and inadequate for anything
-concerning decompensation.
+concerning decompensation --- which is what Section~\ref{sec:dynamic} is for.
 
 \vspace{0.5em}
 \hrule

@@ -322,6 +322,14 @@ recruitment problem.
    leaves the decision boundary that Section 7 shows the design cannot resolve.
 4. **Whether any ethical design meets the excitation condition.** The note now says what is
    required and that nothing accessible supplies it. It does not say what would.
+5. **Length. The main text is about 22,000 words against a target of 8,000.** Seven
+   self-contained blocks were moved to the supplementary appendix in this pass and nothing
+   was deleted, but block moves have taken it about as far as they can: what remains in
+   sections 4 and 5 is on the chain from the target claim to the data specification, and
+   getting it to 8,000 means compressing dense prose rather than relocating it. That is an
+   editorial pass and it has not been done. The chain itself is now explicit in the
+   dependency figure, so the pass has a criterion to work against: keep what a box in that
+   figure depends on, compress everything else.
 
 ## A fifth failure mode
 

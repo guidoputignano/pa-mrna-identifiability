@@ -223,6 +223,41 @@ sits. Neither reduced structure predicts this: in both, returning $s$ to baselin
 returns $m$ to baseline.
 \end{remark}
 
+\subsection{What is and is not new here}
+\label{sec:priorart}
+
+Two parts of \eqref{eq:parent} have prior art in this disease and one does not, and the
+distinction is worth making before anything is proved, because it says what this note is
+claiming.
+
+\paragraph{Therapy as a time-varying input is not new.} Both published pharmacokinetic and
+pharmacodynamic models of mRNA-3927 are indirect-response models in which the dose drives a
+time-varying quantity rather than a fixed one. The translational model puts the indirect
+response on the enzyme and makes the markers a direct saturating function of
+it~\cite{pkpd_translational}, % C46
+and the population model that selected the biweekly dose treats each marker as a turnover
+state whose production the therapy inhibits and whose loss is first
+order~\cite{dose_selection_poster}. Writing $\theta + \Delta(t)$ is the same move. What
+\eqref{eq:parent} adds is that $\theta$ is the \emph{patient's own} residual capacity and
+therefore the object to be identified, rather than a population parameter with the
+between-patient variation carried by random effects.
+
+\paragraph{A longitudinal reformulation is not new either.} The natural history study
+already fits a hazard of the shape Section~\ref{sec:hazard} proposes: a generalised additive
+\emph{mixed} model with a smooth term in days since the previous event and a
+participant-level random effect~\cite{natural_history}. % C28
+What is proposed there is a substitution \emph{within} that machinery --- a mechanistic
+$\theta$ in place of a measured biomarker as the covariate carrying the risk --- and not
+new statistical apparatus.
+
+\paragraph{What is new is the question asked of the input.} Neither prior model asks whether
+the dosing schedule \emph{excites} the parameter it is estimating. Both are fitted to a
+cohort in which the schedule is fixed by protocol and the parameters are population
+quantities, which is a well-posed estimation problem with or without excitation. This note
+asks the individual question, and Section~\ref{sec:excitation} is the answer: a fixed
+schedule supplies almost no excitation of the direction that separates capacity from
+half-saturation, and no amount of it accumulates into any.
+
 \subsection{The reduction hierarchy, verified}
 \label{sec:hierarchy}
 
@@ -450,117 +485,43 @@ and only it removes $\spk$.
 \subsection{What would have to be established}
 \label{sec:notworking}
 
-\begin{enumerate}[leftmargin=*, itemsep=2pt]
-\item \textbf{Unverified.} This is the assumption named in
-      Section~\ref{sec:model_C_added}, stated as a question about data. Everything here
-      turns on replenishment being impaired enough, as the metabolite accumulates, to
-      render clearance decreasing. The test is direct and
-      requires no new experiment, free carnitine and the acylcarnitine/free-carnitine ratio
-      being measured routinely. What is on record is a fall at group level
-      (Section~\ref{sec:discriminant}); whether it collapses within a patient, relative to
-      that patient's own baseline, and by enough to turn clearance downward, is the part
-      that is open.
-\item \textbf{Identifiability, traded.} $k_e$ is replaced by a
-      channel carrying four constants, $R_0$, $K_c$, $M_i$ and $\rho_0$, which worsens an
-      already unfavourable parameter-to-measurement ratio. It also removes the specific
-      degeneracy the local reduction has. The fibre of Remark~\ref{rem:fibre} exists because its
-      alternative channel is exactly linear and so contributes nothing to the intercept of
-      an affine fit; $\alpha$ is curved, contributes to both coefficients, and
-      \emph{given $\alpha$} the pair $(a,b)$ determines $(\theta, K_m)$ outright. That
-      proviso carries weight, because $\alpha$ contains $K_c$, which
-      Remark~\ref{rem:shape} calls arbitrary. Letting $K_c$ run over the same
-      thirty-two-fold range that remark uses, with the calibration held, \textbf{most of
-      that range is inadmissible and the bound is two-sided}: below $K_c \approx 100$ the
-      assumed $\alpha$ already accounts for more of the fitted intercept than the record
-      contains, and above $K_c \approx 300$ it accounts for more of the slope. Inside the
-      window the $\theta$ recovered from one fitted $(a,b)$ runs from $213$ to $300$, a
-      factor of $1.41$. Earlier figures for this ($300$ to $457$, a factor of $1.52$, and no
-      admissible solution above $K_c \approx 200$) do not reproduce under either convention
-      and are withdrawn. The two-sided bound is the useful part, and it is a real piece of
-      information: a record that fixes $(a,b)$ excludes nine-tenths of the range the
-      arbitrariness of $K_c$ nominally spans. The identifiability of the dynamic model is
-      not otherwise analysed in this note.
-\item \textbf{The competition is documented in vitro.} It is measured in a transporter
-      solubilised from \emph{rat} renal brush-border membrane and reconstituted into
-      liposomes, and its identification with OCTN2 is the authors' own qualified
-      one~\cite{octn2_renal_transport}. % C42
-      No measurement in patients establishes that the recovered fraction of filtered
-      carnitine falls with the metabolite. What patients supply is the direction of absolute
-      excretion, which the model matches, and that is the weaker test.
-\item \textbf{Incompleteness.} Equations \eqref{eq:C} lump every non-conjugative loss into
-      $\delta(m)$ and omit the dependence of propionylcarnitine elimination on renal
-      function. Adding one state to capture half a mechanism may be worse than not adding
-      it, since it confers the appearance of having modelled depletion without having done
-      so.
-\end{enumerate}
+Four things, set out in Appendix~\ref{sec:supp}: that replenishment is impaired \emph{enough}
+to turn clearance downward, which is a question about within-patient free-carnitine
+trajectories and not about group means; that replacing $k_e$ with a channel carrying four
+constants is a net gain, which Remark~\ref{rem:shape} prices and
+Remark~\ref{rem:not_a_reduction} bounds; that a competition documented in a reconstituted
+rat renal transporter carries to patients; and that adding one state to capture half a
+mechanism is better than not adding it.
 
 \subsection{Testable discriminant, and the observable it has to be stated in}
 \label{sec:discriminant}
 
-The ceiling hypothesis and the fold differ in a prediction about the model's state:
+The fold and the ceiling differ in whether removing the trigger suffices for recovery, and
+that difference is a statement about $m$ which \emph{cannot be taken to the records in that
+form}: propionylcarnitine, propionylglycine and propionic acid are reported essentially
+unaltered through an acute decompensation~\cite{amd_phenotyping}. % C24
+The single marker does not move through the excursion the discriminant is about.
 
-\begin{center}
-\begin{tabular}{@{}ll@{}}
-\toprule
-\textbf{B} & removing the trigger suffices: $s$ back to baseline returns $m$ to baseline \\
-\textbf{C} & removing the trigger does not suffice; $s$ must be driven \emph{below} baseline,
-             or $m$ lowered directly \\
-\bottomrule
-\end{tabular}
-\end{center}
+Free carnitine does move, and it is measured routinely, so the discriminant is restated in
+it: the median falls from $38.9$ to $22.0$~$\mu$M between samples drawn outside a
+decompensation and during one, $P = 0.0370$~\cite{amd_phenotyping}. % C38
+The phenotyping study's own discussion independently advises measuring free carnitine during
+a decompensation~\cite{amd_phenotyping}, % C39
+so a model built to represent depletion and a recommendation written without reference to
+any model arrive at the same analyte.
 
-That is a statement about $m$, and it cannot be taken to the records in that form. Deep
-metabolic phenotyping of acute decompensation reports propionylcarnitine, propionylglycine
-and propionic acid \emph{essentially unaltered} through the event~\cite{amd_phenotyping}. % C24
-The single marker does not move through the excursion that the discriminant is about, so
-``does the biomarker return to baseline after the illness'' is a question the measurement
-cannot answer in either direction.
+Two qualifications, and Appendix~\ref{sec:supp} carries them in full: the comparison pools
+samples across the cohort rather than within patients, and a fall is consistent with the
+fold rather than exclusive to it.
 
 \begin{remark}[Scope]
 \label{rem:scope}
-The identifiability analysis of Section~3 concerns the \emph{stable} patient, where the
-biomarker and the state can be argued to move together, and nothing in it depends on
-tracking a crisis. The behaviour through a decompensation is exactly where the measured
-proxy stops tracking the state, so the separatrix is a claim about the dynamics that
-the current observable cannot confirm or refute directly.
+Sections~\ref{sec:local} onwards concern the \emph{stable} patient, where the marker and the
+state can be argued to move together. The behaviour through a decompensation is exactly
+where the measured proxy stops tracking the state, so the separatrix is a claim about the
+dynamics that the current observable cannot confirm or refute directly --- which is also why
+Section~\ref{sec:marker} fixes the marker for the stable patient and not for the crisis.
 \end{remark}
-
-Free carnitine does move through the event, and it is measured routinely, so the
-discriminant is restated in it. In propionic acidemia the median plasma level falls from
-$38.9$ $\mu$M in samples drawn outside a decompensation ($n = 56$, SD $16.8$) to $22.0$
-$\mu$M in samples drawn during one ($n = 25$, SD $12.4$), $P = 0.0370$, a fall of
-roughly two-fifths~\cite{amd_phenotyping}. % C38
-Chronic depletion in the stable patient is documented separately, at $5.7$ $\mu$M against a
-normal $37 \pm 8$ with short-chain acylcarnitines correspondingly
-raised~\cite{carnitine_pa_child}, % C25
-so what the event contributes is a further fall on top of a level that is already low.
-
-The same measurement is reached from the clinical side. The phenotyping study's own
-discussion advises determining free carnitine during a decompensation, to check whether
-carnitine supplementation is sufficient while the free pool is relatively
-depleted~\cite{amd_phenotyping}. % C39
-A model built to represent carnitine depletion and a recommendation written without
-reference to any model arrive at the same analyte, which makes the discriminant a
-convergence rather than a proposal.
-
-Two qualifications on it:
-
-\begin{enumerate}[leftmargin=*, itemsep=2pt]
-\item \textbf{The comparison pools samples across the cohort.} The
-      $25$ event samples and the $56$ non-event samples are pooled across the cohort, and no
-      paired or repeated-measures analysis is reported; the authors record that a trend
-      analysis on an individual patient basis would add insight~\cite{amd_phenotyping}. % C40
-      The model asserts a fall relative to a patient's own baseline, and that trajectory
-      remains unmeasured.
-\item \textbf{The fold is not the only structure the fall fits.} A ceiling holds the
-      alternative channel at fixed capacity and says nothing about free carnitine, so B
-      neither predicts the observation nor excludes it. What C asserts beyond the
-      fall is that depletion is quantitatively strong enough to make effective clearance
-      decrease with $m$, which is the first item of
-      Section~\ref{sec:notworking} and is still open.
-\end{enumerate}
-
-Clinical practice is consistent with C, but this is an observation and no more.
 
 \vspace{0.5em}
 \hrule
