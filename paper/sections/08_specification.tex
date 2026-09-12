@@ -39,6 +39,34 @@ therapy exists to prevent.} This is the paper's obstruction in the units a proto
 written in, and no amount of sampling frequency substitutes for it
 (Section~\ref{sec:collapse}).
 
+\paragraph{And read against the decision rather than against a precision target, it is worse.}
+The row above is derived from $20\%$ on $\theta$, which Section~\ref{sec:decision} says is
+the wrong estimand. Deriving it from the decision instead --- asking for a $5\%$ sign error
+for a patient whose true margin is $30\%$ below the threshold, that is at an illness of
+$4.07\times$ baseline --- gives this:
+
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}rrrrrrr@{}}
+\toprule
+top of the excursion & $2\,\bar m$ & $5\,\bar m$ & $10\,\bar m$ & $20\,\bar m$ &
+$40\,\bar m$ & $80\,\bar m$ \\
+sign error at $\mu = -0.3\,\theta$ & $36\%$ & $31\%$ & $18\%$ & $10\%$ & $6\%$ & $7\%$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Two things to read off it. A $10\%$ sign error needs the marker carried to \textbf{twenty
+times} the level management holds it at, which is a severe decompensation and not a
+protocol. And \textbf{the curve plateaus near $6\%$}: past about forty-fold, more excursion
+buys nothing, because what is left is the load-bias floor of
+Proposition~\ref{prop:excitation}(2) and excursion does not touch it. There is no excursion,
+survivable or otherwise, that delivers a $5\%$ sign error at this load record.
+
+Closer to the boundary than $\mu = -0.3\,\theta$ the question has no answer at any
+excursion, and that is a property of taking the sign of a quantity near a zero rather than a
+property of the design. It is quoted at a stated distance for that reason.
+
 \paragraph{Sampling density is worth very little, and sampling placement is worth a factor
 of a hundred.} Two-daily sampling for two years buys a tenth of a decade over four clinic
 visits. The same number of samples placed to straddle $K_m$ buys two decades. A protocol

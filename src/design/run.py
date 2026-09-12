@@ -440,36 +440,47 @@ def sign_error(levels, theta, Km, ke, sigma_load=None, cv=None, reps=400,
                 kind="fail to treat" if mu_true < 0 else "treat unneeded")
 
 
-def excursion_for_decision(target=0.05, tops=(2.0, 5.0, 10.0, 20.0, 40.0),
-                           near=0.30, reps=300, seed=31, n=9):
+def excursion_for_decision(target=0.05, mu_frac=0.30, reps=300, seed=31, n=9,
+                           tops=(2.0, 5.0, 10.0, 20.0, 40.0, 80.0)):
     """
-    How far the marker has to go for the DECISION to be reliable near the
-    boundary, which is the requirement the specification should be written
-    against rather than a precision target on theta.
+    How far the marker has to go for the DECISION to be reliable, and at what
+    distance from the boundary that is asked.
 
-    The note argues that a confidence interval on theta is the wrong output,
-    so deriving the excursion requirement from one would be inconsistent. This
-    walks the top of the excursion upward and reports the first value at which
-    the simulated sign error, evaluated at an illness amplitude `near` the
-    boundary on the unsafe side, falls below `target`. Returns (top, error) or
+    The note argues that a confidence interval on theta is the wrong output, so
+    deriving the excursion requirement from a precision target on theta would
+    be inconsistent. This derives it from the decision instead.
+
+    `mu_frac` is where the question is put: at a patient whose true margin is
+    -mu_frac * theta, that is who sits that far BELOW the threshold. The choice
+    matters and it is not cosmetic. Asking the question arbitrarily close to
+    the boundary is asking for the sign of a quantity that is nearly zero, and
+    no design answers that: at |mu| = 0.11 theta the best excursion tried here
+    still errs 30% of the time. That is a property of taking a sign near a
+    boundary, not a property of the design, and quoting it as a design
+    requirement would be a category error.
+
+    Returns (top of the excursion as a multiple of m_bar, error there), or
     (None, best error reached).
     """
     base = clearance_A(M_BAR, P)
-    cross = None
-    for f in np.linspace(1.0, 12.0, 4001):
-        if margin_and_gradient(P.theta, P.Km, P.ke, s_peak=f * base)[0] < 0:
-            cross = f
-            break
-    s_peak = (cross + near) * base
-    best = 1.0
+    # the amplitude at which the true margin is -mu_frac * theta
+    grid = np.linspace(1.0, 20.0, 8001)
+    mus = np.array([margin_and_gradient(P.theta, P.Km, P.ke, s_peak=f * base)[0]
+                    for f in grid])
+    # mus decreases with the amplitude, so -mus increases: interpolate on that.
+    # The target is mu = -mu_frac*theta, i.e. -mu = +mu_frac*theta.
+    f_at = float(np.interp(mu_frac * P.theta, -mus, grid))
+    assert margin_and_gradient(P.theta, P.Km, P.ke,
+                               s_peak=f_at * base)[0] < 0, \
+        'the question must be asked on the unsafe side of the boundary'
+    s_peak = f_at * base
+    curve = []
     for top in tops:
         lv = np.geomspace(M_BAR, top * M_BAR, n)
-        e = sign_error(lv, P.theta, P.Km, P.ke, reps=reps, seed=seed,
-                       s_peak=s_peak)["p"]
-        best = min(best, e)
-        if e <= target:
-            return top, e
-    return None, best
+        curve.append((top, sign_error(lv, P.theta, P.Km, P.ke, reps=reps,
+                                      seed=seed, s_peak=s_peak)["p"]))
+    hit = [t for t, e in curve if e <= target]
+    return (hit[0] if hit else None), min(e for _, e in curve), f_at, curve
 
 
 def cohort_size(p_err, delta=0.10, frac=0.30, z=1.96):
@@ -645,7 +656,8 @@ def table_spec():
     p_bad = sign_error(lv9, P.theta, P.Km, P.ke, reps=400, seed=21,
                        s_peak=3.6 * base)["p"]
     n_coh = cohort_size(p_bad)
-    top_dec, e_dec = excursion_for_decision()
+    top_dec, e_dec, f_dec, curve_dec = excursion_for_decision()
+    hit10 = [t for t, e in curve_dec if e <= 0.10]
 
     rows = [
         ["marker",
@@ -668,12 +680,18 @@ def table_spec():
          "the band is degenerate in the lumped ratio; above $K_m$ it is "
          "degenerate in $\\theta$ against the load"],
         ["excursion, for the \\emph{decision}",
-         (f"$m$ to reach {top_dec:.0f}$\\,\\bar m$"
+         (f"$m$ to reach {top_dec:.0f}$\\,\\bar m$ for a $5\\%$ sign error"
           if top_dec is not None else
-          f"not reached below $40\\,\\bar m$; best sign error {100*e_dec:.0f}\\%"),
+          (f"$5\\%$ is not reached at any excursion up to $80\\,\\bar m$ "
+           f"(best {100*e_dec:.0f}\\%); $10\\%$ needs "
+           + (f"{hit10[0]:.0f}$\\,\\bar m$" if hit10 else
+              f"more than $80\\,\\bar m$"))),
          "the requirement the specification is actually written against, since "
-         "a confidence interval on $\\theta$ is the wrong output. Set by the "
-         "sign error just past the decision boundary"],
+         "a confidence interval on $\\theta$ is the wrong output. Asked of a "
+         f"patient $30\\%$ below the threshold, that is at an illness of "
+         f"{f_dec:.1f}$\\times$ baseline, and asked for a $5\\%$ sign error. "
+         "Closer to the boundary than that, no excursion answers it, which is a "
+         "property of taking a sign near a zero and not of the design"],
         ["excursion, available",
          "inter-dose recovery reaches a fold of about "
          f"{excursion_sources()[0][2]/excursion_sources()[0][1]:.1f}, downward",
@@ -714,10 +732,14 @@ def table_spec():
     ]
     write_table("tab_D_spec", ["quantity", "requirement", "why"], rows,
                 note="the terminal specification; every row is generated")
-    print(f"    excursion for the decision: "
-          + (f"top {top_dec:.0f} x m_bar (sign error {100*e_dec:.1f}%)"
+    print(f"    excursion for the decision (asked at mu = -0.30 theta, illness "
+          f"{f_dec:.2f}x baseline): "
+          + (f"top {top_dec:.0f} x m_bar, sign error {100*e_dec:.1f}%"
              if top_dec is not None else
-             f"NOT REACHED below 40 x m_bar; best sign error {100*e_dec:.1f}%"))
+             f"5% NOT REACHED below 80 x m_bar (best {100*e_dec:.1f}%); "
+             + (f"10% at {hit10[0]:.0f} x m_bar" if hit10 else "10% not reached either")))
+    print("      the whole curve: " + ", ".join(f"{t:.0f}x -> {100*e:.0f}%"
+                                                for t, e in curve_dec))
     print(f"    cohort at the accessible design: sign error {100*p_bad:.0f}% near the "
           f"boundary -> N >= {n_coh if np.isfinite(n_coh) else 'infinite'}")
     print(f"    specification: sigma = {sigma:.2f}, n >= {n20} for 20% on theta,")

@@ -100,6 +100,11 @@ The routine sources deliver a fifth to a quarter of what their own fold range *c
 because they sit an order of magnitude below `Km`. **The excitation the decision needs is
 available only from the event the therapy exists to prevent.**
 
+**And no excursion rescues it either.** Asked of a patient 30% below the threshold, the
+sign error falls from 36% at a two-fold excursion to 10% at twenty-fold — a severe
+decompensation — and then **plateaus near 6%**. The residue is the confounding with the
+unrecorded load, which excursion does not touch.
+
 **No cohort rescues it.** At the accessible design the sign error near the boundary is 41%,
 and correcting a fraction for misclassification inflates its variance by `(1-2p)^-2`.
 Placing the fraction with `mu < 0` within ten points needs **about 3,100 patients**. The
@@ -190,12 +195,12 @@ make audit       # non-zero while any claim is contradicted or unsourced,
 make all
 ```
 
-`make audit` currently **fails**, on 14 unresolved claims. That is the
-state of the audit, not a broken build. See `REFERENCES.md`: no citation
-in this repository is typed by hand, and no factual claim goes into the
-paper without a row in `paper/claims.csv` saying whether the source
-actually says it. Seven rows are contradicted by the work they cite, and
-those sentences are left standing until each is deliberately revised.
+`make audit` **passes**: of 46 claims, none is contradicted, none is
+unsourced, and four are recorded as matches-with-drift, each with a note
+saying exactly what could not be confirmed from the source. See
+`REFERENCES.md`: no citation in this repository is typed by hand, and no
+factual claim goes into the paper without a row in `paper/claims.csv`
+saying whether the source actually says it.
 
 Structural identifiability needs Julia and is slower:
 
