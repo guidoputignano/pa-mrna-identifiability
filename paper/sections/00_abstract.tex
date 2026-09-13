@@ -42,12 +42,23 @@ every draw at the same phase, collapses the range of $\Delta/\theta$ from $1.95$
 $0.13$, and takes the precision from $0.17$ to $3.51$; moving the schedule half a day
 recovers it.
 
-The decision inherits an asymmetry that reverses between regimes, and neither half should
-be quoted alone. While the record tracks the load, the estimator fails towards declaring
-patients safe --- $7\%$ against $44\%$ at equal distance from the boundary. Under crisis
-protocol, where prescribed intake is cut while catabolism supplies the load, the fit is
-driven towards zero capacity and the errors invert to $80\%$ against $20\%$: the same
-estimator declares everyone unsafe.
+\textbf{Identifiability was not the binding constraint on the decision, and finding the
+channel does not repeal that.} Simulated prior-free, the sign of the margin is still wrong
+for about two patients in five near the boundary, on the new design as on the old; the
+cohort needed to place the affected fraction within ten points falls from roughly $4\,900$
+to $2\,200$, which is a real gain and still impossible against a phase 1/2 trial of
+sixteen. Degrading the increment to the $12\%$ the identifiability gate asks for moves the
+sign error by less than its seed-to-seed spread. The sign of a quantity near its own zero
+is hard for reasons that are not about what the record contains.
+
+The decision also inherits an asymmetry that reverses between regimes, and neither half
+should be quoted alone. While the record tracks the load, the estimator fails towards
+declaring patients safe --- $17\%$ against $42\%$ at equal distance from the boundary.
+Under crisis protocol, where prescribed intake is cut while catabolism supplies the load,
+the fit has nowhere to put the marker except lost capacity, the estimate collapses by two
+orders of magnitude, and the errors invert to $99\%$ against nothing: the same estimator
+declares everyone unsafe. Which regime a record came from is a fact about the chart, not
+about the patient.
 
 The note ends in a two-tier data specification. Tier~2 is a small prospective outpatient
 study. Tier~1 is a single measurement nobody has published --- the same-day repeatability

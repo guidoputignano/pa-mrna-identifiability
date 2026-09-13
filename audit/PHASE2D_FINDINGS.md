@@ -113,3 +113,46 @@ The mechanism is visible in the median: crisis protocol drives theta_hat to zero
 recorded intake falls while the marker climbs, so the fit must attribute the marker to lost
 capacity. "Fails towards declaring patients safe" holds only while the record tracks the
 load.
+
+---
+
+## 5. The decision does not improve, and that is the note's ending
+
+`audit/d13_decision_therapy.py`, 12 seeds × 400 replicates, prior-free (`fit_ensemble`):
+
+| design | κ | treat unneeded | fail to treat | cohort N |
+|---|---|---|---|---|
+| fixed operating point, n=9 (old) | 0 | 6.9% ± 1.7 | 44.0% ± 3.2 | ~4900 |
+| **monthly across dose cycles, n=25** | 0 | 19.1% ± 2.1 | 41.6% ± 2.5 | **~2200** |
+| the same, increment known to 11.7% | 0.117 | 19.1% ± 1.7 | 42.3% ± 2.9 | — |
+
+**The therapy channel identifies θ and does not make μ decidable.** Near the boundary the
+new design errs on about two in five, the same as the old one. The cohort falls from ~4900
+to ~2200 — a real gain, still impossible against a trial of sixteen. And the dose-precision
+requirement does not bind here at all: degrading Δ from exact to 11.7% moves the sign error
+by less than its seed-to-seed spread. **The 11.7% is a requirement on identifying θ, not on
+deciding μ.**
+
+This is not a contradiction with finding 3. Finding 3 is a posterior sd under the k_e
+prior; this is a prior-free global fit. Both are reported, and the gap between them is the
+honest shape of the result.
+
+### The crisis reversal, on the therapy-channel design
+
+| recording fraction ρ | treat unneeded | fail to treat | median θ̂/θ |
+|---|---|---|---|
+| 1 (record tracks the load) | 17.5% | 41.8% | 1.027 |
+| 0.5 (partly recorded) | 99.0% | 0.0% | 0.903 |
+| 0 (intake pinned at baseline) | 100% | 0.0% | 0.086 |
+| −0.25 (protein stopped) | 100% | 0.0% | 0.009 |
+
+Sharper than on the old design: the reversal is complete by ρ = 0.5. Regret-equalised
+thresholds: managed +0.07θ at equal costs, crisis −0.39θ; at a cost ratio of 10:1 or worse
+every regime wants every patient escalated, which is the decision-theoretic statement that
+the test has stopped contributing.
+
+### The published table's 52.5% is a seed outlier
+
+Twelve seeds give the managed-regime errors as **6.9% ± 1.7%** and **44.0% ± 3.2%**, range
+[37.2%, 49.2%]. The table printed 6.0% and 52.5%; the second is outside the range of twelve
+seeds. Quote the spread.

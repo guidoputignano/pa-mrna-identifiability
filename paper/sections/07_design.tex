@@ -181,14 +181,14 @@ excitation it supplies but that it measures capacity on a different axis entirel
 the subject of Section~\ref{sec:validation}.
 \end{enumerate}
 
-\subsection{The estimand is a decision, and the decision survives what the parameter does not}
+\subsection{The estimand is a decision, and the therapy channel does not rescue it}
 \label{sec:decision}
 
 Confidence intervals on $\theta$ are the wrong output. The clinical question is the
 \emph{sign} of $\mu = \theta - \thc$, and its two errors are not interchangeable: treating a
 patient who does not need it costs an infusion and a venous line, and failing to treat one
-who does costs a decompensation. Figure~\ref{fig:D3} is the operating characteristic of that
-decision.
+who does costs a decompensation. Figure~\ref{fig:D3} is the operating characteristic of
+that decision.
 
 \begin{figure}[htbp]
 \centering
@@ -200,64 +200,102 @@ untreated who did. Each panel varies one thing a protocol controls.}
 \label{fig:D3}
 \end{figure}
 
+\textbf{This subsection reports a negative result, and it is the one the note ends on.}
+Everything above says the therapy channel makes $\theta$ identifiable. It does not follow
+that it makes the \emph{sign of the margin} decidable, and it does not.
+
 \begin{center}
 \footnotesize
-\begin{tabular}{@{}rrlrr@{}}
+\begin{tabular}{@{}lrrr@{}}
 \toprule
-\textbf{illness} & $\mu$ & \textbf{which error} & \textbf{simulated} &
-\textbf{a delta method would say} \\
+\textbf{design} & \textbf{treat unneeded} & \textbf{fail to treat} & \textbf{cohort $N$} \\
+& \multicolumn{2}{c}{at $|\mu| = 339$ either side} & \\
 \midrule
-$1.50\times$ & $+2006$ & treat unneeded & $0.2\%$  & $39.5\%$ \\
-$2.50\times$ & $+876$  & treat unneeded & $0.2\%$  & $38.8\%$ \\
-$2.98\times$ & $+339$  & treat unneeded & $6.0\%$  & $36.1\%$ \\
-\addlinespace
-$3.58\times$ & $-339$  & fail to treat  & $\mathbf{52.5\%}$ & $42.3\%$ \\
-$4.00\times$ & $-818$  & fail to treat  & $31.8\%$ & $41.1\%$ \\
-$5.50\times$ & $-2513$ & fail to treat  & $26.0\%$ & $40.4\%$ \\
+fixed operating point, $n=9$ (the old design) & $6.9\% \pm 1.7$ & $44.0\% \pm 3.2$ & $4900$ \\
+monthly across dose cycles, $n=25$            & $19.1\% \pm 2.1$ & $41.6\% \pm 2.5$ & $2200$ \\
+\quad the same, increment known only to $11.7\%$ & $19.1\% \pm 1.7$ & $42.3\% \pm 2.9$ & --- \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\textbf{The two errors are not the same size, and the larger one is the one that costs a
-patient a decompensation.} At equal distance from the boundary --- $|\mu| = 339$ on either
-side --- the simulated error is $6\%$ for treating a patient who did not need it and $53\%$
-for failing to treat one who did. The asymmetry does not close with distance: at
-$|\mu| = 2513$ on the unsafe side the error is still $26\%$, where at $|\mu| = 2006$ on the
-safe side it is $0.2\%$. \textbf{The estimator fails towards declaring patients safe.} The
-mechanism is already in this note: by Remark~\ref{rem:eiv} the abscissa noise inflates
-$\hat a$ and hence $\hat\theta$, and $\hat\mu = \hat\theta - \thc$ inherits that bias
-whole.
+Twelve seeds at four hundred replicates each; the spread is across seeds. \textbf{Three
+things follow, and none of them is comfortable.}
 
-The simulated error exceeds $10\%$ for every illness amplitude from $3.10\times$ baseline
-upward, which is the whole region at and beyond the decision boundary at $3.28\times$. A
-protocol reporting this design's answer would be reporting a test that is nearly reliable
-where it does not matter and close to a coin toss where it does.
+\begin{enumerate}[leftmargin=*, itemsep=3pt]
+\item \textbf{The decision does not improve.} Near the boundary the therapy-channel design
+errs on about two patients in five, against the old design's four in nine. The cohort
+needed to place the fraction of patients with $\mu<0$ within ten points falls from about
+$4\,900$ to about $2\,200$ --- a real gain, and still an impossible number against a
+phase 1/2 trial that enrolled sixteen~\cite{trial_phase12}. % C16
+\item \textbf{The dose-precision requirement does not bind here.} Degrading the increment
+from exact to the $11.7\%$ the identifiability gate asks for moves the sign error by less
+than its seed-to-seed spread. The $11.7\%$ is a requirement on \emph{identifying $\theta$},
+not on deciding $\mu$.
+\item \textbf{And the reason is not identifiability.} It is that the sign of a quantity
+near its own zero is hard for reasons that have nothing to do with what the record
+contains. The estimand analysis said so before the therapy channel was found, and finding
+it does not repeal it.
+\end{enumerate}
 
-\textbf{What excursion would fix it, and whether one exists.} Asking the same question of a
-patient $30\%$ below the threshold, the simulated sign error falls from $36\%$ at a
-two-fold excursion to $10\%$ at twenty-fold and then \emph{plateaus near $6\%$}: past about
-forty-fold, more excursion buys nothing. The plateau is the load-bias degeneracy of
-Proposition~\ref{prop:excitation}(2), which excursion does not touch. So there is no
-excursion, survivable or otherwise, that delivers a $5\%$ sign error at this load record ---
-and the requirement that does bite, a twenty-fold excursion for a one-in-ten error, is a
-severe decompensation. Table~\ref{tab:spec} carries the whole curve.
+\textbf{Why these numbers and Table~\ref{tab:designs} are not in contradiction, and which
+to believe for what.} Table~\ref{tab:designs} reports a posterior standard deviation under
+the $k_e$ prior; this table reports a prior-free nonlinear least squares, which is what
+\S1.9 has always simulated. The gap between them is Remark~\ref{rem:priorfree}, and it is
+the honest shape of the result: \textbf{the therapy channel identifies $\theta$ given a
+defensible prior on the alternative channel, and does not make the decision reliable under
+any reading.} Reporting only the first would be the error this note exists to warn about.
+
+\begin{remark}[The asymmetry reverses under crisis protocol]
+\label{rem:regimes}
+The estimator regresses the \emph{recorded} load on the marker. Write the recorded load as
+$L_{\mathrm{base}} + \rho\,(s_{\mathrm{true}} - L_{\mathrm{base}})$, so $\rho = 1$ is a
+record that tracks the load to its recording error and $\rho \le 0$ is crisis protocol,
+where prescribed intake is cut while catabolic muscle breakdown supplies the load. On the
+monthly design:
+
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+$\rho$ & \textbf{treat unneeded} & \textbf{fail to treat} & \textbf{median $\hat\theta/\theta$} \\
+\midrule
+$1$ \ (the record tracks the load) & $17.5\%$ & $41.8\%$ & $1.03$ \\
+$0.5$ \ (partly recorded)          & $99.0\%$ & $0.0\%$  & $0.90$ \\
+$0$ \ (intake pinned at baseline)  & $100\%$  & $0.0\%$  & $0.086$ \\
+$-0.25$ \ (protein stopped)        & $100\%$  & $0.0\%$  & $0.009$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The mechanism is in the last column. When recorded intake falls while the marker climbs,
+least squares has nowhere to put the marker except lost capacity, and $\hat\theta$ collapses
+by two orders of magnitude. \textbf{``The estimator fails towards declaring patients safe''
+holds only while the record tracks the load.} Under the protocol a decompensation actually
+triggers, the same estimator declares every patient unsafe.
+
+\textbf{Neither half belongs in an abstract on its own}, and neither is a bug to be fixed
+by weighting: they are the same estimator meeting two different data-generating processes,
+and which one a record came from is a fact about the chart, not about the patient. A
+regret-equalised threshold does not repair it either. At equal costs the managed regime
+wants the boundary moved to $+0.07\,\theta$ and the crisis regime wants it moved to
+$-0.39\,\theta$; at a cost ratio of ten to one or worse, every regime wants every patient
+escalated, which is the decision-theoretic way of saying the test has stopped contributing.
+\end{remark}
 
 \begin{remark}[Why this is simulated and not propagated]
 \label{rem:no_delta}
 A delta-method calculation, propagating the estimator's covariance to $\mu$ and reporting
 $\Phi(-|\mu|/\operatorname{sd}(\hat\mu))$, is available and is wrong here, in a way that
-matters. At the accessible design $\operatorname{sd}(\hat\mu)/|\mu| = 3.7$, so a Gaussian
-of that width crosses zero about $39\%$ of the time. Simulating the same model instead,
-$\hat\theta$ ranges over three orders of magnitude across replicates --- the design really
-is that bad --- and $\hat\mu$ never changes sign.
+matters. The design's near-null direction is very nearly the direction along which $\mu$ is
+monotone and of one sign, so the sampling distribution of $\hat\mu$ is heavily skewed and
+does not cross zero anything like as often as its standard deviation suggests.
+\textbf{That is the margin theorem of \eqref{eq:mufibre} showing up in the estimator}, and
+taking the Gaussian tail at face value would throw away the one favourable result this note
+has. Both numbers are reported by the code so that the gap stays visible.
 
-The two disagree because $\hat\mu$ is not symmetric about $\mu$. The design's near-null
-direction is very nearly the direction along which $\mu$ is monotone and of one sign, so the
-sampling distribution of $\hat\mu$ is heavily skewed and does not cross zero anything like
-as often as its standard deviation suggests. \textbf{That is the margin theorem of
-\eqref{eq:mufibre} showing up in the estimator}, and taking the Gaussian tail at face value
-would throw away the one favourable result this note has. Both numbers are reported by the
-code so that the gap stays visible.
+This is the first of the note's two linearisation failures; the second is
+Remark~\ref{rem:second_order}, where a first-order filter reports a curvature-held
+direction as prior-held. They point the same way.
 \end{remark}
 
 \vspace{0.5em}
