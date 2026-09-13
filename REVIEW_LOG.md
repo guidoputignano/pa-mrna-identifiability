@@ -533,6 +533,52 @@ Worth recording alongside: the three defects were found by reading the changed l
 afterwards, not by any check. Two were found because I went looking, and the third only
 because the first two made me suspicious enough to keep looking.
 
+### R11 — the pre-restructure cluster, and two numbers the sweep would not touch
+
+**Not a retraction but the result of applying R10's rule**, recorded because of what
+reading found that no check had.
+
+The restructure moved six sections into the supplement without rewriting them, and they
+still argued the position the paper had reversed: carnitine as the input the identification
+rests on, the therapy as prospective and administered to nobody accessible, and
+Proposition~`prop:channel` stated unconditionally where the A5 correction had made it
+conditional on $K_m$. A reading sweep over every supplement section, forty readers with an
+adversarial verify on each claim, returned thirty-one candidates of which twenty-two
+survived verification: fourteen in `04_local`, five in `A1_supplementary`, two in
+`02_system`, and one each in `03_dynamic`, `09_validation` and `10_results`. Three files
+were clean. Nine candidates were rejected on reading, most of them because the passage was
+already correctly scoped or already carried its own supersession note.
+
+All twenty-two are resolved in place rather than deleted, on the rule from the pass before:
+where a question has been answered, state the answer and cite the section; where a position
+was superseded, say so. Two carried a consequence past the wording. The Figure A3 caption
+and its twin in `10_results` claimed the channel choice does not matter, which is true of
+the excursion and false of the curvature, so the caption now says which of the two the
+figure shows. And `09_validation` concluded that a paired validation would measure the
+marker method's imprecision rather than agreement; that was true on the increment-dropped
+footing and is false on the design the protocol specifies, where the marker side is a
+factor of $1.3$ from the reference standard rather than an order of magnitude, so the
+conclusion is reversed with its original stated.
+
+**Two findings are out of that class and are left alone, deliberately.** Both would change
+a number in the main text, and neither is a contradiction of position:
+
+1. `08_specification.tex:100` and `00_abstract.tex:19` quote $1.79$ for spontaneous load
+   variability at $10\%$ CV. `audit/e7_excitation_budget.py` returns $1.7731$ on the
+   lognormal load that replaced the Gaussian one in 15.1, and `A1_open.tex` quotes $1.77$.
+   The $40\%$ row of the same table was updated to its lognormal value ($0.70 \to 0.62$)
+   and the $10\%$ row was not. `audit/PHASE3_CHECKS.md` says the correction was made "in
+   the paper", and in the paper it was made in one row of two.
+2. `08_specification.tex:90` describes that scenario's footing as "twenty-four monthly
+   draws over two years". The scenario runs on twenty-five
+   (`len(np.arange(0, 730, 30.4)) = 25`). The "twenty-four draws" at line 119 is a
+   different quantity, the sampling-rate route, which does run at twenty-four and is right.
+
+**What this says about the class.** R8's rule was that every quoted precision carries its
+footing. These two are the other half of it: a footing that changed under a number nobody
+requoted. Both were found by reading prose against the script that produces it, which is
+the same instrument that found R6, R7 and R9, and again not by any test in this repository.
+
 ## A sixth failure mode
 
 - **A number taken from an abstract that its own Results contradict.** Three instances now,

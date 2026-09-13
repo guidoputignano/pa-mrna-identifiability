@@ -62,9 +62,12 @@ linear in $m$, and in the \emph{unforced} model that difference in shape is the 
 separating them (Proposition~\ref{prop:degeneracy}); a known input that varies and rides on
 one channel alone is a second and independent separator
 (Proposition~\ref{prop:exchange}). The two selective inputs are drawn together because
-Proposition~\ref{prop:channel} makes them interchangeable: carnitine acts on $k_e$ and is
-recorded for every patient, the therapy would act on $\theta$ and is administered to none,
-and the identification problem cannot tell which one moved the patient.}
+Proposition~\ref{prop:channel} makes them interchangeable \emph{given $K_m$}: carnitine
+acts on $k_e$ and is recorded for every patient, the therapy acts on $\theta$ and is
+administered on the published biweekly schedule, and at fixed $K_m$ the identification
+problem cannot tell which one moved the patient. With $K_m$ free they are not
+interchangeable (Remark~\ref{rem:channel_scope}), and it is the therapy the design of
+Section~\ref{sec:designsec} uses.}
 \label{fig:blockA}
 \end{figure}
 
@@ -108,7 +111,12 @@ supplementation therefore \emph{raises} C3 while lowering the organic acids, so 
 selective perturbation of Section~\ref{sec:selective} enters the observation with the wrong
 sign on that channel: the input the whole identification rests on would appear to worsen the
 patient. No arrangement of the algebra repairs that, and it disqualifies C3 whatever its
-rate ratio.
+rate ratio. \emph{As corrected.} The identification does not rest on carnitine. The known
+input is the dose train (Section~\ref{sec:therapychannel}), and carnitine is closed as a
+substitute for it in Section~\ref{sec:whoto}. The exclusion of C3 stands on the narrower
+ground Remark~\ref{sec:marker} states, that carnitine is a co-treatment given to every
+patient and raises C3 while the organic acids fall. Whether C3 would be disqualified in a
+record with no carnitine in it is not settled here, and the design does not need it to be.
 
 2-MC is excluded on the endpoint, and its strength lies in the arm this note
 excludes. 2-MC is among the strongest correlates of plasma ammonia \emph{during} an
@@ -383,7 +391,11 @@ untouched:
 \;+\; \underbrace{D \sum_i e^{-\lambda (t - t_i)} \mathbf{1}_{\{t \ge t_i\}}}_{\text{known: } \Delta(t)}.
 \label{eq:input}
 \end{equation}
-This input is investigational and is not administered to any accessible patient.
+This input is investigational, and when this was written no accessible patient received
+it. \emph{Superseded.} It is administered, on the published phase 1/2 biweekly schedule,
+and it is the input the design of Section~\ref{sec:designsec} uses. What survives of the
+sentence is a statement about reach rather than about the experiment: the design is
+available to patients on the therapy and to no others (Section~\ref{sec:whoto}).
 \end{description}
 
 Write the equilibrium condition before and after the perturbation, with steady levels $m$
@@ -525,11 +537,16 @@ excursion. Only a patient who is
 both excursing and appreciably saturated escapes both, and that patient is in the middle of a
 decompensation.
 
-Proposition~\ref{prop:channel} is what makes the analysis possible now. The identifiability
-question can be posed and answered on the perturbation that is actually present in the
-records, namely carnitine, and the answer transfers unchanged to the perturbation that is
-not, namely the therapy. What has to be earned in each case is the excursion $m \to m'$;
-the channel through which it is bought is immaterial to the information obtained.
+Proposition~\ref{prop:channel} is what made the analysis possible when the therapy was
+prospective. The identifiability question could be posed and answered on the perturbation
+actually present in the records, namely carnitine, and the answer transferred to the
+perturbation that was not, namely the therapy. What has to be earned in each case is the
+excursion $m \to m'$, and the channel through which it is bought is immaterial to the
+information obtained. \emph{Two corrections.} The transfer holds at fixed $K_m$ and not
+otherwise: with $K_m$ in the parameter vector the two routes separate by six orders of
+magnitude in $\det G$ (Remark~\ref{rem:channel_scope}). And the detour is no longer
+needed, because the therapy is administered and the question is posed on it directly
+(Section~\ref{sec:therapychannel}).
 
 Figure~\ref{fig:A3} carries the arithmetic. Two patients with threefold different
 enzymatic capacity, indistinguishable before the perturbation, are driven apart by a
@@ -541,11 +558,27 @@ the analytical and biological variability of the assay.
 \subsubsection{What the accessible input costs}
 \label{sec:instruments}
 
+\begin{remark}[Superseded as the route; kept as a description of the records]
+\label{rem:instruments_local}
+This subsection prices the design on carnitine, because carnitine was the input the
+analysis rested on. It is kept because the argument is the one a reader will try, and it is
+superseded on the point that matters. The therapy is administered, so the instrument
+question is not reached, and it would not help if it were: carnitine acts on $k_e$, so it
+cannot move the first factor of $-(1 + \Delta(t)/\theta)\,\varphi(m)$ at all, and on the
+footing that gives the dose train $\operatorname{sd}(\ln\hat\theta) = 0.170$, adding
+recorded carnitine steps gives $1.91$ to $2.06$, \emph{worse} than leaving them out
+(Section~\ref{sec:whoto}). The exogeneity an instrument buys is not the binding
+constraint. What survives below is the structural half of the argument, and the directions:
+the instruments move the patient the wrong way along the axis that carries the information,
+which is the same finding Section~\ref{sec:whoto} reaches by a different route.
+\end{remark}
+
 Proposition~\ref{prop:channel} equalises the two channels informationally, given $K_m$. It
-does not equalise them \emph{statistically}, and that is the central compromise of this
+does not equalise them \emph{statistically}, and that was the central compromise of this
 work: the carnitine dose is adjusted in response to the patient's state, so it is confounded
 by indication, where a therapeutic schedule fixed in advance is exogenous by construction
-and is administered to nobody accessible.
+and was, when this was written, administered to nobody accessible. The last clause no longer
+holds, and with it the compromise: the therapeutic schedule is the one the design uses.
 
 The way through is to use only the quasi-exogenous part of the variation in $u_c$. Three
 such instruments are present in routine care, and their directions matter more than
@@ -561,8 +594,10 @@ Appendix~\ref{sec:supp} gives each in full, and Table~\ref{tab:excursion} prices
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
 \item Conditions under which a perturbation schedule, treated as a design variable,
       yields acceptable conditioning without approaching the safety constraint. By
-      Proposition~\ref{prop:channel} the design problem is the same whether the schedule
-      is one of carnitine doses or of therapeutic doses. What such a schedule has to buy is
+      Proposition~\ref{prop:channel} the design problem is the same, \emph{given $K_m$},
+      whether the schedule is one of carnitine doses or of therapeutic doses. It is not the
+      same with $K_m$ free (Remark~\ref{rem:channel_scope}), and the item is answered for
+      the therapeutic schedule in Section~\ref{sec:designsec}. What such a schedule has to buy is
       already fixed by \eqref{eq:intercept} and \eqref{eq:thetaerr}. The residual capacity
       is carried by the intercept, and the intercept is bought by the width of the band,
       where adding visits inside a fixed band does not widen it, so a schedule is to be
@@ -690,8 +725,22 @@ formula close. It is not an elimination, and Remark~\ref{rem:shape} prices what 
 \subsubsection{What the design would have to deliver}
 \label{sec:design}
 
+\begin{remark}[This design is the carnitine one, and it is superseded]
+\label{rem:design_superseded}
+Everything in this subsection prices a design whose $n$ counts quasi-exogenous carnitine
+steps. That is not the design the paper specifies. The dose train supplies the excitation,
+$n$ counts outpatient draws rather than instrument events, and twenty-five monthly draws
+across dose cycles over two years reach $\operatorname{sd}(\ln\hat\theta) = 0.170$
+(Section~\ref{sec:designsec}). The negative answer below is therefore the answer for the
+carnitine route, and it is the reason the therapy is the design's condition of existence
+rather than an improvement on an otherwise workable record (Section~\ref{sec:whoto}). The
+computation is kept because the instrument arithmetic it reports, a floor of $53\%$ at six
+instrument events and the wrong direction of travel, is what closes that route.
+\end{remark}
+
 Equation \eqref{eq:thetaerr} is derived above and left unevaluated. Evaluating it
-answers the question of Table~\ref{tab:models}, and the answer is negative.
+answers the question of Table~\ref{tab:models} \emph{on the carnitine route}, and the
+answer is negative.
 
 \paragraph{The relative precision is identified, though the parameter is not.}
 $\hat\theta = \hat a/g(\bar m)^2$ is the fitted intercept times a constant, so
@@ -718,7 +767,9 @@ constant is days. The accessible design is therefore steady states, where $\dot 
 $C(m_i) = s_i$. The steady-state framing is what makes the argument for
 Proposition~\ref{prop:degeneracy} immediate. And $n$ counts \emph{instrument events}, the
 quasi-exogenous carnitine steps of Section~\ref{sec:instruments}, not clinic visits, which
-is a much smaller number.
+is a much smaller number. On the design the paper specifies it counts draws, because the
+dose train and not an instrument supplies the perturbation, and a draw is then an
+observation of a known input (Remark~\ref{rem:design_superseded}).
 
 \paragraph{Two noise terms, and which one binds.} At steady state the ordinate is the
 recorded load and the abscissa is the assayed metabolite, so an abscissa error $\sigma_m$
