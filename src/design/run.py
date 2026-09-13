@@ -82,6 +82,32 @@ def load(t, base=None):
     return base
 
 
+#: day-to-day variability of ordinary intake, as a coefficient of variation.
+#: By Proposition prop:rank a PERFECTLY STEADY load is the exactly singular
+#: case, so this is not noise to be averaged away -- it is what closes the
+#: fibre, and a dietary record smoothed to a weekly mean destroys it.
+LOAD_CV = 0.10
+
+
+def design_record(times, load_cv=None, seed=3):
+    """
+    Levels and increments for a design, with intake varying day to day.
+
+    Returns (levels, increments). The levels solve the balance at the
+    per-sample recorded load, so a varying load moves the marker as it
+    physically would rather than being added as measurement error.
+    """
+    load_cv = LOAD_CV if load_cv is None else load_cv
+    times = np.asarray(times, dtype=float)
+    inc = np.asarray(delta(times), dtype=float)
+    Lb = load(0.0)
+    Ls = (Lb * (1.0 + load_cv * np.random.default_rng(seed).standard_normal(times.size))
+          if load_cv else np.full(times.size, Lb))
+    B = P.ke * P.Km + P.theta + inc - Ls
+    lv = (-B + np.sqrt(B ** 2 + 4.0 * P.ke * Ls * P.Km)) / (2.0 * P.ke)
+    return lv, inc
+
+
 # ==========================================================================
 def fig_excitation():
     """
@@ -227,7 +253,7 @@ def quasi_steady_check(tol=0.05, cycles=3):
     return settle, worst
 
 
-def _filter(levels, sigma, increments=None, prior_rel=(0.8, 0.8),
+def _filter(levels, sigma, increments=None, prior_rel=(None, None),
             load_frac=LOAD_FRAC, ke_prior=0.8):
     """
     Sequential covariance of (ln theta, ln K_m, load bias) as samples arrive.
@@ -245,6 +271,15 @@ def _filter(levels, sigma, increments=None, prior_rel=(0.8, 0.8),
     removed, it is the wrong tangent. See audit/c1_sensitivity.py, which
     finite-differences the clearance and agrees with the corrected column to
     1.1e-10 while the uncorrected one is wrong by up to 68% of itself.
+
+    `prior_rel` are the log-priors on (ln theta, ln K_m), and BOTH DEFAULT TO
+    None, meaning flat. Stripping the filter's priors one at a time shows that
+    only the one on ln k_e does any work: on the accessible design, dropping
+    the ln K_m prior changes sd(ln theta) by nothing at all, and a K_m prior
+    twenty times looser still changes nothing, so nothing here depends on
+    knowing K_m -- which Remark rem:no_km forbids. Dropping the ln k_e prior
+    takes it from 0.15 to 0.65. The paper therefore claims one prior and lets
+    theta and K_m float.
 
     `ke_prior` is the log-prior on ln k_e. The default 0.8 FITS k_e, which is
     the footing this paper claims: the non-enzymatic channel is not known, and
@@ -272,11 +307,19 @@ def _filter(levels, sigma, increments=None, prior_rel=(0.8, 0.8),
     lv = np.asarray(levels, dtype=float)
     inc = (np.zeros_like(lv) if increments is None
            else np.broadcast_to(np.asarray(increments, dtype=float), lv.shape))
-    pri = [prior_rel[0] ** 2, prior_rel[1] ** 2, (load_frac * Lb) ** 2]
+    pri = [np.inf if prior_rel[0] is None else prior_rel[0] ** 2,
+           np.inf if prior_rel[1] is None else prior_rel[1] ** 2,
+           (load_frac * Lb) ** 2]
     if ke_prior is not None:
         pri.append(ke_prior ** 2)
-    Finv = np.linalg.inv(np.diag(pri))
-    out = [np.linalg.inv(Finv)]
+    Finv = np.diag([0.0 if np.isinf(x) else 1.0 / x for x in pri])
+
+    def _cov(A):
+        w = np.linalg.eigvalsh(A)
+        return (np.full_like(A, np.inf) if w[0] <= 1e-14 * max(w[-1], 1e-300)
+                else np.linalg.inv(A))
+
+    out = [_cov(Finv)]
     for m, d in zip(lv, inc):
         q = [P.theta * m / (P.Km + m),
              -(P.theta + d) * P.Km * m / (P.Km + m) ** 2,
@@ -285,7 +328,7 @@ def _filter(levels, sigma, increments=None, prior_rel=(0.8, 0.8),
             q.append(P.ke * m)
         q = np.array(q)
         Finv = Finv + np.outer(q, q) / sigma ** 2
-        out.append(np.linalg.inv(Finv))
+        out.append(_cov(Finv))
     return np.array(out)
 
 
@@ -680,9 +723,9 @@ def table_designs(T=730.0):
     The design table of Section 7, generated rather than transcribed.
 
     Every row is on the footing this paper claims: the therapeutic increment
-    carried, k_e FITTED at the module's own log-prior, the load recorded to
-    LOAD_FRAC. The last two columns show what the two abandoned footings would
-    have said, so the difference between them stays on the page.
+    carried, theta and K_m FREE, and priors only on ln k_e and the load record.
+    The last column is the abandoned footing, where the increment was dropped
+    from the sensitivity while still being used to generate the levels.
     """
     import model_A.run as LOC
     sigma = LOC.sigma_total(LOAD_FRAC, ASSAY_CV)
@@ -690,39 +733,40 @@ def table_designs(T=730.0):
     designs = [
         ("six-monthly clinic visits", np.arange(180.0, T + 1.0, 180.0), None),
         ("one dose cycle, every two days", np.arange(0.0, DOSE_INTERVAL, 2.0), None),
+        (r"\textbf{monthly, across dose cycles}", np.arange(0.0, T, 30.4), None),
+        ("two-monthly, across dose cycles", np.arange(0.0, T, 60.0), None),
         ("every two days for two years", dense_t, None),
+        (r"\emph{fortnightly: the dose interval itself}",
+         np.arange(0.0, T, DOSE_INTERVAL), None),
         (r"\emph{the same $365$ straddling $K_m$}", dense_t,
          np.geomspace(P.Km / 2.0, P.Km * 2.0, len(dense_t))),
     ]
     rows, raw = [], []
     for name, times, override in designs:
-        lv = quasi_steady_level(times) if override is None else override
-        inc = np.asarray(delta(times), dtype=float)
+        lv, inc = design_record(times)
+        if override is not None:
+            lv = override
         Pc = _filter(lv, sigma, inc)[-1]
         sd = float(np.sqrt(Pc[0, 0]))
         rho = float(Pc[0, 1] / np.sqrt(Pc[0, 0] * Pc[1, 1]))
-        ke_known = float(np.sqrt(_filter(lv, sigma, inc, ke_prior=None)[-1][0, 0]))
-        dropped = float(np.sqrt(_filter(lv, sigma, ke_prior=None)[-1][0, 0]))
-        raw.append((name, len(times), lv.min(), lv.max(), sd, rho, ke_known, dropped))
+        dropped = float(np.sqrt(_filter(lv, sigma)[-1][0, 0]))
+        drng = float((inc.max() - inc.min()) / P.theta)
+        raw.append((name, len(times), lv.min(), lv.max(), drng, sd, rho, dropped))
         cell = (r"\textbf{%.4f}" % sd) if sd < 0.20 else ("%.4f" % sd)
         rows.append([name, len(times), f"${lv.min():.2f}$--${lv.max():.2f}$",
-                     cell, f"${rho:+.4f}$", f"${ke_known:.4f}$", f"${dropped:.4f}$"])
+                     f"${drng:.2f}$", cell, f"${rho:+.4f}$", f"${dropped:.3f}$"])
     write_table("tab_D_designs",
                 ["design", "$n$", "levels visited",
+                 r"range of $\Delta/\theta$",
                  r"$\operatorname{sd}(\ln\hat\theta)$",
                  r"$\operatorname{corr}(\ln\hat\theta, \ln \hat K_m)$",
-                 r"\emph{$k_e$ known}", r"\emph{$\Delta$ dropped}"],
+                 r"\emph{$\Delta$ dropped}"],
                 rows,
-                note="the first four columns are the footing the paper claims; "
-                     "the last two are the abandoned ones")
+                note="theta and K_m free; priors only on ln k_e and the load record")
     print("  wrote tab_D_designs.tex")
-    for nm, n, lo, hi, sd, rho, kk, dr in raw:
-        print(f"    {nm[:34]:>34}: n={n:4d}  sd={sd:.4f}  corr={rho:+.4f}  "
-              f"[k_e known {kk:.4f}; Delta dropped {dr:.4f}]")
-    d, pl = raw[2], raw[3]
-    print(f"    placement ratio on the claimed footing: {d[4]/pl[4]:.2f}x "
-          f"(k_e known: {d[6]/pl[6]:.2f}x;  Delta dropped: {d[7]/pl[7]:.1f}x)")
-    print(f"    density ratio, four visits against 365: {raw[0][4]/d[4]:.2f}x")
+    for nm, n, lo, hi, drng, sd, rho, drop in raw:
+        print(f"    {nm[:40]:>40}: n={n:4d}  range(D/th)={drng:5.2f}  sd={sd:.4f}"
+              f"  corr={rho:+.4f}  [Delta dropped {drop:.3f}]")
     return raw
 
 

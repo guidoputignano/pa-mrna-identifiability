@@ -1,11 +1,14 @@
 \begin{tabular}{@{}lllllll@{}}
 \toprule
-\textbf{design} & \textbf{$n$} & \textbf{levels visited} & \textbf{$\operatorname{sd}(\ln\hat\theta)$} & \textbf{$\operatorname{corr}(\ln\hat\theta, \ln \hat K_m)$} & \textbf{\emph{$k_e$ known}} & \textbf{\emph{$\Delta$ dropped}} \\
+\textbf{design} & \textbf{$n$} & \textbf{levels visited} & \textbf{range of $\Delta/\theta$} & \textbf{$\operatorname{sd}(\ln\hat\theta)$} & \textbf{$\operatorname{corr}(\ln\hat\theta, \ln \hat K_m)$} & \textbf{\emph{$\Delta$ dropped}} \\
 \midrule
-six-monthly clinic visits & 4 & $6.26$--$8.46$ & 0.3707 & $+0.8926$ & $0.3507$ & $0.5449$ \\
-one dose cycle, every two days & 7 & $3.51$--$8.54$ & 0.2067 & $+0.5953$ & $0.1511$ & $0.5396$ \\
-every two days for two years & 365 & $3.36$--$8.54$ & \textbf{0.1475} & $+0.0214$ & $0.0251$ & $0.4892$ \\
-\emph{the same $365$ straddling $K_m$} & 365 & $50.00$--$200.00$ & \textbf{0.0157} & $+0.2055$ & $0.0037$ & $0.0039$ \\
+six-monthly clinic visits & 4 & $5.76$--$10.34$ & $0.45$ & 0.4177 & $+0.9135$ & $2.991$ \\
+one dose cycle, every two days & 7 & $3.28$--$7.79$ & $1.81$ & 0.2187 & $+0.6103$ & $4.738$ \\
+\textbf{monthly, across dose cycles} & 25 & $2.81$--$9.47$ & $1.84$ & \textbf{0.1697} & $+0.3418$ & $2.092$ \\
+two-monthly, across dose cycles & 13 & $3.28$--$9.70$ & $1.94$ & \textbf{0.1868} & $+0.4685$ & $2.369$ \\
+every two days for two years & 365 & $2.49$--$10.47$ & $1.95$ & \textbf{0.1499} & $+0.0418$ & $1.029$ \\
+\emph{fortnightly: the dose interval itself} & 53 & $2.39$--$4.53$ & $0.13$ & 3.5050 & $+0.9984$ & $9.391$ \\
+\emph{the same $365$ straddling $K_m$} & 365 & $50.00$--$200.00$ & $1.95$ & \textbf{0.0157} & $+0.2055$ & $0.047$ \\
 \bottomrule
 \end{tabular}
-% the first four columns are the footing the paper claims; the last two are the abandoned ones
+% theta and K_m free; priors only on ln k_e and the load record
