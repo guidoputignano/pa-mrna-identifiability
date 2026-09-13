@@ -148,3 +148,54 @@ What the paper can defensibly claim is narrower than either option promised:
 
 That is a smaller paper than Phase 3 envisaged and it is the one the evidence supports.
 The decision is yours; nothing is written until you take it.
+
+---
+
+# 3.0.7 — can controls supply the population constants? **Route closed.**
+
+## (a) Controls stay in the linear regime, by two independent arguments
+
+**From the model.** A control has roughly ten times a PA patient's residual capacity
+(`tab_params`: the patient's θ is "~10% of normal"). The load required to carry a control
+to the neighbourhood of K_m:
+
+| target m | m/K_m | load required | × a PA patient's baseline |
+|---|---|---|---|
+| 10 | 0.10 | 2 777 | 8.6 |
+| 50 | 0.50 | 10 250 | 31.8 |
+| **100** | **1.00** | **15 500** | **48.0** |
+
+And where a control actually sits at ordinary loads: **m/K_m = 0.011** at the patient's own
+baseline, 0.022 at twice it, 0.118 at ten times. Deep in the linear regime, where
+g(m) ≈ m/K_m and only the lumped ratio θ/K_m is identifiable — Proposition 2(1).
+
+**From the published protocol, which is decisive on its own.** The dose in the only
+1-¹³C-propionate series located is **0.5 mg/kg body weight, administered orally**, and the
+authors state they optimised the method using *"a 20-fold reduced dose"* to *"minimize
+propionate exposure in MMA subjects"*.
+
+**A dose chosen to minimise exposure is, by construction, not a dose that drives the system
+towards saturation.** It is a tracer. It is also a bolus rather than a sustained load, so it
+does not create the steady state the identification is built on. The route is closed on
+magnitude and on kind.
+
+Record it as closed.
+
+## (b) Moot, and it would not have helped
+
+Not required, since (a) fails. The check is cheap and confirms 2D.0 from the other side —
+monthly design, minimal footing:
+
+| K_m prior | sd(ln θ) |
+|---|---|
+| free (what the paper does) | 0.1697 |
+| a factor of 2.2 | 0.1696 |
+| 10% | 0.1663 |
+| 1% — what a control study might buy | **0.1597** |
+
+**A control-derived K_m tight to 1% buys six per cent.** k_e remains the binding direction.
+So even had (a) passed, the constant it would have supplied is not the one that binds.
+
+*(A fifth row, K_m fixed exactly, returned a singular matrix under the audit script's own
+conditioning test. That is the test firing on a badly scaled matrix rather than a finding,
+and it is omitted rather than reported as one.)*
