@@ -98,7 +98,7 @@ each reported as a median over twenty-four seeds:
 \textbf{source of excitation} & $\operatorname{sd}(\ln\hat\theta)$ & \textbf{against $0.20$} \\
 \midrule
 spontaneous load variability alone, at $10\%$ day-to-day CV & $1.79$ & $9\times$ worse \\
-\quad the same at an implausible $40\%$ CV                  & $0.70$ & $3.5\times$ worse \\
+\quad the same at an implausible $40\%$ CV                  & $0.62$ & $3.1\times$ worse \\
 plus recorded carnitine steps of $25$--$100\%$ in $k_e$     & $1.91$--$2.06$ & \emph{worse still} \\
 \textbf{the dose train}                                     & $\mathbf{0.170}$ & \textbf{passes} \\
 \bottomrule
@@ -109,11 +109,19 @@ Neither route to rescuing the first row exists. Reaching $0.20$ by making intake
 variable needs a day-to-day coefficient of variation of $229\%$, which is not a diet.
 Reaching it by drawing more blood does not work either, and the reason is worth stating
 because the obvious arithmetic is wrong: independent samples would scale as $1/\sqrt{n}$ and
-put daily sampling for two years at about $0.33$, but the computed value is $0.67$.
-Information in the degenerate direction \emph{saturates}, because consecutive days resample
-one load distribution rather than adding independent directions. \textbf{Daily venepuncture
-for two years lands at more than three times the target, and the $1/\sqrt{n}$ estimate of
-what would be needed understates it.}
+put daily sampling for two years at about $0.33$, while the computed value is $0.67$. Pushed
+to $n = 3\times10^{5}$ the fitted exponent stays between $0.06$ and $0.24$ and never
+approaches $0.5$.
+
+\textbf{The reason is not that information saturates}, which an earlier version of this
+paragraph asserted and which the computation does not support. The data's information in the
+degenerate direction \emph{grows} roughly in proportion to $n$, from $1.8\times10^{-7}$ at
+twenty-four draws to $7.6\times10^{-4}$ at three hundred thousand. What it never does is
+arrive: the load-record prior contributes about $1.05$ in that same direction and does not
+move, so even at $n = 3\times10^{5}$ the data supply three orders of magnitude less than the
+prior already holds. \textbf{The weak direction is prior-held at every $n$ a study could
+reach, and the precision falls only through the directions the data do reach.} Sub-root-$n$
+here is a statement about a fixed prior, not about correlated samples.
 
 \textbf{So the conclusion is the stronger one, and this note states it rather than implying
 a second specification exists.} The therapy is not a design improvement on an otherwise
@@ -185,6 +193,38 @@ Bound the fraction of patients it works for, to $\pm 20$ points & $24$ \\
 phase 1/2 trial of sixteen.} Establishing \emph{for how many} patients it works to within
 ten points needs about ninety-six, which is not. Two orders of magnitude separate the
 blocked question from the unblocked one, and this specification asks for the affordable one.
+
+\subsection{The precision is not delivered to every patient, and the shortfall is systematic}
+\label{sec:coverage}
+
+The $0.170$ quoted throughout is one patient: the illustrative parameter set. Across the
+four thousand simulated above the median is $0.192$ and \textbf{just over half meet the
+$0.20$ target}. That distribution is not a sensitivity analysis around the headline; it is
+the headline's actual standing. \emph{The design confirms identifiability in a cohort. It
+does not deliver the stated precision to every patient in one.}
+
+\textbf{And the shortfall is systematic rather than random}, which is what makes it worth a
+subsection. The strongest correlate of the achieved $\operatorname{sd}$ is $\Delta/\theta$
+at $+0.56$ on logs. The increment is delivered on a fixed schedule in absolute terms; the
+residual capacity it is measured against is not. \textbf{So a patient with more residual
+capacity receives less \emph{relative} excitation and is identified less well} --- not by
+chance, but by the arithmetic of a fixed dose against a variable denominator.
+
+That runs the wrong way for the question the note is about. The decision, where it is posed
+at all, concerns patients near a boundary in capacity, and the patients the design serves
+worst are the ones with most of it. This is the third place in this note where the
+identifiability and the clinical need point in opposite directions --- after the excursion
+requirement, which is met only by the event the therapy exists to prevent, and the
+null-genotype anchor, which works for the patients who need it least. \textbf{It is the same
+shape each time and it is not a coincidence: what makes a patient informative about
+$\theta$ is being far from normal, and management exists to keep them near it.}
+
+\textbf{What the specification should therefore say, and now does.} A study powered on the
+median will leave roughly half its patients short of the target, so the design is specified
+as a cohort-level demonstration with a per-patient interval reported, never as a guarantee
+attached to an individual record. Reporting $\hat\theta$ without its own interval, or
+quoting $0.17$ as what a patient receives, would misstate the result in the direction that
+matters.
 
 \subsection{What is excluded, and what is not promised}
 

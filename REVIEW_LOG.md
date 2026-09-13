@@ -471,6 +471,38 @@ sentence it replaced was an error.
 unverified when I made it; the retraction was unverified when I made it. Neither cost was
 paid for the same reason: I did not look.
 
+### R8 — "prior-free sd falls to 0.054 at 2% CV and 0.023 at 10%"
+
+**Retracted** (15.1), and unlike R1–R7 this one was in the paper's own prose rather than in
+a working note. The two numbers reproduce only on the two-daily design of 365 samples **with
+k_e held exactly known** — a footing Section `sec:whypriors` disowns and which the design
+module's docstring explicitly reserves "for the audit, not for a headline". On the claimed
+footing they are 0.234 and 0.172, a factor of 4.3 and 7.5.
+
+Both were also computed **with the dose train present**, in a passage arguing what load
+variation buys. That is the substantive half: the sentence read as a claim about load
+variability and was measuring the therapy.
+
+**It surfaced only because a later result contradicted it.** The excitation budget (14.1)
+returned 1.79 for load variation alone where this sentence implied 0.023, and the handoff
+that followed refused the new number until the contradiction was addressed. Neither figure
+was wrong about its own computation; the older one was wrong about what it was a computation
+*of*. **Two numbers on different footings do not announce themselves — they only collide when
+something forces them into the same table.**
+
+### R9 — "information in the degenerate direction saturates"
+
+**Retracted** (15.2). Written in the previous handoff's own summary and then into the paper.
+The scaling is real — the fitted exponent is 0.06 to 0.24 against an independent-sample 0.5,
+across five orders of magnitude in n — but the stated mechanism is not. Information in that
+direction **grows** roughly in proportion to n. It never saturates; it never arrives. The
+load prior holds about 1.05 in that direction and does not move, so at n = 300,000 the data
+still supply three orders of magnitude less.
+
+The conclusion is unaffected and the mechanism was decorative — which is exactly why it was
+easy to write and would have been hard to catch. This is the second instance of the R7 rule
+in two handoffs.
+
 ## A sixth failure mode
 
 - **A number taken from an abstract that its own Results contradict.** Three instances now,
@@ -506,3 +538,14 @@ paid for the same reason: I did not look.
   repository's numerical apparatus did not catch any of them and was never going to. What
   caught them was reading the passage that justified the claim, which in each case existed
   and had not been consulted.
+
+- **A number that is right about its own computation and wrong about what it computes.** R8
+  is the first of these and it is the most dangerous kind, because every check this
+  repository runs would pass it: it reproduces exactly, from committed code, on a footing
+  that is internally consistent. What it does not do is match the footing of the sentence
+  containing it. The rule that follows: **every quoted precision carries its footing in the
+  same breath** — which design, which priors, and whether the therapy channel was present —
+  because a bare number cannot be audited against a claim it was never attached to. Note
+  what found it: not a test, not a re-read, but a *later result that contradicted it*.
+  Conflicting numbers are the cheapest detector this project has, and the only one that has
+  ever caught an error of this class.

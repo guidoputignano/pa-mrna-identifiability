@@ -601,9 +601,9 @@ the full range, because a single draw is not a result (R5).
 
 | scenario | sd(ln θ̂) | vs target 0.20 |
 |---|---|---|
-| **(1)** load variability only, no therapy, at the note's own 10% CV | **1.79** [1.41, 2.53] | **9× worse** |
-| (1) at 20% CV | 1.09 | 5.4× worse |
-| (1) at an implausible 40% CV | 0.70 | 3.5× worse |
+| **(1)** load variability only, no therapy, at the note's own 10% CV | **1.77** [1.30, 2.61] | **9× worse** |
+| (1) at 20% CV | 1.05 | 5.2× worse |
+| (1) at an implausible 40% CV | 0.62 | 3.1× worse |
 | **(2)** as (1) plus carnitine steps, 25–100% in k_e, gain **known** | **1.91 – 2.06** | **worse than (1)** |
 | **(3)** the dose train | **0.170** [0.168, 0.171] | **passes** |
 
@@ -714,3 +714,104 @@ decision question needs ~2,200.
 
 **Two orders of magnitude separate the blocked question from the unblocked one**, and the
 specification should ask for the affordable one.
+
+---
+
+# 15.1 — reconciling scenario 1 against `prop:rank`. **The gate answer stands, and the contradiction was in the paper.**
+
+`audit/e9_rank_vs_precision.py`.
+
+## (a) The variation reaches the balance, not the noise — but my 40% row was unphysical
+
+Levels solve the quasi-steady balance at the per-sample load, so the marker moves as it
+physically would: at 10% CV, L spans [240, 430] and m spans [7.29, 13.70]. **The mechanism
+was exercised.**
+
+But the sweep drew the load from a **Gaussian**, and at 40% CV that returns `L = −7.19` and
+`m = −0.205`. A negative load and a negative marker are not a record. Every scenario-1 number
+is now on a **lognormal** load of the same CV, which moves the 40% row from 0.70 to **0.62**
+and leaves 10% essentially unchanged (1.79 → 1.77). Corrected in the table above and in the
+paper.
+
+## (b) The load-bias column *was* prior-held — and removing it makes scenario 1 worse
+
+| load CV | dose train | prior ON | prior OFF |
+|---|---|---|---|
+| 0.5% | no | 34.8 | 2726 |
+| 2% | no | 8.57 | 336 |
+| **10%** | **no** | **1.77** | **13.8** |
+| 40% | no | 0.62 | 0.94 |
+| 0.5% | yes | 0.1696 | 0.860 |
+| 10% | yes | 0.1699 | 0.174 |
+
+The prior was helping. **So 14.1's negative answer was the conservative one and it stands** —
+prior-free, the untreated record is an order of magnitude further from usable than reported.
+
+## (c) Rank restored, conditioning not. **This is the reconciliation.**
+
+Singular spectrum of the column-normalised design matrix, seed 3:
+
+| load CV | **no dose train** s_min/s_max | sd | **with dose train** s_min/s_max | sd |
+|---|---|---|---|---|
+| 0% | 5e−48 | ∞ | 1.8e−15 | 0.1696 |
+| 0.5% | 9.7e−10 | **28.1** | 1.2e−3 | 0.1696 |
+| 2% | 6.4e−8 | 6.92 | 1.2e−3 | 0.1696 |
+| 10% | 8.9e−6 | **1.30** | 1.6e−3 | 0.1697 |
+| 40% | 7.7e−4 | 0.38 | 1.6e−2 | 0.1690 |
+
+Variation lifts the smallest singular value off zero exactly as `prop:rank` says — **forty-four
+orders of magnitude** across the left column — and the precision is still 28 at half a per
+cent and 1.3 at ten. **Restoring rank and achieving usable precision are different things,
+and `prop:rank` delivers only the first.** Both statements were true; the paper ran them
+together. Now stated as `rem:rankvsprec`.
+
+One entry cuts the other way and is named in the paper: with the dose train at constant load
+the matrix is *still* rank deficient yet reads 0.1696 — the load prior filling the deficient
+direction, which is exactly what `rem:second_order` exists to diagnose. At any real variation
+the data fill it instead, so the headline does not depend on that prior but **does** depend on
+intake actually varying.
+
+## The published 0.054 and 0.023 do not reproduce. **Withdrawn.**
+
+| design | k_e | load prior | CV 2% | CV 10% |
+|---|---|---|---|---|
+| monthly (24) | prior 0.8 | off | 0.2343 | 0.1721 |
+| monthly (24) | prior 0.8 | on | 0.1696 | 0.1697 |
+| **two-daily (365)** | **known** | **off** | **0.0539** | **0.0227** |
+
+The published figures match only the **two-daily design with k_e held exactly known** — a
+footing `sec:whypriors` disowns and which `_filter`'s own docstring reserves "for the audit,
+not for a headline". On the claimed footing they are **0.234 and 0.172**. Both were also
+computed **with the dose train present**, so neither measured what load variation buys alone.
+
+**That is the whole of the apparent contradiction**, and it was a defect in the paper rather
+than in scenario 1.
+
+---
+
+# 15.2 — the saturation claim, derived. **My stated mechanism was wrong and is withdrawn.**
+
+Scenario 1, 10% CV, n from 24 to 300,000:
+
+| n | sd(ln θ̂) | local exponent | data info, weak dir | prior info, same dir |
+|---|---|---|---|---|
+| 24 | 1.304 | — | 1.80e−7 | 1.011 |
+| 730 | 0.643 | 0.126 | 2.03e−6 | 1.055 |
+| 10,000 | 0.478 | 0.125 | 2.66e−5 | 1.049 |
+| 300,000 | 0.321 | 0.064 | 7.59e−4 | 1.052 |
+
+The exponent is 0.06–0.24 and never approaches the independent-sample 0.5 across five orders
+of magnitude in n.
+
+**But the reason is not saturation.** I wrote that "consecutive days resample one load
+distribution rather than adding independent directions". The data's information in the weak
+direction **grows**, roughly in proportion to n — 1.8e−7 to 7.6e−4. It never saturates. What
+it never does is **arrive**: the load prior contributes ~1.05 in that direction and does not
+move, so even at n = 3×10⁵ the data supply three orders of magnitude less than the prior
+already holds.
+
+**The correct statement: the weak direction is prior-held at every n a study could reach, and
+the precision falls only through the directions the data do reach.** Sub-√n here is a
+statement about a fixed prior, not about correlated samples. The conclusion — that no
+achievable n closes it — is unchanged; the mechanism is different, and the paper now says the
+right one.

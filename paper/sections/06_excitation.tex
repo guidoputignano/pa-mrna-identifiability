@@ -541,11 +541,63 @@ twentyfold buys six per cent. An earlier draft of this note made load-record pre
 binding design variable; it is not, and that is retired here rather than quietly dropped.
 \item \textbf{Load \emph{variation} is what makes the problem identifiable at all.} By
 Proposition~\ref{prop:rank} a perfectly steady intake is exactly the singular case. Half a
-per cent of day-to-day variation in recorded intake restores full rank --- the smallest
-singular value moves from $10^{-13}$ to $9\times10^{-2}$ --- and prior-free
-$\operatorname{sd}(\ln\hat\theta)$ falls to $0.054$ at a $2\%$ coefficient of variation and
-$0.023$ at $10\%$.
+per cent of day-to-day variation restores rank: on the accessible design the smallest
+singular value of the column-normalised matrix moves from $1.8\times10^{-15}$ --- numerically
+zero --- to $1.2\times10^{-3}$, and it is the \emph{data} rather than the load prior that
+then fills the deficient direction.
 \end{enumerate}
+
+\begin{remark}[Restoring rank is not achieving precision, and the two must not be run together]
+\label{rem:rankvsprec}
+An earlier version of this passage continued that prior-free
+$\operatorname{sd}(\ln\hat\theta)$ falls to $0.054$ at a $2\%$ coefficient of variation and
+$0.023$ at $10\%$. \textbf{Those two numbers are withdrawn.} They reproduce only on the
+two-daily design of $365$ samples \emph{with $k_e$ held exactly known} --- a footing this
+note disowns in Section~\ref{sec:whypriors} and which the design module's own documentation
+reserves for the audit rather than for a headline. On the footing this note claims
+--- the accessible monthly design, a log-prior of $0.8$ on $\ln k_e$ --- the same quantities
+are $0.234$ and $0.172$.
+
+\textbf{They were also computed with the dose train present}, which is the substantive
+point and not a bookkeeping one. The passage reads as though load variation alone were
+buying the precision. It is not. Separating the two sources on one footing
+(Section~\ref{sec:whoto}):
+
+\begin{center}
+\small
+\begin{tabular}{@{}rcccc@{}}
+\toprule
+& \multicolumn{2}{c}{\textbf{no dose train}} & \multicolumn{2}{c}{\textbf{with the dose train}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+\textbf{load CV} & $s_{\min}/s_{\max}$ & $\operatorname{sd}(\ln\hat\theta)$
+                 & $s_{\min}/s_{\max}$ & $\operatorname{sd}(\ln\hat\theta)$ \\
+\midrule
+$0\%$    & $5\times10^{-48}$ & $\infty$  & $1.8\times10^{-15}$ & $0.1696$ \\
+$0.5\%$  & $9.7\times10^{-10}$ & $28.1$  & $1.2\times10^{-3}$  & $0.1696$ \\
+$2\%$    & $6.4\times10^{-8}$  & $6.92$  & $1.2\times10^{-3}$  & $0.1696$ \\
+$10\%$   & $8.9\times10^{-6}$  & $1.30$  & $1.6\times10^{-3}$  & $0.1697$ \\
+$40\%$   & $7.7\times10^{-4}$  & $0.38$  & $1.6\times10^{-2}$  & $0.1690$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Read the left half.} Variation lifts the smallest singular value off zero exactly as
+Proposition~\ref{prop:rank} says --- by forty-four orders of magnitude between the first and
+last rows --- and the precision is still $28$ at half a per cent and $1.3$ at ten.
+\emph{Restoring rank and achieving usable precision are different things, and
+Proposition~\ref{prop:rank} delivers only the first.} A reader who takes the proposition as
+a design result will otherwise expect the left half to look like the right half, and it does
+not.
+
+\textbf{One entry deserves naming because it cuts the other way.} With the dose train at a
+perfectly constant load the matrix is \emph{still} rank deficient, yet the table reports
+$0.1696$. That is the load-record prior filling the deficient direction and the filter
+reporting the result as though the data had supplied it --- the failure
+Remark~\ref{rem:second_order} exists to diagnose. At any real day-to-day variation the data
+fill it instead and the same $0.1696$ is earned rather than assumed. \textbf{So the headline
+number does not depend on that prior, but it does depend on intake actually varying}, which
+is the specification's row and not an idealisation.
+\end{remark}
 
 \textbf{So the specification must ask for the ordinary variability of ordinary eating to be
 recorded and not smoothed.} A dietary record averaged to a weekly mean, or imputed from a

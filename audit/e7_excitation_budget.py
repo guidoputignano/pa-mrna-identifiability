@@ -50,7 +50,13 @@ def sd_of(times, inc=None, ke_rel=None, load_cv=LOAD_CV, seed=3):
     inc = np.zeros(n) if inc is None else np.broadcast_to(inc, (n,))
     ke_rel = np.zeros(n) if ke_rel is None else np.broadcast_to(ke_rel, (n,))
     rng = np.random.default_rng(seed)
-    L = LB * (1.0 + load_cv * rng.standard_normal(n)) if load_cv else np.full(n, LB)
+    # LOGNORMAL, not Gaussian. At 40% CV a Gaussian draw returns a NEGATIVE load
+    # and a negative marker level, which is not a record. See e9, part (a).
+    if load_cv:
+        s2 = np.log1p(load_cv ** 2)
+        L = LB * np.exp(rng.normal(-0.5 * s2, np.sqrt(s2), n))
+    else:
+        L = np.full(n, LB)
     m = levels(L, inc, ke_rel)
     ke = P.ke * (1.0 + ke_rel)
     F = np.diag([0.0, 0.0, 1.0 / (LOAD_FRAC * LB) ** 2, 1.0 / 0.8 ** 2])
@@ -204,14 +210,16 @@ def what_would_scenario_1_need():
         print(f"      {len(t):5d} draws over two years ({n_per_year:3d}/yr): "
               f"sd = {med:.4f}")
     print()
-    print("      NOTE THE SCALING, because the obvious extrapolation is wrong.")
-    print("      Independent samples would give sd proportional to 1/sqrt(n), which")
-    print("      from 24 draws would put 730 draws at about 0.33. The computed value")
-    print("      is 0.67 -- twice that. Information in the degenerate direction")
-    print("      saturates, because consecutive days resample one load distribution")
-    print("      rather than adding independent directions. So daily bleeding for")
-    print("      two years lands at 3.3 times the target, and the 1/sqrt(n) estimate")
-    print("      of what would be required UNDERSTATES it. No achievable n closes it.")
+    print("      NOTE THE SCALING. An earlier version of this script said the")
+    print("      information SATURATES, 'because consecutive days resample one load")
+    print("      distribution'. That was asserted, not derived, and e9 derives it:")
+    print("      the information in the weak direction GROWS roughly as n and never")
+    print("      saturates. It simply never ARRIVES -- the load prior holds about")
+    print("      1.05 in that direction and the data supply 7.6e-04 even at n = 3e5.")
+    print("      The weak direction is PRIOR-HELD at every n a study could reach, so")
+    print("      sd falls only through the directions the data do reach, and the")
+    print("      fitted exponent sits near 0.1 rather than 0.5. No achievable n")
+    print("      closes it, but the reason is a fixed prior, not correlated samples.")
     print()
     print("  Neither route exists. The gate is therefore answered in the negative.")
 
