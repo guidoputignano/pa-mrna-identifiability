@@ -327,11 +327,22 @@ a fold, the patient who has crossed the separatrix stays across it and recovery 
 bought by driving the load \emph{below} baseline. That is the discriminant of
 Section~\ref{sec:discriminant}, and it has no content without the null.
 
-Second, \textbf{it prices biological fidelity in the identification.} Once both channels
-saturate they share a functional form and are separated only by bending in different places:
-at a ten per cent excursion the condition number rises from $1.1\times10^{5}$ to
-$4.8\times10^{7}$, a factor of about $450$. The note's own $\alpha$ is curved too, so this
-is a property of the dynamic model and not of a discarded alternative.
+Second, \textbf{it prices biological fidelity in the identification, and it does so twice
+over.} Once both channels saturate they share a functional form and are separated only by
+bending in different places --- by $K_e \neq K_m$ --- and at a ten per cent excursion the
+condition number rises from $1.1\times10^{5}$ to $4.8\times10^{7}$, a factor of about
+$450$. That is the \emph{local} price and it is the one this remark originally quoted.
+
+There is a second price the condition number cannot show, because it is not a matter of
+conditioning at all. By Proposition~\ref{prop:exchange} two channels of shared functional
+form are exchangeable, so the ceiling hypothesis carries an exact two-point degeneracy in which
+$(\theta, K_m)$ and $(k_e, K_e)$ swap: the Jacobian stays full rank, which is why a finite
+condition number is the right local description, and a second isolated parameter vector
+nevertheless reproduces the data exactly. A selective, \emph{time-varying} input removes it
+and a constant one does not. The note's own $\alpha$ is not of this form --- \eqref{eq:alpha}
+is non-monotone and $\theta g(m)$ is not, so they are not two members of one family and no
+exchange is available --- but the ceiling hypothesis is, and a reader who preferred it would
+inherit the degeneracy along with it.
 
 No equilibrium collides with another here; a single equilibrium escapes to infinity as the
 load approaches the ceiling. A genuine saddle-node needs a non-monotone $\alpha$, which is

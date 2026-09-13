@@ -394,3 +394,197 @@ recovers it — and the dose schedule is not. The direction of the shorter-inter
 worth naming for the same reason: a 7-day interval is *worse* for identification and
 *better* for the trough, so a clinician who shortens the interval on therapeutic grounds
 pays an identification cost rather than gaining one.
+
+---
+
+# 12.1 — does the Model B result generalise? **Yes, completely — and the two-channel case was hiding a limit.**
+
+Derived in `audit/e6_channel_exchange.py`, checked independently in
+`symbolic/julia/run_channel_exchange.jl`. Nothing below is asserted; the derivation is in
+the script and the tool never saw it.
+
+## The setting, stated once
+
+Let the observed ordinate be a sum of *n* channels sharing one functional form `f`, each
+with its own amplitude `a_i`, its own shape constant `K_i`, and its own **known** exogenous
+input `Δ_i(t)` riding on the amplitude:
+
+```
+C(m, t) = Σ_i ( a_i + Δ_i(t) ) · f(m; K_i)
+```
+
+The unknown parameter is the **list of pairs** `p = ((a_1,K_1), …, (a_n,K_n))`. The inputs
+are indexed by **channel position** and do not move when the parameter is permuted. That
+is the entire content of "an input on one channel".
+
+## The general result
+
+Permuting the parameter pairs and reindexing the sum gives, for **any** `f` and any `n`:
+
+```
+C(p^π) − C(p)  =  Σ_j ( Δ_{π⁻¹(j)} − Δ_j ) · f(m; K_j)
+```
+
+The amplitudes cancel identically; the difference collects entirely on the **shape**
+functions. Verified symbolically for every permutation at n = 3 with `f` left as an
+uninterpreted function — so this step does not depend on the channel's functional form at
+all.
+
+If the family `{f(·;K_i)}` is linearly independent — which for Michaelis–Menten with
+distinct positive `K_i` follows by multiplying through by `∏(K_j+m)` and evaluating at
+`m = −K_i` — then each coefficient must vanish separately.
+
+> **Theorem (channel exchange), first form — incomplete, see below.** A permutation π of the
+> parameter pairs is an observational symmetry **iff** `Δ_{π(i)} ≡ Δ_i` for every *i*. The
+> residual symmetry group is the Young subgroup `∏_B S_{|B|}`, with *B* running over the
+> blocks of channels sharing an input, and the fibre has **`∏_B |B|!` points**.
+
+This is correct for **pure permutations of the pairs**, and it is what the exhaustive check
+below tests. It is **not** the operative statement, and an adversarial pass caught the gap
+before it reached the paper — see *The correction* two subsections down.
+
+Checked exhaustively against the symbolic difference over all 3! permutations:
+
+| input pattern | predicted fibre | found |
+|---|---|---|
+| no input anywhere | 6 | 6 |
+| one input, channel 1 | 2 | 2 |
+| the **same** input on channels 1 and 2 | 2 | 2 |
+| **different** inputs on channels 1 and 2 | 1 | 1 |
+| a different input on each | 1 | 1 |
+
+## The correction: the input factor is about *variation*, not presence
+
+The first form asks whether permuting the pairs leaves `C` unchanged. The operative question
+is whether **some other parameter vector** gives the same `C` — and the amplitudes are free.
+Since `a_i` is itself an additive constant on channel *i*, and `Δ_i` adds to it, any
+**constant** part of `Δ_i` is indistinguishable from `a_i`, so a permutation can be repaired
+by shifting amplitudes.
+
+With a known **constant** input `c` on channel 1, sympy solves the swapped system exactly:
+
+```
+b_1 = a_2 − c,   b_2 = a_1 + c        residual: 0
+```
+
+**A constant known input breaks nothing.** With an input taking two distinct values, the
+`d`-linear coefficient is `K_2 − K_1`, so with distinct shapes there is no solution and the
+exchange is broken. Demanding one `(b_1, b_2)` at `d = 100` and `d = 400`: no solution.
+
+> **Theorem (channel exchange), corrected.** The exchange of channels *i* and *j* is an
+> observational symmetry unless **both** `Δ_i − Δ_j` is **non-constant in t** **and**
+> `f(·;K_i) ≢ f(·;K_j)`. The residual group is the permutations preserving the inputs **up
+> to an additive constant**. Hypotheses: `K_i` pairwise distinct, `f` injective in `K`,
+> `{f(·;K_i)}` linearly independent, and the pairs `(a_i,K_i)` pairwise distinct (so the
+> action is free — otherwise the fibre is *smaller* than the count).
+
+**The tool confirms the correction, and this is the sharper test.** Two saturating channels
+with a known **constant** input on channel 1 return **locally**, not globally, identifiable,
+with identifiable functions
+
+```
+a1 + a2,  K1 + K2,  K1·K2,  a1·a2 + 100·a2,  K1·a2 + K2·a1 + 100·K2
+```
+
+— precisely the invariants of the shifted swap `(a1,K1) ↔ (a2−100, K2)`, each verified by
+substitution. With a **time-varying** input the same model returns globally identifiable.
+
+## The mechanism, in the paper's own idiom
+
+```
+break of the exchange (i j)  requires   Δ_i − Δ_j non-constant   AND   f(·;K_i) ≢ f(·;K_j)
+                                        the input factor               the shape factor
+```
+
+**Both must hold, and the input factor is about variation.** This is the third degeneracy in
+the note to close on *variation* rather than on magnitude or precision: the sensitivity
+ratio `−(1 + Δ/θ)·φ(m)` is a product of a therapy factor and a marker factor;
+`prop:rank` closes on load **variability**, not load precision; `prop:exchange` closes on
+input **variation**, not input presence. Three different degeneracies, and in each the
+separator is a difference that moves.
+
+## Two consequences the two-channel case conceals
+
+**(1) A single selective input resolves the exchange iff n = 2.** At n ≥ 3 it leaves
+`S_{n−1}` untouched: the fibre falls from `n!` to `(n−1)!`, not to 1. Exhibited at n = 3:
+`[(300,100),(50,20),(8,700)]` and `[(300,100),(8,700),(50,20)]` are identical at every m and
+every Δ.
+
+**(2) Identical inputs on two channels separate neither.** A selective input must be
+selective *pairwise*.
+
+## Independent confirmation — the tool was not told the answer
+
+`StructuralIdentifiability.jl`, on five models written with no expected results in the
+comments (per the R6 rule):
+
+| model | returned | fibre | predicted |
+|---|---|---|---|
+| 2 saturating channels, no input | all **locally** | 2 | 2! = 2 ✓ |
+| 2 saturating, input on channel 1 | all **globally** | 1 | 1! = 1 ✓ |
+| **3 saturating, input on channel 1 only** | `a1, K1` **globally**; `a2, a3, K2, K3` **locally** | 2 | 2! = 2 ✓ |
+| 3 saturating, distinct inputs on 1 and 2 | all **globally** | 1 | 1 ✓ |
+| 1 saturating + 1 **linear**, no input | all **globally** | 1 | 1 ✓ |
+
+The third row is the discriminating one and it confirms the claim in a sharper sense than
+asked: the tool identifies *which* parameters stay ambiguous, and they are exactly those of
+the two channels that share an input. Its identifiable functions for that model are
+
+```
+a1,  K1,          a2+a3,  K2+K3,  a2·a3,  K2·K3,  K2·a3 + K3·a2
+```
+
+— channel 1 pinned by its input, and then **precisely the five S₂ invariants** of channels
+2 and 3. Those five are structurally the same list Model B returned
+(`ke+theta`, `Ke+Km`, `ke·theta`, `Ke·Km`, `Ke·theta+Km·ke`). Model B's invariant list was
+the S₂ invariant ring all along, and it reappears here embedded in a larger model, sitting
+on exactly the channels the input fails to separate.
+
+## Scope: this is a limit on the note, not a result in its favour
+
+The note's model escapes the exchange for a reason close to bookkeeping: its two channels are
+not two members of one parameterised family. The enzymatic term carries `(θ, K_m)` and the
+alternative term carries `k_e` alone, so **there is no permutation of `(θ, K_m, k_e)` that
+exchanges them** and nothing to break. The tool agrees — saturating plus linear, no input,
+returns globally identifiable.
+
+**An earlier draft of this record argued that from the limit `lim_{K_e→∞} k_e K_e m/(K_e+m)
+= k_e m`, i.e. that "the shapes differ". That reasoning is poor and is withdrawn.** The
+limit is singular — it holds `k_e K_e` fixed while `K_e` grows, and `K_e = ∞` is not a value
+of a positive parameter — so it does not put the two channels in one family, and "the shapes
+differ" is not what the argument turns on.
+
+**And the limit cuts the other way, which is the point worth keeping.** Model B contains the
+note's model only as a boundary case, and at any *finite* `K_e ≠ K_m` with no selective input
+the exchange is present and exact. So the note's freedom from it is a property **of the
+linearisation**, not evidence that the linearisation was harmless. That is a scope limit the
+note owes a reader, and it is now stated as one.
+
+It is not fatal, and the reason is itself a result: the note's therapy is a decaying dose
+train, so Δ **varies**, and a varying selective input breaks the exchange whenever the shapes
+differ. A note built on a saturating alternative channel would still identify — but it would
+depend on the therapy for something this note gets for free, and **a constant infusion would
+not do it**.
+
+## Verdict
+
+**It generalises, and it is now stated as the general mechanism** (`prop:exchange`, with the
+affinity/capacity result as one instance) — with three qualifications stated in the same
+breath, because each is false if dropped:
+
+1. **"A selective input resolves channel exchange" is false as a general claim.** True only
+   at n = 2.
+2. **"An input is present" is not the condition.** The input must *vary*; a constant one is
+   absorbed by the amplitudes.
+3. **Model B is a scope limit on this note, not corroboration of it.** An earlier draft had
+   it the other way round, and the paper is corrected.
+
+Four of the five claims in this record's first draft were refuted by an adversarial pass
+before reaching the paper; the fifth (that the Michaelis–Menten difference is the general
+formula's instance) survived. Two further findings from that pass were checked and
+**rejected**: that `rem:ceiling`'s condition number is contradicted by the exact degeneracy
+(it is not — local identifiability *means* a full-rank Jacobian, so a finite condition number
+is the correct local description and the discrete fibre is an additional, compatible fact),
+and that the note's constants sit on the unbreakable `K_e = K_m` case (they do not; `K_e =
+300` against `K_m = 100` — the finding confused `K_e` with `K_c`, which is a different
+constant in a different model).

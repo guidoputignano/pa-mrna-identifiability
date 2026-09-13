@@ -444,6 +444,33 @@ scripts carried pre-written "EXPECTED" comments and both were wrong; the numeric
 which print what they compute and label nothing in advance, have not produced an error of
 this kind. Expected values belong in an assertion that can fail, or nowhere.
 
+### R7 — "the timescale separation makes the information filter exact"
+
+**Not retracted. The retraction is retracted**, and this is the second time that sequence
+has run (R5 was the first).
+
+Writing §3.2 I asserted that the 104× separation between the marker's time constant and the
+dose half-life is what makes \eqref{eq:infofilter} exact. I had not derived it. Proofreading,
+I looked up the filter's definition, saw that it is a static-parameter information recursion
+with no process model, concluded the separation had nothing to do with it, and "corrected"
+the sentence in three files and in the commit message of `6367fe0`.
+
+**The original claim was right.** §4.1 of the note already argues it, in the paragraph
+explaining why the extended Kalman filter that was written first is not used: because the
+marker is quasi-steady at every sampling instant a clinic could use, the observation at each
+visit is an algebraic function of the parameters and the inputs, there is no state left to
+filter, and the pointwise information recursion is exact **rather than approximate as an EKF
+would be**. The separation is exactly what removes the state. I checked the filter's
+definition and not the paragraph that justifies it.
+
+The replacement wording stands, because it names the mechanism instead of only the
+conclusion, and the note is better for it. What does not stand is the claim that the
+sentence it replaced was an error.
+
+**So this is one failure, not two, and it ran in both directions.** The assertion was
+unverified when I made it; the retraction was unverified when I made it. Neither cost was
+paid for the same reason: I did not look.
+
 ## A sixth failure mode
 
 - **A number taken from an abstract that its own Results contradict.** Three instances now,
@@ -462,3 +489,20 @@ this kind. Expected values belong in an assertion that can fail, or nowhere.
   the script is reassured by exactly the text that is wrong. Where a script records what a
   run *returned*, it says returned, is written after the run, and names the tool that
   returned it.
+
+- **A mechanism asserted where a derivation belongs.** Three instances this session, and
+  the third ran in both directions. The pre-written `EXPECTED` comments (R6) asserted what
+  a script would show; the seed-outlier call (R5) asserted why a number was anomalous; the
+  filter-exactness sentence (R7) asserted a causal link, and its retraction asserted the
+  absence of one. Not one of the three was a number, which is why none of them tripped the
+  numerical checks this repository is full of. The standing rule: **a stated mechanism is
+  a claim and carries the same burden as a number** — "because", "which is why", "the
+  reason is", "it is the same X that" are all assertions and each needs a derivation, a
+  citation, or a hedge. **A retraction is a claim too**, and is held to the same standard
+  as the thing it retracts; R5 and R7 are both retractions issued without checking.
+
+  Worth recording alongside the failures: all three were caught inside the session, two of
+  them by re-reading the repository's own prose rather than by running anything. The
+  repository's numerical apparatus did not catch any of them and was never going to. What
+  caught them was reading the passage that justified the claim, which in each case existed
+  and had not been consulted.

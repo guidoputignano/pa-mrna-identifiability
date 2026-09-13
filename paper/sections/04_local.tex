@@ -58,8 +58,10 @@ curve at the plasma level, fitted here (Remark~\ref{rem:no_km_orig}).
 \end{tikzpicture}}
 \caption{The local identification model as a block diagram. One pool $m$, filled by the load $s(t)$ and drained by
 two channels. The enzymatic channel saturates at $\theta$; the alternative channel is
-linear in $m$, and that difference in shape is the only thing separating them
-(Proposition~\ref{prop:degeneracy}). The two selective inputs are drawn together because
+linear in $m$, and in the \emph{unforced} model that difference in shape is the only thing
+separating them (Proposition~\ref{prop:degeneracy}); a known input that varies and rides on
+one channel alone is a second and independent separator
+(Proposition~\ref{prop:exchange}). The two selective inputs are drawn together because
 Proposition~\ref{prop:channel} makes them interchangeable: carnitine acts on $k_e$ and is
 recorded for every patient, the therapy would act on $\theta$ and is administered to none,
 and the identification problem cannot tell which one moved the patient.}
@@ -463,9 +465,12 @@ understates what the therapy would deliver, by a few per cent.
 
 \textbf{The two-parameter restriction is not harmless, and it is the one the note relies
 on.} Adding $K_m$ to the parameter vector -- which is the situation Remark~\ref{rem:fibre}
-describes, since the fibre exists precisely because $K_m$ is unknown -- the two channels
-stop being interchangeable by six orders of magnitude in $\det G$ and by a factor of $46$ to
-$807$ in $\operatorname{sd}(\ln\hat\theta)$. The reason is in the form of the forcing, not
+describes, since the fibre exists precisely because $K_m$ is unknown -- the two \emph{input
+routes} stop being informationally substitutable by six orders of magnitude in $\det G$ and
+by a factor of $46$ to $807$ in $\operatorname{sd}(\ln\hat\theta)$. (That is carnitine
+against the therapy as ways of buying information, and it is a statement about
+conditioning. It is not the channel exchange of Proposition~\ref{prop:exchange}, which is
+an exact parameter symmetry and which this model does not have.) The reason is in the form of the forcing, not
 in any constant. The $K_m$ sensitivity
 is forced by $-(\theta + \Delta(t))\,K_m\,\partial g/\partial K_m$, and that prefactor is
 modulated by the therapeutic input and constant under carnitine. The ratio of the $K_m$
