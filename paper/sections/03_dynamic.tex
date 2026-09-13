@@ -121,67 +121,8 @@ holding $R_0$ while moving $\rho_0$: that sweep breaks the calibration above, an
 same conflation Remark~\ref{rem:shape} separates. The constraint does not bound $M_i$ at
 all, in either direction, over any range worth sweeping.
 
-\begin{figure}[!htbp]
-\centering
-\resizebox{0.90\linewidth}{!}{%
-\begin{tikzpicture}
-\node[mpool] (m) at (0,0) {$m$\\[1pt]\scriptsize\mdseries accumulated\\metabolite};
-\node[mlabel] (in) at (-3.6,0) {$s(t)$};
-\draw[mar] (in) -- (m);
-\node[msmall] at (-2.4,0.42) {load};
-
-% second state, drawn as a pool like m
-\node[mpool] (c) at (5.6,0) {$c$\\[1pt]\scriptsize\mdseries available\\carnitine};
-\node[mlabel] (rep) at (9.6,0) {$R_0$};
-\draw[mar] (rep) -- (c);
-\node[msmall] at (8.0,0.42) {replenishment};
-
-% enzymatic channel, in the same place and colour as in A and B
-\node[menzy] (enz) at (-2.3,-2.7) {$\theta\, g(m)$\\{\scriptsize saturating}};
-\channelglyph{(-3.55,-4.15)}{green!45!black}{s}
-\draw[mar] (m.south) -- ++(0,-0.55) -| (enz.north);
-\node[msmall] (o1) at (-2.3,-5.0) {eliminated};
-\draw[mar] (enz) -- (o1);
-
-% the shared term: ONE node draining both pools
-\node[malt] (kcm) at (2.5,-2.7) {$k\, c\, m/(K_c+m)$\\[1pt]\scriptsize\mdseries consumes one $c$\\per $m$ removed};
-\channelglyph{(1.15,-4.15)}{blue!55!black}{n}
-\draw[mar, blue!55!black] (m.south east).. controls +(0.7,-0.9).. (kcm.north west);
-\draw[mar, blue!55!black] (c.south west).. controls +(-0.7,-0.9).. (kcm.north east);
-\node[msmall] (o2) at (2.5,-5.1) {eliminated together,\\as propionylcarnitine};
-\draw[mar] (kcm) -- (o2);
-
-% carnitine's second exit, which propionate does not share, and which the
-% acylcarnitine competition widens as m rises
-\node[malt] (dc) at (6.9,-2.7) {$\delta(m)\, c$\\[1pt]\scriptsize\mdseries not recovered\\from the filtrate};
-\draw[mar, blue!55!black] (c.south east).. controls +(0.6,-0.9).. (dc.north);
-\node[msmall] (o3) at (6.9,-5.1) {lost in urine};
-\draw[mar] (dc) -- (o3);
-
-% the feedback: rising m widens that exit, it does not throttle the source
-% out to the right of the R_0 input, then back in from the east, so the
-% loop does not cross the replenishment arrow at y = 0
-\draw[red!60!black, thick, -{Bar[width=2.4mm]}]
-      (m.north) -- ++(0,1.9) -| (10.8,-2.7) -- (dc.east);
-\node[msmall, red!60!black, fill=white, inner sep=2pt] at (3.2,1.80)
-     {rising $m$ means more acylcarnitine competing for the renal\\
-      transporter, so less filtered carnitine is recovered};
-\end{tikzpicture}}
-\caption{The dynamic model as a block diagram. The pool $m$, the load $s(t)$ and the enzymatic
-channel are placed and coloured as in Figure~\ref{fig:blockA}, and
-everything else differs. Carnitine is promoted from a rate constant to a second state $c$,
-and the conjugation term is drawn as a single node draining both pools, because the
-one-to-one stoichiometry is the mechanism: each molecule of propionate that leaves takes a
-molecule of carnitine with it. Replenishment $R_0$ is constant. The exit on the right is the
-one carnitine has and propionate does not, and the blunt-ended arrow is the whole content of
-the model: acylcarnitine rising with $m$ competes for the renal transporter, so less
-filtered carnitine is recovered and that exit widens. Having a second exit at all is what
-makes the flux vanish with the metabolite; the exit widening is what makes it decline rather
-than saturate. The shape glyph under the conjugation channel is the third of the three,
-linear in the local reduction, saturating under the ceiling hypothesis, rising and then
-falling here.}
-\label{fig:blockC}
-\end{figure}
+The block diagram of this system is Figure~\ref{fig:blockC} of the paper, where the
+two-state structure and the widening carnitine exit are drawn.
 
 \subsubsection{Consequence: positive feedback}
 

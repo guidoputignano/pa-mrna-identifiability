@@ -28,48 +28,8 @@ curve at the plasma level, fitted here (Remark~\ref{rem:no_km_orig}).
 \item[$k_e m$] alternative elimination, taken proportional to $m$.
 \end{description}
 
-\begin{figure}[htbp]
-\centering
-\resizebox{0.90\linewidth}{!}{%
-\begin{tikzpicture}
-\node[mpool] (m) at (0,0) {$m$\\[1pt]\scriptsize\mdseries accumulated\\metabolite};
-\node[mlabel] (in) at (-3.6,0) {$s(t)$};
-\draw[mar] (in) -- (m);
-\node[msmall] at (-2.4,0.42) {load};
-
-\node[menzy] (enz) at (-2.3,-2.7) {$\theta\, g(m)$\\{\scriptsize saturating}};
-\channelglyph{(-3.55,-4.15)}{green!45!black}{s}
-
-\node[malt] (alt) at (2.3,-2.7) {$k_e\, m$\\{\scriptsize linear}};
-\channelglyph{(1.15,-4.15)}{blue!55!black}{l}
-
-\draw[mar] (m.south) -- ++(0,-0.55) -| (enz.north);
-\draw[mar] (m.south) -- ++(0,-0.55) -| (alt.north);
-
-\node[msmall] (o1) at (-2.3,-5.0) {eliminated};
-\node[msmall] (o2) at (2.3,-5.0) {eliminated};
-\draw[mar] (enz) -- (o1);
-\draw[mar] (alt) -- (o2);
-
-\node[mlabel, green!45!black] (thr) at (-6.6,-2.7) {therapy\\$\Delta(t)$};
-\draw[mar, green!45!black] (thr) -- (enz);
-\node[mlabel, blue!55!black] (carn) at (6.6,-2.7) {carnitine\\$u_c(t)$};
-\draw[mar, blue!55!black] (carn) -- (alt);
-\end{tikzpicture}}
-\caption{The local identification model as a block diagram. One pool $m$, filled by the load $s(t)$ and drained by
-two channels. The enzymatic channel saturates at $\theta$; the alternative channel is
-linear in $m$, and in the \emph{unforced} model that difference in shape is the only thing
-separating them (Proposition~\ref{prop:degeneracy}); a known input that varies and rides on
-one channel alone is a second and independent separator
-(Proposition~\ref{prop:exchange}). The two selective inputs are drawn together because
-Proposition~\ref{prop:channel} makes them interchangeable \emph{given $K_m$}: carnitine
-acts on $k_e$ and is recorded for every patient, the therapy acts on $\theta$ and is
-administered on the published biweekly schedule, and at fixed $K_m$ the identification
-problem cannot tell which one moved the patient. With $K_m$ free they are not
-interchangeable (Remark~\ref{rem:channel_scope}), and it is the therapy the design of
-Section~\ref{sec:designsec} uses.}
-\label{fig:blockA}
-\end{figure}
+The block diagram of this model is Figure~\ref{fig:blockA} of the paper, where the two
+channels and the two selective inputs are drawn.
 
 \subsubsection{Assumptions}
 
