@@ -419,6 +419,31 @@ to 4 years**, with changing renal status named by the authors as a cause — not
 test–retest. The published Correction restores a graphical abstract and changes no
 numbers.
 
+### R6 — "a constant increment leaves only the lumped sum theta + Delta_0 identifiable"
+
+**Retracted** (3.7), and it is the first error in this repository caught by an external
+tool rather than by re-running my own code. The claim was written into
+`symbolic/sympy/observational_equivalence.py` and repeated in the commit message of
+`a7b30a0`; the same file's own pre-written "EXPECTED" comments asserted it too, so the
+script would have appeared to confirm itself. `StructuralIdentifiability.jl` returns
+globally identifiable for that configuration, and re-running the sympy solve returns the
+identity solution alone.
+
+The error is a one-word one. Delta is a **known** input — it is the dosing record — so
+recovering the lumped sum recovers theta. I had reasoned about it as though it were an
+unknown parameter.
+
+A second instance in the same pass, same cause: the Julia file's comments claimed that a
+constant *input* encodes a patient held at steady state. It does not. A constant input is
+not a constant state, and the framework assumes generic initial conditions, so the marker
+relaxes through an interval before settling. Both comments are corrected in place.
+
+**The rule that follows.** Writing the expected answer into a script *before* running it
+converts the script from a check into a confirmation. Two of this session's symbolic
+scripts carried pre-written "EXPECTED" comments and both were wrong; the numerical scripts,
+which print what they compute and label nothing in advance, have not produced an error of
+this kind. Expected values belong in an assertion that can fail, or nowhere.
+
 ## A sixth failure mode
 
 - **A number taken from an abstract that its own Results contradict.** Three instances now,
