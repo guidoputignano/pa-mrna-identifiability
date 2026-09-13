@@ -43,6 +43,12 @@ plt.rcParams.update({
     "figure.autolayout": True,
     "savefig.dpi": 200,
     "savefig.bbox": "tight",
+    # Embed TrueType rather than matplotlib's default Type 3. Type 3 fonts do
+    # not scale, and most journals reject them outright; the paper's own body
+    # text is Type 1 via lmodern, so without this the figures were the only
+    # Type 3 left in the PDF.
+    "pdf.fonttype": 42,
+    "ps.fonttype": 42,
     "font.family": "serif",
     "font.serif": ["DejaVu Serif"],
     "font.size": 9,

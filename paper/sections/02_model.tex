@@ -112,7 +112,7 @@ carnitine has a second exit that propionate does not.
 
 \node[menzy] (enz) at (-2.3,-2.7) {$\theta\, g(m)$\\{\scriptsize saturating}};
 \channelglyph{(-3.55,-4.15)}{green!45!black}{s}
-\draw[mar] (m.south) -- ++(0,-0.55) -| (enz.north);
+\draw[mar] (m.south) -- ++(0,-0.85) -| (enz.north);
 \node[msmall] (o1) at (-2.3,-5.0) {eliminated};
 \draw[mar] (enz) -- (o1);
 
@@ -129,8 +129,9 @@ carnitine has a second exit that propionate does not.
 \draw[mar] (dc) -- (o3);
 
 \draw[red!60!black, thick, -{Bar[width=2.4mm]}]
-      (m.north) -- ++(0,1.9) -| (10.8,-2.7) -- (dc.east);
-\node[msmall, red!60!black, fill=white, inner sep=2pt] at (3.2,1.80)
+      (m.north) -- ++(0,1.45) coordinate (fbtop) -| (10.35,-2.7) -- (dc.east);
+\node[msmall, red!60!black, fill=white, inner sep=3pt]
+     at ([shift={(5.0,0)}]fbtop)
      {rising $m$ means more acylcarnitine competing for the renal\\
       transporter, so less filtered carnitine is recovered};
 \end{tikzpicture}}
