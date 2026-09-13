@@ -52,6 +52,52 @@ reasoning is in the audit record rather than here, because a rejected estimand i
 result. And by Section~\ref{sec:scope} the capacity a mechanistic estimand would report
 stops being recoverable in the patients it matters most for.
 
+\subsection{One pattern across three results, which is what this generalises to}
+\label{sec:pattern}
+
+Three degeneracies appear in this note. They were reached by unrelated routes, they concern
+different parameters, and one of them was found by a general-purpose tool that knew nothing
+about the others. They have the same shape, and naming it is the most portable thing here.
+
+\begin{itemize}[leftmargin=*, itemsep=3pt]
+\item \textbf{The excitation.} The ratio of the two sensitivities is
+$-(1 + \Delta(t)/\theta)\,\varphi(m)$, a product of a therapy factor and a marker factor.
+Neither is large on its own; the literature had measured only the second. What the dose
+train contributes is not a bigger increment but a \emph{moving} one, and the factor
+$1 + \Delta/\theta$ ranging over $2.64$ is what supplies forty-two times the marker band.
+\item \textbf{The load.} Proposition~\ref{prop:rank} is exactly singular at a constant
+recorded load, and the identity names its own cure: it needs $-1/L$ to be one constant.
+So what closes it is the day-to-day \emph{variability} of ordinary eating. Recording the
+same intake twenty times more precisely is worth six per cent; half a per cent of variation
+restores full rank outright.
+\item \textbf{The channels.} Proposition~\ref{prop:exchange} breaks an exchange only when
+the inputs on two channels differ \emph{non-constantly}. A constant increment is absorbed
+into the amplitude it rides on and separates nothing, however large it is.
+\end{itemize}
+
+\textbf{In every case the separating quantity is a difference that moves, and in every case
+the intuitive alternative fails.} A bigger increment does not substitute for a varying one;
+a more precise load record does not substitute for a varying one; a larger constant input
+does not substitute for a varying one. \emph{Magnitude, precision and presence are each the
+wrong axis, and each is the axis a study would naturally be designed to improve.}
+
+That is the practical content, and two of the three failures are not merely neutral but
+actively harmful. A dietary record \emph{tightened} by averaging to a weekly mean or imputing
+from a prescription is more precise and destroys exactly the variability
+Proposition~\ref{prop:rank} needs --- so the instruction Section~\ref{sec:spec} carries is to
+omit a data-cleaning step, not to add a measurement. A \emph{steadier} administration route
+removes the therapy's excitation entirely (Remark~\ref{rem:route}). A larger dose is the
+exception: it raises $\Delta/\theta$ and so does help, which is worth saying because it is
+the only one of the three obvious moves that does.
+
+\textbf{This is a pattern across three results and not a theorem, and it should be read as
+one.} The three are not instances of a single proposition; they are three different
+calculations that happen to resolve the same way, and the note makes no claim that they must.
+What can be said is narrower and still useful: in a saturating compartment model observed
+through one marker, a design's information sits in what varies across its samples rather
+than in the levels the samples sit at, and a reader carrying this to another system should
+check the three separately rather than assume the shape transfers.
+
 \subsection{What would change the answer}
 
 \begin{itemize}[leftmargin=*, itemsep=3pt]

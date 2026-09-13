@@ -416,25 +416,58 @@ the format has changed between releases.
 \subsection{Cases to run}
 
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
-\item \textbf{A1.} Baseline, generic input $s(t)$. Expected: all three globally identifiable.
-\item \textbf{A2.} Constant input, $s(t) \equiv s_0$. Expected: only the degenerate
-      combination identifiable. This is the formal statement of the clinical situation.
+\item \textbf{A1.} Baseline, generic input $s(t)$. \emph{Returned:} $\theta$, $K_m$, $k_e$
+      all globally identifiable. Proposition~\ref{prop:global}, confirmed.
+\item \textbf{A2.} Constant input, $s(t) \equiv s_0$. \emph{Returned:} all four globally
+      identifiable, including $s_0$. See the reading below, because this is not what an
+      earlier version of this list predicted.
 \item \textbf{A3.} Two patients sharing $(K_m, k_e)$ with individual $\theta_1, \theta_2$,
-      constant inputs. Tests whether cohort structure alone helps, which
-      Section 3 predicts it does not.
-\item \textbf{A4.} As A3, with $\theta_2 = 0$ imposed (null anchor). Expected: $k_e$ becomes
-      identifiable.
+      constant inputs. \emph{Returned:} everything globally identifiable, for the same
+      reason as A2.
+\item \textbf{A4.} As A3, with $\theta_2 = 0$ imposed (null anchor). \emph{Returned:}
+      globally identifiable, as A3 already was --- so this encoding does not test the
+      anchor.
 \item \textbf{A5.} Carnitine as an input on the alternative channel,
-      $k_e \to k_e + \kappa\, u_c(t)$.
+      $k_e \to k_e + \kappa\, u_c(t)$. \emph{Returned:} globally identifiable, $\kappa$
+      included.
 \item \textbf{A6.} Therapy as an input on the enzymatic channel,
-      $\theta \to \theta + \Delta(t)$.
-\item \textbf{B.} Model B, with $k_e m$ replaced by $k_e m/(K_e + m)$. Expected: weaker,
-      since the two channels acquire the same functional form.
-\item \textbf{C.} Model C, the two-state carnitine depletion system.
+      $\theta \to \theta + \Delta(t)$. \emph{Returned:} globally identifiable.
+\item \textbf{B.} Model B, with $k_e m$ replaced by $k_e m/(K_e + m)$. \emph{Returned:}
+      \textbf{locally but not globally} identifiable --- the only such case in the set. The
+      identifiable functions are $k_e + \theta$, $K_e + K_m$, $k_e\theta$, $K_e K_m$ and
+      $K_e\theta + K_m k_e$, every one invariant under exchanging the two channels.
+\item \textbf{C.} Model C, the two-state carnitine depletion system. \emph{Returned:}
+      globally identifiable, with $c(t)$ never observed.
 \end{enumerate}
 
-Cases A2 and A4 are the ones that matter. A2 should reproduce the degeneracy formally, and
-A4 should show that a null genotype restores identifiability of the shared parameter.
+\begin{remark}[How to read A2, A3 and A4, and an expectation that was wrong]
+An earlier version of this list wrote an \emph{expectation} beside each model --- that A2
+would show only a degenerate combination identifiable, that A3 would show cohort structure
+alone does not help, that A4 would restore $k_e$. Those expectations were wrong, and worse,
+they would have been read as confirmations of themselves. They are replaced above by what
+the tool returned, and the rule this repository now follows is that no script or list
+states an expected result in advance: an expected value belongs in an assertion that can
+fail, or nowhere.
+
+\textbf{The verdicts do not contradict Section~\ref{sec:cond} or the population result.} A
+constant \emph{input} is not a constant \emph{state}. The framework assumes generic initial
+conditions, so $m(t)$ relaxes towards its steady state and visits an interval on the way ---
+about four hours of it at the illustrative constants --- and Proposition~\ref{prop:global}
+then applies directly. What this note calls the steady-state patient is a different object:
+one already \emph{at} steady state, supplying one algebraic equation in three unknowns,
+deficiency $2$ exactly as claimed. The ODE framework cannot express that case, so A2--A4
+answer a question the note was not asking, and the deficiency-2 result stands untouched.
+
+\textbf{What B says is a limit on the analysis, not support for it.} The exchange
+degeneracy appears exactly when the two channels share a functional form. Model A escapes
+it because its enzymatic term carries $(\theta,K_m)$ and its alternative term carries $k_e$
+alone, so no permutation of the parameter vector exchanges them. But Model B contains Model
+A only as a boundary case, and at any finite $K_e \neq K_m$ the exchange is exact --- so
+Model A's freedom from it is a property of the linearisation rather than evidence that the
+linearisation was harmless. A known input on one channel removes the exchange only if that
+input \emph{varies}: a constant increment is absorbed into the amplitude it rides on and
+breaks nothing.
+\end{remark}
 
 %=========================================================
 \section{Open points}

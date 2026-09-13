@@ -340,9 +340,20 @@ almost bookkeeping: its two channels are not two members of one parameterised fa
 enzymatic term carries $(\theta, K_m)$ and the alternative term carries $k_e$ alone, so
 there is no permutation of $(\theta, K_m, k_e)$ that exchanges them and nothing to break.
 The tool confirms it --- saturating plus linear, with no input at all, returns globally
-identifiable. But \eqref{eq:modelB} contains \eqref{eq:local} only as a boundary case, and
-at any \emph{finite} $K_e \neq K_m$ with no selective input the exchange is present and
-exact. \textbf{The note's freedom from it is therefore a property of the linearisation, not
+identifiable.
+
+An earlier version of this section argued the same conclusion from the limit
+$\lim_{K_e \to \infty} k_e K_e\, m/(K_e+m) = k_e m$ --- that the linear channel is a
+saturating one with an infinite constant, so the two shapes differ. \textbf{That reasoning
+is withdrawn.} The limit is singular: it holds $k_e K_e$ fixed while $K_e$ grows, and
+$K_e = \infty$ is not a value of a positive parameter, so it does not place the two channels
+in one family and ``the shapes differ'' is not what the argument turns on. What it turns on
+is that there is no permutation available at all.
+
+\textbf{And the limit cuts the other way, which is the part worth keeping.}
+\eqref{eq:modelB} contains \eqref{eq:local} only as a boundary case, and at any
+\emph{finite} $K_e \neq K_m$ with no selective input the exchange is present and exact.
+\textbf{The note's freedom from it is therefore a property of the linearisation, not
 evidence that the linearisation was harmless.}
 
 \subsubsection{What separates two channels, in general}

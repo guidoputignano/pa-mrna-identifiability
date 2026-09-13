@@ -233,6 +233,45 @@ different. \emph{The asymmetry is the recommendation.} Optimise the schedule tha
 nothing and leave the one that costs the trough alone.
 \end{remark}
 
+\begin{remark}[The administration route is a condition, and it is the limit point of the table above]
+\label{rem:route}
+Read the second table of Remark~\ref{rem:dosedesign} downwards and the trend is monotone:
+the shorter the interval, the better the trough and the worse the identification. Follow it
+to its limit. A \emph{continuous infusion} at the same delivered rate has no trough at all
+--- the increment never falls between doses, which is the therapeutic optimum on the one
+metric that table says to read --- and it is also the point at which the identification this
+note is built on stops existing.
+
+\textbf{The therapy enters the identification only through its \emph{variation}.} The
+excitation of Proposition~\ref{prop:tworoutes} is carried by the factor
+$1 + \Delta(t)/\theta$, and a constant increment does not move it. On the trial's biweekly
+schedule that factor ranges over $2.64$ and supplies forty-two times what the marker band
+does; under a constant infusion it is a constant, the therapy channel contributes
+\emph{nothing}, and the design falls back on the marker excursion alone --- which
+Section~\ref{sec:excursion_table} shows is unavailable at the magnitude required. The same
+fact appears again in Proposition~\ref{prop:exchange}: a constant increment is absorbed into
+the amplitude it rides on and breaks no channel exchange, so it would not protect a model
+whose alternative channel saturates either.
+
+\textbf{Stated precisely, because the strong version would be wrong.} A constant increment
+does not make $\theta$ structurally unidentifiable: the dosing record is known, so
+$\theta = (\theta + \Delta_0) - \Delta_0$ is still recoverable in principle. What is lost is
+the \emph{excitation} --- the conditioning, which is what every number in this section
+measures --- and losing it takes the design from the monthly row of
+Table~\ref{tab:designs} to a design with no therapy contribution at all.
+
+\textbf{So the condition on the administration route is this, and a protocol can act on it:}
+the increment must \textbf{vary over the sampling window}, which a bolus with a decay
+shorter than the sampling interval achieves and a continuous infusion does not. The trial's
+biweekly dosing with a $3.5$-day half-life satisfies it comfortably and nothing needs to
+change. \textbf{But a switch to continuous or near-continuous administration --- a plausible
+future formulation change, and one that would be made on pharmacological grounds with no
+reason to consider identifiability --- would silently remove the only excitation this design
+has.} That is the second thing this note says about how the therapy is given, and unlike
+Remark~\ref{rem:dosedesign} it is not a recommendation to change anything. It is a condition
+to check before the route changes.
+\end{remark}
+
 \begin{remark}[The transient no clinic samples, and what it would be worth]
 \label{rem:transient}
 Section~\ref{sec:regime} located the obstruction in the sampling regime rather than in the
