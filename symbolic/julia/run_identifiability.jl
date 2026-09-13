@@ -38,8 +38,8 @@ end
 
 # ---------------------------------------------------------------------
 # A1.  Baseline. Generic time-varying input s(t).
-#      EXPECTED: theta, Km, ke all globally identifiable.
-#      This is Proposition 1 of the note.
+#      RETURNED: theta, Km, ke all GLOBALLY identifiable.
+#      This is Proposition 1 of the note, confirmed.
 # ---------------------------------------------------------------------
 A1 = @ODEmodel(
     m'(t) = s(t) - theta * m(t) / (Km + m(t)) - ke * m(t),
@@ -49,24 +49,32 @@ report("A1  baseline, time-varying input s(t)", A1)
 
 # ---------------------------------------------------------------------
 # A2.  Constant input. s is promoted to an unknown constant parameter
-#      with no dynamics, which encodes a patient held at steady state.
-#      EXPECTED: individual parameters NOT identifiable; the identifiable
-#      function should be the degenerate combination theta/Km + ke
-#      (possibly returned in an equivalent algebraic form).
-#      This is the formal version of the clinical situation.
+#      with no dynamics.
+#      RETURNED: theta, Km, ke, s0 all GLOBALLY identifiable.
+#      READ IT CORRECTLY. A constant INPUT is not a constant STATE. This
+#      framework assumes generic initial conditions, so m(t) relaxes towards
+#      its steady state and visits an interval on the way -- four hours of it,
+#      by audit/e5_structural.py. Proposition 1 then applies directly and the
+#      verdict is not surprising.
+#      This model therefore does NOT encode the clinical situation, which is a
+#      patient ALREADY at steady state: one algebraic equation in three
+#      unknowns, deficiency 2. An earlier version of this comment claimed it
+#      did, and was wrong.
 # ---------------------------------------------------------------------
 A2 = @ODEmodel(
     m'(t)  = s0 - theta * m(t) / (Km + m(t)) - ke * m(t),
     s0'(t) = 0,
     y(t)   = m(t)
 )
-report("A2  constant input (steady-state patient)", A2)
+report("A2  constant input (NOT a steady-state patient -- see comment)", A2)
 
 # ---------------------------------------------------------------------
 # A3.  Two patients sharing the population parameters (Km, ke),
 #      each with an individual theta_i, both at constant input.
-#      EXPECTED: cohort structure ALONE does not resolve the degeneracy.
-#      Section 3 of the note predicts deficiency 2 regardless of N.
+#      RETURNED: everything GLOBALLY identifiable -- for the same reason as A2.
+#      Each patient's transient is on its own sufficient, so the cohort is not
+#      being tested here. The note's deficiency-2 claim is about patients
+#      observed AT steady state and is untouched by this run.
 # ---------------------------------------------------------------------
 A3 = @ODEmodel(
     m1'(t) = s1 - th1 * m1(t) / (Km + m1(t)) - ke * m1(t),
@@ -80,9 +88,10 @@ report("A3  two patients, shared (Km, ke), constant inputs", A3)
 
 # ---------------------------------------------------------------------
 # A4.  As A3 but patient 2 carries a NULL genotype: theta_2 = 0.
-#      Its equation reduces to  m2' = s2 - ke*m2, which involves ke
-#      alone. EXPECTED: ke becomes identifiable.
-#      This is condition (i) of the anchor proposition.
+#      Its equation reduces to  m2' = s2 - ke*m2, which involves ke alone.
+#      RETURNED: globally identifiable, as in A3. The anchor is not what is
+#      doing the work in this encoding; the transients are. The anchor matters
+#      in the steady-state setting, which this framework cannot express.
 # ---------------------------------------------------------------------
 A4 = @ODEmodel(
     m1'(t) = s1 - th1 * m1(t) / (Km + m1(t)) - ke * m1(t),
@@ -121,8 +130,13 @@ report("A6  therapy input on the enzymatic channel", A6)
 
 # ---------------------------------------------------------------------
 # B.   Both clearance terms saturating.
-#      EXPECTED: weaker than A, since the two channels now share a
-#      functional form and are distinguished only by Km != Ke.
+#      RETURNED: LOCALLY but not globally identifiable -- the only genuine
+#      structural obstruction in this file. The identifiable functions are
+#      symmetric in the two channels (ke + theta, Ke + Km, ke*theta, Ke*Km,
+#      Ke*theta + Km*ke), so the two channels can be exchanged. This is the
+#      structural counterpart of the note's channel argument: identification
+#      rests on the two channels having DIFFERENT functional forms, and when
+#      they do not, capacity and alternative clearance become interchangeable.
 # ---------------------------------------------------------------------
 B = @ODEmodel(
     m'(t) = s(t) - theta * m(t) / (Km + m(t)) - ke * m(t) / (Ke + m(t)),

@@ -146,7 +146,16 @@ is 3-HP and $n$-propionylglycine, a glycine conjugate that carnitine does not ra
 $J = 2$ and a factor of $1.31$ at a load recorded to $2\%$, falling to $1.05$ at $10\%$.
 \end{remark}
 
-\subsubsection{The structural obstruction}
+\subsubsection{The obstruction, and what kind it is}
+
+The obstruction below is one of \emph{conditioning}, not of structure. Under a generic
+trajectory the model is globally structurally identifiable, and this has been checked two
+ways: by hand in the companion note, and mechanically with
+\texttt{StructuralIdentifiability.jl} on the eight configurations in
+\texttt{symbolic/julia/}, every one of which returns globally identifiable except the
+variant in which both clearance channels saturate. What follows is therefore a statement
+about the range of metabolite levels a record actually contains, and an earlier heading
+here called it structural, which it is not.
 
 Write $C(m) = \theta\, g(m) + k_e\, m$ for the total clearance, and let
 $M = [m_{\min}, m_{\max}]$ be the range of metabolite levels a given patient actually

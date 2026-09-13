@@ -199,3 +199,198 @@ So even had (a) passed, the constant it would have supplied is not the one that 
 *(A fifth row, K_m fixed exactly, returned a singular matrix under the audit script's own
 conditioning test. That is the test firing on a badly scaled matrix rather than a finding,
 and it is omitted rather than reported as one.)*
+
+---
+
+# 3.7 — structural identifiability, symbolically. **The machine disagrees with two of my own comments, and it is right.**
+
+## What was run
+
+Julia 1.10.4 with `StructuralIdentifiability.jl` (40 dependencies, 193 s precompile),
+on `symbolic/julia/run_identifiability.jl`; independently, `sympy` on
+`symbolic/sympy/observational_equivalence.py`; and `audit/e5_structural.py` to settle what
+the disagreement actually was.
+
+## The verdicts
+
+| model | what it encodes | global |
+|---|---|---|
+| A1 | generic time-varying input | θ, K_m, k_e **globally** |
+| A2 | constant input, θ free | θ, K_m, k_e, s₀ **globally** |
+| A3 | two patients, shared (K_m, k_e), constant inputs | all **globally** |
+| A4 | as A3 with a null-genotype anchor | all **globally** |
+| A5 | carnitine as a known input on the alternative channel | +κ, all **globally** |
+| A6 | therapy as a known input on the enzymatic channel | all **globally** |
+| **B** | **both channels saturating** | **locally, not globally** |
+| C | two-state carnitine depletion, c(t) unobserved | all **globally** |
+
+## Three disagreements, reported rather than reconciled
+
+### (a) My sympy commentary was wrong, and the machine was right
+
+The script had asserted that a **constant** therapeutic increment leaves only the lumped
+sum θ + Δ₀ identifiable. It does not. Δ is a **known** input — it is the dosing record —
+so recovering the lump recovers θ. Solving coefficients-all-zero in sympy returns the
+single solution `{K_m′: K_m, L_0′: L_0, k_e′: k_e, θ′: θ}`. The model is globally
+identifiable with no therapy variation at all. The script's own pre-written "EXPECTED"
+comments were wrong on the same point.
+
+This is the third correction of my own reasoning this session, and the first where an
+external tool caught it rather than a re-run of my own code.
+
+### (b) The Julia encodings A2–A4 do not encode what their comments claimed
+
+The comments said A2 "encodes a patient held at steady state" and predicted deficiency 2.
+That was a category error on my part, and `audit/e5_structural.py` Q1 settles it:
+
+> **A constant input is not a constant state.** The framework assumes generic initial
+> conditions, so m(t) relaxes *towards* its steady state and visits an interval on the way.
+> From m(0) = 5 the trajectory spans [5.000, 20.000]; from m(0) = 60 it spans
+> [20.000, 60.000]. Time constant ≈ 0.8 h; 99% of the gap closed in **4.19 hours**.
+
+Proposition `prop:global` then applies directly and the verdict is unsurprising. The note's
+steady-state claim is about a patient *already* at steady state, which supplies one
+algebraic equation in three unknowns. Q2 exhibits the fibre explicitly: nine
+(K_m, k_e, θ) triples spanning K_m over 9× and k_e over 4× that all reproduce the observed
+(s, m) = (600, 20) with residual exactly 0. **Deficiency 2, as the note states.** The two
+results are answers to different questions, and the ODE framework cannot express the
+second one.
+
+### (c) Model B is the one genuine structural obstruction — and it confirms the paper's channel argument
+
+B is **locally but not globally** identifiable, with identifiable functions
+`ke + theta`, `Ke + Km`, `ke*theta`, `Ke*Km`, `Ke*theta + Km*ke` — all symmetric under
+exchanging the two channels. When both channels saturate, capacity and alternative
+clearance are interchangeable. This is the structural counterpart of the paper's channel
+argument: identification rests on the two channels having *different functional forms*.
+Nothing in the paper depended on this; it is a finding, not a repair.
+
+## What the paper's obstructions therefore are
+
+Every obstruction the paper reports survives, but its **type** must be named correctly.
+Two mechanisms, and neither is structural non-identifiability:
+
+**(1) Structural identifiability asks about the transient, and the clinic never sees it.**
+The framework assumes the exact, noiseless, continuous trajectory, from which every
+time-derivative of y is available. The marker's time constant is 0.8 h against a dose
+half-life of 3.5 days — the same 104× separation that makes the information filter exact —
+so monthly sampling returns points on the **quasi-steady locus**, where ṁ is zero to the
+width of the assay. The derivatives carrying the structural result are not in the record.
+The fibre is what remains once the transient is removed.
+
+**(2) On that locus the Fisher matrix is singular at the truth, and flat only to first order.**
+`e5_structural.py` Q3, on a 28-day biweekly record sampled daily with four free parameters
+(θ, K_m, k_e, load bias):
+
+| | |
+|---|---|
+| singular values | 8.083e−4, 1.694e−5, 1.222e−8, **3.911e−15** |
+| s_min/s_max | **4.84e−12** |
+| flat direction (column-scaled) | (+0.1904, −0.6942, −0.0000, +0.6942) |
+
+Noiseless misfit along that direction, in ε:
+
+| ε | rms misfit | misfit/ε² |
+|---|---|---|
+| 0.010 | 4.53e−14 | 4.53e−10 |
+| 0.030 | 4.03e−13 | 4.48e−10 |
+| 0.100 | 4.46e−12 | 4.46e−10 |
+
+Exactly quadratic over a decade. The direction is flat to **first order** and curved at
+second. A singular Fisher matrix at a point does not contradict global injectivity of the
+map — it sets the price: the combination is recovered through curvature rather than slope,
+so the recoverable displacement scales as the **square root** of the noise rather than
+linearly.
+
+## The rank-one identity, derived by hand and matched to the numerics
+
+This was the check reserved for the PI. It is done, by a route sharing no code with the
+design module. On the quasi-steady locus (θ+Δ)u + k_e m = L + b with u = m/(K_m+m):
+
+```
+dG/dtheta = u,   dG/dK_m = -(theta+Delta) u(1-u)/K_m,   dG/dk_e = m,   dG/db = -1
+```
+
+Eliminating the increment with (θ+Δ)u = L − k_e m and using m(1−u) = K_m u, a combination
+(a, b, c, e) vanishes for **every** Δ iff
+
+```
+c = 0                    (m = K_m u/(1-u) is not polynomial in u)
+a + bL/K_m + b k_e = 0   (coefficient of u)
+e + bL/K_m = 0           (constant)
+```
+
+so, taking b = −K_m,  **n = (L + k_e K_m, −K_m, 0, L)**.
+
+| | θ | K_m | k_e | b |
+|---|---|---|---|---|
+| predicted, column-scaled | +0.1904 | −0.6942 | +0.0000 | +0.6942 |
+| computed from the SVD | +0.1904 | −0.6942 | −0.0000 | +0.6942 |
+
+Max absolute difference **1.79e−07**; ‖Jn‖/(‖J‖‖n‖) = **1.53e−11**. Dividing through by θL
+gives c_θ = (1 + K_m k_e/L)/θ and c_Km = −1/L, which is the identity the paper states.
+**Confirmed.** Note that k_e does not appear in the null direction — the degeneracy is
+between capacity, affinity and the load bias only.
+
+## Consequence for the paper
+
+The claims are unchanged in substance and narrower in type. `prop:rank`, the factor-of-22
+aliasing rule and the fibre are results about the **conditioning of a finite, noisy,
+quasi-steady design** — the design a clinic can actually run — not about the structure of
+the model. Stating that makes them more precise, not weaker, and it removes a claim the
+paper never made but a reader could have inferred.
+
+The standalone companion `paper/note_structural_identifiability.tex` already says exactly
+this in its abstract ("the obstruction is one of conditioning, not of structure"), so no
+correction to it is required. The wrong comments were in the two symbolic scripts, and both
+are now corrected in place.
+
+---
+
+# 3.8 — is the dose train itself a design variable? **No. About 13:1 against.**
+
+`audit/e4_dose_design.py`. Figure of merit sd(ln θ) on the minimal footing (θ and K_m free,
+priors only on ln k_e and the load record). Reported alongside it: mean Δ delivered, and
+the **trough** — the minimum increment between doses, which is the quantity a dosing
+interval exists to protect.
+
+### Amplitude modulation, at constant mean dose
+
+| schedule | sd(ln θ) | mean Δ/θ | trough/θ |
+|---|---|---|---|
+| fixed, 6000 every 14 d (the trial schedule) | 0.1697 | 0.723 | **0.128** |
+| alternating ±25% | 0.1676 | 0.724 | 0.104 |
+| alternating ±50% | 0.1647 | 0.726 | 0.075 |
+| alternating ±75% | 0.1615 | 0.727 | **0.045** |
+| random amplitude, sd 50% | 0.1683 | 0.764 | 0.008 |
+
+### Dose interval, at constant delivered dose rate
+
+| schedule | sd(ln θ) | mean Δ/θ | trough/θ |
+|---|---|---|---|
+| every 7 d | 0.2190 | 0.720 | 0.253 |
+| every 10 d | 0.1863 | 0.720 | 0.203 |
+| **every 14 d (the trial schedule)** | **0.1697** | 0.723 | **0.128** |
+| every 21 d | 0.1617 | 0.724 | 0.047 |
+| every 28 d | 0.1587 | 0.729 | **0.016** |
+
+### The exchange rate
+
+Every change that improves identifiability lowers the trough, and the exchange is lopsided:
+
+- ±75% amplitude modulation: **4.8%** better on sd(ln θ) for a **65%** cut in the trough.
+- 28-day interval: **6.5%** better on sd(ln θ) for an **87%** cut in the trough.
+
+That is roughly **13:1 against** in both cases. The mean increment is essentially constant
+across every row (0.72–0.76 θ), so the loss is concentrated exactly where it matters — the
+gap a patient sits in before the next dose.
+
+### The recommendation, stated explicitly as the handoff requires
+
+**The identifiability optimum conflicts with the therapeutic one, and the therapeutic one
+wins.** No dose modulation is recommended. The sampling schedule is free to optimise — that
+is where the factor-of-22 aliasing result applies and where half a day off the dosing day
+recovers it — and the dose schedule is not. The direction of the shorter-interval rows is
+worth naming for the same reason: a 7-day interval is *worse* for identification and
+*better* for the trough, so a clinician who shortens the interval on therapeutic grounds
+pays an identification cost rather than gaining one.
