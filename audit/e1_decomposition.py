@@ -117,3 +117,48 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def sign_flip_contour():
+    """
+    Where does the SIGN of mu flip, as a function of the two chosen constants?
+
+    theta is fixed at its true value and the record is perfect. Any flip here is
+    a property of the convention alone.
+    """
+    print()
+    print("=" * 84)
+    print("THE SIGN OF mu AGAINST THE TWO CHOSEN CONSTANTS, at theta = truth")
+    print("=" * 84)
+    m_tols = (10.0, 20.0, 30.0, 40.0, 60.0, 80.0, 120.0, 160.0)
+    s_facs = (2.5, 2.98, 3.28, 3.58, 4.0, 5.0)
+    print(f"{'m_tol':>7} | " + " ".join(f"{f:>7.2f}x" for f in s_facs))
+    for mt_ in m_tols:
+        row = []
+        for f in s_facs:
+            mu = mu_of(P.theta, P.Km, P.ke, f * base, mt_)
+            row.append(("+" if mu > 0 else "-") + f"{abs(mu):6.0f}")
+        print(f"{mt_:7.0f} | " + " ".join(f"{c:>8}" for c in row))
+    print()
+    print("  '+' is a patient WITH margin, '-' is one who needs escalation.")
+    print("  Same patient, same perfect data, at every cell.")
+    flips = sum(1 for mt_ in m_tols for f in s_facs
+                if mu_of(P.theta, P.Km, P.ke, f * base, mt_) < 0)
+    print(f"  {flips} of {len(m_tols)*len(s_facs)} cells call this patient unsafe.")
+    print()
+    from scipy.optimize import brentq
+    print("  The m_tol at which the sign flips, for each illness amplitude:")
+    for f in s_facs:
+        try:
+            r = brentq(lambda x: mu_of(P.theta, P.Km, P.ke, f * base, x),
+                       5.0, 400.0, xtol=1e-6)
+            print(f"    s_peak = {f:.2f}x baseline:  sign flips at m_tol = {r:.1f}"
+                  f"  ({r/D.M_BAR:.1f} x m_bar)")
+        except ValueError:
+            print(f"    s_peak = {f:.2f}x baseline:  no flip in m_tol 5..400")
+    print()
+    print(f"  The paper uses m_tol = {D.M_TOL:.0f} ({D.M_TOL/D.M_BAR:.0f} x m_bar),")
+    print("  marked ASSUMED in tab_params with no measurement behind it.")
+
+
+sign_flip_contour()
