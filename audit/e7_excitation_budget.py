@@ -11,7 +11,7 @@ therapy". Three sources of excitation, one precision metric, same footing.
     (3) the dose train
 
 FOOTING, identical across all three: theta and K_m free, log-prior 0.8 on ln k_e,
-load recorded to 5%, monthly outpatient draws over two years (24 samples).
+load recorded to 5%, monthly outpatient draws over two years (25 samples).
 Everything is sd(ln theta-hat).
 
 No expected results are recorded here. Each number is printed as computed.
@@ -87,7 +87,7 @@ def scenario_1():
     banner("SCENARIO 1  --  spontaneous load variability only, NO therapy")
     print("  Proposition prop:rank: a perfectly steady recorded load is the exactly")
     print("  singular case, and day-to-day variation is what closes it. So sweep the")
-    print("  variation. 24 monthly draws, no increment, no carnitine perturbation.")
+    print("  variation. 25 monthly draws, no increment, no carnitine perturbation.")
     print()
     print(f"    {'day-to-day load CV':>20}   {'median sd(ln theta)':>20}  {'[min, max] over 24 seeds':>28}")
     out = {}
@@ -188,7 +188,7 @@ def what_would_scenario_1_need():
     banner("WHAT WOULD SCENARIO 1 NEED? (the gate)")
     target = 0.20
 
-    print("  (a) By raising day-to-day load variability, with 24 monthly draws:")
+    print("  (a) By raising day-to-day load variability, with 25 monthly draws:")
     lo, hi = 0.10, 20.0
     for _ in range(60):
         mid = 0.5 * (lo + hi)

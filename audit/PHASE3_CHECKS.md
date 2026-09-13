@@ -594,7 +594,7 @@ constant in a different model).
 # 14.1 — the excitation budget. **GATE ANSWERED IN THE NEGATIVE.**
 
 `audit/e7_excitation_budget.py`. One footing throughout: θ and K_m free, log-prior 0.8 on
-ln k_e, load recorded to 5%, 24 monthly draws over two years. Medians over 24 seeds with
+ln k_e, load recorded to 5%, 25 monthly draws over two years. Medians over 24 seeds with
 the full range, because a single draw is not a result (R5).
 
 ## The three scenarios
