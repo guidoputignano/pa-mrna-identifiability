@@ -588,3 +588,129 @@ is the correct local description and the discrete fibre is an additional, compat
 and that the note's constants sit on the unbreakable `K_e = K_m` case (they do not; `K_e =
 300` against `K_m = 100` — the finding confused `K_e` with `K_c`, which is a different
 constant in a different model).
+
+---
+
+# 14.1 — the excitation budget. **GATE ANSWERED IN THE NEGATIVE.**
+
+`audit/e7_excitation_budget.py`. One footing throughout: θ and K_m free, log-prior 0.8 on
+ln k_e, load recorded to 5%, 24 monthly draws over two years. Medians over 24 seeds with
+the full range, because a single draw is not a result (R5).
+
+## The three scenarios
+
+| scenario | sd(ln θ̂) | vs target 0.20 |
+|---|---|---|
+| **(1)** load variability only, no therapy, at the note's own 10% CV | **1.79** [1.41, 2.53] | **9× worse** |
+| (1) at 20% CV | 1.09 | 5.4× worse |
+| (1) at an implausible 40% CV | 0.70 | 3.5× worse |
+| **(2)** as (1) plus carnitine steps, 25–100% in k_e, gain **known** | **1.91 – 2.06** | **worse than (1)** |
+| **(3)** the dose train | **0.170** [0.168, 0.171] | **passes** |
+
+Scenario (3) is essentially insensitive to load CV (0.1699 at 10%, 0.1701 at 20%): once the
+dose train is present it dominates the excitation budget entirely. Without it, load CV is
+the only lever and is not enough at any value.
+
+## Scenario 2 goes *backwards*, and the mechanism is checked rather than asserted
+
+Carnitine acts on k_e, so it cannot touch the first factor of
+`−(1 + Δ/θ)·φ(m)` at all. It can only move `φ(m)`, and only indirectly, by shifting the
+level. Measured:
+
+| k_e step | m* | φ moves | q_θ = θm/(K_m+m) loses |
+|---|---|---|---|
+| +25% | 9.60 | +0.37% | −3.66% |
+| +50% | 9.23 | +0.70% | −7.05% |
+| +100% | 8.58 | +1.31% | **−13.1%** |
+| +200% | 7.52 | +2.30% | −23.0% |
+
+**About ten to one against.** Raising k_e lowers the quasi-steady marker, and the θ
+sensitivity falls with it — so carnitine buys a small move in the weak factor by pushing the
+patient *deeper into the linear regime*, which is where `prop:excitation` says only the
+lumped ratio survives. It does not merely supply weak excitation; it moves the patient the
+wrong way along the axis that carries the information.
+
+For contrast, `1 + Δ/θ` ranges **1.126 to 3.125** over a continuous dose cycle, a factor of
+2.78, while φ moves only from 0.9091 to 0.9177. *(That 2.78 is the continuous-cycle
+extremum and is not the same statistic as the paper's published 2.64, which is the range
+over its own sampled record — 1.186–3.133, drop 1.948. The paper quotes the record-based
+figure throughout and this script's number is not substituted for it.)*
+
+## What scenario (1) would need
+
+**(a) More variable intake:** a day-to-day CV of **229%** of mean intake. That is not a diet.
+
+**(b) More draws, at 10% CV:**
+
+| draws over two years | sd(ln θ̂) |
+|---|---|
+| 24 (monthly) | 1.89 |
+| 104 (weekly) | 1.01 |
+| 730 (**daily**) | **0.67** |
+
+**The scaling is worse than 1/√n and the obvious extrapolation is wrong.** Independent
+samples would put 730 draws at ≈0.33; the computed value is 0.67, twice that. Information in
+the degenerate direction saturates, because consecutive days resample one load distribution
+rather than adding independent directions. So daily venepuncture for two years lands at 3.3×
+the target, and a 1/√n estimate of what would be required *understates* it.
+
+## The conclusion, in its stronger form
+
+Neither route exists. **The therapy is not a design improvement — it is the design's
+condition of existence.** There is no second specification for untreated patients, and the
+note should not imply one is available. Every design result here is conditional on a patient
+receiving a therapy that varies over the sampling window, which today means a trial
+participant.
+
+---
+
+# 14.3 — the cohort for the question that is not blocked
+
+`audit/e8_cohort_unblocked.py`. The ~2,200 figure is for the **decision** question, which is
+blocked for reasons unrelated to cohort size. The design specification makes a different
+claim — that a monthly record identifies a patient's capacity to the stated precision — and
+that claim is a *within-patient* one. Patients are needed only to cover heterogeneity and to
+confirm the prediction.
+
+## Achieved precision across a heterogeneous cohort
+
+4,000 simulated patients, log-uniform over θ (9-fold), K_m (9-fold), k_e (the prior's own
+factor of 2.2) and managed load (4-fold). **Every range is assumed, not measured.**
+
+| percentile | sd(ln θ̂) |
+|---|---|
+| 5th | 0.080 |
+| 25th | 0.132 |
+| **50th** | **0.192** |
+| 75th | 0.329 |
+| 95th | 0.767 |
+
+**Just over half — 52.5% — meet the 0.20 target**, and the median sits almost exactly on it.
+The headline 0.17 is the illustrative parameter set, which sits near the middle of the
+distribution rather than at its optimum.
+
+**What drives the spread**, as log–log correlations with the achieved sd: `Δ/θ` **+0.56**
+(and θ itself −0.56, the same fact), `K_m` **+0.59**, `k_e` +0.44, load −0.19.
+
+That first one is a design statement, not a nuisance: **the dose is fixed in absolute terms
+while residual capacity is not**, so a patient with more residual capacity receives less
+*relative* excitation and is identified less well. The design is self-weakening in exactly
+the patients who need the therapy least.
+
+## Patients required
+
+| purpose | patients |
+|---|---|
+| confirm the predicted precision to ±40% relative | 5 |
+| **confirm the predicted precision to ±20% relative** | **14** |
+| confirm to ±15% | 24 |
+| bound the fraction meeting the target to ±20 points | 24 |
+| **bound that fraction to ±10 points** | **96** |
+| bound it to ±5 points | 384 |
+
+Confirming the design works needs **~14 patients** — inside the phase 1/2 trial of sixteen.
+Bounding *for how many* patients it works to ±10 points needs ~96, which is not. The
+decision question needs ~2,200.
+
+**Two orders of magnitude separate the blocked question from the unblocked one**, and the
+specification should ask for the affordable one.
