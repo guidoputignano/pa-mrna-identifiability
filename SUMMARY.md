@@ -71,8 +71,9 @@ an individual record.
 **Why the therapy cannot be substituted.** On the same footing, spontaneous load variability
 alone gives **1.77**, and adding recorded carnitine perturbations makes it *worse* — carnitine
 acts on the wrong channel and moves the patient deeper into the linear regime to buy a small
-gain. Reaching the target without a dose train would need day-to-day intake varying by
-**229%**, or daily venepuncture for two years, which still lands at 0.67.
+gain. Reaching the target without a dose train is not possible at any level of
+day-to-day intake variability: the precision floors near 0.376 and rises again. Daily
+venepuncture for two years still lands at 0.65.
 
 ## What was withdrawn
 

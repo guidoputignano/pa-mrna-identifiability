@@ -654,6 +654,17 @@ the degenerate direction saturates, because consecutive days resample one load d
 rather than adding independent directions. So daily venepuncture for two years lands at 3.3×
 the target, and a 1/√n estimate of what would be required *understates* it.
 
+> **Corrected in 21.1, and the correction runs both ways.** Everything in this subsection
+> above was computed on the Gaussian load draw that 15.1 replaced with a lognormal one. On
+> the lognormal draw: (a) **no** coefficient of variation reaches 0.20 — the median floors
+> near **0.376** at a CV of 120–200% and rises again, so the **229%** here is withdrawn, and
+> it was never a solution in the first place but the ceiling of the bisection's search
+> bracket, printed as though the search had converged (see R13); (b) the monthly row is 25
+> draws and not 24, and the daily row is **0.65**, not 0.67. The saturation mechanism
+> asserted in this subsection is separately withdrawn as R9. The record is kept as written
+> and the conclusion below is unaffected, and in fact strengthened: route (a) fails at every
+> variability rather than at an implausible one.
+
 ## The conclusion, in its stronger form
 
 Neither route exists. **The therapy is not a design improvement — it is the design's

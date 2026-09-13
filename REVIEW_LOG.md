@@ -596,9 +596,9 @@ were computed on the Gaussian draw and one was requoted:
 |---|---|---|
 | $10\%$ row, $1.79$ | $1.7731$ | corrected in this pass |
 | $40\%$ row, $0.70$ | $0.6164$ | corrected in `b289ef8` |
-| carnitine row, $1.91$–$2.06$ | $1.91$–$2.02$ | **outstanding** |
-| "needs a CV of $229\%$" | no CV reaches $0.20$; sd bottoms near $0.376$ at $120$–$200\%$ and rises | **outstanding** |
-| daily sampling "$0.67$" | $0.65$ | **outstanding** |
+| carnitine row, $1.91$–$2.06$ | $1.91$–$2.02$ | corrected in 21.1 |
+| "needs a CV of $229\%$" | no CV reaches $0.20$; sd bottoms near $0.376$ at $120$–$200\%$ and rises | rewritten in 21.1, R13 |
+| daily sampling "$0.67$" | $0.65$ | corrected in 21.1 |
 
 The dose-train row ($0.170$) is unaffected, and every number in the paragraph that follows
 (the exponent band $0.06$ to $0.24$, $1.8\times10^{-7}$, $7.6\times10^{-4}$, the prior's
@@ -626,20 +626,56 @@ paragraph, never the line that prompted it. And a note recording that a correcti
 states *where*, because "corrected in the paper" is a claim about extent and carries the
 same burden as a number (R7).
 
-One of the outstanding three is not a refresh and is flagged as a decision rather than an
-edit. The $229\%$ does not reproduce at all: `e7`'s bisection brackets $[10\%, 2000\%]$ and
-prints its ceiling, which is the search reporting "not found" in the shape of a result. Under
-the lognormal draw no coefficient of variation reaches the $0.20$ target, so the paper's
-conclusion is not weakened but *strengthened* — the route does not exist at any variability,
-not merely at an implausible one. Note also that `e7` printing a bracket ceiling as
-"required CV" is itself the R6 failure in a new place: a script stating a result it did not
-establish.
+All five are now on the lognormal draw. One of the three was not a refresh, and it is the
+one worth keeping in view. The $229\%$ does not reproduce at all: `e7`'s bisection brackets
+$[10\%, 2000\%]$ and prints its ceiling, which is the search reporting "not found" in the
+shape of a result. Under the lognormal draw no coefficient of variation reaches the $0.20$
+target, so the paper's conclusion is not weakened but *strengthened*: the route does not
+exist at any variability, not merely at an implausible one. That failure has its own entry
+as R13.
 
 Worth recording alongside: the miss was not found by re-reading the table either. It was
 found by a sweep looking for something else, which noticed that two files quoted the same
 quantity differently, and the remaining three were found only because the rule above forced
 a reading of the whole table rather than the one row named. Conflicting numbers remain the
 only detector here that has ever caught this class (R8), and it has now caught it twice.
+
+### R13 — a bisection that printed its bracket
+
+**A non-answer formatted as an answer**, and the second time this repository has produced
+one (R6 was the first, in a different shape).
+
+`audit/e7_excitation_budget.py` asked what day-to-day load variability would be needed to
+reach the $0.20$ target without a dose train. It bisected on the interval
+$[10\%, 2000\%]$ and printed
+
+```
+required CV = 2000%  of mean intake.
+```
+
+There is no coefficient of variation at which the target is met, so the bisection never
+narrowed and the endpoint it printed was the bracket it started with. The paper read that
+output at an earlier stage and quoted $229\%$, and the sentence around it said the route
+existed but was implausible.
+
+**What the search was actually reporting is stronger than what it printed.** Swept directly,
+the median $\operatorname{sd}(\ln\hat\theta)$ falls to about $0.376$ at a CV between
+$120\%$ and $200\%$ and \emph{rises} again beyond it. The route has a floor at roughly twice
+the target. It does not fail because the required diet is implausible; it fails at every
+diet. A search that had said "not found" would have produced a better sentence than the one
+that returned a number.
+
+**The rule: a search that terminates without finding must report that it did not find, never
+its bracket.** A returned endpoint, a clipped maximum, an iteration cap, a `while` loop that
+exits on count rather than on convergence: each of these is capable of emitting a
+well-formatted number that answers a different question from the one asked. Where a routine
+can fail to converge, the failure is a distinct return value and is printed as one.
+
+This is the R6 class in a new form. R6 was a script asserting in advance what it would show.
+This is a script asserting, in arrears, that it found something it did not. Both put a claim
+into the output stream that no computation backs, and in both cases the reader downstream had
+no way to tell. The common rule is the one R6 already states, extended: **a script's output
+is a record of what it found, and where it found nothing it says so.**
 
 ## A sixth failure mode
 
