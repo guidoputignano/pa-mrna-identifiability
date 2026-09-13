@@ -404,9 +404,10 @@ in one pass, I read a fourth discrepancy as a fourth error. It was not: the figu
 `sign_error(..., seed=12)` and 52.5% reproduces from it exactly. My twelve-seed check ran
 seeds 0–11 and missed the one the code actually uses.
 
-The accurate statement is that 52.5% is one draw, that seeds 0–11 give 44.0% ± 3.2% with
-range [37.2%, 49.2%], and that a single-seed value near a decision boundary should be
-quoted with its spread. **A pattern of errors is not evidence that the next discrepancy is
+The accurate statement is that 52.5% is one draw. Over 24 seeds the unsafe-side error is
+43.9% ± 3.5%, range [37.2%, 52.2%]; seed 12 is the maximum and the 96th percentile. A
+single-seed value near a decision boundary carries three to four points of Monte Carlo
+noise and should be quoted with its spread. **A pattern of errors is not evidence that the next discrepancy is
 another one**, and checking which seed the code used would have cost one grep.
 
 ### R4 — "the breath test repeats at a CV of 12.8% in patients"

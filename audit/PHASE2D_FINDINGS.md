@@ -159,9 +159,11 @@ is withdrawn.** The figure's own code calls
 reproduces 52.5% exactly. It is a legitimate draw from the repo's own path, not a number
 that fails to reproduce.
 
-What is true is narrower. Seeds 0–11 give the managed-regime errors as **6.9% ± 1.7%** and
-**44.0% ± 3.2%**, range [37.2%, 49.2%] — so seed 12 sits above the window those twelve
-happen to span, roughly 2.6 standard deviations above their mean. The recommendation is
+What is true is narrower, and the full distribution now settles it. Over **24 seeds** at
+400 replicates the unsafe-side error is **43.9% ± 3.5%**, range [37.2%, 52.2%]. Seed 12 is
+**52.2%**, the maximum of the 24 and its **96th percentile** — a high draw, and an ordinary
+member of the distribution rather than an outlier in any useful sense. (The figure prints
+52.5% because it evaluates at `cross + 0.3` rather than a literal 3.58.) The recommendation is
 unchanged and is about presentation rather than correctness: **a single-seed value quoted
 near a decision boundary carries three to four points of Monte Carlo noise and should be
 reported with its spread.** Saying the published number was wrong was a stronger claim than
