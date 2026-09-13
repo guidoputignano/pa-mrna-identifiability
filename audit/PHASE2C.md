@@ -41,6 +41,21 @@ quasi-steady assumption anywhere. Compared through
 The corrected residual of 0.06–0.15% is the quasi-steady reduction error, not
 the column. The ln θ column was right as published and reproduces at 0.14–0.32%.
 
+Run again over the **full two-year record with a different solver** (Radau
+rather than LSODA; `--full`), which reaches sample points the short record does
+not:
+
+| t [d] | FD dm/dlnK_m | published | corrected | err pub | err corr |
+|---|---|---|---|---|---|
+| 40 | 7.260634 | 6.064543 | 7.265833 | 16.5% | 0.07% |
+| 200 | 4.819831 | 2.455021 | 4.826829 | 49.1% | 0.15% |
+| 400 | 6.278298 | 4.372525 | 6.285558 | 30.4% | 0.12% |
+| 729 | 3.576157 | 1.302222 | 3.581174 | **63.6%** | **0.14%** |
+
+Worst over the full record: published 63.59%, corrected 0.15% — the same to
+three figures as the short record, and the two solvers agree to five figures at
+every shared sample point. Two integrators, two spans, one answer.
+
 ---
 
 ## C2 — not a double count. But the correction costs a rank.

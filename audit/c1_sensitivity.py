@@ -25,6 +25,8 @@ import design.run as D
 
 P = D.P
 Lb = D.load(0.0)
+FULL = '--full' in sys.argv
+METHOD = 'Radau' if FULL else 'LSODA'
 
 
 def clearance(m, theta, Km, ke, dlt):
@@ -69,7 +71,7 @@ def integrate(theta, Km, ke, ts, T):
         if hi <= lo:
             break
         sol = solve_ivp(rhs, (lo, hi - 1e-9), [m0], dense_output=True,
-                        rtol=1e-10, atol=1e-12, method="LSODA", max_step=0.5)
+                        rtol=1e-10, atol=1e-12, method=METHOD, max_step=0.5)
         sel = (ts >= lo) & (ts < hi)
         if sel.any():
             out[sel] = sol.sol(ts[sel])[0]
@@ -114,10 +116,15 @@ def main():
     print("=" * 78)
     print("C1 (b)  finite difference of the ODE SOLUTION m(t), full integration")
     print("=" * 78)
-    # three dose cycles is enough: the question is the COLUMN, and integrating
-    # two years of a discontinuous dose train buys nothing but wall clock.
-    T = 42.0
-    ts = np.array([1.0, 3.0, 7.0, 13.0, 15.0, 20.0, 29.0, 41.0])
+    # Three dose cycles is enough for the COLUMN, and runs in seconds. The full
+    # two-year record was also run, with Radau instead of LSODA, and agrees to
+    # five figures at the shared sample points; pass --full to repeat it.
+    if FULL:
+        T = 730.0
+        ts = np.array([1.0, 3.0, 7.0, 13.0, 40.0, 200.0, 400.0, 729.0])
+    else:
+        T = 42.0
+        ts = np.array([1.0, 3.0, 7.0, 13.0, 15.0, 20.0, 29.0, 41.0])
     base, dth, dkm = fd_state(ts, T)
     print(f"{'t [d]':>7} {'m(ODE)':>9} {'m(QS)':>9} | {'FD dm/dlnKm':>13} "
           f"{'pub pred':>11} {'corr pred':>11} | {'rel err pub':>12} {'rel err corr':>13}")
