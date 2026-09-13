@@ -19,49 +19,14 @@ than a setting. A random walk on $\theta$ manufactures a finite stationary covar
 direction the data may never see, which is precisely the error this note exists to warn
 about; with \eqref{eq:infofilter}, what does not collapse stays visibly uncollapsed.
 
-\subsection{Why the priors are what they are, before they are chosen}
-\label{sec:whypriors}
-
-The footing below places a prior on $k_e$, none on $K_m$ and none on $\theta$, and that
-looks arbitrary until one fact from Proposition~\ref{prop:rank} is put next to one fact
-about conditioning. They are different facts and the argument needs both.
-
-The exact fact. The null vector \eqref{eq:nullvec} is
-$(L + k_e K_m,\, -K_m,\, 0,\, L)$ in $(\theta, K_m, k_e, b)$. Its third entry is zero, so
-the degenerate direction lies entirely in capacity, affinity and the load bias, and $k_e$
-is not in it.
-
-The conditioning fact. $k_e$ escapes the identity, but only just. Regressing each
-design column on the others leaves residuals of $10^{-14}$ for $\ln\theta$, $\ln K_m$ and
-the load bias (that is the identity, to machine precision) against
-$3.7\times10^{-3}$ for $\ln k_e$, a column that is \emph{nearly}, not exactly, dependent on
-the rest. So there is one exact identity and no second, \emph{and} $k_e$ is the
-worst-conditioned of the directions that survive it.
-
-Together they decide every prior in this note, and they decide it the way round
-that is easy to get backwards.
-\begin{itemize}[leftmargin=*, itemsep=2pt]
-\item \textbf{$K_m$ lies \emph{inside} the exact degeneracy, so a prior on it cannot help.}
-It is not that $K_m$ is well known (Remark~\ref{rem:no_km} says no literature value is
-usable) but that tightening it moves nothing, because the degeneracy is a direction in
-which $K_m$ trades against $\theta$ and the load bias together. A prior twenty times
-looser changes $\operatorname{sd}(\ln\hat\theta)$ in the fourth decimal, and removing it
-changes nothing at all. This is a reason, not a convenience, and it is why the
-note can decline to import a constant it has no right to.
-\item \textbf{$k_e$ lies just \emph{outside} it, so a prior on it does all the work.}
-Removing it takes the same design from $0.1474$ to $0.6451$. A direction that is nearly
-dependent is exactly the case where a modest prior buys a great deal, and it is the only
-such direction here.
-\item \textbf{$\theta$ is the target and carries no prior}, because a prior on the
-estimand would be assuming the answer.
-\end{itemize}
-
-So the one thing this note asks the literature for is the one thing the geometry
-says is worth asking for. A control study that pinned $K_m$ to one per cent would buy six
-per cent (Section~\ref{sec:spec}); $k_e$ within a factor of about three is what the gate
-actually needs. The pattern of priors is read off the null vector, not chosen for
-convenience, and a reader who wants to check the design's dependence on prior information
-should check that vector rather than the priors.
+\paragraph{Why these priors and not others.} The choice below looks arbitrary until one
+fact from Proposition~\ref{prop:rank} is put beside one fact about conditioning. The null
+vector \eqref{eq:nullvec} has a zero in its $k_e$ slot, so the degenerate direction is
+capacity, affinity and the load bias and $k_e$ is not in it; but $k_e$ escapes that identity
+only just, its column being nearly rather than exactly dependent on the rest. So $K_m$ lies
+\emph{inside} the exact degeneracy, where no prior on it can help, and $k_e$ lies just
+outside, where a modest one does all the work. The full argument, with the regression
+residuals that separate the two cases, is in the supplement, \S S1.
 
 \paragraph{The footing, stated once and used everywhere.} Four choices decide every number
 in this section, and earlier drafts of this note did not hold them fixed.
@@ -246,7 +211,7 @@ schedule that factor ranges over $2.64$ and supplies forty-two times what the ma
 does; under a constant infusion it is a constant, the therapy channel contributes
 \emph{nothing}, and the design falls back on the marker excursion alone, which
 Section~\ref{sec:excursion_table} shows is unavailable at the magnitude required. The same
-fact appears again in Proposition~\ref{prop:exchange}: a constant increment is absorbed into
+fact appears again in the channel-exchange result of supplement \S S1: a constant increment is absorbed into
 the amplitude it rides on and breaks no channel exchange, so it would not protect a model
 whose alternative channel saturates either.
 
@@ -373,7 +338,7 @@ that it makes the \emph{sign of the margin} decidable, and it does not.
 \midrule
 fixed operating point, $n=9$ (the old design) & $6.9\% \pm 1.7$ & $44.0\% \pm 3.2$ & $4900$ \\
 monthly across dose cycles, $n=25$            & $19.1\% \pm 2.1$ & $41.6\% \pm 2.5$ & $2200$ \\
-\quad the same, increment known only to $11.7\%$ & $19.1\% \pm 1.7$ & $42.3\% \pm 2.9$ &, \\
+\quad the same, increment known only to $11.7\%$ & $19.1\% \pm 1.7$ & $42.3\% \pm 2.9$ & n/a \\
 \bottomrule
 \end{tabular}
 \end{center}

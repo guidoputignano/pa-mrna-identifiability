@@ -49,7 +49,8 @@ by hand: \texttt{StructuralIdentifiability.jl} returns \emph{globally identifiab
 eight configurations of this model, time-varying load, constant load, two patients
 sharing population constants, a null-genotype anchor, carnitine as a known input, therapy
 as a known input, and a two-state carnitine model in which the second state is never
-observed. The single exception is Section~\ref{sec:modelB}.
+observed. The single exception is the variant in which both clearance channels saturate,
+which Remark~\ref{rem:modelB} states and the supplement, \S S1, proves.
 
 So the information is present in the system, and the sampling regime is what
 destroys it. Structural identifiability is a statement about the exact, noiseless,
@@ -307,124 +308,23 @@ here: \eqref{eq:dosereq} is stated in units of $\theta$, and the ratio $\Delta/\
 only as well known as $\Delta$ is. Section~\ref{sec:spec} turns that into the single number
 the design now turns on: how precisely the delivered increment has to be characterised. It is the one requirement this note cannot discharge from published data.
 
-\subsection{Where the linear alternative channel is load-bearing, and what separates two channels in general}
-\label{sec:modelB}
+\begin{remark}[The linear alternative channel is a modelling choice, and not an innocuous one]
+\label{rem:modelB}
+The alternative clearance has been linear since \eqref{eq:local}. If it saturated instead,
+so that both routes carried the same functional form, capacity and alternative clearance
+would be exchangeable: the configuration is the only one in this note's set that
+\texttt{StructuralIdentifiability.jl} does not return as globally identifiable, and its
+fibre is an exact two-point set that no quantity of noiseless data separates. A known input
+on one channel removes that exchange only if the input \emph{varies}; a constant increment
+is absorbed into the amplitude it rides on and separates nothing.
 
-The alternative channel has been linear since \eqref{eq:local}, and it has been treated as
-a convenience. It is not one. Replacing it by a saturating channel, so that both routes
-carry the \emph{same} functional form,
-\begin{equation}
-\dot m \;=\; L(t) + L_0 \;-\; \bigl(\theta + \Delta(t)\bigr)\frac{m}{K_m + m}
-\;-\; k_e\, \frac{m}{K_e + m},
-\label{eq:modelB}
-\end{equation}
-produces the only configuration in this note's set that
-\texttt{StructuralIdentifiability.jl} does not return as globally identifiable. With
-$\Delta \equiv 0$ it returns \emph{locally} identifiable, and the identifiable functions
-are
-\begin{equation}
-k_e + \theta, \qquad K_e + K_m, \qquad k_e\theta, \qquad K_e K_m, \qquad
-K_e\theta + K_m k_e,
-\label{eq:Binvariants}
-\end{equation}
-every one invariant under the exchange $(\theta, K_m) \leftrightarrow (k_e, K_e)$ and
-nothing else in the list. The fibre is a \emph{two-point set}: the true parameter and its
-channel-swapped image, which no quantity of noiseless data separates.
-
-Read the direction of that correctly, because it is a limit on this note and not a
-result in its favour. The note's own model escapes the exchange for a reason that is
-almost bookkeeping: its two channels are not two members of one parameterised family. The
-enzymatic term carries $(\theta, K_m)$ and the alternative term carries $k_e$ alone, so
-there is no permutation of $(\theta, K_m, k_e)$ that exchanges them and nothing to break.
-The tool confirms it, saturating plus linear, with no input at all, returns globally
-identifiable.
-
-An earlier version of this section argued the same conclusion from the limit
-$\lim_{K_e \to \infty} k_e K_e\, m/(K_e+m) = k_e m$: that the linear channel is a
-saturating one with an infinite constant, so the two shapes differ. That reasoning
-is withdrawn. The limit is singular: it holds $k_e K_e$ fixed while $K_e$ grows, and
-$K_e = \infty$ is not a value of a positive parameter, so it does not place the two channels
-in one family and ``the shapes differ'' is not what the argument turns on. What it turns on
-is that there is no permutation available at all.
-
-And the limit cuts the other way, which is the part worth keeping.
-\eqref{eq:modelB} contains \eqref{eq:local} only as a boundary case, and at any
-\emph{finite} $K_e \neq K_m$ with no selective input the exchange is present and exact.
-The note's freedom from it is therefore a property of the linearisation, not
-evidence that the linearisation was harmless.
-
-\subsubsection{What separates two channels, in general}
-\label{sec:exchange}
-
-The mechanism is not specific to two Michaelis--Menten channels, and stating it generally
-is what makes the limit above precise. Let an observed ordinate be a sum of $n$ channels
-sharing one functional form $f$, each with its own amplitude, its own shape constant, and
-its own \emph{known} input riding on the amplitude:
-\begin{equation}
-C(m,t) \;=\; \sum_{i=1}^{n} \bigl(a_i + \Delta_i(t) \bigr)\, f(m; K_i).
-\label{eq:nchannel}
-\end{equation}
-Permuting the parameter pairs and reindexing gives, for \emph{any} $f$ and any $n$,
-\begin{equation}
-C(p^\pi) - C(p) \;=\; \sum_j \bigl(\Delta_{\pi^{-1}(j)} - \Delta_j \bigr)\, f(m; K_j).
-\label{eq:permdiff}
-\end{equation}
-The amplitudes cancel identically: permuting the pairs does not change the multiset of
-parameters, it changes only \emph{which known input is glued to which shape}. If the
-$f(\cdot;K_i)$ are linearly independent, for Michaelis--Menten with distinct positive
-$K_i$, by clearing $\prod_j(K_j+m)$ and evaluating at $m = -K_i$: each coefficient must
-vanish separately.
-
-\begin{proposition}[Channel exchange]
-\label{prop:exchange}
-In \eqref{eq:nchannel}, with the $K_i$ pairwise distinct, $f$ injective in $K$, and
-$\{f(\cdot;K_i)\}$ linearly independent, the exchange of channels $i$ and $j$ is an
-observational symmetry unless both
-\begin{equation}
-\Delta_i - \Delta_j \ \text{ is non-constant in } t
-\qquad\text{and}\qquad
-f(\cdot\;K_i) \not\equiv f(\cdot\;K_j).
-\label{eq:twofactors}
-\end{equation}
-The residual symmetry group is the permutations preserving the inputs \emph{up to an
-additive constant}, and the fibre has $\prod_B |B|!$ points, $B$ running over those blocks.
-\end{proposition}
-
-Both factors are needed, and the input factor is about variation rather than
-presence. A constant known increment breaks nothing: because $a_i$ is itself an additive
-constant on channel $i$, the swap is repaired by $a_1' = a_2 - c$, $a_2' = a_1 + c$, and
-the observation is reproduced exactly. The tool agrees, and this is the sharper test of the
-proposition: \eqref{eq:modelB} with a known \emph{constant} increment on the enzymatic
-channel returns locally, not globally, identifiable, with identifiable functions
-$a_1+a_2$, $K_1+K_2$, $K_1K_2$, $a_1a_2 + c\,a_2$ and $K_1a_2 + K_2a_1 + c\,K_2$, which are
-precisely the invariants of that shifted swap. With a time-varying increment it returns
-globally identifiable.
-
-Two consequences that the two-channel case conceals. First, a single selective
-input resolves the exchange only when $n = 2$; at $n \ge 3$ it breaks every transposition
-involving the driven channel and leaves $S_{n-1}$ untouched, so the fibre falls from $n!$
-to $(n-1)!$ rather than to one. Verified: three saturating channels with a varying input on
-the first return $a_1$ and $K_1$ globally identifiable and $a_2, a_3, K_2, K_3$ only
-locally, with the five $S_2$ invariants of the two undriven channels: the same five as
-\eqref{eq:Binvariants}, now sitting one level down. Second, identical inputs on two
-channels separate neither: a selective input must be selective \emph{pairwise}.
-
-The two-factor condition \eqref{eq:twofactors} is the same shape as everything else
-in this section, and the echo is worth naming. The sensitivity ratio of
-Section~\ref{sec:therapychannel} is $-(1 + \Delta/\theta)\,\varphi(m)$, a product in which
-the therapy supplies one factor and the marker's position supplies the other.
-Proposition~\ref{prop:rank} closes on load \emph{variability} and not on load precision.
-Proposition~\ref{prop:exchange} closes on input \emph{variation} and not on input presence.
-Three different degeneracies, and in every one what does the separating is a
-difference that moves, not a quantity that is large or a measurement that is precise.
-
-What this licenses, stated narrowly. \eqref{eq:modelB} is not the model used
-anywhere else here. What the proposition adds is a scope statement the note owes a reader:
-if the alternative clearance route saturates on the marker's own scale, identification
-acquires an exact two-point degeneracy that no record removes, and the therapy then becomes
-load-bearing for something this note otherwise gets for free, with a constant infusion
-insufficient, and the biweekly train's decay exactly what is required. That is a condition
-on a future study's model, not a repair to this one.
+This note's own model escapes the exchange because its two channels are not two members of
+one parameterised family, so no permutation of $(\theta, K_m, k_e)$ exchanges them. But the
+saturating model contains this one only as a boundary case, and at any finite $K_e \neq K_m$
+the exchange is exact, so the freedom is a property of the linearisation rather than
+evidence that the linearisation was harmless. The general statement, its proof, and what it
+costs this note are in the supplement, \S S1.
+\end{remark}
 
 \subsection{The obstruction has a closed form, and it names its own cure}
 \label{sec:rank}
@@ -513,7 +413,7 @@ sample-independent constant can bring it into a dependence. Third, the identity 
 
 The second of those is about the \emph{exact} identity and says nothing about conditioning.
 The two must not be run together, and keeping them apart is what accounts for the pattern
-of priors the next section adopts; Section~\ref{sec:whypriors} states it there, where the
+of priors the next section adopts; the supplement, \S S1, states it there, where the
 priors are chosen.
 
 The identity is checked two ways, deliberately by routes with no shared code. Numerically
@@ -550,7 +450,7 @@ An earlier version of this passage continued that prior-free
 $\operatorname{sd}(\ln\hat\theta)$ falls to $0.054$ at a $2\%$ coefficient of variation and
 $0.023$ at $10\%$. Those two numbers are withdrawn. They reproduce only on the
 two-daily design of $365$ samples \emph{with $k_e$ held exactly known}: a footing this
-note disowns in Section~\ref{sec:whypriors} and which the design module's own documentation
+note disowns in the supplement, \S S1, and which the design module's own documentation
 reserves for the audit rather than for a headline. On the footing this note claims: the accessible monthly design, a log-prior of $0.8$ on $\ln k_e$: the same quantities
 are $0.234$ and $0.172$.
 
