@@ -7,37 +7,39 @@ acids, odd-chain fatty acids and propionate from intestinal flora converge on
 propionyl-CoA, which propionyl-CoA carboxylase (PCC) carboxylates onward into the
 tricarboxylic acid cycle. When PCC is defective the intermediate accumulates, spills into
 alternative routes, and periodically overwhelms them: the patient decompensates, with
-hyperammonaemia and metabolic acidosis. Decompensations are frequent --- $49$ of $50$
+hyperammonaemia and metabolic acidosis. Decompensations are frequent, $49$ of $50$
 participants in a natural history cohort reported at least one, at a mean annualised
-frequency of $1.0$~\cite{natural_history} % C08
---- and they carry the neurological damage that defines the disease's course.
+frequency of $1.0$~\cite{natural_history}, % C08
+and they carry the neurological damage that defines the disease's course.
 
 mRNA enzyme replacement supplies PCC transiently~\cite{trial_phase12}. % C16
 The clinical decision it creates is a \emph{dosing interval}, and the interval is set by a
 quantity nobody measures: the patient's residual enzymatic capacity, written $\theta$
 throughout. A patient with more residual capacity needs less frequent replacement.
 
-\textbf{This note asks a narrow question and answers it.} Given a clinical record of the
-kind the disease actually generates --- a marker series, a dosing diary, a dietary record
---- \emph{can $\theta$ be identified, and does identifying it decide anything?} The answer
+This note asks a narrow question and answers it. Given a clinical record of the
+kind the disease actually generates (a marker series, a dosing diary, a dietary record) \emph{can $\theta$ be identified, and does identifying it decide anything?} The answer
 is in four parts, and the second is the one that determines what a protocol should do.
 
 \begin{enumerate}[leftmargin=*, itemsep=3pt]
-\item \textbf{$\theta$ is identifiable, the obstruction is a sampling regime rather than a
-structure, and the therapy is what removes it.} The model is globally structurally
-identifiable under a generic trajectory, so the information is in the system; what a
-monthly clinic record loses is the transient, because the marker settles in about $0.8$~h
-against a therapeutic half-life of $3.5$~days. On the quasi-steady locus that remains, the
-obstruction has an exact closed form --- a rank-one identity whose null direction is
-capacity, affinity and the unrecorded load, with the alternative clearance provably absent
-from it --- and it names its own cure. The excitation that closes it is supplied not by the
-marker's excursions but by the dose train the trial already administers, at forty-two times
-the marker band's contribution. One scheduling choice destroys it: sampling on dosing days
-costs a factor of twenty-two, and moving the schedule half a day recovers it
-(Sections~\ref{sec:excitation} and~\ref{sec:designsec}). \textbf{The corollary is a limit on
-reach rather than on precision:} the excitation comes from the dose train, nothing else
-supplies enough of it, and so the design applies to patients receiving the therapy and to no
-one else (Section~\ref{sec:whoto}).
+\item \textbf{The dose train is the identification experiment, and it is already being
+run.} The therapy is administered on a fixed biweekly schedule and read as treatment; it is
+also a known, exogenous, selective input on exactly the parameter in question, and it
+supplies forty-two times the excitation the marker's own excursions do. That is what makes
+$\theta$ identifiable: monthly outpatient draws across dose cycles reach $17\%$ over two
+years. One scheduling choice destroys it, and it is the choice a protocol would make for
+convenience: sampling on dosing days, or at any multiple of the dose interval, costs a
+factor of twenty-two, and moving the schedule half a day recovers it
+(Sections~\ref{sec:excitation} and~\ref{sec:designsec}).
+
+The obstruction is why this works rather than a finding in its own right. The model is
+globally structurally identifiable, so the information is in the system; what a monthly
+record loses is the transient. On the quasi-steady locus that remains, the degeneracy has
+an exact closed form, a rank-one identity in capacity, affinity and the unrecorded load,
+and that identity names the input that closes it. The corollary is a limit on reach
+rather than on precision: nothing but the dose train supplies enough excitation, so the
+design applies to patients receiving the therapy and to no one else
+(Section~\ref{sec:whoto}).
 \item \textbf{Identifying $\theta$ does not decide the dosing interval.} The decision is
 usually posed as the sign of $\mu = \theta - \thc$ against a critical capacity. That
 threshold is not a measured quantity: it is defined through two chosen constants, and
@@ -49,15 +51,15 @@ as a finding rather than adopting a replacement estimand, for reasons given in
 Section~\ref{sec:decision}.
 \item \textbf{And capacity stops being recoverable exactly where it matters most.} Above
 roughly three to four times the managed marker level, two patients differing tenfold in
-residual capacity are indistinguishable --- which is the severely affected population
+residual capacity are indistinguishable, which is the severely affected population
 (Section~\ref{sec:scope}).
 \end{enumerate}
 
-\textbf{What this note is not.} It is a statement about identifiability, a property of a
+What this note is not. It is a statement about identifiability, a property of a
 model and a design together. It is not a statement about patients, and
 Section~\ref{sec:discussion} says plainly where the model's own analysis questions its
 validity. The biological background, the disease's clinical course and the argument for
-treating $\theta$ as the decision variable are in Appendix~\ref{sec:supp}.
+treating $\theta$ as the decision variable are in the supplement, \S S1.
 
 \vspace{0.5em}
 \hrule

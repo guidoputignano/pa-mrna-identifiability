@@ -29,12 +29,19 @@ refs:
 	$(PY) tools/fetch_refs.py
 	$(PY) tools/claims_to_tex.py
 
+# The paper and the supplement are separate documents. The supplement imports
+# the paper's labels with xr, so the paper MUST be built first; the paper cites
+# the supplement by section number in prose, so there is no cycle to iterate.
 paper: refs
 	cd paper && $(LATEX) -interaction=nonstopmode main.tex >/dev/null
 	cd paper && biber main >/dev/null
 	cd paper && $(LATEX) -interaction=nonstopmode main.tex >/dev/null
 	cd paper && $(LATEX) -interaction=nonstopmode main.tex >/dev/null
-	@echo ">> built $(PAPER).pdf"
+	cd paper && $(LATEX) -interaction=nonstopmode supplement.tex >/dev/null
+	cd paper && biber supplement >/dev/null
+	cd paper && $(LATEX) -interaction=nonstopmode supplement.tex >/dev/null
+	cd paper && $(LATEX) -interaction=nonstopmode supplement.tex >/dev/null
+	@echo ">> built $(PAPER).pdf and paper/supplement.pdf"
 
 symbolic:
 	@echo "Structural identifiability requires Julia:"

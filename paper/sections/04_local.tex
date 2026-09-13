@@ -47,7 +47,7 @@ curve at the plasma level, fitted here (Remark~\ref{rem:no_km_orig}).
 \draw[mar] (m.south) -- ++(0,-0.55) -| (alt.north);
 
 \node[msmall] (o1) at (-2.3,-5.0) {eliminated};
-\node[msmall] (o2) at ( 2.3,-5.0) {eliminated};
+\node[msmall] (o2) at (2.3,-5.0) {eliminated};
 \draw[mar] (enz) -- (o1);
 \draw[mar] (alt) -- (o2);
 
@@ -71,15 +71,15 @@ and the identification problem cannot tell which one moved the patient.}
 \subsubsection{Assumptions}
 
 Three assumptions, stated here and warranted in Appendix~\ref{sec:supp}.
-\textbf{Constancy}: $\theta$ is constant over the afebrile range, which is a restriction the
+Constancy: $\theta$ is constant over the afebrile range, which is a restriction the
 kinetics require, since variant PCCs are \emph{less} thermostable than wild
 type~\cite{pcc_variants_kinetics} % C22
 and would therefore be at their weakest when the load is at its highest.
-\textbf{Population parameters}: $K_m$ and $k_e$ do not vary with genotype and may be
+Population parameters: $K_m$ and $k_e$ do not vary with genotype and may be
 estimated once across the cohort, motivated for $K_m$ by the absence of a significant in
 vitro difference between variant and wild-type enzyme~\cite{pcc_variants_kinetics} % C21
-and for $k_e$ by the alternative channel not involving PCC --- weakened by carnitine being
-administered at patient-specific doses. \textbf{Observable proxy}: the measured marker
+and for $k_e$ by the alternative channel not involving PCC, weakened by carnitine being
+administered at patient-specific doses. Observable proxy: the measured marker
 stands in for the intracellular substrate, which is a shortcut, since the true system has at
 least two states with an uncertain map between them.
 
@@ -93,7 +93,7 @@ is built around, because the three candidates differ in whether they are associa
 endpoint at all. The choice is fixed here, and the reasons are decision-relevant rather than
 analytical.
 
-\textbf{The endpoint.} Over a three-year natural history cohort, a $50\%$ \emph{lower}
+The endpoint. Over a three-year natural history cohort, a $50\%$ \emph{lower}
 plasma 3-HP is associated with a decompensation rate ratio of $0.7$ (95\% CI $0.6$ to $0.9$,
 $p<0.01$); a $50\%$ lower C3 with $0.6$ ($p=0.017$); and 2-methylcitrate shows no
 association at all, rate ratio $1.0$, $p=0.84$~\cite{natural_history}. % C19
@@ -102,7 +102,7 @@ way inverts the conclusion. The ratio is attached to a lower concentration, so a
 below one means \emph{fewer events when the marker is lower}: 3-HP is a risk marker in the
 expected direction for a toxic overflow metabolite, not a protective one.
 
-\textbf{C3 is excluded on the perturbation, and the argument is mechanistic.} C3 is
+C3 is excluded on the perturbation, and the argument is mechanistic. C3 is
 propionylcarnitine, the product of the carnitine conjugation route. Carnitine
 supplementation therefore \emph{raises} C3 while lowering the organic acids, so the
 selective perturbation of Section~\ref{sec:selective} enters the observation with the wrong
@@ -110,14 +110,14 @@ sign on that channel: the input the whole identification rests on would appear t
 patient. No arrangement of the algebra repairs that, and it disqualifies C3 whatever its
 rate ratio.
 
-\textbf{2-MC is excluded on the endpoint, and its strength lies in the arm this note
-excludes.} 2-MC is among the strongest correlates of plasma ammonia \emph{during} an
+2-MC is excluded on the endpoint, and its strength lies in the arm this note
+excludes. 2-MC is among the strongest correlates of plasma ammonia \emph{during} an
 event~\cite{amd_phenotyping}, % C37
 and by Remark~\ref{rem:scope} the behaviour through a decompensation is precisely where the
 analysis here does not go. A marker that tracks the current crisis and a marker that
 predicts the next one need not be the same marker, and this note is about the second.
 
-\textbf{3-HP carries C3's immunity without its defect.} It is not a carnitine conjugate, so
+3-HP carries C3's immunity without its defect. It is not a carnitine conjugate, so
 the sign argument above does not touch it; it has the association with the endpoint that
 2-MC lacks; and it is the covariate the natural history study's own longitudinal hazard is
 already fitted on~\cite{natural_history}, % C28
@@ -140,8 +140,8 @@ the regime where the assay term dominates, which is where the load is well recor
 pays nothing where it is not. At a load recorded to $2\%$ a four-marker panel cuts $\sigma$
 by $1.65$; at $10\%$ it cuts it by $1.07$ and at $20\%$ by $1.02$.
 
-The recommendation is therefore conditional and in that order: \textbf{buy the load record
-first, and the panel only after}. A panel bought first is bought against a noise term it
+The recommendation is therefore conditional and in that order: buy the load record
+first, and the panel only after. A panel bought first is bought against a noise term it
 cannot touch. Fitting the four channels also costs three gains, and two of the four are
 excluded above on grounds the averaging does not repair, so the honest version of the panel
 is 3-HP and $n$-propionylglycine, a glycine conjugate that carnitine does not raise, with
@@ -150,8 +150,7 @@ $J = 2$ and a factor of $1.31$ at a load recorded to $2\%$, falling to $1.05$ at
 
 \subsubsection{The obstruction, and what kind it is}
 
-The obstruction below is one of \emph{conditioning}, not of structure ---
-Section~\ref{sec:regime} makes the distinction and Remark~\ref{rem:twosenses} disambiguates
+The obstruction below is one of \emph{conditioning}, not of structure. Section~\ref{sec:regime} makes the distinction and Remark~\ref{rem:twosenses} disambiguates
 the word. What follows is a statement about the range of metabolite levels a record
 actually contains. An earlier heading here called it structural, which it is not.
 
@@ -161,15 +160,15 @@ visits between clinic visits. Clinical management exists to keep $M$ narrow. The
 obstruction is stated as a property of that range.
 
 \paragraph{Two conventions, fixed here because everything downstream turns on them.}
-$\Delta = m_{\max} - m_{\min}$ is the \textbf{full width} of $M$, not a half-width, and
+$\Delta = m_{\max} - m_{\min}$ is the full width of $M$, not a half-width, and
 $\bar m$ is the point the affine fit is taken at and the sample mean of the band. Together
 they carry a constraint that Section~\ref{sec:design} previously walked past. The
 metabolite cannot be negative, so $m_{\min} \ge 0$ and
 \begin{equation}
-\frac{\Delta}{\bar m} \;\le\; 2 .
+\frac{\Delta}{\bar m} \;\le\; 2.
 \label{eq:bandceiling}
 \end{equation}
-\textbf{A band wider than twice the operating point does not exist.} Design figures quoted
+A band wider than twice the operating point does not exist. Design figures quoted
 as band widths above $200\%$ of $\bar m$ describe an interval whose foot is below zero, and
 Section~\ref{sec:design} is where that matters.
 
@@ -185,7 +184,7 @@ about and is not negligible in the wide band it recommends buying.
 Suppose that over the observed range $M$ the clearance is indistinguishable from an affine
 function at the resolution of the assay: there exist constants $a$ and $b$ with
 \begin{equation}
-\sup_{m \in M} \bigl| C(m) - (a + b\,m) \bigr| \;\le\; \varepsilon ,
+\sup_{m \in M} \bigl| C(m) - (a + b\,m) \bigr| \;\le\; \varepsilon,
 \label{eq:affine}
 \end{equation}
 $\varepsilon$ being the measurement error. ($a$ and $b$ below are the tangent coefficients
@@ -194,11 +193,11 @@ Then data collected while the patient remains in $M$ determine $a$ and $b$, and 
 beyond them. With $\bar m \in M$ the point at which
 the fit is taken, the two coefficients are
 \begin{equation}
-a \;=\; \theta\,\bigl(g(\bar m) - \bar m\, g'(\bar m)\bigr) \;=\; \theta\, g(\bar m)^2 ,
+a \;=\; \theta\,\bigl(g(\bar m) - \bar m\, g'(\bar m)\bigr) \;=\; \theta\, g(\bar m)^2,
 \label{eq:intercept}
 \end{equation}
 \begin{equation}
-b \;=\; \theta\, g'(\bar m) \;+\; k_e .
+b \;=\; \theta\, g'(\bar m) \;+\; k_e.
 \label{eq:slope}
 \end{equation}
 The slope is a single scalar carrying $\theta$ and $k_e$ with the \emph{same} sign, and no
@@ -220,7 +219,7 @@ k_e(K_m) = b - \frac{a\,K_m}{\bar m^{2}},
 \end{equation}
 the upper bound being where $k_e$ reaches zero.
 
-\textbf{How wide the fibre is, in closed form and in observable quantities.} Evaluating
+How wide the fibre is, in closed form and in observable quantities. Evaluating
 \eqref{eq:fibre0} at its two endpoints, the span of $\theta$ is
 \begin{equation}
 \frac{\theta(K_{\max})}{\theta(0^+)}
@@ -230,10 +229,10 @@ the upper bound being where $k_e$ reaches zero.
 \end{equation}
 the second equality because the tangent satisfies $a + b\,\bar m = C(\bar m)$. At steady
 state $C(\bar m)$ is the \emph{recorded load} and $a$ is the \emph{fitted intercept}, so
-both are observable and \textbf{the span is computable for a given patient without knowing a
-single parameter}. It is the square of the ratio of the load the patient carries to the part
+both are observable and the span is computable for a given patient without knowing a
+single parameter. It is the square of the ratio of the load the patient carries to the part
 of the clearance curve that extrapolates back to the origin, so it is large exactly when the
-operating point sits far down the saturation curve --- which is where management puts it.
+operating point sits far down the saturation curve, which is where management puts it.
 
 At the illustrative values this is $(322.7/24.79)^2 = 169$, which is the factor this note
 used to quote as an illustration. It is not an illustration: it is a per-patient diagnostic,
@@ -275,9 +274,9 @@ $M$ does not contain the origin. For a least-squares affine fit to $n$ points $m
 independent errors of standard deviation $\sigma$,
 \begin{equation}
 \operatorname{Var}(\hat a) \;=\; \sigma^2\!\left[\frac{1}{n} +
-\frac{\bar m^2}{\sum_i (m_i - \bar m)^2}\right] ,
+\frac{\bar m^2}{\sum_i (m_i - \bar m)^2}\right],
 \qquad
-\operatorname{Var}(\hat b) \;=\; \frac{\sigma^2}{\sum_i (m_i - \bar m)^2} .
+\operatorname{Var}(\hat b) \;=\; \frac{\sigma^2}{\sum_i (m_i - \bar m)^2}.
 \label{eq:varfit}
 \end{equation}
 Both scale as the reciprocal of $\sum_i (m_i - \bar m)^2$, and their ratio tends to
@@ -288,7 +287,7 @@ the $n$ samples spread across it, $\sum_i (m_i - \bar m)^2 \approx n\Delta^2/12$
 $\Delta \ll \bar m$,
 \begin{equation}
 \frac{\operatorname{sd}(\hat\theta)}{\theta} \;\approx\;
-\frac{\sigma}{\theta}\;\sqrt{\frac{12}{n}}\;\frac{\bar m}{\Delta}\;g(\bar m)^{-2} .
+\frac{\sigma}{\theta}\;\sqrt{\frac{12}{n}}\;\frac{\bar m}{\Delta}\;g(\bar m)^{-2}.
 \label{eq:thetaerr}
 \end{equation}
 Three factors multiply the assay's own relative error. The sample count enters as
@@ -330,8 +329,8 @@ which happens when the enzyme is appreciably nearer saturation at $m_{\max}$ tha
 $m_{\min}$. A narrow $M$ cannot deliver that: over a short interval every smooth curve looks
 straight. Widening $M$ is the only route, and it means letting the metabolite climb, which
 is the beginning of a decompensation. The information the identification needs and the excursion clinical
-management exists to prevent are the same thing. \textbf{Condition \eqref{eq:affine} is a
-property of a particular patient's record}, and it can be checked against that record
+management exists to prevent are the same thing. Condition \eqref{eq:affine} is a
+property of a particular patient's record, and it can be checked against that record
 directly.
 
 \begin{remark}[The scale on which this is stated]
@@ -372,7 +371,7 @@ therefore acts on $k_e$, leaving $\theta$ untouched. Writing the increment as
 $\kappa\, u_c(t)$ with $u_c$ the recorded dose,
 \begin{equation}
 k_e(t) \;=\; \underbrace{k_e}_{\text{unknown}} \;+\;
-\underbrace{\kappa\, u_c(t)}_{\text{known up to }\kappa} .
+\underbrace{\kappa\, u_c(t)}_{\text{known up to }\kappa}.
 \label{eq:input_carn}
 \end{equation}
 Carnitine is administered to \emph{every} patient in the accessible cohort and its dose is
@@ -381,7 +380,7 @@ recorded in the chart.
 untouched:
 \begin{equation}
 \theta(t) \;=\; \underbrace{\theta_{\mathrm{base}}}_{\text{unknown}}
-\;+\; \underbrace{D \sum_i e^{-\lambda (t - t_i)} \mathbf{1}_{\{t \ge t_i\}}}_{\text{known: } \Delta(t)} .
+\;+\; \underbrace{D \sum_i e^{-\lambda (t - t_i)} \mathbf{1}_{\{t \ge t_i\}}}_{\text{known: } \Delta(t)}.
 \label{eq:input}
 \end{equation}
 This input is investigational and is not administered to any accessible patient.
@@ -403,7 +402,7 @@ and under therapy,
 \begin{equation}
 \begin{aligned}
 s &= \theta\, g(m) \;+\; k_e\, m, \\
-s &= \theta\, g(m') \;+\; k_e\, m' \;+\; \Delta\, g(m') .
+s &= \theta\, g(m') \;+\; k_e\, m' \;+\; \Delta\, g(m').
 \end{aligned}
 \label{eq:twoeq}
 \end{equation}
@@ -412,18 +411,18 @@ In both cases these are two linear equations in the unknown pair $(\theta, k_e)$
 both cases the coefficient matrix is the same,
 \begin{equation}
 M \;=\;
-\begin{pmatrix} g(m) & m \\[2pt] g(m') & m' \end{pmatrix} ,
+\begin{pmatrix} g(m) & m \\[2pt] g(m') & m' \end{pmatrix},
 \qquad
 M \begin{pmatrix} \theta \\ k_e \end{pmatrix}
 = \begin{pmatrix} s \\ s - \delta \end{pmatrix},
 \label{eq:system}
 \end{equation}
 with $\delta = \kappa u_c\, m'$ in the first case and $\delta = \Delta\, g(m')$ in the
-second. \textbf{The perturbation enters the right-hand side only.} Hence
+second. The perturbation enters the right-hand side only. Hence
 
 \begin{equation}
 \det M \;=\; g(m)\,m' - g(m')\,m
-\;=\; \frac{m\,m'\,(m' - m)}{(K_m + m)(K_m + m')} .
+\;=\; \frac{m\,m'\,(m' - m)}{(K_m + m)(K_m + m')}.
 \label{eq:det}
 \end{equation}
 
@@ -447,7 +446,7 @@ Both restrictions have been checked against the trajectory, because the use the 
 of the proposition -- the question posed on carnitine and answered for the therapy --
 quietly drops them.
 
-\textbf{The steady-state restriction is harmless.} Integrating the model with its relative
+The steady-state restriction is harmless. Integrating the model with its relative
 sensitivities and comparing the observability Gramians of two inputs chosen to produce the
 \emph{same} trajectory, the $(\theta, k_e)$ sub-Gramians differ by at most $5\%$ in
 determinant and $2.3\%$ in $\operatorname{sd}(\ln\hat\theta)$, over excursions from $5\%$ to
@@ -456,15 +455,15 @@ $-\theta g(m)$ and $-k_e m$, are functions of the state alone and are therefore 
 channel-blind; the only channel dependence anywhere is the decay rate they share, and at a
 matched trajectory
 \begin{equation}
-J_{\Delta}(t) - J_{u_c}(t) \;=\; -\,\kappa u_c(t)\, g(m(t)) \;\le\; 0 .
+J_{\Delta}(t) - J_{u_c}(t) \;=\; -\,\kappa u_c(t)\, g(m(t)) \;\le\; 0.
 \label{eq:jgap}
 \end{equation}
 The therapeutic input decays the sensitivities more slowly, so it returns the larger
 Gramian, always. Posing the question on carnitine is therefore \emph{conservative}: it
 understates what the therapy would deliver, by a few per cent.
 
-\textbf{The two-parameter restriction is not harmless, and it is the one the note relies
-on.} Adding $K_m$ to the parameter vector -- which is the situation Remark~\ref{rem:fibre}
+The two-parameter restriction is not harmless, and it is the one the note relies
+on. Adding $K_m$ to the parameter vector -- which is the situation Remark~\ref{rem:fibre}
 describes, since the fibre exists precisely because $K_m$ is unknown -- the two \emph{input
 routes} stop being informationally substitutable by six orders of magnitude in $\det G$ and
 by a factor of $46$ to $807$ in $\operatorname{sd}(\ln\hat\theta)$. (That is carnitine
@@ -479,7 +478,7 @@ moves it at will, and carnitine can move it only through $m$. At an operating po
 $\bar m/K_m = 0.1$ the two sensitivities are collinear to $|\!\cos| = 0.99994$ under
 carnitine and $0.967$ under the therapy.
 
-\textbf{So the excursion is channel-blind and the curvature is not.} Carnitine buys the
+So the excursion is channel-blind and the curvature is not. Carnitine buys the
 excursion, which is what Proposition~\ref{prop:channel} says and what is true. It cannot buy
 the separation of $\theta$ from $K_m$ except through the state, and it buys that only by
 carrying the patient into the neighbourhood of $K_m$: moving the operating point from
@@ -549,8 +548,8 @@ by indication, where a therapeutic schedule fixed in advance is exogenous by con
 and is administered to nobody accessible.
 
 The way through is to use only the quasi-exogenous part of the variation in $u_c$. Three
-such instruments are present in routine care, and \textbf{their directions matter more than
-the note previously noticed}: weight-based dose recalculation after growth raises the dose
+such instruments are present in routine care, and their directions matter more than
+the note previously noticed: weight-based dose recalculation after growth raises the dose
 and \emph{lowers} $m$; cyclical intestinal antibiotics lower the load and lower $m$; only a
 supply interruption raises $m$, and its amplitude is set by a stock-out rather than by a
 design. A change of load carries the same determinant as a channel perturbation and costs
@@ -580,7 +579,7 @@ Appendix~\ref{sec:supp} gives each in full, and Table~\ref{tab:excursion} prices
       the safety margin is
       \begin{equation}
       \mu \;=\; \theta - \thc^{\mathrm{A}} \;=\; \theta \;-\; \frac{\spk}{g(\mtol)}
-      \;+\; \frac{k_e \mtol}{g(\mtol)} .
+      \;+\; \frac{k_e \mtol}{g(\mtol)}.
       \label{eq:margin}
       \end{equation}
       Both parameters enter \eqref{eq:margin} with a \emph{positive} coefficient, and
@@ -616,8 +615,8 @@ Appendix~\ref{sec:supp} gives each in full, and Table~\ref{tab:excursion} prices
       \label{eq:window}
       \end{equation}
       with $K_{\max} = b\bar m^{2}/a$, the two roots of $\mu(K_{\max}) = 0$ and
-      $\mu(0) = 0$. \textbf{Outside that window the decision is determined by the data even
-      though $\theta$ is not}, and at the illustrative values $\theta$ is unknown there to a
+      $\mu(0) = 0$. Outside that window the decision is determined by the data even
+      though $\theta$ is not, and at the illustrative values $\theta$ is unknown there to a
       factor of $169$. Inside it no width of band settles the decision, because every point
       of the fibre fits the data equally well and they do not agree on the sign.
 
@@ -658,7 +657,7 @@ The cancellation in \eqref{eq:mufibre} is derived against $\thc^{\mathrm{A}}$ of
 \eqref{eq:thcrit}, which imports $\mtol$, a clinical convention. Proposition
 \ref{prop:intrinsic} defines a threshold that does not. The natural question is whether the
 cancellation survives the substitution, and it does not, for a reason worth stating
-precisely: \textbf{the premise is absent, not the conclusion false}.
+precisely: the premise is absent, not the conclusion false.
 
 The cancellation is a statement about a degeneracy. It says that along the one-parameter
 family a band leaves open, the margin is linear where $\theta$ is quadratic. In the model
@@ -672,15 +671,15 @@ fibre for a margin to be linear along.
 So the margin result is stated here for the operational threshold, and that is a limitation
 rather than a choice. Two things go with it.
 
-First, \textbf{the identity $a = \theta g(\bar m)^2$ is a property of this model and not of
-the one it is a reduction of.} It holds when the alternative channel is linear through the
+First, the identity $a = \theta g(\bar m)^2$ is a property of this model and not of
+the one it is a reduction of. It holds when the alternative channel is linear through the
 origin. Under the parent model the intercept is
 $a = \theta g(\bar m)^2 + [\alpha(\bar m) - \bar m\,\alpha'(\bar m)]$, and at the nominal
 constants the second term is $374$ against the first's $61$. The alternative channel owns
 the intercept there, which is exactly the term the capacity was supposed to be carried by.
 
-Second, \textbf{the intrinsic threshold does not eliminate the convention; it relocates
-it.} What leaves is $\mtol$, an analytical tolerance with nothing behind it. What arrives is
+Second, the intrinsic threshold does not eliminate the convention; it relocates
+it. What leaves is $\mtol$, an analytical tolerance with nothing behind it. What arrives is
 $\alpha$'s constants: $K_c$ and $M_i$, which nothing measures, $\rho_0$, and above all the
 calibration that fixes $R_0$, which is the claim that a patient with no residual enzyme
 cannot be maintained at baseline load. The relocation is a real gain, because that last one
@@ -728,12 +727,12 @@ terms balance when
 \begin{equation}
 b\,\mathrm{CV}\,\bar m \;=\; f\, C(\bar m),
 \qquad\text{i.e.}\qquad
-\mathrm{CV} \;=\; \frac{C(\bar m)}{b\,\bar m}\, f \;\approx\; 1.08\, f ,
+\mathrm{CV} \;=\; \frac{C(\bar m)}{b\,\bar m}\, f \;\approx\; 1.08\, f,
 \label{eq:crossover}
 \end{equation}
 with $f$ the relative error in the recorded load, because $b\bar m$ and $C(\bar m)$ differ
-by under $8\%$ at these values. \textbf{The assay term therefore dominates at every load
-recorded to better than roughly the assay's own coefficient of variation.} An earlier
+by under $8\%$ at these values. The assay term therefore dominates at every load
+recorded to better than roughly the assay's own coefficient of variation. An earlier
 version of this paragraph asserted the reverse without checking it. At a load recorded to
 $2\%$ and a $5\%$ assay the assay term is $14.9$ against the load's $6.5$, and the total
 $\sigma$ is two and a half times what the load alone would give.
@@ -747,7 +746,7 @@ this section recommends buying. Writing $S = \sum_i (m_i - \bar m)^2$,
 \sqrt{\frac{1}{n} + \frac{\bar m^2}{S}}
 \;\;\ge\;\; \frac{c(n)\,\sigma}{a\sqrt n},
 \qquad
-c(n) = \sqrt{1 + \frac{3(n-1)}{n+1}} \;\le\; 2 ,
+c(n) = \sqrt{1 + \frac{3(n-1)}{n+1}} \;\le\; 2,
 \label{eq:floor}
 \end{equation}
 for $n$ evenly spaced samples, the bound following from \eqref{eq:bandceiling} and attained
@@ -757,8 +756,8 @@ between the two ends in the optimal proportion, which is $c(n) \to 1$: an evenly
 is at worst a factor of two off the best use of the same excursion, and neither escapes
 $\sigma/(a\sqrt n)$.
 
-The consequence is a change of kind rather than of value. \textbf{The design requirement
-splits into two pieces that do not trade against each other}: a floor on $n$, set by
+The consequence is a change of kind rather than of value. The design requirement
+splits into two pieces that do not trade against each other: a floor on $n$, set by
 $\sigma$ alone, below which no excursion whatever delivers the precision; and, above that
 floor, a requirement on the excursion. The published version of this section had no floor
 in it, and so could quote band widths of $460\%$, $920\%$ and $1841\%$ of $\bar m$ as design
@@ -824,8 +823,8 @@ without an excursion: a patient with $\theta_j = 0$ has $s_j = k_e m_j$ outright
 Remark~\ref{rem:fibre} a known $k_e$ collapses the fibre to a point. Everything else here
 is built on excursions, so the anchor has to be either promoted or explained.
 
-\textbf{It is kept, as a remark, because it has the same shape as the note's main
-argument.} Remark~\ref{rem:anchor_var} prices it, and the price inverts: the anchor
+It is kept, as a remark, because it has the same shape as the note's main
+argument. Remark~\ref{rem:anchor_var} prices it, and the price inverts: the anchor
 \emph{attenuates} a load error for a mild patient and \emph{amplifies} it for a severe one,
 crossing one at $\theta \approx 1100$ and reaching $3.7$ at the $\theta = 300$ the
 equilibrium reduction uses. So the one route that needs no excursion works for the patients
@@ -862,7 +861,7 @@ note is about, and the favourable figure belongs to the mild end of the range.
 Since $k_e m \to \infty$, total clearance is unbounded and every load is eventually balanced,
 so the local reduction predicts that no crisis can occur. It is adequate for the
 identifiability analysis, which concerns the stable patient, and inadequate for anything
-concerning decompensation --- which is what Section~\ref{sec:dynamic} is for.
+concerning decompensation, which is what Section~\ref{sec:dynamic} is for.
 
 \vspace{0.5em}
 \hrule

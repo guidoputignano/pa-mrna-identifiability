@@ -1,11 +1,12 @@
 % =====================================================================
-%  Identifiability of a Therapeutic Threshold in Propionic Acidemia
+%  The Dose Train is the Identification Experiment
 %  Build:  make paper     (or: latexmk -pdf main.tex)
 %  Figures are produced by src/; run `make figures` first.
 % =====================================================================
 \input{preamble}
 
-\title{\textbf{Identifiability of a Therapeutic Threshold\\ in Propionic Acidemia}\\[0.3em]
+\title{\textbf{The Dose Train is the Identification Experiment:\\
+Estimating Residual Enzymatic Capacity in Propionic Acidemia}\\[0.3em]
 \large A modelling note for discussion}
 \author{Guido Putignano}
 \date{\today}
@@ -33,24 +34,6 @@
 \input{sections/12_discussion}
 
 \clearpage
-\appendix
-\input{sections/A1_supplementary}
-
-\clearpage
-\input{sections/A2_reproducibility}
-
-\clearpage
 \printbibliography[title={References}]
-
-\ifshowregister
-\appendix
-\section{Claim register}
-Every factual assertion in this note, its source, and whether the source
-says what the assertion says. Rows are ordered worst first.
-\begin{adjustwidth}{-1.4cm}{-1.4cm}
-\footnotesize
-\input{../results/tables/tab_claims}
-\end{adjustwidth}
-\fi
 
 \end{document}

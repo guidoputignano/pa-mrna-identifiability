@@ -15,7 +15,8 @@ be made.
 | if you want | read |
 |---|---|
 | the result, on one page | **[`SUMMARY.md`](SUMMARY.md)** — four claims, the specification, the coverage qualification, what was withdrawn |
-| the argument and the proofs | `paper/main.pdf` (`make paper`) |
+| the argument and the proofs | `paper/main.pdf`, 27 pages (`make paper`) |
+| the background, derivations, validation protocol and open questions | `paper/supplement.pdf`, 47 pages, numbered S1, S2, ... and cited from the paper by section number |
 | what this work got wrong, and why | **[`REVIEW_LOG.md`](REVIEW_LOG.md)** — nine retractions, each kept with its cause |
 | how the repository is laid out | the rest of this file |
 

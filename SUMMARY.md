@@ -1,6 +1,7 @@
 # One page, for a reader who has not followed the work
 
-*Assembled entirely from the paper. Every number here appears there with its derivation.
+*Assembled entirely from the paper (`paper/main.pdf`; derivations and background are in
+`paper/supplement.pdf`). Every number here appears there with its derivation.
 Frozen with the paper at `b289ef8`. For the technical overview of the repository see
 `README.md` — but read the note at the foot of this page first.*
 

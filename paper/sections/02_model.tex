@@ -37,41 +37,41 @@ $\mtol$ & tolerable level, a convention & $\spk$ & illness amplitude, as a fold 
 
 The metabolite the clinic measures is written $m$. Its balance is
 \begin{equation}
-\dot m \;=\; L(t) + L_0 \;-\; \bigl(\theta + \Delta(t)\bigr) g(m) \;-\; \alpha(m) ,
-\qquad g(m) = \frac{m}{K_m + m} ,
+\dot m \;=\; L(t) + L_0 \;-\; \bigl(\theta + \Delta(t)\bigr) g(m) \;-\; \alpha(m),
+\qquad g(m) = \frac{m}{K_m + m},
 \label{eq:parent}
 \end{equation}
 with $L$ the \emph{recorded} component of the propiogenic load, $L_0$ its unrecorded
 component carried as an unknown constant, $\Delta$ the therapeutic increment known from
-the dosing record, and $\alpha$ an alternative clearance route --- in propionic acidemia,
+the dosing record, and $\alpha$ an alternative clearance route: in propionic acidemia,
 principally conjugation to carnitine and renal loss of the conjugate.
 
-\textbf{The parametrisation is pinned once and matters.} $\theta$ \emph{absorbs} the
+The parametrisation is pinned once and matters. $\theta$ \emph{absorbs} the
 maximal velocity: it \emph{is} the patient's residual $V_{\max}$, not a fraction of a
 population one. Carrying the two separately as $V_{\max}\theta\,g(m)$ adds a parameter that
 no excursion separates, since only the product multiplies $g$. Splitting them needs an
 anchor outside the marker, and a $1$-$^{13}$C-propionate breath test is what such an anchor
 looks like~\cite{breath_test_mma}. % C48
 
-\textbf{Three resolutions, and what each is for.} The full \eqref{eq:parent} with
+Three resolutions, and what each is for. The full \eqref{eq:parent} with
 $\alpha$ saturating is the \emph{parent}: it has a fold, so a sufficiently large load
 leaves it with no equilibrium at all, and that is what a decompensation is in this model.
 Setting $\dot m = 0$ gives the \emph{equilibrium reduction}, which is what a steady-state
 fit to a clinical record actually estimates. Linearising $\alpha \to k_e m$ gives the
 \emph{local identification model}, which is the one every design calculation below uses:
 \begin{equation}
-\dot m \;=\; L(t) + L_0 \;-\; \bigl(\theta + \Delta(t)\bigr) g(m) \;-\; k_e\, m .
+\dot m \;=\; L(t) + L_0 \;-\; \bigl(\theta + \Delta(t)\bigr) g(m) \;-\; k_e\, m.
 \label{eq:local}
 \end{equation}
 The reduction hierarchy is verified symbolically and numerically
-(Appendix~\ref{sec:repro}); the derivations, the fold, the intrinsic threshold and the
-alternative-hypothesis comparison are in Appendix~\ref{sec:supp}.
+(supplement, \S S2); the derivations, the fold, the intrinsic threshold and the
+alternative-hypothesis comparison are in the supplement, \S S1.
 
-\textbf{The local model is the favourable case, and that is why it is used.} Its
+The local model is the favourable case, and that is why it is used. Its
 degeneracy is not an artefact of the linearisation: at matched parameter count the parent
 carries a degenerate family of the same dimension, admissible over a sixteen-fold range in
 $K_m$ and if anything harder to reject than the local one. What closes such a family, in
-either model, is an independent channel being known --- not curvature in $\alpha$.
+either model, is an independent channel being known: not curvature in $\alpha$.
 
 \subsection{What is assumed, and what is not}
 \label{sec:assumed}
@@ -104,13 +104,12 @@ entirely changes nothing at all (Section~\ref{sec:designsec}).
 
 \begin{remark}[The marker, and the observation model both markers need]
 \label{sec:marker}
-Plasma 3-hydroxypropionate is used. It is the one marker with an endpoint association ---
-a $50\%$ lower concentration carries a decompensation rate ratio of $0.7$ ($95\%$ CI
-$0.6$--$0.9$, $p<0.01$)~\cite{natural_history} % C49
---- where 2-methylcitrate has none ($1.0$, $0.7$--$1.3$), and it is not a carnitine
+Plasma 3-hydroxypropionate is used. It is the one marker with an endpoint association: a $50\%$ lower concentration carries a decompensation rate ratio of $0.7$ ($95\%$ CI
+$0.6$--$0.9$, $p<0.01$)~\cite{natural_history}, % C49
+where 2-methylcitrate has none ($1.0$, $0.7$--$1.3$), and it is not a carnitine
 conjugate, so carnitine supplementation does not raise it as it raises C3.
 
-\textbf{But no marker is the PCC substrate.} 3-HP is an overflow metabolite downstream of
+But no marker is the PCC substrate. 3-HP is an overflow metabolite downstream of
 accumulated propionyl-CoA, and so is 2-MC. Writing either as the $m$ of \eqref{eq:parent}
 assumes it tracks the substrate monotonically. That assumption is required identically for
 either choice, it is not testable from the published data, and it is the first thing

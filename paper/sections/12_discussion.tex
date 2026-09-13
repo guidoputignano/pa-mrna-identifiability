@@ -2,40 +2,39 @@
 \label{sec:discussion}
 %==========================================================================
 
-\textbf{Two boundaries first, because everything above sits inside them.}
+Two boundaries first, because everything above sits inside them.
 
-\textbf{These are claims about identifiability, which is a property of a model and a design
-together --- not about patients.} Every number in this note is computed from
+These are claims about identifiability, which is a property of a model and a design
+together: not about patients. Every number in this note is computed from
 \eqref{eq:local} with the constants of Table~\ref{tab:params}, of which exactly one is
 taken from the literature. What the analysis establishes is what a record \emph{of the kind
 assumed} could yield \emph{under the model assumed}. Whether a real record behaves that way
-turns on the observation model of Remark~\ref{sec:marker} --- that a marker which is not
-the enzyme's substrate tracks it monotonically --- and that assumption is not testable from
+turns on the observation model of Remark~\ref{sec:marker} (that a marker which is not
+the enzyme's substrate tracks it monotonically) and that assumption is not testable from
 anything published.
 
-\textbf{And the model questions its own validity in the regime the excursion argument
-points at.} The parent \eqref{eq:parent} has a clearance maximum at $3.4$ times the managed
+And the model questions its own validity in the regime the excursion argument
+points at. The parent \eqref{eq:parent} has a clearance maximum at $3.4$ times the managed
 level and loses its stable equilibrium at $12.6$ times it. An earlier version of this note
 recommended acquiring data through decompensations. Both estimators used here are
 steady-state fits, and over most of that band the parent says there is no steady state to
 fit: $42\%$ of a band running to eight times the managed level lies beyond the clearance
 peak. Fitting the local model to the parent's own noiseless clearance over that band
-recovers $\hat\theta = 151$ against an intrinsic threshold of $150.8$ --- misspecification
+recovers $\hat\theta = 151$ against an intrinsic threshold of $150.8$, misspecification
 alone, with no noise and no perturbation, consuming a true margin of $+149$. The two models
-also disagree by a factor of $4.6$ about the largest load a patient can clear. \textbf{The
-decompensation route is therefore excluded twice over}: the excursion it would supply is
+also disagree by a factor of $4.6$ about the largest load a patient can clear. The
+decompensation route is therefore excluded twice over: the excursion it would supply is
 not observed at the magnitude required, and the model that would interpret it does not hold
 there.
 
 \subsection{What the four claims add up to}
 
 The identification result is the positive one and it is actionable now: the excitation is
-already being administered, and a protocol can lose it by scheduling bloods on dosing days
---- a choice made for convenience that costs a factor of twenty-two. That finding does not
+already being administered, and a protocol can lose it by scheduling bloods on dosing days: a choice made for convenience that costs a factor of twenty-two. That finding does not
 depend on the estimand question at all, and it survives everything below it.
 
-The second claim is the one that should change how the problem is posed. \textbf{The
-decision was never blocked by identifiability.} It is blocked because the boundary it is
+The second claim is the one that should change how the problem is posed. The
+decision was never blocked by identifiability. It is blocked because the boundary it is
 taken against is stipulated rather than measured: two chosen constants move it by a factor
 of $24$, and the paper's own choice sits a quarter of a per cent from its own sign-flip
 point. Improving the estimate of $\theta$ cannot repair that, and neither can a larger
@@ -43,8 +42,8 @@ cohort.
 
 The third and fourth claims bound what should replace it. The only endpoint evidence
 available reports a smooth dose--response and no threshold, which argues against the
-dichotomy rather than for a better-placed one. \textbf{An earlier draft of this note
-adopted an expected event rate as the estimand on that basis, and withdrew it}: at the
+dichotomy rather than for a better-placed one. An earlier draft of this note
+adopted an expected event rate as the estimand on that basis, and withdrew it: at the
 patient's own operating point the model-based rate is thirteen times \emph{worse} than
 reading the same rate off the measured marker, the published exponent is known only to a
 factor of $4.8$, and the map has no published reference concentration to anchor it. The
@@ -75,8 +74,8 @@ the inputs on two channels differ \emph{non-constantly}. A constant increment is
 into the amplitude it rides on and separates nothing, however large it is.
 \end{itemize}
 
-\textbf{In every case the separating quantity is a difference that moves, and in every case
-the intuitive alternative fails.} A bigger increment does not substitute for a varying one;
+In every case the separating quantity is a difference that moves, and in every case
+the intuitive alternative fails. A bigger increment does not substitute for a varying one;
 a more precise load record does not substitute for a varying one; a larger constant input
 does not substitute for a varying one. \emph{Magnitude, precision and presence are each the
 wrong axis, and each is the axis a study would naturally be designed to improve.}
@@ -84,14 +83,14 @@ wrong axis, and each is the axis a study would naturally be designed to improve.
 That is the practical content, and two of the three failures are not merely neutral but
 actively harmful. A dietary record \emph{tightened} by averaging to a weekly mean or imputing
 from a prescription is more precise and destroys exactly the variability
-Proposition~\ref{prop:rank} needs --- so the instruction Section~\ref{sec:spec} carries is to
+Proposition~\ref{prop:rank} needs, so the instruction Section~\ref{sec:spec} carries is to
 omit a data-cleaning step, not to add a measurement. A \emph{steadier} administration route
 removes the therapy's excitation entirely (Remark~\ref{rem:route}). A larger dose is the
 exception: it raises $\Delta/\theta$ and so does help, which is worth saying because it is
 the only one of the three obvious moves that does.
 
-\textbf{This is a pattern across three results and not a theorem, and it should be read as
-one.} The three are not instances of a single proposition; they are three different
+This is a pattern across three results and not a theorem, and it should be read as
+one. The three are not instances of a single proposition; they are three different
 calculations that happen to resolve the same way, and the note makes no claim that they must.
 What can be said is narrower and still useful: in a saturating compartment model observed
 through one marker, a design's information sits in what varies across its samples rather

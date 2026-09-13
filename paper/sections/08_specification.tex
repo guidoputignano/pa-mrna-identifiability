@@ -13,7 +13,7 @@ Tier~2 asks.}
 \footnotesize
 \caption{\label{tab:spec}What a record would have to contain for $\theta$ to be
 identifiable. Quantities are in observable units, not multiples of $K_m$, because $K_m$ is
-not known --- and by the last row does not need to be.}
+not known, and by the last row does not need to be.}
 \input{../results/tables/tab_D_spec}
 \end{table}
 \end{adjustwidth}
@@ -21,19 +21,19 @@ not known --- and by the last row does not need to be.}
 \subsection{Tier 1: the measurement the method's feasibility turns on}
 \label{sec:tier1}
 
-\textbf{What to run.} One cohort, two $1$-$^{13}$C-propionate breath tests bracketing a
+What to run. One cohort, two $1$-$^{13}$C-propionate breath tests bracketing a
 single dose, on one day. The quantity measured is the repeatability of the assay
 \emph{within a day and within a state}, which is what a pre/post pair around a dose depends
 on.
 
-\textbf{Why it is first.} By Section~\ref{sec:excitation} the therapy channel is what makes
+Why it is first. By Section~\ref{sec:excitation} the therapy channel is what makes
 $\theta$ identifiable, and \eqref{eq:dosereq} is stated in units of $\theta$: the ratio
 $\Delta/\theta$ is only as well known as $\Delta$ is. Section~\ref{sec:designsec} turns
-that into one number --- the delivered increment must be characterised to about $12\%$ for
-monthly sampling to reach the $20\%$ target on $\theta$. \textbf{Everything the therapy
-channel buys is conditional on that, and it has never been measured.}
+that into one number: the delivered increment must be characterised to about $12\%$ for
+monthly sampling to reach the $20\%$ target on $\theta$. Everything the therapy
+channel buys is conditional on that, and it has never been measured.
 
-\textbf{What is published is an upper bound, and it is not the quantity needed.} The only
+What is published is an upper bound, and it is not the quantity needed. The only
 repeatability data for this assay~\cite{breath_test_mma} % C48
 are between-visit: controls repeated at one- to three-week intervals, and fifteen
 \emph{mut} patients at separate visits \emph{two months to four years apart}, with the
@@ -44,21 +44,21 @@ cohort is methylmalonic acidemia, not propionic acidemia, where the block sits a
 itself.
 
 Between-visit variation is an \emph{upper bound} on same-day error, because it contains
-drift a same-day pair removes, and the bound sits close to the requirement. \textbf{But a
-bound that happens to sit near a threshold is not a measurement of it}, and a per-subject
+drift a same-day pair removes, and the bound sits close to the requirement. But a
+bound that happens to sit near a threshold is not a measurement of it, and a per-subject
 range reaching $50.8\%$ cannot be applied to an individual. Tier~1 replaces an inference
 with a number.
 
 \subsection{Tier 2: conditional on Tier 1, and then it is a small study}
 
 \paragraph{Cover the dose cycle; do not chase the marker.} Monthly draws across dose cycles
-for two years reach the target, and two-monthly draws --- thirteen over two years --- also
+for two years reach the target, and two-monthly draws, thirteen over two years, also
 reach it. This is ordinary outpatient blood work. What buys the information is the
 \emph{phase}, not the rate: a schedule that sees the increment vary identifies $\theta$ and
 one that does not, does not, whatever its density.
 
 \paragraph{And one hard exclusion a protocol would currently get wrong.}
-\textbf{Do not sample on dosing days, or at any multiple of the dose interval}
+Do not sample on dosing days, or at any multiple of the dose interval
 (Remark~\ref{rem:aliasing}). ``Draw bloods when the patient attends for dosing'' is the
 natural thing to write and it is the one schedule that destroys the result: every draw
 lands at the same phase, the range of $\Delta/\theta$ collapses from $1.95$ to $0.13$, and
@@ -83,12 +83,12 @@ leaves every number unchanged, which is what Remark~\ref{rem:no_km} demanded.
 \subsection{Who the specification applies to, and the divergence it has to name}
 \label{sec:whoto}
 
-\textbf{The design requires a dose train, and no patient outside the trial receives one.}
+The design requires a dose train, and no patient outside the trial receives one.
 That is a limit on the specification's reach and it must be stated before the exclusions,
 because it is larger than any of them. The obvious question is whether an untreated patient
-could be identified from what varies about them anyway. On one footing --- $\theta$ and
+could be identified from what varies about them anyway. On one footing, $\theta$ and
 $K_m$ free, a log-prior of $0.8$ on $\ln k_e$, the load recorded to $5\%$, twenty-four
-monthly draws over two years --- three sources of excitation were put on the same metric,
+monthly draws over two years: three sources of excitation were put on the same metric,
 each reported as a median over twenty-four seeds:
 
 \begin{center}
@@ -113,18 +113,18 @@ put daily sampling for two years at about $0.33$, while the computed value is $0
 to $n = 3\times10^{5}$ the fitted exponent stays between $0.06$ and $0.24$ and never
 approaches $0.5$.
 
-\textbf{The reason is not that information saturates}, which an earlier version of this
+The reason is not that information saturates, which an earlier version of this
 paragraph asserted and which the computation does not support. The data's information in the
 degenerate direction \emph{grows} roughly in proportion to $n$, from $1.8\times10^{-7}$ at
 twenty-four draws to $7.6\times10^{-4}$ at three hundred thousand. What it never does is
 arrive: the load-record prior contributes about $1.05$ in that same direction and does not
 move, so even at $n = 3\times10^{5}$ the data supply three orders of magnitude less than the
-prior already holds. \textbf{The weak direction is prior-held at every $n$ a study could
-reach, and the precision falls only through the directions the data do reach.} Sub-root-$n$
+prior already holds. The weak direction is prior-held at every $n$ a study could
+reach, and the precision falls only through the directions the data do reach. Sub-root-$n$
 here is a statement about a fixed prior, not about correlated samples.
 
-\textbf{So the conclusion is the stronger one, and this note states it rather than implying
-a second specification exists.} The therapy is not a design improvement on an otherwise
+So the conclusion is the stronger one, and this note states it rather than implying
+a second specification exists. The therapy is not a design improvement on an otherwise
 workable record. \emph{It is the design's condition of existence.} Every number in
 Section~\ref{sec:designsec} is conditional on a patient receiving an increment that varies
 over the sampling window, which today means a trial participant, and by
@@ -132,18 +132,18 @@ Remark~\ref{rem:route} would cease to be true of a continuous formulation.
 
 \paragraph{Why carnitine cannot stand in, on two grounds.} The first is quantitative and is
 the row above. Carnitine acts on $k_e$, so it cannot touch the first factor of
-$-(1+\Delta/\theta)\varphi(m)$ at all --- it can only move $\varphi$, and only by shifting
+$-(1+\Delta/\theta)\varphi(m)$ at all: it can only move $\varphi$, and only by shifting
 the level. A doubling of $k_e$ moves $\varphi$ by $1.3\%$ while costing the $\theta$
 sensitivity $13.1\%$ of its magnitude, because raising $k_e$ lowers the marker and
-$\theta\, m/(K_m+m)$ falls with it. \textbf{About ten to one against, and the sign is
+$\theta\, m/(K_m+m)$ falls with it. About ten to one against, and the sign is
 negative: carnitine does not supply weak excitation, it moves the patient deeper into the
-linear regime} where Proposition~\ref{prop:excitation} says only the lumped ratio survives.
+linear regime where Proposition~\ref{prop:excitation} says only the lumped ratio survives.
 For contrast, over the record of Section~\ref{sec:therapychannel} the same product's other
-factor, $1+\Delta/\theta$, ranges $1.186$--$3.133$ --- a drop of $1.948$ against
+factor, $1+\Delta/\theta$, ranges $1.186$--$3.133$: a drop of $1.948$ against
 $\varphi$'s $0.046$.
 
 The second ground is structural and would matter even if the first did not.
-\textbf{Carnitine dose is adjusted in response to the patient's state}, so it is endogenous:
+Carnitine dose is adjusted in response to the patient's state, so it is endogenous:
 a record in which carnitine rose because the patient deteriorated cannot be read as an
 exogenous perturbation, and using it as one would need an instrument. The dose train is
 fixed by protocol and exogenous by construction. That difference is not a matter of degree.
@@ -151,26 +151,26 @@ fixed by protocol and exogenous by construction. That difference is not a matter
 \subsection{How many patients, and for which question}
 \label{sec:howmany}
 
-The cohort arithmetic elsewhere in this note --- roughly $2\,200$ --- is for the
+The cohort arithmetic elsewhere in this note (roughly $2\,200$) is for the
 \emph{decision} question, and Section~\ref{sec:decision} declares that question blocked for
 reasons that have nothing to do with cohort size. The specification on this page makes a
 different and narrower claim: that a monthly record identifies a patient's own $\theta$ to
-the stated precision. \textbf{That claim is within-patient}, so patients are needed only to
+the stated precision. That claim is within-patient, so patients are needed only to
 cover heterogeneity and to confirm the prediction.
 
 Across four thousand simulated patients, log-uniform over $\theta$ (nine-fold), $K_m$
-(nine-fold), $k_e$ (the prior's own factor of $2.2$) and managed load (four-fold) --- every
-range assumed, none measured --- the achieved precision has median $0.192$, quartiles
-$0.132$ and $0.329$, and \textbf{just over half of patients meet the $0.20$ target}. The
+(nine-fold), $k_e$ (the prior's own factor of $2.2$) and managed load (four-fold) (every
+range assumed, none measured) the achieved precision has median $0.192$, quartiles
+$0.132$ and $0.329$, and just over half of patients meet the $0.20$ target. The
 headline $0.170$ is the illustrative parameter set, which sits near the middle of that
 distribution and not at its optimum, and the specification should be read accordingly.
 
-\textbf{What spreads it is $\Delta/\theta$}, which correlates with the achieved
+What spreads it is $\Delta/\theta$, which correlates with the achieved
 $\operatorname{sd}$ at $+0.56$ on logs, alongside $K_m$ at $+0.59$. That is a design
 statement rather than a nuisance: \emph{the dose is fixed in absolute terms while residual
 capacity is not}, so a patient with more residual capacity receives less relative excitation
 and is identified less well. The design is weakest in the patients who need the therapy
-least --- which is the opposite of the inverse-usefulness shape this note reports elsewhere,
+least, which is the opposite of the inverse-usefulness shape this note reports elsewhere,
 and is the one place where that shape runs the favourable way.
 
 \begin{center}
@@ -189,8 +189,8 @@ Bound the fraction of patients it works for, to $\pm 20$ points & $24$ \\
 \end{tabular}
 \end{center}
 
-\textbf{Confirming that the design works needs about fourteen patients, which is inside a
-phase 1/2 trial of sixteen.} Establishing \emph{for how many} patients it works to within
+Confirming that the design works needs about fourteen patients, which is inside a
+phase 1/2 trial of sixteen. Establishing \emph{for how many} patients it works to within
 ten points needs about ninety-six, which is not. Two orders of magnitude separate the
 blocked question from the unblocked one, and this specification asks for the affordable one.
 
@@ -198,28 +198,28 @@ blocked question from the unblocked one, and this specification asks for the aff
 \label{sec:coverage}
 
 The $0.170$ quoted throughout is one patient: the illustrative parameter set. Across the
-four thousand simulated above the median is $0.192$ and \textbf{just over half meet the
-$0.20$ target}. That distribution is not a sensitivity analysis around the headline; it is
+four thousand simulated above the median is $0.192$ and just over half meet the
+$0.20$ target. That distribution is not a sensitivity analysis around the headline; it is
 the headline's actual standing. \emph{The design confirms identifiability in a cohort. It
 does not deliver the stated precision to every patient in one.}
 
-\textbf{And the shortfall is systematic rather than random}, which is what makes it worth a
+And the shortfall is systematic rather than random, which is what makes it worth a
 subsection. The strongest correlate of the achieved $\operatorname{sd}$ is $\Delta/\theta$
 at $+0.56$ on logs. The increment is delivered on a fixed schedule in absolute terms; the
-residual capacity it is measured against is not. \textbf{So a patient with more residual
-capacity receives less \emph{relative} excitation and is identified less well} --- not by
+residual capacity it is measured against is not. So a patient with more residual
+capacity receives less \emph{relative} excitation and is identified less well: not by
 chance, but by the arithmetic of a fixed dose against a variable denominator.
 
 That runs the wrong way for the question the note is about. The decision, where it is posed
 at all, concerns patients near a boundary in capacity, and the patients the design serves
 worst are the ones with most of it. This is the third place in this note where the
-identifiability and the clinical need point in opposite directions --- after the excursion
+identifiability and the clinical need point in opposite directions, after the excursion
 requirement, which is met only by the event the therapy exists to prevent, and the
-null-genotype anchor, which works for the patients who need it least. \textbf{It is the same
+null-genotype anchor, which works for the patients who need it least. It is the same
 shape each time and it is not a coincidence: what makes a patient informative about
-$\theta$ is being far from normal, and management exists to keep them near it.}
+$\theta$ is being far from normal, and management exists to keep them near it.
 
-\textbf{What the specification should therefore say, and now does.} A study powered on the
+What the specification should therefore say, and now does. A study powered on the
 median will leave roughly half its patients short of the target, so the design is specified
 as a cohort-level demonstration with a per-patient interval reported, never as a guarantee
 attached to an individual record. Reporting $\hat\theta$ without its own interval, or
@@ -228,14 +228,14 @@ matters.
 
 \subsection{What is excluded, and what is not promised}
 
-Two acquisitions an earlier draft asked for are struck out. \textbf{High-frequency sampling
-at a fixed operating point} buys nothing: two-monthly sampling with thirteen draws beats
+Two acquisitions an earlier draft asked for are struck out. High-frequency sampling
+at a fixed operating point buys nothing: two-monthly sampling with thirteen draws beats
 fortnightly sampling with fifty-three, because the first sees the dose cycle and the second
-is aliased against it. \textbf{Decompensation records} are excluded twice over --- the
+is aliased against it. Decompensation records are excluded twice over: the
 excursion is not observed at the magnitude required, and by Section~\ref{sec:discussion}
 the model does not hold in that regime.
 
-\textbf{And the specification does not promise a decision.} It buys an identified $\theta$.
+And the specification does not promise a decision. It buys an identified $\theta$.
 Section~\ref{sec:decision} shows that the sign of the margin does not follow from it, for
 reasons that are not about the data, and Section~\ref{sec:scope} shows that $\theta$ itself
 stops being recoverable in the patients the question matters most for. A protocol written

@@ -5,7 +5,7 @@
 \emph{Section~\ref{sec:excitation} says what a trajectory has to do. This section asks
 what the accessible trajectories actually do, and what decision the answer supports.}
 
-\subsection{What does not collapse, stays --- and what does, and why}
+\subsection{What does not collapse, stays, and what does, and why}
 \label{sec:collapse}
 
 The estimator here is the exact information filter for constant parameters,
@@ -14,8 +14,8 @@ P_k^{-1} \;=\; P_0^{-1} \;+\; \sum_{i \le k} \frac{q(m_i, \Delta_i)\,q(m_i, \Del
 \label{eq:infofilter}
 \end{equation}
 on the augmented coordinates $(\ln\theta, \ln K_m, L_0, \ln k_e)$, none of which carries
-dynamics. \textbf{There is no process noise on $\theta$, and that is a construction rather
-than a setting.} A random walk on $\theta$ manufactures a finite stationary covariance in a
+dynamics. There is no process noise on $\theta$, and that is a construction rather
+than a setting. A random walk on $\theta$ manufactures a finite stationary covariance in a
 direction the data may never see, which is precisely the error this note exists to warn
 about; with \eqref{eq:infofilter}, what does not collapse stays visibly uncollapsed.
 
@@ -26,27 +26,27 @@ The footing below places a prior on $k_e$, none on $K_m$ and none on $\theta$, a
 looks arbitrary until one fact from Proposition~\ref{prop:rank} is put next to one fact
 about conditioning. They are different facts and the argument needs both.
 
-\textbf{The exact fact.} The null vector \eqref{eq:nullvec} is
+The exact fact. The null vector \eqref{eq:nullvec} is
 $(L + k_e K_m,\, -K_m,\, 0,\, L)$ in $(\theta, K_m, k_e, b)$. Its third entry is zero, so
 the degenerate direction lies entirely in capacity, affinity and the load bias, and $k_e$
 is not in it.
 
-\textbf{The conditioning fact.} $k_e$ escapes the identity, but only just. Regressing each
+The conditioning fact. $k_e$ escapes the identity, but only just. Regressing each
 design column on the others leaves residuals of $10^{-14}$ for $\ln\theta$, $\ln K_m$ and
-the load bias --- that is the identity, to machine precision --- against
+the load bias (that is the identity, to machine precision) against
 $3.7\times10^{-3}$ for $\ln k_e$, a column that is \emph{nearly}, not exactly, dependent on
 the rest. So there is one exact identity and no second, \emph{and} $k_e$ is the
 worst-conditioned of the directions that survive it.
 
-\textbf{Together they decide every prior in this note, and they decide it the way round
-that is easy to get backwards.}
+Together they decide every prior in this note, and they decide it the way round
+that is easy to get backwards.
 \begin{itemize}[leftmargin=*, itemsep=2pt]
 \item \textbf{$K_m$ lies \emph{inside} the exact degeneracy, so a prior on it cannot help.}
-It is not that $K_m$ is well known --- Remark~\ref{rem:no_km} says no literature value is
-usable --- but that tightening it moves nothing, because the degeneracy is a direction in
+It is not that $K_m$ is well known (Remark~\ref{rem:no_km} says no literature value is
+usable) but that tightening it moves nothing, because the degeneracy is a direction in
 which $K_m$ trades against $\theta$ and the load bias together. A prior twenty times
 looser changes $\operatorname{sd}(\ln\hat\theta)$ in the fourth decimal, and removing it
-changes nothing at all. \textbf{This is a reason, not a convenience}, and it is why the
+changes nothing at all. This is a reason, not a convenience, and it is why the
 note can decline to import a constant it has no right to.
 \item \textbf{$k_e$ lies just \emph{outside} it, so a prior on it does all the work.}
 Removing it takes the same design from $0.1474$ to $0.6451$. A direction that is nearly
@@ -56,8 +56,8 @@ such direction here.
 estimand would be assuming the answer.
 \end{itemize}
 
-\textbf{So the one thing this note asks the literature for is the one thing the geometry
-says is worth asking for.} A control study that pinned $K_m$ to one per cent would buy six
+So the one thing this note asks the literature for is the one thing the geometry
+says is worth asking for. A control study that pinned $K_m$ to one per cent would buy six
 per cent (Section~\ref{sec:spec}); $k_e$ within a factor of about three is what the gate
 actually needs. The pattern of priors is read off the null vector, not chosen for
 convenience, and a reader who wants to check the design's dependence on prior information
@@ -71,9 +71,9 @@ in this section, and earlier drafts of this note did not hold them fixed.
 different $\Delta$ carry different information, and that is the whole of
 Section~\ref{sec:therapychannel}.
 \item \textbf{$\theta$ and $K_m$ are free.} No prior is placed on either. Stripping the
-priors one at a time shows that the $K_m$ prior does no work at all --- the accessible
+priors one at a time shows that the $K_m$ prior does no work at all (the accessible
 design gives $0.1474$ with it and $0.1474$ without it, and still $0.1474$ at a prior
-twenty times looser --- so nothing here depends on knowing $K_m$, which
+twenty times looser) so nothing here depends on knowing $K_m$, which
 Remark~\ref{rem:no_km} forbids.
 \item \textbf{$k_e$ carries a log-prior of $0.8$}, a factor of $2.2$, and it is the only
 prior that does any work: removing it takes the same design from $0.1474$ to $0.6451$. The
@@ -99,7 +99,7 @@ not a steady state and does not belong in a steady-state fit.
 \centering
 \includegraphics[width=\textwidth]{fig_D2_collapse.pdf}
 \caption{Three sampling designs under the biweekly dosing schedule, over two years.
-\textbf{Left:} $\operatorname{sd}(\ln\hat\theta)$ as samples arrive. \textbf{Right:} the
+Left: $\operatorname{sd}(\ln\hat\theta)$ as samples arrive. Right: the
 one-sigma ellipse in $(\ln\theta, \ln K_m)$ at the end. What separates the designs is how
 much of the dose cycle they see, not how many samples they take.}
 \label{fig:D2}
@@ -118,13 +118,12 @@ levels, which is what earlier drafts of this note reported.}
 \end{table}
 \end{adjustwidth}
 
-\textbf{The gate passes, and it passes on ordinary outpatient care.} Sampling monthly
-across dose cycles for two years --- twenty-five draws, no excursion, no admission ---
-reaches $\operatorname{sd}(\ln\hat\theta) = 0.170$, inside the $20\%$ target. Two-monthly
+The gate passes, and it passes on ordinary outpatient care. Sampling monthly
+across dose cycles for two years, twenty-five draws, no excursion, no admission, reaches $\operatorname{sd}(\ln\hat\theta) = 0.170$, inside the $20\%$ target. Two-monthly
 sampling, thirteen draws, reaches $0.187$ and also passes. Six-monthly visits reach
 $0.418$ and do not.
 
-\textbf{What separates them is not $n$.} Two-monthly sampling passes with thirteen samples
+What separates them is not $n$. Two-monthly sampling passes with thirteen samples
 while fortnightly sampling fails with fifty-three. Read the fourth column instead: the
 designs that pass are the ones that see the increment vary, and the ones that fail are the
 ones that do not. Six-monthly visits catch a range of $\Delta/\theta$ of $0.45$;
@@ -139,21 +138,21 @@ of $\Delta/\theta$ collapses from $1.95$ to $0.13$, the correlation between $\ln
 $\ln K_m$ returns to $+0.998$, and $\operatorname{sd}(\ln\hat\theta)$ goes to $3.51$. The
 same happens at twenty-eight days, and at any multiple.
 
-\textbf{Moving the schedule by half a day fixes it}: sampling every $14.5$ days gives
+Moving the schedule by half a day fixes it: sampling every $14.5$ days gives
 $0.161$. A factor of twenty-two in the precision of the answer turns on a choice a protocol
 writer would make for administrative convenience, and would currently make the wrong way,
 because ``sample on dosing days'' is the obvious thing to write.
 \end{remark}
 
-\textbf{Three more things in that table are worth reading against what this note used to
-say.}
+Three more things in that table are worth reading against what this note used to
+say.
 
 \begin{enumerate}[leftmargin=*, itemsep=3pt]
 \item \textbf{The last column is the error.} With the increment dropped from the
 sensitivity, every accessible design sits between $1.0$ and $9.4$ and none of them
 collapses, which is what earlier drafts reported as the result. The correction is checked
 against a finite difference of the integrated dynamics in two independent ways, on two
-integrators over two spans (Appendix~\ref{sec:repro}); the uncorrected column is wrong by
+integrators over two spans (supplement, \S S2); the uncorrected column is wrong by
 up to $64\%$ of itself at the top of a dose cycle.
 \item \textbf{Placement still helps, and by a factor of nine rather than a hundred.} The
 same $365$ samples placed to straddle $K_m$ reach $0.0157$ against $0.1499$. The straddling
@@ -166,9 +165,9 @@ claimed that single cycle passed; it did so only with $k_e$ held known, and the 
 withdrawn in \texttt{REVIEW\_LOG.md} rather than deleted.
 \end{enumerate}
 
-\textbf{And the load record behaves in the way Proposition~\ref{prop:rank} says, not the
-way this note used to assume.} Recording the load ten times better --- to $0.5\%$, which
-nobody can do --- moves the dense design by about one per cent. That retires the claim that
+And the load record behaves in the way Proposition~\ref{prop:rank} says, not the
+way this note used to assume. Recording the load ten times better (to $0.5\%$, which
+nobody can do) moves the dense design by about one per cent. That retires the claim that
 load-record \emph{precision} is the binding design variable. What the record has to contain
 instead is \emph{variation}: by Proposition~\ref{prop:rank} a perfectly steady intake is the
 exactly singular case, and half a per cent of day-to-day variability restores full rank.
@@ -176,16 +175,15 @@ exactly singular case, and half a per cent of day-to-day variability restores fu
 \begin{remark}[What the filter claims, and what a prior-free fit says instead]
 \label{rem:priorfree}
 Table~\ref{tab:designs} reports posterior standard deviations under one prior, and that
-prior is load-bearing. With \emph{no} prior at all --- $k_e$ free as well --- the same
+prior is load-bearing. With \emph{no} prior at all, $k_e$ free as well, the same
 two-daily design gives $\operatorname{sd}(\ln\hat\theta) = 1.03$, and a prior-free
 nonlinear least squares started half a decade from the truth does worse still, because
 along the near-null direction of Proposition~\ref{prop:rank} the gradient is third order
-and a started-away optimiser does not climb back. \textbf{So the honest claim is
+and a started-away optimiser does not climb back. So the honest claim is
 conditional and is stated as such: this design identifies $\theta$ to better than $20\%$
 \emph{given} $k_e$ within a factor of about three, and does not identify it at all
-without.} What survives unconditionally is the comparison --- carrying the increment is
-worth between one and two orders of magnitude on every design in the table, prior-free ---
-and it is the comparison, not the absolute number, that the data specification rests on.
+without. What survives unconditionally is the comparison, carrying the increment is
+worth between one and two orders of magnitude on every design in the table, prior-free, and it is the comparison, not the absolute number, that the data specification rests on.
 \end{remark}
 
 \begin{remark}[The dose train is not a design variable, and the direction of the conflict matters]
@@ -196,8 +194,8 @@ Proposition~\ref{prop:tworoutes} the increment is what supplies the excitation. 
 not, and the reason is a number rather than a principle.
 
 Hold the delivered dose rate fixed and vary the train. A dosing interval is chosen to
-protect the \emph{trough} --- the lowest enzymatic increment the patient sees before the
-next dose --- so the trough is the column to read, not the mean, which is flat at
+protect the \emph{trough} (the lowest enzymatic increment the patient sees before the
+next dose) so the trough is the column to read, not the mean, which is flat at
 $0.72$--$0.76\,\theta$ across every row.
 
 \begin{center}
@@ -214,19 +212,19 @@ every $7$ d, dose scaled to hold the rate         & $0.2190$ & $0.253$ \\
 \end{tabular}
 \end{center}
 
-\textbf{Every change that improves identifiability lowers the trough, at about thirteen to
-one.} Amplitude modulation at $\pm75\%$ buys $4.8\%$ on $\operatorname{sd}(\ln\hat\theta)$
+Every change that improves identifiability lowers the trough, at about thirteen to
+one. Amplitude modulation at $\pm75\%$ buys $4.8\%$ on $\operatorname{sd}(\ln\hat\theta)$
 for a $65\%$ cut in the trough; a twenty-eight-day interval buys $6.5\%$ for an $87\%$ cut.
-\textbf{The identifiability optimum and the therapeutic optimum conflict, and the
-therapeutic one wins: no dose modulation is recommended here.}
+The identifiability optimum and the therapeutic optimum conflict, and the
+therapeutic one wins: no dose modulation is recommended here.
 
 The reverse statement is the one a clinician needs and it is not symmetric with the first.
 Shortening the interval to seven days \emph{doubles} the trough and costs $29\%$ of the
 precision. So a clinician who shortens the interval on therapeutic grounds is not
-sacrificing anything the patient needs --- but they should know that the record will
+sacrificing anything the patient needs, but they should know that the record will
 identify $\theta$ less well, and the sampling schedule then has to work harder.
 
-\textbf{Contrast this with the sampling schedule, where the corresponding number is free.}
+Contrast this with the sampling schedule, where the corresponding number is free.
 Remark~\ref{rem:aliasing} is a factor of twenty-two bought by moving draws half a day off
 the dosing day: no dose changes, no trough moves, no patient is exposed to anything
 different. \emph{The asymmetry is the recommendation.} Optimise the schedule that costs
@@ -237,37 +235,36 @@ nothing and leave the one that costs the trough alone.
 \label{rem:route}
 Read the second table of Remark~\ref{rem:dosedesign} downwards and the trend is monotone:
 the shorter the interval, the better the trough and the worse the identification. Follow it
-to its limit. A \emph{continuous infusion} at the same delivered rate has no trough at all
---- the increment never falls between doses, which is the therapeutic optimum on the one
-metric that table says to read --- and it is also the point at which the identification this
+to its limit. A \emph{continuous infusion} at the same delivered rate has no trough at all (the increment never falls between doses, which is the therapeutic optimum on the one
+metric that table says to read) and it is also the point at which the identification this
 note is built on stops existing.
 
-\textbf{The therapy enters the identification only through its \emph{variation}.} The
+The therapy enters the identification only through its \emph{variation}. The
 excitation of Proposition~\ref{prop:tworoutes} is carried by the factor
 $1 + \Delta(t)/\theta$, and a constant increment does not move it. On the trial's biweekly
 schedule that factor ranges over $2.64$ and supplies forty-two times what the marker band
 does; under a constant infusion it is a constant, the therapy channel contributes
-\emph{nothing}, and the design falls back on the marker excursion alone --- which
+\emph{nothing}, and the design falls back on the marker excursion alone, which
 Section~\ref{sec:excursion_table} shows is unavailable at the magnitude required. The same
 fact appears again in Proposition~\ref{prop:exchange}: a constant increment is absorbed into
 the amplitude it rides on and breaks no channel exchange, so it would not protect a model
 whose alternative channel saturates either.
 
-\textbf{Stated precisely, because the strong version would be wrong.} A constant increment
+Stated precisely, because the strong version would be wrong. A constant increment
 does not make $\theta$ structurally unidentifiable: the dosing record is known, so
 $\theta = (\theta + \Delta_0) - \Delta_0$ is still recoverable in principle. What is lost is
-the \emph{excitation} --- the conditioning, which is what every number in this section
-measures --- and losing it takes the design from the monthly row of
+the \emph{excitation} (the conditioning, which is what every number in this section
+measures) and losing it takes the design from the monthly row of
 Table~\ref{tab:designs} to a design with no therapy contribution at all.
 
-\textbf{So the condition on the administration route is this, and a protocol can act on it:}
-the increment must \textbf{vary over the sampling window}, which a bolus with a decay
+So the condition on the administration route is this, and a protocol can act on it:
+the increment must vary over the sampling window, which a bolus with a decay
 shorter than the sampling interval achieves and a continuous infusion does not. The trial's
 biweekly dosing with a $3.5$-day half-life satisfies it comfortably and nothing needs to
-change. \textbf{But a switch to continuous or near-continuous administration --- a plausible
+change. But a switch to continuous or near-continuous administration (a plausible
 future formulation change, and one that would be made on pharmacological grounds with no
-reason to consider identifiability --- would silently remove the only excitation this design
-has.} That is the second thing this note says about how the therapy is given, and unlike
+reason to consider identifiability) would silently remove the only excitation this design
+has. That is the second thing this note says about how the therapy is given, and unlike
 Remark~\ref{rem:dosedesign} it is not a recommendation to change anything. It is a condition
 to check before the route changes.
 \end{remark}
@@ -280,28 +277,28 @@ as an observation.
 
 The marker's own time constant is about $0.8$~h and the therapeutic half-life is $3.5$~days.
 A record of monthly draws samples only the slow variable, so each visit contributes one
-point on the quasi-steady locus and the fast dynamics --- which is where the structurally
-identifying information sits --- never enters. \textbf{Sampling within hours of a dose
-would be sampling a different object.} During the first few multiples of $0.8$~h after an
+point on the quasi-steady locus and the fast dynamics (which is where the structurally
+identifying information sits) never enters. Sampling within hours of a dose
+would be sampling a different object. During the first few multiples of $0.8$~h after an
 infusion, $\dot m$ is not zero, the balance is not algebraic, and the observation carries
 information about $k_e$ and $K_m$ separately rather than only through the locus. That is
 precisely the direction Remark~\ref{rem:priorfree} identifies as the binding one: $k_e$ is
 the parameter whose prior the whole design rests on, and a transient is what would measure
 it without a prior.
 
-\textbf{Whether that is clinically feasible is a different question, and this note does not
-claim it is.} The infusion is administered in a clinic, so the patient is already present
+Whether that is clinically feasible is a different question, and this note does not
+claim it is. The infusion is administered in a clinic, so the patient is already present
 for the first hours; a series of draws at, say, $0$, $1$, $2$, $4$ and $8$~h is an ordinary
 pharmacokinetic sampling schedule and is not an excursion, an exposure or a provocation.
 Against that: the fast dynamics of a plasma overflow metabolite is not the fast dynamics of
 the mitochondrial substrate, and Remark~\ref{sec:marker} already names the monotone-tracking
 assumption as the weakest link in the chain. A transient interrogates exactly the part of
-the observation model that assumption is least able to support --- at steady state the
+the observation model that assumption is least able to support, at steady state the
 marker only has to track the substrate monotonically, whereas during a transient it has to
 track it with the right \emph{time constant}, and nothing in the literature establishes
 that.
 
-\textbf{So this is recorded as an open direction and not as a recommendation.} No design
+So this is recorded as an open direction and not as a recommendation. No design
 around it is computed here, and none should be until the observation model has been
 tested on a timescale where it matters. Tier~1 of Section~\ref{sec:spec} already asks for
 the one measurement that would begin to do that.
@@ -336,12 +333,12 @@ happen an order of magnitude below $K_m$. Widening them does not fix that.
 \item \textbf{Only a decompensation gets close, and it is still short.} An excursion from
 the operating point to eight times it reaches $E = 0.35$ against the $0.50$ required, and it
 does so at $74\%$ of what that fold range could deliver, because it at least moves towards
-$K_m$. \textbf{The excitation the decision needs is available only from the event the
-treatment exists to prevent}, and even then not in full.
+$K_m$. The excitation the decision needs is available only from the event the
+treatment exists to prevent, and even then not in full.
 \item \textbf{A labelled-propionate bolus is the one designed source, and it is small.}
 Doubling the marker from the operating point reaches $E = 0.076$. Its value is not the
 excitation it supplies but that it measures capacity on a different axis entirely, which is
-the subject of Section~\ref{sec:validation}.
+the subject of the validation protocol in the supplement, \S S1.
 \end{enumerate}
 
 \subsection{The estimand is a decision, and the therapy channel does not rescue it}
@@ -363,7 +360,7 @@ untreated who did. Each panel varies one thing a protocol controls.}
 \label{fig:D3}
 \end{figure}
 
-\textbf{This subsection reports a negative result, and it is the one the note ends on.}
+This subsection reports a negative result, and it is the one the note ends on.
 Everything above says the therapy channel makes $\theta$ identifiable. It does not follow
 that it makes the \emph{sign of the margin} decidable, and it does not.
 
@@ -376,19 +373,19 @@ that it makes the \emph{sign of the margin} decidable, and it does not.
 \midrule
 fixed operating point, $n=9$ (the old design) & $6.9\% \pm 1.7$ & $44.0\% \pm 3.2$ & $4900$ \\
 monthly across dose cycles, $n=25$            & $19.1\% \pm 2.1$ & $41.6\% \pm 2.5$ & $2200$ \\
-\quad the same, increment known only to $11.7\%$ & $19.1\% \pm 1.7$ & $42.3\% \pm 2.9$ & --- \\
+\quad the same, increment known only to $11.7\%$ & $19.1\% \pm 1.7$ & $42.3\% \pm 2.9$ &, \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-Twelve seeds at four hundred replicates each; the spread is across seeds. \textbf{Three
-things follow, and none of them is comfortable.}
+Twelve seeds at four hundred replicates each; the spread is across seeds. Three
+things follow, and none of them is comfortable.
 
 \begin{enumerate}[leftmargin=*, itemsep=3pt]
 \item \textbf{The decision does not improve.} Near the boundary the therapy-channel design
 errs on about two patients in five, against the old design's four in nine. The cohort
 needed to place the fraction of patients with $\mu<0$ within ten points falls from about
-$4\,900$ to about $2\,200$ --- a real gain, and still an impossible number against a
+$4\,900$ to about $2\,200$: a real gain, and still an impossible number against a
 phase 1/2 trial that enrolled sixteen~\cite{trial_phase12}. % C16
 \item \textbf{The dose-precision requirement does not bind here.} Degrading the increment
 from exact to the $11.7\%$ the identifiability gate asks for moves the sign error by less
@@ -400,13 +397,13 @@ contains. The estimand analysis said so before the therapy channel was found, an
 it does not repeal it.
 \end{enumerate}
 
-\textbf{Why these numbers and Table~\ref{tab:designs} are not in contradiction, and which
-to believe for what.} Table~\ref{tab:designs} reports a posterior standard deviation under
+Why these numbers and Table~\ref{tab:designs} are not in contradiction, and which
+to believe for what. Table~\ref{tab:designs} reports a posterior standard deviation under
 the $k_e$ prior; this table reports a prior-free nonlinear least squares, which is what
 \S1.9 has always simulated. The gap between them is Remark~\ref{rem:priorfree}, and it is
-the honest shape of the result: \textbf{the therapy channel identifies $\theta$ given a
+the honest shape of the result: the therapy channel identifies $\theta$ given a
 defensible prior on the alternative channel, and does not make the decision reliable under
-any reading.} Reporting only the first would be the error this note exists to warn about.
+any reading. Reporting only the first would be the error this note exists to warn about.
 
 \begin{remark}[The asymmetry reverses under crisis protocol]
 \label{rem:regimes}
@@ -432,11 +429,11 @@ $-0.25$ \ (protein stopped)        & $100\%$  & $0.0\%$  & $0.009$ \\
 
 The mechanism is in the last column. When recorded intake falls while the marker climbs,
 least squares has nowhere to put the marker except lost capacity, and $\hat\theta$ collapses
-by two orders of magnitude. \textbf{``The estimator fails towards declaring patients safe''
-holds only while the record tracks the load.} Under the protocol a decompensation actually
+by two orders of magnitude. ``The estimator fails towards declaring patients safe''
+holds only while the record tracks the load. Under the protocol a decompensation actually
 triggers, the same estimator declares every patient unsafe.
 
-\textbf{Neither half belongs in an abstract on its own}, and neither is a bug to be fixed
+Neither half belongs in an abstract on its own, and neither is a bug to be fixed
 by weighting: they are the same estimator meeting two different data-generating processes,
 and which one a record came from is a fact about the chart, not about the patient. A
 regret-equalised threshold does not repair it either. At equal costs the managed regime
@@ -452,7 +449,8 @@ $\Phi(-|\mu|/\operatorname{sd}(\hat\mu))$, is available and is wrong here, in a 
 matters. The design's near-null direction is very nearly the direction along which $\mu$ is
 monotone and of one sign, so the sampling distribution of $\hat\mu$ is heavily skewed and
 does not cross zero anything like as often as its standard deviation suggests.
-\textbf{That is the margin theorem of \eqref{eq:mufibre} showing up in the estimator}, and
+That is the margin theorem of the supplement's fibre calculation (\S S1) showing up in
+the estimator, and
 taking the Gaussian tail at face value would throw away the one favourable result this note
 has. Both numbers are reported by the code so that the gap stays visible.
 

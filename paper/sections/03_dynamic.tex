@@ -27,8 +27,8 @@ unknown rather than assumed away, which Remark~\ref{rem:load_bearing} shows is w
 the identification problem well posed at all.
 
 \paragraph{Why $\alpha$ is not a rate constant.} Elimination proceeds by
-conjugating propionate with carnitine, and \textbf{each molecule eliminated consumes one
-molecule of carnitine}, which is excreted with the product. In two patients with propionic
+conjugating propionate with carnitine, and each molecule eliminated consumes one
+molecule of carnitine, which is excreted with the product. In two patients with propionic
 acidemia and two with methylmalonic aciduria, urinary excretion of free carnitine was
 decreased while excretion of short-chain acylcarnitines, mostly propionylcarnitine, was
 increased~\cite{carnitine_excretion_pa}. % C41
@@ -55,7 +55,7 @@ and that exit grows with $m$.
 \begin{equation}
 \begin{aligned}
 \dot m &= s(t) \;-\; \theta\, g(m) \;-\; k\, c\, \frac{m}{K_c + m}, \\[2pt]
-\dot c &= R_0 \;-\; k\, c\, \frac{m}{K_c + m} \;-\; \delta(m)\, c ,
+\dot c &= R_0 \;-\; k\, c\, \frac{m}{K_c + m} \;-\; \delta(m)\, c,
 \qquad \delta(m) = \delta_0\left(1 + \frac{m}{M_i}\right),
 \end{aligned}
 \label{eq:C}
@@ -146,15 +146,15 @@ all, in either direction, over any range worth sweeping.
 % the shared term: ONE node draining both pools
 \node[malt] (kcm) at (2.5,-2.7) {$k\, c\, m/(K_c+m)$\\[1pt]\scriptsize\mdseries consumes one $c$\\per $m$ removed};
 \channelglyph{(1.15,-4.15)}{blue!55!black}{n}
-\draw[mar, blue!55!black] (m.south east) .. controls +(0.7,-0.9) .. (kcm.north west);
-\draw[mar, blue!55!black] (c.south west) .. controls +(-0.7,-0.9) .. (kcm.north east);
+\draw[mar, blue!55!black] (m.south east).. controls +(0.7,-0.9).. (kcm.north west);
+\draw[mar, blue!55!black] (c.south west).. controls +(-0.7,-0.9).. (kcm.north east);
 \node[msmall] (o2) at (2.5,-5.1) {eliminated together,\\as propionylcarnitine};
 \draw[mar] (kcm) -- (o2);
 
 % carnitine's second exit, which propionate does not share, and which the
 % acylcarnitine competition widens as m rises
 \node[malt] (dc) at (6.9,-2.7) {$\delta(m)\, c$\\[1pt]\scriptsize\mdseries not recovered\\from the filtrate};
-\draw[mar, blue!55!black] (c.south east) .. controls +(0.6,-0.9) .. (dc.north);
+\draw[mar, blue!55!black] (c.south east).. controls +(0.6,-0.9).. (dc.north);
 \node[msmall] (o3) at (6.9,-5.1) {lost in urine};
 \draw[mar] (dc) -- (o3);
 
@@ -189,14 +189,14 @@ The loop is
 \[
 m \uparrow \;\Longrightarrow\; \text{acylcarnitine} \uparrow \;\Longrightarrow\;
 \text{less carnitine recovered} \;\Longrightarrow\;
-c \downarrow \;\Longrightarrow\; \text{clearance} \downarrow \;\Longrightarrow\; m \uparrow .
+c \downarrow \;\Longrightarrow\; \text{clearance} \downarrow \;\Longrightarrow\; m \uparrow.
 \]
 
 Consumption by conjugation is not part of that loop: on its own it draws the pool down and
 the replenishment holds it up, which is a ceiling. What closes the loop is the widening exit,
 and once it outpaces the conjugation step effective clearance \emph{decreases} with $m$
 rather than merely saturating. The clearance curve becomes non-monotone, and the system admits
-\textbf{two} equilibria at moderate load: a stable one at low $m$, and an unstable one at
+two equilibria at moderate load: a stable one at low $m$, and an unstable one at
 higher $m$. As load rises the two approach, collide and annihilate, which is a genuine
 saddle-node.
 
@@ -246,8 +246,8 @@ between-patient variation carried by random effects.
 already fits a hazard of the shape Section~\ref{sec:hazard} proposes: a generalised additive
 \emph{mixed} model with a smooth term in days since the previous event and a
 participant-level random effect~\cite{natural_history}. % C28
-What is proposed there is a substitution \emph{within} that machinery --- a mechanistic
-$\theta$ in place of a measured biomarker as the covariate carrying the risk --- and not
+What is proposed there is a substitution \emph{within} that machinery (a mechanistic
+$\theta$ in place of a measured biomarker as the covariate carrying the risk) and not
 new statistical apparatus.
 
 \paragraph{What is new is the question asked of the input.} Neither prior model asks whether
@@ -267,15 +267,15 @@ rather than asserted, because one of the three does not hold.
 
 \begin{description}[leftmargin=1.6em, itemsep=3pt]
 \item[The dynamic model.] Equation \eqref{eq:parent} with the two-state carnitine system
-\eqref{eq:C} behind it. \textbf{Verified:} solving $\dot c = 0$ and substituting returns
+\eqref{eq:C} behind it. Verified: solving $\dot c = 0$ and substituting returns
 \eqref{eq:alpha} exactly, symbolically, with $k$ entering only through $\rho_0 = \delta_0/k$.
 \item[The equilibrium reduction.] Setting $\dot m = 0$ gives $L = \theta g(m) + \alpha(m)$,
 whose solutions are the attractor and the separatrix, and whose fold defines
-$\thc^{\,\mathrm{int}}$. \textbf{Verified:} integrating the two-state system from below the
+$\thc^{\,\mathrm{int}}$. Verified: integrating the two-state system from below the
 separatrix settles on the reduced attractor to fourteen digits, and from above it diverges;
 the peak of $C$ at $\theta = \thc^{\,\mathrm{int}}$ equals the load to ten digits.
 \item[The local identification model.] Section~\ref{sec:local}, over the band a managed
-patient visits. \textbf{Not verified, and it does not hold as a reduction:}
+patient visits. Not verified, and it does not hold as a reduction:
 Remark~\ref{rem:not_a_reduction} says what does.
 \end{description}
 
@@ -292,7 +292,7 @@ a \;=\; \theta\, g(\bar m)^2 \;+\; \bigl[\alpha(\bar m) - \bar m\,\alpha'(\bar m
 so the local model's identity $a = \theta g(\bar m)^2$ holds \emph{only} when the second
 bracket vanishes, that is only when the alternative channel is a straight line through the
 origin. At the illustrative constants the bracket is $374$ against the enzymatic term's
-$61$: \textbf{the alternative channel owns six-sevenths of the intercept}, which is the term
+$61$: the alternative channel owns six-sevenths of the intercept, which is the term
 the residual capacity was supposed to be carried by.
 
 What the local model is, then, is \eqref{eq:parent} with $\alpha$ replaced by $k_e m$. That
@@ -300,10 +300,10 @@ replacement is not an approximation of this model; it is a different hypothesis 
 term. It is retained because it is the \emph{most favourable} case for identification, for a
 reason now sharper than the one this note used to give. A curved $\alpha$ contributes to
 both coefficients of an affine fit, so given $\alpha$ the pair $(a,b)$ determines
-$(\theta, K_m)$ outright --- verified to machine precision --- and the fibre of
+$(\theta, K_m)$ outright, verified to machine precision, and the fibre of
 Remark~\ref{rem:fibre} does not exist. A straight $\alpha$ contributes to neither, and the
-fibre appears. \textbf{The degeneracy the note is about is a property of the most favourable
-structure}, so it is not an artefact of the awkward one.
+fibre appears. The degeneracy the note is about is a property of the most favourable
+structure, so it is not an artefact of the awkward one.
 
 The proviso carries weight in the other direction. ``Given $\alpha$'' means given four
 constants, and Remark~\ref{rem:shape} prices them. What the record does supply is a
@@ -321,15 +321,15 @@ equilibrium and loads above it admit none.
 
 It is kept for exactly two purposes and neither needs a section.
 
-First, \textbf{it is the null against which the fold is testable}. Under a ceiling, removing
+First, it is the null against which the fold is testable. Under a ceiling, removing
 the precipitating illness returns the load to baseline and the marker follows it back; under
 a fold, the patient who has crossed the separatrix stays across it and recovery has to be
 bought by driving the load \emph{below} baseline. That is the discriminant of
 Section~\ref{sec:discriminant}, and it has no content without the null.
 
-Second, \textbf{it prices biological fidelity in the identification, and it does so twice
-over.} Once both channels saturate they share a functional form and are separated only by
-bending in different places --- by $K_e \neq K_m$ --- and at a ten per cent excursion the
+Second, it prices biological fidelity in the identification, and it does so twice
+over. Once both channels saturate they share a functional form and are separated only by
+bending in different places, by $K_e \neq K_m$, and at a ten per cent excursion the
 condition number rises from $1.1\times10^{5}$ to $4.8\times10^{7}$, a factor of about
 $450$. That is the \emph{local} price and it is the one this remark originally quoted.
 
@@ -339,9 +339,9 @@ form are exchangeable, so the ceiling hypothesis carries an exact two-point dege
 $(\theta, K_m)$ and $(k_e, K_e)$ swap: the Jacobian stays full rank, which is why a finite
 condition number is the right local description, and a second isolated parameter vector
 nevertheless reproduces the data exactly. A selective, \emph{time-varying} input removes it
-and a constant one does not. The note's own $\alpha$ is not of this form --- \eqref{eq:alpha}
+and a constant one does not. The note's own $\alpha$ is not of this form: \eqref{eq:alpha}
 is non-monotone and $\theta g(m)$ is not, so they are not two members of one family and no
-exchange is available --- but the ceiling hypothesis is, and a reader who preferred it would
+exchange is available, but the ceiling hypothesis is, and a reader who preferred it would
 inherit the degeneracy along with it.
 
 No equilibrium collides with another here; a single equilibrium escapes to infinity as the
@@ -360,15 +360,15 @@ because it is not a fact about the patient at all. The equilibrium reduction doe
 
 Write $C(m;\theta) = \theta g(m) + \alpha(m)$ for the total clearance, with $\alpha$ the
 carnitine-mediated flux \eqref{eq:alpha}. Since $\alpha$ rises, peaks and then decays,
-$C(\cdot\,;\theta)$ has an interior maximum for every $\theta$, and that maximum increases
+$C(\cdot\;\theta)$ has an interior maximum for every $\theta$, and that maximum increases
 with $\theta$.
 
 \begin{proposition}[Intrinsic critical capacity]
 \label{prop:intrinsic}
 Fix a load $s$. Define
 \begin{equation}
-\thc^{\,\mathrm{int}}(s) \;:=\; \text{the unique } \theta \text{ such that }
-\max_{m > 0}\, C(m;\theta) \;=\; s .
+\thc^{\,\mathrm{int}}(s) \:=\; \text{the unique } \theta \text{ such that }
+\max_{m > 0}\, C(m;\theta) \;=\; s.
 \label{eq:thcrit_int}
 \end{equation}
 Then for $\theta > \thc^{\,\mathrm{int}}(s)$ the system has exactly two equilibria at load
@@ -428,8 +428,8 @@ patient in the first place. A sustained load below the fold cannot. At any
 $s < s_{\mathrm{fold}}$ the system settles on an attractor lying below the separatrix at
 baseline load, so returning $s$ to baseline returns the patient with it. Crossing requires
 the load to exceed $s_{\mathrm{fold}}$, the largest load the patient can balance at all,
-which at $\theta = 300$ is $706$ against a baseline of $600$. \textbf{An excursion of
-$18\%$ in the load is the smallest that strands a patient}, and the illnesses drawn in
+which at $\theta = 300$ is $706$ against a baseline of $600$. An excursion of
+$18\%$ in the load is the smallest that strands a patient, and the illnesses drawn in
 Figures~\ref{fig:C1} and \ref{fig:C2} are $42\%$ and $50\%$ above baseline, clearing it by
 factors of $2.4$ and $2.8$. The margin of Figure~\ref{fig:C5} is measured in metabolite and
 is large; the excursion that consumes it is measured in load and is not.
@@ -449,12 +449,12 @@ of the answer.
 
 Three things follow, and the second is the one that matters.
 
-\textbf{First, on a common footing all three are cheap, and $M_i$ is cheaper than $K_c$.}
+First, on a common footing all three are cheap, and $M_i$ is cheaper than $K_c$.
 Holding the calibration that fixes $R_0$, an eight-fold range in $M_i$ moves
 $\thc^{\,\mathrm{int}}$ by a factor of $1.37$ against $K_c$'s $1.56$ over thirty-two-fold,
 and $\rho_0$ across its whole admissible window moves it by $1.6\%$. Sweeping the three
 together over those ranges leaves $\thc^{\,\mathrm{int}}$ inside a factor of $1.4$.
-\textbf{The threshold is very nearly a function of the peak of $\alpha$ alone}, so its
+The threshold is very nearly a function of the peak of $\alpha$ alone, so its
 exposure is concentrated not in three constants nobody has measured but in one clinical
 claim: that a patient with no residual enzyme cannot be maintained at baseline load. That
 claim can be argued with a clinician. The shape constants cannot.
@@ -465,18 +465,18 @@ the three by a factor of nine hundred, and at one end of each sweep the threshol
 vacuous. None of that is sensitivity to the shape constant; it is the peak of $\alpha$
 crossing the baseline load, which the calibration exists to prevent.
 
-\textbf{Second, the margin is not protected the way the threshold is.} The separatrix sits
+Second, the margin is not protected the way the threshold is. The separatrix sits
 where $\alpha$ has decayed, and $\alpha$ decays on the scale of $M_i$, so the margin
 inherits $M_i$ almost linearly where $\thc^{\,\mathrm{int}}$ does not: over the same
-eight-fold range it runs from $509$ to $3275$. \textbf{Figure~\ref{fig:C5} now draws that
-range as a band rather than quoting the nominal $954$ as a curve}, so the figure carries its
+eight-fold range it runs from $509$ to $3275$. Figure~\ref{fig:C5} now draws that
+range as a band rather than quoting the nominal $954$ as a curve, so the figure carries its
 own uncertainty instead of delegating it to this remark. What survives the sweep is the
 \emph{sign}: the margin is positive at every $\theta$ above the threshold and at every
 $M_i$ in the range. What does not survive is the value, and the quantity
 Section~\ref{sec:intrinsic} calls ``the clinically decisive object'' is the one this model
 pins down least well.
 
-\textbf{Third, the well-posedness claim survives and the quantitative claim does not.}
+Third, the well-posedness claim survives and the quantitative claim does not.
 Proposition~\ref{prop:intrinsic} is a well-posedness statement and no shape constant touches it.
 What the constants move is where the threshold sits and how much room is left above it.
 \end{remark}
@@ -533,7 +533,7 @@ fold rather than exclusive to it.
 Sections~\ref{sec:local} onwards concern the \emph{stable} patient, where the marker and the
 state can be argued to move together. The behaviour through a decompensation is exactly
 where the measured proxy stops tracking the state, so the separatrix is a claim about the
-dynamics that the current observable cannot confirm or refute directly --- which is also why
+dynamics that the current observable cannot confirm or refute directly, which is also why
 Section~\ref{sec:marker_orig} fixes the marker for the stable patient and not for the crisis.
 \end{remark}
 

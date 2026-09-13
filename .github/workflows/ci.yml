@@ -71,6 +71,9 @@ jobs:
           echo "::group::last 120 lines of paper/main.log"
           tail -120 paper/main.log 2>/dev/null || echo "no main.log was produced"
           echo "::endgroup::"
+          echo "::group::last 120 lines of paper/supplement.log"
+          tail -120 paper/supplement.log 2>/dev/null || echo "no supplement.log was produced"
+          echo "::endgroup::"
           echo "::group::LaTeX errors"
           grep -n -A4 "^!" paper/main.log 2>/dev/null | head -60 || true
           echo "::endgroup::"
