@@ -1,4 +1,4 @@
-\section{The excitation condition: what a trajectory has to do}
+\section{The excitation condition}
 \label{sec:excitation}
 %==========================================================================
 
@@ -6,7 +6,7 @@
 section says what a record would have to do instead, and it is the link between the
 obstruction and the data specification.}
 
-\subsection{The parametrisation, pinned}
+\subsection{Parametrisation}
 \label{sec:pinned}
 
 Nothing below can be proved until one choice is made explicit, because the two natural
@@ -30,7 +30,7 @@ with $L$ the recorded component of the propiogenic load, $L_0$ its unrecorded co
 carried as an unknown constant, and $\Delta$ the therapeutic increment, known from the
 dosing schedule.
 
-\subsection{What kind of obstruction this is: a regime, not a structure}
+\subsection{The nature of the obstruction}
 \label{sec:regime}
 
 Everything below is a statement about a \emph{design}. None of it says the model is
@@ -82,14 +82,14 @@ result and everything that follows, and it is not stated again.
 
 \begin{remark}[A word used in two senses, disambiguated once]
 \label{rem:twosenses}
-This note uses \emph{structural} in two ways and they should not be confused.
+This paper uses \emph{structural} in two ways and they should not be confused.
 \emph{Structural identifiability} is the technical sense above: a property of the model and
 observation map alone, in which noise, sampling and cohort size do not appear. Elsewhere the word is used loosely, to mean that a claim follows from the form of the model rather
-than from any constant in it. No claim in this note asserts structural non-identifiability
+than from any constant in it. No claim in this paper asserts structural non-identifiability
 in the technical sense, of this model or of any reduction of it.
 \end{remark}
 
-\subsection{Both ends are degenerate, and they fail differently}
+\subsection{Degeneracy at both ends of the band}
 
 \begin{proposition}[Two degeneracies]
 \label{prop:excitation}
@@ -136,7 +136,7 @@ $\operatorname{sd}(\ln \hat K_m)$ falls from $0.587$ to $0.209$ on a band at
 $m/K_m = 0.01$, while $\operatorname{sd}(\ln\hat\theta)$ does not improve there at all.
 \end{proof}
 
-Note the column that is not $\theta g$. Earlier drafts of this note wrote the
+Note the column that is not $\theta g$. Earlier drafts of this paper wrote the
 $K_m$ column as $-\theta K_m m/(K_m+m)^2$, dropping the increment, while evaluating it at
 levels the increment had produced. That is the wrong tangent rather than a duplicated term,
 and correcting it changes the paper's central design conclusion; the arithmetic is in
@@ -146,7 +146,7 @@ integrated dynamics to $0.15\%$.
 The two failures are not equally survivable. At the low end a decomposition is
 lost while the clearance itself stays constrained: the data still say what the patient
 eliminates, they do not say through which channel. At the high end the target parameter is
-lost against a quantity nobody records. The earlier phrasing of this note (``below $K_m$
+lost against a quantity nobody records. The earlier phrasing of this paper (``below $K_m$
 only the lumped ratio, above $K_m$ only the product'') was wrong in the second clause,
 and wrong in the direction that matters.
 
@@ -167,7 +167,7 @@ nearly irrelevant once the increment is carried, and that its \emph{variability}
 makes the problem identifiable at all.
 \end{remark}
 
-\subsection{Identifiability comes from curvature, and there are two ways to buy it}
+\subsection{Curvature as the source of identifiability}
 
 Since both ends are flat, what separates the parameters is the \emph{change} in the
 saturation across the record. From \eqref{eq:columns}, the ratio of the $K_m$ sensitivity
@@ -222,14 +222,13 @@ $E_{\max} = \sqrt r/(\sqrt r + 1) - 1/(1 + \sqrt r)$, which is \eqref{eq:Emax}, 
 inverting it gives the requirement on $r$.
 \end{proof}
 
-The requirement is a band around $K_m$, not a threshold above it. That is the
-correction this section exists to make, and it changes what a protocol should ask for. A
+The requirement is a band around $K_m$, not a threshold above it. That correction changes what a protocol should ask for. A
 band of a given fold range placed a decade below $K_m$ delivers a fraction of what the same
 fold range delivers straddling it: at $r = 2$, the band the illustrative patient is held in
 gives $E = 0.058$ against a possible $0.172$, a factor of three thrown away by placement
 alone. Across four decades of operating point the penalty is far larger than that, because
 $\operatorname{sd}(\ln\hat\theta)$ depends on placement more steeply than $E$ does:
-at the operating point this note's patient is managed to, it is about $2\,100$ times
+at the operating point this paper's patient is managed to, it is about $2\,100$ times
 its best (Figure~\ref{fig:D1}).
 
 \begin{figure}[htbp]
@@ -248,7 +247,7 @@ management holds the patient.}
 \label{fig:D1}
 \end{figure}
 
-\subsection{The second factor is the therapy, and the trial already varies it}
+\subsection{The therapeutic increment as the second factor}
 \label{sec:therapychannel}
 
 $\Delta(t)$ is not a nuisance. It is a \emph{known input}, read off the dosing record and
@@ -306,27 +305,27 @@ administered on every dosing day of the trial and read as a nuisance.
 What the dose route needs instead, and it is a real requirement. Nothing is free
 here: \eqref{eq:dosereq} is stated in units of $\theta$, and the ratio $\Delta/\theta$ is
 only as well known as $\Delta$ is. Section~\ref{sec:spec} turns that into the single number
-the design now turns on: how precisely the delivered increment has to be characterised. It is the one requirement this note cannot discharge from published data.
+the design now turns on: how precisely the delivered increment has to be characterised. It is the one requirement this paper cannot discharge from published data.
 
 \begin{remark}[The linear alternative channel is a modelling choice, and not an innocuous one]
 \label{rem:modelB}
 The alternative clearance has been linear since \eqref{eq:local}. If it saturated instead,
 so that both routes carried the same functional form, capacity and alternative clearance
-would be exchangeable: the configuration is the only one in this note's set that
+would be exchangeable: the configuration is the only one in this paper's set that
 \texttt{StructuralIdentifiability.jl} does not return as globally identifiable, and its
 fibre is an exact two-point set that no quantity of noiseless data separates. A known input
 on one channel removes that exchange only if the input \emph{varies}; a constant increment
 is absorbed into the amplitude it rides on and separates nothing.
 
-This note's own model escapes the exchange because its two channels are not two members of
+This paper's own model escapes the exchange because its two channels are not two members of
 one parameterised family, so no permutation of $(\theta, K_m, k_e)$ exchanges them. But the
 saturating model contains this one only as a boundary case, and at any finite $K_e \neq K_m$
 the exchange is exact, so the freedom is a property of the linearisation rather than
 evidence that the linearisation was harmless. The general statement, its proof, and what it
-costs this note are in the supplement, \S S1.
+costs this paper are in the supplement, \S S1.
 \end{remark}
 
-\subsection{The obstruction has a closed form, and it names its own cure}
+\subsection{A closed form for the obstruction}
 \label{sec:rank}
 
 What survives all of this is one exact statement, and it is sharper than the determinant
@@ -434,7 +433,7 @@ Two consequences, and the second is the one to keep.
 \item \textbf{Load-record \emph{precision} is nearly irrelevant.} Once the increment is
 carried, $\operatorname{sd}(\ln\hat\theta)$ on the accessible design runs from $0.1469$ at
 a load record good to $1\%$ to $0.1557$ at a record good to $20\%$. Tightening the record
-twentyfold buys six per cent. An earlier draft of this note made load-record precision the
+twentyfold buys six per cent. An earlier draft of this paper made load-record precision the
 binding design variable; it is not, and that is retired here rather than quietly dropped.
 \item \textbf{Load \emph{variation} is what makes the problem identifiable at all.} By
 Proposition~\ref{prop:rank} a perfectly steady intake is exactly the singular case. Half a
@@ -451,7 +450,7 @@ $\operatorname{sd}(\ln\hat\theta)$ falls to $0.054$ at a $2\%$ coefficient of va
 $0.023$ at $10\%$. Those two numbers are withdrawn. They reproduce only on the
 two-daily design of $365$ samples \emph{with $k_e$ held exactly known}: a footing this
 note disowns in the supplement, \S S1, and which the design module's own documentation
-reserves for the audit rather than for a headline. On the footing this note claims: the accessible monthly design, a log-prior of $0.8$ on $\ln k_e$: the same quantities
+reserves for the audit rather than for a headline. On the footing this paper claims: the accessible monthly design, a log-prior of $0.8$ on $\ln k_e$: the same quantities
 are $0.234$ and $0.172$.
 
 They were also computed with the dose train present, which is the substantive
@@ -520,7 +519,7 @@ $\chi^2 \propto \varepsilon^4$ means the data do pin it, at second order, and th
 understating what the record contains. On this design the profile is $\varepsilon^4$ to
 four decades, with $\chi^2/\varepsilon^4$ constant at $2.08\times10^{-6}$.
 
-This is the second time in this note that a linearisation has misrepresented an estimand
+This is the second time in this paper that a linearisation has misrepresented an estimand
 whose true behaviour was one order higher; the first is Remark~\ref{rem:no_delta}, where a
 Gaussian tail on $\mu$ reported a coin toss for a quantity whose sampling distribution does
 not cross zero. Both failures point the same way: propagate a covariance only after
@@ -542,8 +541,7 @@ The third route moves the \emph{other} factor. By Proposition~\ref{prop:tworoute
 increment reaching $\Delta/\theta = 0.55$ meets the same requirement at the patient's own
 operating level, with no excursion at all, and the trial schedule already reaches $2.13$.
 The route that was never considered is the only one that is both safe and
-observed, and it is the therapy the paper exists to dose. The rest of this note is written
-to price it: what it costs is not an excursion but a characterisation of the delivered
+observed, and it is the therapy already being administered. What it costs is not an excursion but a characterisation of the delivered
 increment, and Section~\ref{sec:spec} says how good that has to be.
 \end{remark}
 

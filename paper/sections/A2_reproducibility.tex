@@ -2,7 +2,7 @@
 \label{sec:repro}
 %==========================================================================
 
-No figure, table or number in this note is typed by hand. Everything under
+No figure, table or number in this paper is typed by hand. Everything under
 \texttt{results/} is regenerated from \texttt{src/}, and every load-bearing claim is asserted
 in \texttt{tests/test\_models.py}, so a parameter change that breaks a claim fails a test
 rather than silently moving a figure.
@@ -35,7 +35,7 @@ $(\text{design}, \sigma, \mathrm{CV}, \text{reps}, \text{seed})$, so the same de
 fitted once and reused across an amplitude sweep; nothing in the sweep depends on the
 illness amplitude except the margin evaluated afterwards.
 
-\paragraph{Integration.} Euler appears in this note only for exposition. Every computed
+\paragraph{Integration.} Euler appears in this paper only for exposition. Every computed
 trajectory uses an adaptive stiff-capable solver (\texttt{LSODA} or \texttt{Radau}) with
 relative tolerances at $10^{-8}$ or tighter, and the estimator of
 Section~\ref{sec:collapse} does not integrate at all: it uses the closed-form quasi-steady

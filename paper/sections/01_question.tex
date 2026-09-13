@@ -1,4 +1,4 @@
-\section{The question}
+\section{Introduction}
 \label{sec:question}
 %==========================================================================
 
@@ -17,7 +17,7 @@ The clinical decision it creates is a \emph{dosing interval}, and the interval i
 quantity nobody measures: the patient's residual enzymatic capacity, written $\theta$
 throughout. A patient with more residual capacity needs less frequent replacement.
 
-This note asks a narrow question and answers it. Given a clinical record of the
+This paper asks a narrow question and answers it. Given a clinical record of the
 kind the disease actually generates (a marker series, a dosing diary, a dietary record) \emph{can $\theta$ be identified, and does identifying it decide anything?} The answer
 is in four parts, and the second is the one that determines what a protocol should do.
 
@@ -46,7 +46,7 @@ threshold is not a measured quantity: it is defined through two chosen constants
 across their defensible range it moves by a factor of $24$ and the sign flips for the same
 patient with perfect data (Section~\ref{sec:decision}).
 \item \textbf{The threshold framing is itself doubtful.} The only endpoint evidence
-available reports a smooth dose--response and no threshold at all. This note records that
+available reports a smooth dose--response and no threshold at all. This paper records that
 as a finding rather than adopting a replacement estimand, for reasons given in
 Section~\ref{sec:decision}.
 \item \textbf{And capacity stops being recoverable exactly where it matters most.} Above
@@ -55,11 +55,24 @@ residual capacity are indistinguishable, which is the severely affected populati
 (Section~\ref{sec:scope}).
 \end{enumerate}
 
-What this note is not. It is a statement about identifiability, a property of a
+What this paper is not. It is a statement about identifiability, a property of a
 model and a design together. It is not a statement about patients, and
 Section~\ref{sec:discussion} says plainly where the model's own analysis questions its
 validity. The biological background, the disease's clinical course and the argument for
 treating $\theta$ as the decision variable are in the supplement, \S S1.
+
+\paragraph{How the argument is organised.} Section~\ref{sec:model} fixes the model at
+three resolutions, from the two-state dynamic system through its equilibrium reduction to
+the local identification model every design calculation uses, together with the assumptions
+and the numerical conventions. Section~\ref{sec:excitation} asks what a trajectory has to
+do for $\theta$ to be identifiable at all, and finds that the obstruction on a
+quasi-steady record has a closed form that names the input which closes it.
+Section~\ref{sec:designsec} asks what the accessible trajectories actually deliver, which
+is where the dose train, the sampling phase and the decision estimand are settled.
+Section~\ref{sec:spec} turns those results into a two-tier data specification, the first
+tier of which is a single measurement nobody has published.
+Section~\ref{sec:scope} gives the limit of the whole construction, and
+Section~\ref{sec:discussion} states what it does and does not license.
 
 \vspace{0.5em}
 \hrule

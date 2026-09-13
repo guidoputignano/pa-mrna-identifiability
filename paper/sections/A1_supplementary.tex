@@ -23,7 +23,7 @@ $K_m$ the Michaelis constant, the substrate concentration at which $v = V_{\max}
 Identifying $V_{\max}$ with $\theta$ and $[S]$ with $m$ turns \eqref{eq:mm} into the term
 $\theta\, g(m)$ of \eqref{eq:A}. The same functional form appears under other names in
 adjacent literatures: it is the Monod function in microbial growth kinetics, and the Hill
-function with cooperativity coefficient $n = 1$. Throughout this note the three names are
+function with cooperativity coefficient $n = 1$. Throughout this paper the three names are
 used for the same object, and no cooperativity is assumed. PCC has a second substrate,
 bicarbonate, which is held constant here.
 
@@ -99,7 +99,7 @@ results are stated separately.
       and are withdrawn. The two-sided bound is the useful part, and it is a real piece of
       information: a record that fixes $(a,b)$ excludes nine-tenths of the range the
       arbitrariness of $K_c$ nominally spans. The identifiability of the dynamic model is
-      not otherwise analysed in this note.
+      not otherwise analysed in this paper.
 \item \textbf{The competition is documented in vitro.} It is measured in a transporter
       solubilised from \emph{rat} renal brush-border membrane and reconstituted into
       liposomes, and its identification with OCTN2 is the authors' own qualified
@@ -356,7 +356,7 @@ It is bought at a price in generalisability. The series is $81\%$ \emph{PCCA}
 equally to propionic acidemia worldwide~\cite{saudi84,genereviews_pa}, % C29
 so anything estimated here is estimated predominantly on \emph{PCCA} biology.
 
-\emph{This note does not make that argument, and the reason is a constraint the main text
+\emph{This paper does not make that argument, and the reason is a constraint the main text
 establishes after this material was written.} Section~\ref{sec:whoto} requires a record
 containing a therapeutic increment that varies over the sampling window, and no patient
 outside the trial receives one. The population in which the genotype map is cleanest is
@@ -382,7 +382,7 @@ carry the \emph{same} functional form,
 \;-\; k_e\, \frac{m}{K_e + m},
 \label{eq:modelB}
 \end{equation}
-produces the only configuration in this note's set that
+produces the only configuration in this paper's set that
 \texttt{StructuralIdentifiability.jl} does not return as globally identifiable. With
 $\Delta \equiv 0$ it returns \emph{locally} identifiable, and the identifiable functions
 are
@@ -395,8 +395,8 @@ every one invariant under the exchange $(\theta, K_m) \leftrightarrow (k_e, K_e)
 nothing else in the list. The fibre is a \emph{two-point set}: the true parameter and its
 channel-swapped image, which no quantity of noiseless data separates.
 
-Read the direction of that correctly, because it is a limit on this note and not a
-result in its favour. The note's own model escapes the exchange for a reason that is
+Read the direction of that correctly, because it is a limit on this paper and not a
+result in its favour. The paper's own model escapes the exchange for a reason that is
 almost bookkeeping: its two channels are not two members of one parameterised family. The
 enzymatic term carries $(\theta, K_m)$ and the alternative term carries $k_e$ alone, so
 there is no permutation of $(\theta, K_m, k_e)$ that exchanges them and nothing to break.
@@ -414,7 +414,7 @@ is that there is no permutation available at all.
 And the limit cuts the other way, which is the part worth keeping.
 \eqref{eq:modelB} contains \eqref{eq:local} only as a boundary case, and at any
 \emph{finite} $K_e \neq K_m$ with no selective input the exchange is present and exact.
-The note's freedom from it is therefore a property of the linearisation, not
+The paper's freedom from it is therefore a property of the linearisation, not
 evidence that the linearisation was harmless.
 
 \subsubsection{What separates two channels, in general}
@@ -483,10 +483,10 @@ Three different degeneracies, and in every one what does the separating is a
 difference that moves, not a quantity that is large or a measurement that is precise.
 
 What this licenses, stated narrowly. \eqref{eq:modelB} is not the model used
-anywhere else here. What the proposition adds is a scope statement the note owes a reader:
+anywhere else here. What the proposition adds is a scope statement the paper owes a reader:
 if the alternative clearance route saturates on the marker's own scale, identification
 acquires an exact two-point degeneracy that no record removes, and the therapy then becomes
-load-bearing for something this note otherwise gets for free, with a constant infusion
+load-bearing for something this paper otherwise gets for free, with a constant infusion
 insufficient, and the biweekly train's decay exactly what is required. That is a condition
 on a future study's model, not a repair to this one.
 
@@ -510,7 +510,7 @@ $3.7\times10^{-3}$ for $\ln k_e$, a column that is \emph{nearly}, not exactly, d
 the rest. So there is one exact identity and no second, \emph{and} $k_e$ is the
 worst-conditioned of the directions that survive it.
 
-Together they decide every prior in this note, and they decide it the way round
+Together they decide every prior in this paper, and they decide it the way round
 that is easy to get backwards.
 \begin{itemize}[leftmargin=*, itemsep=2pt]
 \item \textbf{$K_m$ lies \emph{inside} the exact degeneracy, so a prior on it cannot help.}
@@ -528,7 +528,7 @@ such direction here.
 estimand would be assuming the answer.
 \end{itemize}
 
-So the one thing this note asks the literature for is the one thing the geometry
+So the one thing this paper asks the literature for is the one thing the geometry
 says is worth asking for. A control study that pinned $K_m$ to one per cent would buy six
 per cent (Section~\ref{sec:spec}); $k_e$ within a factor of about three is what the gate
 actually needs. The pattern of priors is read off the null vector, not chosen for

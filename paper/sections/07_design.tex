@@ -1,11 +1,11 @@
-\section{The design: where the excitation can be bought, and what it decides}
+\section{The sampling design}
 \label{sec:designsec}
 %==========================================================================
 
 \emph{Section~\ref{sec:excitation} says what a trajectory has to do. This section asks
 what the accessible trajectories actually do, and what decision the answer supports.}
 
-\subsection{What does not collapse, stays, and what does, and why}
+\subsection{Which parameters collapse, and which do not}
 \label{sec:collapse}
 
 The estimator here is the exact information filter for constant parameters,
@@ -16,8 +16,7 @@ P_k^{-1} \;=\; P_0^{-1} \;+\; \sum_{i \le k} \frac{q(m_i, \Delta_i)\,q(m_i, \Del
 on the augmented coordinates $(\ln\theta, \ln K_m, L_0, \ln k_e)$, none of which carries
 dynamics. There is no process noise on $\theta$, and that is a construction rather
 than a setting. A random walk on $\theta$ manufactures a finite stationary covariance in a
-direction the data may never see, which is precisely the error this note exists to warn
-about; with \eqref{eq:infofilter}, what does not collapse stays visibly uncollapsed.
+direction the data may never see, which is precisely the error at issue here; with \eqref{eq:infofilter}, what does not collapse stays visibly uncollapsed.
 
 \paragraph{Why these priors and not others.} The choice below looks arbitrary until one
 fact from Proposition~\ref{prop:rank} is put beside one fact about conditioning. The null
@@ -29,7 +28,7 @@ outside, where a modest one does all the work. The full argument, with the regre
 residuals that separate the two cases, is in the supplement, \S S1.
 
 \paragraph{The footing, stated once and used everywhere.} Four choices decide every number
-in this section, and earlier drafts of this note did not hold them fixed.
+in this section, and earlier drafts of this paper did not hold them fixed.
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
 \item \textbf{$q$ carries the increment}, as \eqref{eq:columns} requires. A design is
 \emph{not} fully described by the levels it visits: two samples at the same level under
@@ -42,7 +41,7 @@ twenty times looser) so nothing here depends on knowing $K_m$, which
 Remark~\ref{rem:no_km} forbids.
 \item \textbf{$k_e$ carries a log-prior of $0.8$}, a factor of $2.2$, and it is the only
 prior that does any work: removing it takes the same design from $0.1474$ to $0.6451$. The
-gate needs $k_e$ within a factor of $2.95$, which is the one thing this note asks the
+gate needs $k_e$ within a factor of $2.95$, which is the one thing this paper asks the
 literature for.
 \item \textbf{Intake varies day to day at a $10\%$ coefficient of variation, and is
 recorded to $5\%$.} By Proposition~\ref{prop:rank} a perfectly steady load is the exactly
@@ -78,7 +77,7 @@ much of the dose cycle they see, not how many samples they take.}
 The fourth column is the range of the therapeutic increment the design actually sees, and
 it, rather than $n$, is what orders the table. The last column is the same design evaluated
 with the increment dropped from the sensitivity while still being used to generate the
-levels, which is what earlier drafts of this note reported.}
+levels, which is what earlier drafts of this paper reported.}
 \input{../results/tables/tab_D_designs}
 \end{table}
 \end{adjustwidth}
@@ -94,7 +93,7 @@ designs that pass are the ones that see the increment vary, and the ones that fa
 ones that do not. Six-monthly visits catch a range of $\Delta/\theta$ of $0.45$;
 two-monthly visits catch $1.94$.
 
-\begin{remark}[Do not sample at the dose interval. This is the sharpest rule in the note.]
+\begin{remark}[Do not sample at the dose interval. This is the sharpest rule in the paper.]
 \label{rem:aliasing}
 The fortnightly row of Table~\ref{tab:designs} is a catastrophe, and it is a
 \emph{designed} catastrophe rather than bad luck. The dose interval is fourteen days, so
@@ -109,7 +108,7 @@ writer would make for administrative convenience, and would currently make the w
 because ``sample on dosing days'' is the obvious thing to write.
 \end{remark}
 
-Three more things in that table are worth reading against what this note used to
+Three more things in that table are worth reading against what this paper used to
 say.
 
 \begin{enumerate}[leftmargin=*, itemsep=3pt]
@@ -131,7 +130,7 @@ withdrawn in \texttt{REVIEW\_LOG.md} rather than deleted.
 \end{enumerate}
 
 And the load record behaves in the way Proposition~\ref{prop:rank} says, not the
-way this note used to assume. Recording the load ten times better (to $0.5\%$, which
+way this paper used to assume. Recording the load ten times better (to $0.5\%$, which
 nobody can do) moves the dense design by about one per cent. That retires the claim that
 load-record \emph{precision} is the binding design variable. What the record has to contain
 instead is \emph{variation}: by Proposition~\ref{prop:rank} a perfectly steady intake is the
@@ -229,7 +228,7 @@ biweekly dosing with a $3.5$-day half-life satisfies it comfortably and nothing 
 change. But a switch to continuous or near-continuous administration (a plausible
 future formulation change, and one that would be made on pharmacological grounds with no
 reason to consider identifiability) would silently remove the only excitation this design
-has. That is the second thing this note says about how the therapy is given, and unlike
+has. That is the second thing this paper says about how the therapy is given, and unlike
 Remark~\ref{rem:dosedesign} it is not a recommendation to change anything. It is a condition
 to check before the route changes.
 \end{remark}
@@ -251,7 +250,7 @@ precisely the direction Remark~\ref{rem:priorfree} identifies as the binding one
 the parameter whose prior the whole design rests on, and a transient is what would measure
 it without a prior.
 
-Whether that is clinically feasible is a different question, and this note does not
+Whether that is clinically feasible is a different question, and this paper does not
 claim it is. The infusion is administered in a clinic, so the patient is already present
 for the first hours; a series of draws at, say, $0$, $1$, $2$, $4$ and $8$~h is an ordinary
 pharmacokinetic sampling schedule and is not an excursion, an exposure or a provocation.
@@ -269,7 +268,7 @@ tested on a timescale where it matters. Tier~1 of Section~\ref{sec:spec} already
 the one measurement that would begin to do that.
 \end{remark}
 
-\subsection{Where the excitation could come from}
+\subsection{Candidate sources of excitation}
 \label{sec:excursion_table}
 
 Each accessible source of variation moves the marker by a known amount, in a known
@@ -306,7 +305,7 @@ excitation it supplies but that it measures capacity on a different axis entirel
 the subject of the validation protocol in the supplement, \S S1.
 \end{enumerate}
 
-\subsection{The estimand is a decision, and the therapy channel does not rescue it}
+\subsection{The decision estimand}
 \label{sec:decision}
 
 Confidence intervals on $\theta$ are the wrong output. The clinical question is the
@@ -325,7 +324,7 @@ untreated who did. Each panel varies one thing a protocol controls.}
 \label{fig:D3}
 \end{figure}
 
-This subsection reports a negative result, and it is the one the note ends on.
+This subsection reports a negative result, and it is the one the paper ends on.
 Everything above says the therapy channel makes $\theta$ identifiable. It does not follow
 that it makes the \emph{sign of the margin} decidable, and it does not.
 
@@ -368,7 +367,7 @@ the $k_e$ prior; this table reports a prior-free nonlinear least squares, which 
 \S1.9 has always simulated. The gap between them is Remark~\ref{rem:priorfree}, and it is
 the honest shape of the result: the therapy channel identifies $\theta$ given a
 defensible prior on the alternative channel, and does not make the decision reliable under
-any reading. Reporting only the first would be the error this note exists to warn about.
+any reading. Reporting only the first would repeat that error.
 
 \begin{remark}[The asymmetry reverses under crisis protocol]
 \label{rem:regimes}
@@ -416,10 +415,10 @@ monotone and of one sign, so the sampling distribution of $\hat\mu$ is heavily s
 does not cross zero anything like as often as its standard deviation suggests.
 That is the margin theorem of the supplement's fibre calculation (\S S1) showing up in
 the estimator, and
-taking the Gaussian tail at face value would throw away the one favourable result this note
+taking the Gaussian tail at face value would throw away the one favourable result this paper
 has. Both numbers are reported by the code so that the gap stays visible.
 
-This is the first of the note's two linearisation failures; the second is
+This is the first of the paper's two linearisation failures; the second is
 Remark~\ref{rem:second_order}, where a first-order filter reports a curvature-held
 direction as prior-held. They point the same way.
 \end{remark}
