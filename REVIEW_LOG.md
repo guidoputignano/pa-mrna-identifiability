@@ -503,6 +503,36 @@ The conclusion is unaffected and the mechanism was decorative — which is exact
 easy to write and would have been hard to catch. This is the second instance of the R7 rule
 in two handoffs.
 
+### R10 — the em-dash sweep, and why a green build proved nothing
+
+**Not a retracted claim but a retracted method**, and it belongs here because the failure
+mode is the same shape as the others: something that looked verified and was not.
+
+Removing 123 em dashes by pattern substitution did the job it was asked to do and three
+things it was not. It rewrote comment rules (`%-----`) into commas. It collapsed the
+newline after two `\cite{...} %` comments, pushing the rest of those sentences **behind the
+comment marker**, where they vanished from the document. And on one of those rewritten
+rules it swallowed the following line, which was `\input{sections/01_biology}` — removing an
+entire 1,400-word section from the build.
+
+**The build stayed green through all of it.** No LaTeX error, no undefined reference, no
+failed test. A section silently left the document and every check this repository runs said
+the document was fine. The page count fell by four and I attributed that to a shorter
+abstract, which was also true, and which is exactly how it stayed hidden.
+
+**The rule that follows: a mechanical edit that leaves the build green is not thereby
+verified.** The build checks that the document compiles, not that it still says what it
+said. For prose there is no test that fails when a sentence is deleted, so the only
+verification is reading the diff — and a 113-site diff is not read, it is skimmed.
+
+**So: no further whole-document pass on this repository is done by pattern substitution.**
+Any sweep is done by reading, or it is not done. Where a sweep has already run, the check
+is not "does it build" but "what did the diff actually change", site by site.
+
+Worth recording alongside: the three defects were found by reading the changed lines
+afterwards, not by any check. Two were found because I went looking, and the third only
+because the first two made me suspicious enough to keep looking.
+
 ## A sixth failure mode
 
 - **A number taken from an abstract that its own Results contradict.** Three instances now,
@@ -549,3 +579,12 @@ in two handoffs.
   what found it: not a test, not a re-read, but a *later result that contradicted it*.
   Conflicting numbers are the cheapest detector this project has, and the only one that has
   ever caught an error of this class.
+
+- **An edit verified by the build rather than by reading.** R10 is the first, and it is the
+  only failure here that *deleted* rather than distorted: a whole section left the document
+  and every automated check passed. The rule: **a mechanical edit that leaves the build
+  green is not thereby verified.** A compiler checks that prose parses, never that it still
+  says what it said, and no test in this repository fails when a paragraph disappears. Any
+  whole-document pass is therefore done by reading, or it is not done; and where one has
+  already run, the question is not whether it builds but what the diff changed, site by
+  site.

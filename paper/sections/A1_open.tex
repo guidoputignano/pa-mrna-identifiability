@@ -100,20 +100,10 @@ this for every parameter value in an uncertainty set, while simultaneously contr
 set, is dual control with a state constraint whose defining parameter is the unknown.
 Violation is not an off-specification excursion but a hospitalisation carrying a risk of
 permanent neurological cost, so the appropriate formulation is a chance constraint rather
-than a quadratic objective.
-
-\paragraph{Confounding of the accessible input.}
-\label{sec:confounding}
-The perturbation actually present in the
-records is carnitine, and it is endogenous: the dose responds to the patient's state. The
-design and identification questions above are therefore posed on an input that no protocol
-fixed in advance. Whether the quasi-exogenous variation listed in
-Section~\ref{sec:instruments}, namely weight-based recalculation after growth, supply
-interruptions and changes of formulation, is sufficient to support the argument is a
-question for the records, and it is answered patient by patient.
-The load route is asked the same question and costs more: a change of load carries the same
-determinant as a channel perturbation, and it needs both loads known where the channel
-route needs one.
+than a quadratic objective. The \emph{practical} form of this question is
+answered and is not open: Section~4.3 of the paper prices every change to the dose train
+against the trough it protects, finds the exchange about thirteen to one against, and
+recommends no modulation at all. What remains open is the theory above.
 
 \paragraph{Reduction.} A model reduction preserving the input--output response to periodic
 impulsive inputs does not obviously yield a reduced model whose parameters are identifiable
@@ -124,13 +114,81 @@ unknowns entering simultaneously, $\theta$, the population parameters, $\lambda$
 amplitude per documented illness episode, attractivity of the estimator manifold becomes a
 matrix condition rather than a sign condition, and is not addressed here.
 
-\paragraph{The therapy, when it arrives.} The analysis of this note is carried out on
-carnitine because that is the selective input present in the accessible cohort. By
-Proposition~\ref{prop:channel} nothing in the identification problem distinguishes the two
-channels: the determinant depends on the metabolite levels before and after the
-perturbation and not on which channel produced them. What the mRNA therapy would add is
-therefore not new structure but a better \emph{statistical} position. Its schedule is fixed
-by protocol, with no reference to the patient's state, so it supplies a genuinely exogenous
-selective input, on the enzymatic channel, in a cohort where the only such input at present
-is endogenous. The instrumental apparatus needed to defend a carnitine-based argument would
-become unnecessary. The conditioning, which is the actual obstruction, is unchanged.
+\subsection{Questions since answered}
+\label{sec:answered}
+
+These were open when the questions above were written. They are kept with their answers
+rather than removed, because a superseded position with its resolution is more useful than
+a silent deletion.
+
+\paragraph{Well-posedness, and whether the decision is invariant to it.} Asked above as the
+central question. \emph{Answered, and in the negative.} The critical capacity is an
+operational definition built on two chosen constants, and across their defensible range it
+moves by a factor of $24$ while the sign of the margin flips for the same patient with
+perfect data. The decision is therefore \emph{not} invariant to the arbitrariness, which is
+the second of the paper's four claims and the reason it ends in a data specification rather
+than a dosing rule.
+
+\paragraph{Confounding of the accessible input.}
+\label{sec:confounding}
+\emph{Closed, on two independent grounds, in Section~5.3 of the paper.} The question as
+posed was whether the quasi-exogenous component of carnitine dosing is sufficient to carry
+the identification. It is not, and the instrument question does not have to be reached.
+Quantitatively, carnitine acts on the alternative channel, so it cannot move the first
+factor of the sensitivity ratio at all; it moves the second by pushing the patient deeper
+into the linear regime, and the exchange is about ten to one against. On the same footing
+that gives the dose train $0.170$, spontaneous load variation alone gives $1.77$ and adding
+recorded carnitine steps gives $1.91$ to $2.06$, \emph{worse} than leaving them out.
+Structurally, the carnitine dose responds to the patient's state, so it is endogenous and
+would need an instrument, where the dose train is fixed by protocol and exogenous by
+construction. The original text is preserved below.
+
+\begin{quote}\small
+  The perturbation actually present in the
+  records is carnitine, and it is endogenous: the dose responds to the patient's state. The
+  design and identification questions above are therefore posed on an input that no protocol
+  fixed in advance. Whether the quasi-exogenous variation listed in
+  Section~\ref{sec:instruments}, namely weight-based recalculation after growth, supply
+  interruptions and changes of formulation, is sufficient to support the argument is a
+  question for the records, and it is answered patient by patient.
+  The load route is asked the same question and costs more: a change of load carries the same
+  determinant as a channel perturbation, and it needs both loads known where the channel
+  route needs one.
+\end{quote}
+
+\paragraph{The therapy, when it arrives.} \emph{Superseded in full.} This paragraph was
+written when carnitine was the input the analysis rested on and the mRNA therapy was
+prospective. Three of its statements are now wrong and the paper reverses each.
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item \emph{That the analysis is carried out on carnitine.} It is carried out on the
+therapy, using the published phase 1/2 biweekly schedule as it stands. The therapy is not
+future; it is the identification experiment the trial is already running.
+\item \emph{That nothing in the identification problem distinguishes the two channels.}
+That equivalence holds only with $K_m$ known and the carnitine gain known. With $K_m$ free,
+which is this note's own situation, the two channels differ by six orders of magnitude in
+$\det G$ and by a factor of $46$ to $807$ in $\operatorname{sd}(\ln\hat\theta)$, because the
+$K_m$ sensitivity carries a prefactor $(\theta + \Delta(t))$ that only the therapy
+modulates.
+\item \emph{That the therapy adds a better statistical position and leaves the conditioning
+unchanged.} This is backwards. The conditioning is exactly what the therapy changes:
+without a dose train the same footing gives $1.77$ against a $0.20$ target, and with one it
+gives $0.170$. Section~5.3 states the consequence, which is that the therapy is not an
+improvement on the design but its condition of existence, and that no specification is
+available for a patient who is not receiving it.
+\end{enumerate}
+
+The original text is preserved below.
+
+\begin{quote}\small
+  The analysis of this note is carried out on
+  carnitine because that is the selective input present in the accessible cohort. By
+  Proposition~\ref{prop:channel} nothing in the identification problem distinguishes the two
+  channels: the determinant depends on the metabolite levels before and after the
+  perturbation and not on which channel produced them. What the mRNA therapy would add is
+  therefore not new structure but a better \emph{statistical} position. Its schedule is fixed
+  by protocol, with no reference to the patient's state, so it supplies a genuinely exogenous
+  selective input, on the enzymatic channel, in a cohort where the only such input at present
+  is endogenous. The instrumental apparatus needed to defend a carnitine-based argument would
+  become unnecessary. The conditioning, which is the actual obstruction, is unchanged.
+\end{quote}
