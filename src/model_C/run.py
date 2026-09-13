@@ -409,25 +409,65 @@ def fig_margin():
     ax[0].set_title("the two equilibria collide at the fold")
     ax[0].legend(loc="upper left")
 
-    ax[1].plot(th_ok, margin, color=BLUE, lw=2.0)
+    # --- the margin as a BAND, not a curve -----------------------------
+    #
+    # The separatrix sits where alpha has decayed, and alpha decays on the
+    # scale of M_i, so the margin inherits M_i almost linearly where
+    # theta_crit_intrinsic does not. Drawing one curve invites the number to be
+    # read as a value. It is an order of magnitude, and the figure should say
+    # so itself rather than leaving it to a remark.
+    #
+    # The sweep is the admissible one: R_0 is recalibrated at each M_i, so the
+    # constraint that fixes it is never broken.
+    MI_SWEEP = (150.0, 300.0, 600.0, 1200.0)     # the eight-fold range
+    coarse = np.linspace(1e-3, 30000.0, 30000)
+    band = []
+    for mi in MI_SWEEP:
+        q0 = replace(PC, Mi=float(mi))
+        q0 = replace(q0, R0=R0_for_peak(q0))
+        mg = []
+        for th in th_ok:
+            q = replace(q0, theta=float(th))
+            roots, st = equilibria_nonmonotone(clearance_C_quasistatic, q,
+                                               S_BASE, coarse)
+            mg.append(roots[~st][0] - roots[st][0]
+                      if st.sum() and (~st).sum() else np.nan)
+        band.append(np.array(mg))
+    band = np.array(band)
+    lo = np.nanmin(band, axis=0)
+    hi = np.nanmax(band, axis=0)
+
+    ax[1].fill_between(th_ok, lo, hi, color=BLUE, alpha=0.16,
+                       label=r"$M_i$ over an eight-fold range")
+    ax[1].plot(th_ok, margin, color=BLUE, lw=2.0, label="nominal $M_i = 300$")
     ax[1].axvline(thc, color=MUTED, ls=":", lw=1.2)
-    ax[1].fill_between(th_ok, 0, margin, color=BLUE, alpha=0.08)
     i = np.argmin(abs(th_ok - PC.theta))
     ax[1].plot([PC.theta], [margin[i]], "o", ms=5.5, color=MUTED, zorder=5)
     at_point(ax[1], (PC.theta, margin[i]),
-             f"nominal patient\nmargin = {margin[i]:.0f}",
+             f"nominal patient\nmargin = {margin[i]:.0f}\n"
+             f"band {lo[i]:.0f}--{hi[i]:.0f}",
              dx=10, dy=34, arrow=True, fontsize=7.5, color=MUTED,
              ha="left", va="bottom")
     over_x(ax[1], thc, "margin vanishes:\nsaddle-node", frac=0.97,
            color=MUTED, fontsize=7.5, ha="left")
     ax[1].set_xlabel(r"residual capacity $\theta$")
     ax[1].set_ylabel("separatrix $-$ attractor")
-    ax[1].set_title("the safety margin, at baseline load")
+    ax[1].set_title("the safety margin: sign robust, magnitude to an "
+                    "order of magnitude", fontsize=8)
+    ax[1].legend(loc="upper left", fontsize=6.5)
 
     save(fig, "fig_C5_margin")
     print(f"    theta_crit_intrinsic at s = {S_BASE:.0f}: {thc:.2f}")
     print(f"    at the nominal theta = {PC.theta:.0f}: attractor "
           f"{attr[i]:.1f}, separatrix {sep[i]:.1f}, margin {margin[i]:.1f}")
+    pos = np.nanmin(band)
+    print(f"    THE SIGN: the margin stays positive at every theta and every "
+          f"M_i in the sweep (smallest {pos:.1f})"
+          if pos > 0 else
+          f"    THE SIGN FLIPS somewhere in the sweep (smallest {pos:.1f})")
+    print(f"    THE MAGNITUDE: at the nominal patient the band runs "
+          f"{lo[i]:.0f} to {hi[i]:.0f}, a factor of {hi[i]/lo[i]:.1f}. "
+          f"Quote it as an order of magnitude.")
     print("    m_bar does NOT appear anywhere in this construction. s does.")
     return thc
 

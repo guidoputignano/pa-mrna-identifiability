@@ -71,10 +71,35 @@ accessible designs it is an order of magnitude larger than the reference standar
 study would be measuring the marker method's imprecision and not the agreement between two
 comparable methods.
 
-\paragraph{What would make the protocol worth running.} Only a cohort in which the excursion
-requirement of Table~\ref{tab:excursion} is met, which by Section~\ref{sec:excursion_table}
-means a cohort observed through decompensations with the load recorded throughout. That is a
-natural history study with a sampling protocol attached, not a new experiment.
+\paragraph{What would make the protocol worth running --- and it is no longer a
+decompensation cohort.} An earlier version of this paragraph asked for a cohort observed
+through decompensations with the load recorded throughout, on the grounds that only such a
+cohort meets the excursion requirement of Table~\ref{tab:excursion}. Two findings retire
+that: the excursion is not observed at the magnitude required, and the model loses its
+stable equilibrium over most of the band in question (Section~\ref{sec:spec}). What
+replaces it is Tier~1 of Table~\ref{tab:spec}: a same-day paired repeatability arm, which
+is smaller than a natural history study by every measure that matters.
+
+\paragraph{And the cohort arithmetic is what settles it.} Placing the fraction of patients
+with $\mu<0$ within ten percentage points requires correcting for per-patient
+misclassification, which inflates the variance by $(1-2p)^{-2}$. At the therapy-channel
+design's simulated sign error near the boundary the requirement is about $2\,200$ patients,
+against roughly $4\,900$ for the design it replaces. \textbf{Neither number is reachable and
+the improvement does not change that.} The phase 1/2 trial enrolled
+sixteen~\cite{trial_phase12}, % C16
+and even in the highest-reported population this note cites, where newborn screening gives
+an incidence near $1{:}14\,000$~\cite{nbs_saudi_national}, % C10
+a cohort of two thousand is not a recruitment problem but an arithmetic one: it is a
+substantial fraction of every diagnosed patient alive. In populations where the incidence is
+lower --- which is most of them --- the arithmetic is worse, and this note does not quote a
+figure for them because it has not verified one.
+
+That is not an argument against the specification. It is an argument about what the
+specification is \emph{for}. \textbf{A design that identifies $\theta$ per patient does not
+need a cohort to decide that patient's dosing}; a cohort is needed only to estimate what
+fraction of a population sits below the threshold, which is an epidemiological question and
+not the clinical one this note opened with. The specification of Section~\ref{sec:spec} is
+written for the first and should not be read as a proposal for the second.
 
 \begin{remark}[A gap in the literature that the protocol depends on]
 \label{rem:no_pa_breath}
