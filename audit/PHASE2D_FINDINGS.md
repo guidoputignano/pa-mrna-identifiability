@@ -151,8 +151,19 @@ thresholds: managed +0.07θ at equal costs, crisis −0.39θ; at a cost ratio of
 every regime wants every patient escalated, which is the decision-theoretic statement that
 the test has stopped contributing.
 
-### The published table's 52.5% is a seed outlier
+### The published table's 52.5% is one draw, not an error — corrected
 
-Twelve seeds give the managed-regime errors as **6.9% ± 1.7%** and **44.0% ± 3.2%**, range
-[37.2%, 49.2%]. The table printed 6.0% and 52.5%; the second is outside the range of twelve
-seeds. Quote the spread.
+**An earlier version of this section called 52.5% a seed outlier. That was overstated and
+is withdrawn.** The figure's own code calls
+`sign_error(lv9, ..., reps=400, seed=12, s_peak=3.58*base)`, and running the pipeline
+reproduces 52.5% exactly. It is a legitimate draw from the repo's own path, not a number
+that fails to reproduce.
+
+What is true is narrower. Seeds 0–11 give the managed-regime errors as **6.9% ± 1.7%** and
+**44.0% ± 3.2%**, range [37.2%, 49.2%] — so seed 12 sits above the window those twelve
+happen to span, roughly 2.6 standard deviations above their mean. The recommendation is
+unchanged and is about presentation rather than correctness: **a single-seed value quoted
+near a decision boundary carries three to four points of Monte Carlo noise and should be
+reported with its spread.** Saying the published number was wrong was a stronger claim than
+the evidence supports, and the distinction matters in a document whose whole purpose is to
+separate the two.

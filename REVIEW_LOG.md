@@ -396,6 +396,19 @@ the identified subspace. It is +0.0214 on the claimed footing, flips sign across
 parameter sweep, and Monte Carlo returns +0.95 against the linearised −0.32. What
 survives is that the correlation *collapses in magnitude*.
 
+### R5 — "the decision table's 52.5% is a seed outlier"
+
+**This retraction is itself retracted**, and the sequence is worth keeping because it is
+the failure mode running in the other direction. Having found three citation-layer errors
+in one pass, I read a fourth discrepancy as a fourth error. It was not: the figure calls
+`sign_error(..., seed=12)` and 52.5% reproduces from it exactly. My twelve-seed check ran
+seeds 0–11 and missed the one the code actually uses.
+
+The accurate statement is that 52.5% is one draw, that seeds 0–11 give 44.0% ± 3.2% with
+range [37.2%, 49.2%], and that a single-seed value near a decision boundary should be
+quoted with its spread. **A pattern of errors is not evidence that the next discrepancy is
+another one**, and checking which seed the code used would have cost one grep.
+
 ### R4 — "the breath test repeats at a CV of 12.8% in patients"
 
 **Retracted** (2D.3), and it is the source's own error inherited. Manoli et al.'s Results
