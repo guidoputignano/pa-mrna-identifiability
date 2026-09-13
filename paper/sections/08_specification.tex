@@ -2,154 +2,99 @@
 \label{sec:spec}
 %==========================================================================
 
-\emph{This is the page the rest of the note is written to reach. Every row is generated
-from the model code, and every row is a consequence of something proved above rather than
-a recommendation of good practice.}
-
-\textbf{It has two tiers, and the order is not cosmetic.} Tier~1 is a single measurement
-that nobody has published, and until it reports there is no defensible answer to the
-question Tier~2 asks. Saying so is the specification's main content: the honest output of
-this analysis is not a protocol but the one experiment that would let a protocol be
-written.
+\emph{Every row is generated from the model code and is a consequence of something proved
+above. It has two tiers, and the order is not cosmetic: Tier~1 is a single measurement
+nobody has published, and until it reports there is no defensible answer to the question
+Tier~2 asks.}
 
 \begin{adjustwidth}{-1.4cm}{-1.4cm}
 \begin{table}[htbp]
 \centering
 \footnotesize
-\caption{\label{tab:spec}What a record would have to contain for the sign of $\mu$ to be
-decidable. Quantities are given in observable units, not in multiples of $K_m$, because
-$K_m$ is not known --- and, by the last row, does not need to be.}
+\caption{\label{tab:spec}What a record would have to contain for $\theta$ to be
+identifiable. Quantities are in observable units, not multiples of $K_m$, because $K_m$ is
+not known --- and by the last row does not need to be.}
 \input{../results/tables/tab_D_spec}
 \end{table}
 \end{adjustwidth}
 
-\subsection{Tier 1: the measurement that decides whether any of this is feasible}
+\subsection{Tier 1: the measurement the method's feasibility turns on}
 \label{sec:tier1}
 
 \textbf{What to run.} One cohort, two $1$-$^{13}$C-propionate breath tests bracketing a
-single dose, on one day. Nothing else. The quantity being measured is the repeatability of
-the assay \emph{within a day and within a state}, which is what a pre/post pair around a
-dose actually depends on.
+single dose, on one day. The quantity measured is the repeatability of the assay
+\emph{within a day and within a state}, which is what a pre/post pair around a dose depends
+on.
 
-\textbf{Why it is first.} By Proposition~\ref{prop:tworoutes} the therapy channel delivers
-the excitation, and \eqref{eq:dosereq} is stated in units of $\theta$: the ratio
+\textbf{Why it is first.} By Section~\ref{sec:excitation} the therapy channel is what makes
+$\theta$ identifiable, and \eqref{eq:dosereq} is stated in units of $\theta$: the ratio
 $\Delta/\theta$ is only as well known as $\Delta$ is. Section~\ref{sec:designsec} turns
-that into one number --- the delivered increment must be characterised to about
-$12\%$ for monthly sampling to reach the $20\%$ target. Everything else in this
-specification is conditional on that number being reachable.
+that into one number --- the delivered increment must be characterised to about $12\%$ for
+monthly sampling to reach the $20\%$ target on $\theta$. \textbf{Everything the therapy
+channel buys is conditional on that, and it has never been measured.}
 
-\textbf{Why the published figure does not settle it, and must not be quoted as though it
-did.} The only repeatability data for this assay are Manoli et al.'s~\cite{breath_test_mma} % C48
-and they do not measure what is needed here, in three separate ways.
+\textbf{What is published is an upper bound, and it is not the quantity needed.} The only
+repeatability data for this assay~\cite{breath_test_mma} % C48
+are between-visit: controls repeated at one- to three-week intervals, and fifteen
+\emph{mut} patients at separate visits \emph{two months to four years apart}, with the
+authors naming changing renal status and varying $V\mathrm{CO}_2$ as causes. The Results
+give $14.02 \pm 12.86\%$ with a range of $0.39$ to $50.84\%$; the abstract's widely quoted
+$12.8\%$ is the standard deviation of the per-subject coefficients, not their mean. And the
+cohort is methylmalonic acidemia, not propionic acidemia, where the block sits at PCC
+itself.
 
-\begin{enumerate}[leftmargin=*, itemsep=3pt]
-\item \textbf{They are between-visit, not same-day.} Controls repeated the study three
-times at one- to three-week intervals; the fifteen \emph{mut} patients repeated it two or
-three times at separate visits \emph{two months to four years apart}. The authors name the
-causes of the larger variances, and they are biological rather than analytical: changing
-renal status between testing (eGFR falling from $57$ to $43$ in one subject), varying
-$V\mathrm{CO}_2$, possibly incomplete dose administration.
-\item \textbf{The headline figure is the wrong statistic.} The abstract reports ``mean
-coefficient of variation $6.9\%$ and $12.8\%$ respectively''. The Results give, for
-patients, ``ranged from $0.39\%$ to $50.84\%$ with an average of $14.02 \pm 12.86\%$'':
-$12.86$ is the \emph{standard deviation} of the per-subject CVs, not their mean. The
-published Correction restores a graphical abstract and changes no numbers. This note used
-the abstract's figure until the present pass and has withdrawn it.
-\item \textbf{They are methylmalonic acidemia, not propionic acidemia.} No PA breath-test
-series has been located. In PA the block sits at PCC itself, so the test maps onto
-$\theta$ more directly than it does in MMA, which is an argument that the assay should
-work better here and not a reason to assume it does.
-\end{enumerate}
-
-\textbf{What can honestly be said, and it is favourable.} Between-visit variation is an
-\emph{upper bound} on same-day measurement error, because it contains the renal drift and
-the $V\mathrm{CO}_2$ change that a same-day pair removes. The bound, $14.0\%$, is already
-close to the requirement, so the measurement is likely to clear it. \textbf{But a bound
-that happens to sit near a threshold is not a measurement of the threshold}, and the
-per-subject range reaching $50.8\%$ means a cohort mean cannot be applied to an individual
-patient in any case. Tier~1 exists to replace an inference with a number.
+Between-visit variation is an \emph{upper bound} on same-day error, because it contains
+drift a same-day pair removes, and the bound sits close to the requirement. \textbf{But a
+bound that happens to sit near a threshold is not a measurement of it}, and a per-subject
+range reaching $50.8\%$ cannot be applied to an individual. Tier~1 replaces an inference
+with a number.
 
 \subsection{Tier 2: conditional on Tier 1, and then it is a small study}
 
-\paragraph{Sampling: cover the dose cycle, do not chase the marker.} Monthly draws across
-dose cycles for two years reach the target; two-monthly draws, thirteen over two years,
-also reach it. This is ordinary outpatient blood work. What buys the information is not the
-rate but the \emph{phase}: a schedule that sees the increment vary identifies $\theta$, and
+\paragraph{Cover the dose cycle; do not chase the marker.} Monthly draws across dose cycles
+for two years reach the target, and two-monthly draws --- thirteen over two years --- also
+reach it. This is ordinary outpatient blood work. What buys the information is the
+\emph{phase}, not the rate: a schedule that sees the increment vary identifies $\theta$ and
 one that does not, does not, whatever its density.
 
-\paragraph{And one hard exclusion, which a protocol would currently get wrong.} By
-Remark~\ref{rem:aliasing}, \textbf{do not sample at the dose interval or any multiple of
-it}. ``Draw bloods on dosing days'' is the natural thing for a protocol to say and it is
-the one schedule that destroys the result: every draw lands at the same phase of every
-cycle, the range of $\Delta/\theta$ collapses from $1.95$ to $0.13$, and
+\paragraph{And one hard exclusion a protocol would currently get wrong.}
+\textbf{Do not sample on dosing days, or at any multiple of the dose interval}
+(Remark~\ref{rem:aliasing}). ``Draw bloods when the patient attends for dosing'' is the
+natural thing to write and it is the one schedule that destroys the result: every draw
+lands at the same phase, the range of $\Delta/\theta$ collapses from $1.95$ to $0.13$, and
 $\operatorname{sd}(\ln\hat\theta)$ goes from $0.17$ to $3.51$. Moving the schedule half a
-day off the dose interval recovers it.
+day recovers it.
 
-\paragraph{The load record: ordinary precision, and preserve the variation.} This reverses
-what an earlier draft of this note asked for, and the reversal is the content of
-Proposition~\ref{prop:rank}. Recording intake twenty times more precisely buys about six
-per cent, so \emph{precision} is not the binding variable it was made out to be.
-
-The variability needs stating carefully, because the load record enters twice and the two
-roles pull in different directions. By Proposition~\ref{prop:rank} a perfectly steady load
-makes the design exactly rank deficient, and that null direction has to be filled by
-something. \textbf{As the specification stands it is filled by the $5\%$ prior on the load
-bias}, and with that prior in place the answer is insensitive to the variability as well as
-to the precision. \textbf{Strip the prior and only real variation fills it}: the design is
-singular at a perfectly steady intake and finite as soon as intake varies.
-
-So ``record intake as eaten, do not smooth it'' is not the difference between working and
-not working --- it is the difference between a result the data support and a result a prior
-supports. That is worth having, and it costs nothing: it is an instruction to \emph{omit} a
-data-cleaning step, not to add one. \textbf{Record what was eaten, when. Do not tidy it.}
+\paragraph{The load record: ordinary precision, and keep the variation.} Recording intake
+twenty times more precisely buys about six per cent, so precision is not the binding
+variable. The variability is subtler and enters twice. By Proposition~\ref{prop:rank} a
+perfectly steady load makes the design exactly rank deficient, and that null direction must
+be filled by something; as the specification stands it is filled by the $5\%$ prior on the
+load bias, and only real day-to-day variation lets the \emph{data} fill it instead. So
+``record intake as eaten, do not smooth it'' is the difference between a result the data
+support and one a prior supports. It costs nothing: it is an instruction to omit a
+data-cleaning step, not to add a measurement.
 
 \paragraph{$k_e$, and nothing else, is assumed.} The result needs the non-enzymatic
-clearance within a factor of about three. That is the single prior everything rests on, and
-the literature supplies it; no measurement programme is proposed for it, and the
-labelled-washout, renal-clearance and recovery-limb routes earlier drafts considered are
-dropped. $K_m$ is assumed at nothing at all: a prior twenty times looser leaves every
-number here unchanged, which is what Remark~\ref{rem:no_km} demanded and what earlier
-drafts could not deliver.
+clearance within a factor of about three, which the literature supplies; no measurement
+programme is proposed for it. $K_m$ is assumed at nothing: a prior twenty times looser
+leaves every number unchanged, which is what Remark~\ref{rem:no_km} demanded.
 
-\subsection{What the analysis eliminated, and why}
+\subsection{What is excluded, and what is not promised}
 
-Two things this note spent most of its length asking for are now struck out. Both were
-consequences of measuring the wrong factor of \eqref{eq:Egen}.
+Two acquisitions an earlier draft asked for are struck out. \textbf{High-frequency sampling
+at a fixed operating point} buys nothing: two-monthly sampling with thirteen draws beats
+fortnightly sampling with fifty-three, because the first sees the dose cycle and the second
+is aliased against it. \textbf{Decompensation records} are excluded twice over --- the
+excursion is not observed at the magnitude required, and by Section~\ref{sec:discussion}
+the model does not hold in that regime.
 
-\begin{itemize}[leftmargin=*, itemsep=4pt]
-\item \textbf{High-frequency sampling at a fixed operating point.} Under the corrected
-sensitivity, two-monthly sampling with thirteen draws beats fortnightly sampling with
-fifty-three, because the first sees the dose cycle and the second is aliased against it.
-Density at a fixed phase buys nothing, and a study that budgets for it has bought nothing.
-\item \textbf{Decompensation records.} This is struck out twice over. The excitation is not
-observed at the magnitude required --- the only published decompensation-to-baseline ratio
-for a propionate marker is $3.2$-fold in urine at $P = \mathrm{NS}$, against the twenty-fold
-an earlier draft asked for, and that twenty-fold was arithmetic on two assumed constants
-rather than an observation. And the model does not hold there: by
-Section~\ref{sec:decision} the clearance curve peaks at $3.4\,\bar m$ and the
-separatrix sits at $12.6\,\bar m$, so $42\%$ of the band an earlier draft proposed lies
-beyond the peak where the equilibrium is unstable, and the levels above it lie past the
-separatrix where no equilibrium exists at all. \textbf{Both estimators in this note are
-steady-state fits. Over most of that band there is no steady state to fit.}
-\end{itemize}
-
-\subsection{What the specification does not promise}
-
-It does not promise that the decision becomes reliable. Section~\ref{sec:decision} runs the
-same design through the decision and finds the sign of $\mu$ wrong for about two patients
-in five near the boundary --- no better than the design it replaces --- and a cohort
-requirement of about $2\,200$ against a phase 1/2 trial of sixteen. \textbf{What this
-specification buys is an identified $\theta$, not a decidable $\mu$}, and the gap between
-those two is not a gap in the data. It is that the sign of a quantity near its own zero is
-hard however well the quantity is estimated. A protocol written from this page should
-report $\hat\theta$ with its interval and should not be read as a rule for escalating an
-individual patient.
-
-\textbf{So the study this specification describes is small, prospective, and outpatient.}
-It is not a registry request: no historical record contains the dosing times, the
-unsmoothed intake and the paired breath tests together. It is not a crisis cohort: the
-analysis that used to point there points away from it in two independent directions. It is
-one repeatability arm, and then monthly bloods with the dosing diary kept honestly.
+\textbf{And the specification does not promise a decision.} It buys an identified $\theta$.
+Section~\ref{sec:decision} shows that the sign of the margin does not follow from it, for
+reasons that are not about the data, and Section~\ref{sec:scope} shows that $\theta$ itself
+stops being recoverable in the patients the question matters most for. A protocol written
+from this page should report $\hat\theta$ with its interval and should not be read as a
+rule for escalating an individual patient.
 
 \vspace{0.5em}
 \hrule
