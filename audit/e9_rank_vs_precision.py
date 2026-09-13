@@ -2,7 +2,7 @@
 15.1 / 15.2 -- reconciling scenario 1 against prop:rank, and deriving the scaling.
 
 prop:rank reports that half a per cent of day-to-day load variation restores full
-rank. Scenario 1 of 14.1 runs twenty times that variation and returns 1.79, which
+rank. Scenario 1 of 14.1 runs twenty times that variation and returns 1.77, which
 is unusable. Both cannot be describing the same mechanism, so this checks three
 things and then derives the one claim 14.1 left asserted.
 
@@ -138,7 +138,7 @@ def published_numbers_do_not_reproduce():
     print("  2% CV and 0.023 at 10%. Those do not reproduce on the note's claimed")
     print("  footing. Searching the designs and priors actually available:\n")
     print(f"    {'design':>18} {'k_e':>9} {'load prior':>11} {'cv=2%':>9} {'cv=10%':>9}")
-    for nm, t in (("monthly (24)", MON),
+    for nm, t in (("monthly (25)", MON),
                   ("two-daily (365)", np.arange(0.0, 730.0, 2.0))):
         for kep in (0.8, None):
             lab = "known" if kep is None else "prior 0.8"

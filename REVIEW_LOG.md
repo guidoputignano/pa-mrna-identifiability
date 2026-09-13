@@ -560,15 +560,18 @@ footing and is false on the design the protocol specifies, where the marker side
 factor of $1.3$ from the reference standard rather than an order of magnitude, so the
 conclusion is reversed with its original stated.
 
-**Two findings are out of that class and are left alone, deliberately.** Both would change
-a number in the main text, and neither is a contradiction of position:
+**Two findings are out of that class and were left alone at the time, deliberately**, both
+being numbers rather than contradictions of position. Both were fixed in the pass that
+followed, and R12 records what their survival says:
 
 1. `08_specification.tex:100` and `00_abstract.tex:19` quote $1.79$ for spontaneous load
    variability at $10\%$ CV. `audit/e7_excitation_budget.py` returns $1.7731$ on the
    lognormal load that replaced the Gaussian one in 15.1, and `A1_open.tex` quotes $1.77$.
    The $40\%$ row of the same table was updated to its lognormal value ($0.70 \to 0.62$)
    and the $10\%$ row was not. `audit/PHASE3_CHECKS.md` says the correction was made "in
-   the paper", and in the paper it was made in one row of two.
+   the paper", and in the paper it was made in one row. (R11 read the extent of this as two
+   rows. Reading the whole table in the pass that fixed it found five affected numbers, of
+   which one had been requoted. R12 has the count.)
 2. `08_specification.tex:90` describes that scenario's footing as "twenty-four monthly
    draws over two years". The scenario runs on twenty-five
    (`len(np.arange(0, 730, 30.4)) = 25`). The "twenty-four draws" at line 119 is a
@@ -578,6 +581,65 @@ a number in the main text, and neither is a contradiction of position:
 footing. These two are the other half of it: a footing that changed under a number nobody
 requoted. Both were found by reading prose against the script that produces it, which is
 the same instrument that found R6, R7 and R9, and again not by any test in this repository.
+
+### R12 — the correction that reached one row of a table
+
+**The near-miss, and the worst-placed error this project has carried.**
+
+In 15.1 the scenario-1 load draw was switched from Gaussian to lognormal, because at
+$40\%$ CV the Gaussian returned a negative load and a negative marker. Commit `b289ef8`
+requoted **one** number on that switch, the $40\%$ row ($0.70 \to 0.62$). Reading the whole
+table and the paragraph under it against `audit/e7_excitation_budget.py`, five numbers there
+were computed on the Gaussian draw and one was requoted:
+
+| quoted | on the lognormal draw | state |
+|---|---|---|
+| $10\%$ row, $1.79$ | $1.7731$ | corrected in this pass |
+| $40\%$ row, $0.70$ | $0.6164$ | corrected in `b289ef8` |
+| carnitine row, $1.91$–$2.06$ | $1.91$–$2.02$ | **outstanding** |
+| "needs a CV of $229\%$" | no CV reaches $0.20$; sd bottoms near $0.376$ at $120$–$200\%$ and rises | **outstanding** |
+| daily sampling "$0.67$" | $0.65$ | **outstanding** |
+
+The dose-train row ($0.170$) is unaffected, and every number in the paragraph that follows
+(the exponent band $0.06$ to $0.24$, $1.8\times10^{-7}$, $7.6\times10^{-4}$, the prior's
+$1.05$) reproduces exactly.
+
+Three things make this the sharpest instance of the class, not the mildest:
+
+- **It reached the abstract.** Of everything in two documents, the abstract is what most
+  readers will read and all readers will read first, and $1.79$ was in it.
+- **It survived two freezes.** v16 froze the repository and v19 froze it again. Neither
+  freeze is a check, and nothing between them looked at the table.
+- **`audit/PHASE3_CHECKS.md` said the correction had been made.** Its own words were
+  "Corrected in the table above and in the paper". In the paper it was made in one row of
+  four, and the note asserting completeness is what made the remainder invisible: anyone
+  re-checking would have read that line and stopped.
+
+It is the same shape as R8 — right about its own computation, wrong about what it applies
+to — with the scope error one level up. R8 was a number attached to the wrong footing. This
+is a *correction* attached to the wrong extent.
+
+**The rule: a correction to one row of a table is applied to the table, and the check is
+reading the table, not the row.** A recomputation that changes one quoted value changes
+every value derived from the same run; the unit of a fix is the table, the figure, or the
+paragraph, never the line that prompted it. And a note recording that a correction was made
+states *where*, because "corrected in the paper" is a claim about extent and carries the
+same burden as a number (R7).
+
+One of the outstanding three is not a refresh and is flagged as a decision rather than an
+edit. The $229\%$ does not reproduce at all: `e7`'s bisection brackets $[10\%, 2000\%]$ and
+prints its ceiling, which is the search reporting "not found" in the shape of a result. Under
+the lognormal draw no coefficient of variation reaches the $0.20$ target, so the paper's
+conclusion is not weakened but *strengthened* — the route does not exist at any variability,
+not merely at an implausible one. Note also that `e7` printing a bracket ceiling as
+"required CV" is itself the R6 failure in a new place: a script stating a result it did not
+establish.
+
+Worth recording alongside: the miss was not found by re-reading the table either. It was
+found by a sweep looking for something else, which noticed that two files quoted the same
+quantity differently, and the remaining three were found only because the rule above forced
+a reading of the whole table rather than the one row named. Conflicting numbers remain the
+only detector here that has ever caught this class (R8), and it has now caught it twice.
 
 ## A sixth failure mode
 
