@@ -228,7 +228,7 @@ def quasi_steady_check(tol=0.05, cycles=3):
 
 
 def _filter(levels, sigma, increments=None, prior_rel=(0.8, 0.8),
-            load_frac=LOAD_FRAC):
+            load_frac=LOAD_FRAC, ke_prior=0.8):
     """
     Sequential covariance of (ln theta, ln K_m, load bias) as samples arrive.
 
@@ -245,6 +245,13 @@ def _filter(levels, sigma, increments=None, prior_rel=(0.8, 0.8),
     removed, it is the wrong tangent. See audit/c1_sensitivity.py, which
     finite-differences the clearance and agrees with the corrected column to
     1.1e-10 while the uncorrected one is wrong by up to 68% of itself.
+
+    `ke_prior` is the log-prior on ln k_e. The default 0.8 FITS k_e, which is
+    the footing this paper claims: the non-enzymatic channel is not known, and
+    a design evaluated as though it were flatters itself (audit/PHASE2A.md, A1).
+    Passing ke_prior=None holds k_e exactly known and reproduces the three-column
+    covariance the earlier drafts used; it is kept for the audit, not for a
+    headline.
 
     Passing increments=None reproduces the published (uncorrected) column and
     is kept only so the audit's numbers stay reproducible.
@@ -265,13 +272,18 @@ def _filter(levels, sigma, increments=None, prior_rel=(0.8, 0.8),
     lv = np.asarray(levels, dtype=float)
     inc = (np.zeros_like(lv) if increments is None
            else np.broadcast_to(np.asarray(increments, dtype=float), lv.shape))
-    Finv = np.linalg.inv(np.diag([prior_rel[0] ** 2, prior_rel[1] ** 2,
-                                  (load_frac * Lb) ** 2]))
+    pri = [prior_rel[0] ** 2, prior_rel[1] ** 2, (load_frac * Lb) ** 2]
+    if ke_prior is not None:
+        pri.append(ke_prior ** 2)
+    Finv = np.linalg.inv(np.diag(pri))
     out = [np.linalg.inv(Finv)]
     for m, d in zip(lv, inc):
-        q = np.array([P.theta * m / (P.Km + m),
-                      -(P.theta + d) * P.Km * m / (P.Km + m) ** 2,
-                      1.0])
+        q = [P.theta * m / (P.Km + m),
+             -(P.theta + d) * P.Km * m / (P.Km + m) ** 2,
+             1.0]
+        if ke_prior is not None:
+            q.append(P.ke * m)
+        q = np.array(q)
         Finv = Finv + np.outer(q, q) / sigma ** 2
         out.append(np.linalg.inv(Finv))
     return np.array(out)
@@ -303,10 +315,11 @@ def fig_collapse(T=730.0):
                        color=cols[name], lw=1.9,
                        label=f"{name} ($n={len(times)}$)")
         rho = Ps[-1][0, 1] / np.sqrt(Ps[-1][0, 0] * Ps[-1][1, 1])
-        stale = np.sqrt(_filter(lv, sigma)[-1][0, 0])
+        stale = np.sqrt(_filter(lv, sigma, ke_prior=None)[-1][0, 0])
+        kek = np.sqrt(_filter(lv, sigma, inc, ke_prior=None)[-1][0, 0])
         print(f"    {name:>30}: n={len(times):4d}  levels {lv.min():6.3f}-{lv.max():6.3f}"
               f"  sd(ln theta) = {np.sqrt(Ps[-1][0,0]):8.4f}  corr = {rho:+.4f}"
-              f"   [Delta dropped, as published: {stale:.4f}]")
+              f"   [k_e held known: {kek:.4f};  Delta dropped too: {stale:.4f}]")
     ax[0].axhline(0.20, color=MUTED, ls="--", lw=1.0)
     corner(ax[0], r"$20\%$ on $\theta$", "lower left", color=MUTED, fontsize=7)
     ax[0].set_xlabel("time  [days]")
@@ -411,7 +424,7 @@ _ENSEMBLE_CACHE = {}
 
 
 def fit_ensemble(levels, theta, Km, ke, sigma_load=None, cv=None, reps=400,
-                 seed=0, m_bar=M_BAR):
+                 seed=0, m_bar=M_BAR, increments=None, rho=1.0, kappa_cv=0.0):
     """
     An ensemble of fitted parameter sets from synthetic records of one design.
 
@@ -432,21 +445,30 @@ def fit_ensemble(levels, theta, Km, ke, sigma_load=None, cv=None, reps=400,
     sigma_load = LOAD_FRAC if sigma_load is None else sigma_load
     cv = ASSAY_CV if cv is None else cv
     key = (tuple(np.round(np.asarray(levels, float), 9)), theta, Km, ke,
-           sigma_load, cv, int(reps), int(seed))
+           sigma_load, cv, int(reps), int(seed), float(rho), float(kappa_cv),
+           None if increments is None
+           else tuple(np.round(np.atleast_1d(increments).astype(float), 9)))
     if key in _ENSEMBLE_CACHE:
         return _ENSEMBLE_CACHE[key]
     rng = np.random.default_rng(seed)
     lv = np.asarray(levels, dtype=float)
+    inc = (np.zeros_like(lv) if increments is None
+           else np.broadcast_to(np.asarray(increments, dtype=float),
+                                lv.shape).astype(float))
     b_loc = theta * Km / (Km + m_bar) ** 2 + ke
-    s_true = theta * lv / (Km + lv) + ke * lv
+    s_true = (theta + inc) * lv / (Km + lv) + ke * lv
+    L_base = clearance_A(m_bar, P)
+    s_rec = L_base + rho * (s_true - L_base)
     out = []
     for _ in range(int(reps)):
-        s_obs = (s_true * (1.0 + rng.normal(0.0, sigma_load, lv.size))
+        s_obs = (s_rec * (1.0 + rng.normal(0.0, sigma_load, lv.size))
                  + rng.normal(0.0, b_loc * cv * m_bar, lv.size))
+
+        inc_fit = inc * (1.0 + rng.normal(0.0, kappa_cv)) if kappa_cv else inc
 
         def res(q):
             t, K, k = np.exp(np.clip(q[:3], -25.0, 25.0))
-            return t * lv / (K + lv) + k * lv + q[3] - s_obs
+            return (t + inc_fit) * lv / (K + lv) + k * lv + q[3] - s_obs
 
         start = np.concatenate([np.log([theta, Km, ke])
                                 + rng.normal(0.0, 0.5, size=3), [0.0]])
@@ -461,7 +483,8 @@ def fit_ensemble(levels, theta, Km, ke, sigma_load=None, cv=None, reps=400,
 
 
 def sign_error(levels, theta, Km, ke, sigma_load=None, cv=None, reps=400,
-               seed=0, m_tol=M_TOL, s_peak=None, m_bar=M_BAR):
+               seed=0, m_tol=M_TOL, s_peak=None, m_bar=M_BAR, increments=None,
+               rho=1.0, kappa_cv=0.0):
     """
     The operating characteristic of the decision, by simulation.
 
@@ -472,7 +495,8 @@ def sign_error(levels, theta, Km, ke, sigma_load=None, cv=None, reps=400,
         treat unneeded   true mu > 0, estimated mu < 0
         fail to treat    true mu < 0, estimated mu > 0
     """
-    ens = fit_ensemble(levels, theta, Km, ke, sigma_load, cv, reps, seed, m_bar)
+    ens = fit_ensemble(levels, theta, Km, ke, sigma_load, cv, reps, seed, m_bar,
+                       increments, rho, kappa_cv)
     mu_true = margin_and_gradient(theta, Km, ke, m_tol, s_peak)[0]
     if ens.size == 0:
         return dict(mu=mu_true, p=np.nan, n=0, kind="n/a")

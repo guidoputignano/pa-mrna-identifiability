@@ -355,3 +355,62 @@ cycle and a literature fact-check before anyone looked at the counts:
 - **A ratio reported as a constant.** The 1.4 load-error amplification and the 0.36 anchor attenuation were both quoted as properties of the model. Both are ratios in `theta` and both invert for the severe patient.
 - **A spread read as disagreement.** Three Saudi incidences differing by 40% were treated as estimates that fail to agree. Two of them rest on four events each, and all three are statistically indistinguishable. A ratio between point estimates says nothing until the counts under them are known, and the fact-check that reviewed the paragraph did not catch this either.
 - **A unit carried across scales.** `ASSAY_CV` is a percentage and was used as absolute flux. The definition site now says so.
+
+---
+
+## Retractions (pass 3, the phase 2A–2D audit)
+
+Recorded rather than deleted, because the reason each was wrong is the point.
+
+### R1 — "one dose cycle of seven samples reaches the target"
+
+**Stated** in the phase 2A report: that reinstating the therapeutic increment in the
+sensitivity brought a single seven-sample dose cycle to `sd(ln theta) = 0.1511`, inside
+the 20% gate.
+
+**Retracted.** It held only with `k_e` held exactly known, which is not the footing this
+paper claims. With `k_e` fitted at the module's own 0.8 log-prior the same design gives
+**0.2067** and has a floor there: it does not reach the gate at any precision on the
+delivered increment, because the floor is set by the design and not by the product
+(`audit/c_dose_precision.py`). `tests/test_models.py` now asserts the retraction rather
+than the claim.
+
+**The failure mode is the one this log already names** — a sensitivity swept off a broken
+constraint — in its fourth instance. The footing was not held fixed between the number
+that was quoted and the footing the paper argues for. The rule that follows: **every
+design number in this paper is quoted on the k_e-fitted footing, and any number on the
+k_e-known footing is labelled as an audit reproduction and never as a headline.**
+
+### R2 — "the sign error plateaus near 6% because of load confounding"
+
+**Retracted** (A1). The floor is an artefact of unweighted least squares against
+level-dependent noise; per-sample sd runs 21.96 to 945.6 across the band. With the load
+bias still free and flat but the noise made homoscedastic, the error runs
+32.3/26.7/2.1/0/0/0/0/0%. The curve does not plateau: extended, it turns at 40 m̄ and
+rises to 17.3% at 320 m̄.
+
+### R3 — "corr(ln theta, ln K_m) reverses from +0.9988 to −0.3163"
+
+**Retracted** (C3). The reversal is a cancellation between a prior-fed null direction and
+the identified subspace. It is +0.0214 on the claimed footing, flips sign across the
+parameter sweep, and Monte Carlo returns +0.95 against the linearised −0.32. What
+survives is that the correlation *collapses in magnitude*.
+
+### R4 — "the breath test repeats at a CV of 12.8% in patients"
+
+**Retracted** (2D.3), and it is the source's own error inherited. Manoli et al.'s Results
+give **14.02 ± 12.86%**, range 0.39–50.84%; the abstract reports 12.86, the standard
+deviation, as though it were the mean. The figure is also **between-visit over 2 months
+to 4 years**, with changing renal status named by the authors as a cause — not same-day
+test–retest. The published Correction restores a graphical abstract and changes no
+numbers.
+
+## A sixth failure mode
+
+- **A number taken from an abstract that its own Results contradict.** Three instances now,
+  all in the citation layer: a crisis-cell value quoted as a managed baseline, a "three
+  times higher" claim traced to a source containing no quantitative value, and a standard
+  deviation reported as a mean by the source itself. The rule that follows, and it is now
+  the standing rule for `claims.csv`: **every quantitative claim is checked against the
+  source's Results or Tables, never its abstract, and every row records which section of
+  the source the value came from.**

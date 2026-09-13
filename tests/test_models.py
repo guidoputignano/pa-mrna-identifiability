@@ -1234,15 +1234,21 @@ def test_the_dense_design_collapses_once_the_increment_is_carried():
     placed = np.geomspace(D.P.Km / 2.0, D.P.Km * 2.0, len(t_dn))
     s_placed = sd(t_dn, placed)
 
-    assert s_dense < 0.20, "the gate now passes on the dense design"
-    assert s_cycle < 0.20, "and on one dose cycle of seven samples"
-    assert s_sparse > 0.20, "but not on six-monthly visits: the dose cycle is the excitation"
+    assert s_dense < 0.20, "the gate passes on the dense design"
+    assert s_cycle > 0.20, (
+        "but NOT on one dose cycle of seven samples. That result was reported in "
+        "the phase 2A audit and is retracted: it held only with k_e known, which "
+        "is not the footing this paper claims. See REVIEW_LOG.md.")
+    assert s_sparse > 0.20, "nor on six-monthly visits"
+    assert s_sparse / s_dense > 2.0, (
+        "and on this footing density DOES buy something, against the published claim")
     assert 3.0 < s_dense / s_placed < 20.0, (
         "placement still helps, but by single figures, not by 122")
 
     # and the uncorrected column is what produced the opposite conclusion
-    stale_dense = float(np.sqrt(D._filter(D.quasi_steady_level(t_dn), sigma)[-1][0, 0]))
-    assert stale_dense > 0.20 and stale_dense / s_dense > 10.0
+    stale_dense = float(np.sqrt(D._filter(D.quasi_steady_level(t_dn), sigma,
+                                          ke_prior=None)[-1][0, 0]))
+    assert stale_dense > 0.20 and stale_dense / s_dense > 3.0
 
 
 def test_the_corrected_design_matrix_is_rank_deficient_at_constant_load():
