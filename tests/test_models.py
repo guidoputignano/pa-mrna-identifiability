@@ -1186,23 +1186,96 @@ def test_the_optimum_is_interior_only_because_the_load_is_unrecorded():
 
 
 # ------------------------------------------------- 1.8 / 1.9  the design
-def test_the_dense_design_does_not_collapse_and_placement_is_why():
+def test_the_Km_sensitivity_carries_the_therapeutic_increment():
     """
-    THE 1.8 GATE, recorded as it fell. Ninety times the sampling buys a tenth
-    of a decade; the same samples placed to straddle K_m buy two decades.
+    The regression guard that would have caught the 1.8 error.
+
+    The ordinate is (theta + Delta) g(m) + k_e m + b, so its derivative in
+    ln K_m carries (theta + Delta). Finite-difference the clearance itself and
+    check which analytic column it agrees with. The uncorrected column is wrong
+    by tens of per cent wherever the dose has just landed, which is most of a
+    dose cycle.
+    """
+    import design.run as D
+    th, Km, ke = D.P.theta, D.P.Km, D.P.ke
+    h = 1e-6
+    worst_pub = 0.0
+    for t in (0.0, 1.0, 3.0, 7.0, 13.0, 40.0, 729.0):
+        dl = float(D.delta(t))
+        m = float(D.quasi_steady_level(t))
+        cl = lambda k: (th + dl) * m / (k + m) + ke * m
+        fd = (cl(Km * np.exp(h)) - cl(Km * np.exp(-h))) / (2 * h)
+        corrected = -(th + dl) * Km * m / (Km + m) ** 2
+        published = -th * Km * m / (Km + m) ** 2
+        assert abs(fd - corrected) < 1e-6 * abs(fd), (t, fd, corrected)
+        worst_pub = max(worst_pub, abs(fd - published) / abs(fd))
+    assert worst_pub > 0.5, "the uncorrected column must be visibly wrong, else this guards nothing"
+
+
+def test_the_dense_design_collapses_once_the_increment_is_carried():
+    """
+    THE 1.8 GATE, as it stands after the phase 2C audit.
+
+    With Delta carried, two-daily sampling reaches the 20% target and so does a
+    single seven-sample dose cycle: the excitation is bought by the dose train,
+    not by the marker band. Placement still helps, but by single figures rather
+    than by the factor of 122 the uncorrected column reported.
     """
     import design.run as D
     import model_A.run as LOC
     sigma = LOC.sigma_total(D.LOAD_FRAC, D.ASSAY_CV)
-    sparse = D.quasi_steady_level(np.arange(180.0, 731.0, 180.0))
-    dense = D.quasi_steady_level(np.arange(0.0, 730.0, 2.0))
-    placed = np.geomspace(D.P.Km / 2.0, D.P.Km * 2.0, len(dense))
-    s_sparse = np.sqrt(D._filter(sparse, sigma)[-1][0, 0])
-    s_dense = np.sqrt(D._filter(dense, sigma)[-1][0, 0])
-    s_placed = np.sqrt(D._filter(placed, sigma)[-1][0, 0])
-    assert s_dense > 0.20, "the gate: the dense design does not reach the target"
-    assert s_sparse / s_dense < 1.3, "and density buys almost nothing"
-    assert s_dense / s_placed > 50, "where placement buys everything"
+    t_sp = np.arange(180.0, 731.0, 180.0)
+    t_dn = np.arange(0.0, 730.0, 2.0)
+    t_cy = np.arange(0.0, D.DOSE_INTERVAL, 2.0)
+    sd = lambda t, lv=None: float(np.sqrt(D._filter(
+        D.quasi_steady_level(t) if lv is None else lv, sigma,
+        np.asarray(D.delta(t), dtype=float))[-1][0, 0]))
+    s_sparse, s_dense, s_cycle = sd(t_sp), sd(t_dn), sd(t_cy)
+    placed = np.geomspace(D.P.Km / 2.0, D.P.Km * 2.0, len(t_dn))
+    s_placed = sd(t_dn, placed)
+
+    assert s_dense < 0.20, "the gate now passes on the dense design"
+    assert s_cycle < 0.20, "and on one dose cycle of seven samples"
+    assert s_sparse > 0.20, "but not on six-monthly visits: the dose cycle is the excitation"
+    assert 3.0 < s_dense / s_placed < 20.0, (
+        "placement still helps, but by single figures, not by 122")
+
+    # and the uncorrected column is what produced the opposite conclusion
+    stale_dense = float(np.sqrt(D._filter(D.quasi_steady_level(t_dn), sigma)[-1][0, 0]))
+    assert stale_dense > 0.20 and stale_dense / s_dense > 10.0
+
+
+def test_the_corrected_design_matrix_is_rank_deficient_at_constant_load():
+    """
+    The price of the correction, proved so it cannot be forgotten.
+
+    At a CONSTANT recorded load the load-bias column lies exactly in the span of
+    the other two, at c_theta = (1 + K_m k_e/L)/theta and c_Km = -1/L. The
+    covariance in that direction is then filled in by the load-record prior
+    rather than by the data. Any real variation in recorded intake breaks it.
+    """
+    import design.run as D
+    th, Km, ke = D.P.theta, D.P.Km, D.P.ke
+    L = D.load(0.0)
+    t = np.arange(0.0, 730.0, 2.0)
+    lv = D.quasi_steady_level(t)
+    dd = np.asarray(D.delta(t), dtype=float)
+    Q = np.stack([th * lv / (Km + lv),
+                  -(th + dd) * Km * lv / (Km + lv) ** 2,
+                  np.ones_like(lv)], axis=1)
+    c = np.array([(1.0 + Km * ke / L) / th, -1.0 / L, -1.0])
+    assert np.linalg.norm(Q @ c) < 1e-9 * np.linalg.norm(Q), "the identity must be exact"
+    assert np.linalg.matrix_rank(Q, tol=1e-10) == 2
+
+    # a varying recorded load breaks it
+    rng = np.random.default_rng(0)
+    Ls = L * (1.0 + 0.05 * rng.standard_normal(t.size))
+    B = ke * Km + th + dd - Ls
+    lv2 = (-B + np.sqrt(B ** 2 + 4.0 * ke * Ls * Km)) / (2.0 * ke)
+    Q2 = np.stack([th * lv2 / (Km + lv2),
+                   -(th + dd) * Km * lv2 / (Km + lv2) ** 2,
+                   np.ones_like(lv2)], axis=1)
+    assert np.linalg.matrix_rank(Q2, tol=1e-10) == 3
 
 
 def test_the_marker_is_quasi_steady_except_just_after_a_dose():
