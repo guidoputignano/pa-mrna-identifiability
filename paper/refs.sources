@@ -158,3 +158,37 @@ nbs_psmmc               doi:10.15537/smj.2020.7.25147
 #                     out of the paper; the anchor does not need it.
 # saudi_carrier_top4  "PA among the four most frequent disorders in Saudi
 #                     carrier screening". No source found. Out of the paper.
+
+# =====================================================================
+#  NOT YET COVERED
+#
+#  Every entry above is clinical or biological: propionic acidemia, PCC
+#  enzymology, carnitine handling, newborn screening, and the mRNA trial.
+#  Twenty sources, and five of them are cited in the main text.
+#
+#  The paper's own contribution is an identifiability result and an
+#  experimental design, and it currently cites nothing from either
+#  literature. A reviewer's first question is how this relates to
+#  existing work, and the reference list has no answer to it.
+#
+#  The areas that need covering are listed below as topics, not as
+#  entries. Each one has to be resolved to a DOI or a PMID by hand and
+#  then fetched like everything else here. No identifier is written from
+#  memory, which is the whole point of this file, so none is guessed at
+#  here either.
+#
+#    - structural identifiability of nonlinear ODE models, and a
+#      citation for StructuralIdentifiability.jl, which Section 2.6
+#      already reports results from and does not cite
+#    - practical identifiability and profile likelihood, and the
+#      distinction between structural and practical non-identifiability,
+#      which is the distinction Section 3 turns on
+#    - Fisher information, sloppy models and sensitivity spectra, which
+#      is the established language for the obstruction in Section 3
+#    - optimal experimental design for dynamic systems, and input design
+#      in particular, which is what Section 4 does
+#    - quasi-steady-state approximation and bounds on model reduction
+#      error, which is the open question Section 7 asks the reader
+#    - identifiability in pharmacokinetic and pharmacodynamic models,
+#      the nearest applied literature to this design
+# =====================================================================
