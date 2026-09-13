@@ -62,10 +62,19 @@ def mu_hats(ens, s_peak):
                      for t, K, k in ens])
 
 
-def err_at(ens, s_peak, tau):
-    """Error rate of the rule 'escalate if mu_hat < tau' at this patient."""
+def err_curve(ens, s_peak):
+    """mu_hat once, so a threshold sweep is comparisons and not refits."""
     mu_t = D.margin_and_gradient(P.theta, P.Km, P.ke, D.M_TOL, s_peak)[0]
-    mh = mu_hats(ens, s_peak)
+    return mu_hats(ens, s_peak), mu_t
+
+
+def err_at(ens, s_peak, tau, cache={}):
+    # NOT keyed on id(ens): ids are reused after garbage collection and that
+    # silently returns another ensemble's margins. Key on the content.
+    key = (ens.shape, float(ens[0, 0]), float(ens[-1, -1]), float(s_peak))
+    if key not in cache:
+        cache[key] = err_curve(ens, s_peak)
+    mh, mu_t = cache[key]
     if mu_t < 0:                      # truly needs escalation
         return float(np.mean(mh >= tau)), "fail to treat", mu_t
     return float(np.mean(mh < tau)), "treat unneeded", mu_t
@@ -97,12 +106,27 @@ def main():
                      ("partial recording (rho = 0.5)", 0.5),
                      ("crisis, intake pinned (rho = 0)", 0.0),
                      ("crisis, protein stopped (rho = -0.25)", -0.25)):
-        ens = fit_regime(lv9, rho, reps=400, seed=21)
+        ens = fit_regime(lv9, rho, reps=400, seed=11)   # the seed fig_decision uses
         e_safe, _, _ = err_at(ens, f_lo * base, 0.0)
         e_uns, _, _ = err_at(ens, f_hi * base, 0.0)
         rows[lab] = (rho, ens, e_safe, e_uns)
         r = (e_uns / e_safe) if e_safe > 0 else np.inf
         print(f"{lab:>34} {e_safe:15.1%} {e_uns:14.1%} {r:9.1f}")
+    print()
+    print()
+    print("  HOW SEED-SENSITIVE IS THIS?  The published table quotes 6.0% / 52.5%.")
+    print(f"  {'regime':>26} {'treat unneeded':>26} {'fail to treat':>26}")
+    for lab, rho in (("managed (rho = 1)", 1.0), ("crisis (rho = 0)", 0.0)):
+        a, b = [], []
+        for sd_ in range(12):
+            e = fit_regime(lv9, rho, reps=400, seed=sd_)
+            a.append(err_at(e, f_lo * base, 0.0)[0])
+            b.append(err_at(e, f_hi * base, 0.0)[0])
+        a, b = np.array(a), np.array(b)
+        print(f"  {lab:>26}   {a.mean():6.1%} +/- {a.std():4.1%} "
+              f"[{a.min():5.1%},{a.max():5.1%}]   {b.mean():6.1%} +/- {b.std():4.1%} "
+              f"[{b.min():5.1%},{b.max():5.1%}]")
+    print("  (12 seeds, 400 replicates each)")
     print()
     print("  rho = 1 'fails towards declaring patients safe': the costly error dominates.")
     print("  rho <= 0 reverses it: the fit is driven to low theta, so every patient")
@@ -118,7 +142,7 @@ def main():
     for lab, (rho, ens, _, _) in rows.items():
         cells = []
         for R in (1.0, 10.0, 30.0, 100.0):
-            taus = np.linspace(-30000.0, 30000.0, 3001)
+            taus = np.linspace(-30000.0, 30000.0, 601)
             gap = np.array([R * err_at(ens, f_hi * base, tau)[0]
                             - err_at(ens, f_lo * base, tau)[0] for tau in taus])
             sgn = np.where(np.diff(np.sign(gap)) != 0)[0]

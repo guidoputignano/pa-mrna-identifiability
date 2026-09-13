@@ -5,71 +5,106 @@
 \emph{Section~\ref{sec:excitation} says what a trajectory has to do. This section asks
 what the accessible trajectories actually do, and what decision the answer supports.}
 
-\subsection{What does not collapse, stays}
+\subsection{What does not collapse, stays --- and what does, and why}
 \label{sec:collapse}
 
 The estimator here is the exact information filter for constant parameters,
 \begin{equation}
-P_k^{-1} \;=\; P_0^{-1} \;+\; \sum_{i \le k} \frac{q(m_i)\,q(m_i)^{\!\top}}{\sigma^2},
+P_k^{-1} \;=\; P_0^{-1} \;+\; \sum_{i \le k} \frac{q(m_i, \Delta_i)\,q(m_i, \Delta_i)^{\!\top}}{\sigma^2},
 \label{eq:infofilter}
 \end{equation}
-on the augmented coordinates $(\ln\theta, \ln K_m, L_0)$, none of which carries dynamics.
-\textbf{There is no process noise on $\theta$, and that is a construction rather than a
-setting.} A random walk on $\theta$ manufactures a finite stationary covariance in a
+on the augmented coordinates $(\ln\theta, \ln K_m, L_0, \ln k_e)$, none of which carries
+dynamics. \textbf{There is no process noise on $\theta$, and that is a construction rather
+than a setting.} A random walk on $\theta$ manufactures a finite stationary covariance in a
 direction the data may never see, which is precisely the error this note exists to warn
 about; with \eqref{eq:infofilter}, what does not collapse stays visibly uncollapsed.
 
+\paragraph{The footing, stated once and used everywhere.} Three choices decide every number
+in this section, and earlier drafts of this note did not hold them fixed.
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item \textbf{$q$ carries the increment}, as \eqref{eq:columns} requires. A design is
+\emph{not} fully described by the levels it visits: two samples at the same level under
+different $\Delta$ carry different information, and that is the whole of
+Section~\ref{sec:therapychannel}.
+\item \textbf{$k_e$ is fitted}, at a log-prior of $0.8$. The non-enzymatic channel is not
+known, and a design evaluated as though it were flatters itself. Where a number on the
+$k_e$-known footing is quoted below it is labelled as such and is never a headline.
+\item \textbf{The load is recorded to $5\%$}, entering as a prior on $L_0$ and not as an
+exact constraint.
+\end{enumerate}
+
 An extended Kalman filter on the joint state was written first and is not used, for a
 reason worth recording. The marker's time constant is
-$\bigl(\theta g'(\bar m) + k_e\bigr)^{-1}$, which is $0.81$ hours at the illustrative
-values, against a therapeutic increment decaying with a half-life of $3.5$ days: a
-separation of $104$. The marker is therefore in quasi-steady state at every sampling
-instant a clinic could use, a design is fully described by the \emph{levels} it visits, and
-\eqref{eq:infofilter} is exact rather than approximate. The code measures the separation
-rather than asserting it, and returns one number a protocol needs: after a dose the marker
-is within $5\%$ of quasi-steady in $0.91$ hours and tracks to within $5\%$ thereafter, so a
-sample drawn inside that first hour is not a steady state and does not belong in a
-steady-state fit.
+$\bigl((\theta+\Delta) g'(\bar m) + k_e\bigr)^{-1}$, which is $0.81$ hours at the
+illustrative values, against a therapeutic increment decaying with a half-life of $3.5$
+days: a separation of $104$. The marker is therefore in quasi-steady state at every
+sampling instant a clinic could use and \eqref{eq:infofilter} is exact rather than
+approximate. The code measures the separation rather than asserting it, and returns one
+number a protocol needs: after a dose the marker is within $5\%$ of quasi-steady in $0.91$
+hours and tracks to within $5\%$ thereafter, so a sample drawn inside that first hour is
+not a steady state and does not belong in a steady-state fit.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{fig_D2_collapse.pdf}
 \caption{Three sampling designs under the biweekly dosing schedule, over two years.
 \textbf{Left:} $\operatorname{sd}(\ln\hat\theta)$ as samples arrive. \textbf{Right:} the
-one-sigma ellipse in $(\ln\theta, \ln K_m)$ at the end. Sampling ninety times more often
-buys a tenth of a decade; the ellipses stay long and stay aligned, which is the fibre of
-Remark~\ref{rem:fibre} seen in the estimator. Nothing here is tuned to produce that: the
-dense design was expected to collapse and did not.}
+one-sigma ellipse in $(\ln\theta, \ln K_m)$ at the end. What separates the designs is how
+much of the dose cycle they see: six-monthly visits catch one increment each and do not
+collapse, while sampling across the cycle does.}
 \label{fig:D2}
 \end{figure}
 
-\begin{center}
+\begin{adjustwidth}{-1.0cm}{-1.0cm}
+\begin{table}[htbp]
+\centering
 \footnotesize
-\begin{tabular}{@{}lrlrr@{}}
-\toprule
-\textbf{design} & $n$ & \textbf{levels visited} &
-$\operatorname{sd}(\ln\hat\theta)$ & $\operatorname{corr}(\ln\hat\theta, \ln \hat K_m)$ \\
-\midrule
-six-monthly clinic visits          &   4 & $6.26$--$8.46$ & $0.545$ & $+0.986$ \\
-one dose cycle, every two days     &   7 & $3.51$--$8.54$ & $0.540$ & $+0.986$ \\
-every two days for two years       & 365 & $3.36$--$8.54$ & $0.489$ & $+0.999$ \\
-\addlinespace
-\emph{the same $365$ samples straddling $K_m$} & 365 & $50$--$200$ & $\mathbf{0.004}$ & --- \\
-\bottomrule
-\end{tabular}
-\end{center}
+\caption{\label{tab:designs}What each design delivers, on the footing stated above.
+Bold is inside the $20\%$ target. The last two columns are the two footings this note
+abandoned: holding $k_e$ known, and dropping the increment from the sensitivity while
+still evaluating it at levels the increment produced. The gap between the fourth column
+and the sixth is the correction of Section~\ref{sec:therapychannel}; the gap between the
+fourth and the fifth is what fitting the alternative channel costs.}
+\input{../results/tables/tab_D_designs}
+\end{table}
+\end{adjustwidth}
 
-\textbf{The gate fails, and the failure is the result.} The design that catches the
-inter-dose recovery was expected to collapse the covariance and does not: ninety times the
-sampling effort moves $\operatorname{sd}(\ln\hat\theta)$ from $0.545$ to $0.489$. Recording
-the load ten times better --- to $0.5\%$, which nobody can do --- moves it to $0.467$. The
-same number of samples placed to straddle $K_m$ moves it to $0.004$, a factor of $122$.
+\textbf{The gate passes, and it passes on the therapy and not on the marker.} Sampling
+across the dose cycle for two years reaches $\operatorname{sd}(\ln\hat\theta) = 0.1475$,
+inside the $20\%$ target; four clinic visits a year apart reach $0.3707$ and do not. So
+sampling density is worth a factor of $2.5$ here --- not because density resolves the
+marker band, which moves by five per cent, but because a six-monthly visit catches one
+increment and a two-daily series catches the whole train.
 
-So \textbf{the obstruction is placement, not density and not precision}, which is
-Proposition~\ref{prop:straddle} arriving from the estimator's side. Sampling a patient more
-often inside the band management holds them in is close to worthless, and this is the
-quantitative form of the warning: a study that buys sampling frequency instead of excursion
-has bought nothing, and a filter carrying process noise on $\theta$ would not have said so.
+\textbf{Three things in that table are worth reading against what this note used to say.}
+
+\begin{enumerate}[leftmargin=*, itemsep=3pt]
+\item \textbf{The last column is the error.} With the increment dropped from the
+sensitivity, every accessible design sits at $0.49$--$0.54$ and none of them collapses,
+which is what earlier drafts reported as the result. The correction is checked against a
+finite difference of the integrated dynamics in two independent ways
+(Appendix~\ref{sec:repro}); the uncorrected column is wrong by up to $64\%$ of itself at
+the top of a dose cycle.
+\item \textbf{Placement still helps, and by a factor of nine rather than a hundred.} The
+same $365$ samples placed to straddle $K_m$ reach $0.0157$ against $0.1475$. On the
+$k_e$-known footing that ratio is $6.8$; on the abandoned footing it was $127$. The
+straddling design remains unavailable for the reasons of Section~\ref{sec:excursion_table},
+so this is a statement about what is being given up, not a recommendation.
+\item \textbf{One dose cycle of seven samples does not do it.} It reaches $0.2067$ and has
+a floor there: no improvement in how well the increment is known brings it inside the
+target, because what limits it is the design and not the product. An earlier report of this
+work claimed that single cycle passed; it did so only with $k_e$ held known, and the claim
+is withdrawn in \texttt{REVIEW\_LOG.md} rather than deleted.
+\end{enumerate}
+
+\textbf{And the load record behaves in the way Proposition~\ref{prop:rank} says, not the
+way this note used to assume.} Recording the load ten times better --- to $0.5\%$, which
+nobody can do --- moves the dense design from $0.1475$ to $0.1456$. That is a one per cent
+gain for a twentyfold improvement in dietary recording, and it retires the claim that
+load-record precision is the binding design variable. What the record has to contain
+instead is \emph{variation}: by Proposition~\ref{prop:rank} a perfectly steady intake is
+the exactly singular case, and half a per cent of day-to-day variability restores full
+rank.
 
 \subsection{Where the excitation could come from}
 \label{sec:excursion_table}

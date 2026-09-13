@@ -675,6 +675,57 @@ def excursion_sources():
     ]
 
 
+def table_designs(T=730.0):
+    """
+    The design table of Section 7, generated rather than transcribed.
+
+    Every row is on the footing this paper claims: the therapeutic increment
+    carried, k_e FITTED at the module's own log-prior, the load recorded to
+    LOAD_FRAC. The last two columns show what the two abandoned footings would
+    have said, so the difference between them stays on the page.
+    """
+    import model_A.run as LOC
+    sigma = LOC.sigma_total(LOAD_FRAC, ASSAY_CV)
+    dense_t = np.arange(0.0, T, 2.0)
+    designs = [
+        ("six-monthly clinic visits", np.arange(180.0, T + 1.0, 180.0), None),
+        ("one dose cycle, every two days", np.arange(0.0, DOSE_INTERVAL, 2.0), None),
+        ("every two days for two years", dense_t, None),
+        (r"\emph{the same $365$ straddling $K_m$}", dense_t,
+         np.geomspace(P.Km / 2.0, P.Km * 2.0, len(dense_t))),
+    ]
+    rows, raw = [], []
+    for name, times, override in designs:
+        lv = quasi_steady_level(times) if override is None else override
+        inc = np.asarray(delta(times), dtype=float)
+        Pc = _filter(lv, sigma, inc)[-1]
+        sd = float(np.sqrt(Pc[0, 0]))
+        rho = float(Pc[0, 1] / np.sqrt(Pc[0, 0] * Pc[1, 1]))
+        ke_known = float(np.sqrt(_filter(lv, sigma, inc, ke_prior=None)[-1][0, 0]))
+        dropped = float(np.sqrt(_filter(lv, sigma, ke_prior=None)[-1][0, 0]))
+        raw.append((name, len(times), lv.min(), lv.max(), sd, rho, ke_known, dropped))
+        cell = (r"\textbf{%.4f}" % sd) if sd < 0.20 else ("%.4f" % sd)
+        rows.append([name, len(times), f"${lv.min():.2f}$--${lv.max():.2f}$",
+                     cell, f"${rho:+.4f}$", f"${ke_known:.4f}$", f"${dropped:.4f}$"])
+    write_table("tab_D_designs",
+                ["design", "$n$", "levels visited",
+                 r"$\operatorname{sd}(\ln\hat\theta)$",
+                 r"$\operatorname{corr}(\ln\hat\theta, \ln \hat K_m)$",
+                 r"\emph{$k_e$ known}", r"\emph{$\Delta$ dropped}"],
+                rows,
+                note="the first four columns are the footing the paper claims; "
+                     "the last two are the abandoned ones")
+    print("  wrote tab_D_designs.tex")
+    for nm, n, lo, hi, sd, rho, kk, dr in raw:
+        print(f"    {nm[:34]:>34}: n={n:4d}  sd={sd:.4f}  corr={rho:+.4f}  "
+              f"[k_e known {kk:.4f}; Delta dropped {dr:.4f}]")
+    d, pl = raw[2], raw[3]
+    print(f"    placement ratio on the claimed footing: {d[4]/pl[4]:.2f}x "
+          f"(k_e known: {d[6]/pl[6]:.2f}x;  Delta dropped: {d[7]/pl[7]:.1f}x)")
+    print(f"    density ratio, four visits against 365: {raw[0][4]/d[4]:.2f}x")
+    return raw
+
+
 def table_excursion():
     rows = []
     for name, lo, hi, direction in excursion_sources():
