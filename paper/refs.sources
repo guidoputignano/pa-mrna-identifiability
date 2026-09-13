@@ -100,6 +100,20 @@ breath_test_mma         doi:10.1038/s41436-021-01143-8
 # 16 participants, 346 doses / 15.69 person-years. 70% risk reduction
 # among the 8 who reported MDEs pretreatment. Single-arm.
 trial_phase12           doi:10.1038/s41586-024-07266-7
+# Semi-mechanistic translational PK/PD model for mRNA-3927, fitted largely to
+# preclinical data and allometrically scaled to human.
+#   PCC-protein degradation rate kdeg = 0.0075 /h  ->  half-life 3.85 d.
+#     This is the footing for lambda, whose 3.5 d sits within 10% of it.
+#   plasma 3-HP disease baseline 60.1 umol/L (14.4% RSE), between-subject
+#     variability 51.1%; fully corrected floor E0 ~ 0.0987 umol/L.
+#   IC50 for 3-HP 37.5 ug/g PCC; slope 55.6.
+#   An indirect-response structure, so a first-order 3-HP elimination is
+#     implicit in it: that is the extraction route for k_e, the parameter the
+#     design is most sensitive to.
+# PROVENANCE: these figures are transcribed from the author's parameter-
+# grounding review of September 2026, not read off the paper in this
+# repository's own pass. The citekey is confirmed to be the right article;
+# the numbers await a check against the primary source.
 pkpd_translational      doi:10.1089/nat.2022.0036
 
 # 0.6 mg/kg biweekly selected from simulation in 1000 virtual
@@ -158,6 +172,46 @@ nbs_psmmc               doi:10.15537/smj.2020.7.25147
 #                     out of the paper; the anchor does not need it.
 # saudi_carrier_top4  "PA among the four most frequent disorders in Saudi
 #                     carrier screening". No source found. Out of the paper.
+
+# --- whole-body propionate: where the load comes from ----------------
+# Source partitioning in inborn errors of propionate metabolism.
+# "Amino acid catabolism accounted for a mean of 51.7% (range 24.5% to
+# 66.4%) of total propionate production"; mean decrease after metronidazole
+# 22.2% +/- 8.5 (the gut-flora fraction); ~30% unaccounted for, likely
+# odd-chain fatty acid catabolism. This is the primary source for s_base's
+# partitioning.
+propionate_sources      doi:10.1016/0026-0495(90)90084-P
+
+# Endogenous colonic propionate rate of appearance 0.27 +/- 0.09
+# umol/kg/min = ~389 umol/kg/day. Gives the gut fermentation flux in
+# absolute units.
+colonic_propionate      doi:10.3390/nu7115440
+
+# Metronidazole 10-20 mg/kg/day in 5 MMA + 4 PA children. Mean decrease in
+# urinary propionate metabolites 41% (range 12-76, P < 0.01); mean plasma
+# propionate 45.0 -> 25.1 umol/l (P < 0.05). Cross-check on the gut fraction.
+metronidazole_pa        doi:10.1007/BF01957284
+
+# 3-methylhistidine excretion as an index of muscle proteolysis. Control
+# 3.6 umol/kg/day (males); skeletal trauma +280% (males) / +225% (females);
+# trauma with steroids +325%; sepsis +227% (males) / +292% (females).
+# Bounds the illness amplitude s_peak/s_base from above.
+muscle_catabolism       doi:10.1016/0026-0495(81)90022-6
+
+# Mechanism of action across mRNA-3927 (PA), mRNA-3705 (MMA), mRNA-3210
+# (PKU), with allometric human scaling. PD responses sustained 3-4 weeks
+# after dosing in Pcca-/- mice. Companion to the translational PK/PD model.
+mrna_moa                doi:10.1038/s41467-024-47460-9
+
+# Guidelines for management of PA. Metabolic control judged clinically and
+# by ammonia, acid-base and trends in C3, C3/C2 and 2-MC. NOTE: specifies
+# NO numeric plasma 3-HP target, which is why m_tol is a convention.
+pa_guidelines           doi:10.1186/s13023-014-0130-8
+
+# Newborn dried-blood-spot LC-MS/MS. 99.9th-percentile 3-HP cutoff
+# 38.13 umol/L. Nearest quantitative anchor for a population 3-HP scale.
+dbs_3hp_cutoff          doi:10.1371/journal.pone.0184897
+
 
 # =====================================================================
 #  NOT YET COVERED
