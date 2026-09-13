@@ -1,4 +1,4 @@
-\section{The dynamic model, and its equilibrium reduction}
+\subsection{The dynamic model, and its equilibrium reduction}
 \label{sec:dynamic}
 %==========================================================================
 
@@ -7,7 +7,7 @@ this section is a reduction of it, and the reductions are named for what they do
 than lettered.}
 %==========================================================================
 
-\subsection{What the model contains}
+\subsubsection{What the model contains}
 \label{sec:model_C_added}
 
 The state is the plasma marker, the enzymatic channel is Michaelis-Menten in it, the therapy
@@ -16,7 +16,7 @@ the propiogenic load is an unknown input:
 \begin{equation}
 \dot m \;=\; L(t) + L_0 \;-\; \bigl(\theta + \Delta(t)\bigr) g(m) \;-\; \alpha(m),
 \qquad g(m) = \frac{m}{K_m+m}.
-\label{eq:parent}
+\label{eq:parent_orig}
 \end{equation}
 The rest of this section is about $\alpha$, the alternative clearance channel, because that
 is the only term the three candidate structures ever disagreed about. Two facts about
@@ -81,7 +81,7 @@ constants: $R_0$ and $K_c$ enter \eqref{eq:alpha} exactly as they enter \eqref{e
 no rescaling, and $k$ cancels. Everything from Section~\ref{sec:intrinsic} onwards is
 carried out on $C(m;\theta) = \theta g(m) + \alpha(m)$.
 
-\paragraph{The constants.} Every one of them is in Table~\ref{tab:params} with its value and
+\paragraph{The constants.} Every one of them is in Table~\ref{tab:params_orig} with its value and
 its source, which is a correction and not a formality: $M_i$ was previously stated nowhere
 in this note, so Figure~\ref{fig:C5} could not be reproduced from the paper, and its value
 had to be recovered from the arithmetic of the paragraph after next. It is $M_i = 300$.
@@ -112,7 +112,7 @@ measured~\cite{carnitine_excretion_pa}. % C41
 The prediction fails once $1 + m/M_i$ exceeds $37/5.7$, that is above
 $m \approx 5.5\,M_i = 1650$, some $1.6$ times the separatrix. This paragraph is the
 arithmetic $M_i$ had to be recovered from, and it is now reproducible from
-Table~\ref{tab:params} instead.
+Table~\ref{tab:params_orig} instead.
 
 The model satisfies the constraint; it does not derive it. What the constraint excludes is
 $\rho_0$ below $0.20$, where the separatrix moves far enough out to reverse the sign. An
@@ -183,7 +183,7 @@ falling here.}
 \label{fig:blockC}
 \end{figure}
 
-\subsection{Consequence: positive feedback}
+\subsubsection{Consequence: positive feedback}
 
 The loop is
 \[
@@ -200,7 +200,7 @@ rather than merely saturating. The clearance curve becomes non-monotone, and the
 higher $m$. As load rises the two approach, collide and annihilate, which is a genuine
 saddle-node.
 
-\subsection{Why this would matter clinically}
+\subsubsection{Why this would matter clinically}
 
 The unstable equilibrium is a \emph{separatrix}. Beyond it, $\dot m > 0$ even at baseline
 load, so the metabolite continues to rise after the precipitating illness has resolved.
@@ -223,7 +223,7 @@ sits. Neither reduced structure predicts this: in both, returning $s$ to baselin
 returns $m$ to baseline.
 \end{remark}
 
-\subsection{What is and is not new here}
+\subsubsection{What is and is not new here}
 \label{sec:priorart}
 
 Two parts of \eqref{eq:parent} have prior art in this disease and one does not, and the
@@ -258,7 +258,7 @@ asks the individual question, and Section~\ref{sec:excitation} is the answer: a 
 schedule supplies almost no excitation of the direction that separates capacity from
 half-saturation, and no amount of it accumulates into any.
 
-\subsection{The reduction hierarchy, verified}
+\subsubsection{The reduction hierarchy, verified}
 \label{sec:hierarchy}
 
 Three objects are in play and they are not three models. They are one model read at three
@@ -338,7 +338,7 @@ load approaches the ceiling. A genuine saddle-node needs a non-monotone $\alpha$
 what \eqref{eq:alpha} supplies.
 \end{remark}
 
-\subsection{An intrinsic definition of $\thc$}
+\subsubsection{An intrinsic definition of $\thc$}
 \label{sec:intrinsic}
 
 The local reduction defines the critical capacity by \eqref{eq:thcrit}, and the hypothesis
@@ -485,7 +485,7 @@ the deterministic crossing into a hazard. That is the reformulation set out in S
 and only it removes $\spk$.
 \end{remark}
 
-\subsection{What would have to be established}
+\subsubsection{What would have to be established}
 \label{sec:notworking}
 
 Four things, set out in Appendix~\ref{sec:supp}: that replenishment is impaired \emph{enough}
@@ -496,7 +496,7 @@ Remark~\ref{rem:not_a_reduction} bounds; that a competition documented in a reco
 rat renal transporter carries to patients; and that adding one state to capture half a
 mechanism is better than not adding it.
 
-\subsection{Testable discriminant, and the observable it has to be stated in}
+\subsubsection{Testable discriminant, and the observable it has to be stated in}
 \label{sec:discriminant}
 
 The fold and the ceiling differ in whether removing the trigger suffices for recovery, and
@@ -523,7 +523,7 @@ Sections~\ref{sec:local} onwards concern the \emph{stable} patient, where the ma
 state can be argued to move together. The behaviour through a decompensation is exactly
 where the measured proxy stops tracking the state, so the separatrix is a claim about the
 dynamics that the current observable cannot confirm or refute directly --- which is also why
-Section~\ref{sec:marker} fixes the marker for the stable patient and not for the crisis.
+Section~\ref{sec:marker_orig} fixes the marker for the stable patient and not for the crisis.
 \end{remark}
 
 \vspace{0.5em}

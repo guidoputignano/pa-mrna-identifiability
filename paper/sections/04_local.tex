@@ -1,4 +1,4 @@
-\section{The local identification model}
+\subsection{The local identification model}
 \label{sec:local}
 %==========================================================================
 
@@ -7,7 +7,7 @@ is where the identifiability question is posed, and Remark~\ref{rem:not_a_reduct
 exactly how it relates to the model it is read from.}
 %==========================================================================
 
-\subsection{Formulation}
+\subsubsection{Formulation}
 
 \begin{equation}
 \dot m \;=\; s(t) \;-\; \theta\, g(m) \;-\; k_e\, m,
@@ -23,7 +23,7 @@ pathogenic variants reduce the \emph{quantity} of functional enzyme rather than 
 number of an individual molecule, $\theta$ is essentially ``how much working enzyme the
 patient has'', and is therefore constant and genotype-determined.
 \item[$K_m$] the half-saturation level of that channel: a shape parameter of the clearance
-curve at the plasma level, fitted here (Remark~\ref{rem:no_km}).
+curve at the plasma level, fitted here (Remark~\ref{rem:no_km_orig}).
 \item[$g(m)$] the \emph{Michaelis-Menten saturation function}, $g \in [0,1)$.
 \item[$k_e m$] alternative elimination, taken proportional to $m$.
 \end{description}
@@ -66,7 +66,7 @@ and the identification problem cannot tell which one moved the patient.}
 \label{fig:blockA}
 \end{figure}
 
-\subsection{Assumptions}
+\subsubsection{Assumptions}
 
 Three assumptions, stated here and warranted in Appendix~\ref{sec:supp}.
 \textbf{Constancy}: $\theta$ is constant over the afebrile range, which is a restriction the
@@ -84,7 +84,7 @@ least two states with an uncertain map between them.
 
 
 \paragraph{The marker is 3-hydroxypropionate.}
-\label{sec:marker}
+\label{sec:marker_orig}
 Earlier drafts left $m$ as ``the plasma marker'' on the grounds that nothing in Sections 3
 and 4 depends on the choice. That is true of the algebra and false of the decision the note
 is built around, because the three candidates differ in whether they are associated with the
@@ -146,7 +146,7 @@ is 3-HP and $n$-propionylglycine, a glycine conjugate that carnitine does not ra
 $J = 2$ and a factor of $1.31$ at a load recorded to $2\%$, falling to $1.05$ at $10\%$.
 \end{remark}
 
-\subsection{The structural obstruction}
+\subsubsection{The structural obstruction}
 
 Write $C(m) = \theta\, g(m) + k_e\, m$ for the total clearance, and let
 $M = [m_{\min}, m_{\max}]$ be the range of metabolite levels a given patient actually
@@ -201,7 +201,7 @@ $K_m$ it determines $\theta$.
 
 \begin{remark}[The fibre the intercept leaves open]
 \label{rem:fibre}
-The intercept carries $K_m$ as well, through $g(\bar m)$, and Remark~\ref{rem:no_km}
+The intercept carries $K_m$ as well, through $g(\bar m)$, and Remark~\ref{rem:no_km_orig}
 forbids importing $K_m$ from in vitro work. So $(a,b)$ known \emph{exactly} still leaves a
 one-parameter family. Inverting \eqref{eq:intercept} and \eqref{eq:slope},
 \begin{equation}
@@ -236,7 +236,7 @@ $g(\bar m)$, so it is a statement about $\theta$ \emph{given} $K_m$. Nothing in 
 supplies $K_m$. The population assumption above grants only that it is shared across the
 cohort and
 estimable once, which says where it could come from without putting it in
-hand, and Remark~\ref{rem:no_km} forbids importing it from in vitro work. The next paragraph
+hand, and Remark~\ref{rem:no_km_orig} forbids importing it from in vitro work. The next paragraph
 is where it comes from.
 
 One extra datum closes the fibre outright. If $k_e$ is known, from a null genotype as in
@@ -328,7 +328,7 @@ property of a particular patient's record}, and it can be checked against that r
 directly.
 
 \begin{remark}[The scale on which this is stated]
-\label{rem:no_km}
+\label{rem:no_km_orig}
 Proposition~\ref{prop:degeneracy} is conditioned on the observed clearance over the
 observed range. The alternative would be to compare $m$ with $K_m$ and conclude that
 patients sit far below saturation, and that comparison is unavailable here.
@@ -352,7 +352,7 @@ dependence. Establishing $\psi$, or bounding how far the conclusions move across
 of candidate maps, is a prerequisite for reading either mechanistically.
 \end{remark}
 
-\subsection{Perturbation as a selective input}
+\subsubsection{Perturbation as a selective input}
 \label{sec:selective}
 
 The degeneracy of \eqref{eq:slope} is broken by moving the patient, not by measuring them
@@ -483,7 +483,7 @@ prevent, which is the obstruction of Section~\ref{sec:structure} arriving by a s
 $m \neq m'$, so the pair $(\theta, k_e)$ is identifiable from steady-state data before and
 after any such perturbation. The second proviso was previously left implicit and is not
 free: the right-hand side of \eqref{eq:system} is $\delta = \kappa u_c m'$ for carnitine,
-and $\kappa$ is never assigned a value anywhere in this note (Table~\ref{tab:params}), so on
+and $\kappa$ is never assigned a value anywhere in this note (Table~\ref{tab:params_orig}), so on
 that channel the system is two equations in \emph{three} unknowns before $K_m$ is even
 raised. On the therapeutic channel $\delta = \Delta g(m')$ and $\Delta$ is known from the
 dosing schedule, which is a second respect, alongside
@@ -528,7 +528,7 @@ plotted against the excursion in $m$ that each buys. The two curves coincide, wh
 Proposition~\ref{prop:channel} in numbers, and both stay near $1\%$, which is well under
 the analytical and biological variability of the assay.
 
-\subsection{What the accessible input costs}
+\subsubsection{What the accessible input costs}
 \label{sec:instruments}
 
 Proposition~\ref{prop:channel} equalises the two channels informationally, given $K_m$. It
@@ -546,7 +546,7 @@ design. A change of load carries the same determinant as a channel perturbation 
 more, needing both loads known where the channel route needs one. None is randomised.
 Appendix~\ref{sec:supp} gives each in full, and Table~\ref{tab:excursion} prices them.
 
-\subsection{What we would like to establish}
+\subsubsection{What we would like to establish}
 
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
 \item Conditions under which a perturbation schedule, treated as a design variable,
@@ -677,7 +677,7 @@ is a clinical assertion a clinician can dispute, where $\mtol$ is a number chose
 formula close. It is not an elimination, and Remark~\ref{rem:shape} prices what arrives.
 \end{remark}
 
-\subsection{What the design would have to deliver}
+\subsubsection{What the design would have to deliver}
 \label{sec:design}
 
 Equation \eqref{eq:thetaerr} is derived above and left unevaluated. Evaluating it
@@ -846,7 +846,7 @@ $3.7$ and the anchor \emph{amplifies}. It is therefore worst for the severe pati
 note is about, and the favourable figure belongs to the mild end of the range.
 \end{remark}
 
-\subsection{Known defect}
+\subsubsection{Known defect}
 
 Since $k_e m \to \infty$, total clearance is unbounded and every load is eventually balanced,
 so the local reduction predicts that no crisis can occur. It is adequate for the
