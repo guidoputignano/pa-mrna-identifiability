@@ -1,19 +1,21 @@
 \begin{tabular}{@{}lll@{}}
 \toprule
-\textbf{quantity} & \textbf{requirement} & \textbf{why} \\
+\textbf{} & \textbf{what the record must contain} & \textbf{why} \\
 \midrule
-marker & plasma 3-hydroxypropionate & endpoint association (RR 0.7, 95\% CI 0.6--0.9) and immunity to the carnitine sign reversal that disqualifies C3 \\
-second channel & $n$-propionylglycine, optional & a glycine conjugate, so carnitine does not raise it. Worth adding only after the load record is good enough for the assay term to bind \\
-sampling interval & $\le$ 4 days through any excursion; 14-day cycles otherwise & the inter-dose recovery is the only excursion a fixed schedule supplies, and six-monthly visits do not resolve it \\
-excursion, for $20\%$ on $\theta$ & $m$ to reach 14.6$\,\bar m$, or a band of fold range 9.1 straddling $K_m$ & the excitation condition, read against a precision target. Below it the band is degenerate in the lumped ratio; above $K_m$ it is degenerate in $\theta$ against the load \\
-excursion, for the \emph{decision} & $5\%$ is not reached at any excursion up to $80\,\bar m$ (best 6\%); $10\%$ needs 20$\,\bar m$ & the requirement the specification is actually written against, since a confidence interval on $\theta$ is the wrong output. Asked of a patient $30\%$ below the threshold, that is at an illness of 4.1$\times$ baseline, and asked for a $5\%$ sign error. Closer to the boundary than that, no excursion answers it, which is a property of taking a sign near a zero and not of the design \\
-excursion, available & inter-dose recovery reaches a fold of about 2.6, downward & so the required excursion is not available from the schedule alone \\
-load record & protein intake to $\le 5\%$, dated, with enteral and parenteral sources separated & the load's unrecorded component is what makes saturation degenerate, and it is the noise term a marker panel cannot average away \\
-labelled-propionate test & once per patient at entry, repeated at any dose change & the only measurement that anchors capacity independently of level. Reference precision 12.8\% in patients \\
-assay precision & coefficient of variation $\le$ 5\%, reported on the log scale & a constant CV is a constant variance on the log scale, which is the only scale on which $\sigma$ has unambiguous units \\
-instrument events & $n \ge 77$ per patient for $20\%$ on $\theta$ & the floor is set by $\sigma$ alone and no excursion beats it \\
-cohort & $N \ge 3,121$ to place the fraction with $\mu<0$ within $\pm 10$ points, at the accessible design's sign error of 41\% near the boundary & sized on the sign error of $\mu$, not on a confidence interval for $\theta$. Per-patient misclassification attenuates the fraction towards one half and inflates the corrected variance by $(1-2p)^{-2}$, which diverges as $p \to 1/2$ \\
-the asymmetry & the two errors are not equal and the costly one is larger & at equal $|\mu|$ either side of the boundary the simulated error is $6\%$ for treating a patient who did not need it and $53\%$ for failing to treat one who did. The design fails towards declaring patients safe \\
+\textbf{TIER 1} --- run first &  &  \\
+what to measure & same-day repeatability of $1$-$^{13}$C-propionate oxidation: two breath tests bracketing one dose, on one day & the only quantity the design turns on, and no published value for it exists \\
+what it must reach & a coefficient of variation on $\Delta$ below $11.7\%$ & derived from the gate, not chosen: at that precision monthly sampling reaches $20\%$ on $\theta$ \\
+what is known now & between-visit CV, mean $14.0\%$, range $0.4$--$50.8\%$, $n=15$, intervals $2$ months to $4$ years & an upper bound on same-day error, already close to the requirement, but it does not establish it; and it is MMA, not PA \\
+\textbf{TIER 2} --- conditional on Tier 1 &  &  \\
+marker & plasma 3-hydroxypropionate & endpoint association (RR $0.7$, $95\%$ CI $0.6$--$0.9$) and immunity to the carnitine sign reversal that disqualifies C3 \\
+sampling schedule & monthly across dose cycles, $n \approx 25$ over two years ($0.170$); two-monthly also passes ($0.187$) & ordinary outpatient density; what matters is covering the phase of the dose cycle, not the sampling rate \\
+sampling, the hard constraint & \textbf{never at the dose interval or a multiple of it}: fortnightly gives $3.51$, $14.5$-daily gives $0.161$ & every draw lands at the same phase, the increment stops varying, and the therapy channel closes \\
+sampling, the other exclusion & no sample within one hour of a dose & the marker is not at quasi-steady state there and a steady-state fit does not apply to it \\
+dosing record & date, dose and product lot for every infusion & $\Delta(t_i)$ is a regressor, not a nuisance: it carries the excitation \\
+load record, precision & ordinary outpatient precision suffices ($0.170$ at a $1\%$ record against $0.170$ at $20\%$) & the load-bias column is nearly orthogonal to $\theta$ once the increment is carried \\
+load record, variability & \textbf{record intake as eaten; do not smooth, average or impute} & a steady load is the exactly singular case of Proposition~\ref{prop:rank}. With the $5\%$ load prior in place that direction is filled by the prior and the answer barely moves; with no prior it is filled only by real variation ($\infty$ steady, $0.23$ at a $2\%$ CV, $0.17$ at $20\%$), so the variability is what makes the result independent of the prior \\
+$k_e$ & a literature prior within a factor of $2.7$ & the only prior the result depends on; no measurement programme is proposed for it \\
+$K_m$ & nothing at all & every number here is unchanged by a $K_m$ prior twenty times looser, which is what Remark~\ref{rem:no_km} demanded \\
 \bottomrule
 \end{tabular}
-% the terminal specification; every row is generated
+% two tiers; Tier 2 is conditional on Tier 1 clearing the gate

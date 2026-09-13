@@ -798,116 +798,152 @@ def table_excursion():
     return rows
 
 
-def table_spec():
+def spec_numbers():
     """
-    The one-page data specification. This is what the note is written to reach.
+    Every number the data specification quotes, computed in one place, so the
+    table and the prose cannot drift apart.
     """
     import model_A.run as LOC
-
+    from scipy.optimize import brentq
     sigma = LOC.sigma_total(LOAD_FRAC, ASSAY_CV)
-    n20 = LOC.n_for_precision(0.20, sigma)
-    top = top_of_excursion_for_precision(0.20, M_BAR, P.theta, P.Km, P.ke,
-                                         sigma=sigma, n=n20)
-    if top is None:
-        top = top_of_excursion_for_precision(0.20, M_BAR, P.theta, P.Km, P.ke,
-                                             sigma=sigma, n=4 * n20)
-    E_req = excitation(M_BAR, top if top else 5 * M_BAR, P.Km)
-    r_req = fold_range_for(E_req)
-    base = clearance_A(M_BAR, P)
-    lv9 = np.geomspace(M_BAR, 5 * M_BAR, 9)
-    p_bad = sign_error(lv9, P.theta, P.Km, P.ke, reps=400, seed=21,
-                       s_peak=3.6 * base)["p"]
-    n_coh = cohort_size(p_bad)
-    top_dec, e_dec, f_dec, curve_dec = excursion_for_decision()
-    hit10 = [t for t, e in curve_dec if e <= 0.10]
+    Lb = load(0.0)
 
+    def sd_of(times, kap=None, load_cv=None, ke_prior=0.8, load_prior=True):
+        lv, inc = design_record(times, load_cv=load_cv)
+        pri = [np.inf, np.inf,
+               (LOAD_FRAC * Lb) ** 2 if load_prior else np.inf,
+               ke_prior ** 2]
+        if kap is not None:
+            pri.append(kap ** 2)
+        F = np.diag([0.0 if np.isinf(x) else 1.0 / x for x in pri])
+        for m, d in zip(lv, inc):
+            g = m / (P.Km + m)
+            q = [P.theta * g, -(P.theta + d) * P.Km * m / (P.Km + m) ** 2,
+                 1.0, P.ke * m]
+            if kap is not None:
+                q.append(d * g)
+            q = np.array(q)
+            F = F + np.outer(q, q) / sigma ** 2
+        w = np.linalg.eigvalsh(F)
+        if w[0] <= 0 or w[0] <= 1e-14 * w[-1]:
+            return np.inf
+        v = np.linalg.inv(F)[0, 0]
+        return float(np.sqrt(v)) if v > 0 else np.inf
+
+    monthly = np.arange(0.0, 730.0, 30.4)
+    two_monthly = np.arange(0.0, 730.0, 60.0)
+    N = {"sigma": sigma,
+         "sd_monthly": sd_of(monthly),
+         "sd_two_monthly": sd_of(two_monthly),
+         "sd_aliased": sd_of(np.arange(0.0, 730.0, DOSE_INTERVAL)),
+         "sd_aliased_off": sd_of(np.arange(0.0, 730.0, DOSE_INTERVAL + 0.5)),
+         "sd_load_1pct": sd_of(monthly, load_cv=0.01),
+         "sd_load_20pct": sd_of(monthly, load_cv=0.20),
+         "sd_load_steady": sd_of(monthly, load_cv=0.0),
+         # the same, with NO prior on the load bias, which is where the rank
+         # deficiency of prop:rank actually shows: the prior fills that
+         # direction, and only real variation lets the DATA fill it instead
+         "free_steady": sd_of(monthly, load_cv=0.0, load_prior=False),
+         "free_cv2": sd_of(monthly, load_cv=0.02, load_prior=False),
+         "free_cv10": sd_of(monthly, load_cv=0.10, load_prior=False),
+         "free_cv20": sd_of(monthly, load_cv=0.20, load_prior=False)}
+    for tag, tt in (("monthly", monthly), ("two_monthly", two_monthly)):
+        try:
+            N["kappa_" + tag] = brentq(lambda x: sd_of(tt, kap=x) - 0.20,
+                                       1e-3, 3.0, xtol=1e-5)
+        except ValueError:
+            N["kappa_" + tag] = None
+    try:
+        N["ke_needed"] = brentq(lambda x: sd_of(monthly, ke_prior=x) - 0.20,
+                                1e-3, 3.0, xtol=1e-5)
+    except ValueError:
+        N["ke_needed"] = None
+    return N
+
+
+def table_spec():
+    """
+    The one-page data specification, in two tiers.
+
+    The order is not cosmetic: Tier 1 measures the only quantity the method's
+    feasibility turns on, and until it reports there is no defensible number of
+    breath tests to ask for.
+    """
+    N = spec_numbers()
+    kap = N["kappa_monthly"]
+    kefac = np.exp(N["ke_needed"]) if N["ke_needed"] else None
+    B = "\\textbf{"
     rows = [
-        ["marker",
-         "plasma 3-hydroxypropionate",
-         "endpoint association (RR 0.7, 95\\% CI 0.6--0.9) and immunity to the "
-         "carnitine sign reversal that disqualifies C3"],
-        ["second channel",
-         "$n$-propionylglycine, optional",
-         "a glycine conjugate, so carnitine does not raise it. Worth adding "
-         "only after the load record is good enough for the assay term to bind"],
-        ["sampling interval",
-         f"$\\le$ {DOSE_INTERVAL/4:.0f} days through any excursion; "
-         f"{DOSE_INTERVAL:.0f}-day cycles otherwise",
-         "the inter-dose recovery is the only excursion a fixed schedule "
-         "supplies, and six-monthly visits do not resolve it"],
-        ["excursion, for $20\\%$ on $\\theta$",
-         f"$m$ to reach {top/M_BAR:.1f}$\\,\\bar m$, or a band of fold range "
-         f"{r_req:.1f} straddling $K_m$",
-         "the excitation condition, read against a precision target. Below it "
-         "the band is degenerate in the lumped ratio; above $K_m$ it is "
-         "degenerate in $\\theta$ against the load"],
-        ["excursion, for the \\emph{decision}",
-         (f"$m$ to reach {top_dec:.0f}$\\,\\bar m$ for a $5\\%$ sign error"
-          if top_dec is not None else
-          (f"$5\\%$ is not reached at any excursion up to $80\\,\\bar m$ "
-           f"(best {100*e_dec:.0f}\\%); $10\\%$ needs "
-           + (f"{hit10[0]:.0f}$\\,\\bar m$" if hit10 else
-              f"more than $80\\,\\bar m$"))),
-         "the requirement the specification is actually written against, since "
-         "a confidence interval on $\\theta$ is the wrong output. Asked of a "
-         f"patient $30\\%$ below the threshold, that is at an illness of "
-         f"{f_dec:.1f}$\\times$ baseline, and asked for a $5\\%$ sign error. "
-         "Closer to the boundary than that, no excursion answers it, which is a "
-         "property of taking a sign near a zero and not of the design"],
-        ["excursion, available",
-         "inter-dose recovery reaches a fold of about "
-         f"{excursion_sources()[0][2]/excursion_sources()[0][1]:.1f}, downward",
-         "so the required excursion is not available from the schedule alone"],
-        ["load record",
-         "protein intake to $\\le 5\\%$, dated, with enteral and parenteral "
-         "sources separated",
-         "the load's unrecorded component is what makes saturation degenerate, "
-         "and it is the noise term a marker panel cannot average away"],
-        ["labelled-propionate test",
-         "once per patient at entry, repeated at any dose change",
-         "the only measurement that anchors capacity independently of level. "
-         "Reference precision 12.8\\% in patients"],
-        ["assay precision",
-         f"coefficient of variation $\\le$ {100*ASSAY_CV:.0f}\\%, reported on "
-         "the log scale",
-         "a constant CV is a constant variance on the log scale, which is the "
-         "only scale on which $\\sigma$ has unambiguous units"],
-        ["instrument events",
-         f"$n \\ge {n20:d}$ per patient for $20\\%$ on $\\theta$",
-         "the floor is set by $\\sigma$ alone and no excursion beats it"],
-        ["cohort",
-         (f"$N \\ge {int(n_coh):,}$ to place the fraction with $\\mu<0$ within "
-          f"$\\pm 10$ points, at the accessible design's sign error of "
-          f"{100*p_bad:.0f}\\% near the boundary"
-          if np.isfinite(n_coh) else
-          "no cohort is large enough at the accessible design"),
-         "sized on the sign error of $\\mu$, not on a confidence interval for "
-         "$\\theta$. Per-patient misclassification attenuates the fraction "
-         "towards one half and inflates the corrected variance by "
-         "$(1-2p)^{-2}$, which diverges as $p \\to 1/2$"],
-        ["the asymmetry",
-         "the two errors are not equal and the costly one is larger",
-         "at equal $|\\mu|$ either side of the boundary the simulated error is "
-         "$6\\%$ for treating a patient who did not need it and $53\\%$ for "
-         "failing to treat one who did. The design fails towards declaring "
-         "patients safe"],
+        [B + "TIER 1} --- run first", "", ""],
+        ["what to measure",
+         "same-day repeatability of $1$-$^{13}$C-propionate oxidation: two "
+         "breath tests bracketing one dose, on one day",
+         "the only quantity the design turns on, and no published value for "
+         "it exists"],
+        ["what it must reach",
+         ("a coefficient of variation on $\\Delta$ below $%.1f\\%%$" % (100 * kap)
+          if kap else "a CV on $\\Delta$ inside the gate"),
+         "derived from the gate, not chosen: at that precision monthly "
+         "sampling reaches $20\\%$ on $\\theta$"],
+        ["what is known now",
+         "between-visit CV, mean $14.0\\%$, range $0.4$--$50.8\\%$, $n=15$, "
+         "intervals $2$ months to $4$ years",
+         "an upper bound on same-day error, already close to the requirement, "
+         "but it does not establish it; and it is MMA, not PA"],
+        [B + "TIER 2} --- conditional on Tier 1", "", ""],
+        ["marker", "plasma 3-hydroxypropionate",
+         "endpoint association (RR $0.7$, $95\\%$ CI $0.6$--$0.9$) and "
+         "immunity to the carnitine sign reversal that disqualifies C3"],
+        ["sampling schedule",
+         "monthly across dose cycles, $n \\approx 25$ over two years "
+         "($%.3f$); two-monthly also passes ($%.3f$)"
+         % (N["sd_monthly"], N["sd_two_monthly"]),
+         "ordinary outpatient density; what matters is covering the phase of "
+         "the dose cycle, not the sampling rate"],
+        ["sampling, the hard constraint",
+         B + "never at the dose interval or a multiple of it}: fortnightly "
+         "gives $%.2f$, $14.5$-daily gives $%.3f$"
+         % (N["sd_aliased"], N["sd_aliased_off"]),
+         "every draw lands at the same phase, the increment stops varying, "
+         "and the therapy channel closes"],
+        ["sampling, the other exclusion",
+         "no sample within one hour of a dose",
+         "the marker is not at quasi-steady state there and a steady-state "
+         "fit does not apply to it"],
+        ["dosing record",
+         "date, dose and product lot for every infusion",
+         "$\\Delta(t_i)$ is a regressor, not a nuisance: it carries the "
+         "excitation"],
+        ["load record, precision",
+         "ordinary outpatient precision suffices ($%.3f$ at a $1\\%%$ record "
+         "against $%.3f$ at $20\\%%$)" % (N["sd_load_1pct"], N["sd_load_20pct"]),
+         "the load-bias column is nearly orthogonal to $\\theta$ once the "
+         "increment is carried"],
+        ["load record, variability",
+         B + "record intake as eaten; do not smooth, average or impute}",
+         "a steady load is the exactly singular case of "
+         "Proposition~\\ref{prop:rank}. With the $5\\%%$ load prior in place "
+         "that direction is filled by the prior and the answer barely moves; "
+         "with no prior it is filled only by real variation "
+         "($%s$ steady, $%.2f$ at a $2\\%%$ CV, $%.2f$ at $20\\%%$), so the "
+         "variability is what makes the result independent of the prior"
+         % ("\\infty" if not np.isfinite(N["free_steady"])
+            else "%.2f" % N["free_steady"], N["free_cv2"], N["free_cv20"])],
+        ["$k_e$",
+         ("a literature prior within a factor of $%.1f$" % kefac if kefac
+          else "a literature prior"),
+         "the only prior the result depends on; no measurement programme is "
+         "proposed for it"],
+        ["$K_m$", "nothing at all",
+         "every number here is unchanged by a $K_m$ prior twenty times "
+         "looser, which is what Remark~\\ref{rem:no_km} demanded"],
     ]
-    write_table("tab_D_spec", ["quantity", "requirement", "why"], rows,
-                note="the terminal specification; every row is generated")
-    print(f"    excursion for the decision (asked at mu = -0.30 theta, illness "
-          f"{f_dec:.2f}x baseline): "
-          + (f"top {top_dec:.0f} x m_bar, sign error {100*e_dec:.1f}%"
-             if top_dec is not None else
-             f"5% NOT REACHED below 80 x m_bar (best {100*e_dec:.1f}%); "
-             + (f"10% at {hit10[0]:.0f} x m_bar" if hit10 else "10% not reached either")))
-    print("      the whole curve: " + ", ".join(f"{t:.0f}x -> {100*e:.0f}%"
-                                                for t, e in curve_dec))
-    print(f"    cohort at the accessible design: sign error {100*p_bad:.0f}% near the "
-          f"boundary -> N >= {n_coh if np.isfinite(n_coh) else 'infinite'}")
-    print(f"    specification: sigma = {sigma:.2f}, n >= {n20} for 20% on theta,")
-    print(f"                   excursion top {top/M_BAR:.2f} x m_bar, "
-          f"E required {E_req:.4f}, fold range {r_req:.1f} if optimally placed")
-    return rows
+    write_table("tab_D_spec", ["", "what the record must contain", "why"], rows,
+                note="two tiers; Tier 2 is conditional on Tier 1 clearing the gate")
+    print("  wrote tab_D_spec.tex")
+    for k, v in N.items():
+        print("    %18s = %s" % (k, v))
+    return N
 
 
 if __name__ == "__main__":

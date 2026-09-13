@@ -2,42 +2,60 @@
 \noindent
 The clinical decision in mRNA enzyme replacement for propionic acidemia is a dosing
 interval, and it is set by a quantity nobody measures: the patient's residual enzymatic
-capacity. What the decision actually turns on is not that capacity but the \emph{sign} of
-its margin against the patient's own propiogenic load. We ask what a clinical record can
+capacity. What the decision turns on is not that capacity but the \emph{sign} of its
+margin against the patient's own propiogenic load. We ask what a clinical record can
 deliver, and answer in the units a protocol is written in.
 
-Marker levels cannot deliver the capacity. Over the band a stable patient's marker visits,
-total clearance is indistinguishable from a straight line at assay resolution, and the
-capacity survives only in that line's intercept, which the band reaches by extrapolation.
-The residual family is a fibre whose width is $\left(C(\bar m)/a\right)^2$, the recorded
-load over the fitted intercept, squared: an observable quantity, $169$ at our illustrative
-values. Independently, oxidative capacity assayed by breath test is near-identical in
-patients whose serum markers differ widely~\cite{breath_test_mma}. % C48
+Marker levels at a fixed operating point cannot deliver it. Over the band a stable patient
+visits, total clearance is indistinguishable from a straight line at assay resolution, and
+the capacity survives only in that line's intercept. \textbf{A degeneracy of this kind
+closes when an independent channel is known}, and the paper's question is therefore not
+whether identification is possible but \emph{which channel it is feasible to know, and to
+what precision}.
 
-The decision survives what the parameter does not, but asymmetrically. Simulating the
-accessible design, the estimated capacity ranges over three orders of magnitude while the
-sign of the margin is right $99.8\%$ of the time for a patient with margin --- and wrong
-$53\%$ of the time for a patient without one, at the same distance from the boundary. The
-estimator fails towards declaring patients safe.
+The obstruction has an exact closed form. At a constant recorded load the three design
+columns satisfy $c_\theta q_\theta + c_{K_m} q_{K_m} = q_{L_0}$ with
+$c_\theta = (1 + K_m k_e/L)/\theta$ and $c_{K_m} = -1/L$, so the design matrix is rank
+deficient by exactly one and the deficient direction is the load bias. The identity names
+its own cure: it needs $-1/L$ to be a single constant, so \textbf{it is the day-to-day
+\emph{variability} of ordinary eating, not the precision of the dietary record, that lets
+the data close the degeneracy rather than a prior.} Recording intake twenty times more
+precisely is worth six per cent; a record smoothed to a weekly mean is exactly the singular
+case, and the instruction that follows is to omit a data-cleaning step rather than to add
+a measurement.
 
-What would fix it is an excitation condition, and it is not the one a sampling schedule
-supplies. Both ends of the saturation curve are degenerate: below the half-saturation level
-only a lumped ratio is identifiable, and above it the capacity is confounded with the
-unrecorded component of the load, which is the worse failure because it loses the target
-rather than a nuisance. Identifiability therefore requires \emph{traversing} the
-half-saturation level, and the excitation is maximised when the band straddles it in
-geometric mean, at $(\sqrt r - 1)/(\sqrt r + 1)$ for a fold range $r$.
+\textbf{The channel that is feasible to know is the therapy itself.} The ratio of the two
+sensitivities is $-(1 + \Delta(t)/\theta)\,\varphi(m)$, a product of two factors, and the
+literature has measured only the second. On the record the phase 1/2 schedule already
+produces, the marker band moves $\varphi$ by five per cent while the dose train moves
+$1 + \Delta/\theta$ by a factor of $2.64$: \textbf{the therapy supplies forty-two times the
+excitation the marker does, on the same patients, and nearly four times what the decision
+needs.} The trial has been administering the excitation and reading it as a nuisance.
 
-\textbf{Time does not buy this.} Sampling every two days for two years, under the trial's
-biweekly schedule, improves the capacity's precision by a tenth of a decade over four clinic
-visits; the same number of samples placed to straddle the half-saturation level improves it
-by two decades. Of the excursions a record contains, only a decompensation comes within a
-factor of two of what the decision requires: \textbf{the excitation is available only from
-the event the therapy exists to prevent}. Asked directly, the sign error for a patient
-$30\%$ below the threshold falls from $36\%$ at a two-fold excursion to $10\%$ at
-twenty-fold, and then stops falling --- the residue is the confounding with the unrecorded
-load, which excursion cannot reach. The paper ends in the one-page data specification that
-follows from saying so, and the first row of it is the load record.
+What follows is a design, not an excursion. Monthly outpatient sampling across dose cycles
+identifies the capacity to $17\%$ over two years, and two-monthly sampling --- thirteen
+draws --- to $19\%$, given the non-enzymatic clearance within a factor of three and given
+the delivered increment characterised to about $12\%$. Nothing is assumed about $K_m$: a
+prior twenty times looser changes no number here. \textbf{The one schedule that fails is
+the obvious one.} Sampling on dosing days, or at any multiple of the dose interval, lands
+every draw at the same phase, collapses the range of $\Delta/\theta$ from $1.95$ to
+$0.13$, and takes the precision from $0.17$ to $3.51$; moving the schedule half a day
+recovers it.
+
+The decision inherits an asymmetry that reverses between regimes, and neither half should
+be quoted alone. While the record tracks the load, the estimator fails towards declaring
+patients safe --- $7\%$ against $44\%$ at equal distance from the boundary. Under crisis
+protocol, where prescribed intake is cut while catabolism supplies the load, the fit is
+driven towards zero capacity and the errors invert to $80\%$ against $20\%$: the same
+estimator declares everyone unsafe.
+
+The note ends in a two-tier data specification. Tier~2 is a small prospective outpatient
+study. Tier~1 is a single measurement nobody has published --- the same-day repeatability
+of a $1$-$^{13}$C-propionate breath test across one dose --- and the honest output of this
+analysis is that \textbf{until that number exists, no protocol can be written}. What the
+analysis eliminates is what earlier drafts asked for: high-frequency sampling at a fixed
+operating point, and decompensation records, which fail twice over because the required
+excursion is not observed and because the model loses its stable equilibrium there.
 \end{abstract}
 
 \vspace{0.5em}

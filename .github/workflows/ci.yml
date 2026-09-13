@@ -1,0 +1,80 @@
+# For a project whose characteristic failure is a silent numerical error, no CI
+# is not acceptable. Three jobs, in the order they are cheap to fail:
+#
+#   test   the consistency checks, including the finite-difference guard that
+#          would have caught the missing therapeutic increment
+#   audit  the claim register: non-zero while any claim is contradicted or any
+#          identifier fails to resolve
+#   paper  the document builds and every reference resolves
+#
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: install
+        run: pip install numpy scipy matplotlib pytest sympy
+      - name: make test
+        run: make test PY=python
+
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: install
+        run: pip install numpy scipy matplotlib sympy requests
+      - name: make audit
+        run: make audit PY=python
+
+  paper:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: install python
+        run: pip install numpy scipy matplotlib sympy requests
+      - name: install latex
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-base texlive-latex-recommended texlive-latex-extra \
+            texlive-fonts-recommended texlive-science biber
+      - name: make paper
+        run: make paper PY=python
+      - name: no undefined references
+        run: |
+          if grep -q "undefined" paper/main.log; then
+            echo "::error::undefined references or citations in paper/main.log"
+            grep -n "undefined" paper/main.log | head -40
+            exit 1
+          fi
+          if grep -q "multiply defined" paper/main.log; then
+            echo "::error::multiply defined labels in paper/main.log"
+            grep -n "multiply defined" paper/main.log | head -40
+            exit 1
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: paper
+          path: |
+            paper/main.pdf
+            paper/main.log
