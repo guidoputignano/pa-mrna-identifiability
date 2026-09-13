@@ -78,7 +78,7 @@ LOCAL = [
     Row(r"$\kappa$", "not assigned", "gain from recorded carnitine dose onto $k_e$",
         ASSUMED, r"never assigned a value. Only the product $\kappa u_c$ enters, as a lumped "
                  r"increment on $k_e$, and every figure varies that product directly. "
-                 r"the ill-conditioning result of supplement \\S S1 is conditional on it: an unknown $\kappa$ "
+                 r"The ill-conditioning result of supplement \S S1 is conditional on it: an unknown $\kappa$ "
                  r"leaves the carnitine route two equations in four unknowns"),
     Row(r"$\lambda$", r"$\ln 2/3.5$ d$^{-1}$",
         "decay rate of the therapeutic increment",
@@ -112,11 +112,11 @@ PARENT = [
         ASSUMED, "as above, and shared with the local model so the two can be compared"),
     Row(r"$K_c$", f"{_C.Kc:.0f}", "half-saturation of the conjugation step",
         ASSUMED, r"no measurement, and no reason a conjugation reaction should share an "
-                 r"enzyme's half-saturation. Cost bounded in supplement \\S S1"),
+                 r"enzyme's half-saturation. Cost bounded in supplement \S S1"),
     Row(r"$M_i$", f"{_C.Mi:.0f}", "metabolite level at which acylcarnitine competition doubles the non-conjugative loss",
         ASSUMED, r"no measurement. Previously not written down anywhere, which is why "
                  r"the margin figure could not be reproduced from the paper. Cost bounded in "
-                 r"supplement \\S S1"),
+                 r"supplement \S S1"),
     Row(r"$\rho_0$", f"{_C.rho0:.2f}", r"basal non-conjugative loss relative to conjugation, $\delta_0/k$",
         ASSUMED, r"no direct measurement. Bounded above by $1$, since the carnitine drain in "
                  r"this disease is dominated by propionylcarnitine, and below by the measured "
@@ -130,7 +130,7 @@ PARENT = [
         ASSUMED, "illustrative. Sets the scale everything else in the parent model is quoted "
                  "against"),
     Row(r"$k$", "cancels", "conjugation rate constant",
-        DERIVED, r"drops out of the quasi-steady reduction of supplement \\S S1 exactly, so the "
+        DERIVED, r"drops out of the quasi-steady reduction of supplement \S S1 exactly, so the "
                  r"reduced clearance does not depend on it and it is a free scale in the "
                  r"two-state system"),
 ]
@@ -148,7 +148,7 @@ def write_params_table():
     """Render both blocks into one table, source column included."""
     from .style import TABDIR, ROOT
     body = [r"\begin{tabular}{@{}p{0.07\textwidth} p{0.07\textwidth} "
-            r"p{0.20\textwidth} p{0.07\textwidth} p{0.45\textwidth}@{}}",
+            r"p{0.20\textwidth} p{0.11\textwidth} p{0.45\textwidth}@{}}",
             r"\toprule",
             r"\textbf{Symbol} & \textbf{Value} & \textbf{Meaning} & "
             r"\textbf{Source} & \textbf{What fixes it, or what assuming it costs} \\",
