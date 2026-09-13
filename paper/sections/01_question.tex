@@ -18,17 +18,14 @@ quantity nobody measures: the patient's residual enzymatic capacity, written $\t
 throughout. A patient with more residual capacity needs less frequent replacement.
 
 This paper asks a narrow question and answers it. Given a clinical record of the
-kind the disease actually generates (a marker series, a dosing diary, a dietary record) \emph{can $\theta$ be identified, and does identifying it decide anything?} The answer
-is in four parts, and the second is the one that determines what a protocol should do.
+kind the disease actually generates (a marker series, a dosing diary, a dietary record) \emph{can $\theta$ be identified, and does identifying it decide anything?} The answer is four results. The first is a design that the trial is already running without knowing it. The other three establish what that design decides, what it does not, and where it stops, so that a protocol can be written against its actual reach rather than an assumed one.
 
 \begin{enumerate}[leftmargin=*, itemsep=3pt]
-\item \textbf{The dose train is the identification experiment, and it is already being
-run.} The therapy is administered on a fixed biweekly schedule and read as treatment; it is
+\item \textbf{The dose train is already the identification experiment.} The therapy is administered on a fixed biweekly schedule and read as treatment; it is
 also a known, exogenous, selective input on exactly the parameter in question, and it
 supplies forty-two times the excitation the marker's own excursions do. That is what makes
 $\theta$ identifiable: monthly outpatient draws across dose cycles reach $17\%$ over two
-years. One scheduling choice destroys it, and it is the choice a protocol would make for
-convenience: sampling on dosing days, or at any multiple of the dose interval, costs a
+years. The precision is lost by the one scheduling choice a protocol would make for convenience: sampling on dosing days, or at any multiple of the dose interval, costs a
 factor of twenty-two, and moving the schedule half a day recovers it
 (Sections~\ref{sec:excitation} and~\ref{sec:designsec}).
 
@@ -40,19 +37,13 @@ and that identity names the input that closes it. The corollary is a limit on re
 rather than on precision: nothing but the dose train supplies enough excitation, so the
 design applies to patients receiving the therapy and to no one else
 (Section~\ref{sec:whoto}).
-\item \textbf{Identifying $\theta$ does not decide the dosing interval.} The decision is
-usually posed as the sign of $\mu = \theta - \thc$ against a critical capacity. That
-threshold is not a measured quantity: it is defined through two chosen constants, and
+\item \textbf{Identification and the interval decision are different problems.} Identifying $\theta$ is worth doing on its own terms; deciding the interval needs something the marker record cannot supply. The decision is usually posed as the sign of $\mu = \theta - \thc$ against a critical capacity, and that threshold is not a measured quantity: it is defined through two chosen constants, and
 across their defensible range it moves by a factor of $24$ and the sign flips for the same
 patient with perfect data (Section~\ref{sec:decision}).
-\item \textbf{The threshold framing is itself doubtful.} The only endpoint evidence
-available reports a smooth dose--response and no threshold at all. This paper records that
+\item \textbf{The endpoint evidence favours a smooth dose--response over a threshold.} The only endpoint evidence available reports no threshold at all. This paper records that
 as a finding rather than adopting a replacement estimand, for reasons given in
 Section~\ref{sec:decision}.
-\item \textbf{And capacity stops being recoverable exactly where it matters most.} Above
-roughly three to four times the managed marker level, two patients differing tenfold in
-residual capacity are indistinguishable, which is the severely affected population
-(Section~\ref{sec:scope}).
+\item \textbf{The design has a located ceiling.} Above roughly three to four times the managed marker level, two patients differing tenfold in residual capacity are indistinguishable. That is the severely affected population, so the specification names the range it applies to instead of leaving it implied (Section~\ref{sec:scope}).
 \end{enumerate}
 
 What this paper is not. It is a statement about identifiability, a property of a

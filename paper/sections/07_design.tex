@@ -14,8 +14,7 @@ P_k^{-1} \;=\; P_0^{-1} \;+\; \sum_{i \le k} \frac{q(m_i, \Delta_i)\,q(m_i, \Del
 \label{eq:infofilter}
 \end{equation}
 on the augmented coordinates $(\ln\theta, \ln K_m, L_0, \ln k_e)$, none of which carries
-dynamics. There is no process noise on $\theta$, and that is a construction rather
-than a setting. A random walk on $\theta$ manufactures a finite stationary covariance in a
+dynamics. The absence of process noise on $\theta$ is a construction rather than a setting. A random walk on $\theta$ manufactures a finite stationary covariance in a
 direction the data may never see, which is precisely the error at issue here; with \eqref{eq:infofilter}, what does not collapse stays visibly uncollapsed.
 
 \paragraph{Why these priors and not others.} The choice below looks arbitrary until one
@@ -32,15 +31,13 @@ in this section, and earlier drafts of this paper did not hold them fixed.
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
 \item \textbf{$q$ carries the increment}, as \eqref{eq:columns} requires. A design is
 \emph{not} fully described by the levels it visits: two samples at the same level under
-different $\Delta$ carry different information, and that is the whole of
-Section~\ref{sec:therapychannel}.
+different $\Delta$ carry different information, which is the whole of Section~\ref{sec:therapychannel}.
 \item \textbf{$\theta$ and $K_m$ are free.} No prior is placed on either. Stripping the
 priors one at a time shows that the $K_m$ prior does no work at all (the accessible
 design gives $0.1474$ with it and $0.1474$ without it, and still $0.1474$ at a prior
 twenty times looser) so nothing here depends on knowing $K_m$, which
 Remark~\ref{rem:no_km} forbids.
-\item \textbf{$k_e$ carries a log-prior of $0.8$}, a factor of $2.2$, and it is the only
-prior that does any work: removing it takes the same design from $0.1474$ to $0.6451$. The
+\item \textbf{$k_e$ carries a log-prior of $0.8$}, a factor of $2.2$, and is the only prior that does any work: removing it takes the same design from $0.1474$ to $0.6451$. The
 gate needs $k_e$ within a factor of $2.95$, which is the one thing this paper asks the
 literature for.
 \item \textbf{Intake varies day to day at a $10\%$ coefficient of variation, and is
@@ -95,8 +92,7 @@ two-monthly visits catch $1.94$.
 
 \begin{remark}[Do not sample at the dose interval. This is the sharpest rule in the paper.]
 \label{rem:aliasing}
-The fortnightly row of Table~\ref{tab:designs} is a catastrophe, and it is a
-\emph{designed} catastrophe rather than bad luck. The dose interval is fourteen days, so
+The fortnightly row of Table~\ref{tab:designs} is a catastrophe, and a \emph{designed} one rather than bad luck. The dose interval is fourteen days, so
 sampling every fourteen days lands every draw at the same phase of every cycle. The range
 of $\Delta/\theta$ collapses from $1.95$ to $0.13$, the correlation between $\ln\theta$ and
 $\ln K_m$ returns to $+0.998$, and $\operatorname{sd}(\ln\hat\theta)$ goes to $3.51$. The
@@ -147,7 +143,7 @@ and a started-away optimiser does not climb back. So the honest claim is
 conditional and is stated as such: this design identifies $\theta$ to better than $20\%$
 \emph{given} $k_e$ within a factor of about three, and does not identify it at all
 without. What survives unconditionally is the comparison, carrying the increment is
-worth between one and two orders of magnitude on every design in the table, prior-free, and it is the comparison, not the absolute number, that the data specification rests on.
+worth between one and two orders of magnitude on every design in the table, prior-free; the data specification rests on that comparison, not on the absolute number.
 \end{remark}
 
 \begin{remark}[The dose train is not a design variable, and the direction of the conflict matters]
@@ -275,6 +271,7 @@ Each accessible source of variation moves the marker by a known amount, in a kno
 direction, from a known place. Table~\ref{tab:excursion} evaluates \eqref{eq:E} on each.
 
 \begin{adjustwidth}{-1.0cm}{-1.0cm}
+\begin{adjustwidth}{-1.4cm}{-1.4cm}
 \begin{table}[htbp]
 \centering
 \footnotesize
@@ -286,6 +283,7 @@ $K_m$, so it separates being too narrow from being in the wrong place.}
 \input{../results/tables/tab_D_excursion}
 \end{table}
 \end{adjustwidth}
+\end{adjustwidth}
 
 Three readings.
 
@@ -294,12 +292,12 @@ Three readings.
 inter-dose recovery, the carnitine dose steps and the cyclical antibiotics all deliver
 between a fifth and a quarter of what their own fold range could deliver, because they
 happen an order of magnitude below $K_m$. Widening them does not fix that.
-\item \textbf{Only a decompensation gets close, and it is still short.} An excursion from
+\item \textbf{Only a decompensation gets close, and still falls short.} An excursion from
 the operating point to eight times it reaches $E = 0.35$ against the $0.50$ required, and it
 does so at $74\%$ of what that fold range could deliver, because it at least moves towards
 $K_m$. The excitation the decision needs is available only from the event the
 treatment exists to prevent, and even then not in full.
-\item \textbf{A labelled-propionate bolus is the one designed source, and it is small.}
+\item \textbf{The one designed source, a labelled-propionate bolus, is small.}
 Doubling the marker from the operating point reaches $E = 0.076$. Its value is not the
 excitation it supplies but that it measures capacity on a different axis entirely, which is
 the subject of the validation protocol in the supplement, \S S1.
@@ -324,7 +322,7 @@ untreated who did. Each panel varies one thing a protocol controls.}
 \label{fig:D3}
 \end{figure}
 
-This subsection reports a negative result, and it is the one the paper ends on.
+This subsection reports the negative result the paper ends on.
 Everything above says the therapy channel makes $\theta$ identifiable. It does not follow
 that it makes the \emph{sign of the margin} decidable, and it does not.
 
@@ -364,8 +362,7 @@ it does not repeal it.
 Why these numbers and Table~\ref{tab:designs} are not in contradiction, and which
 to believe for what. Table~\ref{tab:designs} reports a posterior standard deviation under
 the $k_e$ prior; this table reports a prior-free nonlinear least squares, which is what
-\S1.9 has always simulated. The gap between them is Remark~\ref{rem:priorfree}, and it is
-the honest shape of the result: the therapy channel identifies $\theta$ given a
+\S1.9 has always simulated. The gap between them is Remark~\ref{rem:priorfree}, and is the honest shape of the result: the therapy channel identifies $\theta$ given a
 defensible prior on the alternative channel, and does not make the decision reliable under
 any reading. Reporting only the first would repeat that error.
 

@@ -81,11 +81,20 @@ def save(fig, name):
     return path
 
 
-def write_table(name, header, rows, note=""):
-    """Write a LaTeX booktabs table into results/tables."""
+def write_table(name, header, rows, note="", colspec=None):
+    """Write a LaTeX booktabs table into results/tables.
+
+    colspec is the LaTeX column specification. It defaults to one 'l' per
+    column, which is right for a table of numbers and wrong for any table
+    whose cells are sentences: 'l' never wraps, so a long cell runs off the
+    page and pushes every column to its right off with it, silently. Two
+    tables here did exactly that, one of them losing a whole column. Pass
+    p{...} widths for prose columns.
+    """
     path = TABDIR / f"{name}.tex"
     ncol = len(header)
-    lines = [r"\begin{tabular}{@{}" + "l" * ncol + r"@{}}", r"\toprule",
+    spec = colspec if colspec else "l" * ncol
+    lines = [r"\begin{tabular}{@{}" + spec + r"@{}}", r"\toprule",
              " & ".join(f"\\textbf{{{h}}}" for h in header) + r" \\",
              r"\midrule"]
     for r in rows:

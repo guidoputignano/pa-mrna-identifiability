@@ -787,8 +787,9 @@ def table_excursion():
     write_table("tab_D_excursion",
                 ["source", "$m$ range", "fold", "direction",
                  "$\\sqrt{m_{\\min}m_{\\max}}/K_m$", "$E$", "$E_{\\max}(r)$",
-                 "fraction of $E_{\\max}$"],
+                 "frac.\\ of $E_{\\max}$"],
                 rows,
+                colspec=r"p{0.29\textwidth}lllllll",
                 note="E is the excitation the band delivers; E_max(r) is the most "
                      "a band of that fold range could deliver if it straddled K_m")
     print("    excursion available from each source:")
@@ -939,7 +940,10 @@ def table_spec():
          "looser, which is what Remark~\\ref{rem:no_km} demanded"],
     ]
     write_table("tab_D_spec", ["", "what the record must contain", "why"], rows,
-                note="two tiers; Tier 2 is conditional on Tier 1 clearing the gate")
+                note="two tiers; Tier 2 is conditional on Tier 1 clearing the gate",
+                colspec=(r"p{0.17\textwidth}@{\hskip 1em}"
+                         r"p{0.40\textwidth}@{\hskip 1em}"
+                         r"p{0.40\textwidth}"))
     print("  wrote tab_D_spec.tex")
     for k, v in N.items():
         print("    %18s = %s" % (k, v))

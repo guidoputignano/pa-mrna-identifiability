@@ -3,8 +3,7 @@
 %==========================================================================
 
 \emph{Everything so far says what a record confined to a band cannot deliver. This
-section says what a record would have to do instead, and it is the link between the
-obstruction and the data specification.}
+section says what a record would have to do instead, linking the obstruction to the data specification.}
 
 \subsection{Parametrisation}
 \label{sec:pinned}
@@ -57,8 +56,7 @@ destroys it. Structural identifiability is a statement about the exact, noiseles
 continuous trajectory, from which every time-derivative of the output is available: the
 information lives in the transient. The clinic does not sample the transient. The marker's
 own time constant is about $0.8$~h, $99\%$ of a displacement closes in $4.2$~h, against
-a therapeutic half-life of $3.5$~days, a separation of roughly $10^2$, and it is that
-separation which licenses treating each visit as a point on an algebraic balance rather
+a therapeutic half-life of $3.5$~days, a separation of roughly $10^2$, which is what licenses treating each visit as a point on an algebraic balance rather
 than as a state of an ODE that has to be integrated. A record built
 from monthly clinic draws therefore contains points on the \emph{quasi-steady locus}, where
 $\dot m$ is zero to within the width of the assay and the derivatives that carry the
@@ -78,7 +76,7 @@ direction and a factor of $2$ along every other.
 
 A singular Fisher matrix at a point does not contradict global injectivity of the
 map; it sets the price. That sentence is the whole reconciliation between the structural
-result and everything that follows, and it is not stated again.
+result and everything that follows, and is not stated again.
 
 \begin{remark}[A word used in two senses, disambiguated once]
 \label{rem:twosenses}
@@ -328,8 +326,7 @@ costs this paper are in the supplement, \S S1.
 \subsection{A closed form for the obstruction}
 \label{sec:rank}
 
-What survives all of this is one exact statement, and it is sharper than the determinant
-conditions earlier drafts used.
+What survives all of this is one exact statement, sharper than the determinant conditions earlier drafts used.
 
 \begin{proposition}[The load-bias identity]
 \label{prop:rank}
@@ -434,13 +431,12 @@ Two consequences, and the second is the one to keep.
 carried, $\operatorname{sd}(\ln\hat\theta)$ on the accessible design runs from $0.1469$ at
 a load record good to $1\%$ to $0.1557$ at a record good to $20\%$. Tightening the record
 twentyfold buys six per cent. An earlier draft of this paper made load-record precision the
-binding design variable; it is not, and that is retired here rather than quietly dropped.
+binding design variable; it is not, and the claim is retired here rather than quietly dropped.
 \item \textbf{Load \emph{variation} is what makes the problem identifiable at all.} By
 Proposition~\ref{prop:rank} a perfectly steady intake is exactly the singular case. Half a
 per cent of day-to-day variation restores rank: on the accessible design the smallest
 singular value of the column-normalised matrix moves from $1.8\times10^{-15}$, numerically
-zero, to $1.2\times10^{-3}$, and it is the \emph{data} rather than the load prior that
-then fills the deficient direction.
+zero, to $1.2\times10^{-3}$, after which the \emph{data} rather than the load prior fills the deficient direction.
 \end{enumerate}
 
 \begin{remark}[Restoring rank is not achieving precision, and the two must not be run together]
@@ -533,15 +529,13 @@ either by a wide band wherever the patient is, or by a narrow band placed correc
 Neither is clinically available. Reaching the neighbourhood of $K_m$ means carrying the
 marker to roughly twenty times its managed level; buying the same information from the
 operating point instead needs a fold range of order ten, reached from below.
-The safety constraint is on the level, and both routes violate it. Worse, and this
-is Section~\ref{sec:designsec}: no published series records any propionate marker at either
+The safety constraint is on the level, and both routes violate it. Worse, as Section~\ref{sec:designsec} shows: no published series records any propionate marker at either
 of those levels, so the requirement is not merely unsafe, it is unobserved.
 
 The third route moves the \emph{other} factor. By Proposition~\ref{prop:tworoutes} an
 increment reaching $\Delta/\theta = 0.55$ meets the same requirement at the patient's own
 operating level, with no excursion at all, and the trial schedule already reaches $2.13$.
-The route that was never considered is the only one that is both safe and
-observed, and it is the therapy already being administered. What it costs is not an excursion but a characterisation of the delivered
+The route that was never considered is the only one that is both safe and observed: the therapy already being administered. What it costs is not an excursion but a characterisation of the delivered
 increment, and Section~\ref{sec:spec} says how good that has to be.
 \end{remark}
 
