@@ -100,7 +100,7 @@ way inverts the conclusion. The ratio is attached to a lower concentration, so a
 below one means \emph{fewer events when the marker is lower}: 3-HP is a risk marker in the
 expected direction for a toxic overflow metabolite, not a protective one.
 
-\textbf{C3 is excluded on the perturbation, and the argument is structural.} C3 is
+\textbf{C3 is excluded on the perturbation, and the argument is mechanistic.} C3 is
 propionylcarnitine, the product of the carnitine conjugation route. Carnitine
 supplementation therefore \emph{raises} C3 while lowering the organic acids, so the
 selective perturbation of Section~\ref{sec:selective} enters the observation with the wrong
@@ -148,14 +148,10 @@ $J = 2$ and a factor of $1.31$ at a load recorded to $2\%$, falling to $1.05$ at
 
 \subsubsection{The obstruction, and what kind it is}
 
-The obstruction below is one of \emph{conditioning}, not of structure. Under a generic
-trajectory the model is globally structurally identifiable, and this has been checked two
-ways: by hand in the companion note, and mechanically with
-\texttt{StructuralIdentifiability.jl} on the eight configurations in
-\texttt{symbolic/julia/}, every one of which returns globally identifiable except the
-variant in which both clearance channels saturate. What follows is therefore a statement
-about the range of metabolite levels a record actually contains, and an earlier heading
-here called it structural, which it is not.
+The obstruction below is one of \emph{conditioning}, not of structure ---
+Section~\ref{sec:regime} makes the distinction and Remark~\ref{rem:twosenses} disambiguates
+the word. What follows is a statement about the range of metabolite levels a record
+actually contains. An earlier heading here called it structural, which it is not.
 
 Write $C(m) = \theta\, g(m) + k_e\, m$ for the total clearance, and let
 $M = [m_{\min}, m_{\max}]$ be the range of metabolite levels a given patient actually
@@ -469,7 +465,8 @@ understates what the therapy would deliver, by a few per cent.
 on.} Adding $K_m$ to the parameter vector -- which is the situation Remark~\ref{rem:fibre}
 describes, since the fibre exists precisely because $K_m$ is unknown -- the two channels
 stop being interchangeable by six orders of magnitude in $\det G$ and by a factor of $46$ to
-$807$ in $\operatorname{sd}(\ln\hat\theta)$. The reason is structural. The $K_m$ sensitivity
+$807$ in $\operatorname{sd}(\ln\hat\theta)$. The reason is in the form of the forcing, not
+in any constant. The $K_m$ sensitivity
 is forced by $-(\theta + \Delta(t))\,K_m\,\partial g/\partial K_m$, and that prefactor is
 modulated by the therapeutic input and constant under carnitine. The ratio of the $K_m$
 forcing to the $\theta$ forcing is $-(1 + \Delta(t)/\theta)\,K_m/(K_m + m)$: the therapy
@@ -601,7 +598,7 @@ Appendix~\ref{sec:supp} gives each in full, and Table~\ref{tab:excursion} prices
       The $K_m^2$ terms cancel identically. The margin is \emph{linear} along the
       unidentified direction where $\theta$ is quadratic in it, so the decision quantity is
       better conditioned than the parameter it is built from, by one order. Its whole
-      sensitivity to the non-identifiability is the single coefficient in
+      sensitivity to the unresolved direction is the single coefficient in
       \eqref{eq:mufibre}, computable from the fitted $(a,b)$ without resolving $K_m$.
       This is a change of order and not a claim of good conditioning: $\mu$ still varies
       several-fold over the admissible range of $K_m$ (Figure~\ref{fig:A7}). What survives

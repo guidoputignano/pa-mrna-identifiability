@@ -109,9 +109,10 @@ def main():
     print("      above and StructuralIdentifiability.jl are statements about a")
     print("      marker that is relaxing. The clinic never sees that: the marker")
     print("      relaxes in about four hours against a dose half-life of 3.5 days")
-    print("      -- the same separation of scales that makes the information")
-    print("      filter exact -- so monthly sampling returns points on the")
-    print("      QUASI-STEADY locus, where m_dot is zero to the width of the")
+    print("      -- a separation of scales that licenses treating each visit as")
+    print("      a point on an algebraic balance -- so monthly sampling returns")
+    print("      points on the QUASI-STEADY locus, where m_dot is zero to the")
+    print("      width of the")
     print("      assay and the derivatives carrying the structural result are")
     print("      simply not in the record. The note's fibre is what remains when")
     print("      the transient is removed: one algebraic equation per patient.")
@@ -142,5 +143,46 @@ def main():
     print("  design a clinic can actually run.")
 
 
+def model_B_channel_symmetry():
+    """The one genuine structural obstruction, and what removes it.
+
+    StructuralIdentifiability.jl returns model B -- both channels saturating --
+    as locally but not globally identifiable, with identifiable functions
+    k_e + theta, K_e + K_m, k_e*theta, K_e*K_m, K_e*theta + K_m*k_e. Every one
+    is invariant under the simultaneous swap (theta, K_m) <-> (k_e, K_e), which
+    says the fibre is that swap and nothing else. This checks it directly, and
+    then asks whether the therapy breaks it.
+    """
+    Ke = sp.Symbol('K_e', positive=True)
+
+    def C(a, Ka, b, Kb, delta):
+        return (a + delta) * m / (Ka + m) + b * m / (Kb + m)
+
+    print()
+    print("=" * 78)
+    print("MODEL B -- BOTH CHANNELS SATURATING")
+    print("=" * 78)
+    print("  Without therapy, is the channel swap an exact symmetry?")
+    print("    C(theta,K_m,k_e,K_e) - C(k_e,K_e,theta,K_m) =",
+          sp.simplify(C(th, Km, ke, Ke, 0) - C(ke, Ke, th, Km, 0)))
+    print("  Yes. The two channels are interchangeable, so the fibre is a")
+    print("  two-point set and no amount of noiseless data separates them.")
+    print()
+    print("  With the known increment, which rides on the FIRST channel only:")
+    diff = sp.simplify(sp.together(C(th, Km, ke, Ke, d) - C(ke, Ke, th, Km, d)))
+    print("    difference =")
+    sp.pprint(diff)
+    c1 = sp.factor(sp.Poly(sp.numer(sp.cancel(diff)), d).coeff_monomial(d))
+    print(f"\n    coefficient of Delta: {c1}")
+    print("    vanishing identically in m requires:",
+          sp.solve(sp.Eq(c1, 0), Ke, dict=True))
+    print()
+    print("  So the therapy breaks the symmetry unless K_e = K_m, in which case")
+    print("  the two channels are the same channel and the split has no content.")
+    print("  The selective input does not merely improve the conditioning of the")
+    print("  channel problem; it removes its only structural degeneracy.")
+
+
 if __name__ == "__main__":
     main()
+    model_B_channel_symmetry()

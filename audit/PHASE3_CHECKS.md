@@ -273,9 +273,9 @@ Two mechanisms, and neither is structural non-identifiability:
 **(1) Structural identifiability asks about the transient, and the clinic never sees it.**
 The framework assumes the exact, noiseless, continuous trajectory, from which every
 time-derivative of y is available. The marker's time constant is 0.8 h against a dose
-half-life of 3.5 days — the same 104× separation that makes the information filter exact —
-so monthly sampling returns points on the **quasi-steady locus**, where ṁ is zero to the
-width of the assay. The derivatives carrying the structural result are not in the record.
+half-life of 3.5 days — a 104× separation, which is what licenses treating each visit as a
+point on an algebraic balance rather than a state of an ODE — so monthly sampling returns
+points on the **quasi-steady locus**, where ṁ is zero to the width of the assay. The derivatives carrying the structural result are not in the record.
 The fibre is what remains once the transient is removed.
 
 **(2) On that locus the Fisher matrix is singular at the truth, and flat only to first order.**

@@ -6,9 +6,21 @@ capacity. What the decision turns on is not that capacity but the \emph{sign} of
 margin against the patient's own propiogenic load. We ask what a clinical record can
 deliver, and answer in the units a protocol is written in.
 
-Marker levels at a fixed operating point cannot deliver it. Over the band a stable patient
-visits, total clearance is indistinguishable from a straight line at assay resolution, and
-the capacity survives only in that line's intercept. \textbf{A degeneracy of this kind
+\textbf{The obstruction is a sampling regime, not a structure.} Under a generic trajectory
+the model is globally structurally identifiable --- checked by hand and independently by
+\texttt{StructuralIdentifiability.jl} across eight configurations --- so the information is
+present in the system. What removes it is the regime a clinic samples in. The marker's own
+time constant is about $0.8$~h against a therapeutic half-life of $3.5$~days, a separation
+of roughly $10^2$, so monthly draws return points on the quasi-steady locus and never the
+transient in which the structural result lives. On that locus the information matrix is
+singular at the truth and flat only to first order: the degenerate combination is recovered
+through curvature rather than slope, so its recoverable displacement scales as the
+\emph{square root} of the noise where every other direction scales linearly. A singular
+Fisher matrix at a point does not contradict global injectivity; it sets the price.
+
+What that price looks like in the data is a straight line. Over the band a stable patient
+visits, total clearance is indistinguishable from an affine function at assay resolution,
+and the capacity survives only in that line's intercept. \textbf{A degeneracy of this kind
 closes when an independent channel is known}, and the paper's question is therefore not
 whether identification is possible but \emph{which channel it is feasible to know, and to
 what precision}.

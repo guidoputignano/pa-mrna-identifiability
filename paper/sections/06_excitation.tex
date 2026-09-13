@@ -30,6 +30,66 @@ with $L$ the recorded component of the propiogenic load, $L_0$ its unrecorded co
 carried as an unknown constant, and $\Delta$ the therapeutic increment, known from the
 dosing schedule.
 
+\subsection{What kind of obstruction this is: a regime, not a structure}
+\label{sec:regime}
+
+Everything below is a statement about a \emph{design}. None of it says the model is
+structurally deficient, and the distinction has to be made before the propositions, because
+the propositions read as though it did.
+
+\textbf{Under a generic trajectory the model is globally structurally identifiable.}
+Since $y = m$ is measured, $\dot m$ is known, and the balance supplies one exact equation
+$\bigl(\theta+\Delta\bigr)g(m) + k_e m + L_0 = L - \dot m$ at every level the trajectory
+visits. Clearing denominators, only the therapy carries a term proportional to $\Delta$, so
+$K_m$ follows from that coefficient alone; with $K_m$ pinned the remaining three enter as a
+combination of $g(m)$, $m$ and $1$, whose determinant at three distinct levels is non-zero.
+All four parameters follow, for any parameter values, provided the increment takes two
+distinct values and the marker takes three. This has been checked mechanically as well as
+by hand: \texttt{StructuralIdentifiability.jl} returns \emph{globally identifiable} for
+eight configurations of this model --- time-varying load, constant load, two patients
+sharing population constants, a null-genotype anchor, carnitine as a known input, therapy
+as a known input, and a two-state carnitine model in which the second state is never
+observed. The single exception is Section~\ref{sec:modelB}.
+
+\textbf{So the information is present in the system, and the sampling regime is what
+destroys it.} Structural identifiability is a statement about the exact, noiseless,
+continuous trajectory, from which every time-derivative of the output is available: the
+information lives in the transient. The clinic does not sample the transient. The marker's
+own time constant is about $0.8$~h --- $99\%$ of a displacement closes in $4.2$~h --- against
+a therapeutic half-life of $3.5$~days, a separation of roughly $10^2$, and it is that
+separation which licenses treating each visit as a point on an algebraic balance rather
+than as a state of an ODE that has to be integrated. A record built
+from monthly clinic draws therefore contains points on the \emph{quasi-steady locus}, where
+$\dot m$ is zero to within the width of the assay and the derivatives that carry the
+structural result are simply not present. What remains at each visit is one algebraic
+balance, and the degeneracies below are properties of that.
+
+\textbf{On that locus the information matrix is singular at the truth, and flat only to
+first order.} Proposition~\ref{prop:rank} gives the null direction in closed form. Moving
+along it, the noiseless misfit grows as the \emph{square} of the displacement rather than
+linearly: root-mean-square residual $\propto \varepsilon^2$, checked to three figures over
+a decade in $\varepsilon$. Squaring it, $\chi^2 \propto \varepsilon^4$, which is the same
+statement Remark~\ref{rem:second_order} reports over four decades from the other direction. The combination is therefore recovered through curvature rather than through
+slope, and the consequence is a price rather than a prohibition: the recoverable
+displacement scales as the \textbf{square root} of the noise level, where a first-order
+direction would scale linearly. Halving the assay CV buys a factor of $\sqrt2$ along this
+direction and a factor of $2$ along every other.
+
+\textbf{A singular Fisher matrix at a point does not contradict global injectivity of the
+map; it sets the price.} That sentence is the whole reconciliation between the structural
+result and everything that follows, and it is not stated again.
+
+\begin{remark}[A word used in two senses, disambiguated once]
+\label{rem:twosenses}
+This note uses \emph{structural} in two ways and they should not be confused.
+\emph{Structural identifiability} is the technical sense above: a property of the model and
+observation map alone, in which noise, sampling and cohort size do not appear. Elsewhere ---
+of the intrinsic threshold, of the null-genotype construction, of why C3 is excluded ---
+the word is used loosely, to mean that a claim follows from the form of the model rather
+than from any constant in it. No claim in this note asserts structural non-identifiability
+in the technical sense, of this model or of any reduction of it.
+\end{remark}
+
 \subsection{Both ends are degenerate, and they fail differently}
 
 \begin{proposition}[Two degeneracies]
@@ -250,6 +310,65 @@ only as well known as $\Delta$ is. Section~\ref{sec:spec} turns that into the si
 the design now turns on --- how precisely the delivered increment has to be characterised
 --- and it is the one requirement this note cannot discharge from published data.
 
+\subsection{Independent corroboration: the one model that is genuinely degenerate}
+\label{sec:modelB}
+
+The channel argument above was constructed to serve this note's purpose, which is a reason
+to distrust it. It turns out to have a structural counterpart that was not constructed at
+all: it falls out of a general-purpose tool, applied to a model this note does not use.
+
+Replace the linear alternative channel by a saturating one, so that both routes have the
+same functional form:
+\begin{equation}
+\dot m \;=\; L(t) + L_0 \;-\; \bigl(\theta + \Delta(t)\bigr)\frac{m}{K_m + m}
+\;-\; k_e\, \frac{m}{K_e + m} .
+\label{eq:modelB}
+\end{equation}
+With $\Delta \equiv 0$ this is the \emph{only} configuration in the set that
+\texttt{StructuralIdentifiability.jl} does not return as globally identifiable. It returns
+it as \emph{locally} identifiable, and the identifiable functions it reports are
+\begin{equation}
+k_e + \theta, \qquad K_e + K_m, \qquad k_e\theta, \qquad K_e K_m, \qquad
+K_e\theta + K_m k_e .
+\label{eq:Binvariants}
+\end{equation}
+
+\textbf{Every one of those is invariant under the single exchange
+$(\theta, K_m) \leftrightarrow (k_e, K_e)$}, and nothing else in the list is. The fibre is
+therefore not a curve or a plateau but a \emph{two-point set}: the true parameter and its
+channel-swapped image, which no quantity of noiseless data separates. Direct check:
+$C(\theta,K_m,k_e,K_e) - C(k_e,K_e,\theta,K_m) \equiv 0$.
+
+\textbf{This is the channel argument in structural form, produced by a tool built for
+something else.} The note's claim is that identification rests on the two channels being
+distinguishable, and the mechanism it gives is that they carry different functional forms
+--- saturating against linear. Equation~\eqref{eq:Binvariants} is that claim stated as a
+theorem about the model rather than as a calculation about a design: make the forms the
+same and capacity and alternative clearance become interchangeable, exactly and
+permanently. It is the strongest external corroboration in this note, and it was not sought.
+
+\textbf{And the therapy removes even that.} With the increment restored, the difference
+between a parameter set and its swapped image is
+\begin{equation}
+\bigl(\theta+\Delta\bigr)g(m;K_m) + k_e\,g(m;K_e)
+\;-\;
+\bigl(k_e+\Delta\bigr)g(m;K_e) - \theta\,g(m;K_m)
+\;=\;
+\frac{\Delta\, m\,\bigl(K_e - K_m\bigr)}{(K_m+m)(K_e+m)} ,
+\label{eq:Bbreak}
+\end{equation}
+which vanishes identically in $m$ only when $K_e = K_m$ --- in which case the two channels
+are one channel and the split has no content. The increment rides on the enzymatic route
+alone, so it \emph{labels} which route is which. The selective input does not merely improve
+the conditioning of the channel problem, as the rest of this section argues; on the one
+model where that problem has a structural degeneracy, it removes it.
+
+\textbf{What this does and does not license.} Equation~\eqref{eq:modelB} is not the model
+used anywhere in this note, which takes $\alpha \to k_e m$ throughout and says why in
+Section~\ref{sec:model}. The corroboration is directional: it says the channel argument is
+about functional form and not about the particular linearisation, which is what a reader
+should want to know before trusting it.
+
 \subsection{The obstruction has a closed form, and it names its own cure}
 \label{sec:rank}
 
@@ -274,23 +393,90 @@ no constant satisfies, and the deficiency closes.
 \end{proposition}
 
 \begin{proof}
-Write $u = m/(K_m+m)$, so $q_\theta = \theta u$ and, using the balance
-$(\theta+\Delta)u = L - k_e m$, $q_{K_m} = -(L - k_e m)(1-u)$. Requiring
-$c_\theta q_\theta + c_{K_m} q_{K_m} = 1$ and clearing $(K_m + m)$ gives
+The derivation is short enough to check on paper, and it is written forwards --- solving
+for the dependence rather than verifying a stated one --- so that the reader sees why
+$k_e$ drops out.
+
+Write $u = m/(K_m+m)$, so that $1-u = K_m/(K_m+m)$ and, usefully,
+\begin{equation}
+m\,(1-u) \;=\; K_m\, u , \qquad m \;=\; \frac{K_m\,u}{1-u} .
+\label{eq:usubs}
+\end{equation}
+Work with the balance itself, $G := (\theta+\Delta)\,u + k_e m - L - b$, where $b$ is a
+bias on the recorded load. Because the marker enters every sensitivity through the same
+factor $\partial G/\partial m$, which cancels from any linear dependence among the columns,
+it is enough to find a dependence among the four partial derivatives of $G$:
+\begin{equation}
+\pd{G}{\theta} = u, \qquad
+\pd{G}{K_m} = -(\theta+\Delta)\,\frac{u(1-u)}{K_m}, \qquad
+\pd{G}{k_e} = m, \qquad
+\pd{G}{b} = -1 .
+\label{eq:Gsens}
+\end{equation}
+Ask for constants $(a, \beta, \gamma, e)$, \emph{not} depending on the sample, with
 \[
-m\bigl(c_\theta \theta + c_{K_m} K_m k_e - 1\bigr) \;=\; K_m\bigl(1 + c_{K_m} L\bigr) .
+a\,\pd{G}{\theta} + \beta\,\pd{G}{K_m} + \gamma\,\pd{G}{k_e} + e\,\pd{G}{b} \;=\; 0
+\qquad\text{for every }\Delta .
 \]
-Both sides vanish identically in $m$ at the stated constants, and the right-hand side
-forces $c_{K_m} = -1/L$, which is a single constant only if $L$ is.
+The increment is eliminated by the balance itself: $(\theta+\Delta)\,u = L - k_e m$, so the
+second term is $-(\beta/K_m)(L - k_e m)(1-u)$, and by \eqref{eq:usubs} this is
+$-(\beta/K_m)\bigl[L(1-u) - k_e K_m u\bigr]$. Substituting, and using
+$m = K_m u/(1-u)$ in the third term, the condition becomes
+\begin{equation}
+\underbrace{\gamma\,\frac{K_m u}{1-u}}_{\text{pole at }u=1}
+\;+\; \Bigl(a + \frac{\beta L}{K_m} + \beta k_e\Bigr) u
+\;-\; \Bigl(e + \frac{\beta L}{K_m}\Bigr) \;=\; 0 .
+\label{eq:inu}
+\end{equation}
+The three groups are linearly independent as functions of $u$, so each vanishes. The first
+forces $\gamma = 0$: \textbf{the alternative clearance is the one direction that cannot
+enter a dependence}, because $m$ is the only sensitivity that is not a polynomial in $u$.
+The remaining two give $a = -\beta(L/K_m + k_e)$ and $e = -\beta L/K_m$, a one-dimensional
+family. Taking $\beta = -K_m$,
+\begin{equation}
+n \;=\; \bigl(\,L + k_e K_m,\;\; -K_m,\;\; 0,\;\; L\,\bigr)
+\label{eq:nullvec}
+\end{equation}
+in $(\theta, K_m, k_e, b)$. Dividing through by $\theta L$ and rescaling the first two
+components to logarithmic parameters gives $c_\theta = (1 + K_m k_e/L)/\theta$ and
+$c_{K_m} = -1/L$, which is \eqref{eq:rank}.
+
+Every step used $L$ as a constant. If the recorded load varies, $L \to L_i$, then $e$ and
+$a$ acquire an index and no sample-independent $n$ exists, which is the last sentence of
+the proposition.
 \end{proof}
 
-The identity is verified symbolically and numerically: on the two-year record
-$\lVert Q c\rVert / \lVert Q\rVert = 2.7\times 10^{-17}$, the vector $c$ coincides with the
-smallest right singular vector of $Q$ to $\lvert\cos\rvert = 1.000000000$, and the
-deficiency is exactly one in the four-column form as well as the three-column one.
-Regressing each column on the others separates them cleanly: residuals of $10^{-14}$ for
-$\ln\theta$, $\ln K_m$ and the load bias, against $3.7\times10^{-3}$ for $\ln k_e$, so
-there is one exact identity and no second.
+\textbf{Three things to read off \eqref{eq:nullvec}, because they are not obvious from
+\eqref{eq:rank}.} First, the deficiency is exactly one: the family is one-dimensional, so
+there is one identity and no second. Second, \textbf{$k_e$ does not appear}: the degenerate
+direction lies entirely in capacity, affinity and the load bias, and the reason is visible
+in \eqref{eq:inu} --- $m$ is the only sensitivity that is not a polynomial in $u$, so no
+sample-independent constant can bring it into a dependence. Third, the identity holds
+\emph{for every} $\Delta$, so the dose train does not close it; only a varying load does.
+
+\textbf{The second of those is a statement about the exact identity and not about
+conditioning, and the two must not be run together.} $k_e$ escapes the identity, but only
+just. Regressing each column on the others leaves residuals of $10^{-14}$ for $\ln\theta$,
+$\ln K_m$ and the load bias --- that is the identity --- against $3.7\times10^{-3}$ for
+$\ln k_e$, a column that is nearly, not exactly, dependent on the rest. So there is one
+exact identity and no second, \emph{and} $k_e$ is the worst-conditioned of the directions
+that survive it. Both facts are needed, and together they account for the pattern of priors
+in this note: a prior on $k_e$ is the only one that does any work
+(Remark~\ref{rem:priorfree}), and a prior on $K_m$ does none (Remark~\ref{rem:no_km}),
+because $K_m$ lies inside the exact degeneracy where no prior on it can help, and $k_e$
+lies just outside, where one can.
+
+The identity is checked two ways, deliberately by routes with no shared code. Numerically
+on the two-year record, $\lVert Q c\rVert / \lVert Q\rVert = 2.7\times 10^{-17}$, the
+vector $c$ coincides with the smallest right singular vector of $Q$ to
+$\lvert\cos\rvert = 1.000000000$, and the deficiency is exactly one in the four-column form
+as well as the three-column one. Independently, \eqref{eq:nullvec} evaluated at the
+note's constants reproduces the smallest right singular vector of a separately constructed
+quasi-steady design --- built from a bisection on the balance rather than from the design
+module --- to a maximum component difference of $1.79\times10^{-7}$, with
+$\lVert Jn\rVert/(\lVert J\rVert\lVert n\rVert) = 1.5\times10^{-11}$. The second route
+shares no code with the first and was written to check \eqref{eq:nullvec} specifically.
+
 
 \textbf{Two consequences, and the second is the one to keep.}
 

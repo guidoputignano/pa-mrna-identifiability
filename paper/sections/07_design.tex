@@ -144,6 +144,86 @@ worth between one and two orders of magnitude on every design in the table, prio
 and it is the comparison, not the absolute number, that the data specification rests on.
 \end{remark}
 
+\begin{remark}[The dose train is not a design variable, and the direction of the conflict matters]
+\label{rem:dosedesign}
+The schedule optimised above is the \emph{sampling} schedule. The obvious next question is
+whether the \emph{dosing} schedule should be varied too, since by
+Proposition~\ref{prop:tworoutes} the increment is what supplies the excitation. It should
+not, and the reason is a number rather than a principle.
+
+Hold the delivered dose rate fixed and vary the train. A dosing interval is chosen to
+protect the \emph{trough} --- the lowest enzymatic increment the patient sees before the
+next dose --- so the trough is the column to read, not the mean, which is flat at
+$0.72$--$0.76\,\theta$ across every row.
+
+\begin{center}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{schedule} & $\operatorname{sd}(\ln\hat\theta)$ & \textbf{trough}/$\theta$ \\
+\midrule
+fixed amplitude, every $14$ d (the trial schedule) & $0.1697$ & $0.128$ \\
+alternating $\pm75\%$, same mean dose             & $0.1615$ & $0.045$ \\
+every $28$ d, dose scaled to hold the rate        & $0.1587$ & $0.016$ \\
+every $7$ d, dose scaled to hold the rate         & $0.2190$ & $0.253$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Every change that improves identifiability lowers the trough, at about thirteen to
+one.} Amplitude modulation at $\pm75\%$ buys $4.8\%$ on $\operatorname{sd}(\ln\hat\theta)$
+for a $65\%$ cut in the trough; a twenty-eight-day interval buys $6.5\%$ for an $87\%$ cut.
+\textbf{The identifiability optimum and the therapeutic optimum conflict, and the
+therapeutic one wins: no dose modulation is recommended here.}
+
+The reverse statement is the one a clinician needs and it is not symmetric with the first.
+Shortening the interval to seven days \emph{doubles} the trough and costs $29\%$ of the
+precision. So a clinician who shortens the interval on therapeutic grounds is not
+sacrificing anything the patient needs --- but they should know that the record will
+identify $\theta$ less well, and the sampling schedule then has to work harder.
+
+\textbf{Contrast this with the sampling schedule, where the corresponding number is free.}
+Remark~\ref{rem:aliasing} is a factor of twenty-two bought by moving draws half a day off
+the dosing day: no dose changes, no trough moves, no patient is exposed to anything
+different. \emph{The asymmetry is the recommendation.} Optimise the schedule that costs
+nothing and leave the one that costs the trough alone.
+\end{remark}
+
+\begin{remark}[The transient no clinic samples, and what it would be worth]
+\label{rem:transient}
+Section~\ref{sec:regime} located the obstruction in the sampling regime rather than in the
+model, and that statement has a design consequence which should be named rather than left
+as an observation.
+
+The marker's own time constant is about $0.8$~h and the therapeutic half-life is $3.5$~days.
+A record of monthly draws samples only the slow variable, so each visit contributes one
+point on the quasi-steady locus and the fast dynamics --- which is where the structurally
+identifying information sits --- never enters. \textbf{Sampling within hours of a dose
+would be sampling a different object.} During the first few multiples of $0.8$~h after an
+infusion, $\dot m$ is not zero, the balance is not algebraic, and the observation carries
+information about $k_e$ and $K_m$ separately rather than only through the locus. That is
+precisely the direction Remark~\ref{rem:priorfree} identifies as the binding one: $k_e$ is
+the parameter whose prior the whole design rests on, and a transient is what would measure
+it without a prior.
+
+\textbf{Whether that is clinically feasible is a different question, and this note does not
+claim it is.} The infusion is administered in a clinic, so the patient is already present
+for the first hours; a series of draws at, say, $0$, $1$, $2$, $4$ and $8$~h is an ordinary
+pharmacokinetic sampling schedule and is not an excursion, an exposure or a provocation.
+Against that: the fast dynamics of a plasma overflow metabolite is not the fast dynamics of
+the mitochondrial substrate, and Remark~\ref{sec:marker} already names the monotone-tracking
+assumption as the weakest link in the chain. A transient interrogates exactly the part of
+the observation model that assumption is least able to support --- at steady state the
+marker only has to track the substrate monotonically, whereas during a transient it has to
+track it with the right \emph{time constant}, and nothing in the literature establishes
+that.
+
+\textbf{So this is recorded as an open direction and not as a recommendation.} No design
+around it is computed here, and none should be until the observation model has been
+tested on a timescale where it matters. Tier~1 of Section~\ref{sec:spec} already asks for
+the one measurement that would begin to do that.
+\end{remark}
+
 \subsection{Where the excitation could come from}
 \label{sec:excursion_table}
 

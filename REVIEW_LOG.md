@@ -453,3 +453,12 @@ this kind. Expected values belong in an assertion that can fail, or nowhere.
   the standing rule for `claims.csv`: **every quantitative claim is checked against the
   source's Results or Tables, never its abstract, and every row records which section of
   the source the value came from.**
+
+- **A script that states its expected result in a comment.** Two instances, both symbolic,
+  both wrong, and both read as confirmations of themselves. The standing rule: **no script
+  asserts an expected result in a comment.** An expected value goes in an assertion that
+  can fail, or nowhere. A comment cannot fail, so a comment naming the answer converts a
+  check into a decoration — and the failure is silent, because the reader who reaches for
+  the script is reassured by exactly the text that is wrong. Where a script records what a
+  run *returned*, it says returned, is written after the run, and names the tool that
+  returned it.

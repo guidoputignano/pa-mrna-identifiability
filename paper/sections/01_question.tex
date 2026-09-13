@@ -23,13 +23,18 @@ kind the disease actually generates --- a marker series, a dosing diary, a dieta
 is in four parts, and the second is the one that determines what a protocol should do.
 
 \begin{enumerate}[leftmargin=*, itemsep=3pt]
-\item \textbf{$\theta$ is identifiable, and the therapy is what identifies it.} The
-obstruction has an exact closed form --- a rank-one identity whose null direction is the
-unrecorded load --- and it names its own cure. The excitation that closes it is supplied
-not by the marker's excursions but by the dose train the trial already administers, at
-forty-two times the marker band's contribution. One scheduling choice destroys it:
-sampling on dosing days costs a factor of twenty-two, and moving the schedule half a day
-recovers it (Sections~\ref{sec:excitation} and~\ref{sec:designsec}).
+\item \textbf{$\theta$ is identifiable, the obstruction is a sampling regime rather than a
+structure, and the therapy is what removes it.} The model is globally structurally
+identifiable under a generic trajectory, so the information is in the system; what a
+monthly clinic record loses is the transient, because the marker settles in about $0.8$~h
+against a therapeutic half-life of $3.5$~days. On the quasi-steady locus that remains, the
+obstruction has an exact closed form --- a rank-one identity whose null direction is
+capacity, affinity and the unrecorded load, with the alternative clearance provably absent
+from it --- and it names its own cure. The excitation that closes it is supplied not by the
+marker's excursions but by the dose train the trial already administers, at forty-two times
+the marker band's contribution. One scheduling choice destroys it: sampling on dosing days
+costs a factor of twenty-two, and moving the schedule half a day recovers it
+(Sections~\ref{sec:excitation} and~\ref{sec:designsec}).
 \item \textbf{Identifying $\theta$ does not decide the dosing interval.} The decision is
 usually posed as the sign of $\mu = \theta - \thc$ against a critical capacity. That
 threshold is not a measured quantity: it is defined through two chosen constants, and
