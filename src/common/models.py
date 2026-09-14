@@ -131,8 +131,18 @@ def clearance_B(m, p: ParamsB):
 
 def alt_flux_C(m, p: ParamsC):
     """
-    Carnitine-mediated elimination after adiabatic elimination of the fast
-    carnitine state. This is alpha(m) of the paper, Section 5.1.
+    Carnitine-mediated elimination after eliminating the carnitine state by
+    setting dc/dt = 0. This is alpha(m) of the paper, Section 2.3.
+
+    NOT an adiabatic elimination, and this docstring used to call it one. The
+    carnitine state is not the fast one: at k = 1 the ratio tau_c/tau_m runs
+    0.52 to 55 across the sampled parameter region, and the published human
+    kinetics put whole-body carnitine turnover at 38-119 h against the
+    marker's 0.81 h. What licenses the substitution is an identity rather
+    than a separation of timescales. alpha is DEFINED by solving dc/dt = 0,
+    and dc/dt = 0 holds exactly at any fixed point, so at equilibrium this
+    and rhs_C are one equation and agree exactly whatever the timescales do.
+    Away from equilibrium they do not: see audit/e10_qss_corners.py.
 
     One mechanism supplies both features the curve needs.
 
@@ -182,7 +192,11 @@ def rhs_C(t, y, p: ParamsC, s, k=1.0):
     R0 and the same Kc. tests/test_models.py checks that directly.
 
     k is the conjugation rate constant. It cancels out of the reduction, so
-    the reduced curve does not depend on it and it is a free scale here.
+    the reduced CURVE does not depend on it. That is not the same as being a
+    free scale, which this docstring used to claim: k sets the carnitine
+    relaxation rate, so it alone decides how far the reduction can be carried
+    away from equilibrium. The error there scales as 1/k. Nothing measures k,
+    and audit/e10_qss_corners.py prices the choice.
     """
     m, c = y
     conj = k * c * m / (p.Kc + m)

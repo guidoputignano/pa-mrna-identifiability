@@ -177,10 +177,26 @@ PARENT = [
                  r"catabolism, a fifth from gut fermentation and the rest from odd-chain fatty "
                  r"acids; a protein-restricted diet lowers the first two deliberately. The "
                  r"value here is not in those units and is not claimed to be"),
-    Row(r"$k$", "cancels", "conjugation rate constant",
-        DERIVED, r"drops out of the quasi-steady reduction of supplement \S S1 exactly, so the "
-                 r"reduced clearance does not depend on it and it is a free scale in the "
-                 r"two-state system"),
+    Row(r"$k$", "not assigned", "conjugation rate constant, and the carnitine relaxation rate",
+        ASSUMED, r"\textbf{This row previously read \textsc{derived}, ``a free scale in the "
+                 r"two-state system''. The first half of that is kept and the second is "
+                 r"withdrawn.} $k$ does drop out of the quasi-steady reduction of "
+                 r"supplement~\S S1 exactly, so the reduced clearance does not depend on it. "
+                 r"It does not follow that nothing does. $k$ sets the carnitine relaxation "
+                 r"time $\tau_c = 1/[k(u+\rho)]$, and therefore whether the reduction is valid "
+                 r"\emph{away} from equilibrium, which is the only place the two formulations "
+                 r"differ at all. Nothing measures it, so it is assumed and not derived. Its "
+                 r"cost is bounded rather than argued away, and the bound is not small: at "
+                 r"$k=1$, the value the code runs, $\tau_c/\tau_m$ spans $0.52$ to $55$ across "
+                 r"the sampled parameter region, so carnitine is comparable to or slower than "
+                 r"the metabolite and the separation the reduction would need runs backwards. "
+                 r"Published human kinetics say the same independently: whole-body carnitine "
+                 r"turnover time is $38$ to $119$~h and even the rapidly equilibrating "
+                 r"compartment distributes with a half-life of $2$ to $3$~h, against the "
+                 r"marker's $0.81$~h. The resulting error scales as $1/k$: $3.4\%$ to $25.4\%$ "
+                 r"on a transient, and up to $49.6\%$ on the basin boundary when carnitine "
+                 r"starts away from the slow manifold. No equilibrium quantity is affected, "
+                 r"because there the two formulations are one equation"),
 ]
 
 

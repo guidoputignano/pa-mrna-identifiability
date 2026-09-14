@@ -68,7 +68,7 @@ of propionate leaves only with a molecule of carnitine. The two equations are ot
 symmetric, because carnitine has a second exit that propionate does not. The enzymatic term
 $\theta g(m)$ is unchanged, with $\theta$ and $K_m$ carrying the meanings of Section~3.
 
-\paragraph{The reduction.} The carnitine state is fast relative to the metabolite. Solving
+\paragraph{The reduction.} Solving
 $\dot c = 0$ for $c$ and substituting gives a quasi-steady alternative flux
 \begin{equation}
 \alpha(m) \;=\; R_0\,\frac{u(m)}{u(m) + \rho(m)},
@@ -80,6 +80,16 @@ conjugation step fills, and falls once competition outpaces it. The reduction pr
 constants: $R_0$ and $K_c$ enter \eqref{eq:alpha} exactly as they enter \eqref{eq:C}, with
 no rescaling, and $k$ cancels. Everything from Section~\ref{sec:intrinsic} onwards is
 carried out on $C(m;\theta) = \theta g(m) + \alpha(m)$.
+
+This paragraph previously opened by asserting that the carnitine state is fast relative to
+the metabolite. That assertion is withdrawn, and Section~\ref{sec:reduction} of the paper gives
+the justification that replaces it: $\alpha$ is defined by solving $\dot c = 0$, and
+$\dot c = 0$ holds exactly at any fixed point, so at equilibrium the reduced and two-state
+conditions are one equation and the reduction is exact there whatever the timescales do.
+Away from equilibrium the premise is needed and does not hold, carnitine being the slower
+state both in the published human kinetics and in this model's own $\tau_c/\tau_m$. What
+that costs, and why $k$ cancelling from \eqref{eq:alpha} does not make $k$ a free scale, is
+in Table~\ref{tab:params_orig} and in Section~\ref{sec:reduction} of the paper.
 
 \paragraph{The constants.} Every one of them is in Table~\ref{tab:params_orig} with its value and
 its source, which is a correction and not a formality: $M_i$ was previously stated nowhere
@@ -223,9 +233,15 @@ rather than asserted, because one of the three does not hold.
 \eqref{eq:alpha} exactly, symbolically, with $k$ entering only through $\rho_0 = \delta_0/k$.
 \item[The equilibrium reduction.] Setting $\dot m = 0$ gives $L = \theta g(m) + \alpha(m)$,
 whose solutions are the attractor and the separatrix, and whose fold defines
-$\thc^{\,\mathrm{int}}$. Verified: integrating the two-state system from below the
-separatrix settles on the reduced attractor to fourteen digits, and from above it diverges;
-the peak of $C$ at $\theta = \thc^{\,\mathrm{int}}$ equals the load to ten digits.
+$\thc^{\,\mathrm{int}}$. Exact, and by identity rather than by verification: integrating the
+two-state system from below the separatrix settles on the reduced attractor to fourteen
+digits, but that agreement is $\dot c = 0$ holding at a fixed point and cannot fail at any
+parameter value, so it is not the check it was previously listed as. The peak of $C$ at
+$\theta = \thc^{\,\mathrm{int}}$ equals the load to ten digits, which is a genuine check
+because both sides are computed from $C$ alone. The dynamical half of the old entry, that
+integrating from above the separatrix diverges, holds on the slow manifold and fails off it:
+with $c$ left at its pre-perturbation value the basin runs $10\%$ to $18\%$ past the reduced
+separatrix at the sampled corners, and up to $50\%$ at the extremes of the shape constants.
 \item[The local identification model.] Section~\ref{sec:local}, over the band a managed
 patient visits. Not verified, and it does not hold as a reduction:
 Remark~\ref{rem:not_a_reduction} says what does.

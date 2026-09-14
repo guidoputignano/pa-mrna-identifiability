@@ -152,8 +152,7 @@ glyph under each channel is its shape.}
 \subsection{The equilibrium reduction}
 \label{sec:reduction}
 
-The carnitine state is fast relative to the metabolite: $m$ settles in about $0.8$~h against
-a therapeutic half-life of $3.5$~d. Solving $\dot c = 0$ in \eqref{eq:twostate} for $c$ and
+Solving $\dot c = 0$ in \eqref{eq:twostate} for $c$ and
 substituting gives a quasi-steady alternative flux in closed form,
 \begin{equation}
 \alpha(m) \;=\; R_0\,\frac{u(m)}{u(m) + \rho(m)},
@@ -161,18 +160,66 @@ substituting gives a quasi-steady alternative flux in closed form,
 \qquad \rho(m) = \rho_0\left(1 + \frac{m}{M_i}\right),
 \label{eq:alphaqss}
 \end{equation}
-with $\rho_0 = \delta_0/k$. The conjugation rate constant $k$ enters only through that
-ratio and cancels from the reduced clearance, so it is a free scale of the two-state system
-and no conclusion depends on it. Substituting \eqref{eq:alphaqss} into \eqref{eq:parent}
+with $\rho_0 = \delta_0/k$. Substituting \eqref{eq:alphaqss} into \eqref{eq:parent}
 recovers the parent exactly and symbolically.
+
+What licenses the substitution is not a separation of timescales. It is an identity, and the
+distinction matters enough to state plainly. $\alpha$ is \emph{defined} by solving
+$\dot c = 0$, and $\dot c = 0$ holds exactly at every fixed point of \eqref{eq:twostate}. So
+at equilibrium the two-state system's condition and $s = \theta g(m) + \alpha(m)$ are one
+equation rearranged, for every value of every parameter. Every quantity this paper takes
+from the reduction is read at a fixed point, and is therefore exact rather than approximate,
+with no appeal to how fast either state moves.
+
+\emph{As corrected.} An earlier version of this paragraph opened by asserting that ``the
+carnitine state is fast relative to the metabolite: $m$ settles in about $0.8$~h against a
+therapeutic half-life of $3.5$~d''. That justification is withdrawn. It conflates two
+different separations. The one it quotes is the marker against the \emph{therapy}, which is
+the right separation for treating a clinic draw as a steady state and which is stated, with
+its measured value, where it is used in Section~\ref{sec:collapse}. The reduction needs the
+other one, carnitine against the \emph{marker}, and that comparison runs the wrong way.
+Published human kinetics put whole-body carnitine turnover time at $38$ to $119$~h, and even
+the rapidly equilibrating compartment distributes with a half-life of $2$ to $3$~h, against
+the marker's $0.81$~h (Rebouche, \emph{Ann.\ N.Y.\ Acad.\ Sci.}\ 2004). Carnitine is
+therefore slower than the marker by a factor of about three at best and over a hundred
+typically. The model's own ratio agrees, and independently: at the value of $k$ the code
+runs, $\tau_c/\tau_m$ spans $0.52$ to $55$ across the parameter region the cohort of
+Section~\ref{sec:coverage} samples, so carnitine is the slower state there too. The
+reduction stands because at equilibrium it needs no premise, and not because this premise
+holds.
+
+The conjugation rate constant $k$ enters only through $\rho_0 = \delta_0/k$ and cancels from
+the reduced clearance, so no equilibrium conclusion depends on it. It is not, for that
+reason, a free scale. $k$ alone sets how fast the carnitine state relaxes, and so it alone
+decides how far the closed form can be carried \emph{away} from equilibrium, which is the
+only place the two formulations differ. Table~\ref{tab:params} records what that costs.
 
 Setting $\dot m = 0$ gives the equilibrium reduction, which is what a steady-state fit to a
 clinical record actually estimates. Its solutions are an attractor and a separatrix, and the
 fold at which the two collide defines the critical capacity $\thc$: below it a sufficiently
 large load leaves the system with no equilibrium at all, which is what a decompensation is
-in this model. The reduction is verified rather than asserted. Integrating \eqref{eq:twostate} from
-below the separatrix settles on the reduced attractor to fourteen digits, and from above it
-diverges. The intrinsic definition of $\thc$, the fold, and the comparison against the
+in this model. Integrating \eqref{eq:twostate} from below the separatrix settles on the
+reduced attractor to fourteen digits.
+
+\emph{As corrected.} An earlier version of this paragraph offered that agreement as
+verification, writing that ``the reduction is verified rather than asserted''. It is
+withdrawn. The agreement is the identity established above, so it holds at every parameter
+set that was tried and at every one that was not, including those at which carnitine is the
+slower state and the quasi-steady premise is simply false. It confirms the algebra and
+reports nothing about the premise. Section~\ref{sec:numerics} says the same of the two tests
+that guard the arithmetic.
+
+The companion claim, that integrating from above the separatrix diverges, is dynamical
+rather than algebraic, and it survives only with a condition attached. Started on the slow
+manifold, with $c$ at the $c^{\ast}(m)$ the reduction assumes, it holds: a trajectory begun a
+tenth of a per cent above the separatrix runs away at every corner tried. Started off that
+manifold, with $c$ still at the value it held before the load rose, which is what a sudden
+spike actually leaves behind, the same trajectory returns to the attractor instead. The
+parent's basin extends $10\%$ to $18\%$ past the reduced separatrix across the corners of
+the region the cohort samples, and up to $50\%$ at the extremes of the shape constants. The
+discrepancy is in the conservative direction, the patient tolerating a larger excursion than
+the reduced model predicts, but the reduced separatrix is a lower bound on the basin and not
+the basin itself. The intrinsic definition of $\thc$, the fold, and the comparison against the
 alternative hypothesis with a ceiling instead of a fold are in the supplement, \S S1.
 
 \subsection{The local identification model}
@@ -300,10 +347,24 @@ either choice, it is not testable from the published data, and Section~\ref{sec:
 Every computed trajectory uses an adaptive
 stiff-capable solver (\texttt{LSODA} or \texttt{Radau}) at relative tolerance $10^{-8}$ or
 tighter, and the estimator of Section~\ref{sec:collapse} does not integrate at all: it uses
-the closed-form quasi-steady level of \eqref{eq:alphaqss}, whose validity is measured rather
-than assumed. Two tests guard this. One halves the integration step and asserts the answer
-does not move by more than $10^{-6}$ relative; the other asserts that an integrated steady
-state equals the closed-form equilibrium reduction to the same tolerance.
+the closed-form quasi-steady level of \eqref{eq:alphaqss}. Two tests guard the arithmetic.
+One halves the integration step and asserts the answer does not move by more than $10^{-6}$
+relative; the other asserts that an integrated steady state equals the closed-form
+equilibrium reduction to the same tolerance.
+
+\emph{As corrected.} An earlier version of this paragraph said that the closed form's
+``validity is measured rather than assumed'', and named those two tests as the measurement.
+That is withdrawn, because neither test measures it. The first integrates the local model
+\eqref{eq:local} at two step sizes, so it is a statement about the solver and carnitine does
+not enter it. The second integrates the \emph{reduced} one-state system and compares the
+result with the algebraic root of the same reduced clearance, so it checks integration
+against root-finding on one function and the two-state system \eqref{eq:twostate} never
+appears in it. The third test, which does integrate \eqref{eq:twostate}, agrees with the
+closed form to fourteen digits for the reason given in Section~\ref{sec:reduction}: at a
+fixed point the two are one equation, so the agreement is an identity and no arrangement of
+the parameters could make it fail. All three are worth keeping as regression tests on the
+arithmetic. None of them is evidence that the quasi-steady premise holds, and the premise is
+not needed for any equilibrium quantity in this paper.
 
 Every stochastic result uses \texttt{numpy.random.default\_rng} with an explicit seed named
 at the call site, and each quoted precision is a median over $24$ seeds unless stated
