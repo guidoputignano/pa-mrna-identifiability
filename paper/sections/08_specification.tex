@@ -3,7 +3,7 @@
 %==========================================================================
 
 \emph{Every row is generated from the model code and is a consequence of something proved
-above. It has two tiers, and the order is not cosmetic: Tier~1 is a single measurement
+above. It has two tiers. Tier~1 is a single measurement
 nobody has published, and until it reports there is no defensible answer to the question
 Tier~2 asks.}
 
@@ -17,6 +17,37 @@ not known, and by the last row does not need to be.}
 \input{../results/tables/tab_D_spec}
 \end{table}
 \end{adjustwidth}
+
+\subsection{How to read this table}
+\label{sec:howtoread}
+
+The table holds three kinds of number, and they do not carry equal weight.
+
+\paragraph{The requirements were solved for, not chosen.} Every precision here is the
+answer to an inverse question, found by root-finding: holding the rest of the design
+fixed, how well would this one quantity have to be known for monthly sampling to land
+exactly on $\operatorname{sd}(\ln\hat\theta) = 0.20$? The $11.7\%$ on the delivered
+increment is that answer for the increment; the factor of $2.7$ is that answer for $k_e$.
+The precisions quoted against each schedule ($0.170$ monthly, $0.187$ two-monthly, $3.51$
+when every sample lands on the dose interval) are forward evaluations of the same
+information matrix. No requirement in this table was put into the calculation that
+produced it, so none of them is a guess about what a good assay might manage.
+
+\paragraph{Only one row is a measurement.} The between-visit repeatability in Tier~1,
+mean $14.0\%$ with a per-subject range of $0.4$ to $50.8\%$, is read off the published
+assay~\cite{breath_test_mma} rather than computed. It sits in the table to show that the
+requirement above it is not currently met, and that what is published bounds it from the
+wrong disease.
+
+\paragraph{What is assumed is the patient, not the requirement.} All of the root-finding
+runs on the illustrative constants of Table~\ref{tab:params}, and the $0.20$ target is a
+criterion adopted in Section~\ref{sec:designsec} rather than derived. These numbers are
+therefore conditional on one patient rather than circular: no requirement was an input to
+itself. How far that conditionality reaches is measured in Section~\ref{sec:coverage},
+where the same calculation over four thousand simulated patients gives a median of
+$0.192$, with just over half meeting the target. Two rows already report their own
+insensitivity: the load record gives $0.170$ whether it is kept to $1\%$ or to $20\%$,
+and $K_m$ needs nothing at all.
 
 \subsection{Tier 1: the increment measurement}
 \label{sec:tier1}

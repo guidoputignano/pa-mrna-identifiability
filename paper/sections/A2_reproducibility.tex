@@ -35,7 +35,7 @@ $(\text{design}, \sigma, \mathrm{CV}, \text{reps}, \text{seed})$, so the same de
 fitted once and reused across an amplitude sweep; nothing in the sweep depends on the
 illness amplitude except the margin evaluated afterwards.
 
-\paragraph{Integration.} Euler appears in this paper only for exposition. Every computed
+\paragraph{Integration.} Every computed
 trajectory uses an adaptive stiff-capable solver (\texttt{LSODA} or \texttt{Radau}) with
 relative tolerances at $10^{-8}$ or tighter, and the estimator of
 Section~\ref{sec:collapse} does not integrate at all: it uses the closed-form quasi-steady

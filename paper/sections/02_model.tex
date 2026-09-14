@@ -297,7 +297,7 @@ either choice, it is not testable from the published data, and Section~\ref{sec:
 \subsection{Numerical methods}
 \label{sec:numerics}
 
-Euler appears in this paper only for exposition. Every computed trajectory uses an adaptive
+Every computed trajectory uses an adaptive
 stiff-capable solver (\texttt{LSODA} or \texttt{Radau}) at relative tolerance $10^{-8}$ or
 tighter, and the estimator of Section~\ref{sec:collapse} does not integrate at all: it uses
 the closed-form quasi-steady level of \eqref{eq:alphaqss}, whose validity is measured rather
