@@ -35,13 +35,21 @@ the two places the paper relies on:
 
     separatrix   the basin boundary is the paper's central claim about Model C.
                  Started ON the slow manifold it is reproduced exactly, for the
-                 same fixed-point reason.  Started OFF it -- carnitine still at
-                 its pre-perturbation value, which is what a sudden load spike
-                 actually leaves behind -- the parent's true critical level sits
-                 2.9 to 49.6 per cent ABOVE the reduced separatrix at k = 1.
-                 The reduced model calls decompensation early.  (Every figure
-                 quoted in this docstring is printed by the run, and the run
-                 computes its own closing summary rather than repeating these.)
+                 same fixed-point reason.  Started OFF it the displacement is
+                 SIGNED, and the sign belongs to the carnitine pool rather than
+                 to the reduction.  From a fuller pool -- carnitine still at its
+                 pre-perturbation value, which is what a sudden load spike
+                 leaves behind -- the true boundary sits 2.9 to 49.6 per cent
+                 ABOVE the reduced separatrix and the reduction calls
+                 decompensation early, which is the safe direction.  From a pool
+                 depleted to half of c*(m) it sits 0.5 to 31.9 per cent BELOW
+                 it, and there the reduction calls safe a state the parent
+                 escapes from.  Reporting only the first would be true and
+                 misleading, because secondary carnitine depletion is the
+                 mechanism this model is built on, so the unsafe side is the one
+                 the disease produces.  (Every figure quoted in this docstring
+                 is printed by the run, and the run computes its own closing
+                 summary rather than repeating these.)
 
 The quantity all of this tracks is the timescale ratio
 
@@ -200,17 +208,32 @@ def trajectories(p, s, m0, T, k=K_CONJ, n=4001):
     return np.max(np.abs(par - red) / np.maximum(np.abs(red), 1e-30))
 
 
-def critical_level(p, s, sep, attr, T, on_manifold, k=K_CONJ):
+def critical_level(p, s, sep, attr, T, start, k=K_CONJ):
     """
     The parent's true basin boundary: bisect on the initial metabolite level
-    for the escape/no-escape verdict.  `on_manifold` starts carnitine at
-    c*(m0); otherwise it is left at its pre-perturbation value c*(attractor),
-    which is what a sudden load spike leaves behind.
+    for the escape/no-escape verdict.  `start` chooses the carnitine the
+    trajectory begins with, and it is the whole question, because the basin
+    boundary is a CURVE in (m, c) and the reduced separatrix is one point on
+    it rather than a level of m:
+
+        "manifold"  c*(m0), the value the reduction assumes
+        "pre"       c*(attractor), the pre-perturbation pool, which is what a
+                    sudden load spike leaves behind.  c* falls with m, so this
+                    is FULLER than the manifold and the parent is forgiving
+        a float f   f * c*(m0), a pool depleted below the manifold, which is
+                    what this model's own mechanism produces.  Here the parent
+                    is LESS forgiving than the reduction and the error changes
+                    sign
     """
     thresh = 10.0 * sep
 
     def escapes(m0):
-        c0 = c_star(m0, p, k) if on_manifold else c_star(attr, p, k)
+        if start == "manifold":
+            c0 = c_star(m0, p, k)
+        elif start == "pre":
+            c0 = c_star(attr, p, k)
+        else:
+            c0 = float(start) * c_star(m0, p, k)
         sol = solve_ivp(lambda t, y: rhs_C(t, y, p, lambda _: s, k),
                         (0.0, T), [m0, c0], **SOLVER)
         return float(sol.y[0, -1]) > thresh
@@ -285,8 +308,8 @@ def main():
     print("  THE COMPARISON THAT CAN FAIL: OFF EQUILIBRIUM")
     print("=" * 100)
     print(f"  {'parameter set':<26}{'eps':>12}{'transient max rel':>19}"
-          f"{'separatrix, on-mfld':>21}{'separatrix, off-mfld':>22}")
-    print("  " + "-" * 98)
+          f"{'separatrix, on-mfld':>21}{'sep, full pool':>17}{'sep, depleted':>16}")
+    print("  " + "-" * 112)
     off_eq = []
     for name, p, s, attr, sep, eps, _, T in rows:
         if attr is None:
@@ -302,16 +325,20 @@ def main():
         tau_m = timescales(attr, p)[1]
         tr = trajectories(p, s, 0.5 * attr, 60.0 * tau_m)
         if sep is None:
-            on = off = signed = np.nan
+            on = off = signed = depl = np.nan
         else:
-            a = critical_level(p, s, sep, attr, T, True)
-            b = critical_level(p, s, sep, attr, T, False)
+            a = critical_level(p, s, sep, attr, T, "manifold")
+            b = critical_level(p, s, sep, attr, T, "pre")
+            d = critical_level(p, s, sep, attr, T, 0.5)
             on = abs(a - sep) / sep if np.isfinite(a) else np.nan
             off = abs(b - sep) / sep if np.isfinite(b) else np.nan
             signed = (b - sep) / sep if np.isfinite(b) else np.nan
+            depl = (d - sep) / sep if np.isfinite(d) else np.nan
         f = lambda x: f"{x:.3e}{flag(x)}" if np.isfinite(x) else "no separatrix"
-        print(f"  {name:<26}{eps:>12.3e}{f(tr):>19}{f(on):>21}{f(off):>22}")
-        off_eq.append((tr, on, off, signed))
+        g = lambda x: f"{100*x:+.2f}%" if np.isfinite(x) else "--"
+        print(f"  {name:<26}{eps:>12.3e}{f(tr):>19}{f(on):>21}"
+              f"{g(signed):>17}{g(depl):>16}")
+        off_eq.append((tr, on, off, signed, depl))
 
     # ---------------------------------------------------------------- k sweep
     print("\n" + "=" * 100)
@@ -341,16 +368,30 @@ def main():
     print("=" * 100)
 
     ss = [r[6] for r in rows if np.isfinite(r[6])]
-    tr_ = [a for a, _, _, _ in off_eq if np.isfinite(a)]
-    on_ = [b for _, b, _, _ in off_eq if np.isfinite(b)]
-    off_ = [c for _, _, c, _ in off_eq if np.isfinite(c)]
-    sgn_ = [d for _, _, _, d in off_eq if np.isfinite(d)]
-    conservative = ("conservative in sign: the parent tolerates a LARGER excursion\n"
-                    "      than the reduced model predicts, so the margin figure "
-                    "understates the\n      margin rather than overstating it"
-                    if all(d > 0 for d in sgn_) else
-                    f"NOT uniformly signed: {sum(d > 0 for d in sgn_)} of {len(sgn_)} sets "
-                    "displace upwards, so the\n      direction cannot be relied on")
+    tr_ = [a for a, _, _, _, _ in off_eq if np.isfinite(a)]
+    on_ = [b for _, b, _, _, _ in off_eq if np.isfinite(b)]
+    off_ = [c for _, _, c, _, _ in off_eq if np.isfinite(c)]
+    sgn_ = [d for _, _, _, d, _ in off_eq if np.isfinite(d)]
+    dep_ = [e for _, _, _, _, e in off_eq if np.isfinite(e)]
+    # The sign is NOT a property of the reduction, it is a property of which
+    # side of the slow manifold the carnitine pool starts on.  Reporting only
+    # the pre-perturbation start would say "conservative" and be wrong by
+    # omission, because this model's own mechanism depletes the pool.
+    up = all(d > 0 for d in sgn_)
+    down = all(e < 0 for e in dep_)
+    conservative = (
+        "signed, and the sign is the carnitine pool's, not the reduction's. From a\n"
+        "      FULLER pool, the pre-perturbation start a load spike leaves behind, the\n"
+        f"      parent tolerates MORE than the reduced model predicts ({100*min(sgn_):+.1f}% to\n"
+        f"      {100*max(sgn_):+.1f}%), so there the error is conservative. From a pool DEPLETED to\n"
+        f"      half of c*(m) it tolerates LESS ({100*min(dep_):+.1f}% to {100*max(dep_):+.1f}%), and there the\n"
+        "      reduced model calls safe a state the parent escapes from. The reduced\n"
+        "      separatrix is one point on a curve in (m, c), not a bound in either\n"
+        "      direction, and the unsafe side is the one this model's own mechanism\n"
+        "      produces"
+        if (up and down) else
+        f"      NOT cleanly signed: {sum(d > 0 for d in sgn_)}/{len(sgn_)} up from a full pool, "
+        f"{sum(e < 0 for e in dep_)}/{len(dep_)} down from a depleted one")
     pct = lambda v: f"{100 * min(v):.1f} to {100 * max(v):.1f} per cent"
 
     print(f"""
