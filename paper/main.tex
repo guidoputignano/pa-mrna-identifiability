@@ -1,12 +1,12 @@
 % =====================================================================
-%  Identifiability of a Therapeutic Threshold in Propionic Acidemia
+%  The Dose Train is the Identification Experiment
 %  Build:  make paper     (or: latexmk -pdf main.tex)
 %  Figures are produced by src/; run `make figures` first.
 % =====================================================================
 \input{preamble}
 
-\title{\textbf{Identifiability of a Therapeutic Threshold\\ in Propionic Acidemia}\\[0.3em]
-\large A modelling note for discussion}
+\title{\textbf{The Dose Train is the Identification Experiment:\\
+Estimating Residual Enzymatic Capacity in Propionic Acidemia}}
 \author{Guido Putignano}
 \date{\today}
 
@@ -17,28 +17,22 @@
 
 \vspace{0.5em}\hrule\vspace{1.5em}
 
-\input{sections/01_biology}
-\input{sections/02_system}
-\input{sections/03_model_A}
-\input{sections/04_model_B}
-\input{sections/05_model_C}
+% The main text is written to four claims and nothing wider; see Section 1.
+% The biological background, the full dynamic model and its equilibrium
+% reduction, and the local model's derivation were moved to the appendix in
+% the phase 3 compression. Nothing was deleted and every label came with the
+% text, so every cross-reference into that material still resolves.
+\input{sections/01_question}
+\input{sections/02_model}
 \clearpage
-\input{sections/06_results}
+\input{sections/06_excitation}
+\input{sections/07_design}
 \clearpage
-\input{sections/07_open}
+\input{sections/08_specification}
+\input{sections/11_scope}
+\input{sections/12_discussion}
 
 \clearpage
 \printbibliography[title={References}]
-
-\ifshowregister
-\appendix
-\section{Claim register}
-Every factual assertion in this note, its source, and whether the source
-says what the assertion says. Rows are ordered worst first.
-\begin{adjustwidth}{-1.4cm}{-1.4cm}
-\footnotesize
-\input{../results/tables/tab_claims}
-\end{adjustwidth}
-\fi
 
 \end{document}

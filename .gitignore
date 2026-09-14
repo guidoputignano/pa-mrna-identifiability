@@ -1,4 +1,5 @@
-# LaTeX build artefacts; paper/main.pdf is tracked deliberately
+# LaTeX build artefacts; paper/main.pdf and paper/supplement.pdf are tracked
+# deliberately, so a reader of the repository gets both without a TeX install.
 paper/*.aux
 paper/*.log
 paper/*.out

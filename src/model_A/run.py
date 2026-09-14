@@ -67,6 +67,28 @@ def fibre_Km_max(a, b, m_bar=M_OP):
     return b * m_bar ** 2 / a
 
 
+def fibre_span(a, b, m_bar=M_OP):
+    """
+    How many fold theta spans along the fibre. Closed form, and observable.
+
+    theta(K_m) = a(K_m + m_bar)^2/m_bar^2 on 0 < K_m <= K_max = b m_bar^2/a, so
+
+        span = theta(K_max)/theta(0) = (1 + b m_bar / a)^2 = (C(m_bar)/a)^2 ,
+
+    the second equality because the tangent satisfies a + b m_bar = C(m_bar).
+    At steady state C(m_bar) is the RECORDED LOAD and a is the FITTED
+    INTERCEPT, so both are observable and the span is computable per patient
+    without knowing a single parameter.
+
+    That turns the illustrative 169 into a per-patient diagnostic. It is the
+    square of the ratio of the load the patient carries to the part of the
+    clearance curve that extrapolates back to the origin, so it is large
+    exactly when the operating point sits far down the saturation curve, which
+    is where management puts it.
+    """
+    return (1.0 + b * m_bar / a) ** 2
+
+
 def baseline_load(p: ParamsA = None, m_bar=M_OP):
     """The load this patient balances at the operating point."""
     return clearance_A(m_bar, P if p is None else p)
@@ -414,6 +436,8 @@ def fig_fibre():
     save(fig, "fig_A6_fibre")
     print(f"    fibre: Km in (0, {Kmax:.3f}], theta in "
           f"[{th.min():.2f}, {th.max():.1f}], span {th.max() / th.min():.1f}x")
+    print(f"    closed form (1 + b m_bar/a)^2 = (C(m_bar)/a)^2 = "
+          f"{fibre_span(a0, b0):.2f}x   [load {baseline_load():.2f}, intercept {a0:.3f}]")
     Km_rec = (b0 - P.ke) * M_OP ** 2 / a0
     print(f"    null-genotype closure: Km = {Km_rec:.6f}, "
           f"theta = {fibre(a0, b0, Km_rec)[0]:.3f}")
@@ -597,6 +621,204 @@ def sigma_from_load(frac, p: ParamsA = None, m_bar=M_OP):
 SIGMA_FRACS = (0.02, 0.05, 0.10, 0.20)
 
 
+# =====================================================================
+#  The exact variance of the intercept, and the floor it carries.
+#
+#  rel_err_theta above keeps only the extrapolation term of Var(a_hat). The
+#  term it drops is 1/n:
+#
+#      Var(a_hat) = sigma^2 [ 1/n + m_bar^2 / S ] ,   S = sum_i (m_i - m_bar)^2
+#
+#  and that term is the BINDING one in exactly the wide-band regime the note
+#  recommends buying. Dropping it is why the design table could quote band
+#  widths of 460%, 920% and 1841% of m_bar as though they were achievable.
+#
+#  They are not achievable, for a reason that needs no arithmetic. A band is
+#  [m_bar - Delta/2, m_bar + Delta/2] and the metabolite cannot be negative,
+#  so Delta <= 2 m_bar, i.e. m_bar/Delta >= 1/2. Every entry above 200% of
+#  m_bar describes a band whose lower edge is below zero. Substituting the
+#  bound into (7) gives a floor on the precision that no width can beat:
+#
+#      any design at all   sd(theta)/theta >=        (sigma/a) / sqrt(n)
+#      n evenly spaced     sd(theta)/theta >= c(n) * (sigma/a) / sqrt(n)
+#
+#  with c(n) = sqrt(1 + 3(n-1)/(n+1)), which is 1.77 at n = 6 and rises to 2.
+#  Both are attained only in the limit where the band's foot reaches m = 0,
+#  the widest band the positivity of the metabolite allows. (The note's own
+#  form, evaluated at its ceiling m_bar/Delta = 1/2, gives sqrt(3) = 1.73,
+#  which is the size of the error it makes by dropping 1/n.)
+#
+#  The second follows from a closed form worth recording, since it says what
+#  the best possible use of a given excursion is. For n samples split between
+#  the two ends of [L, H] in the optimal proportion,
+#
+#      sd(a_hat) = sigma (H + L) / ( sqrt(n) (H - L) ) ,
+#
+#  which is (7) with sqrt(12) replaced by 2 and m_bar read as the band's
+#  midpoint. The uniform design is therefore sqrt(3) = 1.73 times worse than
+#  the best use of the same excursion, and neither can escape the floor.
+#
+#  The consequence for the paper's question is a change of kind. The design
+#  requirement splits into two pieces that trade against nothing:
+#
+#    * a floor on n, the number of instrument events, set by sigma alone;
+#    * given n above that floor, a requirement on the excursion.
+#
+#  Below the floor on n, no excursion whatever delivers the precision, and the
+#  right answer to "how wide a band is needed" is that there is no such band.
+# =====================================================================
+def rel_err_exact(levels, sigma, a=None):
+    """
+    sd(theta_hat)/theta for a given design, from the exact Var(a_hat).
+
+    `levels` are the metabolite levels the n observations are taken at. No
+    narrow-band approximation and no assumption that they are evenly spread.
+    """
+    a = fit_ab(P)[0] if a is None else a
+    m = np.asarray(levels, dtype=float)
+    n = m.size
+    mb = m.mean()
+    S = float(((m - mb) ** 2).sum())
+    if S <= 0.0:
+        return np.inf
+    return sigma * np.sqrt(1.0 / n + mb ** 2 / S) / a
+
+
+def sd_a_two_point(L, H, n, sigma):
+    """
+    The closed form above: the best any design supported on [L, H] can do.
+
+    Derived by minimising 1/n + m_bar^2/S over the fraction placed at H. With
+    r = L/(H-L) the minimum of m_bar^2 n/S is 4r(1+r), so the bracket is
+    (1+2r)^2 and the square root is exact.
+    """
+    return sigma * (H + L) / (np.sqrt(n) * (H - L))
+
+
+def floor_constant(n, design="uniform"):
+    """
+    The constant c in sd(theta)/theta >= c*sigma/(a sqrt n), by design.
+
+    "optimal"  c = 1. The 1/n term of Var(a_hat) on its own, which no design
+               of any kind escapes.
+    "uniform"  n evenly spaced samples with the band's foot at m = 0. Then
+               S/n = D^2 (n+1)/(12(n-1)) with D = 2 m_bar, so m_bar^2 n/S is
+               3(n-1)/(n+1) and c = sqrt(1 + 3(n-1)/(n+1)). This rises to 2 as
+               n grows and is 1.77 at n = 6: a finite evenly spaced design
+               beats its own continuous limit, because the endpoints carry
+               more leverage than a uniform density does.
+    """
+    if design == "optimal":
+        return 1.0
+    return float(np.sqrt(1.0 + 3.0 * (n - 1) / (n + 1)))
+
+
+def rel_err_floor(sigma, n, design="uniform", a=None):
+    """
+    The precision no width of band can beat, at this sigma and this n.
+
+    Attained only in the limit where the band's foot reaches m = 0, which is
+    the widest band the positivity of the metabolite allows.
+    """
+    a = fit_ab(P)[0] if a is None else a
+    return floor_constant(n, design) * sigma / (a * np.sqrt(n))
+
+
+def n_for_precision(target, sigma, design="uniform", a=None, n_max=100000):
+    """
+    Instrument events needed before `target` is reachable at any width.
+
+    The uniform constant depends on n, so this is a search rather than a
+    formula. Below the value returned there is no band that delivers the
+    precision, and the question "how wide a band" has no answer.
+    """
+    a = fit_ab(P)[0] if a is None else a
+    n = 1
+    while n < n_max and rel_err_floor(sigma, n, design, a) > target:
+        n += 1
+    return n
+
+
+def band_for_precision(target, sigma, n, m_hi=M_OP, a=None):
+    """
+    How far down a uniform band from m_hi has to reach for `target`.
+
+    Returns None when the target is below the floor at this n, which is the
+    case the old table reported as a band width instead.
+    """
+    f = lambda lo: rel_err_exact(np.linspace(lo, m_hi, int(n)), sigma, a) - target
+    if f(1e-12) > 0.0:
+        return None
+    return float(brentq(f, 1e-12, m_hi * (1.0 - 1e-9)))
+
+
+def top_for_curvature(sigma, n, z=2.0, m_lo=None, p: ParamsA = None,
+                      m_bar=M_OP, hi_cap=1e4):
+    """
+    How far UP the band has to reach for the curvature of C to be resolvable.
+
+    The curvature criterion is the one that makes condition (3) checkable
+    against a record, and unlike the precision criterion it is a statement
+    about the top of the excursion: the bending is at high m. Stated as a
+    multiple of the operating point rather than as a band width, because the
+    top of the excursion is what the safety constraint bounds and what a
+    clinician can be asked for.
+    """
+    p = P if p is None else p
+    m_lo = 0.5 * m_bar if m_lo is None else m_lo
+    c2 = p.theta * p.Km / (p.Km + m_bar) ** 3
+
+    def sd_c2(hi):
+        m = np.linspace(m_lo, hi, int(n))
+        X = np.vstack([np.ones_like(m), m, m ** 2]).T
+        return sigma * np.sqrt(np.linalg.inv(X.T @ X)[2, 2])
+
+    f = lambda hi: c2 / sd_c2(hi) - z
+    if f(hi_cap) < 0.0:
+        return None
+    return float(brentq(f, m_bar * 1.0001, hi_cap))
+
+
+# =====================================================================
+#  The noise budget: which term binds, and what a marker panel buys.
+#
+#  At steady state the ordinate of the fit is the recorded load and the
+#  abscissa is the assayed metabolite, so an abscissa error of sigma_m acts
+#  like an ordinate error of b*sigma_m. Section 3.7 asserted that assay
+#  variability is the smaller of the two and never checked it. It is not:
+#  b*m_bar and the baseline load differ by under 8% at these values, so the
+#  crossover sits at an assay CV of about 1.08 times the relative error in the
+#  recorded load, and the assay term dominates at every load recorded better
+#  than roughly its own CV.
+# =====================================================================
+def sigma_total(load_frac, assay_cv=None, channels=1, p: ParamsA = None,
+                m_bar=M_OP):
+    """
+    The ordinate noise of the steady-state fit, both terms.
+
+    `channels` is the number of markers observed as scaled copies of one
+    latent pool. Independent assay noise averages as sqrt(channels); the load
+    error is COMMON to every channel and does not average at all. That
+    asymmetry is the whole answer to whether a marker panel is affordable.
+    """
+    p = P if p is None else p
+    cv = (ASSAY_CV / 100.0) if assay_cv is None else assay_cv
+    b = fit_ab(p, m_bar)[1]
+    return float(np.hypot(load_frac * baseline_load(p, m_bar),
+                          b * cv * m_bar / np.sqrt(channels)))
+
+
+def assay_load_crossover(p: ParamsA = None, m_bar=M_OP):
+    """
+    The assay CV at which the two terms are equal, per unit load error.
+
+    Returns k such that the terms balance at CV = k * load_frac.
+    """
+    p = P if p is None else p
+    b = fit_ab(p, m_bar)[1]
+    return float(baseline_load(p, m_bar) / (b * m_bar))
+
+
 def anchor_factor(theta=None, ke=None, Km=None, m_bar=M_OP):
     """
     How a relative error in the null patient's load reaches Km and theta.
@@ -724,34 +946,44 @@ def fig_design():
     fig, axg = plt.subplots(2, 2, figsize=figsize(1.0, 0.78))
     ax = axg.ravel()
 
-    # (a) equation (7), evaluated as a FAMILY over the load error, since the
-    #     note never bounds sigma and a single curve hid that.
-    fr = np.logspace(-1.3, 0.9, 300)
+    # (a) the precision against the band, with the FLOOR restored and the
+    #     region past Delta = 2 m_bar marked as what it is: not a band.
+    #     Drawn on the exact Var(a_hat), not on (7)'s narrow-band form, since
+    #     the two part company exactly where the note recommends going.
+    fr = np.linspace(0.02, 1.999, 300)          # Delta/m_bar, up to the ceiling
     cols = [GREY, GREEN, AMBER, RED]
     for sf, col in zip(SIGMA_FRACS, cols):
-        sg = sigma_from_load(sf)
-        ax[0].loglog(100 * fr, [100 * rel_err_theta(sg, n_ss, f * M_OP) for f in fr],
-                     color=col, lw=1.7, label=f"{100 * sf:.0f}% of load")
+        sg = sigma_total(sf)
+        ys = [100 * rel_err_exact(
+                  np.linspace(M_OP * (1 - f / 2), M_OP * (1 + f / 2), int(n_ss)), sg)
+              for f in fr]
+        ax[0].loglog(100 * fr, ys, color=col, lw=1.7, label=f"{100 * sf:.0f}% of load")
+        ax[0].axhline(100 * rel_err_floor(sg, n_ss), color=col, ls=":", lw=0.9)
     ax[0].axhline(20.0, color=RED, ls="--", lw=1.0)
-    ax[0].axvspan(100 * fr[0], 70.0, color=BLUE, alpha=0.08)
-    corner(ax[0], "shaded: what the\ninstruments reach", "lower left",
-           color=BLUE, fontsize=7)
-    ax[0].set_xlabel(r"band width $\Delta$  [% of $\bar m$]")
-    ax[0].set_ylabel(r"rel. error of $\hat\theta$  [%]")
-    ax[0].set_title(r"(7) evaluated, against $\sigma$", fontsize=8)
-    ax[0].legend(loc="upper right", fontsize=6, title=r"$\sigma$ as", title_fontsize=6)
+    ax[0].axvspan(200.0, 400.0, color=GREY, alpha=0.18, hatch="//", lw=0)
+    ax[0].set_xlim(2.0, 400.0)
+    corner(ax[0], "past $200\\%$ the band's\nfoot is below zero", "lower right",
+           color=MUTED, fontsize=6.5)
+    ax[0].set_xlabel(r"band width $\Delta$  [\% of $\bar m$]")
+    ax[0].set_ylabel(r"rel. error of $\hat\theta$  [\%]")
+    ax[0].set_title(r"the floor $(\sigma/a)\sqrt{3/n}$, dotted,""\nwhich no width beats",
+                    fontsize=8)
+    ax[0].legend(loc="lower left", fontsize=6, title=r"$\sigma$ as", title_fontsize=6)
 
-    # (b) the band that makes condition (3) checkable, same family
-    sfr = np.linspace(0.005, 0.25, 200)
+    # (b) the curvature criterion, restated as the TOP of the excursion, which
+    #     is the quantity a safety constraint bounds and a clinician can be
+    #     asked for. A band width was the wrong unit: it hid the fact that the
+    #     bending of C is at high m, so the band has to run up, not down.
+    sfr = np.linspace(0.005, 0.25, 60)
     for nn, col, ls in [(3, GREY, ":"), (6, GREEN, "-"), (20, BLUE, "--")]:
-        ax[1].plot(100 * sfr,
-                   [100 * delta_for_curvature(sigma_from_load(x), nn) / M_OP
-                    for x in sfr], color=col, ls=ls, lw=1.7, label=f"$n = {nn}$")
-    ax[1].axhline(70.0, color=BLUE, alpha=0.6, lw=1.2)
-    corner(ax[1], "the instruments reach 70%", "lower right", color=BLUE,
-           fontsize=7)
-    ax[1].set_xlabel(r"$\sigma$  [% of the recorded load]")
-    ax[1].set_ylabel(r"$\Delta$ to resolve curvature  [% of $\bar m$]")
+        ys = [top_for_curvature(sigma_total(x), nn) for x in sfr]
+        ax[1].plot(100 * sfr, [np.nan if y is None else y / M_OP for y in ys],
+                   color=col, ls=ls, lw=1.7, label=f"$n = {nn}$")
+    ax[1].axhline(1.0, color=BLUE, alpha=0.6, lw=1.2)
+    corner(ax[1], "the instruments never go above $\\bar m$", "lower right",
+           color=BLUE, fontsize=6.5)
+    ax[1].set_xlabel(r"error in the recorded load  [\%]")
+    ax[1].set_ylabel(r"top of the excursion  [$\times\,\bar m$]")
     ax[1].set_title("condition (3) is checkable\nonly above this", fontsize=8)
     ax[1].legend(loc="upper left", fontsize=6.5)
 
@@ -800,14 +1032,15 @@ def fig_design():
     ax[3].legend(loc="lower left", fontsize=6.5)
 
     save(fig, "fig_A8_design")
-    print("    (7) evaluated, relative error of theta at a 10% band:")
+    print("    (7) evaluated, and the floor the old evaluation dropped:")
     for sf in SIGMA_FRACS:
-        sg = sigma_from_load(sf)
-        print(f"      sigma = {100 * sf:4.0f}% of load: "
-              f"{100 * rel_err_theta(sg, n_ss, 0.10 * M_OP):7.0f}%   "
-              f"20% needs Delta = {100 * delta_for_precision(0.20, sg, n_ss) / M_OP:6.0f}% "
-              f"| curvature needs "
-              f"{100 * delta_for_curvature(sg, n_ss) / M_OP:5.0f}%")
+        sg = sigma_total(sf)
+        d_old = delta_for_precision(0.20, sigma_from_load(sf), n_ss) / M_OP
+        print(f"      sigma = {100 * sf:4.0f}% of load: old table said "
+              f"Delta = {100 * d_old:6.0f}% of m_bar"
+              f"{'  -- NOT A BAND' if d_old > 2.0 else ''}; "
+              f"floor at n=6 is {100 * rel_err_floor(sg, n_ss):6.0f}%, "
+              f"so 20% needs n >= {n_for_precision(0.20, sg)}")
     q = eiv_fit(0.20 * D, D, reps=1500, constrain=False)
     r = eiv_fit(0.20 * D, D, reps=1500, constrain=True)
     print(f"    EIV at sigma_m/Delta = 20%: unconstrained mu {q['mu']:.0f}, "
@@ -832,6 +1065,62 @@ def table_rank():
                 note="three distinct levels are necessary and generically sufficient")
 
 
+def table_design():
+    """
+    What the design has to deliver, with the floor restored.
+
+    This replaces the table that was typed into section 3.7. Two things
+    changed and both change the answer. The 1/n term of Var(a_hat) is back, so
+    there is a precision no width of band can beat; and the assay term
+    b*sigma_m is in the noise budget alongside the load term, where the old
+    table had only the load.
+    """
+    n0 = 6
+    cv = ASSAY_CV / 100.0
+    rows = []
+    for f in SIGMA_FRACS:
+        s_load = f * baseline_load()
+        s_assay = fit_ab(P)[1] * cv * M_OP
+        s_tot = sigma_total(f)
+        dom = "assay" if s_assay > s_load else "load"
+        floor = rel_err_floor(s_tot, n0)
+        n20 = n_for_precision(0.20, s_tot)
+        n_use = 2 * n20
+        lo = band_for_precision(0.20, s_tot, n_use)
+        hi = top_for_curvature(s_tot, n0)
+        rows.append([
+            f"{100 * f:.0f}\\%",
+            f"{s_load:.1f}",
+            f"{s_assay:.1f}",
+            dom,
+            f"{100 * floor:.0f}\\%",
+            f"{n20:d}",
+            "---" if lo is None else f"{lo / M_OP:.2f}$\\,\\bar m$ at $n={n_use}$",
+            "none" if hi is None else f"{hi / M_OP:.1f}$\\,\\bar m$",
+        ])
+    write_table(
+        "tab_A_design",
+        ["load error", "$\\sigma_{\\mathrm{load}}$", "$b\\sigma_m$", "dominant",
+         f"floor at $n={n0}$", "$n$ for $20\\%$", "band foot", "excursion top"],
+        rows,
+        note=("floor is 2 (sigma/a)/sqrt(n), which no band width beats; "
+              "band foot is where a uniform band from m_bar must reach for 20% "
+              "at twice the n in the previous column; excursion top is where it "
+              f"must reach for the curvature of C at two standard errors, n = {n0}"))
+    print("    the design, with the floor restored:")
+    for f, r in zip(SIGMA_FRACS, rows):
+        print(f"      load to {100 * f:4.0f}%: sigma_load {r[1]:>7}, b*sigma_m {r[2]:>7}"
+              f" ({r[3]} dominates); floor {r[4]:>5} at n={n0}; n for 20% = {r[5]:>4};"
+              f" band foot {r[6]:>14}; curvature needs m up to {r[7]}")
+    print("    crossover: the assay term dominates above CV = "
+          f"{assay_load_crossover():.2f} x the load error")
+    for J in (1, 3, 4):
+        print(f"      marker panel J={J}: sigma_total at a 2% load = "
+              f"{sigma_total(0.02, channels=J):.2f}, at 10% = "
+              f"{sigma_total(0.10, channels=J):.2f}")
+    return rows
+
+
 if __name__ == "__main__":
     print("MODEL A")
     fig_channels()
@@ -843,4 +1132,7 @@ if __name__ == "__main__":
     fig_margin_fibre()
     fig_design()
     table_rank()
+    table_design()
+    from common.params import write_params_table
+    write_params_table()
     print(f"  load-error amplification factor: {slope:.3f}")

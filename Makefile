@@ -15,21 +15,33 @@ PAPER    = paper/main
 
 all: figures paper
 
+# The three model modules keep their old directory names; the paper no longer
+# uses the letters. model_C is the dynamic model and its equilibrium
+# reduction, model_A is the local identification model, model_B is the
+# alternative hypothesis with a ceiling (one remark in the paper now).
 figures:
-	@echo ">> Model A"; $(PY) src/model_A/run.py
-	@echo ">> Model B"; $(PY) src/model_B/run.py
-	@echo ">> Model C"; $(PY) src/model_C/run.py
+	@echo ">> the dynamic model and its equilibrium reduction"; $(PY) src/model_C/run.py
+	@echo ">> the local identification model";                  $(PY) src/model_A/run.py
+	@echo ">> the ceiling hypothesis";                          $(PY) src/model_B/run.py
+	@echo ">> the design (slow: the decision characteristic is simulated)"; $(PY) src/design/run.py
 
 refs:
 	$(PY) tools/fetch_refs.py
 	$(PY) tools/claims_to_tex.py
 
+# The paper and the supplement are separate documents. The supplement imports
+# the paper's labels with xr, so the paper MUST be built first; the paper cites
+# the supplement by section number in prose, so there is no cycle to iterate.
 paper: refs
 	cd paper && $(LATEX) -interaction=nonstopmode main.tex >/dev/null
 	cd paper && biber main >/dev/null
 	cd paper && $(LATEX) -interaction=nonstopmode main.tex >/dev/null
 	cd paper && $(LATEX) -interaction=nonstopmode main.tex >/dev/null
-	@echo ">> built $(PAPER).pdf"
+	cd paper && $(LATEX) -interaction=nonstopmode supplement.tex >/dev/null
+	cd paper && biber supplement >/dev/null
+	cd paper && $(LATEX) -interaction=nonstopmode supplement.tex >/dev/null
+	cd paper && $(LATEX) -interaction=nonstopmode supplement.tex >/dev/null
+	@echo ">> built $(PAPER).pdf and paper/supplement.pdf"
 
 symbolic:
 	@echo "Structural identifiability requires Julia:"

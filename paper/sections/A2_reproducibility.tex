@@ -1,0 +1,64 @@
+\section{Reproducibility}
+\label{sec:repro}
+%==========================================================================
+
+No figure, table or number in this paper is typed by hand. Everything under
+\texttt{results/} is regenerated from \texttt{src/}, and every load-bearing claim is asserted
+in \texttt{tests/test\_models.py}, so a parameter change that breaks a claim fails a test
+rather than silently moving a figure.
+
+\paragraph{What produces what.}
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{module} & \textbf{what it produces} \\
+\midrule
+\texttt{src/common/models.py}     & the kinetics, the three clearance structures, the equilibria \\
+\texttt{src/common/params.py}     & Table~\ref{tab:params}, generated from the dataclasses \\
+\texttt{src/common/dynamics.py}   & the sensitivity system and the observability Gramian \\
+\texttt{src/common/excitation.py} & $\varphi$, $E$, $E_{\max}$, and the design quantities \\
+\texttt{src/model\_C/run.py}      & the dynamic model and its equilibrium reduction \\
+\texttt{src/model\_A/run.py}      & the local identification model, the fibre, the margin \\
+\texttt{src/model\_B/run.py}      & the ceiling hypothesis of Remark~\ref{rem:ceiling} \\
+\texttt{src/design/run.py}        & Sections \ref{sec:designsec} and \ref{sec:spec}, and Table~\ref{tab:spec} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Seeds and determinism.} Every stochastic result uses
+\texttt{numpy.random.default\_rng} with an explicit seed, named at the call site. The
+errors-in-variables simulation uses seeds $3$ and $7$; the decision operating characteristic
+uses $11$ for the figure and $12$, $13$ and $21$ for the numbers quoted in
+Section~\ref{sec:decision} and Table~\ref{tab:spec}. Fitted ensembles are cached on
+$(\text{design}, \sigma, \mathrm{CV}, \text{reps}, \text{seed})$, so the same design is
+fitted once and reused across an amplitude sweep; nothing in the sweep depends on the
+illness amplitude except the margin evaluated afterwards.
+
+\paragraph{Integration.} Every computed
+trajectory uses an adaptive stiff-capable solver (\texttt{LSODA} or \texttt{Radau}) with
+relative tolerances at $10^{-8}$ or tighter, and the estimator of
+Section~\ref{sec:collapse} does not integrate at all: it uses the closed-form quasi-steady
+level, whose validity is measured rather than assumed. Two tests guard this. One halves the
+integration step and asserts the answer does not move by more than $10^{-6}$ relative; the
+other asserts that an integrated steady state equals the closed-form equilibrium reduction
+to the same tolerance.
+
+\paragraph{The observation model is on the log scale.} A constant coefficient of variation
+is a constant variance there, which is what gives $\sigma$ unambiguous units. This is a
+structural fix rather than a preference: the one unit error this repository has made twice
+was a percentage used as an absolute flux, and a log-scale observation model makes that
+error unrepresentable.
+
+\paragraph{The claim register.} Every factual assertion has a row in
+\texttt{paper/claims.csv} naming its source and whether the source says what the assertion
+says. \texttt{make audit} fails while any row is contradicted or unsourced, any citekey is
+missing from the bibliography, or any \texttt{\textbackslash cite} in the paper has no row.
+No citation in this repository is typed by hand: \texttt{paper/refs.bib} is fetched from
+CrossRef and PubMed by \texttt{tools/fetch\_refs.py} from a file of identifiers.
+
+\vspace{0.5em}
+\hrule
+\vspace{1em}
+
+%==========================================================================

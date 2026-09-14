@@ -247,7 +247,34 @@ def main():
                   "----\n\n" + MANUAL.read_text().strip() + "\n")
 
     text = sanitize(header + "\n\n".join(out) + "\n" + manual)
-    OUT.write_text(text)
+
+    # refs.bib is tracked so the paper builds without network access. An
+    # unconditional overwrite defeats exactly that: one unreachable registrar
+    # and every entry it could not re-fetch vanishes from the bibliography,
+    # and the next build quietly produces a paper full of [?] citations. So
+    # never write a refs.bib carrying fewer citekeys than the one on disk,
+    # and never write at all under --check, which is a check and not a build.
+    def citekeys(s):
+        return set(re.findall(r"^@\w+\{([^,]+),", s, re.M))
+
+    existing = OUT.read_text() if OUT.exists() else ""
+    dropped = citekeys(existing) - citekeys(text)
+
+    if args.check:
+        wrote = False
+        print(f"\n--check: {OUT.relative_to(ROOT)} left untouched")
+    elif dropped:
+        wrote = False
+        print(f"\n  ! NOT writing {OUT.relative_to(ROOT)}: this run resolved "
+              f"{len(citekeys(text))} entries, the file on disk has "
+              f"{len(citekeys(existing))}, and writing would lose "
+              f"{', '.join(sorted(dropped))}.")
+        print("    The committed bibliography is kept, so the build still "
+              "succeeds. Re-run with network access to the registrars.")
+    else:
+        OUT.write_text(text)
+        wrote = True
+
     CACHE.write_text(json.dumps(cache, indent=1))
 
     leftover = unmapped(text)
@@ -261,8 +288,9 @@ def main():
     else:
         TODO.unlink(missing_ok=True)
 
-    print(f"\nwrote {OUT.relative_to(ROOT)}  ({len(out)} entries"
-          f"{', plus refs.manual.bib' if manual else ''})")
+    if wrote:
+        print(f"\nwrote {OUT.relative_to(ROOT)}  ({len(out)} entries"
+              f"{', plus refs.manual.bib' if manual else ''})")
 
     if args.check and todo:
         sys.exit(1)

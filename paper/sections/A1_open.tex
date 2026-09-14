@@ -1,0 +1,194 @@
+\subsection{Open questions}
+%==========================================================================
+
+\paragraph{Well-posedness.} Three quantities in the formulation are not measured and are
+not physiological constants: $\mtol$ (clinical convention), $\spk$ (varies with the
+precipitating event), and the map from intracellular substrate to plasma biomarker. $\thc$
+is therefore an operational definition; it is not a physical parameter. Whether the
+decision built on it is invariant to that arbitrariness is the central question.
+
+\paragraph{From a threshold to a hazard.}
+\label{sec:hazard} This is the reformulation referred to in
+Remark~\ref{rem:ceiling} and Remark~\ref{rem:intrinsic_limit}, and it is
+not attempted here. Proposition~\ref{prop:intrinsic} removes $\mtol$ from the definition
+of $\thc$ but leaves $\spk$, and no sharper deterministic threshold will remove it, because
+the quantity actually wanted is a rate. Treat the precipitating events as a marked
+point process with arrival rate $\nu$ and amplitudes drawn from a distribution
+\emph{estimated from the records rather than postulated}, and ask for the rate at which the
+metabolite crosses the separatrix:
+\begin{equation}
+\lambda_{\mathrm{MDE}}(\theta) \;=\; \nu \cdot
+\mathbb{P}\!\left(A > A_{\mathrm{crit}}(\theta) \mid \theta \right),
+\label{eq:hazard}
+\end{equation}
+where $A$ is the amplitude of an episode and $A_{\mathrm{crit}}(\theta)$ is the smallest
+excursion in the load that carries the patient from the attractor across the separatrix.
+The equilibrium reduction already supplies $A_{\mathrm{crit}}$: it is the margin of
+Figure~\ref{fig:C5},
+converted from metabolite into load.
+
+The construction is partly pre-empted. The natural history study already fits a hazard of
+exactly this
+shape: a generalised additive \emph{mixed} model on 3-HP concentration, with a smooth term
+in the days since the previous event and a participant-level random
+effect~\cite{natural_history}. % C28
+What is proposed here is a substitution within that machinery, of a mechanistic $\theta$
+with $A_{\mathrm{crit}}(\theta)$ supplied by the model, for a measured biomarker as the
+covariate carrying the risk. The statistical apparatus already exists; what it is
+regressed on is the open question.
+
+Four consequences:
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item $\spk$ leaves the definition of the threshold. A single assumed worst case is
+      replaced by a distribution, so nothing has to be asserted about the severity of the
+      worst illness a given patient will meet.
+\item The endpoint becomes the reliable observable. Dated admissions are coded
+      consistently, whereas the metabolite measurements are sparse and stand in an assumed
+      relation to the enzyme's substrate.
+\item The recurrent-event structure is used. Patients do not have one
+      event each: $49$ of $50$ participants in the natural history cohort reported at least
+      one, at a mean annualised frequency of $1.0$~\cite{natural_history}, % C08
+      and the rate varies enough between them that the study carries a participant-level
+      random effect. A hazard formulation uses every event and every event-free interval a
+      patient contributes, and makes the spread between patients a parameter to be estimated
+      instead of noise to be averaged over.
+\item The count model becomes \emph{derived}. A Poisson or
+      negative-binomial model imposed on admission counts is a modelling choice with
+      nothing behind it; under \eqref{eq:hazard} the counting process follows from the
+      arrival process and the crossing probability, and its dispersion has a mechanism.
+\end{enumerate}
+
+It would also close a gap the deterministic threshold leaves open in either structure. Both
+return a \emph{condition}, written in quantities nobody measures, and the records contain a
+\emph{frequency}, which is the one thing they hold reliably. $\lambda_{\mathrm{MDE}}(\theta)$
+is a frequency, and it is the unit the two can be compared in.
+
+\paragraph{What the marker choice still leaves open.} Section~\ref{sec:marker_orig} now fixes the
+marker at 3-HP, on the endpoint association and on the sign of the perturbation, which is
+what a decision-framed argument can settle from published data. It does not settle what the
+identifiability analysis would want to compare the candidates on, and that gap is worth
+stating because it is the one a record could close.
+
+The residual capacity enters through the intercept, which by Remark~\ref{rem:fibre} locates
+it only along a fibre while fixing its relative precision, and by \eqref{eq:floor} that
+precision is governed by $n$ and by $\bar m/\Delta$, the level a patient sits at relative to
+the excursion they make about it. Both are set by how the patient is managed, on that
+marker's own scale, so the object to be compared is a marker \emph{together with the
+management that holds a patient in a band on it}, and not a marker on its own. The
+candidates plausibly differ there, in analytical variability, in how far they move between
+visits, and in how nearly affine the clearance curve is over the range each visits. None of
+that is established here, and assembling it against the same records the rest of this paper
+relies on is a well-posed piece of work.
+
+Two things sharpen it rather than defer it. Remark~\ref{rem:panel} says the marker panel is
+worth buying only after the load record is, which orders the two pieces of work.
+Section~\ref{sec:discriminant} adds the gap that no marker is currently known to track the
+state through a decompensation at all, so the marker fixed here is fixed for the stable
+patient and the excursion, not for the crisis.
+
+\paragraph{Identification.} Under what conditions is a parameter identifiable when the
+excitation required to identify it is the regime that a safety constraint forbids? The
+excitation is supplied by the schedule of the selective perturbation itself, but the
+schedule must be selected \emph{before} any response data exist: the information arrives
+after the moment at which it is required.
+
+\paragraph{Design.} The safety constraint is active only at the trough preceding each dose
+of the perturbation, where the total clearance capacity is at its lowest and the margin
+$\theta - \thc$ is smallest. Designing a sequence of administration times that guarantees
+this for every parameter value in an uncertainty set, while simultaneously contracting that
+set, is dual control with a state constraint whose defining parameter is the unknown.
+Violation is not an off-specification excursion but a hospitalisation carrying a risk of
+permanent neurological cost, so the appropriate formulation is a chance constraint rather
+than a quadratic objective. The \emph{practical} form of this question is
+answered and is not open: Section~4.3 of the paper prices every change to the dose train
+against the trough it protects, finds the exchange about thirteen to one against, and
+recommends no modulation at all. What remains open is the theory above.
+
+\paragraph{Reduction.} A model reduction preserving the input--output response to periodic
+impulsive inputs does not obviously yield a reduced model whose parameters are identifiable
+from sparse sampling. These are distinct objectives and may conflict.
+
+\paragraph{Multi-parameter case.} The scalar analysis above is complete. With several
+unknowns entering simultaneously, $\theta$, the population parameters, $\lambda$, and one
+amplitude per documented illness episode, attractivity of the estimator manifold becomes a
+matrix condition rather than a sign condition, and is not addressed here.
+
+\subsection{Questions since answered}
+\label{sec:answered}
+
+These were open when the questions above were written. They are kept with their answers
+rather than removed, because a superseded position with its resolution is more useful than
+a silent deletion.
+
+\paragraph{Well-posedness, and whether the decision is invariant to it.} Asked above as the
+central question. \emph{Answered, and in the negative.} The critical capacity is an
+operational definition built on two chosen constants, and across their defensible range it
+moves by a factor of $24$ while the sign of the margin flips for the same patient with
+perfect data. The decision is therefore \emph{not} invariant to the arbitrariness, which is
+the second of the paper's four claims and the reason it ends in a data specification rather
+than a dosing rule.
+
+\paragraph{Confounding of the accessible input.}
+\label{sec:confounding}
+\emph{Closed, on two independent grounds, in Section~5.3 of the paper.} The question as
+posed was whether the quasi-exogenous component of carnitine dosing is sufficient to carry
+the identification. It is not, and the instrument question does not have to be reached.
+Quantitatively, carnitine acts on the alternative channel, so it cannot move the first
+factor of the sensitivity ratio at all; it moves the second by pushing the patient deeper
+into the linear regime, and the exchange is about ten to one against. On the same footing
+that gives the dose train $0.170$, spontaneous load variation alone gives $1.77$ and adding
+recorded carnitine steps gives $1.91$ to $2.02$, \emph{worse} than leaving them out.
+Structurally, the carnitine dose responds to the patient's state, so it is endogenous and
+would need an instrument, where the dose train is fixed by protocol and exogenous by
+construction. The original text is preserved below.
+
+\begin{quote}\small
+  The perturbation actually present in the
+  records is carnitine, and it is endogenous: the dose responds to the patient's state. The
+  design and identification questions above are therefore posed on an input that no protocol
+  fixed in advance. Whether the quasi-exogenous variation listed in
+  Section~\ref{sec:instruments}, namely weight-based recalculation after growth, supply
+  interruptions and changes of formulation, is sufficient to support the argument is a
+  question for the records, and it is answered patient by patient.
+  The load route is asked the same question and costs more: a change of load carries the same
+  determinant as a channel perturbation, and it needs both loads known where the channel
+  route needs one.
+\end{quote}
+
+\paragraph{The therapy, when it arrives.} \emph{Superseded in full.} This paragraph was
+written when carnitine was the input the analysis rested on and the mRNA therapy was
+prospective. Three of its statements are now wrong and the paper reverses each.
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item \emph{That the analysis is carried out on carnitine.} It is carried out on the
+therapy, using the published phase 1/2 biweekly schedule as it stands. The therapy is not
+future; it is the identification experiment the trial is already running.
+\item \emph{That nothing in the identification problem distinguishes the two channels.}
+That equivalence holds only with $K_m$ known and the carnitine gain known. With $K_m$ free,
+which is this paper's own situation, the two channels differ by six orders of magnitude in
+$\det G$ and by a factor of $46$ to $807$ in $\operatorname{sd}(\ln\hat\theta)$, because the
+$K_m$ sensitivity carries a prefactor $(\theta + \Delta(t))$ that only the therapy
+modulates.
+\item \emph{That the therapy adds a better statistical position and leaves the conditioning
+unchanged.} This is backwards. The conditioning is exactly what the therapy changes:
+without a dose train the same footing gives $1.77$ against a $0.20$ target, and with one it
+gives $0.170$. Section~5.3 states the consequence, which is that the therapy is not an
+improvement on the design but its condition of existence, and that no specification is
+available for a patient who is not receiving it.
+\end{enumerate}
+
+The original text is preserved below.
+
+\begin{quote}\small
+  The analysis of this paper is carried out on
+  carnitine because that is the selective input present in the accessible cohort. By
+  Proposition~\ref{prop:channel} nothing in the identification problem distinguishes the two
+  channels: the determinant depends on the metabolite levels before and after the
+  perturbation and not on which channel produced them. What the mRNA therapy would add is
+  therefore not new structure but a better \emph{statistical} position. Its schedule is fixed
+  by protocol, with no reference to the patient's state, so it supplies a genuinely exogenous
+  selective input, on the enzymatic channel, in a cohort where the only such input at present
+  is endogenous. The instrumental apparatus needed to defend a carnitine-based argument would
+  become unnecessary. The conditioning, which is the actual obstruction, is unchanged.
+\end{quote}

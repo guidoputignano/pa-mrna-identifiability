@@ -1,5 +1,97 @@
-\section{What is known, measured, and unknown}
+\subsection{What is known, measured, and unknown}
 %==========================================================================
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{\label{tab:notation_orig}Notation, once, in one place. Values and sources are in
+Table~\ref{tab:params_orig}; epistemic status is in Table~\ref{tab:epistemic}.}
+\begin{tabular}{@{}ll@{\hskip 2em}ll@{}}
+\toprule
+$m$ & the plasma marker, 3-HP & $\bar m$ & the operating point, and the sample mean \\
+$L(t)$ & recorded propiogenic load & $L_0$ & its \emph{unrecorded} component, unknown \\
+$\theta$ & residual capacity, absorbing $V_{\max}$ & $\Delta(t)$ & therapeutic increment,
+scheduled \\
+$K_m$ & half-saturation, at the plasma level & $u_c(t)$ & recorded carnitine dose \\
+$k_e$ & alternative clearance & $\kappa$ & its gain onto $k_e$, never assigned \\
+$g(m)$ & $m/(K_m+m)$, the saturation & $\alpha(m)$ & the alternative channel, general \\
+$C(m)$ & total clearance & $(a,b)$ & its affine fit over the band \\
+$\Delta$ & \textbf{full} width of the band & $r$ & its fold range, $m_{\max}/m_{\min}$ \\
+$\varphi(m)$ & $K_m/(K_m+m) = 1-g(m)$ & $E$ & the excitation, $\varphi$'s drop across a
+band \\
+$\thc$ & critical capacity & $\mu$ & the margin $\theta - \thc$, whose \emph{sign} decides \\
+$\mtol$ & tolerable level, a convention & $\spk$ & illness amplitude, as a fold of baseline \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\resizebox{0.97\linewidth}{!}{%
+\begin{tikzpicture}[
+  node distance=6mm,
+  box/.style   = {draw, rounded corners=2pt, align=center, font=\footnotesize,
+                  inner sep=4pt, minimum height=8mm, text width=33mm},
+  main/.style  = {box, fill=soft, font=\footnotesize\bfseries},
+  side/.style  = {box, fill=blue!5, draw=blue!35, text width=31mm},
+  term/.style  = {box, fill=green!8, draw=green!45!black!50,
+                  font=\footnotesize\bfseries, text width=35mm},
+  ar/.style    = {-{Stealth[length=2mm]}, thick},
+  arw/.style   = {-{Stealth[length=2mm]}, thick, blue!45, dashed},
+]
+\node[main] (claim) {the decision is the \emph{sign} of $\mu = \theta - \thc$};
+\node[main, below=of claim] (p1)
+     {Prop.~\ref{prop:degeneracy}: a band determines $(a,b)$ and nothing more};
+\node[main, below=of p1] (fib)
+     {Rem.~\ref{rem:fibre}, \eqref{eq:span}: $\theta$ open to $(C(\bar m)/a)^2$};
+\node[main, below=of fib] (marg)
+     {\eqref{eq:mufibre}: the $K_m^2$ terms cancel, so the \emph{sign} survives};
+\node[main, below=of marg] (exc)
+     {Prop.~\ref{prop:excitation}: both asymptotes degenerate};
+\node[main, below=of exc] (str)
+     {Prop.~\ref{prop:straddle}: $E$ is maximal straddling $K_m$};
+\node[main, below=of str] (coll)
+     {\S\ref{sec:collapse}: density buys nothing, placement buys everything};
+\node[main, below=of coll] (tab)
+     {Tab.~\ref{tab:excursion}: only a decompensation comes close};
+\node[term, below=of tab] (spec)
+     {Table~\ref{tab:spec}: the data specification};
+
+\foreach \a/\b in {claim/p1, p1/fib, fib/marg, marg/exc, exc/str, str/coll,
+                   coll/tab, tab/spec}
+  \draw[ar] (\a) -- (\b);
+
+\node[side, left=16mm of fib] (chan)
+     {Prop.~\ref{prop:channel}: $\det M$ is blind to the channel \emph{given} $K_m$};
+\node[side, below=of chan] (gram)
+     {Rem.~\ref{rem:channel_scope}: and not blind to it without $K_m$};
+\draw[ar] (chan) -- (gram);
+\draw[arw] (gram) |- (exc);
+
+\node[side, right=16mm of marg] (intr)
+     {Prop.~\ref{prop:intrinsic}: an intrinsic $\thc$};
+\node[side, below=of intr] (shape)
+     {Rem.~\ref{rem:shape}: what its shape constants cost};
+\node[side, below=of shape] (whi)
+     {Rem.~\ref{rem:which_threshold}: which $\thc$ the cancellation is proven against};
+\draw[ar] (intr) -- (shape);
+\draw[ar] (shape) -- (whi);
+\draw[arw] (whi) -| (marg.east);
+
+\node[side, right=16mm of coll] (dec)
+     {\S\ref{sec:decision}: the two errors, and their asymmetry};
+\draw[arw] (coll.east) -- (dec.west);
+\draw[arw] (dec.south) |- (spec.east);
+\end{tikzpicture}}
+\caption{How the paper hangs together. The spine is the chain from the clinical claim to the
+data specification; each box is one proposition, remark or section, and every arrow is a
+dependence rather than a narrative transition. The two side branches are the results that
+constrain the spine without lying on it: what a perturbation on the accessible channel can
+and cannot buy, and which threshold the margin theorem is actually proven against. Anything
+not reachable from the top box was moved to Appendix~\ref{sec:supp} in the restructure.}
+\label{fig:deps}
+\end{figure}
+
 
 \begin{adjustwidth}{-1.4cm}{-1.4cm}
 \begin{table}[htbp]
@@ -13,12 +105,13 @@ available from clinical records.}
 \toprule
 \textbf{Quantity} & \textbf{Meaning} & \textbf{Role} & \textbf{Status} & \textbf{Source and caveat} \\
 \midrule
-$m(t)$ & a plasma marker of propionate accumulation; which one is left open &
+$m(t)$ & plasma 3-hydroxypropionate, fixed in Section~\ref{sec:marker_orig} &
 state; the only observable &
 measured sparsely; the one documented schedule is six-monthly study
 visits~\cite{natural_history} % C20
 &
-Sections 3 and 4 do not depend on the choice (Section~\ref{sec:marker}). \emph{Proxy}: the
+The algebra of Sections 3 and 4 does not depend on the choice; the decision does, and
+Section~\ref{sec:marker_orig} settles it. \emph{Proxy}: the
 enzyme substrate is intracellular propionyl-CoA, never measured \\
 \addlinespace
 3-HP & 3-hydroxypropionate &
@@ -60,28 +153,35 @@ unknown &
 a shape parameter of the plasma-level clearance curve, obtained by fitting; the in vitro
 Michaelis constant of PCC is a different quantity \\
 \addlinespace
-$k_e$ & non-enzymatic clearance; a rate constant in Model A, the $V_{\max}$ of the
-alternative route in Model B &
+$k_e$ & non-enzymatic clearance; a rate constant in the local reduction, the $V_{\max}$ of
+the alternative route under the ceiling hypothesis &
 parameter, assumed population-level &
 unknown &
 carnitine conjugation and renal excretion. \emph{Caveat}: carnitine is also administered
 therapeutically, so partly clinician-manipulated \\
 \addlinespace
 $u_c(t)$ & carnitine dose &
-\textbf{input on $k_e$}, selective but \emph{endogenous}; the working perturbation of
-this note &
+input on $k_e$, selective but \emph{endogenous}; \emph{no longer} the working perturbation
+of this paper &
 recorded in charts, present in every patient &
-adjusted in response to patient state, hence confounded by indication. Quasi-exogenous
-instruments: weight-based recalculation after growth, supply interruptions, changes of
-formulation \\
+adjusted in response to patient state, hence confounded by indication. This row previously
+named $u_c$ the working perturbation and left the instrument question open; both are
+superseded. Quasi-exogenous variation is present in the records, in weight-based
+recalculation after growth, supply interruptions and changes of formulation, but the
+question it was raised to answer is closed in the negative in Section~\ref{sec:whoto}, on a
+ground exogeneity cannot reach: carnitine acts on $k_e$, so it cannot move the first factor
+of the sensitivity ratio at all, and adding recorded carnitine steps makes the precision
+worse \\
 \addlinespace
 $\Delta(t)$ & therapeutic increment to capacity &
 \textbf{input on $\theta$}, selective and exogenous &
-\textbf{not administered in the accessible cohort} &
-investigational. Structurally interchangeable with $u_c$: by
-Proposition~\ref{prop:channel} the determinant of the identification problem is the same
-for both channels, so the analysis is carried out on $u_c$ and transfers to $\Delta$.
-Decay rate $\lambda$ possibly patient-specific \\
+\textbf{known from the dosing record} &
+biweekly, on the published phase 1/2 schedule, and the input the paper's identification
+rests on. This row previously read ``not administered in the accessible cohort'' and
+treated $\Delta$ as interchangeable with $u_c$; both are superseded. The interchange holds
+only at fixed $K_m$ and fixed carnitine gain, and with $K_m$ free the two channels differ
+by a factor of $46$ to $807$ in $\operatorname{sd}(\ln\hat\theta)$. Decay rate $\lambda$
+possibly patient-specific \\
 \addlinespace
 $\mtol$ & tolerable metabolite level &
 constant in the definition of $\thc$ &
@@ -109,8 +209,8 @@ admissions reliably coded; only a minority of all events lead to admission \\
 \caption{The three candidate models, alternative hypotheses about the non-enzymatic
 clearance term rather than stages of a development. $\thc$, the residual capacity
 below which a tolerable steady state cannot be held, is used here ahead of its definition:
-Models A and B define it by convention at \eqref{eq:thcrit}, and Model C intrinsically at
-\eqref{eq:thcrit_int}.}
+the local reduction and the ceiling hypothesis define it by convention at
+\eqref{eq:thcrit}, and the equilibrium reduction intrinsically at \eqref{eq:thcrit_int}.}
 \label{tab:models}
 \begin{tabular}{@{}p{0.035\textwidth} p{0.235\textwidth} p{0.175\textwidth} p{0.185\textwidth} p{0.145\textwidth} p{0.13\textwidth}@{}}
 \toprule
@@ -145,20 +245,31 @@ one of the three in which $\thc$ is well posed \\
 \end{table}
 \end{adjustwidth}
 
-\begin{remark}[The role of each model]
-Models A, B and C are alternative hypotheses about one term, each present for a different
-reason. They are not stages of a development and are not ranked by realism.
+\begin{adjustwidth}{-1.4cm}{-1.4cm}
+\scriptsize
+\def\paramslabel{tab:params_orig}
+\def\paramscaption{Every constant this paper quotes, and where it came from. \textsc{literature} is read off a cited source, \textsc{derived} is fixed by a constraint elsewhere in the model and is not free, \textsc{assumed} was chosen and has no measurement behind it. An assumed row is not a defect on its own; an assumed row with no bound on what it costs is, and the last column carries that bound. The table is generated from the model code rather than typed beside it, because the constant that caused the most trouble here, $M_i$, was one the text never wrote down at all: Figure~\ref{fig:C5} could not be reproduced from the paper as it stood.}
+\input{../results/tables/tab_params}
+\end{adjustwidth}
 
-Model A is used for the identifiability analysis because it is the version in which the
+\begin{remark}[The role of each model]
+The three rows above are one model at two resolutions plus one alternative hypothesis about
+the alternative clearance term. They are not stages of a development and are not ranked by
+realism.
+
+The local identification model is used for the identifiability analysis because it is the
+version in which the
 two clearance channels have maximally different functional forms, and is therefore the
 \emph{most favourable} case. Accuracy is not what recommends it, and its known defect is
 that it predicts no crisis.
 
-Model B is what is required to say anything about the loss of a tolerable steady state,
+The ceiling hypothesis is what is required to say anything about the loss of a tolerable
+steady state,
 and it pays for that in identifiability, since both channels acquire the same functional
 form.
 
-Model C is present for its \textbf{well-posedness}, not for its biological fidelity. It is
+The equilibrium reduction is present for its well-posedness, not for its biological
+fidelity. It is
 the only one of the three in which $\thc$ can be defined without a clinical convention,
 and Section~\ref{sec:intrinsic} makes that precise.
 \end{remark}

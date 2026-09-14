@@ -1,0 +1,552 @@
+% =====================================================================
+%  Supplementary material. Everything here was in the main text and was
+%  moved out in the restructure, on one criterion: it is not a link in the
+%  chain from the target claim to the data specification. Nothing is
+%  deleted, and every cross-reference into it still resolves.
+% =====================================================================
+\section{Supplementary: material moved out of the main text}
+\label{sec:supp}
+
+\subsection{The enzymatic term is Michaelis-Menten kinetics}
+
+\paragraph{The enzymatic term is Michaelis-Menten kinetics.} The function $g$ is the
+Michaelis-Menten law, which in its standard biochemical form gives the velocity of a
+single-substrate enzymatic reaction as
+
+\begin{equation}
+v \;=\; \frac{V_{\max}\,[S]}{K_m + [S]},
+\label{eq:mm}
+\end{equation}
+
+with $V_{\max}$ the maximal velocity, attained when the enzyme is fully saturated, and
+$K_m$ the Michaelis constant, the substrate concentration at which $v = V_{\max}/2$.
+Identifying $V_{\max}$ with $\theta$ and $[S]$ with $m$ turns \eqref{eq:mm} into the term
+$\theta\, g(m)$ of \eqref{eq:A}. The same functional form appears under other names in
+adjacent literatures: it is the Monod function in microbial growth kinetics, and the Hill
+function with cooperativity coefficient $n = 1$. Throughout this paper the three names are
+used for the same object, and no cooperativity is assumed. PCC has a second substrate,
+bicarbonate, which is held constant here.
+
+The identification carries over the \emph{shape} and not the constants. Equation
+\eqref{eq:mm} is a law about an enzyme and its own substrate, and $m$ is a plasma marker;
+$\theta$ is accordingly the residual capacity of the enzymatic channel measured at the
+plasma level, and $K_m$ is the level at which that channel reaches half of it, a fitted
+shape parameter of the plasma-level clearance curve. Remark~\ref{rem:no_km_orig} sets out why
+$K_m$ cannot be read as the Michaelis constant of PCC.
+
+\subsection{How this relates to the two published PK/PD models}
+
+\paragraph{The load-bearing part of the form.}
+\label{sec:structure}
+The two published PK/PD models of this system are built on a different structure. The
+population model that selected the dose treats each marker as a turnover state whose
+production the therapy inhibits and whose loss is first
+order~\cite{dose_selection_poster}, and the translational model that preceded it puts the
+indirect response on the enzyme and makes the markers a direct saturating function of
+it~\cite{pkpd_translational}. % C46
+Proposition~\ref{prop:degeneracy} does not distinguish either from \eqref{eq:A}. Its
+hypothesis \eqref{eq:affine} asks only that total clearance be affine over the range a
+patient's marker visits, which a first-order loss satisfies exactly, with no appeal to
+assay error, and its conclusion is about what a record confined to that range contains,
+whatever structure produced it. What is specific to \eqref{eq:A} is what a
+resolved $(a,b)$ then leaves open: the fibre of Remark~\ref{rem:fibre}, which exists because
+$a = \theta\, g(\bar m)^2$ carries $K_m$, and the cancellation in \eqref{eq:mufibre} that
+makes the margin linear along it. The obstruction survives a change of structure; this
+parametrisation of it does not.
+
+\subsection{Two conditionings, kept separate}
+
+\begin{remark}[Two conditionings, kept separate]
+\label{rem:two_scalings}
+The $\bar m/\Delta$ of \eqref{eq:thetaerr} is the conditioning of the two-coefficient affine
+fit. Figure~\ref{fig:A2} plots a different object, the condition number of the
+three-parameter sensitivity matrix for $(\theta, K_m, k_e)$, which degrades as
+$\Delta^{-2}$. The affine fit resolves two coefficients from first-order information, while
+the three-parameter problem must additionally resolve the curvature that separates $\theta$
+from $K_m$. The relation between the two scalings is not established here, and the two
+results are stated separately.
+\end{remark}
+
+\subsection{What the dynamic model would have to establish}
+\label{sec:notworking_appendix}
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item \textbf{Unverified.} This is the assumption named in
+      Section~\ref{sec:model_C_added}, stated as a question about data. Everything here
+      turns on replenishment being impaired enough, as the metabolite accumulates, to
+      render clearance decreasing. The test is direct and
+      requires no new experiment, free carnitine and the acylcarnitine/free-carnitine ratio
+      being measured routinely. What is on record is a fall at group level
+      (Section~\ref{sec:discriminant_appendix}); whether it collapses within a patient, relative to
+      that patient's own baseline, and by enough to turn clearance downward, is the part
+      that is open.
+\item \textbf{Identifiability, traded.} $k_e$ is replaced by a
+      channel carrying four constants, $R_0$, $K_c$, $M_i$ and $\rho_0$, which worsens an
+      already unfavourable parameter-to-measurement ratio. It also removes the specific
+      degeneracy the local reduction has. The fibre of Remark~\ref{rem:fibre} exists because its
+      alternative channel is exactly linear and so contributes nothing to the intercept of
+      an affine fit; $\alpha$ is curved, contributes to both coefficients, and
+      \emph{given $\alpha$} the pair $(a,b)$ determines $(\theta, K_m)$ outright. That
+      proviso carries weight, because $\alpha$ contains $K_c$, which
+      Remark~\ref{rem:shape} calls arbitrary. Letting $K_c$ run over the same
+      thirty-two-fold range that remark uses, with the calibration held, most of
+      that range is inadmissible and the bound is two-sided: below $K_c \approx 100$ the
+      assumed $\alpha$ already accounts for more of the fitted intercept than the record
+      contains, and above $K_c \approx 300$ it accounts for more of the slope. Inside the
+      window the $\theta$ recovered from one fitted $(a,b)$ runs from $213$ to $300$, a
+      factor of $1.41$. Earlier figures for this ($300$ to $457$, a factor of $1.52$, and no
+      admissible solution above $K_c \approx 200$) do not reproduce under either convention
+      and are withdrawn. The two-sided bound is the useful part, and it is a real piece of
+      information: a record that fixes $(a,b)$ excludes nine-tenths of the range the
+      arbitrariness of $K_c$ nominally spans. The identifiability of the dynamic model is
+      not otherwise analysed in this paper.
+\item \textbf{The competition is documented in vitro.} It is measured in a transporter
+      solubilised from \emph{rat} renal brush-border membrane and reconstituted into
+      liposomes, and its identification with OCTN2 is the authors' own qualified
+      one~\cite{octn2_renal_transport}. % C42
+      No measurement in patients establishes that the recovered fraction of filtered
+      carnitine falls with the metabolite. What patients supply is the direction of absolute
+      excretion, which the model matches, and that is the weaker test.
+\item \textbf{Incompleteness.} Equations \eqref{eq:C} lump every non-conjugative loss into
+      $\delta(m)$ and omit the dependence of propionylcarnitine elimination on renal
+      function. Adding one state to capture half a mechanism may be worse than not adding
+      it, since it confers the appearance of having modelled depletion without having done
+      so.
+\end{enumerate}
+
+\subsection{The testable discriminant, and the observable it has to be stated in}
+\label{sec:discriminant_appendix}
+
+The ceiling hypothesis and the fold differ in a prediction about the model's state:
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{B} & removing the trigger suffices: $s$ back to baseline returns $m$ to baseline \\
+\textbf{C} & removing the trigger does not suffice; $s$ must be driven \emph{below} baseline,
+             or $m$ lowered directly \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+That is a statement about $m$, and it cannot be taken to the records in that form. Deep
+metabolic phenotyping of acute decompensation reports propionylcarnitine, propionylglycine
+and propionic acid \emph{essentially unaltered} through the event~\cite{amd_phenotyping}. % C24
+The single marker does not move through the excursion that the discriminant is about, so
+``does the biomarker return to baseline after the illness'' is a question the measurement
+cannot answer in either direction.
+
+\begin{remark}[Scope]
+\label{rem:scope_appendix}
+The identifiability analysis of Section~3 concerns the \emph{stable} patient, where the
+biomarker and the state can be argued to move together, and nothing in it depends on
+tracking a crisis. The behaviour through a decompensation is exactly where the measured
+proxy stops tracking the state, so the separatrix is a claim about the dynamics that
+the current observable cannot confirm or refute directly.
+\end{remark}
+
+Free carnitine does move through the event, and it is measured routinely, so the
+discriminant is restated in it. In propionic acidemia the median plasma level falls from
+$38.9$ $\mu$M in samples drawn outside a decompensation ($n = 56$, SD $16.8$) to $22.0$
+$\mu$M in samples drawn during one ($n = 25$, SD $12.4$), $P = 0.0370$, a fall of
+roughly two-fifths~\cite{amd_phenotyping}. % C38
+Chronic depletion in the stable patient is documented separately, at $5.7$ $\mu$M against a
+normal $37 \pm 8$ with short-chain acylcarnitines correspondingly
+raised~\cite{carnitine_pa_child}, % C25
+so what the event contributes is a further fall on top of a level that is already low.
+
+The same measurement is reached from the clinical side. The phenotyping study's own
+discussion advises determining free carnitine during a decompensation, to check whether
+carnitine supplementation is sufficient while the free pool is relatively
+depleted~\cite{amd_phenotyping}. % C39
+A model built to represent carnitine depletion and a recommendation written without
+reference to any model arrive at the same analyte, which makes the discriminant a
+convergence rather than a proposal.
+
+Two qualifications on it:
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item \textbf{The comparison pools samples across the cohort.} The
+      $25$ event samples and the $56$ non-event samples are pooled across the cohort, and no
+      paired or repeated-measures analysis is reported; the authors record that a trend
+      analysis on an individual patient basis would add insight~\cite{amd_phenotyping}. % C40
+      The model asserts a fall relative to a patient's own baseline, and that trajectory
+      remains unmeasured.
+\item \textbf{The fold is not the only structure the fall fits.} A ceiling holds the
+      alternative channel at fixed capacity and says nothing about free carnitine, so B
+      neither predicts the observation nor excludes it. What C asserts beyond the
+      fall is that depletion is quantitatively strong enough to make effective clearance
+      decrease with $m$, which is the first item of
+      Section~\ref{sec:notworking_appendix} and is still open.
+\end{enumerate}
+
+Clinical practice is consistent with C, but this is an observation and no more.
+
+\subsection{What the accessible input costs}
+\label{sec:instruments_appendix}
+
+\begin{remark}[Superseded as the route; kept as a description of the records]
+\label{rem:instruments_superseded}
+This subsection was written when carnitine was the input the identification rested on and
+the therapy was prospective. Both premises have since been settled against it. The text is
+kept rather than removed, because the argument it makes is the one a reader will try.
+
+The therapy is not absent. It is administered on the published biweekly schedule, the
+design of Section~\ref{sec:designsec} uses that schedule as it stands, and it supplies
+forty-two times the excitation the marker band does on the same record
+(Section~\ref{sec:therapychannel}). The sentence below that no accessible patient receives
+it is a statement about reach, and it is treated as one in Section~\ref{sec:whoto}: the
+design reaches patients on the therapy and no others.
+
+The instrument question is therefore not reached, and it is closed in the negative on a
+ground an instrument cannot touch. Carnitine acts on $k_e$, so it cannot move the first
+factor of $-(1 + \Delta(t)/\theta)\,\varphi(m)$ at all; it moves the second by pushing the
+patient deeper into the linear regime, about ten to one against. On the footing that gives
+the dose train $\operatorname{sd}(\ln\hat\theta) = 0.170$, adding recorded carnitine steps
+gives $1.91$ to $2.02$, \emph{worse} than leaving them out. What survives below is the
+structural half of the argument, that carnitine dosing responds to the patient's state
+where a dose train fixed by protocol does not, and the description of the quasi-exogenous
+variation itself, which is real and is cited as such in Section~\ref{sec:local}.
+
+And Proposition~\ref{prop:channel} equalises the two channels informationally \emph{given
+$K_m$}, which is not the setting of this subsection. The determinant \eqref{eq:det} depends
+on $K_m$, so with $K_m$ free the $2\times2$ system is two equations in three unknowns, and
+the two input routes separate by six orders of magnitude in $\det G$ and by a factor of
+$46$ to $807$ in $\operatorname{sd}(\ln\hat\theta)$ (Remark~\ref{rem:channel_scope}). The
+difference between the channels is not only statistical, and the choice of carnitine is not
+a compromise inside a workable design but the absence of one.
+\end{remark}
+
+Proposition~\ref{prop:channel} equalises the two channels informationally. It does not
+equalise them \emph{statistically}, and the difference is the central compromise of this
+work.
+
+\begin{description}[leftmargin=1.4em, itemsep=3pt]
+\item[Carnitine is available but endogenous.] The dose is adjusted by the clinician in
+response to the patient's state: a rising biomarker or a falling free-carnitine level is
+itself the reason the dose was raised. The input is therefore correlated with the state it
+is meant to excite, which is confounding by indication. Treating $u_c$ as an exogenous
+perturbation and regressing $m$ on it is invalid, and would bias $\theta$ in a direction
+set by the prescribing rule.
+\item[The therapy would be exogenous but is absent.] A dosing schedule fixed in advance by
+protocol is exogenous by construction, which is exactly the property carnitine lacks. No
+patient in the accessible cohort receives it, so the property is unavailable.
+\emph{Superseded}, on both halves: the property is available and it is what the design
+uses, and the absence is an absence from the non-trial cohort rather than from the
+experiment. Remark~\ref{rem:instruments_superseded}.
+\end{description}
+
+The way through, if carnitine had to carry the identification, is to isolate the part of
+the variation in $u_c$ that is exogenous, and to use only that part. Three quasi-exogenous
+instruments are present in routine care:
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item \textbf{Weight-based dose recalculation following growth.} The dose is a fixed
+      quantity per kilogram, so it steps upward when the child is weighed and the
+      prescription is refreshed. The timing is set by the clinic calendar and the child's
+      growth, not by the biomarker.
+\item \textbf{Supply interruptions.} Stock-outs, travel, and gaps in dispensing produce
+      involuntary dose reductions whose timing is unrelated to the patient's metabolic
+      state.
+\item \textbf{Changes of formulation.} A switch between preparations, or between oral and
+      intravenous administration, changes the effective $\kappa$ at a date fixed by
+      procurement, with no reference to the patient's state.
+\end{enumerate}
+
+Each of these moves $u_c$ for a reason that is plausibly independent of $m$, which is what
+an instrument requires.
+
+A third perturbation is present in the same records and acts on neither channel. Cyclical
+intestinal antibiotics suppress the gut-flora contribution to $s$, so they move the load
+rather than a parameter. It carries the same information as the two above. Two steady
+states at loads $s$ and $s'$ give $s = \theta g(m) + k_e m$ and
+$s' = \theta g(m') + k_e m'$, which is the coefficient matrix $M$ of \eqref{eq:system}
+again, so a load change carries exactly the determinant \eqref{eq:det} that a channel
+perturbation does. It is also the second anchor of Proposition~\ref{prop:anchor} seen from
+here, since one patient observed at two distinct loads is precisely this case.
+The asymmetry lies elsewhere. The load route needs both $s$ and $s'$ known, where the
+channel route needs $s$ once together with the increment, and how much that costs is part
+of the question of Section~\ref{sec:confounding}, the substrate load being only partially
+recorded. Courses given on a fixed schedule are quasi-exogenous;
+courses started because a patient is deteriorating are confounded by indication exactly as
+carnitine is. None is randomised, and the independence is an assumption to be
+argued from the records in each case.
+
+\begin{remark}[The identical structure on the other channel]
+Everything above is stated for carnitine because that is the input in the charts. By
+Proposition~\ref{prop:channel} the same equations, the same determinant and the same
+conditioning apply verbatim when the therapy supplies the perturbation instead, with
+$\delta = \Delta g(m')$ in place of $\delta = \kappa u_c m'$. The statistics change. A
+therapeutic schedule is exogenous and needs no instrument, so the instrumental apparatus of
+this subsection becomes unnecessary. That is now the actual configuration and not the
+alternative one. \emph{Superseded in part}: the verbatim transfer holds given $K_m$, and
+with $K_m$ free the two routes are not interchangeable at all
+(Remark~\ref{rem:channel_scope}, Remark~\ref{rem:instruments_superseded}).
+\end{remark}
+
+\subsection{The local reduction's known defect}
+
+Since $k_e m \to \infty$, total clearance is unbounded and every load is eventually
+balanced. The local reduction therefore predicts that no crisis can occur. It is adequate for the
+identifiability analysis, which concerns the stable patient, and inadequate for anything
+concerning decompensation.
+
+\subsection{Invariance under a monotone rescaling of the activity scale}
+
+\begin{itemize}[leftmargin=*]
+\item Whether the decision $\theta \gtrless \thc$ is invariant under a
+      common strictly increasing reparametrisation $\varphi$ of the activity scale. If every variant is
+      distorted by the same $\varphi$, and if $\thc$ is \emph{estimated empirically on that
+      same distorted scale} rather than computed from \eqref{eq:thcrit}, then
+      $\varphi(\theta) \gtrless \varphi(\thc)$ reproduces the true decision. The
+      requirement is therefore consistency of the assay across variants, not absolute
+      calibration. The invariance fails if $\varphi$ differs by mechanism class. It also
+      fails whenever $\thc$ is computed on the distorted scale,
+      because \eqref{eq:thcrit} is not equivariant under $\varphi$: in general
+      $\varphi\!\left((\spk - k_e \mtol)/g(\mtol)\right)$ differs from the expression
+      obtained by substituting $\varphi(k_e)$ into the same formula, so the two sides of
+      the comparison are transported differently. Note that this pulls against
+      Proposition~\ref{prop:intrinsic}: the intrinsic $\thc$ is a structural construction,
+      defined by where the fold of $C(\cdot\;\theta)$ falls, and that location is not
+      preserved by a monotone rescaling of the activity axis. Well-posedness and
+      invariance are bought from different accounts here, and buying one spends the
+      other.
+
+
+\subsection{The Saudi context}
+
+Consanguinity rates in Saudi Arabia are among the highest worldwide, producing founder
+variants at frequencies not seen in outbred populations. Propionic acidemia is
+correspondingly common, and is the most frequent inborn error of metabolism in Saudi
+newborn screening. Three cohorts give $1{:}10{,}241$ among $40{,}965$ newborns in
+Riyadh~\cite{nbs_riyadh_kfmc}, $1{:}14{,}158$ among $56{,}632$ infants at a second Riyadh
+centre~\cite{nbs_psmmc}, and $1{:}14{,}000$ in the national programme covering
+$775{,}000$ newborns~\cite{nbs_saudi_national}. % C10
+The first two rest on four confirmed cases apiece, and the third, whose count is not
+printed, on the fifty-five its rate and denominator imply. At those counts the spread is
+sampling noise rather than disagreement: exact Poisson $95\%$ intervals run $1{:}4{,}000$ to
+$1{:}37{,}587$, $1{:}5{,}530$ to $1{:}51{,}962$ and $1{:}10{,}826$ to $1{:}18{,}705$, and
+the national interval lies inside both of the others.
+The national figure is the one to lean on because four events cannot resolve an incidence,
+and because the ascertainment a single centre is exposed to does most damage to a numerator
+of four: the authors of the smaller Riyadh cohort attribute their own elevated incidence to
+families with a known metabolic disorder being advised to deliver at the same
+centre~\cite{nbs_riyadh_kfmc}. % C47
+
+A published series of 84 Saudi patients identified 16 distinct variants (7 in \emph{PCCA},
+9 in \emph{PCCB})~\cite{saudi84}. % C11
+Two features of that series bear on the identification:
+
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+\item The variant \emph{PCCA} c.425G$>$A (p.Gly142Asp) accounts for $70.2\%$ of families and
+      is associated with a severe, neonatal-onset phenotype~\cite{saudi84}. % C12
+\item \textbf{All families but one were homozygous}~\cite{saudi84}, the exception being a
+      single compound heterozygous family. % C13
+      Compound heterozygosity, which
+      elsewhere confounds genotype--phenotype correlation because two different variants
+      contribute jointly (and, for a multimeric enzyme, non-additively through intragenic
+      complementation), is essentially absent.
+\end{itemize}
+
+The second point would be a methodological argument for working in this population, and it
+is recorded because it is real: the map from genotype to residual enzymatic capacity is
+unconfounded~\cite{saudi84}. % C44
+It is bought at a price in generalisability. The series is $81\%$ \emph{PCCA}
+(68 of 84 patients) against $19\%$ \emph{PCCB}, where the two genes contribute roughly
+equally to propionic acidemia worldwide~\cite{saudi84,genereviews_pa}, % C29
+so anything estimated here is estimated predominantly on \emph{PCCA} biology.
+
+\emph{This paper does not make that argument, and the reason is a constraint the main text
+establishes after this material was written.} Section~\ref{sec:whoto} requires a record
+containing a therapeutic increment that varies over the sampling window, and no patient
+outside the trial receives one. The population in which the genotype map is cleanest is
+therefore not a population in which this design can be run. The two criteria select
+different cohorts, the design constraint is the binding one, and the genotype argument is
+left here as a property of the literature rather than as a recommendation.
+\end{itemize}
+
+
+
+%-------------------------------------------------------------------
+%  Relocated from the main text by the phase 4 editorial pass: method
+%  justification rather than links in the chain to the four claims.
+%-------------------------------------------------------------------
+\subsection{Where the linear alternative channel is load-bearing, and what separates two channels in general}
+\label{sec:modelB}
+
+The alternative channel has been linear since \eqref{eq:local}, and it has been treated as
+a convenience. It is not one. Replacing it by a saturating channel, so that both routes
+carry the \emph{same} functional form,
+\begin{equation}
+\dot m \;=\; L(t) + L_0 \;-\; \bigl(\theta + \Delta(t)\bigr)\frac{m}{K_m + m}
+\;-\; k_e\, \frac{m}{K_e + m},
+\label{eq:modelB}
+\end{equation}
+produces the only configuration in this paper's set that
+\texttt{StructuralIdentifiability.jl} does not return as globally identifiable. With
+$\Delta \equiv 0$ it returns \emph{locally} identifiable, and the identifiable functions
+are
+\begin{equation}
+k_e + \theta, \qquad K_e + K_m, \qquad k_e\theta, \qquad K_e K_m, \qquad
+K_e\theta + K_m k_e,
+\label{eq:Binvariants}
+\end{equation}
+every one invariant under the exchange $(\theta, K_m) \leftrightarrow (k_e, K_e)$ and
+nothing else in the list. The fibre is a \emph{two-point set}: the true parameter and its
+channel-swapped image, which no quantity of noiseless data separates.
+
+Read the direction of that correctly, because it is a limit on this paper and not a
+result in its favour. The paper's own model escapes the exchange for a reason that is
+almost bookkeeping: its two channels are not two members of one parameterised family. The
+enzymatic term carries $(\theta, K_m)$ and the alternative term carries $k_e$ alone, so
+there is no permutation of $(\theta, K_m, k_e)$ that exchanges them and nothing to break.
+The tool confirms it, saturating plus linear, with no input at all, returns globally
+identifiable.
+
+An earlier version of this section argued the same conclusion from the limit
+$\lim_{K_e \to \infty} k_e K_e\, m/(K_e+m) = k_e m$: that the linear channel is a
+saturating one with an infinite constant, so the two shapes differ. That reasoning
+is withdrawn. The limit is singular: it holds $k_e K_e$ fixed while $K_e$ grows, and
+$K_e = \infty$ is not a value of a positive parameter, so it does not place the two channels
+in one family and ``the shapes differ'' is not what the argument turns on. What it turns on
+is that there is no permutation available at all.
+
+And the limit cuts the other way, which is the part worth keeping.
+\eqref{eq:modelB} contains \eqref{eq:local} only as a boundary case, and at any
+\emph{finite} $K_e \neq K_m$ with no selective input the exchange is present and exact.
+The paper's freedom from it is therefore a property of the linearisation, not
+evidence that the linearisation was harmless.
+
+\subsubsection{What separates two channels, in general}
+\label{sec:exchange}
+
+The mechanism is not specific to two Michaelis--Menten channels, and stating it generally
+is what makes the limit above precise. Let an observed ordinate be a sum of $n$ channels
+sharing one functional form $f$, each with its own amplitude, its own shape constant, and
+its own \emph{known} input riding on the amplitude:
+\begin{equation}
+C(m,t) \;=\; \sum_{i=1}^{n} \bigl(a_i + \Delta_i(t) \bigr)\, f(m; K_i).
+\label{eq:nchannel}
+\end{equation}
+Permuting the parameter pairs and reindexing gives, for \emph{any} $f$ and any $n$,
+\begin{equation}
+C(p^\pi) - C(p) \;=\; \sum_j \bigl(\Delta_{\pi^{-1}(j)} - \Delta_j \bigr)\, f(m; K_j).
+\label{eq:permdiff}
+\end{equation}
+The amplitudes cancel identically: permuting the pairs does not change the multiset of
+parameters, it changes only \emph{which known input is glued to which shape}. If the
+$f(\cdot;K_i)$ are linearly independent, for Michaelis--Menten with distinct positive
+$K_i$, by clearing $\prod_j(K_j+m)$ and evaluating at $m = -K_i$: each coefficient must
+vanish separately.
+
+\begin{proposition}[Channel exchange]
+\label{prop:exchange}
+In \eqref{eq:nchannel}, with the $K_i$ pairwise distinct, $f$ injective in $K$, and
+$\{f(\cdot;K_i)\}$ linearly independent, the exchange of channels $i$ and $j$ is an
+observational symmetry unless both
+\begin{equation}
+\Delta_i - \Delta_j \ \text{ is non-constant in } t
+\qquad\text{and}\qquad
+f(\cdot\;K_i) \not\equiv f(\cdot\;K_j).
+\label{eq:twofactors}
+\end{equation}
+The residual symmetry group is the permutations preserving the inputs \emph{up to an
+additive constant}, and the fibre has $\prod_B |B|!$ points, $B$ running over those blocks.
+\end{proposition}
+
+Both factors are needed, and the input factor is about variation rather than
+presence. A constant known increment breaks nothing: because $a_i$ is itself an additive
+constant on channel $i$, the swap is repaired by $a_1' = a_2 - c$, $a_2' = a_1 + c$, and
+the observation is reproduced exactly. The tool agrees, and this is the sharper test of the
+proposition: \eqref{eq:modelB} with a known \emph{constant} increment on the enzymatic
+channel returns locally, not globally, identifiable, with identifiable functions
+$a_1+a_2$, $K_1+K_2$, $K_1K_2$, $a_1a_2 + c\,a_2$ and $K_1a_2 + K_2a_1 + c\,K_2$, which are
+precisely the invariants of that shifted swap. With a time-varying increment it returns
+globally identifiable.
+
+Two consequences that the two-channel case conceals. First, a single selective
+input resolves the exchange only when $n = 2$; at $n \ge 3$ it breaks every transposition
+involving the driven channel and leaves $S_{n-1}$ untouched, so the fibre falls from $n!$
+to $(n-1)!$ rather than to one. Verified: three saturating channels with a varying input on
+the first return $a_1$ and $K_1$ globally identifiable and $a_2, a_3, K_2, K_3$ only
+locally, with the five $S_2$ invariants of the two undriven channels: the same five as
+\eqref{eq:Binvariants}, now sitting one level down. Second, identical inputs on two
+channels separate neither: a selective input must be selective \emph{pairwise}.
+
+The two-factor condition \eqref{eq:twofactors} is the same shape as everything else
+in this section, and the echo is worth naming. The sensitivity ratio of
+Section~\ref{sec:therapychannel} is $-(1 + \Delta/\theta)\,\varphi(m)$, a product in which
+the therapy supplies one factor and the marker's position supplies the other.
+Proposition~\ref{prop:rank} closes on load \emph{variability} and not on load precision.
+Proposition~\ref{prop:exchange} closes on input \emph{variation} and not on input presence.
+Three different degeneracies, and in every one what does the separating is a
+difference that moves, not a quantity that is large or a measurement that is precise.
+
+What this licenses, stated narrowly. \eqref{eq:modelB} is not the model used
+anywhere else here. What the proposition adds is a scope statement the paper owes a reader:
+if the alternative clearance route saturates on the marker's own scale, identification
+acquires an exact two-point degeneracy that no record removes, and the therapy then becomes
+load-bearing for something this paper otherwise gets for free, with a constant infusion
+insufficient, and the biweekly train's decay exactly what is required. That is a condition
+on a future study's model, not a repair to this one.
+
+
+\subsection{Why the priors are what they are, before they are chosen}
+\label{sec:whypriors}
+
+The footing below places a prior on $k_e$, none on $K_m$ and none on $\theta$, and that
+looks arbitrary until one fact from Proposition~\ref{prop:rank} is put next to one fact
+about conditioning. They are different facts and the argument needs both.
+
+The exact fact. The null vector \eqref{eq:nullvec} is
+$(L + k_e K_m,\, -K_m,\, 0,\, L)$ in $(\theta, K_m, k_e, b)$. Its third entry is zero, so
+the degenerate direction lies entirely in capacity, affinity and the load bias, and $k_e$
+is not in it.
+
+The conditioning fact. $k_e$ escapes the identity, but only just. Regressing each
+design column on the others leaves residuals of $10^{-14}$ for $\ln\theta$, $\ln K_m$ and
+the load bias (that is the identity, to machine precision) against
+$3.7\times10^{-3}$ for $\ln k_e$, a column that is \emph{nearly}, not exactly, dependent on
+the rest. So there is one exact identity and no second, \emph{and} $k_e$ is the
+worst-conditioned of the directions that survive it.
+
+Together they decide every prior in this paper, and they decide it the way round
+that is easy to get backwards.
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+\item \textbf{$K_m$ lies \emph{inside} the exact degeneracy, so a prior on it cannot help.}
+It is not that $K_m$ is well known (Remark~\ref{rem:no_km} says no literature value is
+usable) but that tightening it moves nothing, because the degeneracy is a direction in
+which $K_m$ trades against $\theta$ and the load bias together. A prior twenty times
+looser changes $\operatorname{sd}(\ln\hat\theta)$ in the fourth decimal, and removing it
+changes nothing at all. This is a reason, not a convenience, and it is why the
+note can decline to import a constant it has no right to.
+\item \textbf{$k_e$ lies just \emph{outside} it, so a prior on it does all the work.}
+Removing it takes the same design from $0.1474$ to $0.6451$. A direction that is nearly
+dependent is exactly the case where a modest prior buys a great deal, and it is the only
+such direction here.
+\item \textbf{$\theta$ is the target and carries no prior}, because a prior on the
+estimand would be assuming the answer.
+\end{itemize}
+
+So the one thing this paper asks the literature for is the one thing the geometry
+says is worth asking for. A control study that pinned $K_m$ to one per cent would buy six
+per cent (Section~\ref{sec:spec}); $k_e$ within a factor of about three is what the gate
+actually needs. The pattern of priors is read off the null vector, not chosen for
+convenience, and a reader who wants to check the design's dependence on prior information
+should check that vector rather than the priors.
+
+
+%-------------------------------------------------------------------
+%  Relocated by the phase 3 compression. These four blocks were the main
+%  text's sections 1 to 4. They are unchanged apart from being demoted one
+%  heading level, so every label they define still resolves from the main
+%  text. They are here because they are not links in the chain to any of
+%  the four claims, not because they are wrong.
+%-------------------------------------------------------------------
+\input{sections/01_biology}
+\input{sections/02_system}
+\input{sections/03_dynamic}
+\input{sections/04_local}
+\input{sections/09_validation}
+\input{sections/10_results}
+\input{sections/A1_open}
