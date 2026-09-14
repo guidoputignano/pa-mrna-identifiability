@@ -428,25 +428,37 @@ def fig_protocol(T=112.0):
         ("fortnightly, on the dose", DOSE_INTERVAL, RED, "X", "3.51"),
     ]
 
-    fig, ax = plt.subplot_mosaic(
-        [["traj", "p0"], ["traj", "p1"], ["rails", "p2"]],
-        figsize=figsize(1.0, 0.62),
-        gridspec_kw={"width_ratios": [1.45, 1.0], "height_ratios": [1.0, 1.0, 1.0],
-                     "hspace": 0.20, "wspace": 0.34}, layout="constrained")
+    # Nested gridspecs rather than one mosaic: the trajectory and its rails are
+    # one object and want almost no gap, while the three increment panels want
+    # a real one. A single grid cannot hold both spacings.
+    fig = plt.figure(figsize=figsize(1.0, 0.62))
+    fig.set_layout_engine("none")
+    outer = fig.add_gridspec(1, 2, width_ratios=[1.45, 1.0], wspace=0.34,
+                             left=0.085, right=0.90, top=0.93, bottom=0.105)
+    gl = outer[0, 0].subgridspec(2, 1, height_ratios=[2.3, 1.0], hspace=0.04)
+    gr = outer[0, 1].subgridspec(3, 1, hspace=0.28)
+    ax = {"traj": fig.add_subplot(gl[0]), "rails": fig.add_subplot(gl[1])}
+    for i in range(3):
+        ax[f"p{i}"] = fig.add_subplot(gr[i])
 
     # ---------------- the marker under the dose train ----------------
     tt = np.linspace(0.0, T, 2000)
     a = ax["traj"]
-    a.plot(tt, quasi_steady_level(tt), color=INK, lw=1.5, zorder=3)
+    mm = quasi_steady_level(tt)
+    a.plot(tt, mm, color=INK, lw=1.5, zorder=3)
     a.set_ylabel(r"marker $m(t)$")
     a.set_xlim(0, T)
     a.set_xticklabels([])
+    # a clear strip below the trough, so the dose label sits under the
+    # trajectory rather than across it
+    lo, hi = float(mm.min()), float(mm.max())
+    span = hi - lo
+    a.set_ylim(lo - span * 0.20, hi + span * 0.05)
     doses = np.arange(0.0, T + 1e-9, DOSE_INTERVAL)
     a.plot(doses, quasi_steady_level(doses), linestyle="none", marker="v",
-           ms=3.8, color=AMBER, mec="white", mew=0.5, zorder=4, clip_on=False)
-    a.annotate("dose, every 14 d", xy=(doses[2], quasi_steady_level(doses[2])),
-               xytext=(0, -13), textcoords="offset points",
-               fontsize=6.3, color=AMBER, ha="center")
+           ms=3.8, color=AMBER, mec="white", mew=0.5, zorder=4)
+    a.text(T * 0.012, lo - span * 0.15, "dose, every 14 d",
+           fontsize=6.3, color=AMBER, ha="left", va="center")
     a.set_title("the schedule in time", fontsize=7.4)
 
     # ---------------- the three schedules as rails ----------------
