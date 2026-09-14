@@ -100,16 +100,18 @@ day recovers it.
 \centering
 \includegraphics[width=\textwidth]{fig_D4_protocol.pdf}
 \caption{The schedule the specification asks for. \textbf{Left, above:} the marker under
-the biweekly dose train, which is the excursion every draw is placed against.
-\textbf{Left, below:} three candidate schedules over four months. \textbf{Right:} where two
-years of draws from each fall inside a single $14$-day dose cycle, which is the whole of
-the argument. Monthly sampling walks the phase and sees the increment at every value it
-takes; sampling at $14.5$~days does the same half a day slower. Sampling fortnightly puts
-every draw at one phase, so the increment never varies across the record and the therapy
-channel supplies nothing, which is the factor of twenty-two between
-$\operatorname{sd}(\ln\hat\theta) = 0.161$ and $3.51$. The excluded hour after each dose is
-one twenty-fourth of a day against a fourteen-day axis, so the band marking it is drawn
-wider than scale.}
+the biweekly dose train. \textbf{Left, below:} three candidate schedules over four months.
+\textbf{Right:} what each schedule sees of the therapeutic increment. The grey curve is
+$\Delta/\theta$ across one dose cycle, and the markers are where two years of draws from
+that schedule fall on it. What identifies $\theta$ is not the number of draws but the
+\emph{range} of $\Delta/\theta$ the record contains, drawn as the bar at the right of each
+panel. Monthly sampling walks the cycle and spans $1.84$ of it; moving to $14.5$ days spans
+$1.99$. Sampling fortnightly puts every draw at one phase, so every draw sees the same
+increment and the range collapses to $0.13$: the record carries the therapy channel as a
+constant, which is no excitation at all, and
+$\operatorname{sd}(\ln\hat\theta)$ goes from $0.161$ to $3.51$. The excluded hour after each
+dose is one twenty-fourth of a day against a fourteen-day axis, so the band marking it is
+drawn wider than scale.}
 \label{fig:D4}
 \end{figure}
 

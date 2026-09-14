@@ -410,38 +410,34 @@ def fig_collapse(T=730.0):
 
 def fig_protocol(T=112.0):
     """
-    What the schedule looks like, and why the phase is the thing that matters.
+    What the schedule looks like, and what the phase actually buys.
 
-    Section 5 states the sampling rule in words: cover the dose cycle, never at
-    the dose interval or a multiple of it, never within an hour of a dose. The
-    precision each choice buys is Figure D2. This figure is the rule itself, in
-    time, so a protocol writer reads the schedule off it rather than
-    reconstructing it from a standard deviation.
+    Section 5 states the sampling rule in words and Figure D2 shows what each
+    choice costs. Neither shows the schedule itself, so a protocol writer has
+    to reconstruct it from a standard deviation. This figure is the rule.
 
-    The trajectory and the sample rails are separate axes on a shared time
-    axis, because the rails are not marker values and one y-scale across both
-    would say they were.
+    The right panel plots the increment rather than the phase. Phase is only
+    the proxy: what identifies theta is the RANGE of Delta/theta a record
+    contains, and a schedule locked to the dose interval sees one value of it.
+    Faceting the three schedules keeps that comparison a spatial one, so the
+    reader never has to separate two hues to make it.
     """
-    # Palette order green -> blue -> red, validated so the failing schedule is
-    # not adjacent to a passing one under deuteranopia. Marker shape repeats
-    # the distinction and every row is named, so identity never rests on colour.
     SCHEDULES = [
-        ("monthly, every 30.4 d", 30.4, GREEN, "o", "0.170", "monthly"),
-        ("every 14.5 d, half a day off", 14.5, BLUE, "^", "0.161", "14.5-daily"),
-        ("fortnightly, on the dose", DOSE_INTERVAL, RED, "X", "3.51", "fortnightly"),
+        ("monthly, every 30.4 d", 30.4, GREEN, "o", "0.170"),
+        ("every 14.5 d, half a day off", 14.5, BLUE, "^", "0.161"),
+        ("fortnightly, on the dose", DOSE_INTERVAL, RED, "X", "3.51"),
     ]
 
     fig, ax = plt.subplot_mosaic(
-        [["traj", "phase"], ["rails", "phase"]],
-        figsize=figsize(1.0, 0.50),
-        gridspec_kw={"width_ratios": [1.5, 1.0], "height_ratios": [1.9, 1.25],
-                     "hspace": 0.18, "wspace": 0.30}, layout="constrained")
+        [["traj", "p0"], ["traj", "p1"], ["rails", "p2"]],
+        figsize=figsize(1.0, 0.62),
+        gridspec_kw={"width_ratios": [1.45, 1.0], "height_ratios": [1.0, 1.0, 1.0],
+                     "hspace": 0.20, "wspace": 0.34}, layout="constrained")
 
     # ---------------- the marker under the dose train ----------------
     tt = np.linspace(0.0, T, 2000)
-    mm = quasi_steady_level(tt)
     a = ax["traj"]
-    a.plot(tt, mm, color=INK, lw=1.5, zorder=3)
+    a.plot(tt, quasi_steady_level(tt), color=INK, lw=1.5, zorder=3)
     a.set_ylabel(r"marker $m(t)$")
     a.set_xlim(0, T)
     a.set_xticklabels([])
@@ -459,52 +455,61 @@ def fig_protocol(T=112.0):
     r.set_xlabel("time  [days]")
     r.set_ylim(-0.7, len(SCHEDULES) - 0.3)
     r.set_yticks(range(len(SCHEDULES)))
-    r.set_yticklabels([s[5] for s in reversed(SCHEDULES)], fontsize=6.6)
-    for i, (lab, dt, col, mk, sd, short) in enumerate(SCHEDULES):
+    r.set_yticklabels([s[0].split(",")[0] for s in reversed(SCHEDULES)], fontsize=6.4)
+    for i, (lab, dt, col, mk, sd) in enumerate(SCHEDULES):
         y = len(SCHEDULES) - 1 - i
         ts = np.arange(0.0, T + 1e-9, dt)
         r.axhline(y, color=GREY, lw=0.5, zorder=1)
         r.plot(ts, np.full_like(ts, y), linestyle="none", marker=mk, ms=4.4,
                color=col, mec="white", mew=0.6, zorder=5)
-        r.text(T * 0.99, y + 0.17, rf"$\operatorname{{sd}}(\ln\hat\theta)={sd}$",
-               fontsize=6.0, color=col, ha="right", va="bottom")
     r.spines["left"].set_visible(False)
-    r.spines["bottom"].set_linewidth(0.6)
     r.tick_params(axis="y", length=0)
 
-    # ---------------- where the draws fall inside one cycle ----------------
-    b = ax["phase"]
-    b.set_xlabel("phase within the 14-day dose cycle  [days]")
-    b.set_xlim(-0.35, DOSE_INTERVAL + 0.35)
-    b.set_ylim(-0.45, len(SCHEDULES) - 0.55)
-    b.set_yticks(range(len(SCHEDULES)))
-    b.set_yticklabels([s[5] for s in reversed(SCHEDULES)], fontsize=6.6)
-    b.tick_params(axis="y", length=0)
-    b.spines["left"].set_visible(False)
+    # ---------------- what each schedule sees of the increment ----------------
+    # one steady cycle, well past the first dose
+    ph = np.linspace(0.0, DOSE_INTERVAL, 400)
+    curve = np.asarray(delta(20 * DOSE_INTERVAL + ph)) / P.theta
+    ymax = float(curve.max()) * 1.18
 
-    # the hour after a dose is excluded: the marker is not yet quasi-steady
-    # one hour is 1/24 d against a 14 d axis and invisible at true width, so the
-    # band is drawn wider than scale; the caption says so.
-    for x0 in (0.0, DOSE_INTERVAL - 0.22):
-        b.axvspan(x0, x0 + 0.22, color=RED, alpha=0.22, lw=0, zorder=1)
-    b.annotate("no draw within an hour of a dose",
-               xy=(0.11, len(SCHEDULES) - 0.78), xytext=(17, 0),
-               textcoords="offset points", fontsize=6.0, color=RED,
-               va="center", ha="left",
-               arrowprops=dict(arrowstyle="->", color=RED, lw=0.7))
+    for i, (lab, dt, col, mk, sd) in enumerate(SCHEDULES):
+        b = ax[f"p{i}"]
+        ts = np.arange(0.0, 730.0, dt)
+        dph = np.mod(ts, DOSE_INTERVAL)
+        dval = np.asarray(delta(ts)) / P.theta
+        rng = float(np.ptp(dval))
 
-    for i, (lab, dt, col, mk, sd, short) in enumerate(SCHEDULES):
-        y = len(SCHEDULES) - 1 - i
-        ph = np.mod(np.arange(0.0, 730.0, dt), DOSE_INTERVAL)
-        b.axhline(y, color=GREY, lw=0.5, zorder=1)
-        b.plot(ph, np.full_like(ph, y), linestyle="none", marker=mk, ms=4.2,
-               color=col, mec="white", mew=0.6, alpha=0.9, zorder=5)
-    # the fortnightly row is one point, which is the whole finding
-    b.annotate("every draw at the same phase:\nthe increment stops varying",
-               xy=(0.0, 0.0), xytext=(10, 16), textcoords="offset points",
-               fontsize=6.0, color=RED, va="bottom", ha="left",
-               arrowprops=dict(arrowstyle="->", color=RED, lw=0.7))
-    b.set_title("where two years of draws land in one cycle", fontsize=7.4)
+        b.plot(ph, curve, color=GREY, lw=1.0, zorder=2)
+        b.axvspan(0.0, 0.22, color=RED, alpha=0.18, lw=0, zorder=1)
+        b.axvspan(DOSE_INTERVAL - 0.22, DOSE_INTERVAL, color=RED, alpha=0.18,
+                  lw=0, zorder=1)
+        b.plot(dph, dval, linestyle="none", marker=mk, ms=4.0, color=col,
+               mec="white", mew=0.6, alpha=0.9, zorder=5)
+
+        # the range each schedule actually spans, drawn as a bar at the right
+        xr = DOSE_INTERVAL * 1.045
+        b.plot([xr, xr], [dval.min(), dval.max()], color=col, lw=2.4,
+               solid_capstyle="butt", zorder=6, clip_on=False)
+        b.text(DOSE_INTERVAL * 1.10, (dval.min() + dval.max()) / 2.0,
+               f"range\n{rng:.2f}", fontsize=5.9, color=col, va="center",
+               ha="left")
+
+        b.set_xlim(0, DOSE_INTERVAL)
+        b.set_ylim(0, ymax)
+        b.set_yticks([0, 1, 2])
+        b.tick_params(labelsize=6.2)
+        b.text(0.42, ymax * 0.93, lab, fontsize=6.4, color=col, va="top")
+        if i < len(SCHEDULES) - 1:
+            b.set_xticklabels([])
+        else:
+            b.set_xlabel("phase within the 14-day dose cycle  [days]")
+        if i == 1:
+            b.set_ylabel(r"increment $\Delta/\theta$")
+
+    ax["p0"].set_title("what each schedule sees of the increment", fontsize=7.4)
+    ax["p2"].annotate("every draw at one phase,\nso one value of $\Delta$",
+                      xy=(0.35, curve.max() * 0.99), xytext=(2.4, ymax * 0.42),
+                      fontsize=6.0, color=RED,
+                      arrowprops=dict(arrowstyle="->", color=RED, lw=0.7))
 
     save(fig, "fig_D4_protocol")
 
