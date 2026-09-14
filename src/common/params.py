@@ -178,9 +178,9 @@ PARENT = [
                  r"acids; a protein-restricted diet lowers the first two deliberately. The "
                  r"value here is not in those units and is not claimed to be"),
     Row(r"$k$", "not assigned", "conjugation rate constant, and the carnitine relaxation rate",
-        ASSUMED, r"\textbf{This row previously read \textsc{derived}, ``a free scale in the "
-                 r"two-state system''. The first half of that is kept and the second is "
-                 r"withdrawn.} $k$ does drop out of the quasi-steady reduction of "
+        ASSUMED, r"\textbf{This row was previously classed as derived, and called $k$ ``a "
+                 r"free scale in the two-state system''. The first half of that is kept and "
+                 r"the second is withdrawn.} $k$ does drop out of the quasi-steady reduction of "
                  r"supplement~\S S1 exactly, so the reduced clearance does not depend on it. "
                  r"It does not follow that nothing does. $k$ sets the carnitine relaxation "
                  r"time $\tau_c = 1/[k(u+\rho)]$, and therefore whether the reduction is valid "

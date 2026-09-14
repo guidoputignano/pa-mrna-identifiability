@@ -1451,3 +1451,26 @@ def test_the_reduction_is_not_exact_off_equilibrium_and_improves_with_k():
     assert errs[0] > 0.05, errs          # not a rounding-level disagreement
     assert errs[0] > errs[1] > errs[2]   # and it is the timescale ratio that drives it
     assert errs[2] < 0.02, errs          # separation bought by k restores it
+
+
+def test_the_params_table_asks_for_no_font_shape_latin_modern_lacks():
+    """
+    CI fails the paper build if paper/main.log contains the string "undefined",
+    and that grep catches font warnings as well as references. Latin Modern has
+    no bold small-caps, so a \\textsc nested inside a \\textbf emits
+
+        LaTeX Font Warning: Font shape `T1/lmr/bx/sc' undefined
+
+    which builds a correct PDF and fails the build anyway. The retraction note
+    on the row for k did exactly that, having set the withdrawn source class in
+    small caps inside the bold lead-in. Checked on the rendered row rather than
+    on the source string, because the note is assembled from several literals
+    and only the rendered form is what LaTeX sees.
+    """
+    import re
+    from common.params import LOCAL, PARENT, _tex
+
+    for line in _tex(LOCAL + PARENT):
+        for bold in re.findall(r"\\textbf\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}", line):
+            assert "\\textsc" not in bold, (
+                f"bold small-caps asks for a font shape Latin Modern lacks: {bold}")
