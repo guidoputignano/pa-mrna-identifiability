@@ -35,7 +35,7 @@ from common.excitation import (phi, excitation, excitation_max, fold_range_for,
                                fold_range_for_precision,
                                top_of_excursion_for_precision)
 from common.style import (save, write_table, figsize, GREEN, RED, BLUE, AMBER,
-                          GREY, MUTED, corner, over_x, at_point)
+                          GREY, MUTED, INK, corner, over_x, at_point)
 
 P = ParamsA()
 M_BAR = 10.0
@@ -367,7 +367,7 @@ def fig_collapse(T=730.0):
     corner(ax[0], r"$20\%$ on $\theta$", "lower left", color=MUTED, fontsize=7)
     ax[0].set_xlabel("time  [days]")
     ax[0].set_ylabel(r"$\mathrm{sd}(\ln\hat\theta)$")
-    ax[0].set_title("no process noise on $\theta$:\n"
+    ax[0].set_title(r"no process noise on $\theta$:" "\n"
                     "what does not collapse, stays", fontsize=8)
     ax[0].legend(loc="upper right", fontsize=5.8)
 
@@ -407,6 +407,107 @@ def fig_collapse(T=730.0):
 # ==========================================================================
 #  1.9  The estimand is a decision.
 # ==========================================================================
+
+def fig_protocol(T=112.0):
+    """
+    What the schedule looks like, and why the phase is the thing that matters.
+
+    Section 5 states the sampling rule in words: cover the dose cycle, never at
+    the dose interval or a multiple of it, never within an hour of a dose. The
+    precision each choice buys is Figure D2. This figure is the rule itself, in
+    time, so a protocol writer reads the schedule off it rather than
+    reconstructing it from a standard deviation.
+
+    The trajectory and the sample rails are separate axes on a shared time
+    axis, because the rails are not marker values and one y-scale across both
+    would say they were.
+    """
+    # Palette order green -> blue -> red, validated so the failing schedule is
+    # not adjacent to a passing one under deuteranopia. Marker shape repeats
+    # the distinction and every row is named, so identity never rests on colour.
+    SCHEDULES = [
+        ("monthly, every 30.4 d", 30.4, GREEN, "o", "0.170", "monthly"),
+        ("every 14.5 d, half a day off", 14.5, BLUE, "^", "0.161", "14.5-daily"),
+        ("fortnightly, on the dose", DOSE_INTERVAL, RED, "X", "3.51", "fortnightly"),
+    ]
+
+    fig, ax = plt.subplot_mosaic(
+        [["traj", "phase"], ["rails", "phase"]],
+        figsize=figsize(1.0, 0.50),
+        gridspec_kw={"width_ratios": [1.5, 1.0], "height_ratios": [1.9, 1.25],
+                     "hspace": 0.18, "wspace": 0.30}, layout="constrained")
+
+    # ---------------- the marker under the dose train ----------------
+    tt = np.linspace(0.0, T, 2000)
+    mm = quasi_steady_level(tt)
+    a = ax["traj"]
+    a.plot(tt, mm, color=INK, lw=1.5, zorder=3)
+    a.set_ylabel(r"marker $m(t)$")
+    a.set_xlim(0, T)
+    a.set_xticklabels([])
+    doses = np.arange(0.0, T + 1e-9, DOSE_INTERVAL)
+    a.plot(doses, quasi_steady_level(doses), linestyle="none", marker="v",
+           ms=3.8, color=AMBER, mec="white", mew=0.5, zorder=4, clip_on=False)
+    a.annotate("dose, every 14 d", xy=(doses[2], quasi_steady_level(doses[2])),
+               xytext=(0, -13), textcoords="offset points",
+               fontsize=6.3, color=AMBER, ha="center")
+    a.set_title("the schedule in time", fontsize=7.4)
+
+    # ---------------- the three schedules as rails ----------------
+    r = ax["rails"]
+    r.set_xlim(0, T)
+    r.set_xlabel("time  [days]")
+    r.set_ylim(-0.7, len(SCHEDULES) - 0.3)
+    r.set_yticks(range(len(SCHEDULES)))
+    r.set_yticklabels([s[5] for s in reversed(SCHEDULES)], fontsize=6.6)
+    for i, (lab, dt, col, mk, sd, short) in enumerate(SCHEDULES):
+        y = len(SCHEDULES) - 1 - i
+        ts = np.arange(0.0, T + 1e-9, dt)
+        r.axhline(y, color=GREY, lw=0.5, zorder=1)
+        r.plot(ts, np.full_like(ts, y), linestyle="none", marker=mk, ms=4.4,
+               color=col, mec="white", mew=0.6, zorder=5)
+        r.text(T * 0.99, y + 0.17, rf"$\operatorname{{sd}}(\ln\hat\theta)={sd}$",
+               fontsize=6.0, color=col, ha="right", va="bottom")
+    r.spines["left"].set_visible(False)
+    r.spines["bottom"].set_linewidth(0.6)
+    r.tick_params(axis="y", length=0)
+
+    # ---------------- where the draws fall inside one cycle ----------------
+    b = ax["phase"]
+    b.set_xlabel("phase within the 14-day dose cycle  [days]")
+    b.set_xlim(-0.35, DOSE_INTERVAL + 0.35)
+    b.set_ylim(-0.45, len(SCHEDULES) - 0.55)
+    b.set_yticks(range(len(SCHEDULES)))
+    b.set_yticklabels([s[5] for s in reversed(SCHEDULES)], fontsize=6.6)
+    b.tick_params(axis="y", length=0)
+    b.spines["left"].set_visible(False)
+
+    # the hour after a dose is excluded: the marker is not yet quasi-steady
+    # one hour is 1/24 d against a 14 d axis and invisible at true width, so the
+    # band is drawn wider than scale; the caption says so.
+    for x0 in (0.0, DOSE_INTERVAL - 0.22):
+        b.axvspan(x0, x0 + 0.22, color=RED, alpha=0.22, lw=0, zorder=1)
+    b.annotate("no draw within an hour of a dose",
+               xy=(0.11, len(SCHEDULES) - 0.78), xytext=(17, 0),
+               textcoords="offset points", fontsize=6.0, color=RED,
+               va="center", ha="left",
+               arrowprops=dict(arrowstyle="->", color=RED, lw=0.7))
+
+    for i, (lab, dt, col, mk, sd, short) in enumerate(SCHEDULES):
+        y = len(SCHEDULES) - 1 - i
+        ph = np.mod(np.arange(0.0, 730.0, dt), DOSE_INTERVAL)
+        b.axhline(y, color=GREY, lw=0.5, zorder=1)
+        b.plot(ph, np.full_like(ph, y), linestyle="none", marker=mk, ms=4.2,
+               color=col, mec="white", mew=0.6, alpha=0.9, zorder=5)
+    # the fortnightly row is one point, which is the whole finding
+    b.annotate("every draw at the same phase:\nthe increment stops varying",
+               xy=(0.0, 0.0), xytext=(10, 16), textcoords="offset points",
+               fontsize=6.0, color=RED, va="bottom", ha="left",
+               arrowprops=dict(arrowstyle="->", color=RED, lw=0.7))
+    b.set_title("where two years of draws land in one cycle", fontsize=7.4)
+
+    save(fig, "fig_D4_protocol")
+
 def theta_crit_local(ke, Km, m_tol=M_TOL, s_peak=None):
     """The operational threshold, in the local identification model."""
     s_peak = 1.5 * clearance_A(M_BAR, P) if s_peak is None else s_peak
@@ -955,5 +1056,6 @@ if __name__ == "__main__":
     fig_excitation()
     fig_collapse()
     fig_decision()
+    fig_protocol()
     table_excursion()
     table_spec()
