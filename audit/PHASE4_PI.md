@@ -751,8 +751,8 @@ Committed alongside this report, because both lock facts rather than sentences:
   against it and all six fail it;
 - `REVIEW_LOG.md` `R14`, the retraction, in the form the existing entries use.
 
-Held, unapplied, pending your reading: replacement wording for the passages listed above.
-The paper stays frozen.
+Held, unapplied, pending your reading: `audit/PHASE4_PROPOSED_TEXT.md`, replacement wording
+for the six passages listed above. The paper stays frozen.
 
 On the repository's taxonomy this is a new failure class and worth naming: **a diagnostic
 that answers a question the model cannot pose.** `audit/e5_structural.py` `q3` computes
