@@ -40,7 +40,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 import numpy as np
 import sympy as sp
 from scipy.integrate import solve_ivp
-from scipy.optimize import least_squares
+from scipy.optimize import brentq, least_squares
 
 from common.models import ParamsA, g, clearance_A
 from design.run import P, delta, load, LOAD_FRAC, ASSAY_CV, DOSE_INTERVAL
@@ -249,10 +249,11 @@ def s3_true_profile(times=MONTHLY):
     print("\n  The fibre runs to b -> +infinity with theta, K_m and k_e all")
     print("  positive, so nothing in the model closes it. What closes it is a")
     print("  bound on the load bias. theta implied by each plausible bound:")
-    lo, hi = -LB + 1e-9, 0.0
-    for _ in range(300):
-        mid = 0.5 * (lo + hi)
-        (hi, lo) = (mid, lo) if fibre(mid)[0] <= 0 else (lo, mid)
+    # theta(b) is increasing in b and runs to -infinity as b -> -L, so the
+    # admissible end is its root. brentq rather than a hand-rolled bisection:
+    # an earlier version of this line inverted the bracket update and printed
+    # -215.1515, which is where K_m reaches 300 and where theta is still 1785.
+    lo = float(brentq(lambda x: fibre(x)[0], -LB + 1e-9, 0.0, xtol=1e-12))
     print(f"    theta(b) reaches zero at b = {lo:.4f} "
           f"({100*lo/LB:+.2f}% of the recorded load)")
     print(f"\n  {'bound on |b|':>28} {'theta interval':>34} {'fold':>9}")
@@ -275,33 +276,64 @@ def s3_true_profile(times=MONTHLY):
 
 # --------------------------------------------------------------------------
 def s3b_which_design_gave_36_9():
-    banner("S3b  which design produced the paper's +/-36.9 and 2.08e-6?")
+    banner("S3b  which construction produced the paper's +/-36.9 and 2.08e-6?")
 
-    print("  chi^2 along the straight line is exactly quartic, so the printed")
-    print("  pair (chi^2/eps^4, half-width) determines each other and pins the")
-    print("  design. Sweeping the designs this repository uses:\n")
-    nvec = np.array([(LB + KE0 * KM0) / LB, -KM0 / LB, 0.0, 1.0])
-    print(f"  {'design':>30} {'n':>5} {'chi2/eps^4':>14} "
-          f"{'eps at dchi2=3.84':>19}")
-    print("  " + "-" * 72)
+    print("  chi^2 along a straight line is a SECOND-ORDER quantity, so it is")
+    print("  parametrisation dependent: the same null direction walked in")
+    print("  natural (theta, K_m) and in log (ln theta, ln K_m) coordinates")
+    print("  gives different answers. prop:rank is stated in log parameters")
+    print("  (06_excitation.tex:332, 'in (ln theta, ln K_m, L_0)') and the")
+    print("  information filter's columns are derivatives in those same")
+    print("  coordinates (src/design/run.py:324-329), so the LOG column is the")
+    print("  paper's own construction and the natural one is not.\n")
+    c_th = (1.0 + KM0 * KE0 / LB) / TH0        # eq:rank
+    c_km = -1.0 / LB
+    print(f"  c_theta = {c_th:.6e}, c_Km = {c_km:.6e} (eq:rank, log parameters)")
+    print(f"\n  {'design':>22} {'n':>5} | {'NATURAL chi2/eps^4':>19}"
+          f" {'half-width':>11} | {'LOG chi2/eps^4':>15} {'half-width':>11}")
+    print("  " + "-" * 94)
     designs = [("two-daily x 2 y", np.arange(0.0, 730.0, 2.0)),
                ("weekly x 2 y", np.arange(0.0, 730.0, 7.0)),
                ("monthly x 2 y", np.arange(0.0, 730.0, 30.4)),
                ("two-monthly x 2 y", np.arange(0.0, 730.0, 60.0)),
                ("daily x 2 y", np.arange(0.0, 730.0, 1.0)),
-               ("daily x 1 y", np.arange(0.0, 365.0, 1.0)),
                ("two-daily x 1 y", np.arange(0.0, 365.0, 2.0)),
                ("weekly x 1 y", np.arange(0.0, 365.0, 7.0)),
                ("14.5 d x 2 y", np.arange(0.0, 730.0, 14.5))]
     for lab, t in designs:
         m, inc = levels(t)
-        k = chi2(m, inc, *(np.array([TH0, KM0, KE0, 0.0]) + 1.0 * nvec))
-        print(f"  {lab:>30} {len(t):5d} {k:14.6e} {(3.84/k)**0.25:19.4f}")
-    print(f"\n  the paper prints {PAPER_CHI2_OVER_EPS4:.3g} and "
-          f"+/-{PAPER_PROFILE_HALFWIDTH}; the two are consistent with each")
-    print(f"  other ((3.84/{PAPER_CHI2_OVER_EPS4:.3g})^(1/4) = "
-          f"{(3.84/PAPER_CHI2_OVER_EPS4)**0.25:.2f}), so the printed pair is")
-    print("  internally consistent and identifies a design of about this size.")
+        row = []
+        for mode in ("natural", "log"):
+            e = 1.0
+            th = TH0 * (1 + e * c_th) if mode == "natural" else TH0 * np.exp(e * c_th)
+            km = KM0 * (1 + e * c_km) if mode == "natural" else KM0 * np.exp(e * c_km)
+            k = chi2(m, inc, th, km, KE0, e)
+            # the quartic extrapolation, and the exact crossing, which differ
+            # because chi^2 drifts off the quartic by the time it reaches 3.84
+            f = lambda x, mo=mode: chi2(
+                m, inc,
+                TH0 * (1 + x * c_th) if mo == "natural" else TH0 * np.exp(x * c_th),
+                KM0 * (1 + x * c_km) if mo == "natural" else KM0 * np.exp(x * c_km),
+                KE0, x) - 3.84
+            row += [k, float(brentq(f, 1e-3, 1e4))]
+        print(f"  {lab:>22} {len(t):5d} | {row[0]:19.6e} {row[1]:11.4f}"
+              f" | {row[2]:15.6e} {row[3]:11.4f}")
+
+    print(f"\n  the paper prints chi^2/eps^4 = {PAPER_CHI2_OVER_EPS4:.3g} and "
+          f"+/-{PAPER_PROFILE_HALFWIDTH} (06_excitation.tex:502-513).")
+    print(f"  Note the printed pair is internally a QUARTIC EXTRAPOLATION:")
+    print(f"    (3.84/{PAPER_CHI2_OVER_EPS4:.3g})^(1/4) = "
+          f"{(3.84/PAPER_CHI2_OVER_EPS4)**0.25:.3f} against the printed "
+          f"{PAPER_PROFILE_HALFWIDTH}.")
+    print("  A true profile does not produce a constant chi^2/eps^4 to read a")
+    print("  half-width off, so that consistency is itself evidence the number")
+    print("  was taken along a ray.")
+    print(f"\n  the load prior's own 95% half-width, 1.96 * {LOAD_FRAC} * L = "
+          f"{1.96 * LOAD_FRAC * LB:.4f}; the paper prints "
+          f"+/-{PAPER_PRIOR_HALFWIDTH} (06_excitation.tex:502)")
+    print("\n  The half-width is strongly design dependent in either")
+    print("  parametrisation, so no single number defends 'every covariance")
+    print("  this note reports', which is what rem:second_order claims.")
 
 
 # --------------------------------------------------------------------------
@@ -325,43 +357,57 @@ def s3c_how_well_is_k_e_pinned():
 
 
 # --------------------------------------------------------------------------
-def s4_with_noise(times=MONTHLY, reps=200, seed=7):
+def s4_with_noise(times=MONTHLY, reps=200, seeds=range(8)):
     banner("S4  with noise: does the likelihood pick a point on the fibre?")
 
     m, inc = levels(times)
-    rng = np.random.default_rng(seed)
-    print(f"  {reps} noisy replicates, ordinate noise sd {SIG:.4f}, monthly design.")
-    print("  Each replicate is fitted (a) freely in (theta, K_m, k_e, b) and")
-    print("  (b) with b fixed at 0.  Reported: the fitted b, and how far the")
-    print("  free fit's parameters sit from the truth.\n")
+    print(f"  {reps} noisy replicates at each of {len(list(seeds))} seeds, ordinate")
+    print(f"  noise sd {SIG:.4f}, monthly design, no priors, constant load.")
+    print("  Every summary below is quoted with its spread ACROSS SEEDS, because")
+    print("  an earlier version of this section quoted one seed and two of its")
+    print("  numbers (a 23% negative-theta rate and a k_e median of -0.879) are")
+    print("  seed artefacts: the sign of the k_e median is close to a coin toss.\n")
 
-    def fit(y, b_free=True, x0=None):
+    def fit(y, b_free=True):
         def res(x):
             th, lk, ke = x[0], np.exp(x[1]), x[2]
             b = x[3] if b_free else 0.0
-            tot = LB + b
-            return ((th + inc) * g(m, lk) + ke * m - tot - y) / SIG
-        x0 = np.array([TH0, np.log(KM0), KE0, 0.0]) if x0 is None else x0
-        s = least_squares(res, x0, xtol=1e-14, ftol=1e-14)
+            return ((th + inc) * g(m, lk) + ke * m - (LB + b) - y) / SIG
+        s = least_squares(res, np.array([TH0, np.log(KM0), KE0, 0.0]),
+                          xtol=1e-14, ftol=1e-14)
         return s.x, float(np.sum(s.fun ** 2))
 
-    bs, ths, kms, kes = [], [], [], []
-    for _ in range(reps):
-        y = rng.normal(0.0, SIG, m.size)
-        x, _ = fit(y)
-        bs.append(x[3]); ths.append(x[0]); kms.append(np.exp(x[1])); kes.append(x[2])
-    bs, ths, kms, kes = map(np.asarray, (bs, ths, kms, kes))
-    for nm, v, tr in (("b", bs, 0.0), ("theta", ths, TH0),
-                      ("K_m", kms, KM0), ("k_e", kes, KE0)):
-        print(f"    {nm:>6}: truth {tr:10.4f}   fitted "
-              f"median {np.median(v):12.4f}  [{np.percentile(v,2.5):12.4f}, "
-              f"{np.percentile(v,97.5):12.4f}]")
-    frac_neg = float(np.mean(ths <= 0))
-    print(f"\n    fraction of replicates with theta_hat <= 0: {frac_neg:.3f}")
-    pos = ths[ths > 0]
-    if pos.size:
-        print(f"    sd(ln theta_hat) over the positive ones = "
-              f"{np.std(np.log(pos)):.4f}  (n = {pos.size})")
+    per_seed = []
+    for sd in seeds:
+        rng = np.random.default_rng(sd)
+        bs, ths, kms, kes = [], [], [], []
+        for _ in range(reps):
+            x, _ = fit(rng.normal(0.0, SIG, m.size))
+            bs.append(x[3]); ths.append(x[0])
+            kms.append(np.exp(x[1])); kes.append(x[2])
+        per_seed.append(tuple(map(np.asarray, (bs, ths, kms, kes))))
+
+    def spread(fn):
+        v = np.array([fn(*p) for p in per_seed], float)
+        return v.min(), np.median(v), v.max()
+
+    print(f"    {'quantity':>28} {'truth':>10} | {'min':>12} {'median':>12} "
+          f"{'max':>12}   (over seeds)")
+    print("  " + "-" * 92)
+    for nm, i, tr in (("median b_hat", 0, 0.0), ("median theta_hat", 1, TH0),
+                      ("median K_m_hat", 2, KM0), ("median k_e_hat", 3, KE0)):
+        lo, md, hi = spread(lambda *p, i=i: np.median(p[i]))
+        print(f"    {nm:>28} {tr:10.4f} | {lo:12.4f} {md:12.4f} {hi:12.4f}")
+    lo, md, hi = spread(lambda *p: float(np.mean(p[3] < 0)))
+    print(f"    {'fraction with k_e_hat < 0':>28} {'':>10} | "
+          f"{lo:12.4f} {md:12.4f} {hi:12.4f}")
+    lo, md, hi = spread(lambda *p: float(np.mean(p[1] <= 0)))
+    print(f"    {'fraction with theta_hat <= 0':>28} {'':>10} | "
+          f"{lo:12.4f} {md:12.4f} {hi:12.4f}")
+    print("\n    The sign of the fitted k_e is close to a coin toss, so no single")
+    print("    seed's median may be quoted. What is stable across every seed is")
+    print("    the collapse itself, and the invariants below.")
+    bs, ths, kms, kes = per_seed[0]
 
     # the fibre invariants are what the data actually determine
     print("\n  The invariants (A, B, C) = (K_m(L+b), L+b-theta-k_e K_m, -k_e)")

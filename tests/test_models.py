@@ -1284,6 +1284,89 @@ def test_the_corrected_design_matrix_is_rank_deficient_at_constant_load():
     assert np.linalg.matrix_rank(Q2, tol=1e-10) == 3
 
 
+def test_the_constant_load_deficiency_is_an_exact_fibre_not_a_curvature():
+    """
+    What the rank deficiency above actually is, asserted so that the
+    first-order reading cannot come back.
+
+    Solving the balance for the increment that produces a level m gives, with
+    no remainder,
+
+        Delta(m) = A/m + B + C m,   A = K_m (L + b),
+                                    B = L + b - theta - k_e K_m,
+                                    C = -k_e,
+
+    and {1/m, 1, m} are independent as functions of m, so (A, B, C) is
+    everything a constant-load record of (m_k, Delta_k) pairs contains. Four
+    unknowns against three invariants leave a ONE-PARAMETER family of exact
+    observational twins,
+
+        K_m(b) = K_0 L/(L + b),   theta(b) = theta_0 + b + k_e (K_0 - K_m(b)),
+
+    with k_e unchanged. The family is EXACT, not second order: the noiseless
+    misfit stays at machine zero along it at any displacement. The straight
+    line tangent to it at b = 0 is the null vector of the test above, and
+    moving along THAT line gives a quartic misfit, which is the curvature of
+    the fibre relative to its own tangent rather than information the record
+    holds. audit/f5_fibre.py, audit/PHASE4_PI.md, and REVIEW_LOG.md R14.
+    """
+    import design.run as D
+    th0, K0, ke = D.P.theta, D.P.Km, D.P.ke
+    L = D.load(0.0)
+    t = np.arange(0.0, 730.0, 30.4)
+    dd = np.asarray(D.delta(t), dtype=float)
+
+    def fibre(b):
+        Km = K0 * L / (L + b)
+        return th0 + b + ke * (K0 - Km), Km
+
+    def levels(th, Km, b):
+        B = ke * Km + th + dd - (L + b)
+        return (-B + np.sqrt(B ** 2 + 4.0 * ke * (L + b) * Km)) / (2.0 * ke)
+
+    def misfit(th, Km, b, m):
+        return (th + dd) * m / (Km + m) + ke * m - (L + b)
+
+    m0 = levels(th0, K0, 0.0)
+    scale = np.linalg.norm(np.full_like(m0, L))
+
+    # along the exact fibre the misfit is machine zero at every displacement,
+    # and the twin generates the same levels, which is the observational claim
+    for b in (1.0, 10.0, 30.0, 100.0, 200.0):
+        th, Km = fibre(b)
+        assert np.linalg.norm(misfit(th, Km, b, m0)) < 1e-9 * scale, b
+        assert np.allclose(levels(th, Km, b), m0, rtol=1e-11, atol=1e-11), b
+
+    # along the straight tangent the misfit is QUARTIC in the displacement,
+    # which is the quantity the first-order reading measured
+    n = np.array([(L + ke * K0) / L, -K0 / L, 1.0])
+    ss = {}
+    for eps in (1.0, 10.0):
+        ss[eps] = float(np.sum(misfit(th0 + eps * n[0], K0 + eps * n[1],
+                                      eps * n[2], m0) ** 2))
+    assert ss[1.0] > 0.0, "the line must NOT be flat, else this guards nothing"
+    power = np.log(ss[10.0] / ss[1.0]) / np.log(10.0)
+    assert 3.6 < power < 4.4, (power, ss)
+
+    # and that line is the tangent to the fibre at b = 0, which is the null
+    # vector of prop:rank
+    d = 1e-6
+    thp, Kmp = fibre(d)
+    thm, Kmm = fibre(-d)
+    tang = np.array([(thp - thm) / (2 * d), (Kmp - Kmm) / (2 * d), 1.0])
+    assert np.allclose(tang, n, rtol=1e-6), (tang, n)
+
+    # a varying recorded load closes the fibre: the same twin no longer
+    # reproduces the record
+    rng = np.random.default_rng(0)
+    Ls = L * (1.0 + 0.05 * rng.standard_normal(t.size))
+    B = ke * K0 + th0 + dd - Ls
+    mv = (-B + np.sqrt(B ** 2 + 4.0 * ke * Ls * K0)) / (2.0 * ke)
+    th, Km = fibre(30.0)
+    r = (th + dd) * mv / (Km + mv) + ke * mv - (Ls + 30.0)
+    assert np.linalg.norm(r) > 1e-3 * np.linalg.norm(Ls), np.linalg.norm(r)
+
+
 def test_the_marker_is_quasi_steady_except_just_after_a_dose():
     """
     The separation of time scales that makes the information filter exact,

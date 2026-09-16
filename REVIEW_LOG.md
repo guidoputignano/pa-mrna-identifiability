@@ -732,3 +732,127 @@ is a record of what it found, and where it found nothing it says so.**
   whole-document pass is therefore done by reading, or it is not done; and where one has
   already run, the question is not whether it builds but what the diff changed, site by
   site.
+
+### R14. "the degenerate combination is recovered through curvature, at a square-root-of-noise price"
+
+**Retracted** (Phase 4, P5), and this one is in the paper's own prose in three places plus a
+cross-reference in a fourth, and in the two audit records that produced it.
+
+Section 6 states that on the quasi-steady locus the information matrix is singular at the
+truth and "flat only to first order", that the noiseless misfit along
+Proposition~`prop:rank`'s null direction grows as `eps^2` so `chi^2` grows as `eps^4`, and
+that the combination is therefore "recovered through curvature rather than through slope"
+at a price: "the recoverable displacement scales as the square root of the noise level".
+`rem:second_order` supports it with a diagnostic and with two numbers, `±31.6` against
+`±36.9`. `rem:no_delta` refers back to it.
+
+**The direction is not recovered at any order.** Solving the balance for the increment that
+produces a level `m` gives, with no remainder,
+
+    Delta(m) = A/m + B + C m ,   A = K_m(L+b),  B = L+b-theta-k_e K_m,  C = -k_e ,
+
+and `{1/m, 1, m}` are independent as functions of `m`, so `(A, B, C)` is everything a
+constant-load record of `(m_k, Delta_k)` pairs contains. Four unknowns against three
+invariants leave a one-parameter family of exact observational twins,
+
+    K_m(b) = K_0 L/(L+b) ,   theta(b) = theta_0 + b + k_e (K_0 - K_m(b)) ,   k_e unchanged,
+
+whose noiseless misfit is zero at every displacement out to `b = 200`, which is 62% of the
+recorded load, and whose true profile, re-optimising `(theta, K_m, k_e)` at each fixed `b`,
+is flat to `1e-25` and traces the closed form to seven figures.
+
+**The `eps^4` is the fibre's own curvature relative to its tangent line.**
+Proposition~`prop:rank`'s null vector is that tangent at `b = 0`, verified symbolically
+(the difference is identically zero in all four components). Moving along a straight line
+through a curved exact fibre departs from it at second order, so the residual is `O(eps^2)`
+and `chi^2` is `O(eps^4)` whether or not the record constrains anything. The measured local
+slope is `4.0000` over four decades, which is the signature of the geometry and not of the
+data.
+
+**So the diagnostic `rem:second_order` recommends returns the wrong answer on the problem it
+was written for.** It says `chi^2 ~ eps^4` means "the data do pin it, at second order, and
+the filter is understating what the record contains". Here the data pin nothing and the
+filter is reporting the prior exactly, which is the reading `rem:rankvsprec` gives the same
+configuration two pages earlier. The two remarks contradict each other and the paper did not
+notice, because each is locally consistent.
+
+**One supporting number is the load prior itself.** The `±31.6` is
+`1.96 × 0.05 × 322.7273`, the load prior's own 95% half-width, and is design-independent.
+
+**The `±36.9` is a ray, and the printed pair says so.** `(3.84/2.08e-6)^(1/4) = 36.86`
+against a printed `36.9`: the two numbers are tied by a quartic, which is what a straight
+line through a curved fibre gives and what a profile does not, because a profile does not
+produce a constant `chi²/ε⁴` to read a half-width off. A sweep of 88 designs by 7 noise
+conventions by 3 residual scales, plus restricted profiles, profiles with each prior inside
+`chi²`, profiles at a varying load, profiles on the ODE record and profiles with the assay
+error on the abscissa, reproduces it nowhere as a profile.
+
+**A first version of this entry made a footing charge that does not hold, and it is
+withdrawn here rather than quietly dropped.** It said the pair was computed on a design of
+roughly weekly size while the covariance it defends is monthly. `chi²/ε⁴` is second order and
+therefore parametrisation dependent; `prop:rank` is stated in log parameters
+(`06_excitation.tex:332`) and the filter's columns are derivatives in those coordinates,
+while the audit drew its line in natural `(θ, K_m)` coordinates. Redrawn in the paper's own,
+the two-daily × 2 y design gives `2.0900e-6` and `36.82` against the printed `2.08e-6` and
+`36.9`, and the provenance is documented: `audit/c2b_degeneracy.py:95` runs
+`arange(0, 730, 2.0)`, `PHASE2C.md:92-94` attaches the constant to `sd = 0.0251`, and
+`PHASE2A.md:35` shows `0.0251` is the two-daily row. On that design "the two agree to within
+a fifth" is right as computed.
+
+What survives of the footing charge is weaker and still worth recording: `rem:second_order`
+claims "every covariance this note reports survives", and the paper points the remark at the
+`0.1696` entry of `rem:rankvsprec` (`06_excitation.tex:482-485`), which is monthly. On
+monthly the same log construction gives `69.4` against the prior's `31.6`. The half-width
+runs `36.2 / 49.3 / 69.4` across two-daily, weekly and monthly, so one number cannot defend
+every covariance the note reports.
+
+**A defect in the proof, found while checking this.** `06_excitation.tex:371` eliminates the
+increment as `(θ+Δ)u = L − k_e m`, dropping the bias; the balance gives `L + b − k_e m`. So
+`eq:nullvec` as printed is the `b = 0` value of a field that depends on `b`. Carrying `b`
+through gives `n = (L + b + k_e K_m, −K_m, 0, L + b)`, whose integral curve is the fibre
+exactly; integrating the printed vector instead gives `K_m = K_0 exp(−b/L)`, which leaves the
+fibre at second order. That is why the exact fibre is not derivable from the paper as
+written.
+
+**What is unaffected, and this was attacked directly rather than assumed.** `0.1697` on the
+monthly design is earned at a load coefficient of variation of 10%, where the fibre is
+closed. Dropping the load-bias prior there costs **1.4%**: `0.1697` with it against `0.1721`
+without, and across seven seeds `0.1688`-`0.1709` with against `0.1710`-`0.1810` without. On
+every other design in `tab:designs` the prior is worth 0.6% to 3.5%. The 42x excitation
+(`1.9390` against `0.0462`), the factor-of-22 sampling rule (`21.7x`, and `25.3x`
+prior-free), the 11.7% dose-precision requirement and the cohort numbers all reproduce. No
+printed number in the paper changes: the retraction is a mechanism and a diagnostic, not a
+design number.
+
+**A new failure class, and it is the reason this took three passes to find: a diagnostic
+that answers a question the model cannot pose.** R7 was a mechanism asserted without
+derivation. R8 was a number right about its own computation and wrong about what it computed.
+This is neither. `audit/e5_structural.py` `q3` computes `eps^2` correctly, from committed
+code, and reports it accurately; the paper quotes it accurately; the power law is real to
+four decades. What is wrong is the *inference*, and it is wrong because the test profiles
+along a straight line in a space whose relevant object is curved. No numerical check in this
+repository could have caught it, because there is no number in it to disagree with. The rule
+that follows: **a diagnostic is a model too.** Before reading a power law as evidence, state
+what the alternative hypothesis is and check that the construction can distinguish them.
+Here `chi^2 ~ eps^4` is equally consistent with "the data pin it at second order" and with
+"an exact fibre is curved", and nothing in the construction separates the two. The separating
+test is a profile with the nuisance parameters re-optimised, which costs more and which the
+repository now runs.
+
+**How it was found, and how the retraction was itself checked.** Not by a test and not by
+re-reading. A second reader, working outside the repository, proposed a different
+parametrisation, multiply the balance by `(K_m + m)` and it becomes linear in
+`beta = (K_m, K_m b, b − θ − k_e K_m, −k_e)`, in which the degeneracy is a plain rank
+condition on a design matrix and the fibre is visible immediately. That is the same detector
+that caught `R8`: two descriptions of one object that do not agree. The route ran through a
+proposed estimator that this audit otherwise rejected on three other counts.
+
+The retraction was then put through eight adversarial lenses before it was written
+(`audit/PHASE4_STRESS.md`), each prompted to refute it and each re-run by a second agent.
+The finding survived all eight. **The audit did not**: its own forensic claim about the
+`±36.9` was refuted, along with a bug in `audit/f5_fibre.py`, a single-seed number quoted
+without its spread, and a retraction scoped both too wide (`"flat only to first order"` is
+true of `prop:rank`'s null vector) and too narrow (`rem:rankvsprec` contains a sentence that
+is false at two of the four rows it prints). All are recorded as C1 to C8 in
+`audit/PHASE4_PI.md`. Given `R5` and `R7`, a retraction issued without that check would have
+been the third of its kind here.

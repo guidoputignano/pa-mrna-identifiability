@@ -10,6 +10,7 @@ python audit/f2_euler.py          # P2  Euler, and what a between-visit differen
 python audit/f3_linearisation.py  # P3  his multiplied-out form and his constrained solve
 python audit/f4_sampling.py       # P4  the sampling rule
 python audit/f5_fibre.py          # P5  curvature, or an exact fibre
+python audit/f6_fibre_adversarial.py   # P5  the adversarial checks, reproducible
 ```
 
 No script records an expected result in advance. The four numbers quoted from the paper in
@@ -26,12 +27,20 @@ P5 is the one that matters.
 The largest result is P5, and it goes against the paper rather than against him. The
 premise he restates is the paper's own (`PI_NOTE.md` p.3, from `06_excitation.tex:66-78`):
 the degenerate combination is "recovered through curvature" at a `sqrt(noise)` price. The
-second reader's hypothesis is **confirmed**, symbolically and numerically: the combination
-is not recovered at all. The fibre is exact, the true profile is flat to machine precision,
-and the `eps^4` the paper reports is the curvature of that fibre relative to its own tangent
-line. This retires three sentences in Section 6 and one cross-reference in Section 7. It
-does **not** touch the paper's headline precision, which is earned at a varying load where
-the fibre is closed.
+second reader's hypothesis is **confirmed**: on the quasi-steady locus at a constant
+recorded load the degeneracy is an **exact one-parameter fibre**, the true profile is flat,
+and the `eps^4` the paper measures is the curvature of that fibre relative to its own
+tangent line. Two clauses in Section 6 are false, one cross-reference in Section 7 is
+inverted, and `eq:nullvec`'s derivation drops the load bias. It does **not** touch the
+paper's headline precision, which is earned at a varying load where the fibre is closed.
+
+**This finding was then adversarially stress-tested before anything was built on it**
+(`audit/PHASE4_STRESS.md`): eight independent lenses, each prompted to refute it, each
+re-run by a second agent. Claims (1) to (4) survived all eight. **The audit's own claim (5),
+about where the paper's `+/-36.9` came from, was refuted and is withdrawn in its strongest
+form**, along with four smaller errors of this document's, including a bug in
+`audit/f5_fibre.py` and a single-seed number quoted without its spread. All of them are
+recorded as C1 to C8 at the end of the P5 section. The core survived; this audit did not.
 
 ---
 
@@ -56,7 +65,7 @@ the fibre is closed.
 | P3f | The linear route runs with `psi` unknown | **fails** | `K_M psi` is a product of unknowns. Linear only after the `beta` reparametrisation. `f3` S3 |
 | P4a | Synchronous sampling is bad | **already in the paper** | 14, 28, 42, 56 d give 3.51, 3.59, 3.63, 3.68. `f4` S1, and `PHASE2D_FINDINGS.md` §4 |
 | P4b | Sampling at 1/2 of the interval is also bad | **fails** | 7 d gives 0.1528 and passes. `f4` S2 |
-| P5 | Recovered through curvature, `sqrt(noise)` price | **fails** | the second reader is right: the fibre is exact, the true profile is flat to machine precision, and the `eps^4` is the fibre's curvature relative to its own tangent. `f5` S1-S4 |
+| P5 | Recovered through curvature, `sqrt(noise)` price | **fails** | the second reader is right: on the locus at constant load the fibre is exact, the true profile is flat, and the `eps^4` is its curvature against its own tangent. Confirmed by eight adversarial lenses. `f5` S1-S4, `PHASE4_STRESS.md` |
 | P6 | (what the notes do not cover) | see below | |
 
 ---
@@ -372,163 +381,252 @@ plateau where `Delta` has barely moved, and 14.05 d already fails the 0.20 gate 
 
 ## P5. The premise: curvature, or an exact fibre
 
-**The second reader is right.** Both symbolically and numerically, and the consequence is
-larger than the hypothesis as stated.
+**Verdict: the core holds and one sub-claim was mine and was wrong.** The finding was put
+through eight independent adversarial lenses, each prompted to refute it and each re-run by a
+second agent (`audit/PHASE4_STRESS.md`). Claims (1) to (4) survived every one. Claim (5), the
+forensic claim about where the paper's `+/-36.9` came from, was refuted in its strongest form
+and survives only in a weaker one. The corrections are set out at the end of this section and
+in the stress-test record; the numbers below are the ones that survived.
 
-**Symbolic (`f5` S1, sympy).** Solving the balance for the increment that produces a level
-`m`,
+### What is claimed
 
-```
-Delta(m) = A/m + B + C m ,   A = K_m (L+b),  B = L + b - theta - k_e K_m,  C = -k_e
-```
-
-with remainder exactly 0. `{1/m, 1, m}` are independent as functions of `m`, so
-**`(A, B, C)` is everything a constant-load record of `(m_k, Delta_k)` pairs can contain**:
-four unknowns, three invariants, a one-parameter fibre. Fixing `(A, B, C)` at the truth and
-solving gives
+**(1)** Solving the quasi-steady balance for the increment that produces a level `m` gives,
+with no remainder,
 
 ```
-K_m(b) = K_0 L/(L+b) ,    theta(b) = theta_0 + b + k_e (K_0 - K_m(b)) ,    k_e unchanged
+Delta(m) = A/m + B + C m ,   A = K_m(L+b),  B = L+b-theta-k_e K_m,  C = -k_e
 ```
 
-which is the second reader's curve, and its tangent at `b = 0` is `prop:rank`'s null vector
-exactly (`difference = [0, 0, 0, 0]`, asserted in the script).
+**(2)** `{1/m, 1, m}` are independent as functions of `m`, so `(A, B, C)` is everything a
+constant-load record of `(m_k, Delta_k)` pairs **on the quasi-steady locus** contains. Four
+unknowns against three invariants leave a one-parameter fibre,
 
-**Numeric (`f5` S2, monthly design, ordinate sd 21.9612).**
+```
+K_m(b) = K_0 L/(L+b) ,  theta(b) = theta_0 + b + k_e (K_0 - K_m(b)) ,  k_e unchanged.
+```
 
-| `b` displacement | chi2 along the straight line `n` | chi2 along the exact curve |
-|---|---|---|
-| 0.01 | 4.41e-15 | 1.86e-25 |
-| 1.0 | 4.44e-07 | 1.85e-25 |
-| 30.0 | 4.29e-01 | 2.19e-25 |
-| 36.9 | 1.03e+00 | 2.25e-25 |
-| 200.0 | 4.08e+03 | 4.55e-25 |
+**(3)** The fibre is exact on the locus, not second order.
 
-Along the line the local slope `d ln chi2 / d ln eps` is 4.0000 over four decades, exactly
-reproducing the paper's power law. **Along the curve chi2 is machine zero at every
-displacement, out to `b = 200`, which is 62% of the recorded load.**
+**(4)** So the `eps^4` the paper measures is the curvature of that fibre relative to its own
+tangent line, and "recovered through curvature" and the `sqrt(noise)` price are false.
 
-**The true profile (`f5` S3).** Re-optimising `(theta, K_m, k_e)` at each fixed `b`:
+**(5)** The paper's `+/-36.9` was computed along a ray, not as a profile.
 
-| `b` | chi2 along the line | chi2, TRUE profile | `theta_hat` | `K_m_hat` | `k_e_hat` |
-|---|---|---|---|---|---|
-| 0 | 1.8e-25 | 1.2e-25 | 3000.0000 | 100.0000 | 5.00000 |
-| 30 | 4.29e-01 | 1.5e-25 | 3072.5258 | 91.4948 | 5.00000 |
-| 100 | 8.80e+01 | 2.1e-25 | 3218.2796 | 76.3441 | 5.00000 |
-| 200 | 4.08e+03 | 3.1e-25 | 3391.3043 | 61.7391 | 5.00000 |
-| 300 | 2.41e+05 | 4.3e-25 | 3540.8759 | 51.8248 | 5.00000 |
-| -200 | 2.81e+02 | 1.9e-26 | 1985.1852 | 262.9630 | 5.00000 |
+### The evidence, by lens
 
-The optimiser lands on the closed-form fibre point to every digit printed. **The true
-profile is flat. The `eps^4` is the curvature of an exact fibre relative to its own tangent
-line, and it carries no information.**
+**Symbolic, two independent eliminations.** Solving for `Delta` and collecting in
+`{1/m, 1, m}` leaves remainder `0`. Eliminating `m` instead, by a resultant between the
+truth's quadratic and a candidate's and requiring it to vanish identically in the known
+`Delta`, sympy returns the single solution `{A2: A1, B2: B1, k_e2: k_e}`, and the Groebner
+basis of the coefficient ideal contains `(B1-B2)^3`, `(k_e-k_e2)^4` and `k_e^2 (A1-A2)^2`.
+**There is no fourth invariant.** The Jacobian of `(theta, K_m, k_e, b) -> (A, B, C)` has rank
+3 with minors `{-(L+b), 0, K_m, K_m k_e + L + b}`, and the analytic Jacobian of the level map
+on the real records has fourth singular value `9.0e-17` (monthly), `9.4e-16` (weekly),
+`5.1e-16` (two-daily) against a first of `~1.99`.
 
-**Was the `+/-36.9` a line or a profile? A line.** Three checks:
+**An identity, not a coincidence.** `R_fibre(m) = R_true(m) * [1 + K_0 b/(K_0 L + (L+b) m)]`,
+so the fibre's residual vanishes wherever the truth's does, for every `b`, every `Delta` and
+every `m`. It follows immediately that **any** true profile leaving `theta` and `K_m` free is
+exactly flat.
 
-1. The printed pair is internally consistent with a quartic:
-   `(3.84 / 2.08e-6)^(1/4) = 36.86`. A quartic in the displacement is what a straight line
-   through a curved fibre gives, and is not what a profile gives.
-2. `+/-31.6` reproduces exactly as `1.96 * 0.05 * 322.7273 = 31.6273`, the load prior's own
-   95% half-width. Design-independent.
-3. **The two numbers are not on the same design.** On the accessible monthly design the
-   same line construction gives `chi2/eps^4 = 4.44e-7` and a half-width of **`+/-54.24`**,
-   not 36.9. `2.08e-6` matches a design of roughly 100 visits. The closest in the
-   sweep is weekly x 2 y at `1.91e-6` and `+/-37.67`, which is 8% out in the constant and
-   2% out in the half-width, so the exact design is not pinned. What is pinned is that it is
-   **not the monthly one**: that would need `4.44e-7`, a factor of 4.7 away. So
-   `rem:second_order` compares a line profile from a design of roughly weekly size against a
-   design-independent prior width, in defence of a covariance quoted on the **monthly**
-   design. On the monthly design the same two numbers are 54.2 against 31.6, a factor of
-   1.72, not "within a fifth".
+**Exact arithmetic settles the artefact question.** The worry is that `chi^2 ~ 1e-25` is
+cancellation in the closed-form quadratic root. It is not. sympy returns the integer `0`, not
+something small. In exact rationals (`clearance_A(10) = 3550/11`) the residual is the rational
+`0` in eighteen cases, at fibre points `K_m = 8875/97, theta = 298035/97` (`b = 30`) and
+`K_m = 1420/23, theta = 78000/23` (`b = 200`). Decisively, re-running the pipeline in mpmath
+at 15 / 30 / 60 / 120 digits gives `chi^2 = 1.86e-25 / 2.94e-55 / 1.49e-115 / 2.08e-235`:
+**a fall of 210 orders of magnitude as precision goes from 16 to 120 digits.** A zero
+manufactured by cancellation cannot track working precision like that.
 
-This is the `R8` failure mode again (`REVIEW_LOG.md`): a number that is right about its own
-computation and attached to a sentence with a different footing.
+**The observable itself is invariant.** Stronger than the load-scale argument the audit first
+made: the predicted marker is bit-identical along the fibre, `max|m(b) - m(0)| = 0.0` in
+floating point at `b = 1, 10, 30, 100, 200, 1000, -100, -200`. Every likelihood whose noise
+acts on `m` with parameter-free noise constants is therefore exactly flat, whatever its shape.
+Confirmed directly: a log-normal (CV 5%) `m`-scale profile moves `chi^2` by at most `4.7e-4`
+out to `b = +5000`, against `chi^2(0) = 19.82`; a consistently heteroscedastic load-scale fit
+carrying its Jacobian term returns `-26.77721254` at `b = 0, 30, 100, 200, -100`, identical to
+eight decimals.
 
-**With noise (`f5` S4, 200 replicates, constant load, no priors, free 4-parameter fit).**
-23% of replicates return `theta_hat <= 0`; `k_e_hat` has median `-0.879` against a truth of
-5. Relative inter-quartile ranges:
+**The `sqrt(noise)` claim, refuted quantitatively.** At a constant load, halving the assay CV
+buys nothing at all: the true profile half-width is infinite at `sigma`, `sigma/2` and
+`sigma/4`. Where the data do work, at load CV 0.5 / 2 / 10%, the half-width scales as
+`sigma^0.98`, which is **first** order, not square root.
 
-| quantity | relative IQR |
-|---|---|
-| `A = K_m(L+b)` | **0.084** |
-| `B` | 0.307 |
-| `C = -k_e` | 17.39 |
-| `b` | 13.90 |
-| `theta` | 3.56 |
-| `K_m` | 0.96 |
+**The ODE does not rescue it.** The departure of the ODE record from the locus is perfectly
+systematic (the pattern at `b = 1` and at `b = 1000` is the same unit vector to
+`cos = 0.99999926`), so it could in principle be estimable. It is not: re-optimising the other
+three parameters absorbs `99.9934%` of it, and the profile Fisher information about `b` from
+the transient alone gives `sd(b_hat) = 3.90e7`, which is 2.4 million times the load prior's
+`+/-31.6`. Matching the prior would take `1.4e14` monthly draws.
 
-Only the invariant `A` is pinned. This is what an exactly flat direction looks like in
-practice, and it is not what "recovered through curvature" predicts.
+**No profile construction reproduces `36.9`.** A sweep of 88 designs x 7 sigma conventions x 3
+residual scales, plus restricted profiles (holding each of `K_m`, `theta`, `k_e` and every
+subset), profiles with each prior inside `chi^2`, profiles at a varying load, profiles on the
+ODE record, and profiles with the assay error moved onto the abscissa. Three land near 36.9
+and all three are disqualified on inspection; the closest, a `theta`-only profile on an offset
+monthly grid giving 36.84, is exactly **quadratic** in `b` (so it cannot also yield a constant
+`chi^2/eps^4`) and holds `K_m` exactly known, which `07_design.tex:35-39` forbids.
 
-**A second-order point that cuts the other way (`f5` S3c).** `C = -k_e` is an *exact*
-invariant, so `k_e` is structurally identified at a constant load with no fibre at all. It
-is still barely estimable: over the marker band the design visits, `[3.51, 8.75]`, a
-2.49-fold range, `cond{1/m, 1, m} = 59.9`, and the Monte Carlo IQR above is 17.4. So
-"exactly identified" and "usefully estimated" are as far apart here as `rem:rankvsprec`
-already says, and this time the gap runs in the opposite direction. The paper's `k_e` prior
-is not redundant.
+**The exact fibre is not already in the paper.** `K_m(b) = K_0 L/(L+b)` appears nowhere
+outside the audit. And there is a reason it is not derivable from the paper as written: the
+elimination at `06_excitation.tex:371` drops the bias, writing `(theta+Delta) u = L - k_e m`
+instead of `L + b - k_e m`, so `eq:nullvec` is the `b = 0` value of a field that in fact
+depends on `b`. Carrying `b` through gives `n = (L + b + k_e K_m, -K_m, 0, L + b)`, and
+integrating **that** field reproduces the fibre with symbolic difference exactly `0`;
+integrating the paper's frozen-`L` vector instead gives `K_m = K_0 exp(-b/L)`, which leaves the
+fibre at second order. That is a real defect in the proof and it should be fixed whatever is
+decided about the rest.
 
-**Where the fibre ends (`f5` S3).** Nowhere, inside the model: it runs to `b -> +infinity`
-with `theta`, `K_m` and `k_e` all positive. `theta(b)` reaches zero at `b = -215.15`,
-`-66.67%` of the recorded load. What closes it is a bound on `b`:
+### What the fibre costs, and what closes it
 
-| bound on `|b|` | `theta` interval | fold |
+Nothing in the model closes it: the fibre runs to `b -> +infinity` with `theta`, `K_m` and
+`k_e` all positive. `theta(b)` reaches zero at **`b = -272.7273`**, `-84.51%` of the recorded
+load. What closes it is a bound on `b`:
+
+| bound on `\|b\|` | `theta` interval | fold |
 |---|---|---|
 | 5% of `L` (the paper's load prior) | [2957.55, 3039.95] | 1.028 |
 | 10% | [2912.17, 3077.73] | 1.057 |
 | 20% | [2810.45, 3147.88] | 1.120 |
 | 50% | [2338.64, 3328.03] | 1.423 |
 
-and with `b >= 0` imposed, `[3000.00, 3039.95]`, `[3000, 3147.88]`, `[3000, 3328.03]`. So
-the practical damage at the paper's own 5% load prior is a 2.8% fold in `theta`, which is
-small. **The prior is doing that work, and the paper should say so rather than say the
-curvature is.**
+So at the paper's own 5% load record the practical damage is a 2.8% fold in `theta`. **The
+prior is doing that work, and the paper should say so rather than say the curvature is.**
 
-**Does a varying load close it (`f5` S5)?** Yes, and here are the rates:
+A varying load closes it from the data, and here are the rates (monthly design, true profile
+in `b`, `Delta chi^2 = 3.84`):
 
-| load CV | rms residual on the fibre at `b = 30` | 95% TRUE profile half-width in `b` |
+| load CV | rms residual on the fibre at `b = 30` | 95% profile half-width in `b` |
 |---|---|---|
-| 0% | 2.06e-12 | `> 1e5` |
+| 0% | 2.06e-12 | unbounded |
 | 0.5% | 0.1642 | 2108.5 |
 | 2% | 0.5694 | 508.8 |
 | 10% | 2.9314 | 96.0 |
 
-Even at CV 10% the data's own interval in `b` is `+/-96`, three times looser than the
-prior's `+/-31.6`. It does not matter much for `theta` (`PHASE2D_FINDINGS.md` section 2, two-daily x 2 y at
-load CV 10%: 0.1474 with the load prior, 0.1483 without), but "at any real day-to-day variation the
-data fill it instead" (`rem:rankvsprec`) is generous: the data close the *rank* at 0.5% and
-only overtake the prior's *width* somewhere well past 10%.
+Even at CV 10% the data's own interval is three times looser than the prior's `+/-31.6`.
 
-**Is the fibre an artefact of the algebraic locus (`f5` S6)?** No. Integrating the real ODE
-at the truth and at fibre points and sampling at the visits:
+### With noise, and why `k_e` is the interesting case
 
-| `b` | max `|m_fibre - m_true|` | as a fraction of one assay sd |
-|---|---|---|
-| 30 | 7.70e-4 | 0.25% |
-| 100 | 2.14e-3 | 0.69% |
-| 200 | 3.46e-3 | 1.11% |
+200 replicates at each of 8 seeds, monthly design, no priors, constant load. Quoted with the
+spread across seeds, because an earlier version of this section quoted one:
 
-The fibre is exact for the balance and survives the ODE two orders of magnitude below the
-assay.
+| quantity | truth | min | median | max |
+|---|---|---|---|---|
+| median `b_hat` | 0 | 147.3 | 399.8 | 774.4 |
+| median `theta_hat` | 3000 | 6905 | 7889 | 8646 |
+| median `K_m_hat` | 100 | 27.8 | 42.8 | 69.6 |
+| median `k_e_hat` | 5 | **-0.88** | 4.67 | **14.34** |
+| fraction with `k_e_hat < 0` | | 0.415 | 0.490 | 0.505 |
+| fraction with `theta_hat <= 0` | | 0.220 | 0.245 | 0.290 |
 
-**Reconciling with `StructuralIdentifiability.jl` (`f5` S7).** No contradiction, and the
-paper already has the right reconciliation at `06_excitation.tex:55-65`. The Julia verdict
-is about the transient from a generic initial condition, where every time derivative of the
-output is available. On the locus `dm/dt = 0`, so every higher derivative is `0 = 0` and
-those equations are simply absent. `tau = 0.0336 d` against a 3.5 d half-life, a separation
-of 104x, is what puts the clinic on the locus. What changes is only the sentence that
-follows: the obstruction is not "real but priced at `sqrt(noise)`". At a constant load it is
-an exact fibre priced at whatever bound you can put on `b`; at a varying load it is closed
-by the data.
+The sign of the fitted `k_e` is a coin toss and its median is not quotable from one seed. What
+is stable is the collapse. Relative inter-quartile ranges: `A = K_m(L+b)` **0.078**, `B` 0.303,
+`C = -k_e` 16.9, `b` 12.6, `theta` 4.36, `K_m` 0.857. Only the invariant `A` is pinned.
 
-**Three fibres, and they are different objects.** Worth writing down because the paper now
-has three and calls two of them the same word:
+**`k_e` is exactly identified and still barely estimable.** `C = -k_e` is an exact invariant,
+so at a constant load `k_e` is structurally identified with no fibre at all. Over the marker
+band the design visits, `[3.51, 8.75]`, a 2.49-fold range, `cond{1/m, 1, m} = 59.9` and the
+Monte Carlo IQR above is 16.9. So "exactly identified" and "usefully estimated" are as far
+apart here as `rem:rankvsprec` says, and this time the gap runs the other way. The paper's
+`k_e` prior is not redundant.
+
+### Reconciling with `StructuralIdentifiability.jl`
+
+No contradiction, and the paper already has the right reconciliation at
+`06_excitation.tex:55-65`. The Julia verdict is about the transient from a generic initial
+condition, where every time derivative of the output is available. On the locus `dm/dt = 0`, so
+every higher derivative is `0 = 0`. `tau = 0.0336 d` against a 3.5 d half-life, a separation of
+104x, is what puts the clinic on the locus. What changes is only the sentence that follows: the
+obstruction is not "real but priced at `sqrt(noise)`". At a constant load it is an exact fibre
+priced at whatever bound you can put on `b`; at a varying load it is closed by the data.
+
+### Three fibres, and they are different objects
 
 | | unknowns | observables | dimension | `k_e` along it |
 |---|---|---|---|---|
 | `rem:fibre` (`04_local.tex:176`) | `(theta, K_m, k_e)` | `(a, b)` of an affine tangent | 1 | **varies** |
 | `prop:rank` / this one | `(theta, K_m, k_e, b)` | `(A, B, C)` on the locus | 1 | **fixed** |
 | `rem:modelB` (`06_excitation.tex:306`) | `(theta, K_m, k_e, K_e)` | saturating-channel exchange | 0 (two points) | exchanged |
+
+### Corrections the stress test forced, on this audit's own work
+
+**C1. Claim (5)'s design and coordinates were wrong.** `chi^2/eps^4` is a second-order
+quantity and is therefore **parametrisation dependent**. `prop:rank` is stated in log
+parameters (`06_excitation.tex:332`, "the three design columns ... in `(ln theta, ln K_m,
+L_0)`") and the information filter's columns are derivatives in those coordinates. The audit
+drew the line in natural `(theta, K_m)` coordinates. Redrawn in the paper's own:
+
+| design | n | natural `chi2/eps^4` | half-width | **log `chi2/eps^4`** | **half-width** |
+|---|---|---|---|---|---|
+| **two-daily x 2 y** | **365** | 6.499e-06 | 26.66 | **2.0900e-06** | **36.15** |
+| weekly x 2 y | 105 | 1.908e-06 | 35.68 | 5.879e-07 | 49.30 |
+| monthly x 2 y | 25 | 4.438e-07 | 50.18 | 1.436e-07 | 69.41 |
+
+The paper prints `2.08e-6` and `+/-36.9`. The log / two-daily entry matches to 0.5%, and the
+provenance is documented rather than inferred: `audit/c2b_degeneracy.py:95` runs
+`np.arange(0.0, 730.0, 2.0)`, `audit/PHASE2C.md:92-94` attaches the `2.08e-6` to
+`sd = 0.0251`, and `audit/PHASE2A.md:35` shows `0.0251` is the two-daily row. **So
+"a design of roughly weekly size", "not the monthly one", "`+/-54.2`" and "a factor of 1.72,
+not within a fifth" are all withdrawn.** On the design the number was computed for, the
+paper's "the two agree to within a fifth" is right as computed: `36.86/31.63 = 1.17`.
+
+**C2. A weaker design charge survives.** `rem:second_order` claims "every covariance this note
+reports survives", and the paper points the remark at the `0.1696` entry of `rem:rankvsprec`
+(`06_excitation.tex:482-485`), which is the **monthly** design. On monthly the same log
+construction gives `69.41` against the prior's `31.63`, a ratio of `2.19`. The half-width runs
+`36.2 / 49.3 / 69.4` across two-daily / weekly / monthly, so one number cannot defend every
+covariance the note reports.
+
+**C3. The `+/-54.2` was a quartic extrapolation, and so is the paper's `+/-36.9`.** `chi^2`
+on the line is not exactly quartic: `chi^2/eps^4` drifts about 6% over four decades and about
+40% by the time `eps` reaches the quoted half-width. The exact `Delta chi^2 = 3.84` crossings
+are in the table above. This cuts **for** the surviving half of claim (5): the printed pair is
+internally the quartic extrapolation, `(3.84/2.08e-6)^(1/4) = 36.86` against a printed `36.9`,
+and a true profile does not produce a constant `chi^2/eps^4` to read a half-width off.
+
+**C4. A bug in `audit/f5_fibre.py`.** The bisection for `theta(b) = 0` inverted its bracket
+update and printed `-215.1515`, which is where `K_m` reaches 300 and where `theta` is still
+1785. The correct root is `-272.7273`. Fixed with `brentq`.
+
+**C5. One S4 number was a seed artefact.** The `k_e` median of `-0.879` is the minimum over
+eight seeds, and the median across them is `+4.67`. The quotable statistic is that the sign is
+a coin toss, negative in 42-51% of replicates. The `theta_hat <= 0` rate does survive the seed
+sweep (0.22 to 0.29). `S4` now quotes spreads. This repository's own rule, from `PHASE2D`, is
+to quote the spread, and the first version of this section broke it.
+
+**C6. Scope, in both directions.** Too wide: "flat only to first order"
+(`06_excitation.tex:66`) is a **true** and reproducible statement about `prop:rank`'s null
+*vector* (local power 2.0000 to 2.0002 over a decade), and only becomes false read as a claim
+about the likelihood's degeneracy, which is a curve. The same applies to `07_design.tex:141`.
+Only "recovered through curvature rather than through slope" and "the recoverable displacement
+scales as the square root of the noise level" are unambiguously false. Too narrow:
+`rem:rankvsprec` is **not** wholly correct, as this document elsewhere concedes. Its sentence
+"At any real day-to-day variation the data fill it instead and the same `0.1696` is earned
+rather than assumed" is false at the 0.5% and 2% rows the same remark prints, where prior-free
+gives `0.8604` and `0.2630` against `0.1696`. Separately, "Halving the assay CV buys ... a
+factor of 2 along every other direction" (`06:74-75`) fails for a reason independent of P5,
+because the load-record term floors `sigma_total`.
+
+**C7. Two qualifiers the claims need.** Claim (2)'s "everything" is everything **the
+quasi-steady locus** contains, and the count is generic: it needs at least three distinct
+increments and `L + b != 0`. (A claimed further rank drop on the synchronous 14 d and 28 d
+designs was a finite-difference artefact; built analytically at 60 digits those designs are
+rank 3 with a 24-order gap.) Claim (3)'s "machine zero" is a locus statement: on the ODE record
+the same quantity is `2.28e-3` along the fibre and `8.71e-5` as a true profile at `b = 200`,
+four orders below any inferential threshold but not machine zero.
+
+**C8. "Carries no information" overstates, by two channels.** Neither rescues the paper.
+Under errors-in-variables with an unrecorded per-visit load fluctuation, the lever arm
+`J = d(load)/dm` varies along the fibre (33.7 to 51.9 at the high-`m` end between `b = 0` and
+`b = 200`) even though `m` does not, so the variance transmitted from load to marker differs
+between twins. Marginalised by Gauss-Hermite quadrature this gives a genuine 95% interval in
+`b` of about `[-120, +383]` (400-replicate median, 95.8% coverage), four to twelve times looper
+than the prior, a variance channel rather than a mean-curvature one, and with a noise scaling
+that **saturates** rather than following `sqrt(noise)`. Second, a record sampling inside the
+post-dose settling window does break the fibre: nine draws at 5 to 120 minutes cut the
+half-width to `+/-108` and 225 such draws reach `+/-24.2`. That design is excluded by P1f and
+by `06_excitation.tex:56-65`, but replacement text should not say flatly that the combination
+is never recovered.
 
 ---
 
@@ -567,30 +665,42 @@ phase clock) are all Phase 2 and Phase 3 work and none of them is blocked by any
 
 ## What P5 costs the paper, if you accept it
 
-Nothing in the headline. `0.1697` on the monthly design is computed at load CV 10% with the
-dose train and a `k_e` prior, where the fibre is closed and the load prior is not
-load-bearing for `theta` (0.1474 with it against 0.1483 without, on the two-daily x 2 y
-design at load CV 10%, `PHASE2D_FINDINGS.md` section 2). The design recommendation, the sampling
-rule, the 42x excitation and the specification are all untouched.
+**Nothing in the headline, and this was attacked directly rather than assumed.** On the
+monthly design at load CV 10% the load-bias prior is worth **1.4%** of `sd(ln theta)`
+(0.1697 with it, 0.1721 without; across seven seeds 0.1688-0.1709 with, 0.1710-0.1810
+without), and 0.6% to 3.5% on every other design in `tab:designs`. The 42x excitation
+(1.9390 against 0.0462), the factor-of-22 sampling rule (21.7x, and 25.3x prior-free), the
+11.7% dose-precision requirement and the cohort numbers all reproduce. **No printed number
+in the paper changes.**
 
-What fails is a mechanism sentence and a diagnostic, in four places. Listed here, **not
-edited**, pending your go-ahead:
+What fails is two clauses, a diagnostic, a cross-reference and a step in one proof. Listed
+here, **not edited**, pending your go-ahead. The scope is narrower than this document's
+first draft had it, and wider in one place.
 
-| file:line | what it says | why it fails |
+| file:line | what to change | why |
 |---|---|---|
-| `06_excitation.tex:66-78` | "flat only to first order ... recovered through curvature rather than through slope ... the recoverable displacement scales as the square root of the noise level ... Halving the assay CV buys a factor of `sqrt2` along this direction" | the true profile is flat, so nothing is recovered and halving the CV buys nothing along this direction |
-| `06_excitation.tex:497-516` (`rem:second_order`) | the `+/-31.6` against `+/-36.9` comparison, and "`chi2 ~ eps^4` means the data do pin it, at second order, and the filter is understating what the record contains" | the diagnostic gives the wrong answer here: it reads a curved exact fibre as data-pinned. Separately, the two numbers are on different designs |
-| `07_design.tex:141` | "along the near-null direction of `prop:rank` the gradient is third order" | true of the line, vacuous on the fibre, where every derivative is zero |
-| `07_design.tex:417-419` (`rem:no_delta`) | "the second is `rem:second_order`, where a first-order filter reports a curvature-held direction as prior-held" | exactly inverted. The direction *is* prior-held; it is the `eps^4` diagnostic that calls it curvature-held |
+| `06_excitation.tex:71-75` | "**recovered through curvature rather than through slope**" and "**the recoverable displacement scales as the square root of the noise level**" | both false. The profile is flat, so nothing is recovered; and where the data do work the half-width scales as `sigma^0.98`, first order |
+| `06_excitation.tex:74-75` | "Halving the assay CV buys a factor of `sqrt2` along this direction and a factor of `2` along every other" | the first half is false for the reason above. The second half fails **independently of P5**, because the load-record term floors `sigma_total` |
+| `06_excitation.tex:497-516` (`rem:second_order`) | the diagnostic, and "`chi2 ~ eps^4` means the data do pin it, at second order" | it reads a curved exact fibre as data-pinned, so it returns the wrong answer on the problem it was written for. The `+/-36.9` is a ray, not a profile |
+| `07_design.tex:141` | "because ... the gradient is third order" | the *mechanism clause* only. The statement is true of the line; the operative fact is start dependence on a flat fibre |
+| `07_design.tex:417-419` (`rem:no_delta`) | "where a first-order filter reports a curvature-held direction as prior-held" | exactly inverted. The direction *is* prior-held; the `eps^4` diagnostic is what calls it curvature-held |
+| `06_excitation.tex:371` | `(theta+Delta) u = L - k_e m` | drops the bias. It should be `L + b - k_e m`, so `eq:nullvec` as printed is the `b = 0` value of a `b`-dependent field. Independent of the rest, and worth fixing either way |
 
-`rem:rankvsprec` (`06_excitation.tex:439-490`) is **correct as it stands** ("that is the
-load-record prior filling the deficient direction"). Only its forward reference to
-`rem:second_order` needs to go.
+**Not to be changed, against this document's first draft.** `06_excitation.tex:66`, "flat
+only to first order", is a true and independently reproducible statement about
+`prop:rank`'s null *vector*. It is incomplete, not false, and calling it wrong was an
+overreach.
 
-Two audit records carry the same claim and will need retraction notes:
-`PHASE3_CHECKS.md:301-302` and `PHASE2C.md:141-150`. So does the closing commentary of
-`audit/e5_structural.py` `q3`, whose *computation* is correct and whose *interpretation* is
-the one being retracted.
+**To be changed, also against this document's first draft.** `rem:rankvsprec`
+(`06_excitation.tex:439-490`) was called "correct as it stands" here. It is not. Its
+sentence "At any real day-to-day variation the data fill it instead and the same `0.1696`
+is earned rather than assumed" is false at two of the four rows the same remark prints: at
+load CV 0.5% and 2% the prior-free figures are `0.8604` and `0.2630` against `0.1696`. The
+reading of the zero-CV row as the prior filling the direction *is* correct and should stay.
+
+Two audit records carry the retracted claim and will need notes: `PHASE3_CHECKS.md:301-302`
+and `PHASE2C.md:141-150`. So does the closing commentary of `audit/e5_structural.py` `q3`,
+whose *computation* is correct and whose *interpretation* is the one being retracted.
 
 ---
 
@@ -628,23 +738,32 @@ the one being retracted.
 
 ## Status
 
-Phase 0 is complete and nothing has been built on top of it. No prose has been edited, no
-figure regenerated, no constant changed, and no retraction written into `REVIEW_LOG.md`
-yet. Phases 1, 2 and 3 are waiting at their gates.
+Phase 0 is complete, and it has now been adversarially stress-tested
+(`audit/PHASE4_STRESS.md`). No prose has been edited, no figure regenerated and no constant
+changed. Phases 1, 2 and 3 are waiting at their gates.
 
-Two things are drafted and deliberately not committed to the paper's apparatus, because
-both would embed a Phase 0 conclusion before the gate:
+Committed alongside this report, because both lock facts rather than sentences:
 
-- a test in `tests/test_models.py` asserting that the constant-load fibre is exact (that
-  `chi2` along `K_m(b) = K_0 L/(L+b)`, `theta(b) = theta_0 + b + k_e(K_0 - K_m(b))` stays at
-  machine zero out to `b = 200`, while `chi2` along the tangent line is quartic). It locks a
-  fact about the model rather than a sentence about it, and it is the natural guard against
-  this finding regressing;
-- a retraction entry, `R14`, for `REVIEW_LOG.md`, in the form the existing entries use: what
-  was claimed, what is true, how it was found, and what class of failure it belongs to. On
-  the repository's own taxonomy it is a new class and worth naming: **a diagnostic that
-  answers a question the model cannot pose.** The `eps^2`-against-`eps^4` test is a correct
-  computation of the wrong object, because it profiles along a straight line through a
-  curved exact fibre, and every numerical check in this repository passes it. What caught
-  it was a reader proposing a different parametrisation, which is the same detector that
-  caught `R8`: two descriptions of the same object that do not agree.
+- `tests/test_models.py::test_the_constant_load_deficiency_is_an_exact_fibre_not_a_curvature`,
+  which asserts that the fibre reproduces the same levels from the same increments, that the
+  misfit is machine zero along it, that its tangent at `b = 0` is `prop:rank`'s null vector,
+  and that the straight line gives a quartic. Six mutations of the fibre formula were tried
+  against it and all six fail it;
+- `REVIEW_LOG.md` `R14`, the retraction, in the form the existing entries use.
+
+Held, unapplied, pending your reading: replacement wording for the passages listed above.
+The paper stays frozen.
+
+On the repository's taxonomy this is a new failure class and worth naming: **a diagnostic
+that answers a question the model cannot pose.** `audit/e5_structural.py` `q3` computes
+`eps^2` correctly, from committed code; the paper quotes it accurately; the power law is real
+to four decades. What is wrong is the inference, and it is wrong because the test profiles
+along a straight line in a space whose relevant object is curved. No numerical check here
+could have caught it, because there is no number in it to disagree with.
+
+The audit's own failure has the same shape and is recorded as C1: `chi^2/eps^4` is
+second-order and therefore parametrisation dependent, and the audit measured it in one
+coordinate system while the paper had computed it in another. Both errors are a quantity
+being right about its own computation and wrong about what it is a computation of, which is
+`R8`, and both were caught the same way `R8` was, by two descriptions of one object failing
+to agree.
