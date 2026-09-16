@@ -13,8 +13,12 @@ rather than to check P5. Thirteen of twenty agents completed on the first pass; 
 were re-run.
 
 **Outcome: sub-claims (1) to (4) survived all eight lenses. Sub-claim (5) was refuted, and
-it was the audit's, not the paper's.** Four further errors in the audit were found, one of
-them a bug in `audit/f5_fibre.py`. The corrections are folded into `PHASE4_PI.md` as C1-C8.
+it was the audit's, not the paper's.** Seven further errors in the audit were found, four by
+the lenses and three by the judges and the completeness critic: a bug in
+`audit/f5_fibre.py`, two single-seed numbers quoted without their spread, a justification
+for claim (2) that proved neither direction it was used for, two passages missing from the
+scope, and two statements more precise than their evidence. The corrections are folded into
+`PHASE4_PI.md` as C1 to C11.
 
 ---
 

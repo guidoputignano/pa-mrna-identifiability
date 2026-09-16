@@ -38,9 +38,10 @@ paper's headline precision, which is earned at a varying load where the fibre is
 (`audit/PHASE4_STRESS.md`): eight independent lenses, each prompted to refute it, each
 re-run by a second agent. Claims (1) to (4) survived all eight. **The audit's own claim (5),
 about where the paper's `+/-36.9` came from, was refuted and is withdrawn in its strongest
-form**, along with four smaller errors of this document's, including a bug in
-`audit/f5_fibre.py` and a single-seed number quoted without its spread. All of them are
-recorded as C1 to C8 at the end of the P5 section. The core survived; this audit did not.
+form**, along with seven smaller errors of this document's, including a bug in
+`audit/f5_fibre.py`, two single-seed numbers quoted without their spread, and a
+justification for claim (2) that was a non-sequitur. All of them are recorded as C1 to C11
+at the end of the P5 section. The core survived; this audit did not.
 
 ---
 
