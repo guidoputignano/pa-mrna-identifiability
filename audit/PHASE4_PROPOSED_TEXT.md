@@ -6,7 +6,7 @@ wording below. Written after the adversarial stress test of `audit/PHASE4_STRESS
 scope here is narrower than a first draft had it in two places and wider in two others, and
 both changes are flagged where they occur.
 
-Six passages.
+Seven passages.
 
 ---
 
@@ -33,9 +33,14 @@ decade) and stays.
 > \qquad A = K_m(L+b), \quad B = L + b - \theta - k_e K_m, \quad C = -k_e,
 > \label{eq:invariants}
 > \end{equation}
-> and $\{1/m,\,1,\,m\}$ are independent, so $(A,B,C)$ is everything a constant-load record of
-> pairs $(m_k,\Delta_k)$ on this locus contains. Four unknowns against three invariants leave
-> a one-parameter family of exact observational twins,
+> so the increment that produces a given level depends on the parameters only through
+> $(A,B,C)$. Since $A>0$ and $C<0$ the map is strictly decreasing from $(0,\infty)$ onto
+> $\mathbb{R}$, hence a bijection, so the level a known $\Delta$ produces is a function of
+> $(A,B,C)$ alone; and three distinct levels determine $(A,B,C)$, the relevant determinant
+> being $-\prod_{i<j}(m_i-m_j)/(m_1m_2m_3)$. So on this locus, at a constant recorded load
+> and a record visiting at least three levels, $(A,B,C)$ is exactly what the data contain.
+> Four unknowns against three invariants leave a one-parameter family of exact
+> observational twins,
 > \begin{equation}
 > K_m(b) = \frac{K_m^{0}\,L}{L+b},
 > \qquad \theta(b) = \theta^{0} + b + k_e\bigl(K_m^{0} - K_m(b)\bigr),
@@ -99,8 +104,10 @@ is about the transient, which the section's own opening already says.
 >
 > What does the work instead is the last clause of Proposition~\ref{prop:rank}. At the
 > day-to-day variability the specification asks for, the fibre closes and the profile becomes
-> finite: a $95\%$ half-width in $b$ of about $2100$ at a load coefficient of variation of
-> $0.5\%$, $509$ at $2\%$ and $96$ at $10\%$. Those remain wider than the prior's $\pm31.6$,
+> finite, though widely spread over realisations of the intake. Across eight simulated
+> records the $95\%$ half-width in $b$ runs $2100$ to $4200$ at a load coefficient of
+> variation of $0.5\%$, $420$ to $690$ at $2\%$ and $80$ to $130$ at $10\%$. Those remain
+> wider than the prior's $\pm31.6$,
 > so the prior stays the tighter of the two; what changes is that the direction is no longer
 > exactly unidentified. Either way $\operatorname{sd}(\ln\hat\theta)$ barely moves: on the
 > accessible monthly design the load-bias prior is worth $1.4\%$ of it.
@@ -181,8 +188,16 @@ rest.
 
 > The increment is eliminated by the balance itself: $(\theta+\Delta)\,u = L + b - k_e m$ ...
 
-with the consequent change to \eqref{eq:nullvec}, which becomes
-$n = (L + b + k_e K_m,\; -K_m,\; 0,\; L + b)$.
+with the consequent changes carried all the way through, which is what makes this a fix
+rather than a patch: \eqref{eq:nullvec} becomes
+$n = (L + b + k_e K_m,\; -K_m,\; 0,\; L + b)$, the normalisation line reads "dividing
+through by $\theta(L+b)$" rather than by $\theta L$, and \eqref{eq:rank} becomes
+\[
+c_\theta = \frac{1 + K_m k_e/(L+b)}{\theta}, \qquad c_{K_m} = -\frac{1}{L+b}.
+\]
+Only then is the fibre the integral curve of the null direction, which is how the proposed
+Section 6 text describes it. Doing half of this would leave the new text asserting something
+the amended proposition still would not support.
 
 ### Why
 
@@ -218,6 +233,38 @@ zero-CV row, that the prior is filling the deficient direction, is correct and s
 
 ---
 
+## 7. `paper/sections/07_design.tex:25` and `A1_supplementary.tex:516`. NEW
+
+Added by the stress test, and treated the way passage 3 was: replace the mechanism clause,
+keep the empirical conclusion.
+
+### Current
+
+> $K_m$ lies inside the exact degeneracy, so a prior on it cannot help ... This is a reason,
+> not a convenience.
+
+### Proposed
+
+> $K_m$ moves \emph{along} the degeneracy rather than across it, so a prior on it does bound
+> the load bias, through $b = L(K_m^{0}/K_m - 1)$: a log-prior of standard deviation $s$
+> confines $b$ to $[L(e^{-1.96s}-1),\, L(e^{1.96s}-1)]$. What that shows is how tight such a
+> prior would have to be. At $s = 0.8$ it leaves $b$ in $[-255, +1225]$, forty times the load
+> record's own $\pm31.6$, and matching the record would need $s = 0.048$, a factor of $1.10$
+> on $K_m$. No published figure is within reach of that, and
+> Remark~\ref{rem:no_km_orig} forbids importing one in any case. This is a reason, not a
+> convenience.
+
+### Why
+
+The mechanism as stated is inverted, and the fibre is what shows it: a $K_m$ prior is
+precisely a prior on position along the fibre. With the load prior removed and $k_e$ free, a
+$K_m$ log-prior alone takes the filter from singular to $\operatorname{sd}(\ln\hat\theta) =
+0.2820$ at $s = 0.8$ and $0.1854$ at $s = 0.2$ on the monthly design. So it helps; the
+conclusion survives because the help needed is unobtainable, which is a stronger argument
+than the one in place.
+
+---
+
 ## Also needing a note, outside the paper
 
 - `audit/PHASE2C.md:141-150`, where `±31.6` against `±36.9` first appears with the inverted
@@ -226,3 +273,5 @@ zero-CV row, that the prior is filling the deficient direction, is correct and s
 - `audit/e5_structural.py` `q3`. Its computation is correct and its interpretation is what is
   retracted, so the fix is to append what the `eps^2` measurement does and does not
   establish, not to change any number.
+- `audit/e9_rank_vs_precision.py`, whose printed commentary carries the `rem:rankvsprec`
+  sentence corrected in passage 6.

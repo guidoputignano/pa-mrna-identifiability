@@ -746,13 +746,16 @@ at a price: "the recoverable displacement scales as the square root of the noise
 `rem:second_order` supports it with a diagnostic and with two numbers, `±31.6` against
 `±36.9`. `rem:no_delta` refers back to it.
 
-**The direction is not recovered at any order.** Solving the balance for the increment that
+**On this locus the direction is not recovered at all.** Solving the balance for the increment that
 produces a level `m` gives, with no remainder,
 
     Delta(m) = A/m + B + C m ,   A = K_m(L+b),  B = L+b-theta-k_e K_m,  C = -k_e ,
 
-and `{1/m, 1, m}` are independent as functions of `m`, so `(A, B, C)` is everything a
-constant-load record of `(m_k, Delta_k)` pairs contains. Four unknowns against three
+and the increment that produces a given level depends on the parameters only through
+`(A, B, C)`. Since `A > 0` and `C < 0` that map is a strictly decreasing bijection, so the
+level a known `Delta` produces is a function of `(A, B, C)` alone; and three distinct levels
+determine `(A, B, C)`. So on the quasi-steady locus, at a constant recorded load, `(A, B, C)`
+is everything a record of `(m_k, Delta_k)` pairs contains. Four unknowns against three
 invariants leave a one-parameter family of exact observational twins,
 
     K_m(b) = K_0 L/(L+b) ,   theta(b) = theta_0 + b + k_e (K_0 - K_m(b)) ,   k_e unchanged,
@@ -765,9 +768,8 @@ is flat to `1e-25` and traces the closed form to seven figures.
 Proposition~`prop:rank`'s null vector is that tangent at `b = 0`, verified symbolically
 (the difference is identically zero in all four components). Moving along a straight line
 through a curved exact fibre departs from it at second order, so the residual is `O(eps^2)`
-and `chi^2` is `O(eps^4)` whether or not the record constrains anything. The measured local
-slope is `4.0000` over four decades, which is the signature of the geometry and not of the
-data.
+and `chi^2` is `O(eps^4)` whether or not the record constrains anything. The measured local slope is `4.00` over four decades, drifting by about
+two per cent across them, which is the signature of the geometry and not of the data.
 
 **So the diagnostic `rem:second_order` recommends returns the wrong answer on the problem it
 was written for.** It says `chi^2 ~ eps^4` means "the data do pin it, at second order, and

@@ -182,6 +182,52 @@ The coordinate-system finding that refuted the audit's claim (5) is in
 
 ---
 
+## What the judges and the completeness critic added
+
+Three judges (a strict mathematician, a working statistician, a cautious editor) and a
+completeness critic read the whole dossier. All three judges returned
+`P5_NEEDS_QUALIFICATION`, two of them `safe_to_retract: True`. None could break C1 to C8.
+Five further corrections came out of them, recorded as C9 to C11 in `PHASE4_PI.md` and
+applied to the proposed wording:
+
+**The critic found the one thing nobody had attacked: the replacement wording itself.**
+`audit/PHASE4_PROPOSED_TEXT.md` was committed sixty-eight seconds after the stress test
+ended and received no adversarial review, and it carried three new printed numbers, a 95%
+half-width in `b` of "about 2100 at 0.5%, 509 at 2% and 96 at 10%". Those are single
+realisations of the intake, and the seed behind them is the **minimum of eight at every
+CV**: the medians are `3500 / 593 / 112` and the ranges `2108-4155 / 424-690 / 80-134`.
+So the text that would retract a number for being one ray dressed as a profile was itself
+about to put single-seed numbers into print. That is correction C5 repeated in the only
+place it would have mattered. Both `audit/f5_fibre.py` S5 and
+`audit/f6_fibre_adversarial.py` D now sweep seeds and print the spread.
+
+**The justification for claim (2) was a non-sequitur.** "`{1/m, 1, m}` are independent as
+functions of `m`, so `(A, B, C)` is everything the record contains" proves neither direction
+it was used for. The conclusion is a theorem and the reason is not, so the reason has been
+replaced, in the report, in `R14` and most importantly in the paper-facing equation block,
+which a referee will check: *nothing more*, because `Delta(m)` depends on the parameters only
+through `(A, B, C)` and is a strictly decreasing bijection when `A > 0` and `C < 0`; and
+*nothing less*, because three distinct levels pin `(A, B, C)` through a Vandermonde
+determinant.
+
+**Two passages were missing from the scope**, `07_design.tex:25` and
+`A1_supplementary.tex:516`, where the claim that a `K_m` prior "cannot help" has an inverted
+mechanism. Along the fibre `b = L(K_0/K_m - 1)`, so a `K_m` prior is exactly a prior on
+position along it and does bound `b`. The empirical conclusion survives for a better reason:
+matching the load record's `+/-31.6` would need a `K_m` log-prior of `0.048`, a factor of
+`1.10`, which nothing published is near.
+
+**Two quantitative statements were over-precise.** "`sigma^0.98`" was a one-seed two-digit
+exponent and is now the qualitative claim it can support, linear in `sigma` and not its
+square root. C8's errors-in-variables channel holds only while the load-record error is held
+exactly known; as a free nuisance it loses three orders of magnitude, so it is the load prior
+again rather than the data.
+
+The critic's verdict on whether any of this changes the conclusion was **no**. It changes
+what may be printed.
+
+---
+
 ## Method note
 
 The stress test is not part of the finding and does not make it true. What it does is bound

@@ -434,30 +434,28 @@ def s4_with_noise(times=MONTHLY, reps=200, seeds=range(8)):
 
 
 # --------------------------------------------------------------------------
-def s5_varying_load(times=MONTHLY, cvs=(0.0, 0.005, 0.02, 0.10), seed=3):
+def s5_varying_load(times=MONTHLY, cvs=(0.0, 0.005, 0.02, 0.10), seeds=range(8)):
     banner("S5  the fibre under a VARYING load: does it close, and how fast?")
 
     print("  The fibre exists because L_k and 1 are the same column when L is")
     print("  constant. With L varying they separate. Below: the exact-fibre")
     print("  residual at b = 30 (which is zero at CV 0) as the CV grows, and a")
-    print("  true profile half-width in b at each CV.\n")
-    rng = np.random.default_rng(seed)
-    print(f"  {'load CV':>9} {'rms resid on fibre(b=30)':>26} {'chi2':>13} "
-          f"{'95% profile half-width in b':>29}")
-    print("  " + "-" * 82)
-    for cv in cvs:
+    print("  true profile half-width in b at each CV.")
+    print()
+    print("  Quoted over 8 seeds. One realisation of a varying load sits well")
+    print("  off the median here, and an earlier version of this section quoted")
+    print("  one: its seed is the MINIMUM at every CV, so the single number")
+    print("  understated the width by a third to a half.\n")
+    CAP = 1e5
+
+    def one(cv, seed):
+        rng = np.random.default_rng(seed)
         Ls = (LB * np.exp(rng.normal(-0.5 * np.log1p(cv ** 2),
                                      np.sqrt(np.log1p(cv ** 2)), times.size))
               if cv else np.full(times.size, LB))
         m, inc = levels(times, Ls=Ls)
-        th, km, ke, b = fibre(30.0)
-        r = load_residual(m, inc, th, km, ke, b, Ls=Ls)
-        c = float(np.sum(r ** 2) / SIG ** 2)
 
         def prof(bv):
-            """Warm-started at the closed-form fibre point, and bounded, so a
-            flat direction returns a flat chi^2 rather than an optimiser
-            failure."""
             th_s, km_s, _, _ = fibre(bv)
             th_s = max(th_s, 1e-3)
 
@@ -467,23 +465,34 @@ def s5_varying_load(times=MONTHLY, cvs=(0.0, 0.005, 0.02, 0.10), seed=3):
             best = np.inf
             for start in (np.array([np.log(th_s), np.log(km_s), np.log(KE0)]),
                           np.array([np.log(TH0), np.log(KM0), np.log(KE0)])):
-                s = least_squares(res, start, xtol=1e-15, ftol=1e-15,
-                                  gtol=1e-15,
-                                  bounds=(np.array([-20., -20., -20.]),
-                                          np.array([30., 30., 30.])))
-                best = min(best, float(np.sum(s.fun ** 2)))
+                sol = least_squares(res, start, xtol=1e-15, ftol=1e-15,
+                                    gtol=1e-15,
+                                    bounds=(np.array([-20., -20., -20.]),
+                                            np.array([30., 30., 30.])))
+                best = min(best, float(np.sum(sol.fun ** 2)))
             return best
 
-        CAP = 1e5
-        lo, hi = 0.0, CAP
-        if prof(CAP) < 3.84:
-            hw = f"> {CAP:.0e}"
+        th, km, ke, b = fibre(30.0)
+        r = load_residual(m, inc, th, km, ke, b, Ls=Ls)
+        hw = (np.inf if prof(CAP) < 3.84
+              else float(brentq(lambda x: prof(x) - 3.84, 1e-6, CAP, xtol=1e-3)))
+        return float(np.sqrt(np.mean(r ** 2))), hw
+
+    print(f"  {'load CV':>9} {'rms resid on fibre(b=30)':>26} | "
+          f"{'95% profile half-width in b, over seeds':>42}")
+    print(f"  {'':>9} {'median':>26} | {'min':>13} {'median':>13} {'max':>13}")
+    print("  " + "-" * 82)
+    for cv in cvs:
+        rs, hs = zip(*[one(cv, sd) for sd in seeds])
+        hs = np.array(hs, float)
+        if not np.all(np.isfinite(hs)):
+            print(f"  {cv*100:8.2f}% {np.median(rs):26.6e} | "
+                  f"{'unbounded':>13} {'unbounded':>13} {'unbounded':>13}")
         else:
-            for _ in range(80):
-                mid = 0.5 * (lo + hi)
-                (lo, hi) = (mid, hi) if prof(mid) < 3.84 else (lo, mid)
-            hw = f"{lo:.4f}"
-        print(f"  {cv*100:8.2f}% {np.sqrt(np.mean(r**2)):26.6e} {c:13.6e} {hw:>29}")
+            print(f"  {cv*100:8.2f}% {np.median(rs):26.6e} | "
+                  f"{hs.min():13.1f} {np.median(hs):13.1f} {hs.max():13.1f}")
+    print(f"\n  against the load prior's own 95% half-width, "
+          f"{1.96 * LOAD_FRAC * LB:.2f}.")
 
 
 # --------------------------------------------------------------------------

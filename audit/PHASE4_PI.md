@@ -397,9 +397,16 @@ with no remainder,
 Delta(m) = A/m + B + C m ,   A = K_m(L+b),  B = L+b-theta-k_e K_m,  C = -k_e
 ```
 
-**(2)** `{1/m, 1, m}` are independent as functions of `m`, so `(A, B, C)` is everything a
-constant-load record of `(m_k, Delta_k)` pairs **on the quasi-steady locus** contains. Four
-unknowns against three invariants leave a one-parameter fibre,
+**(2)** The record determines `(A, B, C)` and nothing else, and determines them
+whenever it visits three distinct levels. Both halves need saying, because the first
+draft of this section gave a reason that carries neither. *Nothing more*: `Delta(m)`
+depends on the parameters only through `(A, B, C)`, and since `A = K_m(L+b) > 0` and
+`C = -k_e < 0` the map is strictly decreasing from `(0, infinity)` onto the reals, hence a
+bijection, so the level a known `Delta` produces is a function of `(A, B, C)` alone, with no
+branch, ordering or positivity freedom left over. *Nothing less*: three distinct levels pin
+`(A, B, C)`, because `det[[1/m_i, 1, m_i]] = -(m_1-m_2)(m_1-m_3)(m_2-m_3)/(m_1 m_2 m_3)`, a
+Vandermonde, is non-zero exactly when the `m_i` differ. So four unknowns against three
+invariants leave a one-parameter fibre,
 
 ```
 K_m(b) = K_0 L/(L+b) ,  theta(b) = theta_0 + b + k_e (K_0 - K_m(b)) ,  k_e unchanged.
@@ -450,7 +457,10 @@ eight decimals.
 **The `sqrt(noise)` claim, refuted quantitatively.** At a constant load, halving the assay CV
 buys nothing at all: the true profile half-width is infinite at `sigma`, `sigma/2` and
 `sigma/4`. Where the data do work, at load CV 0.5 / 2 / 10%, the half-width scales as
-`sigma^0.98`, which is **first** order, not square root.
+`sigma` **linearly**, not as its square root: the ratio per halving is `0.43` to `0.54`
+against `0.7071` for a square-root law and `0.500` for a first-order one. (An earlier draft
+quoted an exponent of `0.98`. That was one seed and two digits, and the robust statement is
+the qualitative one.)
 
 **The ODE does not rescue it.** The departure of the ODE record from the locus is perfectly
 systematic (the pattern at `b = 1` and at `b = 1000` is the same unit vector to
@@ -496,14 +506,19 @@ prior is doing that work, and the paper should say so rather than say the curvat
 A varying load closes it from the data, and here are the rates (monthly design, true profile
 in `b`, `Delta chi^2 = 3.84`):
 
-| load CV | rms residual on the fibre at `b = 30` | 95% profile half-width in `b` |
+| load CV | rms residual on the fibre at `b = 30` | 95% profile half-width in `b`, 8 seeds |
 |---|---|---|
 | 0% | 2.06e-12 | unbounded |
-| 0.5% | 0.1642 | 2108.5 |
-| 2% | 0.5694 | 508.8 |
-| 10% | 2.9314 | 96.0 |
+| 0.5% | 0.123 | 2108 to 4155, median 3500 |
+| 2% | 0.491 | 424 to 690, median 593 |
+| 10% | 2.430 | 80 to 134, median 112 |
 
-Even at CV 10% the data's own interval is three times looser than the prior's `+/-31.6`.
+Even at CV 10% the data's own interval is three to four times looser than the prior's
+`+/-31.6`. Those are eight-seed ranges, not single realisations: an earlier draft of this
+table quoted one seed, and that seed is the **minimum** at every CV, so it understated the
+width by a third to a half. That is correction C5 again, in the one place it would have
+reached the paper, and it was the completeness critic rather than any of the eight lenses
+that caught it.
 
 ### With noise, and why `k_e` is the interesting case
 
@@ -628,6 +643,33 @@ half-width to `+/-108` and 225 such draws reach `+/-24.2`. That design is exclud
 by `06_excitation.tex:56-65`, but replacement text should not say flatly that the combination
 is never recovered.
 
+**C9. Two more passages belong in the scope, found by the judges.**
+`07_design.tex:25` and `A1_supplementary.tex:516` say that `K_m` lies inside the exact
+degeneracy, so a prior on it cannot help, and that this is "a reason, not a convenience".
+The stated mechanism is inverted, and the fibre is what proves it: along the fibre
+`b = L(K_0/K_m - 1)`, so a `ln K_m` prior of sd `s` bounds `b` to
+`[L(e^{-1.96s} - 1), L(e^{+1.96s} - 1)]`. At `s = 0.8` that is `[-255, +1225]`, and at
+`s = 0.0477` it matches the load record's `+/-31.6` exactly. Numerically, with the load
+prior removed and `k_e` free, a `K_m` log-prior alone gives `sd(ln theta)` of
+`0.2820` (monthly) at `s = 0.8` and `0.1854` at `s = 0.2`, against a singular filter with no
+`K_m` prior at all. So a `K_m` prior does help, and the empirical conclusion survives for a
+different reason: one tight enough to matter is far outside anything the literature
+supports. Treat it as `07_design.tex:141` was treated, replacing the mechanism clause and
+keeping the conclusion.
+
+**C10. C8 is too generous to itself.** The errors-in-variables channel it records exists
+only while the load record's error is held exactly known at 5% of `L`. Profiling that scale
+as a free nuisance collapses the discrimination by three orders of magnitude, and there is
+no 95% crossing at any admissible `b`. So that channel is the load prior again rather than
+the data, and C8's "[-120, +383]" must carry the condition.
+
+**C11. The design pinning in C1 is good to about 2%, not 0.5%.** Walked in log coordinates
+on the two-daily design, `chi^2/eps^4` runs `2.0399e-6` to `2.1172e-6` across the prior
+conventions the repository uses (pure data, `c2b_degeneracy.py`'s own `0.8` priors, the
+minimal footing, `k_e` free). All of them sit on the printed `2.08e-6` and none of them sits
+near the natural-coordinate `6.5e-6`, so the conclusion is unaffected and the quoted
+agreement should be `2%`.
+
 ---
 
 ## P6. What the notes do not address
@@ -679,7 +721,7 @@ first draft had it, and wider in one place.
 
 | file:line | what to change | why |
 |---|---|---|
-| `06_excitation.tex:71-75` | "**recovered through curvature rather than through slope**" and "**the recoverable displacement scales as the square root of the noise level**" | both false. The profile is flat, so nothing is recovered; and where the data do work the half-width scales as `sigma^0.98`, first order |
+| `06_excitation.tex:71-75` | "**recovered through curvature rather than through slope**" and "**the recoverable displacement scales as the square root of the noise level**" | both false. The profile is flat, so nothing is recovered; and where the data do work the half-width scales linearly in `sigma`, not as its square root |
 | `06_excitation.tex:74-75` | "Halving the assay CV buys a factor of `sqrt2` along this direction and a factor of `2` along every other" | the first half is false for the reason above. The second half fails **independently of P5**, because the load-record term floors `sigma_total` |
 | `06_excitation.tex:497-516` (`rem:second_order`) | the diagnostic, and "`chi2 ~ eps^4` means the data do pin it, at second order" | it reads a curved exact fibre as data-pinned, so it returns the wrong answer on the problem it was written for. The `+/-36.9` is a ray, not a profile |
 | `07_design.tex:141` | "because ... the gradient is third order" | the *mechanism clause* only. The statement is true of the line; the operative fact is start dependence on a flat fibre |

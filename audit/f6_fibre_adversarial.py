@@ -237,12 +237,29 @@ def d_the_sqrt_noise_price(times=MONTHLY):
             return np.inf
         return float(brentq(lambda x: prof(x) - 3.84, 1e-6, cap, xtol=1e-4))
 
+    print("  (i) the half-width at the repository's own sigma, over 8 seeds,")
+    print("      because a single realisation of the load sits well off the")
+    print("      median and quoting one is the failure this audit corrected\n")
+    print(f"    {'load CV':>9} {'seed 3':>12} {'min':>12} {'median':>12} {'max':>12}")
+    print("  " + "-" * 64)
+    for cv in (0.0, 0.005, 0.02, 0.10):
+        v = np.array([halfwidth(cv, SIG, seed=sd) for sd in range(8)], float)
+        if not np.all(np.isfinite(v)):
+            print(f"    {cv:9.1%} {'unbounded':>12} {'unbounded':>12} "
+                  f"{'unbounded':>12} {'unbounded':>12}")
+            continue
+        print(f"    {cv:9.1%} {halfwidth(cv, SIG, seed=3):12.1f} {v.min():12.1f} "
+              f"{np.median(v):12.1f} {v.max():12.1f}")
+
+    print("\n  (ii) the ratio per halving of the noise, at seed 3, which is what")
+    print("       the sqrt(noise) claim is about. The RATIO is far more stable")
+    print("       across seeds than the half-width itself.\n")
     for cv in (0.0, 0.005, 0.02, 0.10):
         print(f"  load CV {cv:.1%}")
         print(f"    {'sigma':>12} {'half-width in b':>18} {'ratio to previous':>20}")
         prev = None
         for f in (1.0, 0.5, 0.25, 0.125):
-            hw = halfwidth(cv, SIG * f)
+            hw = halfwidth(cv, SIG * f, seed=3)
             r = "" if prev is None or not np.isfinite(hw) or not np.isfinite(prev) \
                 else f"{hw/prev:20.4f}"
             print(f"    {SIG*f:12.4f} "
@@ -251,7 +268,10 @@ def d_the_sqrt_noise_price(times=MONTHLY):
         print()
     print("  sqrt(noise) would give a ratio of 1/sqrt2 = 0.7071 per halving and")
     print("  a first-order direction would give 0.5. Read the ratios against")
-    print("  those two numbers.")
+    print("  those two numbers. The conclusion that survives a seed sweep is the")
+    print("  qualitative one: LINEARLY in sigma, not as its square root, and at")
+    print("  a constant load not at all. A two-digit exponent from one seed does")
+    print("  not.")
 
 
 # --------------------------------------------------------------------------
