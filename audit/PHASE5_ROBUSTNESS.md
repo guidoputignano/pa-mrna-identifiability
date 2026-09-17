@@ -1,6 +1,9 @@
 # Phase 5. Robustness to model structure
 
-**No paper edits, no merge.** Step 0 is a gate; this file currently contains Step 0 only.
+**No paper edits, no merge, no constant moved.** Step 0 was a gate. It is recorded below as
+it stood when it was raised, unedited, so that what was missing and what the sources then
+supplied can be read against each other. Everything from *Phase 5 continued* onward is the
+work done after you supplied the five PDFs.
 
 ---
 
@@ -9,7 +12,7 @@
 Everything below was found in the repository. Nothing was fetched and nothing is inferred
 from memory.
 
-### `pkpd_translational` — Attarwala, Lumley, Liang, Ivaturi, Senn (2023)
+### `pkpd_translational`: Attarwala, Lumley, Liang, Ivaturi, Senn (2023)
 
 *Translational Pharmacokinetic/Pharmacodynamic Model for mRNA-3927, an Investigational
 Therapeutic for the Treatment of Propionic Acidemia*, Nucleic Acid Therapeutics 33(2):141-147,
@@ -62,7 +65,7 @@ Therapeutic for the Treatment of Propionic Acidemia*, Nucleic Acid Therapeutics 
    `base` is per-marker.
 7. **The residual-error model** and whether the 51.1% is on the baseline only.
 
-### `dose_selection_poster` — Gao, He, Li, Liang, Luo, Natenshon, Patel, Real, Van, Ward, Zhang
+### `dose_selection_poster`: Gao, He, Li, Liang, Luo, Natenshon, Patel, Real, Van, Ward, Zhang
 
 *Model-Informed Dose Selection for mRNA-3927 in Participants with Propionic Acidemia (PA)*,
 International Society of Pharmacometrics, `doi:10.70534/JVQU8233`. Full CrossRef metadata in
@@ -110,7 +113,10 @@ but it will not be the same tool the paper cites. Say if you want Julia installe
 
 ## The ask
 
-**Stopping here, as the gate requires.** To proceed properly I need:
+**Stopping here, as the gate requires.** *(Answered. You supplied all of it; see finding 1
+and finding 5 below. The alternative offered at the end of this section is what was run:
+A and B calibrated to this paper's operating point, flagged in every table.)* To proceed
+properly I need:
 
 1. **`pkpd_translational` full text**, and above all **the model-equations section and Table 1**
    with units. The blocking item is what "slope 55.6" denotes.
@@ -126,3 +132,585 @@ theirs. That still answers the question Step 2 asks, which is whether the design
 published models*, and the report would say so in those words.
 
 Tell me which, and I will proceed.
+
+---
+
+# Phase 5 continued. The five source checks, and steps 1 to 2
+
+**Status of the gate.** The gate is cleared. You supplied the Attarwala full text with
+Supplementary Table S1 and Figures S1 to S3, the Nature trial paper with its extended data,
+and Baek et al. 2024. Every blocking item listed above is now answered from the primary
+sources, and the answers are below. All five PDFs were read in this pass with `pdftotext
+-layout`, and Extended Data Table 3 was read off a 200 dpi render of page 11 because it is a
+graphic in the text layer.
+
+**Unchanged rules.** No paper edits, no merge, no constant moved. Every correction below is
+*proposed and unapplied*. `PHASE4_PROPOSED_TEXT.md` stays unapplied. No scheduled check-ins
+were armed and no agents were spawned.
+
+**Scripts.** `audit/k1_sources.py` (the five checks and the reruns), `audit/k2_structures.py`
+(steps 1 and 2), `audit/k3_recheck.py` (the independent re-check, 6 of 6 pass).
+
+Findings 2, 3 and 4 come first, as you asked, because they bear on the paper's physical
+relevance whatever the robustness test says.
+
+---
+
+## Finding 2 (PROVEN from the source). The Table 1 PD estimates are mouse, and four repository rows read them as human
+
+**What the source says.** The PD half of Attarwala's model is fitted in
+`Pcca-/- (A138T)` mice, `N = 111`. The section is headed *"PK/PD model for plasma 2-MC, 3-HP,
+and C3/C2 ratio in PCC-deficient mice"*. The parameter definitions say the baselines are
+*"plasma levels of corresponding biomarkers that are susceptible to suppression by PCC protein
+expressed through mRNA-3927 in mice"*. Supplementary Table S1 scales on `(BW/0.025)`, a 25 g
+reference animal.
+
+**And the scaling sentence covers PK only.** The paper's own words:
+
+> "The preclinical PK/PD model described earlier was extrapolated to humans based on
+> allometric scaling of model parameters. Based on the PCCA/B mRNA PK model described earlier,
+> estimated allometric exponent was 0.63 for CL12 and CL32 and 1.1 for CL23 and CL20.
+> Allometric exponent for the volume of distribution parameters (ie, V and V2) was fixed to 1."
+
+Every parameter named there is a clearance or a volume. Baek's companion paper says the same in
+one sentence: *"Each preclinical PK/PD model was extrapolated to humans based on allometric
+scaling of PK parameters."* So `E0`, `base`, `IC50`, `Imax`, `Slope`, `kdeg`, `kq` and `ke0`
+are mouse estimates, and the `51.1%` and `73.8%` inter-individual variabilities are between
+mice of one inbred strain.
+
+**Where the repository reads them as human.** `results/tables/tab_params.tex` is generated
+from `src/common/params.py` by `make figures`, so each row below is one edit and not two.
+
+| place | what it says | why it is wrong |
+|---|---|---|
+| `params.py:60-63` → `tab_params.tex:19` (the `$\bar m$` row) | "the translational model puts the untreated plasma 3-HP baseline at $60.1$ $\mu$M and the fully corrected floor near $0.1$ $\mu$M, so a managed **patient** sits between the two" | both numbers are mouse. The floor is `E0 = 0.0987`, also mouse. |
+| `params.py:107-113` → `tab_params.tex:26` (the `$\lambda$` row) | "**Corroborated**: the translational PK/PD model estimates a PCC-protein degradation rate of $0.0075$ h$^{-1}$, a half-life of $3.85$ d, so this is within $10\%$ of a published value" | mouse, and see finding 3: `3.85` d is one rate constant inside the model, not the model's protein half-life. |
+| `params.py:135-136` → `tab_params.tex:30` (the `CV` row) | "Biological variability is far larger, the translational model carrying $51\%$ between subjects on the 3-HP baseline" | `51.1%` is between **mice**, so if anything it is a lower bound on between-patient variability, and the sentence deploys it as the large figure. |
+| `params.py:82-83` (the `$k_e$` row) | "The nearest route is the first-order 3-HP elimination implicit in the published indirect-response model~\cite{pkpd_translational}" | not a species error but a **structure** error. Supplementary Table S1(C) is algebraic in the marker, `3-HP = E0 + base*(1 - Imax*PCC/(IC50+PCC))`. There is no marker state and no elimination constant anywhere in that model, so nothing can be extracted from it. `claims.csv` C46 already records this ("no biomarker turnover constant at all"). The model that *does* carry a first-order marker loss is the other one, and it publishes no value for it. |
+| `refs.sources:102-116` | "fitted largely to preclinical data and **allometrically scaled to human**", plus the provenance warning | true of the PK, false of the PD, and the six figures beneath it are all PD. |
+
+**Proposed corrections, unapplied.** Four annotation edits and one source note. No value moves:
+`60.1`, `0.0075` and `51%` are all prose, and `M_BAR` stays `10`.
+
+1. `$\bar m$` row: after "translational model", insert "of PCC-deficient **mice**"; and change
+   "so a managed patient sits between the two" to "so a managed patient is read on a scale of
+   the same order, with the caveat that the two anchors are murine. The nearest human anchor is
+   the newborn dried-blood-spot 99.9th centile of $38.13$ $\mu$mol/L~\cite{dbs_3hp_cutoff},
+   which is within a factor of $1.6$ of the mouse baseline."
+2. `$\lambda$` row: replace "**Corroborated**: ... within $10\%$ of a published value rather
+   than free" with "**Partly corroborated, and only early.** The translational model of
+   PCC-deficient mice estimates `kdeg` $= 0.0075$ h$^{-1}$~\cite{pkpd_translational}, but that
+   is one rate constant inside a two-compartment protein model whose own stated protein
+   half-life is $\sim 7$ d. The model's local half-life passes $3.5$ d at about five days after
+   a dose and reaches $9.0$ d by the end of a fortnightly interval, so $\lambda$ tracks the
+   published decline over the first week and decays faster than it thereafter."
+3. `CV` row: change "the translational model carrying $51\%$ between subjects" to "the
+   translational model carrying $51\%$ between **mice** of one inbred strain, which bounds
+   between-patient variability from below rather than above".
+4. `$k_e$` row: replace "the first-order 3-HP elimination implicit in the published
+   indirect-response model~\cite{pkpd_translational}" with "the first-order marker loss of the
+   turnover model~\cite{dose_selection_poster,mrna_moa}. The translational
+   model~\cite{pkpd_translational} does **not** supply one: its marker is an algebraic function
+   of the enzyme with no state and no elimination constant."
+5. `refs.sources`: change "allometrically scaled to human" to "whose **PK** parameters were
+   allometrically scaled to human; the PD parameters below were **not** scaled and are mouse
+   estimates", and **lift the provenance warning**: all six figures are confirmed against
+   Table 1 in this pass, with two unit misprints noted under finding 1.
+
+---
+
+## Finding 3 (MEASURED). "3.85 d" is not the published protein half-life, and the corroboration is early-only
+
+Supplementary Table S1(B) gives the protein two compartments:
+
+```
+d(PCC)/dt = Ksyn + Kq*(PCP - PCC) - Kdeg*PCC
+d(PCP)/dt = Kq*(PCC - PCP)
+```
+
+with `Kdeg = 0.0075 /h` and `Kq = 0.00474 /h`, both from Table 1. (S1 as printed writes
+`Ksyn*Ce` with `Ksyn = Ce*Slope` on the next line, which is quadratic in `Ce` and
+dimensionally wrong. The text says synthesis rises *linearly* in mRNA, so the intended term is
+`Ksyn` alone. The eigenvalues do not depend on which reading is taken, because the input enters
+the forcing and not the matrix.)
+
+| reading | value |
+|---|---|
+| `ln2/Kdeg` alone, which is what the repository quotes | **3.85 d** |
+| fast eigenvalue | 1.99 d |
+| slow (terminal) eigenvalue | 11.81 d |
+| peak to half-peak of the simulated single-dose profile | 2.79 d |
+| local half-life 14 d after the peak | **9.04 d** |
+| the paper's own statement | **~7 d** |
+
+No single constant reproduces the `~7 d`. The protein declines biexponentially, which is
+exactly what the text says the second compartment was added for, so its half-life is a function
+of time: `2.54 d` at one day after the peak, `3.53 d` at five days, `6.34 d` at ten, `9.04 d` at
+fourteen, tending to `11.81 d`. It passes `7 d` at about `10.9 d` after the peak. **The `~7 d`
+is consistent with the constants, read from the middle of that decline. There is no arithmetic
+disagreement with the source.**
+
+What this does to `$\lambda$`: the local half-life passes `3.5 d` at about **4.9 d** after the
+peak, so over roughly the first week `$\lambda$` tracks the published model closely. Over the
+window `$\lambda$` has to govern, a whole 14 d dose interval, the model's local half-life is
+`9.04 d` (a ratio of `2.6`) and the terminal figure is `11.81 d` (a ratio of `3.4`). A
+single-exponential increment with a 3.5 d half-life therefore **decays faster late in the
+interval than the published model's protein does**, which is the direction that makes the
+inter-dose excursion look larger than it is. What the annotation cannot support as written is
+that `3.85 d` is "a half-life of PCC protein".
+
+---
+
+## Finding 4 (PROVEN from the source). The trial reports a 20 to 29% fall in two of five cohorts, not "about half"
+
+Extended Data Table 3 of the Nature paper, read off a render of page 11. 3-HP, mean percentage
+change from baseline after the third dose:
+
+| cohort | regimen | n | 3-HP mean % change (SD) |
+|---|---|---|---|
+| 1 | 0.30 mg/kg Q3W | 4 | **-29 (25)** |
+| 2 | 0.30 mg/kg Q2W | 3 | **-3 (26)** |
+| 3 | 0.45 mg/kg Q2W | 3 | **-20 (24)** |
+| 4 | 0.60 mg/kg Q2W | 3 | **+5 (57)** |
+| 5 | 0.90 mg/kg Q2W | 3 | **-20 (41)** |
+
+These match your figures exactly. The mean of the cohort means is `-13.4%`; the range runs from
+`-29%` to `+5%`; there is no dose trend, the largest fall being in the lowest-dose cohort.
+
+Against this the repository's `D_AMP = 6000` is calibrated to a fall of `64.90%` at the
+first-cycle peak, `66.36%` at the steady-state peak, and `62.25%` from the patient's own
+pre-dose trough to the following peak, which is the `62-66%` already recorded unapplied in
+`PHASE4_PROPOSED_TEXT.md`. **That is two to three times the reported falls, and the reported
+falls are not "about half".**
+
+**The assumption about when "after the third dose" was sampled, stated explicitly.** *The
+Nature paper does not say.* Extended Data Table 3's caption carries no time point; the Methods
+define the endpoint only as "changes in blood 2-MC and 3-HP levels from baseline (predose
+levels) to post-dose levels"; the Reporting section names no biomarker sampling schedule. The
+one sampling time the paper does name anywhere is a **predose** draw ("the predose sample for
+dose 3 (52 days after the first dose)"), which is a trough. I therefore carry **both**
+readings throughout, and the choice turns out to matter more than the fall itself.
+
+**What the between-patient SD implies.** The SDs are 24 to 57 percentage points on cohorts of
+three or four, against mean changes of 3 to 29 points. Two consequences, both for the paper's
+noise model rather than its conclusions:
+
+- The `5%` analytical assay CV in `params.py` is nowhere near the whole story. Even the
+  smallest cohort SD, 24 points, is five times it. The repository already says so in the `CV`
+  row's annotation, and finding 2 corrects the figure it says it with.
+- The SD is **between patients**, over three or four people, so it confounds assay repeatability,
+  within-patient day-to-day biological variability, and genuine between-patient response
+  heterogeneity, and nothing in the table separates them. It is an upper bound on each. With
+  `n = 3` the SD itself has about `50%` relative uncertainty, so `24` and `57` are not
+  distinguishable from one another. What can be said is that a single 3-HP measurement carries a
+  variability of *at least* the same order as the treatment effect it is meant to show, which is
+  the paper's own argument for repeated visits and is consistent with `LOAD_CV = 0.10` being an
+  optimistic figure rather than a pessimistic one.
+
+---
+
+## The reruns
+
+Every number comes from `g_design_common`, unchanged, with `design.run.LAMBDA` and `D_AMP`
+rebound in a context manager that restores them. Nothing in `src/` is edited and no committed
+constant moves. `n` is the number of monthly visits to reach `sd(ln theta) <= 0.20`, searched to
+`n = 60` (five years). The `sd` column is at `n = 12` with the 8-seed spread.
+
+First, the dose that produces each target fall, at the committed half-life:
+
+| reading of "after dose 3" | target fall | `D` | `Delta` at the sample |
+|---|---|---|---|
+| peak | 20% | 766.0 | 816.8 |
+| peak | 30% | 1311.1 | 1398.1 |
+| trough (next predose) | 20% | 12255.3 | 816.8 |
+| trough (next predose) | 30% | 20976.9 | 1398.1 |
+
+Then the design numbers:
+
+| configuration | peak `Delta/theta` | `Delta/theta` range, monthly n=12 | `sd(ln theta)` at n=12, CV 10% | visits to 0.20 |
+|---|---|---|---|---|
+| **as committed** (3.5 d, `D = 6000`) | 2.13 | 1.8170 | 0.1888 [0.1857, 0.1919] | **11** |
+| finding 3 alone: 7 d half-life | 2.67 | 1.7820 | 0.2657 [0.2597, 0.2780] | **30** |
+| finding 4: 20% fall at the **peak** | 0.27 | 0.2320 | 0.3682 [0.3591, 0.3821] | **never by 60** |
+| finding 4: 30% fall at the **peak** | 0.47 | 0.3970 | 0.2744 [0.2669, 0.2805] | **42** |
+| finding 4: 20% fall at the **trough** | 4.36 | 3.7112 | 0.1835 [0.1808, 0.1865] | **10** |
+| finding 4: 30% fall at the **trough** | 7.46 | 6.3523 | 0.1879 [0.1853, 0.1921] | **12** |
+| findings 3+4: 20% at the peak, 7 d | 0.28 | 0.1848 | 0.5154 [0.4912, 0.5429] | **never by 60** |
+| findings 3+4: 30% at the trough, 7 d | 1.89 | 1.2655 | 0.2639 [0.2578, 0.2756] | **30** |
+
+**Three things this says.**
+
+1. **The sampling-time assumption dominates, and we do not have it.** Under the trough reading
+   the trial's 20 to 30% fall needs a *larger* dose than the repository assumes, not a smaller
+   one, because the trough is `6.7%` of the peak increment. The design then gets slightly
+   **better** than committed, 10 to 12 visits against 11. Under the peak reading it gets much
+   worse, 42 visits at 30% and unreachable within five years at 20%. The two readings of one
+   unstated sampling time move the answer from "better than we said" to "not feasible". This is
+   the single largest uncertainty the reruns expose, and it is a gap in the trial report, not in
+   the repository.
+2. **The 7 d half-life alone roughly triples the record needed**, from 11 monthly visits to 30,
+   with the `Delta/theta` range almost unmoved (1.817 to 1.782). So it is not the excursion size
+   that changes; it is where in the cycle the excursion sits relative to a monthly visit grid.
+3. **Load CV still barely moves any of it**, which is the prior-conditional finding already
+   recorded in Phase 3: the load prior is carrying that comparison, and the seed spread is
+   narrower than the gap between rows in every configuration.
+
+---
+
+## Finding 1 (PROVEN from the source). The transfer function: a linear slope, a fixed `Imax`, and two misprinted units
+
+**(a) `Slope 55.6` is a linear coefficient, not a Hill exponent.** This was the gate's single
+most blocking item and it is settled. Supplementary Table S1(B) gives `Ksyn = Ce * Slope`, and
+the text says *"indirect response PD model where the synthesis rate of PCC protein increased
+linearly with an increase in plasma PCC mRNA concentration through an effect compartment"*.
+There is no exponent in the PCC equation at all. The only saturating term in the entire model is
+the `Imax` expression on the marker, in part (C). The RSE is `1.93%`.
+
+**(b) `Imax` is fixed at `0.999`.** Table 1, footnote m: *"Maximum inhibition (Imax) was fixed at
+0.999."* So the marker's floor is `E0`, not a fitted maximum effect: as PCC grows without bound,
+`3-HP -> E0 + base*(1-Imax) = 0.0987 + 0.0601 = 0.1588`.
+
+**(c) The slope's unit as printed is `mg`, not `ug`.** Table 1 prints
+`Slope [(mg/g/h)/(mg/mL)]`. The repository's `refs.sources` gives the `IC50` in `ug/g`. The ratio
+inside the slope is scale-free if both masses carry the same prefix, so `55.6` is unchanged
+either way, but the annotation should quote the unit as printed. The repository currently records
+**no unit at all** for the slope, which was gap 4 at the gate.
+
+**(d) `"mg/g"` in the `IC50` rows is a misprint for `ug/g`, on the paper's own evidence.** The
+Fig. 2B axis label, read in this pass, is `"PCC protein, ug/g"`, with plotted liver PCC running
+to about 700 on that axis. The three `IC50`s are printed `21.0 / 37.5 / 32.1` "mg/g". On the
+figure's own axis those sit inside the plotted range; read as `mg/g` they would be a
+thousandfold above every point the model was fitted to and no dose could reach half effect.
+**The repository already has this right.**
+
+**(e) `"mM/L"` in the marker rows is a misprint for `umol/L`.** Three independent reasons. The
+3-HP baseline is printed `60.1` "mM/L", which as millimolar is a plasma organic acid at 60 mM.
+The same text gives the assay LOQ as `25` "mM/L", and an LOQ at `0.42` of the disease baseline is
+an ordinary assay whereas an LOQ at 25 mM is not an assay at all. The repository's own population
+anchor, the newborn dried-blood-spot 99.9th centile, is `38.13 umol/L`, a factor `1.58` from
+`60.1`. **The repository already has this right.** "mM/L" is in any case not a unit, since mM is
+already per litre.
+
+**Proposed addition to `refs.sources`, unapplied**, folding (a) to (e) into the
+`pkpd_translational` annotation and replacing the provenance warning: record the slope as
+`55.6 (mg/g/h)/(mg/mL) as printed`, record `Imax fixed at 0.999`, record that the two unit
+strings are misprints with the evidence above, and record that the marker equation is algebraic.
+
+---
+
+## Finding 5 (PROVEN from the source, with one judgement). What Models A and B are
+
+**Model A is a named structure with no published parameters.** It is named twice and written
+down nowhere:
+
+- Gao (ACoP2025, `dose_selection_poster`), quoted in `claims.csv` C46: *"An indirect inhibition
+  Kin model was used to describe the PD response of 3-HP and 2-MC."*
+- Baek et al. 2024, Methods, read in this pass: *"For PD biomarkers, classic indirect response
+  models with inhibition of kin were developed for 3-HP and 2-MC/MMA, incorporating PCC/hMUT
+  enzyme-induced decreases in organic acid accumulation."*
+
+Baek's **Table 1 carries no PD parameter values at all**. It is a dose-projection table: LNP
+formulation, starting dose, FIH dose species, NOAEL, safety-relevant species, safety margin. So
+it cannot supply numbers either. **Every number in our Model A is therefore ours, calibrated to
+this repository's operating point, and is flagged as such in every table produced by
+`k2_structures.py`.**
+
+**Registration: Baek is already a source here.** It is `mrna_moa`,
+`doi:10.1038/s41467-024-47460-9`, at `refs.sources:200-203`. No new citekey is needed, and
+adding one would create a duplicate. What is missing is the structure sentence above: the
+repository currently attributes Model A's structure to the conference abstract alone, when the
+same structure is stated in a peer-reviewed Methods section it already cites.
+
+**Proposed addition to the `mrna_moa` annotation, unapplied:** add the quoted Methods sentence
+and the note that Table 1 is a dose-projection table carrying no PD parameters; and add
+`mrna_moa` alongside `dose_selection_poster` at the two places in the paper that attribute the
+turnover structure (`sections/03_dynamic.tex:176-179`, `sections/A1_supplementary.tex:41-44`).
+This strengthens a citation rather than correcting one: C46 records the Gao attribution as
+`matches-with-drift` precisely because an abstract was carrying it alone.
+
+**Model B is Attarwala's structure with Table 1's values, unscaled**, because the paper rescales
+nothing in this block to human (finding 2). Supplementary Table S1(B) and (C):
+
+```
+d(Ce)/dt  = ke0*(C13 - Ce)
+d(PCC)/dt = Ksyn + kq*(PCP - PCC) - kdeg*PCC ,   Ksyn = Slope*Ce
+d(PCP)/dt = kq*(PCC - PCP)
+3-HP      = E0 + base*(1 - Imax*PCC/(IC50 + PCC))
+```
+
+**The structural point that step 2 turns on: Model B's marker is algebraic in the enzyme.** It
+has no state, so it cannot express a substrate load at all, and neither can Model A as named.
+Where the load enters is our choice in both, and that is stated in every table.
+
+---
+
+# Step 1. The two published structures as simulators
+
+`audit/k2_structures.py`. A naming trap is stated at the top of that file and is repeated here:
+this repository already has `src/model_A/` (the paper's local model) and `src/model_C/` (the
+parent), and they have nothing to do with the two published structures. The file writes `PUB_A`,
+`PUB_B` and `PAPER` throughout.
+
+**Where the load enters, flagged as our assumption.** Neither published structure has a
+substrate load in it. Both were fitted to a fixed-diet animal colony, so the load never varied
+and nothing in either paper says where it would go. We choose:
+
+- `PUB_A`: the load is the marker's **production rate**, `k_in = L + b`. This is the
+  least-committal choice available, because `k_in` already is a production rate and the load
+  already is a rate of substrate arrival.
+- `PUB_B`: the marker is an instantaneous function of the enzyme, so a load can only be imposed.
+  We scale the whole marker by `(L+b)/L0`, that is, at fixed enzyme the marker is proportional to
+  substrate supply. This is the weakest assumption that gives the structure a load at all.
+
+**What is published and what is ours, per constant.**
+
+| constant | source |
+|---|---|
+| `Imax = 0.999` | **published**, Attarwala Table 1 note m; dimensionless, transfers unchanged |
+| `E0/base = 0.0987/60.1` | **published**, Attarwala Table 1; a ratio, so it transfers unchanged |
+| `IC50` on our enzyme axis | **ours**. `37.5 ug/g` is a liver protein concentration and `theta` is a flux capacity, and the untreated PA-mouse PCC level that would fix the ratio is not published |
+| `k_out` (PUB_A only) | **ours**, and it follows once `IC50` is fixed by the operating point |
+
+**The calibration has two roots, and both are carried.** Matching one fall at one enzyme level is
+a quadratic in `IC50`, and both roots reproduce the target exactly, so no conclusion below rests
+on a branch choice. The two branches differ enormously in what they imply for the marker's own
+memory: at a 30% calibration `PUB_A` is either `k_out = 0.058/d` (marker half-life 12 d) or
+`k_out = 25.8/d` (39 minutes).
+
+**A structural result that falls out of the calibration, before any fitting.** The published
+inhibition shape has a **hard ceiling** on the fall it can produce between the untreated enzyme
+and the treated steady-state peak, maximised over all `IC50`:
+
+| structure | ceiling on the fall | at `IC50` |
+|---|---|---|
+| `PUB_A` (no floor term) | **65.65%** | 167.9 |
+| `PUB_B` (with the published `E0/base` floor) | **64.13%** | 272.7 |
+
+The repository's committed calibration is `64.90%` at the first-cycle peak and `66.36%` at the
+steady-state peak. **The steady-state figure is above both ceilings and the first-cycle figure is
+above `PUB_B`'s.** So with Attarwala's own `Imax` and floor ratio, neither published structure can
+reproduce the fall the repository assumes, on any `IC50`, at a `3.13`-fold enzyme increase. This
+is an independent argument, from the published shape rather than from the trial, that `D_AMP` is
+set too high. The reruns above are the quantitative version.
+
+---
+
+# Step 2. Fit the paper's model to records the published structures generate
+
+Five generators (`PAPER` as the control, `PUB_A` and `PUB_B` on both calibration branches), five
+schedules at `n = 12`, load CV `0`, `2%` and `10%`, three calibration targets (`60%`, `30%`,
+`20%`), 8 daily diet records per cell. The fit is `i1_estimator`'s variable-projection scan
+polished on the exact objective, unchanged. Full tables in `k2_structures.py`'s output; the
+`60%` calibration is quoted here because it is nearest the repository's committed dose.
+
+**The control row works.** `PAPER` returns `rms/sigma = 0.000` and `theta_hat/theta = 1` on every
+schedule and every load CV, except `14 d, already on therapy` at constant load, where the fit is
+still exact but `theta_hat` collapses to the estimator's lower clip. That is P5's exactly
+singular case, and it is reproduced here from a completely separate code path.
+
+## (a) Is the misspecification detectable? Structure only, no observation noise
+
+RMS residual of the paper's best fit, in units of the repository's own `sigma = 21.9612`, with
+the noise switched off, so the number is structure and nothing else. `theta_hat/theta` beside it.
+Load CV `0`. In the full tables the `2%` and `10%` columns keep every residual inside the
+8-seed range of the CV `0` cell. `theta_hat` holds too, with one exception worth its own line:
+on `14 d, already on therapy` **any** load variation breaks the exact singularity, and what the
+fit then returns depends on the structure. Under `PAPER` it recovers the truth
+(`theta_hat/theta = 1`). Under `PUB_B` it jumps from the lower clip to about `1e6` times the
+truth. Under `PUB_A` it stays at the clip. So load variation rescues that schedule only when the
+model is right, which is a caveat the paper does not currently carry.
+
+| generator | 14 d | 14 d, on therapy | 14.5 d | monthly | phase-spread |
+|---|---|---|---|---|---|
+| `PAPER` | 0.000, `1` | 0.000, clip | 0.000, `1` | 0.000, `1` | 0.000, `1` |
+| `PUB_B` IC50 63.75 | **0.000**, `2.03` | 0.000, clip | **0.068**, `1.53` | **0.180**, `1.34` | **0.170**, `1.32` |
+| `PUB_B` IC50 1167 | **0.000**, `1.34` | 0.000, clip | **0.006**, `1.31` | **0.016**, `1.29` | **0.015**, `1.29` |
+| `PUB_A` IC50 22.93 | 0.624, clip | 0.000, clip | **2.051**, `2.3e7` | **1.961**, `2.34e7` | **1.960**, `2.31e7` |
+| `PUB_A` IC50 1230 | 0.134, clip | 0.000, clip | **2.591**, `1.69e7` | **2.469**, `12.1` | **2.423**, `16.7` |
+
+"clip" is `theta_hat = 1e-9`, the estimator's own lower bound: the fit wants `theta <= 0` and
+cannot go there.
+
+**Two different answers, and the difference is the marker's memory.**
+
+- **`PUB_B` is invisible.** Attarwala's algebraic structure produces records the paper's model
+  fits to between `0.000` and `0.19` of one `sigma` at this calibration. At the repository's
+  noise level nothing in the residuals could tell the two structures apart, on any schedule.
+  **But `theta_hat` comes out `1.29` to `2.03` times the truth**, and `K_m` moves with it: at the
+  `30%` calibration the fitted `K_m` runs `462` to `979` against a true `100`. So the paper's
+  model absorbs `PUB_B` completely and returns a wrong answer with no warning in the fit.
+- **`PUB_A` is loud, and loudest on exactly the schedules the paper recommends.** The turnover
+  structure gives an RMS of `2.0` to `2.6` sigma on `14.5 d`, monthly and phase-spread, and
+  `theta_hat` runs away by six to seven orders of magnitude into the linear limit where
+  `theta g(m)` merges with `k_e m`. On the two `14 d` schedules the residual is small (`0.000` to
+  `0.62`) and `theta_hat` collapses to zero instead.
+
+**And the `PUB_B` bias grows sharply as the dose falls, which ties this straight to finding 4.**
+`theta_hat/theta` under `PUB_B`, both branches, at load CV `0`, with the monthly residual beside
+it:
+
+| calibration | `14 d` | `14.5 d` | monthly | phase-spread | monthly `RMS/sigma` |
+|---|---|---|---|---|---|
+| 60% fall (near the committed `D`) | 1.34 to 2.03 | 1.31 to 1.53 | **1.29 to 1.34** | 1.29 to 1.32 | 0.016 to 0.180 |
+| 30% fall | 4.30 to 11.4 | 4.29 to 6.67 | **4.29 to 4.81** | 4.29 to 4.67 | 0.001 to 0.248 |
+| 20% fall | 7.30 to 20.5 | 7.29 to 11.7 | **7.29 to 8.30** | 7.29 to 8.04 | 0.000 to 0.179 |
+
+The residual does not grow with the bias. It shrinks. So **if the trial's 20 to 30% fall is the
+right scale, a `PUB_B` truth would make the paper's estimator wrong by a factor of four to
+twenty, and the fit would look better than at the dose the repository currently assumes.** That
+is the single most consequential number in this report, and it depends on the same unstated
+sampling time as everything else in the reruns.
+
+**The `PUB_A`/`PUB_B` contrast is the other useful result.** The schedules the paper recommends are the ones that
+*expose* a turnover marker; the schedule locked to the dose period hides it and quietly returns
+`theta = 0`. So the paper's design advice does two jobs at once, and the second was not claimed:
+a phase-spread or off-period record is not only better conditioned, it is the only one of these
+five that would have told the analyst the structure was wrong.
+
+## (b) With the repository's own observation noise
+
+`sd(ln theta)` as the fitter would report it, median over 8 seeds (which carry both the diet
+record and the noise draw). `sing` means every seed returned a singular information matrix at its
+own fit, so no precision can be reported at all.
+
+| generator | 14 d | 14.5 d | monthly | phase-spread |
+|---|---|---|---|---|
+| `PAPER` | 7.198 | 0.2885 | **0.1893** | **0.1894** |
+| `PUB_B` IC50 63.75 | 4.990 | 0.2861 | **0.1894** | **0.1900** |
+| `PUB_B` IC50 1167 | 8.964 | 0.2912 | **0.1952** | **0.1955** |
+| `PUB_A` IC50 22.93 | `sing` | `sing` | `sing` | `sing` |
+| `PUB_A` IC50 1230 | 355.1 | `sing` | 0.6936 | 1.0527 |
+
+Load CV `0`. Across `2%` and `10%` these move by under `2%` in the `14.5 d`, monthly and
+phase-spread columns. The `14 d` column is not stable in any structure (`PAPER` runs
+`7.198 / 7.063 / 4.454` across the three CVs), which is the near-singular schedule behaving as
+the paper says it does.
+
+**The schedule ranking survives both structures.** Monthly and phase-spread beat `14.5 d` beats
+`14 d`, in that order, under `PAPER` and under both `PUB_B` branches, with the monthly and
+phase-spread figures agreeing to within about `3%` across structures (`0.1893`, `0.1894`,
+`0.1952` on the monthly record). Under `PUB_A` the
+reported precision is either unavailable or four times worse, and the ranking within the usable
+cells is unchanged. **So the design advice transfers; the parameter estimate does not.**
+
+A calibration note on the residual column of the full tables: a well-specified fit of `n = 12`
+points for 4 parameters has an expected `RMS/sigma` of `sqrt(8/12) = 0.816`, and the
+well-fitting rows sit at `0.78` to `0.87`. That is the figure to read the residual column
+against, and it confirms the fit is absorbing the noise rather than the structure.
+
+## (c) Does the fibre survive a change of structure?
+
+The width of the `K_m` profile within 1 unit of the minimum of the same penalised objective the
+estimator minimises, at a constant recorded load and no noise. The scan runs `0.3` to `3e4`;
+"edge" means the flat region runs off the end of it. This is the paper's central obstruction
+made measurable, and `A1_supplementary.tex:51-52` asserts exactly what is being tested here:
+*"The obstruction survives a change of structure; this parametrisation of it does not."*
+
+| generator | 14 d | 14 d, on therapy | 14.5 d | monthly | phase-spread |
+|---|---|---|---|---|---|
+| `PAPER` | 35.6 to edge | **0.3 to edge** | 88.5 to 114.7 | 91.7 to 109.9 | 91.7 to 110.2 |
+| `PUB_B` IC50 63.75 | 46.6 to edge | **0.3 to edge** | 120.8 to 164.9 | 118.4 to 144.4 | 117.0 to 143.6 |
+| `PUB_B` IC50 1167 | 44.1 to edge | **0.3 to edge** | 115.7 to 154.3 | 119.4 to 145.7 | 119.1 to 146.1 |
+| `PUB_A` IC50 22.93 | 36.5 to 77.8 | **0.3 to edge** | 1.13e4 to edge | 1.07e4 to edge | 9877 to edge |
+| `PUB_A` IC50 1230 | 68.7 to 538 | **0.3 to edge** | 5243 to edge | 858 to 3680 | 1014 to 1.18e4 |
+
+**Both halves of the supplement's sentence are confirmed, and one of them more strongly than the
+paper claims.**
+
+- **The obstruction survives.** `14 d, already on therapy` is flat across the **whole scan** for
+  **every** generator, on both branches of both structures. The exactly singular case is not an
+  artefact of the paper's rational parametrisation; it is a property of a record whose samples all
+  sit at the same dose-cycle phase, and it holds when the marker is algebraic in the enzyme and
+  when it is a turnover state. `14 d` from `t = 0` runs to the edge for `PAPER` and both `PUB_B`
+  branches, and breaking the period lock bounds `K_m` for `PAPER` and both `PUB_B` branches, in
+  the same direction and by a comparable factor.
+- **The parametrisation does not survive.** The bounded intervals sit in the wrong place. Under
+  `PUB_B` the fitted `K_m` is `116` to `165` against a true `100` at the `60%` calibration, and
+  `354` to `1086` at the `30%` calibration. Under `PUB_A` the flat region is three to four orders
+  of magnitude out. A bounded interval is not a correct interval.
+
+---
+
+# The independent re-check
+
+`audit/k3_recheck.py`. Every check reaches the same number by a route that shares no code with
+the script it checks. **6 of 6 pass**, and two of them failed first and were the reason two real
+errors were found.
+
+| check | independent route | result |
+|---|---|---|
+| 1. PCC eigenvalues | exact `Fraction` characteristic polynomial, `Decimal` at 60 digits, against numpy's eigensolver | agree to `1e-9` |
+| 2. `IC50` calibration roots | the closed form of the same quadratic, against the grid bisection `k2` uses | agree to `1e-6` on both structures at three targets |
+| 3. Structure ceilings | stationarity of the ratio by derivative bisection, against `k2`'s grid maximisation | agree to `1e-7` |
+| 4. `D` calibrated to a target fall | bisection on the balance itself, against `k1`'s quadratic root formula | falls reproduce to `1e-8`; the untreated level returns `10.0000000000` |
+| 5. `PUB_A`'s integration | variation of constants with Simpson quadrature on a dose-aligned grid, against `solve_ivp` | now agree to `3e-10` (slow branch) and `4e-8` (fast branch) |
+| 6. Control row | the paper's model fitted to its own data on every schedule | `rms/sigma < 3e-13`, `theta_hat/theta = 1`, `K_m = 100`, except the two constant-load fibre cases |
+
+**Check 5 failed twice, and both failures were real.**
+
+1. The first failure (errors of `2e-4` to `5e-2` relative) was in **`k2`**: `PUB_A` was being
+   integrated with one `solve_ivp` call across the whole record, and the right-hand side jumps at
+   every dose time and every day boundary. An adaptive Runge-Kutta run straight through a jump
+   loses its order there. `PUB_A.marker` now restarts the integration at each breakpoint, which
+   fixed the accuracy **and** cut the runtime of the whole step-2 matrix by more than an order of
+   magnitude.
+2. The residual failure was in **`k3` itself**: the last quadrature node of an interval ending at
+   a dose time was evaluating the enzyme *after* the dose, because `enzyme(t)` is
+   right-continuous. Taking the left limit there brought the two routes to `1e-10`. The check was
+   wrong, and the fix is recorded in the file rather than silently applied.
+
+Neither error changed a reported conclusion, because both were found before any table was
+written. They are recorded because the point of the re-check is that it catches things.
+
+---
+
+# Proven, measured, judgement
+
+| claim | status |
+|---|---|
+| The slope is a linear coefficient and not a Hill exponent; `Imax` is fixed at `0.999` | **proven** from Suppl Table S1(B) and Table 1 footnote m |
+| `"mg/g"` and `"mM/L"` are misprints for `ug/g` and `umol/L` | **proven** from the paper's own Fig. 2B axis and its own LOQ |
+| The Table 1 PD estimates are mouse and were not scaled to human | **proven** from the paper's own scaling sentence and Baek's |
+| Five repository places present them as human, or cite a non-existent extraction route | **proven**, located by line |
+| `3.85 d` is one rate constant, not the model's protein half-life; the `~7 d` is consistent with the constants | **measured**, `k1_sources.py`, re-checked exactly |
+| The trial's 3-HP fall after dose 3 is `-29` to `+5%` across five cohorts | **proven**, Extended Data Table 3 |
+| `D_AMP = 6000` implies a `62-66%` fall, two to three times the reported figures | **measured**, and independently confirmed by the structure ceilings |
+| The design numbers under a 7 d half-life and under a 20-30% fall | **measured**, table above, 8-seed spread quoted |
+| Model A has no published parameters; Baek is already registered as `mrna_moa` | **proven** from Baek's Methods and Table 1, and from `refs.sources:200-203` |
+| The published inhibition shape cannot reach the repository's calibrated fall | **measured**, ceilings `65.65%` and `64.13%` against `66.36%` |
+| `PUB_B` misspecification is invisible in the residuals and biases `theta` by `1.29` to `2.03` at the `60%` calibration, and by `4.3` to `20.5` at the trial's own `20-30%` | **measured** |
+| `PUB_A` misspecification is loud on the recommended schedules and silent on the dose-period one | **measured** |
+| The schedule ranking survives both structures; the parameter estimate does not | **measured** |
+| The exactly singular case survives both structures on every branch | **measured**, which is the first direct test of `A1_supplementary.tex:51-52` |
+| Where the load enters `PUB_A` and `PUB_B` | **judgement**, stated in the file header and in every table |
+| Which calibration branch is "the" one | **not judged**. Both are carried everywhere |
+| That the trial's samples were troughs | **not judged**. The paper does not say, and both readings are carried, and they disagree about whether the design is feasible |
+
+## What I did not do
+
+- **No paper edit, no constant change, no merge.** Every correction above is proposed text.
+  `PHASE4_PROPOSED_TEXT.md` is still unapplied.
+- **Steps 3 and 4 are not started**, per the instruction to stop after step 2.
+- **No test was added to `tests/test_models.py`.** The natural candidates are the two structure
+  ceilings and the `PUB_A`/`PUB_B` calibration identities, since both are exact arithmetic on
+  published constants. They belong there if and when the simulators become part of the paper
+  rather than of the audit, and that is a decision for after you have read this.
+- `StructuralIdentifiability.jl` is still not installed in this container, which will matter at
+  step 3 and not before.
+
+## The three questions this leaves you
+
+1. **The sampling time.** Everything in the reruns turns on whether Extended Data Table 3 is a
+   trough or a peak, and the trial report does not say. Is there a protocol, a poster, or a
+   contact who can settle it? If not, the paper has to carry both readings, and under one of them
+   a monthly record does not reach `sd(ln theta) = 0.20` in five years.
+2. **Whether `D_AMP` moves.** Two independent arguments now say `6000` is too high: the trial's
+   reported falls, and the ceiling of the published inhibition shape. Moving it changes printed
+   numbers across several sections, so it is your call and I have not touched it.
+3. **Whether the `theta` bias under `PUB_B` belongs in the paper.** It is the sharpest result
+   here: a structure the paper already cites, fitted by the paper's own estimator, gives a `1.3`
+   to `2.0`-fold error in the quantity the paper exists to estimate at the committed dose, and a
+   `4` to `20`-fold error at the dose the trial's own reported falls imply, with a residual of
+   less than a fifth of one `sigma` in both cases and therefore no warning at all. The supplement currently says the
+   obstruction survives a change of structure and the parametrisation does not. That is now
+   measured, and the measurement is stronger and more specific than the sentence.
