@@ -235,3 +235,271 @@ paper its contribution.
 - **The `sigma` sweep is not in `spec_numbers()`.** It lives in `audit/m1_loadbias_prior.py`
   only, pending a decision on 3.1.
 - Wagner 2011 was verified as a record, not read. The 10% figure is quoted from the review.
+
+---
+---
+
+# Part 2. The full verification pass, and what reading the primary sources found
+
+Part 1 was written after resolving nine identifiers. This part completes
+`refs/literature_pending.md` and reports what came out of reading the primary sources rather
+than the reviews' descriptions of them. **Several of the most consequential findings below are
+in papers no review in the pack cited.**
+
+## 5. `refs/literature_pending.md` is now fully verified
+
+Every row resolved against CrossRef or PubMed. **All 16 rows are correct as written.**
+
+**Methods, 11 rows, all confirmed:**
+
+| row | registrar says | note |
+|---|---|---|
+| Raue 2009 | *Bioinformatics* 25(15):1923-1929 | exact |
+| Bates & Watts 1980 | *JRSS-B* 42(1):1-16, "Relative Curvature Measures of Nonlinearity" | exact |
+| Self & Liang 1987 | *JASA* 82(398):605-610 | exact |
+| Andrews 2000 | *Econometrica* 68(2):399-405 | exact |
+| Lavielle & Aarons 2016 | *JPKPD* 43(1):111-122 | exact |
+| Janzén 2016 | *Front Physiol* 7, "Parameter Identifiability of Fundamental Pharmacodynamic Models" | family name carries an accent, **Janzén** |
+| Golub & Pereyra 2003 | *Inverse Problems* 19(2):R1-R26 | exact; 1973 founding paper confirmed at *SIAM J Numer Anal* 10(2):413-432 |
+| Nyberg & Karlsson 2009 | **Nyberg, Karlsson, Hooker**, *JPKPD* 36(2):125-145 | third author is Hooker |
+| **Walter & Pronzato 1990** | *Automatica* 26(2):195-213 | **the "Verify (review)" row. Confirmed** |
+| **Mehra 1974** | *IEEE TAC* **19(6):753-768** | **the citation trap. Confirmed exactly as this file has it** |
+| **Segel & Slemrod 1989** | *SIAM Rev* 31(3):446-477 | **the second "Verify (review)" row. Confirmed** |
+
+**Held references and the exclusion:**
+
+- `natural_history` `10.1186/s13023-026-04251-3` resolves to Schwahn, Berry, Vernon et al.,
+  *Orphanet J Rare Dis* 21(1), 2026. Already at `refs.sources:36`. Correct.
+- `breath_test_mma` confirmed at *Genet Med* 23(8):1522-1533.
+- **van Noort 2024** resolves to "Navigating the landscape of parameter identifiability
+  methods: a workflow recommendation for model development", *CPT PSP* 13(7):1170-1179. It is
+  a methods-workflow review. **The exclusion stands and is now checked at the source.**
+
+**Clinical, 4 rows, all confirmed**, and three of them upgraded from "would support" to a
+verbatim quotation. See Part 1 section 2.1 (Thompson), 3.1 (Daly) and 3.2 (Hsia).
+
+**Nothing in `literature_pending.md` was wrong.** Every row can move into `paper/refs.sources`
+on a registration decision.
+
+## 6. Four further misattributions in the pack, none previously reported
+
+Added to the three in Part 1 section 2.2, these make **seven** citation errors across the pack.
+
+| the pack says | the registrar says |
+|---|---|
+| "Ogungbenro K, Aarons L, et al., *JPKPD* **2007**", `10.1007/s10928-006-9009-1` | **Gueorguieva**, Aarons, Ogungbenro, Jorga, Rodgers, Rowland, *JPKPD* **2006;33(2):97-124**. Title correct, first author, year and volume wrong |
+| "Sharma/Kumar et al. 2025", `10.1038/s41598-025-09110-y` | **Devi**, Pasanna, Ayoob, Sachdev, Thomas, Fiehn, **Kurpad**, *Sci Rep* 15(1). Real and topical, attribution invented |
+| "Al-Dirbashi/Chakrapani et al.", PMID 25943030 | **Turki**, Murthy, Ueda, Cheng et al., *Mol Genet Metab* 2015;115(2-3):78-83 |
+| "Kasicka-Jonderko et al. 2018", PMID 29409350 | **Bożek**, Kamińska, Kasicka-Jonderko, Krusiec-Świdergoł. Kasicka-Jonderko is third author |
+
+Smaller: "Perri" for PMID 15797668 (actually **Barbosa**, *Nutrition* 2005;21(3):289-94);
+"Dijkman SC" for **van Dijkman SA**; "Evans/MacDonald group" for *Nutrients* 2023;15:4903,
+whose first author is **Pinto**. Verified as correct and unremarkable: Baumgartner 2014,
+Cummings 1987, Sasaki 2023, Kasicka-Jonderko 2007 and 2011, Afolabi 2011 and 2013, Choi 1997,
+Ziegler 1996, Gharaibeh 1998, Di Campli 2003, Fuller 2000, Daugirdas 2010, Obi 2018
+(*NDT* 33(3):530-539, the article number the review flagged), Daugirdas & Bolasco 2025,
+Shafi 2016, Van Cauter 1992, Sparacino & Cobelli 1996, Mortensen 2007, Ruan 2019,
+Qi 2021 (*Clin Transl Sci* 14(5):1894-1905, the volume the review flagged), Feillet 2008,
+Kaufman 1999, Langenbeck 2001, Griffin & Bradshaw 2019, Rossato & Fuchs 2021, van Rijn 2011,
+Evans 2022, the mFood paper, and **Haitjema 2026** (*Mol Genet Metab* 148(4):110183, real).
+
+## 7. A correction to Part 1. Wagner 2011 cannot carry the weight I gave it
+
+Part 1 section 3.3 said that if Wagner's 10% figure held, Tier 1 would become a confirmation
+rather than a gamble. **Having now read the full text (PMC3204151), it does not hold.** The
+reproducibility paragraph in full:
+
+> "A subset of all subjects (33 of 58) received a second breath test 1 to 3 days after initial
+> testing to evaluate the reliability of the BBT." ... "The Kappa value for the agreement
+> between tests was 0.7415 (95% CI: 0.4664 - **1.0166**). The BBT value of the two tests was on
+> average within 10% of each other (95% CI: **7.5 - 9.8%**)."
+
+A kappa cannot exceed 1, and a confidence interval cannot exclude its own point estimate.
+**Two impossible statistics in one paragraph.** The kappa is also categorical agreement on a
+deficient/not-deficient call, not a continuous CV, and the readout is `%dose/hr` at 10 or 20
+minutes in a B12 population. Wagner remains the **shortest-interval repeat of a
+`1-13C`-propionate breath test in the literature**, and that fact is worth one sentence, but
+its numbers are not usable. **Tier 1 stays where the paper had it.**
+
+## 8. The trial's dose train is not a fixed biweekly schedule
+
+Read from the Nature 2024 paper (PMC11156579), which the repository holds as `trial_phase12`.
+
+- **Cohort 1 is Q3W, not Q2W.** Cohort 1: 0.30 mg/kg **every three weeks**, n = 4. Cohorts 2-5:
+  0.30, 0.45, 0.60, 0.90 mg/kg **every two weeks**, n = 3 each. Dose amplitude spans **threefold**.
+- **Five of 16 participants changed dosing regimen.** One had a dose decrease (0.90 to 0.60
+  after grade 3 pancreatitis), **skipped dose 3 entirely**, and had dose 2 delayed by
+  hospitalisation. Two cohort-1 participants moved to Q2W, two cohort-2 participants to 0.60
+  Q2W, one cohort-5 participant to 0.60 Q2W.
+- **The schedule slips.** For a cohort-1 (Q3W) participant the paper records "the predose sample
+  for dose 3 (**52 days after the first dose**)". Nominal Q3W puts dose 3 at day 42. That is
+  about **ten days of slippage on a 21-day nominal interval**.
+- Per-regimen dose counts are published: 73 doses at 0.30 Q3W, 136 at 0.30 Q2W, 68 at 0.45 Q2W,
+  45 at 0.60 Q2W, 24 at 0.90 Q2W, total 346.
+
+`src/design/run.py` annotates `DOSE_INTERVAL = 14.0` as "the biweekly schedule selected for
+mRNA-3927". That is one of two published schedules, and neither is adhered to exactly.
+
+**Which way this cuts is worth stating carefully, because it is mostly good.** A ragged,
+amplitude-varying, occasionally-skipped dose train is **better excitation** than a uniform one,
+and slippage makes `rem:aliasing`'s failure mode (every draw at the same phase) much harder to
+fall into by accident. What it costs is the paper's framing: the claim that "the **fixed**
+biweekly schedule the trial already runs turns out to be the identification experiment" should
+become a claim about the dose train as administered, which is better for the argument and
+requires the sentence to change. `D_AMP`, a single assumed amplitude, is also standing in for
+five published dose levels.
+
+## 9. Extended Data Table 3. Narrowed, with a test the repository can run on numbers it already has
+
+`OPEN_QUESTIONS.md` section 2 calls this "the single largest swing in the design" and says the
+public record is exhausted. It is narrower than that:
+
+- The table's own title is "**Biomarker percentage change from baseline after the third dose**".
+- The Methods define the comparison: "changes in blood 2-MC and 3-HP levels from baseline
+  (**predose levels**) to post-dose levels".
+- The Extended Data tables are published as **images** (`41586_2024_7266_Tab3_ESM.jpg`), which is
+  why no timepoint appears in any machine-readable version.
+
+The phase of the post-dose reading is still unstated. **But the table reports the Q2W and Q3W
+cohorts separately**, and that gives a discriminator the repository can apply to the numbers it
+already has: if the post-dose sample is at a fixed clock time after dose 3, the Q2W and Q3W
+cohorts sit at the **same** phase; if it is the following predose, they sit at **14 and 21 days**,
+different phases of a decay with a 3.5-day half-life. A systematic Q2W-versus-Q3W offset in the
+tabulated falls is evidence for the trough reading; its absence is evidence for a fixed clock
+time. This does not need the sponsor.
+
+## 10. Three published corrections, none cited here. One of them settles R4
+
+- *Nature* **Author** Correction, 629(8011):E10, `10.1038/s41586-024-07413-0`.
+- *Nature* **Publisher** Correction, 630(8017):E13, `10.1038/s41586-024-07646-z`.
+- *Genet Med* Correction, 23(11):2233, `10.1038/s41436-021-01188-9`, to `breath_test_mma`.
+
+The Manoli correction was read in full (PMC8553604). In its entirety: "Due to a processing
+error, the online graphical abstract was not given. The original article has been corrected."
+
+**It does not touch the coefficient of variation.** So the abstract's `12.8%`, which is the
+Results' `12.86` standard deviation misreported as a mean, **stands uncorrected in the published
+record**. `REVIEW_LOG.md` **R4 is not superseded**, and the reviews will keep inheriting the
+error because the source has never fixed it.
+
+## 11. Tier 1 is cheaper and better supported than the paper assumes
+
+All from Manoli's own Methods and Figure 1 (PMC8354855), read here for the first time.
+
+1. **A metabolic cart is not needed for a short test.** Figure 1a: at the 0.5 mg/kg dose, "when
+   predicted CO2 rather than the VCO2 measured by the metabolic cart was used for calculations,
+   **results were identical up to the 60-minute timepoint**". Indirect calorimetry is the main
+   logistical obstacle to running Tier 1 outside a research unit, and a pre/post pair read at
+   60 minutes does not need it.
+2. **The signal peaks early.** Time of maximum enrichment **22.5 ± 12.9 minutes**. Tier 1 does
+   not need the 2-hour protocol.
+3. **The dose is small and the result is dose-invariant.** 0.5 mg/kg, twenty-fold below
+   Barshop's 9.7 mg/kg, with 48.8%, 56.03% and 55.91% oxidised at 9.7, 5 and 0.5 mg/kg.
+4. **The paper's central Tier 1 argument can now be cited instead of asserted.**
+   `08_specification.tex` says between-visit variation is an upper bound on same-day error
+   "because it contains drift a same-day pair removes". Manoli's Discussion says exactly that in
+   the source's own words: oral bolus results are affected by "fasting state, gut motility, and
+   microbiome differences, but also, importantly, by the **dilution of the tracer in a large
+   endogenous metabolite pool** and the **effects of renal function on its clearance**,
+   parameters that **can vary greatly between follow-up clinic visits**."
+5. **Manoli states the sensitivity claim Tier 1 rests on**: the test "can detect smaller
+   enzymatic activity changes after an isolated kidney transplant or B12 therapy when tested
+   **pre- and postintervention in individual subjects**".
+6. **A protocol conflict to resolve.** Wagner found an **8-hour fast essential** (a 1-hour fast
+   produced 4/10 false positives). Manoli used "a minimum of **3-hour** fast... **as suggested by
+   the study of Wagner et al.**", which is shorter than the minimum Wagner established. Tier 1
+   should fix the fast at 8 hours or longer and say why.
+
+## 12. The biological-variation gap is real for 3-HP and 2-MC, and **not** real for serum MMA
+
+Both reviews call within-subject variability for these markers a genuine, unfilled gap. For 3-HP
+and 2-MC that is correct. For serum MMA it is not, and the data are in the paper this repository
+already cites:
+
+- **Between-visit** serum MMA CV in the repeat-tested subjects: range **1.5% to 75.3%, average
+  31.38 ± 24.55%** (against the breath test's 14.02 ± 12.86% in the same subjects).
+- **Within-week**: Manoli Figure 1h plots serum MMA means and standard deviations for **57
+  subjects with more than one measurement during a week-long CRC stay**.
+
+That is a within-subject biological-variation dataset for the serum marker in this disease,
+n = 57, which both reviews missed. It does not close the 3-HP gap, but "no data exist for any of
+these markers" is too strong and should not be written that way.
+
+## 13. The finding no review produced: an unrecorded antibiotic cycle costs a factor of 1.8
+
+Two primary sources, neither cited anywhere in the pack.
+
+**Baumgartner 2014 (PMC4180313), the regimen, verbatim:** "Metronidazole, 10-20 mg/kg/day
+divided in 2-3 times... In order to avoid the development of drug-resistant colonies, **1-2
+weeks of therapy alternating with 2-3 weeks off or alternating every month is advisable**."
+This closes the "verify exact dose/schedule" item.
+
+**Thompson GN, Chalmers RA, Walter JH, Bresson JL, Lyonnet SL, Reed PJ, Saudubray JM, Leonard
+JV, Halliday D, "The use of metronidazole in management of methylmalonic and propionic
+acidaemias", *Eur J Pediatr* 1990;149(11):792-6, PMID 2226555, `10.1007/BF01957284`.** Verified.
+**Four PA and five MMA children.** "Urinary excretion of propionate metabolites fell
+significantly during the treatment in all subjects, the mean decrease being **41% (range 12-76,
+P less than 0.01)**, while mean plasma propionate was reduced from **45.0 to 25.1 umol/l**
+(P less than 0.05)." This is the source of `literature_pending.md`'s "metronidazole ~-40%", now
+verified with an n and a range, and it is a **different paper** from the Thompson 1990
+*Metabolism* partitioning study. It is also, incidentally, a human plasma propionate
+concentration in PA/MMA before and after a load intervention, which the 3-HP review lists as
+absent.
+
+**Put together: in a patient on the standard regimen the non-dietary load `b` is not constant.
+It is close to a square wave of order 40% amplitude on a 21 to 35 day period**, sitting
+alongside a 14 or 21 day dose train and a 30.4 day sampling grid.
+
+The paper knows about cyclical antibiotics and treats them as one of the **pre-therapy
+instruments** (`A1_supplementary.tex`, and the "three readings" in `07_design.tex`, which
+correctly conclude they act below `K_m` and move the patient the wrong way). **It never asks
+what a concurrent antibiotic cycle does to the dose-train design.** `audit/m2_antibiotic_cycle.py`,
+24 seeds, monthly draws:
+
+| antibiotic period | cycle **in** the load record | cycle **not** in the record |
+|---|---|---|
+| no cycle at all | `0.1660` | `0.1660` |
+| 21 d | `0.1709` | **`0.2974`** |
+| 28 d | `0.1716` | **`0.3044`** |
+| **30.4 d** (the sampling interval) | `0.1665` | `0.1665` |
+| 35 d | `0.1712` | **`0.3024`** |
+| 60 d | `0.1731` | **`0.3128`** |
+
+Three things follow.
+
+1. **Recording the antibiotic weeks costs nothing and removes a factor of 1.8.** Recorded, the
+   cycle neither helps nor hurts (`0.166` to `0.173`), which is exactly what the paper's own
+   "three readings" predicts for a perturbation an order of magnitude below `K_m`. Unrecorded,
+   it takes the design from `0.166` to about `0.30` and **fails the `0.20` target by half**.
+   The instruction is one line and it is free: **record antibiotic weeks alongside intake**.
+   It is worth as much as the entire load-precision discussion in Part 1 section 3.1.
+2. **The aliasing case is the benign one here, which is the opposite of the dose-train result.**
+   At a period equal to the sampling interval every draw lands at the same phase, the swing
+   becomes a constant offset, and the load-bias column absorbs it. A reader who has just been
+   told that aliasing destroys the dose-train result will assume aliasing is always the enemy.
+   On an unrecorded nuisance input it is the rescue.
+3. **The two audit scripts corroborate.** `m2`'s unrecorded case runs at an effective
+   `sigma` near `68`, and `m1`'s independent `sigma` sweep gives `0.264` at `sigma = 66.2`.
+   Different code paths, consistent answers.
+
+## 14. Two smaller things worth carrying
+
+- **The trial's efficacy figure needs its interval.** The abstract's "70% reduction in the risk
+  of metabolic decompensation events" is `1 - 0.30`, and the paper gives the relative risk as
+  **0.30 (95% CI 0.066 to 1.315), P = 0.0927** overall, and **0.18 (95% CI 0.011 to 2.907),
+  P = 0.1832** among the biweekly cohorts. **Neither is significant and both intervals cross 1
+  substantially.** Every review in the pack quoted the 70% without the interval.
+- **Dense post-dose sampling already happens in this trial, on the wrong analyte.** "Blood
+  samples were collected before dosing and at the indicated time points for up 21 days after
+  dose 1" for mRNA PK. `rem:transient` asks for exactly this schedule on the marker, and says
+  "whether that is clinically feasible is a different question". The sampling infrastructure and
+  consent for it demonstrably exist. That strengthens the remark.
+
+## 15. What Part 2 did not do
+
+- **No prose edited, no constant moved, nothing registered.** Unchanged from Part 1.
+- **The Extended Data Table 3 discriminator in section 9 was not run.** It needs the tabulated
+  per-cohort falls, which are in an image the repository already holds and this container does
+  not.
+- **`audit/m2_antibiotic_cycle.py` models the antibiotic cycle as a square wave on the load.**
+  That is the shape the regimen implies, not a shape anyone has measured.
