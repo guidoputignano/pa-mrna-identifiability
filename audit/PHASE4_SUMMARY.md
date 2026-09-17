@@ -24,12 +24,22 @@ direct saturating function of the enzyme, with no state). Neither is `src/model_
 
 ### Structure-robust: holds under the paper's model AND both published structures
 
-**The three-number bound.** [proven] At a constant recorded load, all a record contains is the
-function from increment to marker, and in all three structures that function belongs to a
-family of dimension exactly three: `Delta(m) = A/m+B+Cm` for the paper, `(P Delta+U)/(Delta+V)`
-for both published ones. Four or five parameters against three numbers is why every structure
-here is one short at a constant load. **The obstruction is a property of the form, not of the
-biology.**
+**The three-number bound, in all three structures EXAMINED.** [proven, for a stated class]
+At a constant recorded load, all a record contains is the function from increment to marker,
+and in all three structures that function belongs to a family of dimension exactly three:
+`Delta(m) = A/m+B+Cm` for the paper, `(P Delta+U)/(Delta+V)` for both published ones. Four or
+five parameters against three numbers is why every structure here is one short at a constant
+load.
+
+**It is not a general theorem and is not claimed as one.** The class it is proved for is
+*four-monomial*: structures whose fixed-load `(Delta, m)` graph is the zero set of a
+polynomial with at most four monomials. Within that class the bound is elementary, since the
+polynomial is defined only up to scale. The content is entirely in MEMBERSHIP, verified for
+these three and claimed for no others: `PAPER` uses `{1, m, m^2, Delta*m}`, both published
+structures use `{1, m, Delta, Delta*m}`. **`PUB_A`'s full model leaves the class** the moment
+its transient is used, because a marker with a state does not put `(Delta(t), m(t))` on any
+algebraic curve, and that is exactly where its fourth number comes from. The class boundary
+and the mechanism are the same line.
 
 **A period-locked record is exactly singular in `K_m`.** [measured] A record whose samples all
 sit at one dose-cycle phase leaves the `K_m` profile flat across the whole scan, for **every**
@@ -62,29 +72,50 @@ worse (`0.69` and `1.05` against the paper's `0.19`). So the ranking is
 not *demonstrated* under `PUB_A`; what is demonstrated there is better, and is the next
 paragraph.
 
-**And the recommended schedules are the ones that DETECT a wrong structure.** [measured] Under
-`PUB_A` the paper's fit leaves `2.0` to `2.6 sigma` of residual on 14.5 d, monthly and
-phase-spread, and `0.0` to `0.6 sigma` on the two 14 d schedules, where it quietly returns
-`theta = 0` instead. So a phase-spread or off-period record is not only better conditioned:
-it is the only one of the five tested that would tell the analyst the structure was wrong.
-That was not claimed in the paper and is worth having.
+**Under `PUB_A` ONLY, the recommended schedules detect the wrong structure.** [measured] The
+paper's fit leaves `2.0` to `2.6 sigma` of residual on 14.5 d, monthly and phase-spread, and
+`0.0` to `0.6 sigma` on the two 14 d schedules, where it quietly returns `theta = 0` instead.
+So against a turnover truth a phase-spread or off-period record is not only better
+conditioned: it also tells the analyst the structure is wrong.
+
+**Under `PUB_B` the fit is silent on EVERY schedule**, monthly and phase-spread included:
+`0.000` to `0.19 sigma` of structural residual at the committed calibration, and `0.78` to
+`0.88` with noise against an expected `0.816`. **So detection is a `PUB_A` property and not a
+property of the recommended designs**, and the previous revision of this file said otherwise.
+Against an algebraic-marker truth no schedule tested here raises a residual signal at all.
 
 ### Model-dependent: the value of `theta`, and everything stated in units of it
 
 **`theta` is identified relative to a structure, not absolutely.** [proven] Under `PUB_B`,
-`theta` enters only through `V = IC50 + theta` and `U`, and eliminating the other parameters
-leaves **no relation on it**: any `theta` in `(0, V)` reproduces the record exactly. Walked
-explicitly, `theta` runs from `3.06` to `3033` with the record unchanged to `1.4e-14`. A
-varying load does not help, because the load enters `PUB_B` only as a common factor. Under
-`PUB_A` it **is** identifiable, in closed form, `theta = (V-W)/Imax`. The difference is that
-`PUB_A`'s marker is a state, which buys a number from the transient, and carries no free
-marker scale, where `PUB_B` carries two and spends one.
+`theta` enters `V = IC50 + theta` and `U`, and eliminating the other parameters leaves **no
+relation on it**: any `theta` in `(0, V)` reproduces the record exactly. Walked explicitly,
+`theta` runs from `3.06` to `3033` with the record unchanged to `1.4e-14`. Under `PUB_A` it
+**is** identifiable, in closed form, `theta = (V-W)/Imax`. The difference is that `PUB_A`'s
+marker is a state, which buys a number from the transient, and carries no free marker scale,
+where `PUB_B` carries two and spends one.
 
-**So `theta_hat` can be badly wrong with no warning in the fit.** [measured] Fitting the
-paper's model to `PUB_B` records returns `theta_hat` high by `1.29` to `2.03` at the
-committed dose and by `4.3` to `20.5` at a dose calibrated to the falls the trial actually
-reports, with an RMS residual under a fifth of one `sigma`. **The bias grows as the residual
-shrinks**, so goodness of fit is exactly the diagnostic that cannot see it.
+**But `PUB_B` as published has no load input at all**, so where the load enters is our choice,
+and the choice decides the answer. Of four plausible insertions, three leave `theta`
+unidentifiable at any design and **one restores it** (the load lifting only the suppressible
+pool `base`, which is arguably the most natural reading of Attarwala's own definitions).
+Removing the free offset `E0`, or knowing `IC50` externally, also restores it. **So the honest
+statement is that under `PUB_B` whether `theta` is identifiable at all turns on an assumption
+the source does not make**, and the deficit traces specifically to carrying a free marker
+offset alongside a free marker amplitude, which is what a phenomenological readout has and a
+flux balance does not.
+
+**So `theta_hat` can be badly wrong, sometimes with no warning in the fit.** [measured]
+Fitting the paper's model to `PUB_B` records returns `theta_hat` high by `1.29` to `2.03` at
+the committed dose and by `4.3` to `20.5` at a dose calibrated to the falls the trial actually
+reports. **Three conditions on those figures**, all established in the insertion follow-up:
+
+- **The direction is robust; the size is not.** `theta_hat/theta` is above 1 under every load
+  insertion and every estimator tried, but it is `1.3` to `1.7` with the paper's own priors and
+  `5` to `9` with them removed. **The priors shrink the bias, they do not prevent it.**
+- **The absence of a warning is insertion-dependent.** The residual is `0.18` to `0.24 sigma`
+  when the load scales the whole marker or the suppressible pool, and `0.93` to `1.27` when it
+  moves the unsuppressible part, against an expected `0.816` for a well-specified fit.
+- **So is identifiability itself.** See below.
 
 **`K_m` moves with it.** [measured] `100` under the paper's model; `116` to `165` under
 `PUB_B` at the committed calibration, `354` to `1086` at a 30% one, on the same schedules and
@@ -234,10 +265,16 @@ paragraph.
 > needs `D = 766` to `1311` and reaches it in **42** visits or **not within five years**. One
 > unstated sampling time moves the design from "better than we said" to "not feasible".
 
-**What would settle it:** the registry record for `NCT04159103`. Its secondary outcome
-measures carry a `timeFrame` field. **Not checked**: outbound network access is blocked in
-this container (a 403 CONNECT denial from the egress proxy for both `curl` and `WebFetch`).
-It costs one fetch from a session with egress, or the record pasted in.
+**The public record is exhausted.** The registry for `NCT04159103` has been checked: its 3-HP
+time frame reads "Baseline (predose levels) to postdose levels ... up to Week 40", a window
+and not a visit. So **the timing cannot be settled from public sources and must come from the
+sponsor.**
+
+**What the registry does establish** is that the sponsor holds full post-dose time courses: it
+lists `Emax`, `AUEC` and duration of response among the biomarker outcomes, and none of those
+can be computed from a single draw. **The economical ask is therefore `Emax` and `AUEC` per
+cohort**, which would pin the dose calibration directly and make the sampling-time question
+moot, rather than the raw per-visit series.
 
 **2. How large is the dose effect?** `D_AMP = 6000` is calibrated to a `62` to `66%` marker
 fall, against reported per-cohort falls of `-29%` to `+5%` with no dose trend. **The constant

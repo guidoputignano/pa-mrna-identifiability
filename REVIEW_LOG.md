@@ -909,3 +909,57 @@ signature of a comparison between two forms of the same saturating shape rather 
 real physical bound. The sensitivity that settled it (`Imax` at `1` against `0.999`) was run
 before the claim was reported a second time, not after. The failure mode is the one `R5` and
 `R7` are also instances of: a verdict that turns on a constant nobody measured.
+
+---
+
+### R16. Four statements from Phase 5 that were true of the configuration measured and were reported as unconditional
+
+**Scoped, not retracted.** All four are mine, all are one report round old, and none reached
+`paper/`. Each stands where it was measured; each was written as though it held generally. They
+are grouped because they are one failure mode, not four.
+
+**(a) "Under PUB_B, theta is not identifiable, at any design, with or without load variation."**
+True of the load insertion `audit/k2_structures.py` happens to use, and **false of another
+plausible one**. Attarwala's marker equation was fitted in a fixed-diet colony and carries no
+substrate load at all, so every load in our version is our insertion. Of four plausible
+insertions, three leave theta unidentifiable at any design and one restores it: a load lifting
+only the suppressible pool `base`, which separates it from the unaffected floor `E0`. Setting
+`E0 = 0`, or knowing `IC50` externally, restores it too. The scoped statement is that **whether
+theta is identifiable under that structure turns on an assumption the source does not make**,
+and the deficit traces to carrying a free marker offset alongside a free marker amplitude.
+
+**(b) "The bias is 1.29 to 2.03 with a residual under a fifth of one sigma."** The direction of
+the bias is robust: theta_hat/theta is above 1 under every insertion and every estimator tried.
+The **size** is not. With this repository's own priors it is 1.3 to 1.7; with them removed, on
+the same records, it is 5 to 9. The priors shrink the bias, they do not prevent it, which is
+consistent with Phase 1's finding that the `k_e` prior does most of the identification. And the
+**invisibility** is insertion-dependent: 0.18 to 0.24 sigma when the load scales the whole
+marker or the suppressible pool, 0.93 to 1.27 when it moves the unsuppressible part, against an
+expected 0.816 for a well-specified fit at n = 12 and 4 parameters.
+
+**(c) "The recommended schedules detect a wrong structure."** True against a **turnover** truth,
+where monthly and phase-spread leave 2.0 to 2.6 sigma of residual. **False against the algebraic
+one**, where no schedule tested raises a signal at all: 0.000 to 0.19 sigma structural, 0.78 to
+0.88 with noise. Detection is a property of the alternative, not of the design.
+
+**(d) "The three-number bound."** Stated without a class, which reads as a general theorem. It
+is proved for structures whose fixed-load `(Delta, m)` graph is the zero set of a polynomial
+with at most four monomials, where it is elementary, and membership is verified for the three
+structures examined and claimed for no others. `PUB_A`'s full model leaves the class as soon as
+its transient is used, which is where its fourth number comes from.
+
+**How these were caught.** Not by re-running anything. By the questions being asked of the
+report: where does the load enter, is the intuition right, does the detection claim hold for
+both structures, and can the bound be proved for a stated class. Each answer was already
+computable from code that existed; none of it had been computed, because the configuration that
+was measured was the only one that had been considered. **The failure mode is reporting the
+scope of a measurement as the scope of a claim**, and it is the same one as `R5`, `R7` and
+`R15`. The correction in each case made the finding more useful rather than less: (a) is a
+sharper criticism of the paper than the unconditional version, and (b) says the reported
+estimate looks reasonable partly because the priors are pulling it back.
+
+**One statement that was checked and did NOT need scoping.** The registry claim from the same
+round, that "one registry fetch would settle" the sampling time, was wrong in the other
+direction and is withdrawn outright rather than scoped: the record has been read and its 3-HP
+time frame is "Baseline (predose levels) to postdose levels ... up to Week 40", a window and
+not a visit. The timing cannot be settled from public sources and must come from the sponsor.

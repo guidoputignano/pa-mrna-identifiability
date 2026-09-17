@@ -561,11 +561,14 @@ twenty, and the fit would look better than at the dose the repository currently 
 is the single most consequential number in this report, and it depends on the same unstated
 sampling time as everything else in the reruns.
 
-**The `PUB_A`/`PUB_B` contrast is the other useful result.** The schedules the paper recommends are the ones that
-*expose* a turnover marker; the schedule locked to the dose period hides it and quietly returns
-`theta = 0`. So the paper's design advice does two jobs at once, and the second was not claimed:
-a phase-spread or off-period record is not only better conditioned, it is the only one of these
-five that would have told the analyst the structure was wrong.
+**The `PUB_A`/`PUB_B` contrast is the other useful result, and it is a `PUB_A` property.**
+Against a turnover marker the schedules the paper recommends *expose* the misspecification,
+while the schedule locked to the dose period hides it and quietly returns `theta = 0`.
+**Against `PUB_B` no schedule tested here exposes anything**: the structural residual is
+`0.000` to `0.19 sigma` on monthly and phase-spread alike, and `0.78` to `0.88` with noise
+against an expected `0.816`. So the claim is "the recommended schedules detect a TURNOVER
+truth", not "the recommended schedules detect a wrong structure", and an earlier draft of this
+file said the latter.
 
 ## (b) With the repository's own observation noise
 
@@ -682,13 +685,15 @@ the first dose)". That is a trough, it is about anti-PEG titres rather than 3-HP
 the only evidence there is. (In passing: cohort 1 is Q3W, so a third dose on schedule falls
 at day 42, not 52. Nominal and actual timing are not the same thing in this trial.)
 
-**The registry (NCT04159103): not checked, and this is a real open item rather than a null
-result.** Outbound network access is blocked by this environment's egress policy. Both
-`curl https://clinicaltrials.gov/api/v2/studies/NCT04159103` and a `WebFetch` of the same
-record return a 403 CONNECT denial, logged by the proxy itself as *"gateway answered 403 to
-CONNECT (policy denial or upstream failure)"*. The registry's secondary outcome measures
-carry a `timeFrame` field, and if it names a visit for the 3-HP endpoint it settles the
-question outright. **It needs a session with egress, or the record pasted in.**
+**The registry (NCT04159103): SINCE CHECKED, AND IT DOES NOT SETTLE THE QUESTION.** See
+"The registry, settled" below. What this paragraph said when it was written, left in place so
+the order of work is legible: outbound network access is blocked by this environment's egress
+policy, both `curl https://clinicaltrials.gov/api/v2/studies/NCT04159103` and a `WebFetch` of
+the same record returning a 403 CONNECT denial logged by the proxy as *"gateway answered 403
+to CONNECT (policy denial or upstream failure)"*; and the registry's `timeFrame` field on the
+3-HP endpoint was expected to settle the question outright. **It does not.** The field reads
+"Baseline (predose levels) to postdose levels ... up to Week 40", a window rather than a
+visit.
 
 **Baek's Source Data: not available**, for the same reason. Fig. 2's caption says "Source
 data are provided as a Source Data file"; that file was not among the five PDFs.
@@ -948,6 +953,26 @@ such a function carries three numbers and no more. **That is a property of the f
 of the biology, which is why the obstruction survives a change of structure: it is the same
 count each time.**
 
+**The class this is proved for, and it is not a general theorem.** Call a structure
+*four-monomial* if its fixed-load `(Delta, m)` graph is the zero set of a polynomial with at
+most four monomials. Within that class the bound is elementary: the polynomial is defined
+only up to an overall scale, so its four coefficients are a point in projective 3-space, that
+is three numbers. All the content is in MEMBERSHIP, verified in `k7_insertions.py` section 4
+and claimed for these three structures only:
+
+| structure | monomials |
+|---|---|
+| `PAPER`, quasi-steady balance | `1, m, m^2, Delta*m` |
+| `PUB_B`, algebraic marker | `1, m, Delta, Delta*m` |
+| `PUB_A`, at steady state | `1, m, Delta, Delta*m` |
+
+**`PUB_A`'s full model is not in the class**, because its marker is a state and
+`(Delta(t), m(t))` therefore lies on no algebraic curve at a fixed load: `m` depends on the
+history of `Delta`, not on its current value. Checked numerically, the steady relation that
+the other three satisfy to `3e-16` is violated by `0.88` relative once `PUB_A`'s transient is
+carried. That is precisely where `PUB_A`'s fourth number comes from, so the class boundary and
+the mechanism are the same line. Nothing is claimed about structures outside the class.
+
 ## What differs is what each structure has to pay for out of those three
 
 | structure | free parameters (`Imax` fixed) | what a record carries | deficit |
@@ -1024,6 +1049,305 @@ were real.
    rather than silently fixed, because a re-check that quietly retunes until it passes is not
    a re-check.
 
+---
+
+# The insertion follow-up: where the load enters PUB_B, and what the result rests on
+
+`audit/k7_insertions.py`, re-checked in `audit/k8_recheck.py`. **5 of 5 and 5 of 5 pass.**
+
+## The correction this section makes
+
+The previous round reported, without qualification, that under `PUB_B` the enzyme capacity is
+*"not identifiable, at any design, at any number of visits, with or without load variation"*.
+**That is true of the insertion `k2_structures.py` happens to use, and false of another
+plausible one.** `PUB_B` as published has **no load input at all**: Attarwala's marker
+equation is fitted in a fixed-diet animal colony, so every load in our version is our
+insertion, and the conclusion has to be stated per insertion.
+
+## The four insertions, and the rank of each
+
+With `u = (L+b)/L0`, `f(Delta) = (IC50 + q(theta+Delta))/(IC50+theta+Delta)` and `q = 1-Imax`:
+
+| insertion | form | what it says physically |
+|---|---|---|
+| **as published** | `m = E0 + base f` | no load anywhere |
+| **whole** | `m = (E0 + base f) u` | the load scales the whole marker (what `k2` uses) |
+| **base** | `m = E0 + base u f` | the load lifts only the suppressible pool |
+| **E0** | `m = E0 u + base f` | the load lifts only the unaffected floor |
+| **add** | `m = E0 + base f + gamma u` | the load is a separate additive source |
+
+Complex-step Jacobian rank at a varying recorded load, 24 phase-spread visits:
+
+| insertion | params | rank | deficit | is `theta` free? |
+|---|---|---|---|---|
+| as published (no load) | 5 | 3 | 2 | **yes** (and `b` is dead, as it must be) |
+| whole | 5 | 4 | 1 | **yes**, null has `IC50 = -theta` exactly, `b = 0.0000` |
+| **base** | 5 | **5** | **0** | **no. IDENTIFIED** |
+| E0 | 5 | 4 | 1 | **yes**, null has `IC50 = -theta`, `b = +0.41` |
+| add | 6 | 4 | 2 | **yes** |
+| whole, with `E0 = 0` | 4 | **4** | **0** | **no. IDENTIFIED** |
+
+At a *constant* load every insertion has `theta` free, so nothing below rescues the
+constant-load case.
+
+**`k8` check 1 confirms the `base` result without any derivative at all**: a five-column
+regression of `m*Delta` on `{m, Delta, L*Delta, L, 1}` determines five numbers, and all five
+parameters follow in closed form. Recovered from exact noiseless data: `E0 = 0.70092704`,
+`base = 426.80562645`, `IC50 = 63.75181842`, `theta = 3000.00000000`, `b = 0.00000000`, worst
+relative error `3.8e-11`. **`k8` check 2** reaches the same split by Gröbner elimination:
+`whole` leaves no generator constraining `theta`, `base` leaves
+`V*alpha - gamma*q + theta*(alpha*q - alpha)`.
+
+## So the qualified statement is
+
+> Under `PUB_B`, whether `theta` is identifiable at all **depends on an assumption the source
+> does not make**. Three of the four insertions leave it unidentifiable at any design; one
+> restores it.
+
+That is weaker than the previous round's claim and, for the paper, worse: the question is not
+"is `theta` identifiable under a published alternative" but "under a published alternative,
+whether `theta` is even identifiable turns on a modelling choice nobody has made".
+
+**And the insertion that restores it is arguably the most natural on Attarwala's own
+definitions.** `base` is *"baseline 3-HP amenable to suppression"*; `E0` is *"plasma levels not
+affected by mRNA-3927"*. A larger substrate load should raise the suppressible pool and not the
+unaffected floor, which is the `base` insertion exactly. **That reading is ours, it is a
+judgement about biology, and nothing in either source states it.**
+
+## Is Step 2's bias figure insertion-robust? The direction yes, the size no
+
+Fitting the paper's model to records from each insertion, 12 monthly or phase-spread visits,
+8 daily diet records, the same estimator Step 2 used. A well-specified fit at `n = 12` for 4
+parameters has an expected `RMS/sigma` of `0.816`.
+
+| insertion | schedule | structure (noiseless) | noisy | `theta_hat/theta` |
+|---|---|---|---|---|
+| as published | monthly | 1.062 | 1.230 | 1.42 [1.11, 1.82] |
+| as published | phase-spread | 1.273 | 1.589 | 1.34 [0.96, 1.74] |
+| whole | monthly | **0.176** | 0.795 | 1.33 [1.18, 1.64] |
+| whole | phase-spread | **0.181** | 0.841 | 1.35 [1.23, 1.54] |
+| base | monthly | **0.221** | 0.821 | 1.32 [1.20, 1.63] |
+| base | phase-spread | **0.242** | 0.876 | 1.35 [1.21, 1.54] |
+| E0 | monthly | 0.949 | 1.140 | 1.42 [1.14, 1.79] |
+| E0 | phase-spread | 1.145 | 1.480 | 1.34 [1.00, 1.70] |
+| add | monthly | 0.925 | 1.133 | 1.76 [1.39, 2.25] |
+| add | phase-spread | 1.125 | 1.464 | 1.65 [1.22, 2.14] |
+
+**The bias is above 1 in every cell**, `1.32` to `1.76` on medians, so Step 2's finding that
+fitting the paper's model to a `PUB_B`-shaped record biases `theta` upward survives the choice.
+
+**The absence of a warning does not.** The previous round's phrase *"a residual under a fifth of
+one sigma"* holds for `whole` and `base` (`0.18` to `0.24`) and fails for the other three
+(`0.93` to `1.27`, so `1.1x` to `1.9x` the expected `0.816` once noise is added). `PUB_A`, for
+comparison, gives `2.0` to `2.6`. The insertions sort cleanly: those where the load is a common
+factor on the whole marker, or on the suppressible pool alone, are **invisible**; those where it
+moves the **unsuppressible** part are audible at about twice the expected residual.
+
+## And the size of the bias depends on the paper's own priors
+
+`k8` check 5, three fits of the same noiseless records:
+
+| insertion | varpro, penalised | varpro, unpenalised | beta form |
+|---|---|---|---|
+| as published | 1.408 | inadmissible | inadmissible |
+| whole | 1.341 | 7.354 | 7.446 |
+| base | 1.347 | 7.732 | 7.761 |
+| E0 | 1.410 | 4.811 | 5.548 |
+| add | 1.745 | 8.913 | 8.350 |
+
+Every admissible fit is above 1, so the **direction** is not an artefact of the estimator or of
+the priors. The **size** is: with the repository's own priors `theta_hat/theta` is `1.3` to
+`1.7`; with them removed it is `5` to `9` on the same records. **The priors are shrinking the
+bias, not preventing it**, which is consistent with Phase 1's finding that the `k_e` prior does
+most of the identification. So the previous round's `1.29` to `2.03` is conditional on the
+insertion **and** on the paper's priors, and the prior-free figure is several times larger. (The
+one inadmissible cell is the unpenalised beta form on `as published`, where the marker carries
+no load response while the ordinate varies anyway; `theta_hat < 0` there is a documented failure
+mode of that estimator, not a fact about the structure.)
+
+## The intuition, confirmed with one correction
+
+The claim put to me: *"in PUB_B, theta enters only through theta + IC50, so residual enzyme and
+potency trade off."*
+
+**The trade-off is right and one-for-one. "Only" is not.** `theta` enters **two** invariants,
+`V = IC50 + theta` and `U = P*theta + (E0+base)*IC50`. Walking the fibre:
+
+| `IC50` | `theta` | `IC50 + theta` | `base` | `E0` | `P` | `U` |
+|---|---|---|---|---|---|---|
+| 30.64 | 3033.11 | 3063.751818 | 888.11 | 0.2396 | 1.127732670 | 30637.5182 |
+| 306.4 | 2757.38 | 3063.751818 | 88.81 | 1.0389 | 1.127732670 | 30637.5182 |
+| 1531.9 | 1531.88 | 3063.751818 | 17.76 | 1.1100 | 1.127732670 | 30637.5182 |
+| 2757.4 | 306.38 | 3063.751818 | 9.868 | 1.1179 | 1.127732670 | 30637.5182 |
+| 3033.1 | 30.64 | 3063.751818 | 8.971 | 1.1188 | 1.127732670 | 30637.5182 |
+
+`IC50 + theta` is held to `0.00e+00` relative, `U` to `2.2e-16`, `P` to `0.00e+00`. **But `U`
+and `P` are not held by `theta` and `IC50`: they are held by `base` and `E0`, which move over
+three orders of magnitude to do it.**
+
+> **Corrected form.** `theta` enters two invariants. The reason only `IC50 + theta` binds is
+> that the marker's two free scale constants can always be re-tuned to hold the other two, so
+> the single surviving constraint is the one-for-one trade between residual enzyme and potency.
+> Under `PUB_A` the same `V` exists, but there is a second invariant `W = q*theta + IC50` and no
+> free scale to absorb it, which is exactly why the trade breaks there and `theta` is pinned.
+
+## `PUB_B` is a direct-response form, and the deficit is its free offset
+
+**Both are instantaneous maps.** `PUB_B`'s marker has no state; the paper's marker is the state
+of a flux balance solved at quasi-steady state, which is also an instantaneous map from
+`(Delta, L)` to `m`. **So the difference between them is the shape of the map, not the
+dynamics.** `PUB_A` is the only one of the three with a marker state, and that is where its
+fourth number comes from.
+
+**The count, side by side at a varying load:**
+
+| structure | parameters | invariants | deficit |
+|---|---|---|---|
+| `PAPER` | `theta, K_m, k_e, b` (4) | `A, B, C, b` (4) | 0 |
+| `PUB_B` | `E0, base, IC50, theta, b` (5) | `P, U, V, b` (4) | 1 |
+
+`PUB_B` has **one more parameter and the same number of invariants**, and the extra one is a
+free marker scale. The paper's model has none: there the marker *is* the state whose balance is
+written, so its scale is fixed by the load's units. `PUB_B`'s marker is a phenomenological
+readout with a free offset `E0` and a free amplitude `base`.
+
+**Yes, the deficit comes from the phenomenological parameters, and specifically from `E0`.**
+
+| variant | rank | verdict |
+|---|---|---|
+| `whole`, `E0` free | 4 of 5 | `theta` FREE |
+| `whole`, **`E0 = 0`** | **4 of 4** | **IDENTIFIED** |
+| `whole`, **`IC50` known** | **4 of 4** | **IDENTIFIED** |
+
+`k8` check 3 recovers `theta` in closed form under both, to `1e-13` and `1e-16` on exact data.
+So `PUB_B`'s non-identifiability is **not** a property of direct-response forms in general, nor
+of the saturating shape. It is caused by carrying a free marker offset *alongside* a free marker
+amplitude, which is what a phenomenological readout has and a flux balance does not.
+
+**Three independent ways out**, and two of them are external to the record: a known floor
+(`E0 = 0`), a measured potency (`IC50` known, e.g. in vitro), or the `base` insertion. The first
+two are instances of the external anchor the previous round argued for; the third is a
+modelling choice.
+
+---
+
+# The registry, settled: the timing cannot be resolved from public sources
+
+The previous round called one registry fetch "the single highest-value open item" and said it
+"costs one fetch". **Both statements are withdrawn.** The registry record for `NCT04159103` has
+now been read, and it does not settle the question.
+
+**What it says.** The 3-HP outcome measures give the time frame as
+
+> "Baseline (predose levels) to postdose levels ... up to Week 40"
+
+and no more. That is a window of the whole treatment period, not a visit. It gives **no
+timepoint for Extended Data Table 3**, so nothing in the registry distinguishes a trough draw
+from a peak one.
+
+**What it does tell us, and it is worth having.** The registry lists **Emax, AUEC and duration
+of response** among the biomarker outcomes. Those three quantities cannot be computed from a
+single draw: `Emax` needs the extremum of a profile, `AUEC` needs its integral, and duration of
+response needs its return. **So the sponsor holds full post-dose time courses for 3-HP**, and
+what is missing from the public record is not the measurement but the reporting of which point
+of them Extended Data Table 3 summarises.
+
+**Therefore.** The timing question **cannot be settled from public sources and must come from
+the sponsor.** It is not a fetch, a protocol download or a supplementary file away. It is a
+request to Moderna, or the trial's per-visit biomarker series, and until one of those arrives
+the paper has to carry both readings. Everything the sensitivity table says about the
+consequence stands: the two readings differ between "10 to 12 monthly visits" and "42, or not
+within five years".
+
+**One thing this makes more valuable rather than less.** Since the sponsor has the time courses,
+`Emax` and `AUEC` are exactly the statistics that would pin the dose calibration directly,
+without the sampling-time question arising at all. A request for those two numbers per cohort
+would close both open items at once, and is a smaller ask than the raw series.
+
+---
+
+# Point 4: what Baek's Source Data can and cannot discriminate
+
+`audit/k9_sourcedata_prior.py`. **Written before the file arrives, deliberately**, so that it
+is a yardstick rather than a rationalisation. No mouse datum enters it: everything is computed
+from the design and from the simulators already here. **Nothing will be fitted until you say
+so.**
+
+**The design**, from the Fig. 2 caption: one treated arm, `n = 6`, doses on Days 0 and 28, blood
+prior to treatment and on Days **2, 8, 14, 22, 28** after the first dose and **2 days after the
+second**. Several cells are `n = 2` or `n = 5`. No diet record exists, and a colony on fixed
+chow has a **constant substrate load by construction**.
+
+## What it can discriminate: one thing, and it is the right one
+
+**Whether the marker has a state.** Step 3 established that the entire difference between the
+two published structures is a marker time constant: `PUB_A`'s transient supplies the fourth
+number, `PUB_B` has no transient at all. A time course is exactly the instrument that separates
+those, and a cross-section is not.
+
+The observable signature is **lag**: `PUB_B`'s marker bottoms out the instant the enzyme peaks,
+`PUB_A`'s lags. Simulated on the mouse schedule at our operating point, which is a statement
+about the **schedule** and not about the mouse:
+
+| calibration | branch | `IC50` | marker `t1/2` | lag to nadir | shape gap at the sampled days |
+|---|---|---|---|---|---|
+| 30% | slow | 2.368 | 12.01 d | 11.1 d | **80.2%** |
+| 30% | fast | 1.19e4 | 0.0269 d | 0.202 d | 16.1% |
+| 60% | slow | 22.93 | 2.504 d | 5.67 d | **49.7%** |
+| 60% | fast | 1230 | 0.0737 d | 0.504 d | 2.6% |
+
+"Shape gap" is the largest difference between the two **normalised** profiles at a sampled
+post-dose day, so it is free of any scale or baseline difference between the structures.
+
+**Read against the noise.** Attarwala's own between-mouse variability on the 3-HP baseline is
+`51.1%`, so with `n = 6` the standard error on a group mean is about `20.9%` at best and
+`36.1%` in the `n = 2` cells, **before assay error**. Only the **slow** branch clears that.
+
+## What it cannot discriminate
+
+1. **`theta` under `PUB_B`, and this is structural, not a power problem.** A fixed-chow colony
+   has a constant load, and Step 3b's rank table at a constant load gives `PUB_B` rank 3 of 5, a
+   deficit of **two**. No number of mice and no number of timepoints changes that. The same
+   table gives the paper's own model rank 3 of 4 at a constant load, so this dataset cannot
+   close the paper's fibre either.
+2. **The human sampling-time question**, which is the one open item that moves the design
+   numbers. Different species, different regimen (0.5 mg/kg Q4W against 0.30 to 0.90 mg/kg Q2W
+   or Q3W), and it says nothing about when the trial drew its samples.
+3. **An operating point.** The `Pcca-/- (A138T)` mouse carries about 2% of normal liver PCC.
+   The repository's `theta` is set at a different fraction, stated two ways in `params.py`, and
+   `m_bar/K_m = 0.1` is ours.
+4. **Probably, individual mice.** The figure reports mean and SD per timepoint. If the Source
+   Data holds only those summaries, then at `51%` between-mouse variability the **within-animal
+   shape**, which is what a turnover model is identified from, is not recoverable. **This is the
+   first thing to check when the file arrives**, and it decides whether item 1 above is even
+   available.
+5. **The fast branch.** A marker half-life of `0.0269` d is about **39 minutes** and lags the
+   enzyme by `0.2` d. On a grid whose finest spacing is 2 days that is indistinguishable from an
+   instantaneous marker: its shape gap is `16.1%` against a best-case standard error of `20.9%`.
+   **So a null result would rule out the slow branch of `PUB_A` and say nothing about the fast
+   one. A null result is not evidence for `PUB_B`.**
+
+**One thing worth flagging in passing.** The caption says blood was collected "on ... Day 28",
+and the second dose is on Day 28. Which side of it is not stated. **That is the same unstated
+sampling convention as Extended Data Table 3, in miniature**, in the same programme. Taken here
+as the trough, which is the natural reading of a Day-28 sample in the first cycle, and flagged
+because the ambiguity recurring twice suggests it is a reporting habit rather than an oversight.
+
+## The standing rule for when the file arrives
+
+**Do not fit it.** The first pass is descriptive only, and reports:
+
+- **a.** per-animal series or per-timepoint summaries? (If summaries, stop and say so: most of
+  the value is gone.)
+- **b.** how many animals and timepoints actually carry a 3-HP value, against the caption's
+  `n = 6` with cells at `n = 2` and `n = 5`?
+- **c.** is the pre-treatment sample present for every animal? A turnover model's transient is
+  measured against its own baseline.
+- **d.** units and assay LOQ, against the `25 umol/L` Attarwala's text quotes and the `0` to
+  `200 uM` axis of Fig. 2e.
+
+Then report, and wait.
+
 
 # Proven, measured, judgement
 
@@ -1048,9 +1372,21 @@ were real.
 | Where the load enters `PUB_A` and `PUB_B` | **judgement**, stated in the file header and in every table |
 | Which calibration branch is "the" one | **not judged**. Both are carried everywhere |
 | That the trial's samples were troughs | **not judged**. The paper does not say, and both readings are carried, and they disagree about whether the design is feasible |
+| Where the load enters `PUB_B` decides whether `theta` is identifiable at all | **proven**. 3 of 4 insertions leave it free; the `base` insertion gives rank 5 of 5, recovered in closed form to `3.8e-11` |
+| The deficit is `PUB_B`'s free offset `E0`; either `E0 = 0` or a known `IC50` removes it | **proven**, rank 4 of 4 and closed-form recovery under both |
+| `theta` and `IC50` trade off one-for-one; `base` and `E0` pay for the other two invariants | **proven**. `IC50 + theta` held to `0.00e+00`, `U` to `2.2e-16`, while `base` moves over three orders of magnitude |
+| `PUB_B` is a direct-response form, so the difference from the paper's model is the shape of the map and not the dynamics | **proven**. Both are instantaneous maps; `PUB_A` alone has a marker state |
+| The bias direction survives every insertion and every estimator | **measured**, above 1 in every admissible cell |
+| The bias SIZE is `1.3-1.7` with the paper's priors and `5-9` without them | **measured**. The priors shrink it, they do not prevent it |
+| The invisibility of the misspecification is insertion-dependent | **measured**. `0.18-0.24` sigma for two insertions, `0.93-1.27` for three |
+| The three-number bound holds for the four-monomial class, verified for these three structures | **proven for a stated class**, not a general theorem |
+| That the `base` insertion is the right one on Attarwala's definitions | **judgement**. `base` is "amenable to suppression" and `E0` is "not affected"; nothing in either source says where a load goes |
+| Baek's Source Data can separate a marker state from none on its SLOW branch and not its fast one | **measured a priori**, before the file arrives: shape gaps `80.2%`/`49.7%` against `16.1%`/`2.6%`, on a standard error of `20.9%` at best |
 | Every trough row passes the capacity ceiling at both references, the worst at `84.58%` of normal | **measured**, `h1`'s constraint 5 recomputed per row |
 | The trial paper names no sampling time for Extended Data Table 3, and has no biomarker time-course figure | **proven**, checked exhaustively in this pass |
-| The registry's `timeFrame` field would settle it | **not checked**. Outbound egress is blocked here; both `curl` and `WebFetch` get a 403 CONNECT denial |
+| ~~The registry's `timeFrame` field would settle it~~ | **WITHDRAWN**. The record has been read: its 3-HP time frame is "Baseline (predose levels) to postdose levels ... up to Week 40", a window, not a visit |
+| The timing cannot be settled from public sources and must come from the sponsor | **proven**, by exhausting the article and the registry |
+| The sponsor holds full post-dose 3-HP time courses | **proven**. The registry lists Emax, AUEC and duration of response, none of which a single draw can give |
 | Baek's mouse PD was sampled at Days 2, 8, 14, 22, 28 of a 28 d cycle, a full time course | **proven**, Fig. 2 caption |
 | Baek Fig. 2e plots 3-HP in `uM` in the same mouse strain, confirming Attarwala's `"mM/L"` is `umol/L` | **proven**, and this is an EXTERNAL confirmation of what was an internal argument |
 | `PUB_B` is exactly Moebius in `Delta`, so a record carries three numbers | **proven** symbolically, and by exact rational interpolation |
@@ -1082,9 +1418,10 @@ were real.
 1. **The sampling time: carry both readings.** Decided. It is carried throughout, and the
    two readings still disagree about feasibility: `10` to `12` monthly visits under the
    trough reading at the committed half-life, against `42` or unreachable under the peak
-   reading. **The one thing that would settle it and has not been checked is the registry's
-   `timeFrame` field for the 3-HP secondary outcome**, which this container cannot reach.
-   That is the single highest-value open item in this report and it costs one fetch.
+   reading. **It cannot be settled from public sources.** The article names no timepoint and
+   the registry's time frame is a window, not a visit. It must come from the sponsor, and the
+   most economical ask is `Emax` and `AUEC` per cohort, which the registry shows they compute
+   and which would pin the dose calibration without the sampling-time question arising.
 2. **`D_AMP` does not move.** Decided. The sensitivity table above is what stands in its
    place, with admissibility on every row. One of the two arguments for moving it is
    withdrawn (`REVIEW_LOG.md` R15); the argument from the trial's reported falls stands.
@@ -1097,7 +1434,8 @@ were real.
 
 ## What remains open
 
-- **The registry `timeFrame`.** See 1.
+- **A request to the sponsor.** See 1. Not a fetch: the public record is exhausted.
+  The economical ask is `Emax` and `AUEC` per cohort for 3-HP.
 - **Baek's Source Data file**, for the same reason. It would give the mouse 3-HP time course
   as numbers rather than as a figure, which would let the translational model be simulated
   end to end rather than through our own calibration.
