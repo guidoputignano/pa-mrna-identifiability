@@ -10,7 +10,11 @@ Marks: **[proven]** mathematics, exact or symbolic. **[measured]** computed, foo
 
 **One retraction since the last revision of this file**: `REVIEW_LOG.md` R15, mine, that the
 published inhibition shape could not reach the repository's calibrated fall. It was a knife
-edge on a constant the source fixed rather than estimated.
+edge on a constant the source fixed rather than estimated. `R16` then scoped four Phase 5
+statements that were reported as unconditional.
+
+**Literature supplied September 2026 is held unverified** in `refs/literature_pending.md` and
+summarised in section 5a. No source from it is registered, and no constant moves on it.
 
 ## 0. Structure-robust, and model-dependent
 
@@ -95,9 +99,13 @@ marker is a state, which buys a number from the transient, and carries no free m
 where `PUB_B` carries two and spends one.
 
 **But `PUB_B` as published has no load input at all**, so where the load enters is our choice,
-and the choice decides the answer. Of four plausible insertions, three leave `theta`
-unidentifiable at any design and **one restores it** (the load lifting only the suppressible
-pool `base`, which is arguably the most natural reading of Attarwala's own definitions).
+and the choice decides the answer. [measured] Of four plausible insertions, three leave
+`theta` unidentifiable at any design and **one restores it**: the load lifting only the
+suppressible pool `base`. **That this is the right reading is [judgement], not a finding.**
+It rests on Attarwala's own definitions (`base` is "amenable to suppression", `E0` is "not
+affected by mRNA-3927"), so a larger substrate load should raise the suppressible pool and not
+the unaffected floor. Nothing in either source says where a load goes, and the rank result
+above is what changes if the judgement is wrong.
 Removing the free offset `E0`, or knowing `IC50` externally, also restores it. **So the honest
 statement is that under `PUB_B` whether `theta` is identifiable at all turns on an assumption
 the source does not make**, and the deficit traces specifically to carrying a free marker
@@ -243,10 +251,81 @@ one is a single spoke and the others fill the dial. `fig_E1` is drawn and unused
 
 **(d) Reword the `D` row, or leave it?** [judgement] Nothing downstream breaks if it stays.
 
-**(e) Settled since this list was written.** Both readings of the trial's sampling time are
+**(e) Where does dietary load enter a direct-response model?** [judgement, and the largest
+one open] A marker that is an algebraic function of the enzyme has no load input, so any load
+has to be imposed. The choice is not cosmetic: of four plausible insertions, three leave
+`theta` unidentifiable at any design and one restores it, and the size and visibility of the
+bias in `theta_hat` move with it too. Neither published model states a coupling, and this is
+the question to put to the PI. The candidates, in the order they appear in section 0:
+`(E0 + base*f)*u` (the whole marker scales), `E0 + base*u*f` (only the suppressible pool),
+`E0*u + base*f` (only the unaffected floor), and `E0 + base*f + gamma*u` (a separate additive
+source). The third and fourth are also the two that leave an audible residual, so the answer
+decides both whether `theta` is identifiable and whether a misfit would be noticed.
+
+**(f) Settled since this list was written.** Both readings of the trial's sampling time are
 carried; `D_AMP` does not move; the structure-relative `theta` passage goes in the paper
 (passage 9); the five mouse-versus-human corrections are drafted (passage 10). All four are
 unapplied.
+
+---
+
+## 5a. Findings from the literature reviews. PENDING VERIFICATION, nothing applied
+
+Supplied September 2026 from two literature reviews (clinical and methods). **No constant is
+changed, no analysis is run on these, and no source is added to `paper/refs.sources`**; the
+full reference list with DOIs is held in `refs/literature_pending.md`. Network egress is
+blocked in this container, so **none of the citations below has been verified here**. Two of
+the five are flagged against things this repository already holds, and one of those is a
+direct conflict.
+
+**1. PA diet records are prescriptions, not intake as eaten.** (Daly et al. 2017,
+PMID 29021961; a 47-centre survey reporting prescribed protein.) No published within-patient
+day-to-day variability of *actual* intake exists. **If this holds, it is the most consequential
+item in either review**, because the `10%` recorded load CV is then unsupported and a
+prescription-based record is effectively a **constant** recorded load. What that costs is
+already measured and needs no new work: at a constant recorded load the paper's model is
+**rank 3 of 4, exactly singular** (Phase 5 step 3b), and section 3 above already records that
+a 2% recorded CV cannot reach the target in 60 visits. **So the question is no longer "how
+much does the load vary" but "is the recorded load a measurement at all".**
+
+**2. About half of propionate production is not dietary.** (Thompson et al. 1990,
+*Metabolism* 39:1133; 6 patients, fasting, mixed PA/MMA: amino acids ~52%, gut bacteria
+>=22%, odd-chain fatty acids ~30%.) Two consequences if it holds, both for `b`, the
+unrecorded component of the load. **Its scale:** the prior is `S_B = 5%` of `L`, that is
+`16.14` against `L = 322.73`, and `b_true = 0` in every simulation. A systematic
+non-dietary half would put `b` at the order of `L` itself, roughly twenty prior standard
+deviations out. **Its constancy:** the same review reports `b` moving with metronidazole
+(about `-40%`), with illness and with fasting, whereas the model carries it as a single
+constant. The mapping from "non-dietary propionate" to "`b`" is an interpretation and is
+flagged as such.
+
+**3. Residual PCC activity in PA is typically <5% of control.** (Hsia et al. 1979,
+PMID 481943.) This bears directly on open question **(b)** above, which this audit
+deliberately left open because `params.py` states the fraction two ways four lines apart. The
+literature favours the **5%** reference. It changes no pass or fail (`h1_admissibility.py`
+holds at both), and it changes the admissible range of the unidentified direction by `2.5x`.
+**Not applied**: the repository's own rule is that the PI settles this, and the citation is
+unverified.
+
+**4. No human data exist on plasma 3-HP half-life, clearance or test-retest CV.** This
+**confirms** rather than changes the repository's position: `params.py`'s `k_e` row already
+calls it "the priority gap", and Phase 5 finding 2 removed the one extraction route the row
+named, because the cited model's marker is algebraic and carries no elimination constant. The
+review adds that absolute plasma 3-HP in `umol/L` is also unpublished for PA, both key human
+papers reporting only percentage change or an undigitised figure. That is a third gap on the
+same quantity.
+
+**5. Breath-test repeatability. CONFLICT, and this repository has already adjudicated it.**
+The review gives "CV 12.8% in MMA patients, 6.9% in controls (Manoli et al. 2021,
+PMID 33820958)". That source is **already registered here** as `breath_test_mma`
+(`doi:10.1038/s41436-021-01143-8`), and `REVIEW_LOG.md` **R4 retracted the 12.8% figure**:
+Manoli's Results give `14.02 +/- 12.86%`, range `0.39` to `50.84`, and the abstract reports
+the standard deviation as though it were the mean. R4 adds a second point the review does not
+make, and it is the one that matters for Tier 1: the figure is **between-visit over two months
+to four years**, with changing renal status named by the authors as a cause, and is therefore
+an **upper bound** on the same-day repeatability Tier 1 actually needs. **The review's bullet
+restates the abstract figure R4 corrected. Do not import it.** The review's other statement,
+that no PA breath-test cohort exists, agrees with `08_specification.tex` as written.
 
 ## 5b. The open data questions
 
@@ -292,8 +371,11 @@ five days after a dose, reaches `9.0 d` by the end of a fortnightly interval, an
 thereafter. **The constant is not moved**; passage 10b states the qualification. Moving it to
 `ln 2/7` costs `11 -> 30` monthly visits and moves every Phase 3 figure.
 
-**Two older ones, unchanged and still binding.** The diet record must carry real day-to-day
-variation, and no real diet record enters this audit anywhere. And the delivered dose must be
+**Two older ones, unchanged and still binding, and the first is now sharper.** The diet record
+must carry real day-to-day variation, and no real diet record enters this audit anywhere.
+Section 5a item 1 reports that PA records are typically prescriptions rather than intake as
+eaten, which would make the recorded load constant and therefore exactly singular; that
+citation is unverified. And the delivered dose must be
 characterised to about `12%`, which is what Tier 1 asks for and what only a between-visit
 upper bound is published for.
 
