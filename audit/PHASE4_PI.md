@@ -185,6 +185,16 @@ outside `f2_euler.py` itself: `tests/test_models.py:1066`, the docstring of the 
 
 ## P3. His linearisation
 
+> **Clarification received, and what it retires.** The PI's equation was an illustrative
+> sketch of the method, not a formal model. On his instruction it is no longer analysed as
+> a model of its own: the questions about `psi`, the missing `Delta_k m_k` term and the
+> signs are withdrawn, and the symbol-mapping table below is kept only as the record of how
+> the sketch was read, not as a list of defects in it. **What survives, and is his, is the
+> idea: multiply the balance out to get a linear form.** That is where the `beta`
+> reparametrisation comes from, and it is right. The rest of P3 stands on its own terms --
+> the multiplied-out balance, the exact `beta`, and the constrained solve -- and none of it
+> depended on the sketch being formal.
+
 **The paper's own multiplied-out balance.** Multiplying
 `(theta+Delta) m/(K_m+m) + k_e m = L + b` by `(K_m+m)`:
 
@@ -753,27 +763,22 @@ whose *computation* is correct and whose *interpretation* is the one being retra
    therapy removes metabolite rather than adding capacity, that is a different biology and
    worth settling first: mRNA-3927 delivers PCC mRNA, which is a capacity increment, and
    the 226x difference in integrated effect means the two models do not share a design.
-2. **In his `K_M psi + psi m - L_0 + ...`, is `psi` the total load or the recorded one, and
-   is `L_0` intended to be our unrecorded load `L_0`?** The two cannot both be free: if
-   `psi` is the total, `L_0` has no column; if `psi` is the recorded load, `L_0` is
-   `K_m b` and not a load at all.
-3. **Was the `Delta_k m_k` term dropped deliberately?** If he was deliberately analysing the
-   no-therapy case, his conclusions are right for that case and his solve returns
-   `K_M = -6.14`, which is the correct diagnosis of it.
-4. **Does he agree the sign on the `psi` terms is a transcription slip?** As written the
-   solve has no positive root.
-5. **"1 or 1/2 of the interval": which did he mean?** At `T` the design fails by a factor of
+   *(Three questions stood here -- on `psi`, on the missing `Delta_k m_k` term, and on the
+   signs. They are withdrawn: the equation was a sketch of the method, and a sketch does not
+   owe a complete term list. The `beta` reparametrisation it pointed at is kept and
+   credited.)*
+2. **"1 or 1/2 of the interval": which did he mean?** At `T` the design fails by a factor of
    22; at `T/2` it passes. If he meant something like "any rational ratio with a small
    denominator", the data say the opposite: small `q` is fine, and what matters is the
    `Delta` range.
-6. **One `params.py` row says `theta` is "about 10% of normal" and, four lines later, "under 5% of control".** Which
+3. **One `params.py` row says `theta` is "about 10% of normal" and, four lines later, "under 5% of control".** Which
    reference does he want the acceptability check written against? The two differ by a
    factor of two and they are the denominator of the ceiling constraint he asked for.
-7. **Does he accept the exact fibre, and with it that the `sqrt(noise)` sentence goes?** The
+4. **Does he accept the exact fibre, and with it that the `sqrt(noise)` sentence goes?** The
    honest replacement is that at a constant load the deficiency is closed by a bound on the
    load bias, and at any real day-to-day variation it is closed by the data. Both are
    defensible and neither needs curvature.
-8. **His second question, the a priori reduction bound, is untouched by this round**, and
+5. **His second question, the a priori reduction bound, is untouched by this round**, and
    P3 tightens it: the linear route he proposes exists only for the straight-`alpha`
    hypothesis. Does he want that pursued next, or the design outputs first?
 
