@@ -228,7 +228,100 @@ linearisation costs 5 to 7 points of coverage for a 5% saving in width.
 coverage, at 1.8x the width and with up to a quarter of the intervals unbounded, which is a
 high price for a number that the profile already supplies.
 
+## Addendum: test inversion, the boundary cutoff, seeds and Monte Carlo error
+
+`audit/j3_testinversion.py`, `audit/j4_recheck.py`.
+
+### What `calibrated` was, and what test inversion is
+
+**They are not the same thing, and the first pass ran only the first.** `j1`'s `calibrated`
+bootstraps at `theta_hat`, forms `LR* = J*(theta_hat) - J*_min` once, and uses that single 95th
+percentile at **every** `theta_0`. Proper test inversion simulates under the **constrained**
+fit at each `theta_0` separately, so the cutoff `q(theta_0)` varies along the grid. On one
+replicate it runs from **1.30 to 13.00**, which is why one threshold cannot serve. It is also
+orthogonal to `fixed vs redrawn`, which is about the nuisances.
+
+`n = 25` monthly, nuisances drawn, dose exact, 21 `theta_0` nodes x 99 datasets each,
+160 replicates = 8 diet records x 20. Nominal 0.95.
+
+| row | profile (3.841) | `j1` calibrated | **test inversion** |
+|---|---|---|---|
+| CV 10%, prior off | 0.881 +/- 0.026, w 0.708, 2% cens | 0.950 +/- 0.017, w 1.268, 19% | **0.931 +/- 0.020, w 0.976, 5%** |
+| CV 10%, prior on | 0.863 +/- 0.027, w 0.677, 0% | 0.931 +/- 0.020, w 1.076, 2% | **0.944 +/- 0.018, w 1.471, 51%** |
+| CV 2%, prior off | 0.975 +/- 0.012, w 1.948, 75% | 0.975 +/- 0.012, w 2.256, 89% | **0.930 +/- 0.020, w 1.755, 68%** |
+
+**Test inversion does better on the headline number and the re-check shows the number is not
+earned.** `j4` check 1 puts its simulated threshold at `theta_true` against the empirical 95th
+percentile of the LR there, measured over 200 replicates per diet record: the ratio is **0.255
+to 0.427**. The textbook fixed-nuisance form calibrates against a threshold two and a half to
+four times too small, exactly as `j1`'s fixed bootstrap did. Its coverage comes from `q`
+growing steeply in the tails, and from intervals that are unbounded 5% to 68% of the time.
+
+**Redrawing the nuisances inside the inversion largely fixes the calibration**, moving the
+ratio to **1.11 to 1.77**. So the nuisance handling governs calibration in test inversion just
+as it did in the simple bootstrap, and the constrained fit is not the right thing to hold
+fixed here.
+
+**Recommendation, revised.** Still report the profile with `chi^2_1`, and now state its
+measured coverage. Test inversion buys 5 to 8 points of coverage and is more *consistent*
+across rows (0.930 to 0.950 against the profile's 0.863 to 0.975), but it pays with intervals
+that have no upper bound in a large minority of cases and a threshold whose own calibration is
+off by a factor of three in the form usually written down. **Use it as a check on the profile,
+not as the reported statement.** If a stated 95% is required, the honest route is to widen the
+profile's threshold to the empirical LR 95% on the design in hand, which the paper's own
+machinery can compute.
+
+### The boundary cutoff
+
+`b >= 0` imposed, `k_e` drawn, load CV 10%, prior off. 160 replicates.
+
+| `b_true` | on the bound | profile 3.841 | **mixture 2.706** | test inversion |
+|---|---|---|---|---|
+| 0 (on the bound) | 40.0% (10-55%) | **0.938 +/- 0.019**, w 0.656 | 0.887 +/- 0.025, w 0.545 | 0.950, w 1.478, 58% cens |
+| 16.14 (one prior sd) | 25.0% (5-50%) | **0.938 +/- 0.019**, w 0.683 | 0.900 +/- 0.024, w 0.569 | 0.950, w 1.525, 70% cens |
+
+**The boundary correction makes coverage worse, and it should.** The 50:50 mixture of `chi^2_0`
+and `chi^2_1` is the right law when the parameter **being tested** sits on a boundary. Here the
+parameter on the boundary is a **nuisance** and `theta` is interior, so narrowing the cutoff
+from 3.841 to 2.706 just narrows the interval and loses five points of coverage. `j4` check 2
+confirms the constant itself is right (2.7055 is the `chi^2_1` 90th percentile, and 2 million
+simulated draws give `P = 0.94998`). **Do not apply it here.**
+
+### What a seed varies, and how many diet patterns reach the target
+
+**A seed is a diet record.** The load realisation is drawn once per seed and held; the
+replicates inside it vary the observation noise and the nuisances. `j4` check 3 confirms it on
+the arrays. So every seed range quoted in Phase 1 is variation **across diet patterns**, a
+design property, and Monte Carlo error is reported separately as a binomial standard error.
+
+*(A "load CV 10%" record delivers a realised CV of 0.078 to 0.084 on 25 points, which is part
+of why diet patterns differ.)*
+
+**32 diet records, 60 replicates each. Fraction reaching RMSE <= 0.20:**
+
+| setting | median RMSE | range | fraction |
+|---|---|---|---|
+| CV 10%, prior off, dose exact | 0.2001 | 0.1381-0.2692 | **47% of 32** |
+| CV 10%, prior **on**, dose exact | 0.1922 | 0.1362-0.2557 | **59% of 32** |
+| CV 2%, prior off, dose exact | 0.5015 | 0.2882-0.9679 | **0% of 32** |
+| CV 2%, prior **on**, dose exact | 0.1916 | 0.1336-0.2536 | **59% of 32** |
+| CV 10%, prior off, dose CV 11.7% | 0.2000 | 0.1385-0.2692 | **50% of 32** |
+
+**On the paper's own footing the design reaches its own target for 59% of diet patterns, not
+for a typical one.** The 8-seed ranges quoted elsewhere in Phase 1 are the same quantity at a
+quarter of the resolution and understate how often it misses.
+
+### Monte Carlo error
+
+Every coverage figure above rests on **160 replicates** (8 diet records x 20), binomial
+standard error **+/- 0.017 to 0.027** at these coverages. The main `j1` grid rests on 240
+(8 x 30), `+/- 0.014` to `0.019`. Those standard errors treat the replicates as independent;
+they are not independent across diet records, so the per-seed range beside each figure is the
+honest measure of how much a different patient's diet would move it.
+
+---
+
 ## Status
 
-`j1` and `j2` exit 0. No paper file touched, no constant changed, no printed number in the
+`j1` to `j4` exit 0. No paper file touched, no constant changed, no printed number in the
 paper altered.
