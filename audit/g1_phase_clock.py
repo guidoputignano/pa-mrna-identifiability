@@ -101,9 +101,11 @@ def figure():
              f"all but invisible because it is only {360*settle/G.T:.1f}"
              f"$^\\circ$ of the dial ({settle*24:.1f} h at a 1% tolerance; "
              f"g6 reconciles that against the paper's 4.2 h and P1f's 3.71 h).\n"
-             f"Excluding it costs a schedule almost nothing, and none of these "
-             f"{len(designs)} has to be moved to avoid it. The second panel is "
-             f"a patient ALREADY ON THERAPY, whose "
+             f"It is negligible in TIME and not in VALUE: the phase it removes "
+             f"is the peak, so excluding it costs 10.1% of the reachable "
+             r"$\Delta/\theta$ range" "\n"
+             f"while costing 0.39% of the dial (h1 check 7). The second panel "
+             f"is a patient ALREADY ON THERAPY, whose "
              r"$\Delta/\theta$ range is exactly zero.",
              ha="center", va="bottom", fontsize=6.8, color=MUTED,
              linespacing=1.5)

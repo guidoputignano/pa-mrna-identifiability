@@ -1442,3 +1442,146 @@ def test_only_a_decompensation_approaches_the_required_excitation():
             continue
         frac = excitation(lo, hi, D.P.Km) / excitation_max(hi / lo)
         assert frac < 0.5, (name, frac)
+
+
+# ------------------------------------------------------- physical admissibility
+#
+# A fit can balance the data and describe no patient. These assert the
+# constraints that say so, one test per constraint, so that a change to a
+# constant that makes the model unphysical fails here rather than producing a
+# figure. audit/h1_admissibility.py reports the same checks with their numbers.
+
+
+def _design():
+    """The design model's constants, in one place so the tests cannot drift."""
+    import design.run as D
+    peak = D.D_AMP / (1.0 - np.exp(-D.LAMBDA * D.DOSE_INTERVAL))
+    return D, D.P, float(D.load(0.0)), peak
+
+
+def test_every_rate_in_every_parameter_set_is_positive():
+    """
+    Rates are capacities and clearances. A negative one is not a worse fit, it
+    is a different physics, and nothing downstream checks for it.
+    """
+    for p in (ParamsA(), ParamsB(), ParamsC()):
+        for name in ("theta", "Km"):
+            assert getattr(p, name) > 0.0, (type(p).__name__, name)
+    for p in (ParamsA(), ParamsB()):
+        assert p.ke > 0.0, type(p).__name__
+    for name in ("Kc", "Mi", "R0"):
+        assert getattr(ParamsC(), name) > 0.0, name
+
+    D, P, Lb, _ = _design()
+    for name, v in (("D_AMP", D.D_AMP), ("LAMBDA", D.LAMBDA),
+                    ("DOSE_INTERVAL", D.DOSE_INTERVAL), ("load", Lb),
+                    ("M_BAR", D.M_BAR)):
+        assert v > 0.0, (name, v)
+
+
+def test_the_increment_is_non_negative_and_never_exceeds_its_steady_peak():
+    """
+    Delta is a sum of decaying doses, so it cannot be negative and cannot
+    exceed the geometric limit D/(1 - e^{-lambda T}). A schedule that broke
+    either would be adding capacity the therapy never delivers.
+    """
+    D, _, _, peak = _design()
+    t = np.linspace(0.0, 60 * D.DOSE_INTERVAL, 20001)
+    d = np.asarray(D.delta(t), dtype=float)
+    assert d.min() >= 0.0, d.min()
+    assert d.max() <= peak + 1e-9, (d.max(), peak)
+    # and it does reach the limit, so the bound is tight rather than vacuous
+    assert d.max() > 0.999 * peak, (d.max(), peak)
+
+
+def test_the_balance_has_exactly_one_positive_root_at_every_increment():
+    """
+    k_e m^2 + (k_e K_m + theta + Delta - L) m - L K_m = 0. The product of the
+    roots is -L K_m / k_e, which is negative for any positive load, so the
+    roots straddle zero whatever Delta does and the quasi-steady level is
+    well defined and unique. quasi_steady_level takes the + branch; this
+    asserts that branch is the positive one.
+    """
+    D, P, Lb, peak = _design()
+    assert -Lb * P.Km / P.ke < 0.0
+    for d in (0.0, 1.0, peak, 10.0 * peak):
+        B = P.ke * P.Km + P.theta + d - Lb
+        disc = B ** 2 + 4.0 * P.ke * Lb * P.Km
+        assert disc > 0.0, d
+        plus = (-B + np.sqrt(disc)) / (2.0 * P.ke)
+        minus = (-B - np.sqrt(disc)) / (2.0 * P.ke)
+        assert plus > 0.0 > minus, (d, plus, minus)
+        res = P.ke * plus ** 2 + B * plus - Lb * P.Km
+        assert abs(res) < 1e-6 * Lb * P.Km, (d, res)
+    t = np.linspace(0.0, 4 * D.DOSE_INTERVAL, 2001)
+    assert np.asarray(D.quasi_steady_level(t), dtype=float).min() > 0.0
+
+
+def test_the_total_load_stays_positive_across_the_load_prior():
+    """
+    L + b is an intake and cannot be negative. The load record's own 95%
+    interval must sit well inside that, or the prior is placing mass on
+    patients who eat a negative amount.
+    """
+    D, _, Lb, _ = _design()
+    half = 1.96 * D.LOAD_FRAC * Lb
+    assert Lb - half > 0.0, (Lb, half)
+    # and with a lot of room: positivity is nowhere near binding
+    assert Lb / half > 5.0, Lb / half
+
+
+@pytest.mark.parametrize("frac", [0.05, 0.10])
+def test_the_capacity_ceiling_holds_at_both_readings_of_the_reference(frac):
+    """
+    theta + Delta_peak <= normal capacity.
+
+    `normal` is not a constant of this repository. It is implied by a stated
+    fraction, and src/common/params.py states two of them four lines apart,
+    "about 10% of normal" and "under 5% of control". THE REFERENCE IS A
+    PARAMETER OF THIS TEST and neither reading is chosen here: both must hold.
+    The used fraction is frac (1 + Delta_peak/theta), so theta cancels and the
+    answer is the same in the local and parent blocks.
+    """
+    _, P, _, peak = _design()
+    normal = P.theta / frac
+    assert P.theta + peak <= normal, (frac, P.theta + peak, normal)
+    used = (P.theta + peak) / normal
+    assert used == pytest.approx(frac * (1.0 + peak / P.theta), rel=1e-12)
+
+
+def test_admissibility_bounds_the_constant_load_fibre_on_both_sides():
+    """
+    The exact fibre of the constant-load case is unidentifiable from the data,
+    so admissibility is the only thing that bounds it. It does, on both sides:
+    positivity of theta from below, the capacity ceiling from above.
+
+    The bound is real and it is loose. The interval it leaves is orders of
+    magnitude wider than the load record's own 95% interval, which is why the
+    record and not physics carries the identification at a constant load.
+    """
+    from scipy.optimize import brentq
+    D, P, Lb, peak = _design()
+    K0, TH0, KE = P.Km, P.theta, P.ke
+    Km_b = lambda b: K0 * Lb / (Lb + b)
+    th_b = lambda b: TH0 + b + KE * (K0 - Km_b(b))
+
+    lo = brentq(th_b, -Lb + 1e-9, 0.0, xtol=1e-12)
+    assert -Lb < lo < 0.0, lo
+    assert Km_b(lo) > 0.0 and th_b(lo) == pytest.approx(0.0, abs=1e-6)
+
+    half = 1.96 * D.LOAD_FRAC * Lb
+    for frac in (0.05, 0.10):
+        hi = brentq(lambda b: th_b(b) + peak - TH0 / frac, 0.0, 1e7, xtol=1e-9)
+        assert hi > 0.0, (frac, hi)
+        assert th_b(hi) + peak == pytest.approx(TH0 / frac, rel=1e-9)
+        assert hi - lo > 100.0 * (2.0 * half), (frac, hi - lo, 2.0 * half)
+
+    # the marker is bit-identical along the fibre, so every admissible b
+    # describes the same record: that is why only physics can bound it
+    for b in (lo / 2.0, 0.0, 10.0, 1000.0):
+        km, th = Km_b(b), th_b(b)
+        B0 = KE * K0 + TH0 - Lb
+        m0 = (-B0 + np.sqrt(B0 ** 2 + 4.0 * KE * Lb * K0)) / (2.0 * KE)
+        B = KE * km + th - (Lb + b)
+        m = (-B + np.sqrt(B ** 2 + 4.0 * KE * (Lb + b) * km)) / (2.0 * KE)
+        assert m == pytest.approx(m0, rel=1e-12), (b, m, m0)

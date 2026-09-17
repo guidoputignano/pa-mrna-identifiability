@@ -46,10 +46,16 @@ The figure makes the design rule visible in one look: the 14 d schedule is a sin
 the other three fill the dial. Two things worth stating that the dial shows and prose does
 not.
 
-**The settling window is not a design constraint.** It is **1.30 h** at a 1% tolerance and
-**0.91 h** at the repository's own 5%, which is `1.39` degrees of the dial. None of the four
-schedules has to be moved to avoid it. That is a finding, not a formality: the specification
-carries the exclusion, and it now has a price, which is nothing.
+**The settling window is negligible in time and not in value.** It is **1.30 h** at a 1%
+tolerance and **0.91 h** at the repository's own 5%, which is `1.39` degrees, **0.39% of
+the dial**. But the phase it removes is phase 0, the **peak**, which is one endpoint of the
+`Delta/theta` range that `f4` found binds. Costed on the half-day grid, excluding it removes
+**10.1%** of the reachable range, 1.9861 down to 1.7850.
+
+*This corrects the first version of this report*, which said the exclusion "costs a schedule
+almost nothing". That is true of the angle and false of the value, and `h1` check 7 found it.
+The recommended design already pays the price correctly: its most peak-ward phase is 0.5,
+worth 1.9322, not phase 0's 2.1333.
 
 **The 14 d schedule's only excitation is the dose train still filling up.** Its
 `Delta/theta` range is 0.1333, which is exactly `(6400 - 6000)/3000`. That is the approach of
