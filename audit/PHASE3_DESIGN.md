@@ -91,10 +91,14 @@ all-n fit has rms 9.7e-4, so the form holds there anyway.*
 0.394-0.396 throughout. Visits buy `c/sqrt(n)`; they cannot buy the floor. Tightening the
 `k_e` prior from 0.8 to 0.3 takes monthly from 11 visits to 6.
 
-**(b) Load variability moves neither floor nor `c`.** At every schedule and prior, CV 0%,
-2% and 10% agree to the fourth decimal. This is the paper's own rank-versus-precision
-distinction landing on the design: variation is what restores *rank*, and once rank is
-restored more of it buys almost no *precision*.
+**(b) Load variability moves neither floor nor `c`. WITHDRAWN as a design finding.**
+At every schedule and prior, CV 0%, 2% and 10% do agree to the fourth decimal. But that is
+a statement about the 5% prior on the load bias, not about the design. The prior is what
+closes P5's exact fibre at a constant load, so with it on there is nothing left for load
+variation to do. Released, monthly goes from *exactly singular* at CV 0%, through a target
+it cannot reach in 60 visits at CV 2%, to 12 visits at CV 10%. Section 4(a) has the
+numbers. The paper's rank-versus-precision
+distinction survives; my restatement of it did not.
 
 **(c) Observed and fit-implied visit counts disagree, and observed is the honest one.**
 The saturated fit answers "how many visits if the first `n` had the coverage the large-`n`
@@ -132,6 +136,15 @@ the sharpest practical finding of Phase 3, and it is arithmetic:
 Verified against `datetime` over 60 cycles for all 28 half-day phases and both dose timings:
 **zero phases drift** (`g4` check 1).
 
+> **What that is conditional on.** The arithmetic is `14 = 2 x 7` and nothing else, so the
+> phase-to-weekday map holds **exactly as long as doses land exactly 14 days apart at a
+> fixed time of day, and not otherwise**. A dose given at a variable hour, or an infusion
+> moved by a day, breaks the map. Section 4(d) measures what that costs and the answer is
+> not what I expected: the map breaks, the *precision* does not. A phase-spread design is
+> buying the `Delta/theta` range rather than any particular phase, so a bounded shift
+> leaves it intact. What follows for practice is that the calendar in Part B is a design to
+> be **re-derived from the actual infusion dates**, not a fixed timetable.
+
 ### What a weekday clinic can reach
 
 | dose given | bookable slots | `Delta/theta` reachable | range | of the usable dial | reaches the trough? |
@@ -163,6 +176,14 @@ Targets chosen from the 19 reachable phases, taken nearest-reachable first, mini
 Horizon 346.5 d (11.4 months), 12 distinct phases, `Delta/theta` range 1.6642, every visit
 on a clinic day outside the settling window. `sd(ln theta)` **0.1929** at CV 0%, 0.1932
 (8 seeds 0.1890-0.1958) at CV 10%.
+
+> **How this should be quoted.** 0.1932 clears the 0.20 target by 3.5%, and the top of the
+> seed spread, 0.1958, clears it by 2%. That is not margin. Section 4(b) prices the
+> conditionings: with the load prior released the design gives 0.2021, which does **not**
+> pass, and at the repository's own required dose-scale CV it gives 0.2204 and needs 36
+> visits. **The 12-visit recommendation holds only if the dose scale is known to better
+> than about 12% and the load record carries real day-to-day variation.** Neither is
+> established; the first is the paper's own Tier 1 measurement, which has not been run.
 
 ### Phase-spread against fixed intervals, at equal `n`
 
@@ -206,7 +227,161 @@ At `n = 12`, load CV 10%, `k_e` prior 0.8, median of 8 seeds:
 
 ---
 
-## 4. The independent re-check (`g4`)
+## 4. What the E2 curves are conditional on (`g5`, fig_E4)
+
+Sections 1 to 3 hold four things fixed. Each panel of fig_E4 releases one.
+
+### (a) The 5% prior on the load bias
+
+| schedule | load CV | prior ON, `n=12` | visits to 0.20 | prior OFF, `n=12` | visits to 0.20 |
+|---|---|---|---|---|---|
+| monthly | 0% | 0.1890 | 11 | **singular** | >60 |
+| monthly | 2% | 0.1890 | 11 | 0.3477 | >60 |
+| monthly | 10% | 0.1888 | 11 | 0.1976 | **12** |
+| phase-spread | 0% | 0.1909 | 10 | **singular** | >60 |
+| phase-spread | 2% | 0.1909 | 10 | 0.3553 | >60 |
+| phase-spread | 10% | 0.1913 | 10 | 0.2003 | **14** |
+| 14.5 d | 0% | 0.2899 | 20 | **singular** | >60 |
+| 14.5 d | 10% | 0.2879 | 20 | 0.2940 | 25 |
+
+*`k_e` prior 0.8, median of 8 seeds. Dropping the prior drops the prior only; the `b`
+column stays. This is `design/run.py:965`'s own `free_` construction.*
+
+At a constant load with no prior the design is **exactly singular, at every schedule and
+every `n`**. That is P5's fibre, and the prior was filling it. At CV 2% the prior is worth
+a factor of 1.8 and the target is out of reach inside 60 visits. At CV 10% it is worth 4.7%
+and one visit.
+
+So the load record matters enormously, and the prior-conditional curves hid it. The right
+statement is the paper's: **variation restores rank**, and the 5% prior is an assumption
+standing in for variation the record may not have.
+
+### (b) The dose scale
+
+`sd_ln_theta` had no dose-scale column, which asserts the infusion delivers its nominal
+increment to infinite precision. `design/run.py:943` carries that column; `g1`-`g4` did not.
+It is now `columns(..., kappa=True)`, the derivative `Delta g(m)` of a log dose scale.
+
+Recomputed over 8 seeds, the monthly `n = 25` design reaches 0.20 at a dose-scale CV of
+**0.1168** (seeds 0.1141-0.1187). The paper's Tier 1 row carries **0.1167**, the same solve
+on its own single seed; it is not changed here.
+
+| schedule (load CV 10%) | dose exact, `n=12` | to 0.20 | CV 11.7%, `n=12` | to 0.20 | CV 20%, `n=12` | to 0.20 |
+|---|---|---|---|---|---|---|
+| monthly | 0.1888 | 11 | 0.2168 | 30 | 0.2615 | >60 |
+| phase-spread | 0.1913 | 10 | 0.2187 | 30 | 0.2635 | >60 |
+| 14.5 d | 0.2879 | 20 | 0.3068 | 30 | 0.3403 | >60 |
+
+The `30` is a grid step, not a cliff. At the repository's own `n = 25`, monthly gives
+**0.2000** at the required CV, exactly the target, because that is how the required CV was
+defined. Read it as: **the repository's requirement buys 0.20 at `n = 25` with no margin at
+all, and anything worse than it does not buy 0.20 at any `n` up to 60.**
+
+A 20% dose-scale CV is not exotic. The repository's own between-visit row is
+*mean 14.0%, range 0.4-50.8%*, and that is an **upper** bound on the same-day figure the
+design actually needs.
+
+**The 12-visit recommendation, re-priced** (load CV 10%, median of 8 seeds):
+
+| conditioning | median | 8 seeds | vs 0.20 |
+|---|---|---|---|
+| as reported, prior on and dose exact | 0.1932 | 0.1890-0.1958 | passes |
+| no load prior | 0.2021 | 0.1955-0.2230 | **fails** |
+| dose-scale CV 11.7% (the requirement) | 0.2204 | 0.2169-0.2223 | **fails**, needs 36 visits |
+| dose-scale CV 20% | 0.2651 | 0.2618-0.2677 | **fails**, needs >60 |
+| no load prior AND dose-scale CV 20% | 0.2701 | 0.2643-0.2855 | **fails** |
+
+### (c) When therapy starts
+
+Every schedule in sections 1 and 2 ran from `t = 0`, so the dose train was still
+accumulating. For a fortnightly schedule that transient is the **entire** excitation.
+
+| schedule, `n=12` | `Delta/theta` range | sd, CV 0% | sd, CV 10% (8 seeds) |
+|---|---|---|---|
+| 14 d, from `t = 0` | 0.1333 | 5.1569 | 5.0155 (3.67-5.84) |
+| **14 d, already on therapy** | **exactly 0** | **singular** | 20.77 (11.34-36.33) |
+| 14.5 d | 1.2822 | 0.2899 | 0.2879 |
+| monthly | 1.8170 | 0.1890 | 0.1888 |
+| phase-spread | 1.8375 | 0.1909 | 0.1913 |
+
+A patient already on therapy at enrolment, sampled fortnightly, has a `Delta/theta` range
+of **exactly zero** and the design is **exactly singular** at a constant load, at every `n`
+tried. The `t = 0` version's finite sd of about 5 is an artefact of enrolling on the day
+therapy starts, and no trial should count on it.
+
+Nothing else changes. At the same `n` and CV 0%, moving enrolment to steady state gives
+14.5 d 0.2899 -> 0.2848, monthly 0.1890 -> 0.1882, phase-spread 0.1909 -> 0.1899. The three
+covering schedules are the same design at either enrolment point; only the fortnightly one
+was living on the transient.
+
+### (d) Dosing regularity
+
+| dose timing | booked design: median | spread | mean phase drift (d) | range | 14.5 d control: median | spread | x wider |
+|---|---|---|---|---|---|---|---|
+| exactly on schedule | 0.1925 | 0.0067 | 0.00 | 1.66 | 0.2929 | 0.0299 | 1.0 |
+| +/- 6 h, same day | 0.1928 | 0.0071 | 0.13 | 1.62 | 0.2946 | 0.1189 | 4.0 |
+| +/- 1 day, independent | 0.1952 | 0.0088 | 0.53 | 1.66 | 0.2577 | 0.1294 | 4.3 |
+| +/- 12 h, accumulating | 0.1939 | 0.0092 | 0.74 | 1.72 | 0.2837 | 0.1749 | 5.9 |
+| +/- 1 day, accumulating | 0.1925 | 0.0119 | 1.48 | 1.65 | 0.2678 | 0.2514 | 8.4 |
+
+*`spread` is the width of the 8-seed min-to-max interval. Load CV 10%.*
+
+The phases **do** drift, by 1.5 days on average in the worst row, a tenth of a cycle. The
+precision does not follow them: the booked design's median moves by less than 1.5% and its
+`Delta/theta` range stays at 1.60-1.72 against 1.66 on schedule. That is `f4` once more, and
+it is the argument for a spread design that was not anticipated: it is not buying any
+particular phase, it is buying the range, and a bounded shift applied to a well-spread set
+leaves the range where it was.
+
+The 14.5 d control is the informative column, and not as a simple penalty. Its median moves
+**both ways**, sometimes improving, because a slip can hand a thin schedule phases it would
+not otherwise visit. What it loses is predictability: its seed spread widens by up to 8.4x
+while the booked design's widens by 1.8x. A design whose precision is a lottery on the
+infusion clerk is not a design.
+
+---
+
+## 5. Three settling times, reconciled (`g6`)
+
+Three numbers were in circulation and they differ by more than a factor of three. None is
+wrong; they answer three different questions. The two choices hidden in the phrase
+"settling time" are **which operating point** the rate is evaluated at and **what
+displacement** is being closed.
+
+| | definition | value | source |
+|---|---|---|---|
+| (A) | linearised `tau`, and its 99% multiple `-ln(0.01) tau` | `tau` 0.806 h, 99% **3.710 h** at `m_bar = 10`; `tau` 0.929 h, 99% 4.278 h at `m* = 20` | `design/run.py:223`; `PHASE4_PI` P1f |
+| (B) | nonlinear time to close 99% of a **large** gap to a **fixed** target `m* = 20` | **4.185-4.518 h** depending on the start (4.216 h from `m = 10`) | `e5_structural.py:57-61`; `06_excitation.tex:58` |
+| (C) | time for the **actual post-dose trajectory** to come within a tolerance of the **moving** quasi-steady locus | **1.299 h** at 1%, 0.909 h at 5% | `quasi_steady_check`; Phase 3 |
+
+**The 4.2 h against 3.71 h gap is the operating point.** `06_excitation.tex:58` pairs
+"`tau` about 0.8 h" (which is `tau` at `m_bar`) with "99% in 4.2 h" (which is (B), near
+`m*`). The 99% multiple of the quoted `tau` is 3.71 h. Both numbers are right; they are
+evaluated at different levels, which `P1f` already recorded.
+
+**The 3.71 h against 1.30 h gap is the displacement**, and it has three parts, all
+measured in `g6`: the post-dose displacement is **5.54** against (B)'s 10 to 40; the rate
+there is faster because the dose raises capacity (`tau` 0.258 h against 0.806 h); and the
+target **moves towards the trajectory**, because the increment decays from the instant it
+lands.
+
+**Phase 3 uses (C) at a 1% tolerance, 1.30 h, everywhere.** `g1`'s shaded wedge, `g3`'s
+reachable-phase filter and `g5`'s slip counting all call `settling_days`, so they cannot
+disagree. (C) is the only one of the three that answers the question the exclusion rule is
+for: a sample is excluded because a **steady-state fit does not apply to it**, and (C)
+measures the departure from that fit's own locus. Using (A) or (B) as the exclusion window
+overstates it by about 3x.
+
+Two limits worth recording. A 0.1% tolerance is not a window at all but the whole cycle,
+because the quasi-steady approximation is itself only good to about a tenth of a per cent
+anywhere between doses; 1% sits an order of magnitude inside that. And the data
+specification's "no sample within one hour of a dose" sits between the 5% and 1% rows of
+(C), which is the right order of magnitude for an instruction a clinic has to follow. **No
+paper text is edited by any of this.**
+
+---
+
+## 6. The independent re-check (`g4`)
 
 Five numbers, each recomputed by machinery that shares no code with the script that produced
 it. **It found one error and one misreport, both now fixed.**
@@ -246,20 +421,33 @@ also densified to integer resolution through `n = 14`, where the crossings are. 
 
 ## What I would report, and what I would not
 
-- **Book the clinic phase-spread with an afternoon dose.** 12 visits, 11.4 months, every
-  visit bookable, `sd(ln theta) = 0.193`. The calendar is in `g3` Part B.
+- **Book the clinic phase-spread with an afternoon dose**, and quote it conditionally:
+  12 visits over 11.4 months reach `sd(ln theta) = 0.193` **if** the dose scale is known to
+  better than about 12% and the load record carries real day-to-day variation. Without the
+  first it is 36 visits; without the second it does not reach 0.20 at 12. The calendar is in
+  `g3` Part B and should be re-derived from the actual infusion dates.
 - **Quote the saturated floor and `c`, not the all-n fit**, monthly `floor 0.150`,
   `c 0.394` at prior 0.8. And quote the **observed** visit count, not the fit-implied one.
 - **Do not quote a precision without the `k_e` prior beside it.** It is the floor, and the
   floor is most of the answer at the visit counts a trial can afford.
-- **Do not claim load variability buys precision.** It buys rank. Once rank is there, CV 0%
-  and CV 10% are the same number to four decimals.
+- **Do not claim load variability buys no precision.** That is the load-bias prior talking.
+  Released, a constant load is exactly singular and CV 10% is worth the difference between
+  11 visits and never.
+- **Do not quote a fortnightly result without saying when therapy started.** For a patient
+  already on therapy the fortnightly design is exactly singular, not merely poor.
+- **Do not call 4.2 h, 3.71 h or 1.30 h "the settling time" without its definition.** They
+  are three different quantities; the exclusion rule needs the third.
 
 ## Status
 
-`g1`-`g4` all exit 0. Three figures written to `results/figures/`. No paper file touched, no
+`g1`-`g6` all exit 0. Four figures written to `results/figures/`. No paper file touched, no
 constant changed, no printed number in the paper altered, `PHASE4_PROPOSED_TEXT.md` still
 unapplied. The PI's clarification is recorded at the head of `PHASE4_PI.md` P3 and the three
 questions it retires are withdrawn from the questions list.
 
-**Stopping here for go-ahead before Phase 2 item 4 (physical admissibility).**
+**Withdrawn from the first version of this report**, on the PI's review: the claim that load
+variability moves neither floor nor `c`, which was the load-bias prior speaking, not the
+design (section 4a); and the unconditional form of the 12-visit recommendation, which does
+not survive the dose scale (section 4b). Added on the same review: the dose-scale column,
+the already-on-therapy case, the dosing-regularity conditional, and the settling
+reconciliation.

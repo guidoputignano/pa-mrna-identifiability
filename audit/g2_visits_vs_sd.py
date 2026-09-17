@@ -47,7 +47,8 @@ REVIEWER_FLOOR, REVIEWER_C = 0.145, 0.45
 PRIORS = [(0.8, "$k_e$ prior 0.8"), (0.3, "$k_e$ prior 0.3"),
           (0.05, "$k_e$ prior 0.05"), (None, "$k_e$ known")]
 CVS = [(0.0, "load CV 0%"), (0.02, "load CV 2%"), (0.10, "load CV 10%")]
-COLOUR = {"14 d (the dose interval)": RED, "14.5 d": AMBER,
+COLOUR = {"14 d (the dose interval)": RED,
+          "14 d, already on therapy": MUTED, "14.5 d": AMBER,
           "monthly (30.4 d)": BLUE, "phase-spread": GREEN}
 NS = np.array([4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 18, 20,
                25, 30, 36, 44, 52, 60])   # integer resolution to n=14,
@@ -93,7 +94,7 @@ def figure():
                              figsize=figsize(1.0, 0.80),
                              sharex=True, sharey=True)
     fig.set_layout_engine("none")
-    fig.subplots_adjust(left=0.085, right=0.985, top=0.90, bottom=0.135,
+    fig.subplots_adjust(left=0.085, right=0.985, top=0.91, bottom=0.185,
                         wspace=0.10, hspace=0.18)
 
     for i, (cv, cvlab) in enumerate(CVS):
@@ -129,8 +130,16 @@ def figure():
                      transform=axes[0, -1].get_yaxis_transform(),
                      fontsize=6.5, color=GREY)
     handles = [plt.Line2D([], [], color=COLOUR[k], lw=1.6) for k in G.SCHEDULES]
-    fig.legend(handles, list(G.SCHEDULES), loc="lower center", ncol=4,
-               fontsize=7.5, bbox_to_anchor=(0.5, 0.005))
+    fig.legend(handles, list(G.SCHEDULES), loc="lower center", ncol=5,
+               fontsize=7.0, bbox_to_anchor=(0.5, 0.043))
+    fig.text(0.5, 0.004,
+             "These curves are PRIOR-CONDITIONAL and assume the dose scale is "
+             "known exactly. The 5% prior on the load bias fills the "
+             "constant-load fibre,\nso the near-identity of the three load-CV "
+             "rows is a statement about the prior, not about the design. "
+             "g5 gives the prior-free and dose-scale-prior versions.",
+             ha="center", va="bottom", fontsize=6.3, color=MUTED,
+             linespacing=1.5)
     save(fig, "fig_E2_visits")
 
 

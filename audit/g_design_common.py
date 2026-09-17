@@ -77,8 +77,15 @@ def phase_spread(n, gap=30.4, t0=0.0, period=T, grid=GRID, phases=None):
     return np.array(out)
 
 
+#: far enough in that the dose train has reached steady state. A patient who
+#: is ALREADY ON THERAPY when enrolment starts is at this end of the train, not
+#: at t = 0, and for a fortnightly schedule that is the whole difference
+#: between "nearly singular" and "exactly singular".
+STEADY = 100 * T
+
 SCHEDULES = {
     "14 d (the dose interval)": lambda n: fixed(n, 14.0),
+    "14 d, already on therapy": lambda n: fixed(n, 14.0, t0=STEADY),
     "14.5 d": lambda n: fixed(n, 14.5),
     "monthly (30.4 d)": lambda n: fixed(n, 30.4),
     "phase-spread": lambda n: phase_spread(n, gap=30.4),
@@ -107,32 +114,51 @@ def record(times, load_cv=0.0, seed=0):
     return m, inc, Ls
 
 
-def columns(m, inc):
+def columns(m, inc, kappa=False):
     """
     The design columns in the paper's coordinates,
-    (ln theta, ln K_m, b, ln k_e).
+    (ln theta, ln K_m, b, ln k_e) and optionally ln kappa.
+
+    The fifth column is the DOSE SCALE, `Delta -> kappa Delta`, whose
+    derivative is `Delta g(m)`. It is design/run.py:943's column exactly. Left
+    out, as g1 to g4 left it out, the design is being told the dose scale is
+    known to infinite precision, which no assay establishes.
     """
-    return np.stack([TH * m / (KM + m),
-                     -(TH + inc) * KM * m / (KM + m) ** 2,
-                     np.ones_like(m),
-                     KE * m], axis=1)
+    g = m / (KM + m)
+    cols = [TH * g,
+            -(TH + inc) * KM * m / (KM + m) ** 2,
+            np.ones_like(m),
+            KE * m]
+    if kappa:
+        cols.append(inc * g)
+    return np.stack(cols, axis=1)
 
 
-def sd_ln_theta(m, inc, ke_prior=0.8, load_prior=True, sigma=SIG):
+def sd_ln_theta(m, inc, ke_prior=0.8, load_prior=True, kappa_prior=None,
+                sigma=SIG):
     """
     sd(ln theta_hat) from the information filter.
 
     ke_prior=None holds k_e exactly known and DROPS its column, which is
     _filter's own convention and e9's. Giving it a flat prior instead would
     make "k_e known" read as "k_e free" and invert the comparison.
+
+    load_prior=False drops the prior on the load bias `b`, NOT its column. At a
+    constant recorded load that is the exactly singular case of P5's fibre, so
+    it returns inf, and that is the answer rather than a failure: with the
+    prior on, every load-CV comparison is being carried by the prior.
+
+    kappa_prior=None leaves the dose scale out of the parameter vector, which
+    asserts it is known exactly. A number puts it in with that log-prior.
     """
-    Q = columns(m, inc)
-    if ke_prior is None:
-        Q = Q[:, :3]
-        pri = [np.inf, np.inf, (LOAD_FRAC * LB) ** 2 if load_prior else np.inf]
-    else:
-        pri = [np.inf, np.inf,
-               (LOAD_FRAC * LB) ** 2 if load_prior else np.inf, ke_prior ** 2]
+    Q = columns(m, inc, kappa=kappa_prior is not None)
+    pri = [np.inf, np.inf, (LOAD_FRAC * LB) ** 2 if load_prior else np.inf,
+           ke_prior ** 2 if ke_prior is not None else None]
+    if kappa_prior is not None:
+        pri.append(kappa_prior ** 2)
+    if ke_prior is None:                      # drop the column, do not free it
+        keep = [i for i in range(Q.shape[1]) if i != 3]
+        Q, pri = Q[:, keep], [pri[i] for i in keep]
     F = np.diag([0.0 if np.isinf(x) else 1.0 / x for x in pri]) \
         + Q.T @ Q / sigma ** 2
     w = np.linalg.eigvalsh(F)
@@ -142,18 +168,21 @@ def sd_ln_theta(m, inc, ke_prior=0.8, load_prior=True, sigma=SIG):
     return float(np.sqrt(v)) if v > 0 else np.inf
 
 
-def sd_over_seeds(times, load_cv, ke_prior=0.8, seeds=range(8)):
+def sd_over_seeds(times, load_cv, ke_prior=0.8, seeds=range(8),
+                  load_prior=True, kappa_prior=None):
     """Median and range of sd(ln theta_hat) over load realisations.
 
     At load_cv = 0 the record is deterministic and one seed is the answer;
     above it the spread is large enough that a single seed misleads, which is
     the failure corrected in PHASE4_PI.md C5.
     """
+    kw = dict(ke_prior=ke_prior, load_prior=load_prior,
+              kappa_prior=kappa_prior)
     if not load_cv:
-        v = sd_ln_theta(*record(times, 0.0)[:2], ke_prior=ke_prior)
+        v = sd_ln_theta(*record(times, 0.0)[:2], **kw)
         return v, v, v
-    vals = np.array([sd_ln_theta(*record(times, load_cv, seed=s)[:2],
-                                 ke_prior=ke_prior) for s in seeds], float)
+    vals = np.array([sd_ln_theta(*record(times, load_cv, seed=s)[:2], **kw)
+                     for s in seeds], float)
     fin = vals[np.isfinite(vals)]
     if fin.size == 0:
         return np.inf, np.inf, np.inf
@@ -188,6 +217,14 @@ def settling_days(tol=0.01):
     5%, which is not tight enough to shade as "off the locus": at that
     tolerance the worst departure AFTER settling is 4.97%, i.e. right at the
     bound. The figures use 1%, and both are reported.
+
+    This is ONE of three quantities that get called a settling time, and it is
+    the smallest. It is the departure from the MOVING quasi-steady locus,
+    which is the question the exclusion rule is for. The paper's 4.2 h and
+    P1f's 3.71 h close a full displacement to a FIXED target, at two different
+    operating points. g6_settling.py computes all three and shows which choice
+    accounts for which gap; every Phase 3 script calls this function, so they
+    cannot disagree with one another.
     """
     import io
     import contextlib

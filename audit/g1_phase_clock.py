@@ -61,7 +61,7 @@ def panel(ax, times, title, settle, cmap, norm):
     nph = len(G.cycle_phases(times))
     ax.set_title(f"{title}\n{nph} phase{'s' if nph != 1 else ''}, "
                  f"$\\Delta/\\theta$ range {G.delta_range(times):.2f}",
-                 fontsize=8, pad=7, linespacing=1.5)
+                 fontsize=7, pad=6, linespacing=1.5)
 
 
 def figure():
@@ -80,11 +80,11 @@ def figure():
     norm = plt.Normalize(allinc.min(), allinc.max())
     cmap = plt.get_cmap("viridis")
 
-    fig, axes = plt.subplots(1, 4, figsize=figsize(1.0, 0.40),
+    fig, axes = plt.subplots(1, len(designs), figsize=figsize(1.0, 0.36),
                              subplot_kw={"projection": "polar"})
     fig.set_layout_engine("none")
-    fig.subplots_adjust(left=0.02, right=0.98, top=0.82, bottom=0.38,
-                        wspace=0.42)
+    fig.subplots_adjust(left=0.015, right=0.985, top=0.80, bottom=0.40,
+                        wspace=0.50)
     for ax, (name, t) in zip(axes, designs):
         panel(ax, t, name, settle, cmap, norm)
         print(f"  {name:28} n={len(t):3d}  horizon {t[-1]:7.1f} d  "
@@ -92,18 +92,21 @@ def figure():
               f"Delta/theta range {G.delta_range(t):.4f}")
 
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
-    cax = fig.add_axes([0.28, 0.150, 0.44, 0.026])
+    cax = fig.add_axes([0.32, 0.215, 0.36, 0.022])
     cb = fig.colorbar(sm, cax=cax, orientation="horizontal")
     cb.ax.set_title(r"$\Delta/\theta$ at the visit", fontsize=7.5, pad=3)
     cb.ax.tick_params(labelsize=6.5, length=2, pad=1)
-    fig.text(0.5, 0.005,
+    fig.text(0.5, 0.010,
              f"The post-dose settling window is shaded at 12 o'clock, and is "
              f"all but invisible because it is only {360*settle/G.T:.1f}"
-             f"$^\\circ$ of the dial ({settle*24:.1f} h at a 1% tolerance).\n"
-             f"That is the point: excluding it costs a schedule almost "
-             f"nothing, and none of these four has to be moved to avoid it.",
-             ha="center", va="bottom", fontsize=7, color=MUTED,
-             linespacing=1.4)
+             f"$^\\circ$ of the dial ({settle*24:.1f} h at a 1% tolerance; "
+             f"g6 reconciles that against the paper's 4.2 h and P1f's 3.71 h).\n"
+             f"Excluding it costs a schedule almost nothing, and none of these "
+             f"{len(designs)} has to be moved to avoid it. The second panel is "
+             f"a patient ALREADY ON THERAPY, whose "
+             r"$\Delta/\theta$ range is exactly zero.",
+             ha="center", va="bottom", fontsize=6.8, color=MUTED,
+             linespacing=1.5)
     save(fig, "fig_E1_phaseclock")
 
 
