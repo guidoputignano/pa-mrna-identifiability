@@ -664,6 +664,367 @@ written. They are recorded because the point of the re-check is that it catches 
 
 ---
 
+---
+
+# The follow-up: admissibility of the trough reading, and the dose sensitivity table
+
+`audit/k4_admissibility.py`, re-checked in `audit/k6_recheck.py`.
+
+## Does anything constrain when "after the third dose" was sampled?
+
+**The trial paper: no, and this pass checked exhaustively.** Extended Data Table 3's caption
+carries no time point. The Methods define the endpoint only as "changes in blood 2-MC and
+3-HP levels from baseline (predose levels) to post-dose levels". There is **no biomarker
+time-course figure**: Fig. 3 is PK exposure to PCCA mRNA and Fig. 4 is MDE profiles, so 3-HP
+appears in the article exactly once as a number. The only sampling time named anywhere is a
+**predose** draw, in the antibody paragraph, "the predose sample for dose 3 (52 days after
+the first dose)". That is a trough, it is about anti-PEG titres rather than 3-HP, and it is
+the only evidence there is. (In passing: cohort 1 is Q3W, so a third dose on schedule falls
+at day 42, not 52. Nominal and actual timing are not the same thing in this trial.)
+
+**The registry (NCT04159103): not checked, and this is a real open item rather than a null
+result.** Outbound network access is blocked by this environment's egress policy. Both
+`curl https://clinicaltrials.gov/api/v2/studies/NCT04159103` and a `WebFetch` of the same
+record return a 403 CONNECT denial, logged by the proxy itself as *"gateway answered 403 to
+CONNECT (policy denial or upstream failure)"*. The registry's secondary outcome measures
+carry a `timeFrame` field, and if it names a visit for the 3-HP endpoint it settles the
+question outright. **It needs a session with egress, or the record pasted in.**
+
+**Baek's Source Data: not available**, for the same reason. Fig. 2's caption says "Source
+data are provided as a Source Data file"; that file was not among the five PDFs.
+
+**What Baek's Fig. 2 caption does say**, read in this pass:
+
+> "Blood was collected from mice prior to treatment and on Days 2, 8, 14, 22, and 28 after
+> the first IV dose, and 2 days after the second IV dose"
+
+on a regimen of "two IV bolus doses ... on Days 0 and 28". So the preclinical PD data the
+translational model was fitted to is a **full time course across a 28-day cycle**, not a
+trough-only design: Day 2 is near that cycle's PD peak and Day 28 is its trough. The
+programme's own preclinical convention was to sample the whole cycle. It does **not** tell us
+which point of the human cycle Extended Data Table 3 reports, because the trial's biomarker
+sampling schedule is not published.
+
+**One thing the same figure does settle, for finding 1(e).** Fig. 2e's y-axis is
+`3-HP (uM)`, plotted 0 to 200, in the **same** `Pcca-/- (A138T)` mouse model Attarwala
+fitted. Same company, same strain, same analyte, plotted in micromolar. Attarwala's Table 1
+prints the 3-HP baseline as `60.1` "mM/L". That reading is now confirmed as `umol/L` by an
+**external** source and not only by the internal LOQ argument.
+
+## The dose sensitivity table
+
+`D_AMP` is **not moved**. Every row rebinds `design.run.D_AMP` and `LAMBDA` inside a context
+manager that restores them. `n` is monthly visits to `sd(ln theta) <= 0.20` at load CV 10%,
+median over 8 seeds, searched to `n = 60`.
+
+| half-life | row | `D` | `Δ_peak/θ` | fall at peak | `m` at peak | Δ/θ range, n=12 | `sd@12` | `n` |
+|---|---|---|---|---|---|---|---|---|
+| 3.5 d | **committed `D = 6000`** | 6000.0 | 2.133 | 66.36% | 3.364 | 1.817 | 0.1888 | **11** |
+| 3.5 d | 20% fall at the peak | 766.0 | 0.272 | 20.00% | 8.000 | 0.232 | 0.3682 | **>60** |
+| 3.5 d | 30% fall at the peak | 1311.1 | 0.466 | 30.01% | 6.999 | 0.397 | 0.2744 | **42** |
+| 3.5 d | 20% fall at the trough | 12255.3 | 4.357 | 80.15% | 1.985 | 3.711 | 0.1835 | **10** |
+| 3.5 d | 30% fall at the trough | 20976.9 | 7.458 | 87.37% | 1.263 | 6.352 | 0.1879 | **12** |
+| 7 d | committed `D = 6000` | 6000.0 | 2.667 | 71.16% | 2.884 | 1.782 | 0.2657 | **30** |
+| 7 d | 20% fall at the peak | 622.3 | 0.277 | 20.25% | 7.975 | 0.185 | 0.5154 | **>60** |
+| 7 d | 30% fall at the peak | 1065.2 | 0.473 | 30.33% | 6.967 | 0.316 | 0.3798 | **>60** |
+| 7 d | 20% fall at the trough | 2489.4 | 1.106 | 50.51% | 4.949 | 0.739 | 0.2814 | **37** |
+| 7 d | 30% fall at the trough | 4260.9 | 1.894 | 63.64% | 3.636 | 1.265 | 0.2639 | **30** |
+
+And admissibility on every row. `capacity` is `h1_admissibility.py`'s constraint 5 at both
+readings of the residual-capacity fraction; it binds at `Δ_peak/θ = 9.0` (10% reading) and
+`19.0` (5%). `B@1` and `A@1` are the two published inhibition shapes' ceilings at that row's
+own enzyme ratio, with `Imax` set to 1 rather than the fixed 0.999.
+
+| half-life | row | used@10% | used@5% | capacity | fall | `B@1` | `A@1` | bracketed |
+|---|---|---|---|---|---|---|---|---|
+| 3.5 d | committed | 0.3133 | 0.1567 | OK | 66.36% | 64.97% | 68.09% | yes |
+| 3.5 d | 20% peak | 0.1272 | 0.0636 | OK | 20.00% | 19.91% | 21.40% | yes |
+| 3.5 d | 30% peak | 0.1466 | 0.0733 | OK | 30.01% | 29.72% | 31.79% | yes |
+| 3.5 d | **20% trough** | 0.5357 | 0.2679 | **OK** | 80.15% | 78.43% | 81.33% | yes |
+| 3.5 d | **30% trough** | 0.8458 | 0.4229 | **OK** | 87.37% | 85.63% | 88.18% | yes |
+| 7 d | committed | 0.3667 | 0.1833 | OK | 71.16% | 69.63% | 72.73% | yes |
+| 7 d | 20% peak | 0.1277 | 0.0638 | OK | 20.25% | 20.16% | 21.67% | yes |
+| 7 d | 30% peak | 0.1473 | 0.0737 | OK | 30.33% | 29.82% | 31.68% | yes |
+| 7 d | **20% trough** | 0.2106 | 0.1053 | **OK** | 50.51% | 49.63% | 52.53% | yes |
+| 7 d | **30% trough** | 0.2894 | 0.1447 | **OK** | 63.64% | 61.50% | 65.02% | yes |
+
+## Are the trough rows physically admissible? Yes, on both tests
+
+**Saying so plainly, because the first version of this check said the opposite and was
+wrong.** Neither the capacity ceiling nor the published shape excludes any trough row.
+
+**(a) The capacity ceiling: every trough row passes, on both references.** The four sit at
+`Δ_peak/θ` of `4.357`, `7.458`, `1.106` and `1.894` against a bound of `9.0` at the 10%
+reading. The worst row, a 30% trough fall at the committed half-life, uses `84.58%` of normal
+capacity. That is inside the bound, and it is also a strong clinical claim: one fortnightly
+dose lifting a patient from 10% of normal PCC capacity to 85% of it at every peak. The
+trial's own outcomes do not support that reading, since the relative risk of a metabolic
+decompensation event fell by 70% rather than to near-normal, and the biomarkers moved by
+`-29%` to `+5%`.
+
+**(b) The shape ceiling: it does not exclude them either, and this is the correction.** At
+`Imax` fixed to its published `0.999` the ceilings sit a fraction of a percentage point
+*below* the paper's fall on most rows, which reads as an exclusion. But Attarwala **fixed**
+`Imax` at 0.999 rather than estimating it (Table 1, footnote m), so a verdict that turns on
+it is a verdict about a modelling convenience. Rerunning each ceiling at `Imax = 1` separates
+the two questions:
+
+- **`PUB_A`'s ceiling at `Imax = 1` is exactly `Δ/(θ+Δ)`**, the `IC50 → 0` limit of the
+  inhibition ratio, verified symbolically in `k6` check 8. It **clears** the paper's fall on
+  every row by 1.2 to 2.0 percentage points. `PUB_A` is not excluded at any dose. The 0.999
+  cap costs it 1.0 to 2.4 points, and that is the entire reason it appeared to fail.
+- **`PUB_B`'s ceiling falls short on every tabulated row at both values of `Imax`**, by 0.09
+  to 1.74 points. That shortfall is structural: it is the published floor
+  `E0/base = 0.0987/60.1` riding along and blunting every fall, not the `Imax` cap.
+
+**The result that matters is the bracket.** On every row, at `Imax = 1`, the paper's fall
+lies strictly between the two published shapes' ceilings: `PUB_B` a little too shallow,
+`PUB_A` with headroom. The paper's dose-response is bracketed by the published structures
+rather than outside them, and a shortfall of under two percentage points on one side cannot
+exclude a dose.
+
+**One scope limit on that bracket**, found by `k6` check 9 and not by `k4`. `PUB_A`'s ceiling
+is above the paper's fall at every dose from `Δ_peak = 100` to `40000`. `PUB_B`'s **crosses**
+it at `Δ_peak = 443.6`, that is `Δ_peak/θ = 0.148`: below that dose `PUB_B`'s shape can do
+*more* than the paper's marker, not less, and the bracket reverses. Every row in the table
+sits above the crossover, the smallest at `Δ_peak = 816.8`, so the bracket holds throughout
+the table. It is not a property of the three forms at every dose, and `k4`'s first draft said
+it was.
+
+**What is actually against the trough reading**, then, is two things, neither of them
+admissibility:
+
+1. At the committed half-life it needs `D` to be **2.0x and 3.5x** the committed value
+   (12255 and 20977 against 6000), producing peak marker falls of 80% and 87%, while the
+   trial reports falls two to three times *smaller* than the committed calibration already
+   is. That is coherent only if the trial sampled at the very bottom of a very deep
+   excursion.
+2. The clinical claim in (a).
+
+**And the 7 d half-life mostly dissolves objection 1.** A longer half-life makes the trough a
+much larger fraction of the peak (25.0% at 7 d against 6.25% at 3.5 d), so the same trough
+target needs far less dose: `D = 2489` and `4261`, peak falls of 51% and 64%, capacity at 21%
+and 29% of normal, both bracketed. **So 7 d plus the trough reading is the most internally
+coherent combination on the table**, and it is also the one that costs the design the most,
+30 to 37 monthly visits against the committed 11. Both of its ingredients are the reading the
+primary sources lean towards, and neither is established.
+
+---
+
+# Step 3. Is the enzyme capacity identifiable under each structure?
+
+`audit/k5_identifiability.py`, re-checked in `audit/k6_recheck.py`. Three routes that share
+no code: exact reparametrisation in sympy, the numerical rank of the parameter-to-observation
+Jacobian, and constructing the unidentifiable family explicitly and walking it.
+`StructuralIdentifiability.jl` is still absent from this container and is not needed: every
+model here reduces to a rational map of low degree, and the reduction is **verified** rather
+than asserted.
+
+## 3a. Each structure has an exact reparametrisation, and each carries three numbers
+
+**`PUB_B`** (Attarwala, algebraic). With `q = 1 - Imax` and `E = θ + Δ`, sympy returns the
+marker as a ratio of two polynomials of degree 1 in `Δ`, that is a **Möbius function**:
+
+```
+m(Δ) = (P Δ + U)/(Δ + V) ,   P = E0 + base·q
+                             U = P·θ + (E0 + base)·IC50
+                             V = IC50 + θ
+```
+
+residual after substitution exactly `0`. Re-derived in `k6` check 1 by **exact rational
+interpolation** with no floating point anywhere: three points determine `(P, U, V)` as exact
+fractions, and four more agree exactly.
+
+**`PUB_A`** (turnover). The forcing term is the same shape, `f(θ+Δ) = (qΔ + W)/(Δ + V)` with
+`W = qθ + IC50` and `V = θ + IC50`. There is **no free multiplicative constant** in front of
+it: the equation is `dm/dt = (L+b)·f - k_out·m` and `(L+b)` is the recorded load, so `f` is
+identified as a function rather than up to a scale. Inverting, with `Imax` fixed,
+
+```
+IC50 = (W - qV)/Imax ,   θ = V - IC50 = (V - W)/Imax
+```
+
+both recovered symbolically. `k6` check 3 reaches the same closed form by a Gröbner
+elimination of `IC50`, which leaves the generator `V - W + qθ - θ`.
+
+**`PAPER`**. Re-derived from scratch by the same method so all three are counted one way:
+`Δ(m) = A/m + B + Cm` with `A = K_m(L+b)`, `B = L+b-θ-k_e K_m`, `C = -k_e`. Three invariants,
+four parameters. This is P5's result and it is unchanged.
+
+## 3b. The numerical rank of the sensitivity map agrees exactly
+
+24 phase-spread visits. `PAPER` and `PUB_B` are differentiated by the **complex step**, exact
+to machine precision; `PUB_A` by integrating its **forward sensitivity system**. Columns are
+scaled before the SVD.
+
+| load | structure | params | rank | deficit | smallest singular value |
+|---|---|---|---|---|---|
+| constant | `PAPER` | 4 | **3** | 1 | 3.17e-16 |
+| constant | `PUB_A` | 4 | **4** | 0 | 1.58e-04 |
+| constant | `PUB_B` | 5 | **3** | 2 | 5.58e-17, 4.38e-17 |
+| varying | `PAPER` | 4 | **4** | 0 | 1.02e-03 |
+| varying | `PUB_A` | 4 | **4** | 0 | 7.96e-03 |
+| varying | `PUB_B` | 5 | **4** | 1 | 3.15e-17 |
+
+And the null directions read off the algebra exactly:
+
+- `PAPER`, constant load: `θ=+0.9250, K_m=-0.1124, k_e=+0.0000, b=+0.3629`. **`k_e` is
+  exactly zero**, which is P5's fibre ("`k_e` unchanged") recovered by a completely different
+  route. Varying the load: full rank, the fibre closes.
+- `PUB_B`, varying load: `E0=-0.0010, base=+0.9784, IC50=-0.1461, theta=+0.1461, b=-0.0000`.
+  **`IC50` and `θ` exactly equal and opposite**, which is `V = IC50 + θ` held fixed, and
+  **`b` exactly zero**, which says load variation bought `b` and nothing else.
+
+`k6` check 4 confirms every rank by **Richardson-extrapolated central differences** instead
+of the complex step, with spectral gaps of 5.6e4 to 1.9e10 at the predicted rank.
+
+**Two bugs this leg found, both mine, both fixed.** The first version used central differences
+at `h = 1e-6` and reported `PAPER` as full rank at a constant load, contradicting P5's exact
+fibre; the fibre is exact and the difference quotient was not. The second used
+`k2_structures.PubA.marker`, which reads `θ` from a module-level function and therefore has
+**no `θ` dependence at all**, so the `θ` column was identically zero and the reported rank
+deficit was an artefact of the harness rather than of the model.
+
+## 3c. `PUB_B`'s fibre, constructed and walked
+
+Parametrising by `IC50 = R` and solving the rest in closed form,
+`θ = V - R`, `base = (U - PV)/(R·Imax)`, `E0 = P - q·base`:
+
+| `IC50 = R` | `θ = V - R` | `base` | `E0` | max relative change in the record |
+|---|---|---|---|---|
+| 30.6 | 3033.1 | 888.1 | 0.2396 | 1.44e-14 |
+| 306.4 | 2757.4 | 88.81 | 1.0389 | 7.60e-15 |
+| 1531.9 | 1531.9 | 17.76 | 1.1100 | 7.50e-15 |
+| 63.75 (truth) | 3000.0 | 426.81 | 0.7009 | 1.08e-14 |
+| 2757.4 | 306.4 | 9.868 | 1.1179 | 7.60e-15 |
+| 3060.7 | 3.064 | 8.890 | 1.1188 | 7.60e-15 |
+
+**`θ` runs from 3.06 to 3033, a factor of 990, with the record unchanged to 1.4e-14.** Run
+again at a 10% varying load, the figures are the same to a digit: load variation does **not**
+close this fibre, because `L` enters only as the common factor `(L+b)/L0`.
+
+`k6` check 2 reaches the same conclusion by Gröbner elimination: eliminating
+`(E0, base, IC50)` from the three invariant equations leaves **no generator** involving only
+`θ`. An empty elimination ideal is the definition of `θ` being unconstrained.
+
+## 3d. `PUB_A`'s profile in `θ` is not flat
+
+The counterpart. Moving `θ`, sliding `IC50 = V - θ` to hold the one invariant a null direction
+would have to preserve, and **re-optimising `k_out`** by a golden-section search at each trial
+`θ`:
+
+| `θ` | `IC50 = V - θ` | best `k_out` | mismatch |
+|---|---|---|---|
+| 750 | 2273 | 18.98 | 3.196e-01 |
+| 2700 | 322.9 | 2.887 | 2.476e-01 |
+| 2970 | 52.93 | 0.5681 | 7.994e-02 |
+| **3000 (truth)** | **22.93** | **0.2768** | **2.893e-11** |
+| 3030 and above | negative | | inadmissible |
+
+A gap of `2.8e9` between the truth and the nearest admissible alternative. `θ` is decisively
+identifiable under `PUB_A`, and its admissible range is `(0, V)` with the record picking one
+point out of it.
+
+---
+
+# Step 4. The general statement
+
+What the three reductions have in common is not the algebra, which differs, but the **count**.
+
+## The three-number bound
+
+Fix the recorded load. The entire content of a record is then the **function** that sends the
+therapeutic increment to the marker level. In each structure that function belongs to a
+family of dimension exactly **three**:
+
+| structure | the family | three numbers |
+|---|---|---|
+| `PAPER` | `Δ(m) = A/m + B + Cm` | `A = K_m(L+b)`, `B = L+b-θ-k_e K_m`, `C = -k_e` |
+| `PUB_B` | `m(Δ) = (PΔ+U)/(Δ+V)` | `P = E0+base·q`, `U = Pθ+(E0+base)IC50`, `V = IC50+θ` |
+| `PUB_A` | `f(Δ) = (qΔ+W)/(Δ+V)` | `q` fixed, `W = qθ+IC50`, `V = θ+IC50` |
+
+In every case the map is a rational function of degree (1,1) in one of the two variables, and
+such a function carries three numbers and no more. **That is a property of the form and not
+of the biology, which is why the obstruction survives a change of structure: it is the same
+count each time.**
+
+## What differs is what each structure has to pay for out of those three
+
+| structure | free parameters (`Imax` fixed) | what a record carries | deficit |
+|---|---|---|---|
+| `PAPER` | 4: `θ, K_m, k_e, b` | 3 at constant load | **1** |
+| `PAPER` | 4 | 4 once the load varies (`b` enters the invariants) | **0** |
+| `PUB_A` | 4: `θ, IC50, k_out, b` | 2 from `(W,V)` + `k_out` from the transient + `b` | **0** |
+| `PUB_B` | 5: `θ, IC50, E0, base, b` | 3 from `(P,U,V)` + `b` from the load | **1** |
+
+## Three consequences
+
+**1. The paper's fibre is generic; its cure is specific.** Every structure here is one number
+short at a constant load. What differs is where the fourth comes from. For the paper it is
+the load, because `b` enters the invariants. That is P5, and it is why a diet record smoothed
+to a weekly mean destroys the identification.
+
+**2. A marker state buys a number; a marker scale spends one.** `PUB_A` is identifiable and
+`PUB_B` is not, and they differ in exactly two places. `PUB_A`'s marker is a **state**, so the
+transient pins `k_out` separately from the steady map: one number bought. `PUB_B`'s marker
+carries **two free scale constants**, `E0` and `base`, which enter the invariants only
+through `P` and `E0+base`: one number spent. Net, `PUB_A` is exactly determined and `PUB_B`
+is one short. That is the thing to look for in any third structure.
+
+**3. Where `θ` sits in the deficit is not a detail.** Under `PUB_B`, `θ` appears only inside
+`V = IC50 + θ` and inside `U`, and 3c walks it over its whole positive range at a
+bit-identical record. So under `PUB_B`, `θ` is not merely imprecise, it is **not
+identifiable**, at any design, at any number of visits, with or without load variation.
+
+**That is the exact explanation of what step 2 measured.** Fitting the paper's model to
+`PUB_B` data returned `θ̂` biased by 1.3x at the committed dose and up to 20x at the trial's
+own, with a residual under a fifth of one `σ`. The estimator was not failing. It was
+reporting a point on a fibre along which the data are silent, and the paper's parametrisation
+chose which point.
+
+**The statement for the paper, in one sentence:** `θ` is identified relative to a structure,
+not absolutely, and the structure has to supply a fourth number from somewhere (a varying
+load, a marker transient, or an external anchor) before any record can determine it.
+
+---
+
+# The independent re-check for the follow-up and steps 3 to 4
+
+`audit/k6_recheck.py`. **9 of 9 pass.** Three of them failed first, and all three failures
+were real.
+
+| check | independent route | result |
+|---|---|---|
+| 1. `PUB_B` is Möbius | exact rational interpolation, no floating point | `(P,U,V)` exact, matches sympy |
+| 2. `PUB_B`'s fibre | Gröbner elimination of `(E0, base, IC50)` | no generator constrains `θ` |
+| 3. `PUB_A` pins `θ` | the same elimination, `IC50` only | `θ = (V-W)/Imax` in closed form |
+| 4. the ranks | Richardson extrapolation instead of the complex step | spectral gaps 5.6e4 to 1.9e10 |
+| 5. `PUB_A` sensitivities | finite differences at each parameter's own scale | agree to 1.5e-9 |
+| 6. two `PUB_A` integrators | `k2`'s simulator against `k5`'s sensitivity solver | agree to 2.7e-10 |
+| 7. the capacity cancellation | symbolic, `used = frac·(1 + Δ_peak/θ)` | `θ` cancels; binds at 9.0 and 19.0 |
+| 8. the `Imax=1` ceiling | symbolic `IC50 → 0` limit | exactly `Δ/(θ+Δ)`, matches the grid |
+| 9. the bracket | swept 61 doses instead of tabulating 10 | holds above `Δ_peak = 443.6`, reverses below |
+
+**The three failures.**
+
+1. **Check 5 found a real error in `k5`.** The forward sensitivity system's **initial
+   conditions** set `∂m0/∂IC50` and `∂m0/∂θ` to zero. They are not zero: `m0` depends on both
+   through `f(E(t0))`. The omission left a transient worth `1e-3` relative, which is exactly
+   what the check measured. Now carried; both columns agree to `1e-9`. The rank conclusion
+   was unaffected, since a `1e-3` error in two columns cannot create rank, but the
+   sensitivity values were wrong.
+2. **Check 9 refuted a claim in `k4`.** `k4`'s first draft called the bracket "a property of
+   the three forms". Sweeping 61 doses instead of tabulating 10 shows `PUB_B`'s ceiling
+   crosses the paper's fall at `Δ_peak = 443.6`, below which the bracket reverses. `k4` now
+   carries the crossover and the scope limit.
+3. **Check 5 also failed a second time on its own step size**, and that one was the check's
+   fault, not the code's. With the integrator at `rtol = 1e-12` and `b` entering on the load's
+   scale of `322.7`, a step of `1e-5` made the difference quotient integrator noise. The step
+   is now taken relative to each parameter's own scale and Richardson-extrapolated. Recorded
+   rather than silently fixed, because a re-check that quietly retunes until it passes is not
+   a re-check.
+
+
 # Proven, measured, judgement
 
 | claim | status |
@@ -674,10 +1035,12 @@ written. They are recorded because the point of the re-check is that it catches 
 | Five repository places present them as human, or cite a non-existent extraction route | **proven**, located by line |
 | `3.85 d` is one rate constant, not the model's protein half-life; the `~7 d` is consistent with the constants | **measured**, `k1_sources.py`, re-checked exactly |
 | The trial's 3-HP fall after dose 3 is `-29` to `+5%` across five cohorts | **proven**, Extended Data Table 3 |
-| `D_AMP = 6000` implies a `62-66%` fall, two to three times the reported figures | **measured**, and independently confirmed by the structure ceilings |
+| `D_AMP = 6000` implies a `62-66%` fall, two to three times the reported figures | **measured** |
 | The design numbers under a 7 d half-life and under a 20-30% fall | **measured**, table above, 8-seed spread quoted |
 | Model A has no published parameters; Baek is already registered as `mrna_moa` | **proven** from Baek's Methods and Table 1, and from `refs.sources:200-203` |
-| The published inhibition shape cannot reach the repository's calibrated fall | **measured**, ceilings `65.65%` and `64.13%` against `66.36%` |
+| ~~The published inhibition shape cannot reach the repository's calibrated fall~~ | **RETRACTED**, `REVIEW_LOG.md` R15. It was a knife edge on `Imax = 0.999`, a constant the source FIXED rather than estimated. At `Imax = 1` the turnover shape clears the fall at every dose |
+| The repository's fall is BRACKETED by the two published shapes' ceilings on every tabulated dose | **measured**, and swept independently over 61 doses |
+| That bracket reverses below `Delta_peak = 443.6`, so it is not a property of the forms at every dose | **measured**, `k6` check 9, which refuted `k4`'s own wording |
 | `PUB_B` misspecification is invisible in the residuals and biases `theta` by `1.29` to `2.03` at the `60%` calibration, and by `4.3` to `20.5` at the trial's own `20-30%` | **measured** |
 | `PUB_A` misspecification is loud on the recommended schedules and silent on the dose-period one | **measured** |
 | The schedule ranking survives both structures; the parameter estimate does not | **measured** |
@@ -685,32 +1048,63 @@ written. They are recorded because the point of the re-check is that it catches 
 | Where the load enters `PUB_A` and `PUB_B` | **judgement**, stated in the file header and in every table |
 | Which calibration branch is "the" one | **not judged**. Both are carried everywhere |
 | That the trial's samples were troughs | **not judged**. The paper does not say, and both readings are carried, and they disagree about whether the design is feasible |
+| Every trough row passes the capacity ceiling at both references, the worst at `84.58%` of normal | **measured**, `h1`'s constraint 5 recomputed per row |
+| The trial paper names no sampling time for Extended Data Table 3, and has no biomarker time-course figure | **proven**, checked exhaustively in this pass |
+| The registry's `timeFrame` field would settle it | **not checked**. Outbound egress is blocked here; both `curl` and `WebFetch` get a 403 CONNECT denial |
+| Baek's mouse PD was sampled at Days 2, 8, 14, 22, 28 of a 28 d cycle, a full time course | **proven**, Fig. 2 caption |
+| Baek Fig. 2e plots 3-HP in `uM` in the same mouse strain, confirming Attarwala's `"mM/L"` is `umol/L` | **proven**, and this is an EXTERNAL confirmation of what was an internal argument |
+| `PUB_B` is exactly Moebius in `Delta`, so a record carries three numbers | **proven** symbolically, and by exact rational interpolation |
+| Under `PUB_B`, `theta` is NOT IDENTIFIABLE at any design, with or without load variation | **proven**. Groebner elimination leaves no relation on `theta`; the fibre was walked over a `990`-fold range at a record unchanged to `1.4e-14` |
+| Under `PUB_A`, `theta` IS identifiable, at a constant load, with no external information | **proven**, `theta = (V-W)/Imax` in closed form; profile gap `2.8e9` |
+| The rank counts (`PAPER` 3 of 4 then 4 of 4; `PUB_A` 4 of 4; `PUB_B` 3 of 5 then 4 of 5) | **measured** by complex step, re-checked by Richardson |
+| `PAPER`'s null direction has `k_e` exactly zero, which is P5's fibre by a new route | **measured** |
+| `PUB_B`'s null direction has `IC50` and `theta` exactly opposite and `b` exactly zero | **measured** |
+| The three-number bound, and that a marker state buys a number while a marker scale spends one | **proven** for these three structures. Whether it generalises beyond degree-(1,1) maps is **judgement** |
+| That `PUB_B`'s non-identifiability EXPLAINS step 2's bias | **judgement**, though a well-supported one: the mechanism predicts both the size of the bias and the absence of a residual signal |
 
 ## What I did not do
 
 - **No paper edit, no constant change, no merge.** Every correction above is proposed text.
   `PHASE4_PROPOSED_TEXT.md` is still unapplied.
-- **Steps 3 and 4 are not started**, per the instruction to stop after step 2.
+- **Steps 3 and 4 are now done** (they were not, when the section above was first
+  written; the entry is kept so the order of work is legible).
 - **No test was added to `tests/test_models.py`.** The natural candidates are the two structure
   ceilings and the `PUB_A`/`PUB_B` calibration identities, since both are exact arithmetic on
   published constants. They belong there if and when the simulators become part of the paper
   rather than of the audit, and that is a decision for after you have read this.
-- `StructuralIdentifiability.jl` is still not installed in this container, which will matter at
-  step 3 and not before.
+- `StructuralIdentifiability.jl` is still not installed in this container. It turned out not
+  to matter: every structure here reduces to a rational map of degree (1,1), the reduction
+  is verified three ways, and a differential-algebra package would answer the same
+  question more slowly. It would still be worth running as a fourth opinion.
 
-## The three questions this leaves you
+## The questions, and where they now stand
 
-1. **The sampling time.** Everything in the reruns turns on whether Extended Data Table 3 is a
-   trough or a peak, and the trial report does not say. Is there a protocol, a poster, or a
-   contact who can settle it? If not, the paper has to carry both readings, and under one of them
-   a monthly record does not reach `sd(ln theta) = 0.20` in five years.
-2. **Whether `D_AMP` moves.** Two independent arguments now say `6000` is too high: the trial's
-   reported falls, and the ceiling of the published inhibition shape. Moving it changes printed
-   numbers across several sections, so it is your call and I have not touched it.
-3. **Whether the `theta` bias under `PUB_B` belongs in the paper.** It is the sharpest result
-   here: a structure the paper already cites, fitted by the paper's own estimator, gives a `1.3`
-   to `2.0`-fold error in the quantity the paper exists to estimate at the committed dose, and a
-   `4` to `20`-fold error at the dose the trial's own reported falls imply, with a residual of
-   less than a fifth of one `sigma` in both cases and therefore no warning at all. The supplement currently says the
-   obstruction survives a change of structure and the parametrisation does not. That is now
-   measured, and the measurement is stronger and more specific than the sentence.
+1. **The sampling time: carry both readings.** Decided. It is carried throughout, and the
+   two readings still disagree about feasibility: `10` to `12` monthly visits under the
+   trough reading at the committed half-life, against `42` or unreachable under the peak
+   reading. **The one thing that would settle it and has not been checked is the registry's
+   `timeFrame` field for the 3-HP secondary outcome**, which this container cannot reach.
+   That is the single highest-value open item in this report and it costs one fetch.
+2. **`D_AMP` does not move.** Decided. The sensitivity table above is what stands in its
+   place, with admissibility on every row. One of the two arguments for moving it is
+   withdrawn (`REVIEW_LOG.md` R15); the argument from the trial's reported falls stands.
+3. **The `theta` bias goes in the paper.** Decided. Drafted, unapplied, as passage 9 of
+   `audit/PHASE4_PROPOSED_TEXT.md`, together with a pointer in the discussion's "What would
+   change the answer" list. Steps 3 and 4 turned it from a measurement into a proof: under
+   that structure `theta` is not identifiable at all, so the bias is not estimator failure
+   but a parametrisation choosing a point on a silent fibre.
+4. **The five mouse-versus-human corrections** are drafted, unapplied, as passage 10.
+
+## What remains open
+
+- **The registry `timeFrame`.** See 1.
+- **Baek's Source Data file**, for the same reason. It would give the mouse 3-HP time course
+  as numbers rather than as a figure, which would let the translational model be simulated
+  end to end rather than through our own calibration.
+- **Whether `lambda` moves to `ln 2/7`.** Not proposed here. Passage 10b states the
+  qualification and keeps the constant. Moving it costs `11 -> 30` monthly visits, and every
+  Phase 3 figure is computed at `ln 2/3.5`.
+- **Whether the `PUB_A`/`PUB_B` simulators become part of `src/` and get tests.** The natural
+  test candidates are the two calibration identities and the closed form
+  `theta = (V-W)/Imax`, all exact arithmetic. Not added, because they are audit code until
+  you say otherwise.

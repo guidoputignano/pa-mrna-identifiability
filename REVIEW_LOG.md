@@ -858,3 +858,54 @@ true of `prop:rank`'s null vector) and too narrow (`rem:rankvsprec` contains a s
 is false at two of the four rows it prints). All are recorded as C1 to C8 in
 `audit/PHASE4_PI.md`. Given `R5` and `R7`, a retraction issued without that check would have
 been the third of its kind here.
+
+---
+
+### R15. "the published inhibition shape cannot reproduce the repository's calibrated fall"
+
+**Retracted** (Phase 5, the admissibility follow-up). It is mine, it is one report round old,
+and it never reached `paper/`.
+
+`audit/PHASE5_ROBUSTNESS.md` reported, in the Step 1 section and again in the
+proven/measured table, that the two published inhibition shapes have a ceiling on the marker
+fall they can produce over a `3.13`-fold enzyme rise, `65.65%` for the turnover structure and
+`64.13%` for Attarwala's algebraic one, and that the repository's committed calibration of
+`66.36%` lies above both. It was offered as "an independent argument, from the published
+shape rather than from the trial, that `D_AMP` is set too high".
+
+**The argument does not survive `Imax`.** Attarwala **fixed** `Imax` at `0.999` rather than
+estimating it (Table 1, footnote m), so it is a modelling convenience. Recomputing each
+ceiling at `Imax = 1` separates the structure's limit from that constant's:
+
+- The turnover structure's ceiling at `Imax = 1` is exactly `Delta/(theta + Delta)`, the
+  `IC50 -> 0` limit of the inhibition ratio, verified symbolically. It **clears** the
+  repository's fall at every dose from `Delta_peak = 100` to `40000`, by 1.2 to 2.0
+  percentage points. The `0.999` cap costs it 1.0 to 2.4 points, and that cap is the entire
+  reason it appeared to fail.
+- Attarwala's algebraic structure does fall short at every tabulated dose at both values of
+  `Imax`, but by `0.09` to `1.74` percentage points, which is a knife edge and not an
+  exclusion. That shortfall is structural, being the published floor `E0/base = 0.0987/60.1`
+  blunting every fall, and it is worth stating on its own terms. It is not worth stating as a
+  bound on `D`.
+
+**What replaces it** is a better statement, and one the numbers support: on every dose in the
+sensitivity table the repository's fall lies strictly **between** the two published shapes'
+ceilings, the algebraic one a little too shallow and the turnover one with headroom. The
+dose-response is bracketed by the published structures rather than outside them.
+
+**And even that has a scope limit**, found by `audit/k6_recheck.py` check 9 and not by the
+script it checks. Sweeping 61 doses instead of tabulating 10 shows the algebraic structure's
+ceiling **crosses** the repository's fall at `Delta_peak = 443.6`, that is
+`Delta_peak/theta = 0.148`; below that dose it can do *more*, not less, and the bracket
+reverses. Every tabulated dose sits above the crossover, so the bracket holds where it is
+claimed, and the first draft's phrase "a property of the three forms" did not.
+
+**The argument from the trial is untouched.** `D_AMP = 6000` still implies a `62` to `66%`
+fall against reported per-cohort falls of `-29%` to `+5%`. That remains the reason to
+question the calibration; there is now one such reason rather than two.
+
+**How it was caught.** The margins were suspiciously small and uniformly signed, which is the
+signature of a comparison between two forms of the same saturating shape rather than of a
+real physical bound. The sensitivity that settled it (`Imax` at `1` against `0.999`) was run
+before the claim was reported a second time, not after. The failure mode is the one `R5` and
+`R7` are also instances of: a verdict that turns on a constant nobody measured.
