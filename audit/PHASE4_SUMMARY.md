@@ -109,10 +109,15 @@ rather than calling it 95%.** [measured] Over 160 replicates per row (8 diet rec
 binomial se `+/- 0.02`) it covers **0.881** at CV 10% with the load prior off and **0.863**
 with it on, against a nominal 0.95. It is never censored there and needs no bootstrap.
 
-Four things beside it: [measured] conditional on the stated priors; **covers about 0.88, not
-0.95**; describes the prior's population, not one patient (RMSE 0.093 at the prior means
-against 0.192 drawn); **void at a constant load without the load prior**, where every method
-returns an unbounded interval while reporting 100% coverage.
+Four things beside it: [measured] conditional on the stated priors; **covers about 86 to 88%
+at 10% recorded load variation, not 95%**; describes the prior's population, not one patient
+(RMSE 0.093 at the prior means against 0.192 drawn); **void at a constant load without the load
+prior**, where every method returns an unbounded interval while reporting 100% coverage.
+
+**Read no coverage figure without its censoring column.** The profile's 0.975 at a 2% recorded
+CV with the load prior off is not good coverage: about three-quarters of those intervals are
+unbounded (78% on the main grid, 75% in the addendum's smaller run), so the hits are intervals
+with no upper end. That row is a failed design, not a well-covered one.
 
 **Do not use** the percentile bootstrap (0.77-0.82) or a parametric bootstrap at the fitted
 nuisances (0.683). **Do not apply the boundary correction** [proven]: the 50:50
@@ -132,6 +137,12 @@ hand: 4.1 to 6.9 here, not 3.84. [measured]
 ## 7. The design answer, in one line
 
 **On the paper's own footing the monthly `n = 25` design reaches its 0.20 target for 59% of 32
-simulated diet patterns, not for a typical one** (median RMSE 0.1922, range 0.1362-0.2557).
-[measured] At a 2% recorded CV without the load prior, **none of 32**. The binding
+SIMULATED diet records drawn at a 10% load CV** (median RMSE 0.1922, range 0.1362-0.2557).
+[measured] At a 2% recorded CV without the load prior, **none of 32**.
+
+**That 59% is conditional on the assumed 10% variation and is not a property of real
+patients.** No real diet record enters anywhere in this audit; the load realisations are
+lognormal draws at a CV the repository assumes. What the figure establishes is that even under
+that assumption the design misses its own target for four records in ten, which is a weaker
+claim than "it reaches 0.20" and a stronger one than any single median. The binding
 requirements, in order: the `k_e` prior, real recorded diet variation, a measured dose scale.

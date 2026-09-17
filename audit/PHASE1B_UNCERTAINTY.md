@@ -83,9 +83,14 @@ in every row with the load prior on; bias -0.044 and RMSE 0.425 in the CV 2% pri
 **(a) `chi^2_1` is the wrong threshold, and by a factor that is not constant.** The empirical
 95th percentile of the LR at the **true** `theta` runs **4.07 to 6.92** across the usable
 rows, against 3.841, and its 8-seed range reaches 31.8. So the profile interval is
-systematically a little too narrow, which is exactly the 0.90-0.93 coverage it delivers. **No
-fixed threshold is right**, because the right one varies by a factor of ten across load
-records.
+systematically a little too narrow, which is exactly the **0.881 and 0.863** coverage it
+delivers in the two `load CV 10%` rows. **No fixed threshold is right**, because the right one
+varies by a factor of ten across diet records.
+
+**The 0.975 in the `CV 2%, prior off` rows is not good coverage.** 78% of those profile
+intervals are unbounded, so almost every "hit" is an interval with no upper end. Coverage is
+not a meaningful summary where the censoring column is large, and those rows should be read as
+a failed design rather than a well-covered one.
 
 **(b) The profile is nevertheless the best of the four**, in every usable row. It is never
 worse than 0.900, never censored except where the design itself has failed, and needs no
@@ -209,9 +214,13 @@ rather than silently, and its failure mode is a 2 to 5 point coverage shortfall 
 1. **It is conditional on the priors, and the paper should say which.** The `k_e` log-prior of
    0.8 is doing the identification. The load-bias prior matters at `n = 12` and at a constant
    load, and costs 1.5% at `n = 25` (`i1`'s ladder).
-2. **It covers 90-93%, not 95%.** The empirical LR 95% is 4.1 to 6.9 against 3.841. If a
-   stated 95% matters, widen the threshold to the empirical value on the design in hand; the
-   paper's own `sd_of` machinery can compute it.
+2. **It covers about 86 to 88% at 10% recorded load variation, not 95%** (0.881 with the load
+   prior off, 0.863 with it on, binomial se `+/- 0.02` on 240 replicates). The empirical LR 95%
+   is 4.1 to 6.9 against 3.841. If a stated 95% matters, widen the threshold to the empirical
+   value on the design in hand; the paper's own `sd_of` machinery can compute it.
+   **Where the censoring column is large the coverage figure means nothing**: the 0.975 at a 2%
+   recorded CV with the load prior off comes with about three-quarters of the intervals
+   unbounded (78% here, 75% in the addendum's smaller run).
 3. **It is a statement about the population the prior describes, not about the patient in
    front of you.** At the prior mean the same recipe over-covers (1.000) with an RMSE of
    0.093; with the nuisances drawn it under-covers (0.900) with an RMSE of 0.194.
@@ -307,9 +316,11 @@ of why diet patterns differ.)*
 | CV 2%, prior **on**, dose exact | 0.1916 | 0.1336-0.2536 | **59% of 32** |
 | CV 10%, prior off, dose CV 11.7% | 0.2000 | 0.1385-0.2692 | **50% of 32** |
 
-**On the paper's own footing the design reaches its own target for 59% of diet patterns, not
-for a typical one.** The 8-seed ranges quoted elsewhere in Phase 1 are the same quantity at a
-quarter of the resolution and understate how often it misses.
+**On the paper's own footing the design reaches its own target for 59% of 32 SIMULATED diet
+records drawn at a 10% load CV. That is an estimate conditional on that assumed variation, not
+a property of real patients.** No real diet record has been seen by any of this. The 8-seed
+ranges quoted elsewhere in Phase 1 are the same quantity at a quarter of the resolution and
+understate how often the design misses.
 
 ### Monte Carlo error
 
