@@ -219,6 +219,53 @@ def nonlinear_fit(m, inc, s, seed=0, jitter=0.5, pen=True):
     return dict(theta=t, Km=K, ke=k, b=float(r.x[3]), rss=float(2.0 * r.cost))
 
 
+def obj_exact(q, m, inc, s, pen=True):
+    """
+    The PAPER'S penalised objective, with the priors in the coordinates the
+    filter states them in: Gaussian on ln k_e, not on k_e.
+
+        J = sum r_k^2/sigma^2 + b^2/s_b^2 + (ln k_e - ln k_e0)^2/0.8^2
+
+    q = (ln theta, ln K_m, ln k_e, b).
+    """
+    t, K, k = np.exp(np.clip(q[:3], -25.0, 25.0))
+    r = ((t + inc) * m / (K + m) + k * m + q[3] - s) / SIG
+    J = float(r @ r)
+    if pen:
+        J += q[3] ** 2 / S_B ** 2 + (q[2] - np.log(KE)) ** 2 / 0.8 ** 2
+    return J
+
+
+def polish(fit, m, inc, s, pen=True):
+    """
+    Re-minimise the EXACT objective from varpro's solution.
+
+    varpro's inner problem must be linear, so it carries the delta-method
+    form of the k_e log-prior, Gaussian on k_e with sd 0.8 k_e. That is the
+    same prior to first order and not the same prior. This step starts at
+    varpro's answer and minimises the exact objective, so the grid supplies
+    the global basin and the polish supplies the exact stationary point.
+    """
+    q0 = np.array([np.log(max(fit["theta"], 1e-9)), np.log(fit["Km"]),
+                   np.log(max(fit["ke"], 1e-9)), fit["b"]])
+
+    def res(q):
+        t, K, k = np.exp(np.clip(q[:3], -25.0, 25.0))
+        r = ((t + inc) * m / (K + m) + k * m + q[3] - s) / SIG
+        if pen:
+            r = np.concatenate([r, [(q[2] - np.log(KE)) / 0.8, q[3] / S_B]])
+        return r
+
+    try:
+        out = least_squares(res, q0, method="lm", max_nfev=5000)
+    except Exception:
+        return dict(fit), np.nan
+    t, K, k = np.exp(np.clip(out.x[:3], -25.0, 25.0))
+    return (dict(theta=t, Km=K, ke=k, b=float(out.x[3]),
+                 rss=float(2.0 * out.cost)),
+            obj_exact(q0, m, inc, s, pen) - float(2.0 * out.cost))
+
+
 def filter_sd(m, inc, pen=True):
     """
     The information filter on the SAME record and the SAME priors, so the
@@ -323,9 +370,14 @@ def batch(fit, reps, batch_seed, **kw):
     return np.array(v, float)
 
 
+def varpro_exact(m, inc, s, pen=True):
+    """varpro for the global basin, then a polish on the EXACT objective."""
+    return polish(varpro(m, inc, s, pen=pen)[0], m, inc, s, pen=pen)[0]
+
+
 def fits(pen):
     return {
-        "varpro (global grid)": lambda m, i, s, k: varpro(m, i, s, pen=pen)[0],
+        "varpro + exact polish": lambda m, i, s, k: varpro_exact(m, i, s, pen),
         "beta (P3 linear)": lambda m, i, s, k: beta_fit(m, i, s),
         "nonlinear (the repo's)":
             lambda m, i, s, k: nonlinear_fit(m, i, s, seed=k, pen=pen),
@@ -338,8 +390,11 @@ def part_b(reps=60):
           f"sigma_total({LOAD_FRAC:g}, {CV:g}) = {SIG:.4f}.")
     print(f"  {reps} replicates per seed, 8 seeds, load record fixed within a")
     print("  seed. Reported in ln theta; `bias` is mean(ln theta_hat) - ln theta,")
-    print("  and `rmse` is sqrt(bias^2 + sd^2) so a biased-but-tight estimator")
-    print("  cannot look good by hiding in the sd column.\n")
+    print("  and `rmse` is sqrt(bias^2 + sd^2) FORMED PER SEED and then")
+    print("  summarised, so a biased-but-tight estimator cannot look good by")
+    print("  hiding in the sd column. Note that the median of the per-seed")
+    print("  rmse is not the same as hypot of the two medians, and the per-seed")
+    print("  one is the honest summary because bias and sd covary across seeds.\n")
     store = {}
     for pen, dn, lab in (
             (False, False, "UNPENALISED, four free parameters, nuisances at "
@@ -353,13 +408,13 @@ def part_b(reps=60):
               for s0 in SEEDS]
         print(f"  {lab}")
         print(f"    the filter's bound on the same records: {spread(fb)}")
-        print(f"    {'estimator':>22} {'bias':>28} {'sd':>28} {'rmse':>10} "
-              f"{'sd/bound':>9}")
-        print("  " + "-" * 102)
+        print(f"    {'estimator':>22} {'bias':>28} {'sd':>28}")
+        print("  " + "-" * 110)
         for name, fit in fits(pen).items():
             if name.startswith("beta") and pen:
                 print(f"    {name:>22}   cannot carry the priors: they are not "
                       f"linear in beta")
+                print()
                 continue
             bs, sds = [], []
             for s0 in SEEDS:
@@ -368,9 +423,11 @@ def part_b(reps=60):
                 bs.append(np.mean(v) - np.log(TH))
                 sds.append(np.std(v, ddof=1))
             store[(pen, dn, name)] = (bs, sds)
-            rmse = np.median([np.hypot(a, b) for a, b in zip(bs, sds)])
-            print(f"    {name:>22} {spread(bs):>28} {spread(sds):>28} "
-                  f"{rmse:10.4f} {np.median(sds)/np.median(fb):9.2f}")
+            rm = [np.hypot(a, b) for a, b in zip(bs, sds)]
+            print(f"    {name:>22} {spread(bs):>28} {spread(sds):>28}")
+            print(f"    {'':>22} {'rmse ' + spread(rm):>28} "
+                  f"{'sd/bound ' + f'{np.median(sds)/np.median(fb):.2f}':>28}"
+                  f"   {'rmse vs the 0.20 target: ' + ('BELOW' if np.median(rm) < 0.20 else 'ABOVE'):>34}")
         print()
     return store
 
@@ -409,6 +466,114 @@ def part_b_starts(reps=40):
     print("    fit ends at a strictly larger objective than the grid's global")
     print("    minimum on the same data, so it is a lower bound on how often the")
     print("    local search stopped somewhere it should not have.")
+
+
+# ----------------------------------------------------------- part B, ladder
+def part_b_ladder():
+    banner("(B, ladder) EXACTLY WHICH PRIORS, AND WHAT EACH ONE IS WORTH")
+    print("  The 5.75 above removes BOTH the load-bias prior and the k_e")
+    print("  log-prior, at monthly n=25, load CV 10%, with the dose scale taken")
+    print("  as known exactly and FLAT priors on ln theta and ln K_m throughout")
+    print("  (the e9 / _filter convention). Removing them one at a time says")
+    print("  which one the identification actually rests on, and lets the two")
+    print("  numbers already in this repository be placed on the same ladder.\n")
+    FLAT = 1e3
+    MON12 = 30.4 * np.arange(12)
+    TD = np.arange(0.0, 730.0, 2.0)
+
+    def sd(times, load_cv, seed, pth, pkm, pb, pke, kap=None):
+        L = (loads_for(times, load_cv, seed) if load_cv
+             else np.full(len(times), LB))
+        mm = levels(times, L)
+        inc = np.asarray(delta(times), float)
+        g = mm / (KM + mm)
+        cols = [TH * g, -(TH + inc) * KM * mm / (KM + mm) ** 2,
+                np.ones_like(mm), KE * mm]
+        pri = [pth, pkm, pb, pke]
+        if kap is not None:
+            cols.append(inc * g); pri.append(kap)
+        Q = np.stack(cols, 1)
+        F = (np.diag([0.0 if np.isinf(x) else 1.0 / x ** 2 for x in pri])
+             + Q.T @ Q / SIG ** 2)
+        w = np.linalg.eigvalsh(F)
+        if w[0] <= 0 or w[0] <= 1e-14 * w[-1]:
+            return np.inf
+        return float(np.sqrt(np.linalg.inv(F)[0, 0]))
+
+    I = np.inf
+    rows = [
+        ("the paper's footing", MONTHLY, 0.10,
+         dict(pth=I, pkm=I, pb=S_B, pke=0.8), "b 5%, ln k_e 0.8, dose exact"),
+        ("load-bias prior OFF only", MONTHLY, 0.10,
+         dict(pth=I, pkm=I, pb=I, pke=0.8), "ln k_e 0.8 kept"),
+        ("k_e log-prior FLAT only", MONTHLY, 0.10,
+         dict(pth=I, pkm=I, pb=S_B, pke=FLAT), "b 5% kept"),
+        ("BOTH off  <- part B's 5.75", MONTHLY, 0.10,
+         dict(pth=I, pkm=I, pb=I, pke=FLAT), "nothing but the data"),
+        ("n=12, load OFF, k_e 0.8  [PHASE3 4a]", MON12, 0.10,
+         dict(pth=I, pkm=I, pb=I, pke=0.8), "the same removal at n=12"),
+        ("two-daily n=365  [2D.10 row 1]", TD, 0.0,
+         dict(pth=0.8, pkm=0.8, pb=S_B, pke=FLAT, kap=FLAT),
+         "d10's OWN priors: 0.8 on ln theta AND ln K_m, dose flat"),
+        ("  the same with flat theta, K_m", TD, 0.0,
+         dict(pth=I, pkm=I, pb=S_B, pke=FLAT, kap=FLAT),
+         "what d10's two extra priors are worth"),
+    ]
+    print(f"    {'footing':>38} {'sd(ln theta)':>14} {'8 seeds':>26}  what changed")
+    print("  " + "-" * 112)
+    for lab, t, cv, kw, note in rows:
+        v = np.array([sd(t, cv, s0, **kw) for s0 in SEEDS], float)
+        v = v[np.isfinite(v)]
+        rng = (f"({v.min():.4f} to {v.max():.4f})" if cv and v.size else
+               "deterministic")
+        print(f"    {lab:>38} {np.median(v):14.4f} {rng:>26}  {note}")
+    print("\n    So the k_e log-prior is the load-bearing one and the load-bias")
+    print("    prior is not, at this n: dropping the load prior alone costs 1.5%")
+    print("    at n=25, while flattening k_e alone costs a factor of 23. Phase 3")
+    print("    section 4(a) measured the load prior at n=12, where it costs more")
+    print("    (0.1976 against 0.1890) and where a constant load is still exactly")
+    print("    singular without it. Both statements hold; they are different n.")
+    print("\n    2D.10's 0.7364 is a THIRD footing: a two-daily record 15x denser,")
+    print("    a constant load, a FLAT dose scale as well as a flat k_e, and")
+    print("    0.8 log-priors on ln theta and ln K_m that the e9 convention does")
+    print("    not have. Those last two are carrying that row almost entirely:")
+    print("    remove them and the same design gives 513.")
+
+
+def part_b_prior_form(reps=12):
+    banner("(B, prior form) IS THE LINEARISED k_e PRIOR THE PAPER'S PRIOR?")
+    print("  varpro's inner problem has to be linear, so it cannot carry a")
+    print("  Gaussian on ln k_e. It carries the DELTA-METHOD equivalent,")
+    print("  Gaussian on k_e with sd 0.8 k_e, which agrees to first order and")
+    print("  is not the same function. This checks what that costs, by")
+    print("  re-minimising the EXACT objective from varpro's own answer.\n")
+    print(f"    {'rep':>4} {'J(varpro, exact obj)':>21} {'J(polished)':>13} "
+          f"{'drop':>11} {'d ln theta':>12} {'d ln K_m':>11} {'d ln k_e':>11}")
+    print("  " + "-" * 92)
+    drops, dth = [], []
+    for i in range(reps):
+        m, inc, s = one_record(0, i, draw_nuisance=True)
+        v, _ = varpro(m, inc, s, pen=True)
+        q0 = np.array([np.log(v["theta"]), np.log(v["Km"]),
+                       np.log(v["ke"]), v["b"]])
+        J0 = obj_exact(q0, m, inc, s)
+        w, _ = polish(v, m, inc, s)
+        drops.append(J0 - w["rss"]); dth.append(np.log(w["theta"] / v["theta"]))
+        print(f"    {i:4d} {J0:21.8f} {w['rss']:13.8f} {J0 - w['rss']:11.2e} "
+              f"{np.log(w['theta']/v['theta']):12.2e} "
+              f"{np.log(w['Km']/v['Km']):11.2e} "
+              f"{np.log(w['ke']/v['ke']):11.2e}")
+    print(f"\n    median drop in the exact objective {np.median(drops):.3e}, "
+          f"worst {max(drops):.3e}")
+    print(f"    median |d ln theta| {np.median(np.abs(dth)):.3e}, "
+          f"worst {np.max(np.abs(dth)):.3e}")
+    print("\n    For scale, one unit of this objective is one sigma of one")
+    print("    residual, and sd(ln theta) on this design is about 0.17.")
+    print("\n    The linearised prior is therefore not the paper's prior, and on")
+    print("    these records the difference is far below anything reported.")
+    print("    Everything from here on uses varpro for the GLOBAL basin and the")
+    print("    polish for the EXACT stationary point, so no result depends on")
+    print("    the approximation.")
 
 
 # ------------------------------------------------------------------ part C
@@ -563,6 +728,8 @@ if __name__ == "__main__":
     print(__doc__)
     part_a()
     part_b()
+    part_b_ladder()
+    part_b_prior_form()
     part_b_starts()
     part_c()
     part_d()

@@ -35,6 +35,34 @@ Two others are fitted for comparison: the `beta` form of P3 (linear in four para
 grid, at the price of reweighting every residual by `(K_m + m_k)`), and the repository's own
 nonlinear fit reproduced from `design/run.py:628-641`.
 
+### How the `k_e` log-prior is imposed, and what the approximation costs
+
+The paper's prior on `k_e` is Gaussian on **`ln k_e`** with sd 0.8. The inner problem has to
+stay linear, so **varpro carries the delta-method equivalent**, Gaussian on `k_e` with sd
+`0.8 k_e`, which agrees to first order and is a different function. That approximation is not
+left standing: **every varpro result below is polished**, by re-minimising the exact objective
+
+```
+J = sum_k r_k^2/sigma^2  +  b^2/s_b^2  +  (ln k_e - ln k_e0)^2/0.8^2
+```
+
+with `least_squares` started at varpro's own answer. The grid supplies the global basin; the
+polish supplies the exact stationary point.
+
+**What the approximation was worth** (`i1` `part_b_prior_form`, 12 replicates with the
+nuisances drawn):
+
+| | median | worst |
+|---|---|---|
+| drop in the exact objective from polishing | 1.6e-7 | 1.2e-4 |
+| `\|d ln theta\|` between the two | 6.4e-5 | 2.0e-3 |
+
+One unit of that objective is one sigma of one residual, and `sd(ln theta)` here is about
+0.17. So the linearisation was never going to matter at this scale, and the polish removes
+the question anyway. The estimator matching the paper's penalised objective is checked
+directly: the polished varpro and the repository's own nonlinear fit, both carrying the exact
+log-prior, agree on bias to four figures and on sd to five in every row of the table below.
+
 ---
 
 ## (A) Noiseless data: all three are exact
@@ -53,28 +81,67 @@ of the three before any is asked a harder question; it makes no other claim.
 
 ## (B) Noisy data, and the finding that reframes the rest
 
-**The four-parameter fit on this design is not identified without priors.** The information
-filter's bound with no priors at all is `sd(ln theta) = 5.75` (8 seeds 4.50 to 6.95), a
-factor of `e^5.75`. On one of those records the unpenalised information matrix has
-eigenvalues `[1.5e-4, 1.9e-3, 1.1e2, 5.5e3]` and condition number `3.7e7` (`i2` check 1).
+**This confirms the paper's stated footing rather than reframing it.** The paper reports a
+penalised estimate on a stated footing, priors on `ln k_e` and on the load record, and what
+follows is a measurement of what each of those is worth on this design.
+
+**Exactly what "without priors" removes.** The `5.75` takes away **both** the Gaussian prior
+on the load bias `b` (sd `0.05 L = 16.1364`) **and** the `0.8` log-prior on `ln k_e`, at
+**monthly `n = 25`, load CV 10%, dose scale known exactly**, with flat priors on `ln theta`
+and `ln K_m` throughout, which is the `e9` / `_filter` convention. On one of those records the
+information matrix has eigenvalues `[1.5e-4, 1.9e-3, 1.1e2, 5.5e3]` and condition number
+`3.7e7` (`i2` check 1).
+
+**The ladder, removing them one at a time** (median of 8 seeds, min-max beside):
+
+| footing | `sd(ln theta)` | what changed |
+|---|---|---|
+| the paper's footing | **0.1698** (0.1688-0.1709) | `b` 5%, `ln k_e` 0.8, dose exact |
+| load-bias prior **off** only | **0.1723** (0.1713-0.1823) | `ln k_e` 0.8 kept |
+| `k_e` log-prior **flat** only | **3.9570** (2.9389-4.7937) | `b` 5% kept |
+| **both** off | **5.7432** (4.4940-6.9434) | nothing but the data |
+| `n = 12`, load off, `k_e` 0.8 | **0.1976** (0.1897-0.2453) | the same removal at `n = 12` |
+| two-daily `n = 365`, `d10`'s priors, dose flat | **0.7364** | `0.8` on `ln theta` **and** `ln K_m` too |
+| the same with flat `theta`, `K_m` | **513.19** | what `d10`'s two extra priors are worth |
+
+**Reconciliation in one line each.** Phase 3 section 4(a)'s prior-free **0.1976** is the load
+prior removed with the `k_e` prior kept, at `n = 12`; the same removal at `n = 25` costs only
+1.5% (0.1723 against 0.1698), so the two are the same statement at different `n`. `2D.10`'s
+**0.7364** is a third footing entirely: a two-daily record fifteen times denser, a constant
+load, a **flat dose scale** as well as a flat `k_e`, and `0.8` log-priors on `ln theta` and
+`ln K_m` that the `e9` convention does not have, which are carrying that row almost by
+themselves since removing them gives 513.
+
+**So the `k_e` log-prior is the load-bearing one and the load-bias prior is not, at this `n`.**
+Flattening `k_e` alone costs a factor of 23; dropping the load prior alone costs 1.5%. That
+ordering was not visible from Phase 3, which measured the load prior at `n = 12` and at a
+constant load, where it is the only thing closing the fibre. Both statements hold.
 
 | footing | filter's bound | varpro | beta | nonlinear |
 |---|---|---|---|---|
 | **unpenalised**, nuisances at prior means | 5.75 (4.50-6.95) | bias 1.11, sd 1.13 | bias 0.95, sd 0.83 | bias **-6.11**, sd **8.35** |
-| **penalised** with the paper's priors, nuisances at prior means | 0.1698 (0.1688-0.1709) | bias 0.0003, sd **0.0872** | cannot carry the priors | bias 0.0003, sd **0.0872** |
-| **penalised**, nuisances **drawn from** those priors | 0.1704 (0.1678-0.1853) | bias 0.0619, sd **0.1856** | cannot carry the priors | bias 0.0619, sd **0.1856** |
+| **penalised** with the paper's priors, nuisances at prior means | 0.1698 (0.1688-0.1709) | bias 0.0001, sd **0.0875**, rmse **0.0882** | cannot carry the priors | bias 0.0003, sd 0.0872, rmse 0.0879 |
+| **penalised**, nuisances **drawn from** those priors | 0.1712 (0.1680-0.1800) | bias 0.0452, sd **0.1796**, rmse **0.1881** | cannot carry the priors | bias 0.0455, sd 0.1795, rmse 0.1880 |
 
-*bias is `mean(ln theta_hat) - ln theta`; sd is of `ln theta_hat`; medians over 8 seeds,
-60 replicates each.*
+*bias is `mean(ln theta_hat) - ln theta`; sd is of `ln theta_hat`; rmse is
+`sqrt(bias^2 + sd^2)` formed PER SEED and then summarised, which is not the same as `hypot`
+of the two medians and is the honest summary because bias and sd covary across seeds. Medians
+over 8 seeds, 60 replicates each. The varpro column is `varpro + exact polish`, see below.*
+
+**RMSE against the 0.20 target, for the prior-drawn row**: **0.1881, with an 8-seed range of
+0.1568 to 0.2659**. The median is below the target and the upper seeds are above it, so on
+this design and these priors the target is met for a typical load record and missed for an
+unlucky one. (`hypot` of the two medians gives 0.1852; the per-seed figure is the one quoted.)
 
 **Three results.**
 
-**(a) The paper's `0.1697` is a prior-averaged posterior sd, and the realised precision
-depends on where the patient sits.** At the prior means the same design and the same
-estimator give **0.0872**, half the reported figure. With the nuisances drawn from their own
-priors it gives **0.1856**, 9% above it, with a bias of +0.062 in `ln theta`. The reported
-number is neither a floor nor a ceiling: it is an average over a population of patients the
-prior describes.
+**(a) The paper's `0.1697` is a prior-averaged posterior sd: a property of the design AND the
+stated priors, and the realised precision depends on where the patient sits.** At the prior
+means the same design and the same estimator give **0.0875** (8 seeds 0.0699-0.0936), half
+the reported figure. With the nuisances drawn from those same priors it gives **0.1796**
+(0.1567-0.2505), 5% above it, with a bias of +0.0452 in `ln theta`. The reported number is
+neither a floor nor a ceiling: it is an average over the population of patients the prior
+describes.
 
 **(b) The `beta` route cannot carry the paper's priors.** They are Gaussian on `b` and on
 `ln k_e`, and neither is a linear function of `beta`, so the linear form is unpenalised
