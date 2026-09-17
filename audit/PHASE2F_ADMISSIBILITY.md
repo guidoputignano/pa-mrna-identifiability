@@ -20,8 +20,15 @@ draw, so no seed spread arises.
 ## The table
 
 **19 pass, 1 fail, 20 checks.** Every admissibility constraint proper holds, at both
-readings of the capacity reference, and the recommended Phase 3 design satisfies all of them
+readings of the capacity reference, and the Phase 3 illustrative design satisfies all of them
 as constructed.
+
+> **The one failing check is #15: `D` makes the marker "fall by about half".** It is the
+> wording of a justification in `src/common/params.py`'s `D` row, not a constraint the model
+> violates. The fall is **62.25% to 66.36%** depending on which peak and which baseline, so
+> the row understates its own constant by about 1.3x. A replacement phrasing, *"about two
+> thirds (62-66%)"*, is proposed in `PHASE4_PROPOSED_TEXT.md` passage 8 and is **not
+> applied**. No other check fails.
 
 | # | check | verdict | evidence |
 |---|---|---|---|

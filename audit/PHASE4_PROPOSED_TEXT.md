@@ -6,7 +6,7 @@ wording below. Written after the adversarial stress test of `audit/PHASE4_STRESS
 scope here is narrower than a first draft had it in two places and wider in two others, and
 both changes are flagged where they occur.
 
-Seven passages.
+Eight passages.
 
 ---
 
@@ -262,6 +262,49 @@ $K_m$ log-prior alone takes the filter from singular to $\operatorname{sd}(\ln\h
 0.2820$ at $s = 0.8$ and $0.1854$ at $s = 0.2$ on the monthly design. So it helps; the
 conclusion survives because the help needed is unobtainable, which is a stronger argument
 than the one in place.
+
+---
+
+## 8. `src/common/params.py`, the `D` row's justification. NEW
+
+From Phase 2 item 4, `audit/h1_admissibility.py` check 8 and `audit/h2_recheck.py` check 3.
+This is the **only** failing check of the twenty, and it is a wording, not a constraint.
+
+### Current
+
+> `ASSUMED`, "chosen so the marker falls by about half at peak effect, the order of the
+> reductions reported in the phase 1/2 interim analysis~\cite{trial_phase12}. Only the
+> excursion it produces is used. ..."
+
+### Proposed
+
+> `ASSUMED`, "chosen so the marker falls by **about two thirds ($62$--$66\%$, depending on
+> whether the fall is read from the untreated level or the pre-dose trough, and on the first
+> dose or the steady-state peak)** at peak effect, the order of the reductions reported in
+> the phase 1/2 interim analysis~\cite{trial_phase12}. Only the excursion it produces is
+> used. ..."
+
+The rest of the row is unchanged, including the recoverability sentence.
+
+### Why
+
+Computed in exact rationals, the marker falls from $10.0000$ to $3.5099$ at the first dose
+($64.90\%$), from $10.0000$ to $3.3638$ at the steady-state peak ($66.36\%$), and from the
+pre-dose trough $8.9106$ to $3.3638$ ($62.25\%$). **Every reading is larger than half**, the
+smallest by a factor of $1.24$. It is not a rounding artefact: `h2` check 3 recomputes all
+three symbolically.
+
+Two reasons this is a wording fix and not a substantive one. The row's own next sentence,
+"Only the excursion it produces is used", is the honest reading: nothing in the design turns
+on the fall being any particular fraction, and the excursion is what is actually measured, as
+$\Delta/\theta$ running $2.1333$ at peak to $0.1333$ at trough. And the "from untreated"
+readings are anchored on a definition rather than a measurement, since $m(\Delta=0)=10$
+exactly by the construction of $L$.
+
+So the order of magnitude is right and only the word is wrong. **If the author prefers to
+leave the row as it stands, nothing downstream breaks**; the proposal is offered because a
+reader who checks the number will find it does not match, and a justification that does not
+survive checking costs more than the word saves.
 
 ---
 

@@ -165,7 +165,15 @@ number of slots. They are not the same slots: an afternoon dose puts phase 13.5,
 trough and one end of the quantity `f4` found binds, on a Monday morning, and a morning dose
 loses it to the weekend. It costs nothing and it is worth asking for.
 
-### One booked design, 12 visits
+### One booked design, 12 visits. AN ILLUSTRATION, NOT A RECOMMENDATION
+
+> **What this table is for.** It shows that the inverse map produces a bookable calendar, and
+> what such a calendar looks like. **It is not a recommended trial design.** Twelve visits
+> reach 0.20 only under conditions that are not established: with the dose scale known
+> exactly it gives 0.1929, and at the repository's own required dose-scale CV of 11.7% it
+> gives 0.2204 and **the same construction needs 36 visits** (section 4b). Any design put to
+> a trial has to be sized against the dose-scale precision that has actually been measured,
+> which as of now is none.
 
 Targets chosen from the 19 reachable phases, taken nearest-reachable first, minimum gap
 30.4 d, first dose Monday (an arbitrary one; only the weekday matters):
@@ -427,11 +435,14 @@ also densified to integer resolution through `n = 14`, where the crossings are. 
 
 ## What I would report, and what I would not
 
-- **Book the clinic phase-spread with an afternoon dose**, and quote it conditionally:
-  12 visits over 11.4 months reach `sd(ln theta) = 0.193` **if** the dose scale is known to
-  better than about 12% and the load record carries real day-to-day variation. Without the
-  first it is 36 visits; without the second it does not reach 0.20 at 12. The calendar is in
-  `g3` Part B and should be re-derived from the actual infusion dates.
+- **Recommend the clinic phase-spread construction with an afternoon dose. Do not
+  recommend a visit count.** The construction is what the evidence supports: choose the
+  phases first, take them nearest-reachable, and let the clinic's weekdays pick the dates.
+  The count is not yet decidable, because it is set by a quantity nobody has measured: 12
+  visits with the dose scale known exactly, **36 at the repository's own required dose-scale
+  CV of 11.7%**, more than 60 at 20%. The 12-visit calendar in `g3` Part B is an
+  **illustration of the map**, not a design to run, and any real calendar has to be
+  re-derived from the actual infusion dates.
 - **Quote the saturated floor and `c`, not the all-n fit**, monthly `floor 0.150`,
   `c 0.394` at prior 0.8. And quote the **observed** visit count, not the fit-implied one.
 - **Do not quote a precision without the `k_e` prior beside it.** It is the floor, and the
