@@ -437,6 +437,10 @@ This closes the "verify exact dose/schedule" item.
 **Thompson GN, Chalmers RA, Walter JH, Bresson JL, Lyonnet SL, Reed PJ, Saudubray JM, Leonard
 JV, Halliday D, "The use of metronidazole in management of methylmalonic and propionic
 acidaemias", *Eur J Pediatr* 1990;149(11):792-6, PMID 2226555, `10.1007/BF01957284`.** Verified.
+**Correction to this section as first written: this paper was already registered here as
+`metronidazole_pa`, with these figures already in its annotation, and Baumgartner was already
+held as `pa_guidelines`. Neither is new to the repository. What is new is the conjunction, and
+the heading "two primary sources, neither cited anywhere in the pack" is true only of the pack.**
 **Four PA and five MMA children.** "Urinary excretion of propionate metabolites fell
 significantly during the treatment in all subjects, the mean decrease being **41% (range 12-76,
 P less than 0.01)**, while mean plasma propionate was reduced from **45.0 to 25.1 umol/l**
@@ -503,3 +507,95 @@ Three things follow.
   not.
 - **`audit/m2_antibiotic_cycle.py` models the antibiotic cycle as a square wave on the load.**
   That is the shape the regimen implies, not a shape anyone has measured.
+
+---
+---
+
+# Part 3. The discriminator, run; and what is now discharged
+
+## 16. Section 9's discriminator fails, and section 9 is withdrawn
+
+The per-cohort values of Extended Data Table 3 were supplied by the author from the Nature PDF.
+The test proposed in section 9 was run with **its power printed before the table was read**,
+which `audit/m3_edt3_discriminator.py` enforces structurally: Part A executes before Part B.
+
+**Power, established first.** The only contrast free of the dose confound is cohort 1
+(0.30 mg/kg Q3W, `n = 4`) against cohort 2 (0.30 mg/kg Q2W, `n = 3`). Cohorts 3 to 5 differ from
+cohort 1 in dose, interval **and** age together.
+
+| marker | SE of the difference | df | smallest difference detectable at 80% power |
+|---|---|---|---|
+| 3-HP | 19.5 pp | 4.3 | **70.8 pp** |
+| 2-MC | 21.2 pp | 4.9 | **74.2 pp** |
+| C3 | 17.2 pp | 4.3 | **62.6 pp** |
+| n-PG | 17.0 pp | 5.0 | **59.5 pp** |
+
+Against that, the two conventions differ by `8.1 pp` at the assumed `D_AMP = 6000` and by
+`22.5 pp` at `D_AMP = 24000`, four times the assumed value. The fixed-clock convention predicts
+`1.2 pp`. **The test is underpowered by a factor of three to thirty and cannot separate the two
+sampling conventions at any plausible amplitude.**
+
+**The data, read second, agree.** `p = 0.249` (3-HP), `0.964` (2-MC), `0.215` (C3), `0.911`
+(n-PG). The two markers that move at all move `-26` and `-25` pp, which is the **direction
+opposite** to the trough hypothesis: a Q3W arm sampled at its next predose should show a
+*smaller* fall, not a larger one. There is no dose trend to lean on either: over the four Q2W
+dose levels the dose-versus-fall correlation is `-0.37`, `-0.50`, `-0.16` and **`+0.67`**, on
+four points.
+
+**Part D of the script adds nothing beyond what `PHASE5_ROBUSTNESS.md` already records.** All
+twenty cohort-by-marker means sit above the `-61.8%` a one-day-post-dose reading predicts at
+`D_AMP = 6000`, but only three of twenty reach `p < 0.05`, the cohorts within a marker are not
+independent, and the comparison is conditional on an assumed amplitude that a smaller value
+would move up to meet the data. Phase and amplitude cannot be separated by it.
+
+**Recorded as `REVIEW_LOG.md` R18.** `OPEN_QUESTIONS.md` section 2 stands: the sampling time
+must come from the sponsor. What is now pinned is only that the table is a change from a
+**predose** baseline measured **after the third dose**.
+
+Stating the power first is what produced the answer before the data were read. Had the table
+been read first, `-26` and `-25` pp on two of four markers would have looked like a finding.
+
+## 17. `refs/literature_pending.md` is discharged
+
+All 16 rows resolved and all 16 were correct. Registered into `paper/refs.sources`, which now
+holds **46 identifiers, no duplicate keys and no duplicate identifiers**, and
+`tools/fetch_refs.py --check` resolves every one with an empty `paper/refs.todo`.
+
+Two rows needed no new entry because the repository already held them, **which corrects section
+13 above**: Thompson 1990 *Metabolism* is `propionate_sources` and Manoli 2021 is
+`breath_test_mma`. Two further sources this pass turned out to be already held with correct
+annotations, `pa_guidelines` and `metronidazole_pa`, the latter already carrying the `41%`,
+the `12-76` range and the `45.0` to `25.1` umol/L plasma fall. **The metronidazole finding is a
+conjunction of two sources the repository had, not a discovery of sources it lacked.**
+
+Twelve method identifiers, four clinical ones and three corrections are new. Annotations were
+extended on three existing entries:
+
+- `trial_phase12` now carries the MDE relative risk **with its interval**, `0.30 (95% CI
+  0.066-1.315, P = 0.0927)` overall and `0.18 (95% CI 0.011-2.907, P = 0.1832)` biweekly, and
+  records that the abstract's "70% reduction" is `1 - 0.30` and is **not significant**, with an
+  instruction not to quote it bare. It also now records the non-uniform dose train and what
+  Extended Data Table 3's title does and does not fix.
+- `breath_test_mma` now carries its published correction and the finding that the correction
+  restores a graphical abstract and **leaves the CV error standing**, so `R4` is not superseded.
+- `pa_guidelines` now carries the metronidazole regimen verbatim, which was an open
+  verification item, and the dialysis rebound that passage 14 rests on.
+
+**`van_noort` was deliberately not registered.** It resolved and was read; it is a workflow
+review of identifiability methods and is not support for the dose-phase result. Keeping it out
+of `refs.bib` means it cannot be cited here by accident. The reason is recorded in
+`refs.sources` itself.
+
+## 18. State of the gate
+
+- **No `.tex` file has been touched.** `git status` confirms it. `paper/refs.bib` regenerated
+  from `refs.sources`, which is its defined behaviour; no `.tex` cites any new key, so the built
+  PDF's bibliography is unchanged. The PDF was not rebuilt.
+- **No constant moved.** `LOAD_FRAC` is `0.05`, `D_AMP` is `6000`, `DOSE_INTERVAL` is `14.0`.
+- **Five proposed passages (11 to 15) are held unapplied** in `PHASE4_PROPOSED_TEXT.md`,
+  alongside the ten that were already there. None is in the paper.
+- **Two retractions recorded**, `R17` (the `spec_numbers()` sweep) and `R18` (my own
+  discriminator proposal).
+- Three audit scripts added: `m1_loadbias_prior.py`, `m2_antibiotic_cycle.py`,
+  `m3_edt3_discriminator.py`. None is in `src/`, none has a test, and that is deliberate per
+  `OPEN_QUESTIONS.md` section 5.

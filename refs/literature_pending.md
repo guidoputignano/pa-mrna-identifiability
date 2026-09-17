@@ -1,5 +1,18 @@
 # Literature pending verification
 
+> **DISCHARGED, September 2026.** Network egress became available in the working container and
+> every row below was resolved against CrossRef or NCBI. **All 16 were correct as written**,
+> including both rows flagged "Verify (review)" and the Mehra volume trap. They are registered
+> in `paper/refs.sources`; `van_noort` is deliberately excluded and the reason is recorded
+> there. This file is kept as the record of what was claimed before it was checked. See
+> `audit/PHASE6_REVIEWS_SEP2026.md` sections 5, 6 and 17.
+>
+> Two corrections to this file's own text, found on reading the sources rather than the
+> reviews: the breath-test conflict below is right and is now confirmed to be **uncorrected in
+> the published record** (the Genet Med erratum restores a graphical abstract and does not
+> touch the CV), and the clinical row for metronidazole was already held as `metronidazole_pa`
+> rather than pending.
+
 **Nothing in this file is registered.** These references arrived from two literature reviews
 (clinical and methods) supplied in September 2026. **None has been verified in this
 repository**: network egress is blocked in this container, so no DOI here has been resolved,

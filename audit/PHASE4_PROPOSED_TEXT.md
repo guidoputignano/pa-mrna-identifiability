@@ -6,8 +6,12 @@ wording below. Written after the adversarial stress test of `audit/PHASE4_STRESS
 scope here is narrower than a first draft had it in two places and wider in two others, and
 both changes are flagged where they occur.
 
-Ten passages. Passages 9 and 10 were added after Phase 5, from the primary sources
+Fifteen passages. Passages 9 and 10 were added after Phase 5, from the primary sources
 supplied in September 2026; they are flagged NEW where they occur, as passages 5 to 8 were.
+Passages 11 to 15 were added after the September 2026 verification pass
+(`audit/PHASE6_REVIEWS_SEP2026.md`), once network egress made the primary sources readable
+rather than merely citable. Passage 11 carries retraction `R17`; passage 15 is the second half
+of the same retraction and is kept separate because it moves in the opposite direction.
 
 ---
 
@@ -619,3 +623,229 @@ the qualification; moving the constant is a separate decision and is not propose
 - `audit/g_design_common.py` and every Phase 3 figure are computed at `lambda = ln 2/3.5`
   and `D = 6000`. If either constant moves, those figures move with it; the sensitivity
   table in `PHASE5_ROBUSTNESS.md` says by how much, and nothing has been regenerated.
+
+---
+
+## 11. `paper/sections/08_specification.tex:48-50` and `:118-120`. The load recording error. NEW
+
+Carries retraction `R17`. **This is the largest single change proposed in this file**, because
+it converts a sentence that reads as robustness into a requirement the design can fail.
+
+### Current, at `:48-50`
+
+> Two rows already report their own insensitivity: the load record gives $0.170$ whether it is
+> kept to $1\%$ or to $20\%$, and $K_m$ needs nothing at all.
+
+### Current, at `:118-120`
+
+> \paragraph{The load record: ordinary precision, and keep the variation.} Recording intake
+> twenty times more precisely buys about six per cent, so precision is not the binding
+> variable.
+
+### Proposed, at `:48-50`
+
+> One row reports its own insensitivity: $K_m$ needs nothing at all. The load row reports two
+> different quantities and only one of them is insensitive. How much the record \emph{varies}
+> changes nothing ($0.170$ whether the day-to-day coefficient of variation is $1\%$ or $20\%$);
+> how well it is \emph{recorded} is the second-tightest requirement in the table.
+
+### Proposed, at `:118-120`, replacing the first sentence and keeping the rest of the paragraph
+
+> \paragraph{The load record: the recording error binds, and keep the variation.} Two different
+> things are called the load record and they behave oppositely. Making the record more
+> \emph{variable} buys nothing, and making it twenty times less variable costs nothing. Making
+> it more \emph{accurate} is the second-tightest requirement here, after the increment:
+> \begin{center}
+> \small
+> \begin{tabular}{@{}lcc@{}}
+> \toprule
+> \textbf{substrate load recorded to} & $\sigma$ & $\operatorname{sd}(\ln\hat\theta)$ \\
+> \midrule
+> $1\%$  & $15.2$  & $\mathbf{0.157}$ \\
+> $5\%$  & $22.0$  & $\mathbf{0.166}$ \\
+> $10\%$ & $35.5$  & $\mathbf{0.192}$ \\
+> $20\%$ & $66.2$  & $0.264$ \\
+> $40\%$ & $130.0$ & $0.402$ \\
+> \bottomrule
+> \end{tabular}
+> \end{center}
+> so the design reaches $0.20$ only if intake is recorded to better than about $12\%$. That
+> is not a comfortable margin. European practice records what patients are \emph{prescribed}
+> rather than what they eat~\cite{pa_diet_survey}, no study in propionic acidemia reports
+> repeated as-eaten intake at all, and the one study in any protein-restricted inborn error
+> that has compared the two found actual natural protein running at $167\%$ of
+> prescribed, a median of $40\%$ above it~\cite{pku_prescribed_actual}. At $40\%$ this design
+> returns $0.402$, twice its own target. \textbf{The feasibility of everything downstream rests
+> on a measurement of intake that is currently not made.}
+
+### Why
+
+`spec_numbers()` computes $\sigma$ once at a $5\%$ load error and reuses it on every row, so the
+published "$1\%$ or $20\%$" rows sweep `load_cv`, the record's variation, and never touch the
+recording error, which enters only through $\sigma$. Full working and the seed spread are in
+`audit/m1_loadbias_prior.py` and `REVIEW_LOG.md` `R17`. **No constant is moved**: `LOAD_FRAC`
+stays at `0.05` and the headline stays at $0.166$. What changes is that the table now says what
+that $0.05$ is buying.
+
+Two citations are needed and both are registered: `pa_diet_survey` (Daly et al. 2017,
+PMID 29021961) and `pku_prescribed_actual` (Pinto et al., *Nutrients* 2023;15(23):4903).
+
+---
+
+## 12. `paper/sections/08_specification.tex`, a new paragraph after the load record. NEW
+
+### Current
+
+Nothing. The paper discusses cyclical intestinal antibiotics in
+`A1_supplementary.tex` and in the "three readings" of `07_design.tex`, in both cases as a
+\emph{pre-therapy instrument}, and never as an input that coexists with the dose train.
+
+### Proposed
+
+> \paragraph{Record the antibiotic weeks, and one reason that is not the reason you expect.}
+> Most patients on this therapy are also on cyclical intestinal antibiotics. The consensus
+> regimen is one to two weeks of metronidazole alternating with two to three weeks
+> off~\cite{pa_guidelines}, and the measured effect on propionate metabolite excretion in four
+> PA and five MMA children is a mean fall of $41\%$, range $12$ to $76\%$, with plasma
+> propionate falling from $45.0$ to $25.1\,\mu$mol/L~\cite{metronidazole_pa}. So the
+> non-enzymatic load is not a constant in these patients. It is close to a square wave of
+> order $40\%$ amplitude on a three- to five-week period, running alongside a two- or
+> three-week dose train and a monthly draw.
+>
+> Recorded, it is free and almost inert: it changes
+> $\operatorname{sd}(\ln\hat\theta)$ from $0.166$ to between $0.167$ and $0.173$ at every period
+> tried, which is what Section~\ref{sec:instruments} predicts for a perturbation an order of
+> magnitude below $K_m$. \emph{Un}recorded, the same cycle lands in the residual and takes the
+> design to between $0.297$ and $0.313$, missing the target by half. The instruction is
+> therefore one line and it costs nothing: \textbf{record which weeks the patient was on
+> antibiotics}, in the same record as intake and for the same reason.
+>
+> One row of that calculation is worth stating explicitly because it inverts the warning of
+> Remark~\ref{rem:aliasing}. If the antibiotic period happens to equal the sampling interval,
+> the unrecorded cycle becomes \emph{harmless} ($0.167$), because every draw then lands at the
+> same phase, the swing is a constant offset, and the load-bias column absorbs it. Aliasing
+> destroys the dose train, which is the \emph{signal}; aliasing rescues an unrecorded
+> nuisance input. The two are not the same phenomenon and a reader who has just met the first
+> will guess the wrong sign for the second.
+
+### Why
+
+**Both sources were already registered here, with correct annotations**: `pa_guidelines` and
+`metronidazole_pa` (Thompson et al., *Eur J Pediatr* 1990;149(11):792-6, PMID 2226555, which is
+a different paper from the Thompson 1990 *Metabolism* partitioning study also held as
+`propionate_sources`). What is new is not the sources but the **conjunction**: nobody had put
+the guideline's intermittent schedule next to the trial's effect size and asked what a periodic
+`b` does to a design built on a periodic `Delta`. The `pa_guidelines` annotation has been
+extended with the regimen, which was an open verification item.
+`audit/m2_antibiotic_cycle.py` carries the sweep, 24 seeds, and cross-checks against the
+independent $\sigma$ sweep of passage 11 (its unrecorded case runs at $\sigma \approx 68$, and
+the $\sigma$ sweep gives $0.264$ at $\sigma = 66.2$). **What this passage does not claim.** The square wave is the shape the regimen implies. Nobody
+has measured the shape, and no PA cohort reports antibiotic status alongside markers.
+
+---
+
+## 13. `paper/sections/08_specification.tex:73-75`. The PA breath-test cohort. NEW
+
+### Current
+
+> And the cohort is methylmalonic acidemia, not propionic acidemia, where the block sits at PCC
+> itself.
+
+### Proposed
+
+> The cohort is also methylmalonic acidemia rather than propionic acidemia, where the block
+> sits at PCC itself. That last point cuts less deeply than it appears, and in the
+> favourable direction. The assay was first applied to this disease in five patients with
+> propionic acidemia among twenty subjects, where recovery of $^{13}$CO$_2$ was significantly
+> below normal and, notably, \emph{``well correlated with clinical severity in PA, but did not
+> correlate in MMA''}~\cite{breath_test_original}. The measurement Tier~1 asks for is therefore
+> not an extrapolation from the wrong disease. What is missing in propionic acidemia is
+> narrower and more specific: a \emph{repeatability} figure, which that study does not report
+> and which nobody has published since.
+
+### Why
+
+Barshop et al., *Pediatr Res* 1991;30(1):15-22 (PMID 1909779), verified. The current sentence
+is true of `breath_test_mma` and reads as a statement about the literature, which it is not:
+there are PA data, and the severity correlation in them is better than in MMA. Correcting it
+strengthens Tier 1's rationale rather than weakening it, and it keeps the gap that Tier 1
+actually fills stated precisely. Registered as `breath_test_original`.
+
+---
+
+## 14. `paper/sections/07_design.tex:253-259`, `rem:transient`. A second untested assumption. NEW
+
+### Current
+
+> Against that: the fast dynamics of a plasma overflow metabolite is not the fast dynamics of
+> the mitochondrial substrate, and Remark~\ref{sec:marker} already names the monotone-tracking
+> assumption as the weakest link in the chain. A transient interrogates exactly the part of
+> the observation model that assumption is least able to support, at steady state the
+> marker only has to track the substrate monotonically, whereas during a transient it has to
+> track it with the right \emph{time constant}, and nothing in the literature establishes
+> that.
+
+### Proposed
+
+> Against that, two things, and they are different objections. The first is the one
+> Remark~\ref{sec:marker} already names: the fast dynamics of a plasma overflow metabolite is
+> not the fast dynamics of the mitochondrial substrate, and at steady state the marker only has
+> to track the substrate monotonically, whereas during a transient it has to track it with the
+> right \emph{time constant}. Nothing in the literature establishes that.
+>
+> The second is about the plasma compartment itself, and it is the one piece of human evidence
+> that bears on the $0.81$~h constant directly. After intermittent haemodialysis is stopped in
+> an acute decompensation, the organic-acid pool does not stay drawn down: it refills, from
+> continued extrahepatic production and from redistribution out of tissue, which is the
+> standard argument for preferring continuous therapy~\cite{pa_guidelines}. A slow compartment
+> behind the plasma pool is exactly the structure that would break the separation of $104$ this
+> section is built on, and it would do so without violating monotone tracking at all. The
+> observation is qualitative and it is made about crisis management rather than about steady
+> state, so it does not move a number here. It does say that the two assumptions are
+> independent, and that a transient design would be testing both at once.
+
+### Why
+
+The September 2026 clinical review's conclusion that capacity changes act over days does **not**
+follow from its own evidence (post-transplant decay is consistent with a fast marker tracking a
+graft whose function ramps over a week, and the review's Di Campli entry shows exactly that
+ramp). The dialysis rebound is the part of that review that does bear on the question, and it
+bears on a different assumption from the one the remark currently names. Barshop's suggestion
+that PA and MMA differ in the \emph{``distribution of propionate pools''}~\cite{breath_test_original}
+points the same way from the other direction.
+
+**No number changes.** `rem:transient` remains an open direction and not a recommendation.
+
+---
+
+## 15. `paper/sections/08_specification.tex:120-126`. The other half of `R17`. NEW
+
+The second correction inside the load-record paragraph, moving the opposite way to passage 11.
+
+### Current
+
+> By Proposition~\ref{prop:rank} a
+> perfectly steady load makes the design exactly rank deficient, and that null direction must
+> be filled by something; as the specification stands it is filled by the $5\%$ prior on the
+> load bias, and only real day-to-day variation lets the \emph{data} fill it instead. So
+> ``record intake as eaten, do not smooth it'' is the difference between a result the data
+> support and one a prior supports.
+
+### Proposed
+
+> By Proposition~\ref{prop:rank} a perfectly steady load makes the \emph{untreated} design
+> exactly rank deficient. Under the dose train it does not, because the increment varies even
+> when the load does not: at a constant recorded load with the prior on the load bias removed
+> entirely, $\operatorname{sd}(\ln\hat\theta)$ is $0.266$ rather than unbounded. The prior is
+> worth a factor of $1.6$ there and is not holding the result up. So ``record intake as eaten,
+> do not smooth it'' buys a real but bounded improvement, and it is the \emph{accuracy} of the
+> record, not its variability, that decides whether the design works at all.
+
+### Why
+
+Measured in `audit/m1_loadbias_prior.py`: at a constant recorded load, `0.1659` at the published
+$5\%$ prior, `0.1911` at $40\%$, `0.2659` with the prior flat. The published claim was checked
+against the varying-load case and never against the constant-load case it is a statement about.
+This is a **softening of the paper's own argument** and is proposed for that reason: the
+sentence as written claims more for the instruction than the code supports, and passage 11
+gives the instruction a better justification anyway.
