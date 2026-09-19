@@ -75,6 +75,9 @@ def regenerate_tables(out):
         #  the quasi-steady check contributes the settling time a protocol
         #  needs, so it runs here too or the numbers file comes out short
         D.quasi_steady_check()
+        #  the dose-train figure contributes the increment's peak and trough
+        #  and the phase coverage of each schedule, which the captions quote
+        D.fig_dose_train()
         D.table_factors()
         D.table_load_precision()
         D.table_instruments()

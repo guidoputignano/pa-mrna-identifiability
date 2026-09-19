@@ -360,6 +360,95 @@ def d_calibration():
     print("    order. The trial's own falls are smaller than this calibration.")
 
 
+def write_paper_table():
+    """
+    The twenty checks and their verdicts, for the paper.
+
+    Physical admissibility is a property of the design a reader cannot see
+    from a precision, and a fit that balances the data while describing no
+    patient is the failure the paper is about. So the checks go in, as a
+    table, rather than being asserted in a sentence.
+    """
+    import sys
+    from pathlib import Path as _P
+    sys.path.insert(0, str(_P(__file__).resolve().parents[1] / "src"))
+    from common.style import write_table
+    import re as _re
+
+    #: plain-text token -> what the paper prints for it. Order matters only
+    #: in that the regex below prefers the longest alternative, so
+    #: "Delta_peak" cannot be eaten by "Delta".
+    _SYMBOLS = {
+        "theta_crit": r"$\thc$", "Delta_peak": r"$\Delta_{\mathrm{peak}}$",
+        "Delta(t)": r"$\Delta(t)$", "Delta": r"$\Delta$",
+        "theta": r"$\theta$", "K_m": r"$K_m$", "k_e": r"$k_e$",
+        "lambda": r"$\lambda$", "m_bar": r"$\bar m$", "m(t)": r"$m(t)$",
+        "sd(ln theta)": r"$\operatorname{sd}(\ln\hat\theta)$",
+        "<=": r"$\le$", ">=": r"$\ge$", ">": r"$>$", "<": r"$<$",
+    }
+    _TOKEN = _re.compile("|".join(_re.escape(k) for k in
+                                  sorted(_SYMBOLS, key=len, reverse=True)))
+
+    def tex(t):
+        """
+        The checks are written for a terminal; the paper is not a terminal.
+
+        Symbols become symbols and LaTeX's reserved characters are escaped,
+        and the two passes cannot interfere: the escaping runs only on the
+        text BETWEEN symbol matches, so an underscore this function inserts
+        as part of $K_m$ is never escaped back out again.
+        """
+        def esc(x):
+            for a, b in (("\\", r"\textbackslash{}"), ("%", r"\%"),
+                         ("&", r"\&"), ("_", r"\_"), ("#", r"\#"),
+                         ("$", r"\$"), ("^", r"\^{}"), ("~", r"\~{}")):
+                x = x.replace(a, b)
+            return x
+        out, last = [], 0
+        for m in _TOKEN.finditer(t):
+            out.append(esc(t[last:m.start()]))
+            out.append(_SYMBOLS[m.group(0)])
+            last = m.end()
+        out.append(esc(t[last:]))
+        return "".join(out)
+
+    rows = []
+    for tag, ok, detail in RESULTS:
+        verdict = (r"\textbf{pass}" if ok is True
+                   else (r"\textbf{FAIL}" if ok is False else "---"))
+        #  the detail column is evidence, not prose: keep it short enough to
+        #  read across a page and let the audit record carry the rest
+        d = detail if len(detail) <= 72 else detail[:69].rstrip() + r"\,\ldots"
+        rows.append([tex(tag), verdict, tex(d)])
+    #  the main text wants the verdicts at a glance and the supplement wants
+    #  the evidence, so both are written rather than one being cut down by
+    #  hand in the .tex
+    half = (len(RESULTS) + 1) // 2
+    pair = []
+    for k in range(half):
+        left = rows[k][:2]
+        right = rows[k + half][:2] if k + half < len(rows) else ["", ""]
+        pair.append(left + right)
+    write_table("tab_S_admissible_compact",
+                ["constraint", "verdict", "constraint", "verdict"],
+                pair, colspec=r"p{0.40\textwidth}l p{0.40\textwidth}l",
+                note=("%d checks, %d pass, %d fail; the evidence for each is "
+                      "in the supplement"
+                      % (len(RESULTS),
+                         sum(1 for _, ok, _ in RESULTS if ok is True),
+                         sum(1 for _, ok, _ in RESULTS if ok is False))))
+    print(f"  wrote tab_S_admissible_compact.tex")
+    write_table("tab_S_admissible",
+                ["constraint", "verdict", "evidence"],
+                rows,
+                colspec=r"p{0.36\textwidth}l p{0.44\textwidth}",
+                note=("%d checks, %d pass, %d fail"
+                      % (len(RESULTS),
+                         sum(1 for _, ok, _ in RESULTS if ok is True),
+                         sum(1 for _, ok, _ in RESULTS if ok is False))))
+    print(f"  wrote tab_S_admissible.tex ({len(RESULTS)} checks)")
+
+
 # ------------------------------------------------------------------- table
 def table():
     head("PASS / FAIL")
@@ -393,3 +482,4 @@ if __name__ == "__main__":
     settling_exclusion()
     d_calibration()
     table()
+    write_paper_table()

@@ -5,6 +5,23 @@
 \emph{Section~\ref{sec:excitation} says what a trajectory has to do. This section asks
 what the accessible trajectories actually do, and what decision the answer supports.}
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig_D0_dosetrain.pdf}
+\caption{The experiment the trial is already running. Top: the enzymatic
+increment a fortnightly dose with a $3.5$-day half-life delivers, as a
+fraction of capacity, rising to $\num{train_peak_frac}\,\theta$ at peak and
+falling to $\num{train_trough_frac}\,\theta$ at the trough the dosing interval
+is chosen to protect. Bottom: the marker it drives, over three months of the
+two-year record, with the sampling instants of two schedules marked. Monthly
+draws walk around the dose cycle and over two years leave no gap in phase
+wider than $\num{phase_gap_monthly}$ of a cycle; fortnightly draws are the
+dose interval itself, so every one of them lands at the same phase, at the
+same point on the curve, for ever. That is the whole of
+Remark~\ref{rem:aliasing}, drawn.}
+\label{fig:D0}
+\end{figure}
+
 \subsection{Which parameters collapse, and which do not}
 \label{sec:collapse}
 
@@ -224,6 +241,144 @@ comfortably, and a switch to continuous or near-continuous administration, which
 made on pharmacological grounds with no reason to consider identifiability, would silently
 remove the only excitation this design has. This is not a recommendation to change
 anything, but a condition to check before the route changes.
+
+\subsection{The schedule a protocol would write}
+\label{sec:schedule}
+
+The rules above are statements about phase. A protocol is written in dates, and
+the three figures of this subsection are the translation, in the order a
+protocol writer needs them: where a schedule lands in the dose cycle, what
+visits buy, and which of the resulting phases a clinic can actually book.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig_E1_phaseclock.pdf}
+\caption{Where each schedule lands in the dose cycle. Visit times are folded
+onto the $14$-day cycle, with the dose at twelve o'clock and time running
+clockwise; radius is visit order, so the record reads outwards, and colour is
+the increment at that visit. Sampling at the dose interval collapses to one
+spoke and a $\Delta/\theta$ range of $0.13$; half a day off it fills the dial
+and reaches $1.80$; monthly reaches $1.84$ and a schedule designed to spread
+phase reaches $1.85$, so almost all of what phase-spreading buys is already
+bought by a schedule that simply is not a multiple of the dose interval. The
+second panel is a patient already on therapy when the record starts, whose
+increment range is exactly zero. The post-dose settling window is shaded and
+is all but invisible: at a $1\%$ tolerance it is $1.3$~hours, which is $0.4\%$
+of the dial, but the phase it removes is the peak, so excluding it costs about
+a tenth of the reachable increment range.}
+\label{fig:E1}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig_E2_visits.pdf}
+\caption{What visits buy, against how well the alternative clearance is known
+(columns) and how much intake varies day to day (rows). Each curve is
+$\operatorname{sd}(\ln\hat\theta)$ against the number of visits, with the
+$0.20$ target marked. \textbf{These curves are prior-conditional and assume the
+dose scale is known exactly}: the $5\%$ prior on the load bias is what closes
+the constant-load fibre of Proposition~\ref{prop:rank}, so the near-identity of
+the three rows is a statement about that prior and not about the design. The
+supplement, \S S1, releases each assumption in turn. Fitting
+$\operatorname{sd}(n) = \sqrt{\mathrm{floor}^2 + c^2/n}$ separates what visits
+buy from what they cannot: on the monthly schedule at the published prior and
+a $10\%$ day-to-day variability the floor is $0.150$ and the target is reached
+at eleven visits, while sampling at the dose interval has a floor of $4.5$ and
+never reaches it at any number of visits.}
+\label{fig:E2}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig_E3_calendar.pdf}
+\caption{The inverse map, from target phase to a date a clinic can book. The
+dose interval is fourteen days, which is exactly two weeks, so a visit's phase
+determines its weekday once and for all: a target phase is either always
+bookable or never bookable, and there is no rescheduling it into the working
+week. Left: twelve visits spread across the dial, each on the weekday its phase
+forces. Right: what the constraint costs. A weekday clinic reaches nineteen of
+twenty-seven phase slots either way, but a morning dose leaves the trough
+unreachable and $96\%$ of the increment range available, where an afternoon
+dose reaches the trough and the whole range. The cost of the constraint is
+small and it is not zero, and it is fixed at the protocol stage rather than
+discovered at the first missed visit.}
+\label{fig:E3}
+\end{figure}
+
+Read together these say that the schedule a protocol should write is monthly
+across dose cycles, offset so that it is not a multiple of the dose interval,
+booked on the weekday each target phase forces, with no draw inside the first
+hour after a dose. Nothing in that list costs a patient anything, and
+Figure~\ref{fig:E2} is the argument for stopping at about a dozen visits rather
+than extending the record: past the point where the curve meets its own floor,
+further visits buy a precision the prior and not the data would be supplying.
+
+\subsection{Physical admissibility}
+\label{sec:admissible}
+
+A fit can balance the data and describe no patient. Twenty constraints say
+when it does: that the rates are positive, that the increment is non-negative
+and bounded by its own steady-state peak, that the balance has exactly one
+positive root at every visit, that the total load stays positive across the
+load prior, that capacity plus the peak increment does not exceed normal
+capacity, and that no sample falls inside the post-dose settling window. All
+twenty hold for the design recommended here, as constructed rather than by
+repair.
+
+\begin{adjustwidth}{-1.0cm}{-1.0cm}
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{\label{tab:admissible}The twenty admissibility constraints and their
+verdicts on the recommended design. The evidence for each is in the
+supplement, \S S1.}
+\input{../results/tables/tab_S_admissible_compact}
+\end{table}
+\end{adjustwidth}
+
+\paragraph{The settling window, and the two definitions of it.} How long after
+a dose the marker is still catching up is a tolerance and not a constant, and
+the paper quotes two numbers for it because there are two tolerances. At the
+$5\%$ tolerance used in Section~\ref{sec:collapse} the window is
+$\num{settle_hours}$~hours; at a $1\%$ tolerance it is $1.30$~hours. Neither
+changes the rule, which is that no draw belongs inside it, and the recommended
+schedule satisfies that as constructed: none of its draws falls in the window
+at either tolerance. The window matters more in value than in time. It is
+$0.4\%$ of the dose cycle, but the phase it removes is the peak, so excluding
+it costs about a tenth of the reachable increment range.
+
+\paragraph{The capacity ceiling, and what it allows the dose to be.} The
+constraint that binds on dose is that capacity plus the peak increment cannot
+exceed normal capacity. Neither $\theta$ nor the model block enters it: the
+fraction of normal capacity used is the residual fraction times
+$1 + \Delta_{\mathrm{peak}}/\theta$, so the ceiling binds at
+$\Delta_{\mathrm{peak}}/\theta = 19$ at the $5\%$ residual-activity reference
+this paper adopts, and at $9$ at the $10\%$ reading kept as a check. The
+committed dose sits at $\Delta_{\mathrm{peak}}/\theta = 2.13$ and uses $16\%$
+of normal capacity at the $5\%$ reference, so it is inside the ceiling by a
+factor of nine,
+and the ceiling is not what limits it.
+
+What does limit it is the calibration, and Table~\ref{tab:dosesens} is the
+sensitivity to that. Each row rebinds the dose and the decay rate, recomputes
+the design on them, and carries its own admissibility verdict. Two readings of
+the trial's reported marker falls are on the table, at the peak and at the
+trough, and two half-lives. \textbf{The design is not robust to that choice}:
+the same gate is reached in ten monthly visits on one row and not at all
+within sixty on another. The committed calibration is one point in a
+defensible range, and the range is what a protocol should be written against.
+
+\begin{adjustwidth}{-1.0cm}{-1.0cm}
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{\label{tab:dosesens}The dose calibration, and what each reading of it
+costs the design. Every row is admissible on the capacity ceiling at the $5\%$
+reference. Visits are monthly visits to reach the $0.20$ gate, a median over
+eight intake records, searched to sixty.}
+\input{../results/tables/tab_S_dosesens}
+\end{table}
+\end{adjustwidth}
 
 \subsection{Candidate sources of excitation}
 \label{sec:excursion_table}

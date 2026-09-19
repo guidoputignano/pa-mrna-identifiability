@@ -396,10 +396,52 @@ def verdict(rows):
     is established.
 """)
 
+def write_paper_table(rows):
+    """
+    The dose sensitivity table, for the paper.
+
+    Every row rebinds the dose and the decay rate, recomputes the design on
+    them, and carries its own admissibility verdict. What a reader needs from
+    it is that the committed dose is one point in a defensible range and that
+    the range moves the design from ten monthly visits to more than sixty.
+    """
+    import sys
+    from pathlib import Path as _P
+    sys.path.insert(0, str(_P(__file__).resolve().parents[1] / "src"))
+    from common.style import write_table
+    out = []
+    for r in rows:
+        name = r["name"].replace("%", r"\%")
+        #  'lam' arrives as "3.5 d"; the number is maths and the unit is not
+        half_life = r"$%s$~d" % r["lam"].split()[0]
+        out.append([half_life,
+                    name.replace("committed D = 6000", "committed $D = 6000$"),
+                    f"${r['D']:.0f}$",
+                    f"${r['ratio']:.2f}$",
+                    r"$%.0f\%%$" % (100 * r["fall"]),
+                    #  `used` is keyed by the residual-capacity reference;
+                    #  the paper quotes the 5% reading, which is the one the
+                    #  author settled on
+                    r"$%.0f\%%$" % (100 * r["used"][0.05]),
+                    f"${r['sd12']:.3f}$",
+                    (f"${r['n']}$" if r["n"] else r"$>60$")])
+    write_table("tab_S_dosesens",
+                ["half-life", "dose chosen to give", "$D$",
+                 r"$\Delta_{\mathrm{peak}}/\theta$", "marker fall",
+                 "capacity used", r"$\operatorname{sd}(\ln\hat\theta)$",
+                 "visits to $0.20$"],
+                out, colspec="llrrrrrr",
+                note=("every row admissible on the capacity ceiling at the 5% "
+                      "reference; visits are monthly visits to the gate, "
+                      "median over 8 intake records, searched to 60"))
+    print(f"  wrote tab_S_dosesens.tex ({len(out)} rows)")
+
+
 def main():
     timing_evidence()
     rows = sensitivity()
     verdict(rows)
+    write_paper_table(rows)
 
 
 if __name__ == "__main__":

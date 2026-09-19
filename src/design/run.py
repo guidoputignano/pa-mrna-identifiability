@@ -35,7 +35,7 @@ from common.excitation import (phi, excitation, excitation_max, fold_range_for,
                                fold_range_for_precision,
                                top_of_excursion_for_precision)
 from common.style import (save, write_table, figsize, GREEN, RED, BLUE, AMBER,
-                          GREY, MUTED, INK, corner, over_x, at_point)
+                          GREY, MUTED, INK, corner, over_x, beside_y, at_point)
 
 P = ParamsA()
 M_BAR = 10.0
@@ -577,6 +577,91 @@ def table_instruments(T=730.0):
                    ("carnitine 25%", carn_lo), ("carnitine 100%", carn_hi),
                    ("the dose train", train)):
         print(f"    {lab:>22}: {v[0]:.4f} [{v[1]:.4f}, {v[2]:.4f}]")
+
+
+def fig_dose_train(T=91.0):
+    """
+    The experiment, drawn: the dose train, what it does to the increment and
+    to the marker, and where two schedules land in it.
+
+    The paper's thesis is that the therapy is already the identification
+    experiment, and a reader has to be able to see the experiment. The top
+    panel is the increment the schedule delivers, the bottom is the marker
+    it drives, and the two schedules are marked on both: monthly across dose
+    cycles, which walks around the cycle, and fortnightly, which is the dose
+    interval itself and therefore lands at one phase for ever.
+    """
+    t = np.linspace(0.0, T, 4000)
+    inc = np.asarray(delta(t), dtype=float) / P.theta
+    lv = quasi_steady_level(t)
+
+    monthly = np.arange(0.0, T, 30.4)
+    fortnightly = np.arange(0.0, T, DOSE_INTERVAL)
+    doses = np.arange(0.0, T, DOSE_INTERVAL)
+
+    fig, ax = plt.subplots(2, 1, figsize=figsize(1.0, 0.58), sharex=True)
+
+    #  (top) the increment the schedule delivers
+    ax[0].plot(t, inc, color=GREEN, lw=1.8)
+    for d in doses:
+        ax[0].plot([d, d], [0, inc.max() * 1.04], color=GREY, lw=0.7, ls=":",
+                   zorder=0)
+    trough = float(inc[(t > doses[-2]) & (t < doses[-1])].min())
+    ax[0].axhline(trough, color=MUTED, ls="--", lw=0.9)
+    ax[0].annotate(r"trough  $%.2f\,\theta$" % trough,
+                   xy=(0.30 * T, trough), xytext=(0.30 * T, trough + 0.28),
+                   color=MUTED, fontsize=7, ha="left", va="bottom",
+                   arrowprops=dict(arrowstyle="-", color=MUTED, lw=0.7))
+    ax[0].set_ylabel(r"increment  $\Delta(t)/\theta$")
+    ax[0].set_ylim(0, inc.max() * 1.12)
+    corner(ax[0], "a dose every %.0f d, half-life %.1f d"
+           % (DOSE_INTERVAL, np.log(2) / LAMBDA), "upper right",
+           color=MUTED, fontsize=7)
+
+    #  (bottom) the marker the increment drives, and where each schedule lands
+    ax[1].plot(t, lv, color=BLUE, lw=1.8)
+    for times, col, mk, lab in ((monthly, GREEN, "o", "monthly, across cycles"),
+                                (fortnightly, RED, "s",
+                                 "fortnightly = the dose interval")):
+        y = quasi_steady_level(times)
+        ax[1].plot(times, y, mk, color=col, ms=5.5, mec="white", mew=0.8,
+                   label=lab, zorder=5)
+        for x, yy in zip(times, y):
+            ax[1].plot([x, x], [lv.min() * 0.97, yy], color=col, lw=0.8,
+                       alpha=0.55, zorder=1)
+    ax[1].set_xlabel("days")
+    ax[1].set_ylabel(r"marker  $m$  [$\mu$M]")
+    #  headroom above the peaks so the legend sits in clear air rather than
+    #  over the curve it is labelling
+    ax[1].set_ylim(lv.min() * 0.97, lv.max() * 1.30)
+    ax[1].legend(loc="upper center", ncol=2, fontsize=7, framealpha=0.0,
+                 borderpad=0.2, handletextpad=0.5, columnspacing=1.6)
+
+    #  the phase each schedule visits over the WHOLE record, which is the
+    #  point: three months is what fits on a page, two years is the design
+    full = np.arange(0.0, 730.0, 30.4)
+    ph_m = np.sort((full % DOSE_INTERVAL) / DOSE_INTERVAL)
+    ph_f = (np.arange(0.0, 730.0, DOSE_INTERVAL) % DOSE_INTERVAL) / DOSE_INTERVAL
+    PAPER_NUMBERS.update({
+        "phase_gap_monthly": float(np.max(np.diff(np.r_[ph_m, ph_m[0] + 1.0]))),
+        "phase_spread_fortnightly": float(ph_f.max() - ph_f.min()),
+    })
+    for a in ax:
+        a.set_xlim(0, T)
+    fig.align_ylabels(ax)
+    save(fig, "fig_D0_dosetrain")
+    PAPER_NUMBERS.update({
+        "train_trough_frac": trough,
+        "train_peak_frac": float(inc.max()),
+        "marker_low": float(lv.min()),
+        "marker_high": float(lv.max()),
+    })
+    print(f"    increment runs {inc.min():.3f} to {inc.max():.3f} of theta, "
+          f"trough {trough:.3f}; marker {lv.min():.2f} to {lv.max():.2f}")
+    print(f"    over two years the monthly schedule leaves no gap in cycle "
+          f"phase wider than {PAPER_NUMBERS['phase_gap_monthly']:.2f} of a "
+          f"cycle; the fortnightly one spans "
+          f"{PAPER_NUMBERS['phase_spread_fortnightly']:.2f}")
 
 
 def fig_collapse(T=730.0):
@@ -1408,6 +1493,7 @@ def table_spec():
 if __name__ == "__main__":
     print("DESIGN")
     fig_excitation()
+    fig_dose_train()
     fig_collapse()
     fig_decision()
     fig_protocol()

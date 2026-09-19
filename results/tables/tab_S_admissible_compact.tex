@@ -1,0 +1,17 @@
+\begin{tabular}{@{}p{0.40\textwidth}l p{0.40\textwidth}l@{}}
+\toprule
+\textbf{constraint} & \textbf{verdict} & \textbf{constraint} & \textbf{verdict} \\
+\midrule
+$\theta$ $>$ 0 & \textbf{pass} & the closed form solves the balance & \textbf{pass} \\
+$K_m$ $>$ 0 & \textbf{pass} & $m(t)$ $>$ 0 across the cycle & \textbf{pass} \\
+$k_e$ $>$ 0 & \textbf{pass} & L + b $>$ 0 at b = 0 & \textbf{pass} \\
+D $>$ 0 & \textbf{pass} & L + b $>$ 0 across the load prior's 95\% interval & \textbf{pass} \\
+$\lambda$ $>$ 0 & \textbf{pass} & $\theta$ + $\Delta_{\mathrm{peak}}$ $\le$ normal, at BOTH references & \textbf{pass} \\
+L $>$ 0 & \textbf{pass} & physics bounds b on both sides & \textbf{pass} \\
+$\Delta(t)$ $\ge$ 0 on 60 cycles & \textbf{pass} & the load prior is tighter than admissibility & \textbf{pass} \\
+$\Delta(t)$ $\le$ its steady-state peak & \textbf{pass} & the booked design is outside the window as constructed & \textbf{pass} \\
+$\Delta$ returns to its steady trough each cycle & \textbf{pass} & every collision is removed by a half-day offset & \textbf{pass} \\
+the balance has exactly one positive root & \textbf{pass} & the D row's stated fall matches the computed one & \textbf{pass} \\
+\bottomrule
+\end{tabular}
+% 20 checks, 20 pass, 0 fail; the evidence for each is in the supplement

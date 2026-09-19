@@ -131,15 +131,9 @@ def figure():
                      fontsize=6.5, color=GREY)
     handles = [plt.Line2D([], [], color=COLOUR[k], lw=1.6) for k in G.SCHEDULES]
     fig.legend(handles, list(G.SCHEDULES), loc="lower center", ncol=5,
-               fontsize=7.0, bbox_to_anchor=(0.5, 0.043))
-    fig.text(0.5, 0.004,
-             "These curves are PRIOR-CONDITIONAL and assume the dose scale is "
-             "known exactly. The 5% prior on the load bias fills the "
-             "constant-load fibre,\nso the near-identity of the three load-CV "
-             "rows is a statement about the prior, not about the design. "
-             "g5 gives the prior-free and dose-scale-prior versions.",
-             ha="center", va="bottom", fontsize=6.3, color=MUTED,
-             linespacing=1.5)
+               fontsize=7.0, bbox_to_anchor=(0.5, 0.012))
+    #  the prior-conditional caveat belongs in the caption, where a
+    #  reader meets it before the curves rather than under them.
     save(fig, "fig_E2_visits")
 
 

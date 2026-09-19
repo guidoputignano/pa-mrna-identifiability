@@ -26,6 +26,13 @@ figures:
 	@echo ">> the design (slow: the decision characteristic is simulated)"; $(PY) src/design/run.py
 	@echo ">> the scope tables, whose convention lives in the audit script"; $(PY) audit/n4_theta_scope.py
 	@echo ">> the decision table (slow: 12 seeds x 400 replicates)";        $(PY) audit/d13_decision_therapy.py
+	@echo ">> the admissibility checks and the dose sensitivity";           $(PY) audit/h1_admissibility.py
+	@echo ">> the dose calibration table (slow)";                           $(PY) audit/k4_admissibility.py
+	@echo ">> the design figures: phase clock, visits, calendar, conditioning"
+	$(PY) audit/g1_phase_clock.py
+	$(PY) audit/g2_visits_vs_sd.py
+	$(PY) audit/g3_calendar.py
+	$(PY) audit/g5_conditions.py
 
 refs:
 	$(PY) tools/fetch_refs.py

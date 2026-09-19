@@ -80,10 +80,10 @@ def figure():
     norm = plt.Normalize(allinc.min(), allinc.max())
     cmap = plt.get_cmap("viridis")
 
-    fig, axes = plt.subplots(1, len(designs), figsize=figsize(1.0, 0.36),
+    fig, axes = plt.subplots(1, len(designs), figsize=figsize(1.0, 0.27),
                              subplot_kw={"projection": "polar"})
     fig.set_layout_engine("none")
-    fig.subplots_adjust(left=0.015, right=0.985, top=0.80, bottom=0.40,
+    fig.subplots_adjust(left=0.015, right=0.985, top=0.80, bottom=0.30,
                         wspace=0.50)
     for ax, (name, t) in zip(axes, designs):
         panel(ax, t, name, settle, cmap, norm)
@@ -92,23 +92,16 @@ def figure():
               f"Delta/theta range {G.delta_range(t):.4f}")
 
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
-    cax = fig.add_axes([0.32, 0.215, 0.36, 0.022])
+    cax = fig.add_axes([0.34, 0.035, 0.32, 0.045])
     cb = fig.colorbar(sm, cax=cax, orientation="horizontal")
     cb.ax.set_title(r"$\Delta/\theta$ at the visit", fontsize=7.5, pad=3)
     cb.ax.tick_params(labelsize=6.5, length=2, pad=1)
-    fig.text(0.5, 0.010,
-             f"The post-dose settling window is shaded at 12 o'clock, and is "
-             f"all but invisible because it is only {360*settle/G.T:.1f}"
-             f"$^\\circ$ of the dial ({settle*24:.1f} h at a 1% tolerance; "
-             f"g6 reconciles that against the paper's 4.2 h and P1f's 3.71 h).\n"
-             f"It is negligible in TIME and not in VALUE: the phase it removes "
-             f"is the peak, so excluding it costs 10.1% of the reachable "
-             r"$\Delta/\theta$ range" "\n"
-             f"while costing 0.39% of the dial (h1 check 7). The second panel "
-             f"is a patient ALREADY ON THERAPY, whose "
-             r"$\Delta/\theta$ range is exactly zero.",
-             ha="center", va="bottom", fontsize=6.8, color=MUTED,
-             linespacing=1.5)
+    #  the reading of this figure is the paper's caption, not a block
+    #  of small type inside the axes: a figure that has to be annotated
+    #  to be read is a figure that will be read wrongly when the caption
+    #  is what gets quoted.
+    print(f"    settling window {360*settle/G.T:.1f} deg of the dial, "
+          f"{settle*24:.1f} h at a 1% tolerance")
     save(fig, "fig_E1_phaseclock")
 
 
