@@ -39,6 +39,74 @@ and below $0.1$ at $5.8$. At the bottom of that table two patients differing ten
 capacity, $10\%$ of nominal against $1\%$, are separated by less than a third in
 marker level, which no assay resolves against the day-to-day variability of the quantity.
 
+\subsection{What the estimate's own precision does across that range}
+\label{sec:scopeprec}
+
+The table above is about the \emph{marker}. The same question can be put to the
+\emph{estimate}, and until now it had not been: every precision this paper reports is
+computed at $\theta = 3000$, and on the table above that is the $100\%$ row.
+
+That is worth stating plainly, because the repository had left it ambiguous.
+\texttt{src/common/models.py} annotates $\theta = 3000$ as $V_{\max}$, the \emph{maximal}
+enzymatic velocity, and annotates the parent model's $\theta = 300$ as ``$\sim 10\%$ of
+normal''. Together those put normal at $3000$ and the local block at $100\%$ of it, so the
+local block is a normal-capacity illustration and Table~\ref{tab:params} now labels it as
+one. Residual PCC activity in propionic acidemia is under $5\%$ of
+control~\cite{pcc_residual_activity}, so the patient sits at $\theta \le 150$, which the
+table now carries as its own row. Nothing about the model changes; what changes is that the
+illustration is no longer available to be read as a description of the patient.
+
+Holding the recorded load fixed and letting the marker rise, which is the convention the
+table above already uses, and re-solving the operating level, $\sigma$, the load-bias prior
+and the excitation at each capacity:
+
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}rrrrr@{}}
+\toprule
+$\theta$, as \% of nominal & marker, $\times$ managed &
+$\lvert\partial \ln m / \partial \ln\theta\rvert$ &
+$\operatorname{sd}(\ln\hat\theta)$ & monthly visits to $0.20$ \\
+\midrule
+$100\%$ & $1.00$ & $0.915$ & $\mathbf{0.1699}$ & $11$ \\
+$20\%$  & $3.41$ & $0.537$ & $0.8107$ & --- \\
+$10\%$  & $4.57$ & $0.321$ & $1.5830$ & --- \\
+$5\%$   & $5.40$ & $0.173$ & $3.0673$ & --- \\
+$2\%$   & $6.00$ & $0.072$ & $7.4572$ & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Medians over $24$ simulated intake records at the specification's own $10\%$ day-to-day
+variability; the seed ranges are in \texttt{audit/n4\_theta\_scope.py}. A dash means the
+target is not reached at any number of monthly visits up to $600$, which is fifty years of
+follow-up.
+
+$\operatorname{sd}(\ln\hat\theta)$ is not monotone in $\theta$, so the gate is crossed twice.
+It holds for $\theta$ between $2472$ and $18814$, which is $82\%$ to $627\%$ of nominal, a
+band of $7.6$ fold, with the best precision $0.123$ at about twice nominal. Below the band
+the marker has stopped responding to capacity, which is the statement above. Above it the
+$\theta$ column saturates at $L$ while the assay term keeps growing, so information per draw
+stops improving. \textbf{The disease sits a factor of $16$ below the lower edge of the band
+the design works in.} Sampling every two days for two years instead of monthly, fifteen times
+the draws, moves that edge only from $82\%$ to $75\%$ of nominal. That $9\%$ is the
+quantitative form of the sentence below: it is not a statement about sampling effort.
+
+One consequence follows for the dose and it is independent of the precision. The
+admissibility bound $\theta + \Delta_{\mathrm{peak}} \le$ normal is satisfied at the
+illustrative point only because the check reads $\theta$ as the \emph{residual} and infers
+normal as $\theta/0.05$; written out, its verdict is
+$\operatorname{frac} \times (1 + \Delta_{\mathrm{peak}}/\theta)$ with $\theta$ cancelled,
+which cannot report a breach below a residual activity of $32\%$ and so cannot bind on this
+disease at all. Read instead with $\theta = 3000$ as normal and $D$ held at its booked value
+rather than scaled with capacity, which is what a dose in mg/kg is, the bound is breached at
+$10\%$ of nominal and below: at $5\%$ the booked increment would drive the enzyme to $2.18$
+times normal, and the largest admissible increment there is $D = 2672$ rather than $6000$.
+That does not rescue the precision, since at $D = 2672$ and $\theta = 150$ the monthly design
+returns $2.96$, but it is a second and independent reason to think the increment is set too
+high, alongside the trial's own reported falls in the $D$ row of Table~\ref{tab:params}.
+
 This is the severely affected patient. The population in which the dosing question
 is most urgent is the population in which the record cannot answer it. This is not a statement about sampling effort: no schedule, no excursion and no precision on the dose
 recovers a quantity the observable has stopped responding to. The therapy channel of

@@ -122,27 +122,47 @@ LOCAL = [
                  r"capacity is recoverable",
         kind=CONVENTION, species="mouse"),
     Row(r"$\theta$", f"${_A.theta:.0f}$~$\mu$M/d",
-        "capacity of the enzymatic channel",
-        ASSUMED, r"illustrative. \textbf{What this value is on the shared scale is an open "
-                 r"question and the table should not be read as settling it.} "
-                 r"\texttt{src/common/models.py} annotates this constant as $V_{\max}$, the "
-                 r"\emph{maximal} enzymatic velocity, and annotates the parent model's "
-                 r"$\theta = 300$ as ``$\sim 10\%$ of normal'', which puts normal at $3000$ "
-                 r"and this patient at $100\%$ of it. Residual PCC activity in PA is under "
-                 r"$5\%$ of control~\cite{pcc_residual_activity}, which on that same scale is "
-                 r"$\theta \le 150$. The two blocks therefore sit above the disease range, "
-                 r"and Section~\ref{sec:scope} reports that the elasticity "
-                 r"$\lvert\partial\ln m/\partial\ln\theta\rvert$ falls from $0.915$ at $100\%$ "
-                 r"of nominal to $0.173$ at $5\%$. \textbf{An earlier version of this row said "
+        "capacity of the enzymatic channel, \textbf{at normal capacity}",
+        ASSUMED, r"illustrative, and \textbf{a normal-capacity illustration rather than a "
+                 r"patient}. That label is new and it resolves an ambiguity the row used to "
+                 r"carry: \texttt{src/common/models.py} annotates this constant as "
+                 r"$V_{\max}$, the \emph{maximal} enzymatic velocity, and annotates the "
+                 r"parent model's $\theta = 300$ as ``$\sim 10\%$ of normal'', which puts "
+                 r"normal at $3000$ and this block at $100\%$ of it. Residual PCC activity "
+                 r"in PA is under $5\%$ of control~\cite{pcc_residual_activity}, so the "
+                 r"disease sits at $\theta \le 150$, which is the row below. The two "
+                 r"annotations are not in conflict once the label is stated; what was in "
+                 r"conflict was reading an illustration of a healthy channel as a "
+                 r"description of the patient the paper is about. "
+                 r"\textbf{An earlier version of this row said "
                  r"no conclusion may depend on its value. That is false and is withdrawn}: "
                  r"the identifiability results do not depend on it, but the "
                  r"supplement's local-model section (\S S1) flips a qualitative conclusion "
                  r"across it, the anchor attenuating at $3000$ and amplifying at the "
-                 r"parent's $300$. It "
+                 r"parent's $300$, and Section~\ref{sec:scope} now reports that the "
+                 r"design's own precision does too. It "
                  r"remains an order-of-magnitude quantity and is confounded with $V_{\max}$ "
                  r"by construction: at $\bar m/K_m = 0.1$ the channel runs at $9.1\%$ of "
                  r"$V_{\max}$, carrying $273$ against a load of $323$",
-        kind=LUMPED),
+        kind=CONVENTION),
+    Row(r"$\theta_{\mathrm{PA}}$", r"$\le 150$~$\mu$M/d",
+        "capacity in the disease, on the scale of the row above",
+        LITERATURE, r"\textbf{previously unregistered, and it is the row that says who the "
+                    r"paper is about}. Residual PCC activity in propionic acidemia is under "
+                    r"$5\%$ of control~\cite{pcc_residual_activity}, which on the scale "
+                    r"the row above fixes is $\theta \le 150$. \textbf{The design does not "
+                    r"reach its target there, and the gap is large}: on the monthly record "
+                    r"$\mathrm{sd}(\ln\hat\theta)$ is $0.1699$ at nominal, $1.5830$ at "
+                    r"$10\%$ of nominal and $3.0673$ at $5\%$, against a target of $0.20$ "
+                    r"(medians over $24$ intake records; \texttt{audit/n4\_theta\_scope.py}). "
+                    r"The gate holds only for $\theta$ between $2472$ and $18814$, that is "
+                    r"$82\%$ to $627\%$ of nominal, so the disease sits a factor of $16$ "
+                    r"below the band. This is Section~\ref{sec:scope}'s own conclusion "
+                    r"given a number: that section already says no schedule, excursion or "
+                    r"precision recovers a quantity the observable has stopped responding "
+                    r"to, and sampling every two days for two years instead of monthly "
+                    r"moves the lower edge by $9\%$",
+        kind=DERIVED, species="human"),
     Row(r"$K_m$", f"${_A.Km:.0f}$~$\mu$M",
         "half-saturation of the enzymatic channel, at the plasma level",
         ASSUMED, r"illustrative, and \emph{not} the in vitro Michaelis constant of PCC "

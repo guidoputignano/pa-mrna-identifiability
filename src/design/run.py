@@ -88,14 +88,47 @@ def load(t, base=None):
 #: fibre, and a dietary record smoothed to a weekly mean destroys it.
 LOAD_CV = 0.10
 
+#: the seed `design_record` has always drawn its intake record from. Kept as
+#: the default so nothing computed before September 2026 changes silently.
+BASE_SEED = 3
 
-def design_record(times, load_cv=None, seed=3):
+#: every design number this module reports is a MEDIAN over these records with
+#: its range quoted beside it. Until September 2026 each was a single draw at
+#: BASE_SEED, because no caller ever passed a seed. Mostly that did not matter
+#: -- the monthly headline moves 0.11% from seed 3 to the median -- but on the
+#: weak designs it does: six-monthly moves 8.6%, and 68.6% with the k_e prior
+#: removed. See audit/n3_ke_prior_worth.py, which found it.
+SEEDS = tuple(range(24))
+
+
+def median_spread(values):
+    """(median, min, max) over a seed sweep, infinities dropped."""
+    v = np.asarray([x for x in values], dtype=float)
+    v = v[np.isfinite(v)]
+    if not v.size:
+        return np.inf, np.inf, np.inf
+    return float(np.median(v)), float(v.min()), float(v.max())
+
+
+def tex_spread(med, lo, hi, gate=0.20, digits=4):
+    """A median with its seed range, bolded when it clears the gate."""
+    if not np.isfinite(med):
+        return r"$\infty$"
+    body = ("\\textbf{%.*f}" % (digits, med)) if med < gate else ("%.*f" % (digits, med))
+    return r"%s\,\scriptsize$[%.*f, %.*f]$" % (body, digits, lo, digits, hi)
+
+
+def design_record(times, load_cv=None, seed=BASE_SEED):
     """
     Levels and increments for a design, with intake varying day to day.
 
     Returns (levels, increments). The levels solve the balance at the
     per-sample recorded load, so a varying load moves the marker as it
     physically would rather than being added as measurement error.
+
+    `seed` selects the intake record. It has a default so that existing callers
+    keep their numbers, but a number that reaches the paper is swept over
+    `SEEDS` and reported as a median with its range; see `median_spread`.
     """
     load_cv = LOAD_CV if load_cv is None else load_cv
     times = np.asarray(times, dtype=float)
