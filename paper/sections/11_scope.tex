@@ -56,6 +56,24 @@ control~\cite{pcc_residual_activity}, so the patient sits at $\theta \le 150$, w
 table now carries as its own row. Nothing about the model changes; what changes is that the
 illustration is no longer available to be read as a description of the patient.
 
+\paragraph{The reason, before the measurement.} None of what follows needs a sweep to
+anticipate. Write the untreated balance, $\theta\,g(m) + k_e m = L$. The column the
+information matrix carries for $\ln\theta$ is $\partial s/\partial \ln\theta = \theta\,g(m)$,
+and the balance says what that equals:
+\begin{equation}
+\frac{\partial s}{\partial \ln\theta} \;=\; \theta\,g(m) \;=\; L - k_e m .
+\label{eq:thetacolumn}
+\end{equation}
+\textbf{The information the record carries about capacity is the flux through the enzyme.}
+The record's sensitivity to $\theta$ is $\theta$'s own share of the load, and in this
+disease the alternative channel carries almost all of it. The enzymatic share is $84.5\%$
+at nominal, $29.2\%$ at $10\%$ of nominal and $16.3\%$ at $5\%$. Against the $k_e$ column,
+$k_e m$, the ratio is exactly enzymatic flux over alternative flux and runs $5.455$ to
+$0.195$ across the same range, so at a disease-range capacity $\theta$ is recovered as a
+small difference of two large numbers, one of which is known only through a prior. That is
+the whole mechanism, and \eqref{eq:thetacolumn} is an identity rather than an
+approximation. Everything below confirms it and puts numbers on it.
+
 Holding the recorded load fixed and letting the marker rise, which is the convention the
 table above already uses, and re-solving the operating level, $\sigma$, the load-bias prior
 and the excitation at each capacity:
@@ -81,7 +99,17 @@ $2\%$   & $6.00$ & $0.072$ & $7.4572$ & --- \\
 Medians over $24$ simulated intake records at the specification's own $10\%$ day-to-day
 variability; the seed ranges are in \texttt{audit/n4\_theta\_scope.py}. A dash means the
 target is not reached at any number of monthly visits up to $600$, which is fifty years of
-follow-up.
+follow-up. These are sampling spreads and not interval half-widths
+(Remark~\ref{rem:curvature}); at a disease-range capacity the distinction stops mattering,
+because the profile interval does not close below at all and the point estimate lands
+anywhere between $3$ and $224$ against a truth of $150$.
+
+Two things survive in that range and both are worth stating, because a limit is more
+useful with its complement attached. The record still determines $K_m$, to about $6\%$ at
+every capacity (Remark~\ref{rem:kmrecovered}), and it still supplies an \emph{upper} bound
+on $\theta$, ruling out capacity above about a quarter of nominal even where it rules out
+nothing from below. A clinician asking ``does this patient have usable residual capacity''
+can be answered; one asking ``how much'' cannot.
 
 $\operatorname{sd}(\ln\hat\theta)$ is not monotone in $\theta$, so the gate is crossed twice.
 It holds for $\theta$ between $2472$ and $18814$, which is $82\%$ to $627\%$ of nominal, a
@@ -106,6 +134,19 @@ times normal, and the largest admissible increment there is $D = 2672$ rather th
 That does not rescue the precision, since at $D = 2672$ and $\theta = 150$ the monthly design
 returns $2.96$, but it is a second and independent reason to think the increment is set too
 high, alongside the trial's own reported falls in the $D$ row of Table~\ref{tab:params}.
+
+\paragraph{Two questions about the dose that point opposite ways, and should not be
+merged.} Sweeping $D$ from $10$ to $30000$ at a disease-range capacity, the best the
+monthly design achieves is $2.75$ at $D \approx 100$ against $3.07$ at the booked $6000$,
+so no dose opens a window: below $D \sim \theta$ there is no excitation, above it the
+increment swamps the capacity, and ten per cent separates the two failures. At nominal
+capacity the same sweep says something else. The booked $D = 6000$ returns $0.170$ against
+a sweep best of $0.165$, so \textbf{the trial's dose is within three per cent of optimal
+for identification}. Whether it is the right dose \emph{as a therapy} is a different
+question, and on the evidence of the trial's own reported falls and of the ceiling above
+the answer is probably not. A design argument for keeping the dose and a pharmacological
+argument for lowering it are not in conflict; they are answers to different questions, and
+this paper makes only the first.
 
 This is the severely affected patient. The population in which the dosing question
 is most urgent is the population in which the record cannot answer it. This is not a statement about sampling effort: no schedule, no excursion and no precision on the dose

@@ -311,8 +311,18 @@ def _filter(levels, sigma, increments=None, prior_rel=(None, None),
     the ln K_m prior changes sd(ln theta) by nothing at all, and a K_m prior
     twenty times looser still changes nothing, so nothing here depends on
     knowing K_m -- which Remark rem:no_km forbids. Dropping the ln k_e prior
-    takes it from 0.15 to 0.65. The paper therefore claims one prior and lets
-    theta and K_m float.
+    takes it from 0.1500 to 1.1096, a factor of 7.4 taken record by record
+    (6.9 to 7.9 over the 24 records of SEEDS).
+
+    This docstring previously said "from 0.15 to 0.65", which was the rounded
+    form of a pair, 0.1474 and 0.6451, quoted in Section 7 and in the
+    supplement and REPRODUCIBLE FROM NOWHERE: audit/n3_ke_prior_worth.py
+    searched every design Section 7 lists at 24 records each, and 60
+    combinations of horizon, sampling interval and phase offset at the seed
+    the paper used, and found neither figure. It is withdrawn here too, so the
+    code does not assert what the paper has retracted (REVIEW_LOG.md R19).
+
+    The paper therefore claims one prior and lets theta and K_m float.
 
     `ke_prior` is the log-prior on ln k_e. The default 0.8 FITS k_e, which is
     the footing this paper claims: the non-enzymatic channel is not known, and
@@ -894,18 +904,29 @@ def table_designs(T=730.0):
     ]
     rows, raw = [], []
     for name, times, override in designs:
-        lv, inc = design_record(times)
+        # one intake record per seed; every number below is a median with its
+        # range, because a single draw is not a property of the design
+        sds, rhos, drops = [], [], []
+        for s in SEEDS:
+            lv, inc = design_record(times, seed=s)
+            if override is not None:
+                lv = override
+            Pc = _filter(lv, sigma, inc)[-1]
+            sds.append(float(np.sqrt(Pc[0, 0])))
+            rhos.append(float(Pc[0, 1] / np.sqrt(Pc[0, 0] * Pc[1, 1])))
+            drops.append(float(np.sqrt(_filter(lv, sigma)[-1][0, 0])))
+        sd, sd_lo, sd_hi = median_spread(sds)
+        rho, _, _ = median_spread(rhos)
+        dropped, _, _ = median_spread(drops)
+        lv, inc = design_record(times, seed=BASE_SEED)
         if override is not None:
             lv = override
-        Pc = _filter(lv, sigma, inc)[-1]
-        sd = float(np.sqrt(Pc[0, 0]))
-        rho = float(Pc[0, 1] / np.sqrt(Pc[0, 0] * Pc[1, 1]))
-        dropped = float(np.sqrt(_filter(lv, sigma)[-1][0, 0]))
         drng = float((inc.max() - inc.min()) / P.theta)
-        raw.append((name, len(times), lv.min(), lv.max(), drng, sd, rho, dropped))
-        cell = (r"\textbf{%.4f}" % sd) if sd < 0.20 else ("%.4f" % sd)
+        raw.append((name, len(times), lv.min(), lv.max(), drng, sd, rho,
+                    dropped, sd_lo, sd_hi))
         rows.append([name, len(times), f"${lv.min():.2f}$--${lv.max():.2f}$",
-                     f"${drng:.2f}$", cell, f"${rho:+.4f}$", f"${dropped:.3f}$"])
+                     f"${drng:.2f}$", tex_spread(sd, sd_lo, sd_hi),
+                     f"${rho:+.4f}$", f"${dropped:.3f}$"])
     write_table("tab_D_designs",
                 ["design", "$n$", "levels visited",
                  r"range of $\Delta/\theta$",
@@ -913,10 +934,13 @@ def table_designs(T=730.0):
                  r"$\operatorname{corr}(\ln\hat\theta, \ln \hat K_m)$",
                  r"\emph{$\Delta$ dropped}"],
                 rows,
-                note="theta and K_m free; priors only on ln k_e and the load record")
+                note=("theta and K_m free; priors only on ln k_e and the load "
+                      "record. Medians over %d intake records, range in "
+                      "brackets." % len(SEEDS)))
     print("  wrote tab_D_designs.tex")
-    for nm, n, lo, hi, drng, sd, rho, drop in raw:
-        print(f"    {nm[:40]:>40}: n={n:4d}  range(D/th)={drng:5.2f}  sd={sd:.4f}"
+    for nm, n, lo, hi, drng, sd, rho, drop, slo, shi in raw:
+        print(f"    {nm[:40]:>40}: n={n:4d}  range(D/th)={drng:5.2f}  "
+              f"sd={sd:.4f} [{slo:.4f}, {shi:.4f}]"
               f"  corr={rho:+.4f}  [Delta dropped {drop:.3f}]")
     return raw
 
@@ -960,8 +984,9 @@ def spec_numbers():
     sigma = LOC.sigma_total(LOAD_FRAC, ASSAY_CV)
     Lb = load(0.0)
 
-    def sd_of(times, kap=None, load_cv=None, ke_prior=0.8, load_prior=True):
-        lv, inc = design_record(times, load_cv=load_cv)
+    def sd_of(times, kap=None, load_cv=None, ke_prior=0.8, load_prior=True,
+              seed=BASE_SEED):
+        lv, inc = design_record(times, load_cv=load_cv, seed=seed)
         pri = [np.inf, np.inf,
                (LOAD_FRAC * Lb) ** 2 if load_prior else np.inf,
                ke_prior ** 2]
@@ -982,34 +1007,71 @@ def spec_numbers():
         v = np.linalg.inv(F)[0, 0]
         return float(np.sqrt(v)) if v > 0 else np.inf
 
+    def over_seeds(**kw):
+        """
+        Median and range over SEEDS, because one intake record is not a
+        property of the design. Until September 2026 every number below was a
+        single draw at BASE_SEED, and on the weak designs that mattered: the
+        aliased row's seed-3 value is the MINIMUM of its own 24-seed range.
+        """
+        return median_spread([sd_of(seed=s, **kw) for s in SEEDS])
+
     monthly = np.arange(0.0, 730.0, 30.4)
     two_monthly = np.arange(0.0, 730.0, 60.0)
-    N = {"sigma": sigma,
-         "sd_monthly": sd_of(monthly),
-         "sd_two_monthly": sd_of(two_monthly),
-         "sd_aliased": sd_of(np.arange(0.0, 730.0, DOSE_INTERVAL)),
-         "sd_aliased_off": sd_of(np.arange(0.0, 730.0, DOSE_INTERVAL + 0.5)),
-         "sd_load_1pct": sd_of(monthly, load_cv=0.01),
-         "sd_load_20pct": sd_of(monthly, load_cv=0.20),
-         "sd_load_steady": sd_of(monthly, load_cv=0.0),
-         # the same, with NO prior on the load bias, which is where the rank
-         # deficiency of prop:rank actually shows: the prior fills that
-         # direction, and only real variation lets the DATA fill it instead
-         "free_steady": sd_of(monthly, load_cv=0.0, load_prior=False),
-         "free_cv2": sd_of(monthly, load_cv=0.02, load_prior=False),
-         "free_cv10": sd_of(monthly, load_cv=0.10, load_prior=False),
-         "free_cv20": sd_of(monthly, load_cv=0.20, load_prior=False)}
+    spread = {
+        "sd_monthly": over_seeds(times=monthly),
+        "sd_two_monthly": over_seeds(times=two_monthly),
+        "sd_aliased": over_seeds(times=np.arange(0.0, 730.0, DOSE_INTERVAL)),
+        "sd_aliased_off": over_seeds(
+            times=np.arange(0.0, 730.0, DOSE_INTERVAL + 0.5)),
+        "sd_load_1pct": over_seeds(times=monthly, load_cv=0.01),
+        "sd_load_20pct": over_seeds(times=monthly, load_cv=0.20),
+        "sd_load_steady": over_seeds(times=monthly, load_cv=0.0),
+        # the same, with NO prior on the load bias, which is where the rank
+        # deficiency of prop:rank actually shows: the prior fills that
+        # direction, and only real variation lets the DATA fill it instead
+        "free_steady": over_seeds(times=monthly, load_cv=0.0, load_prior=False),
+        "free_cv2": over_seeds(times=monthly, load_cv=0.02, load_prior=False),
+        "free_cv10": over_seeds(times=monthly, load_cv=0.10, load_prior=False),
+        "free_cv20": over_seeds(times=monthly, load_cv=0.20, load_prior=False),
+    }
+    N = {"sigma": sigma}
+    #: the headline keys keep their names and now carry the MEDIAN; the
+    #: <key>_lo / <key>_hi keys carry the range that median came from, and the
+    #: paper quotes both wherever it quotes the median.
+    for k, (med, lo, hi) in spread.items():
+        N[k], N[k + "_lo"], N[k + "_hi"] = med, lo, hi
+    #: the ratio the aliasing claim rests on, taken per record and then
+    #: summarised, rather than as a ratio of two separately-taken medians
+    ratios = [sd_of(times=np.arange(0.0, 730.0, DOSE_INTERVAL), seed=s)
+              / sd_of(times=monthly, seed=s) for s in SEEDS]
+    (N["alias_cost"], N["alias_cost_lo"],
+     N["alias_cost_hi"]) = median_spread(ratios)
+    def solve_over_seeds(f):
+        """
+        brentq per intake record, then the median and range of the answers.
+
+        These are the requirements Tier 1 is written against, so a single-draw
+        answer here is a single-draw REQUIREMENT, which is worse than a
+        single-draw precision.
+        """
+        out = []
+        for s in SEEDS:
+            try:
+                out.append(brentq(lambda x: f(x, s) - 0.20, 1e-3, 3.0,
+                                  xtol=1e-7))
+            except ValueError:
+                pass
+        return median_spread(out) if out else (None, None, None)
+
     for tag, tt in (("monthly", monthly), ("two_monthly", two_monthly)):
-        try:
-            N["kappa_" + tag] = brentq(lambda x: sd_of(tt, kap=x) - 0.20,
-                                       1e-3, 3.0, xtol=1e-5)
-        except ValueError:
-            N["kappa_" + tag] = None
-    try:
-        N["ke_needed"] = brentq(lambda x: sd_of(monthly, ke_prior=x) - 0.20,
-                                1e-3, 3.0, xtol=1e-5)
-    except ValueError:
-        N["ke_needed"] = None
+        med, lo, hi = solve_over_seeds(
+            lambda x, s, tt=tt: sd_of(tt, kap=x, seed=s))
+        N["kappa_" + tag] = med
+        N["kappa_" + tag + "_lo"], N["kappa_" + tag + "_hi"] = lo, hi
+    med, lo, hi = solve_over_seeds(
+        lambda x, s: sd_of(monthly, ke_prior=x, seed=s))
+    N["ke_needed"], N["ke_needed_lo"], N["ke_needed_hi"] = med, lo, hi
     return N
 
 
@@ -1024,6 +1086,19 @@ def table_spec():
     N = spec_numbers()
     kap = N["kappa_monthly"]
     kefac = np.exp(N["ke_needed"]) if N["ke_needed"] else None
+
+    def rng(key, digits=3, scale=1.0, unit=""):
+        """
+        The seed range beside a median, in the units the median is quoted in.
+
+        `scale` and `unit` exist because some of these are percentages and a
+        range printed in the wrong units is worse than no range at all.
+        """
+        lo, hi = N.get(key + "_lo"), N.get(key + "_hi")
+        if lo is None or not np.isfinite(lo) or not np.isfinite(hi):
+            return ""
+        return (r", $%.*f$ to $%.*f$%s across %d records"
+                % (digits, scale * lo, digits, scale * hi, unit, len(SEEDS)))
     B = "\\textbf{"
     rows = [
         [B + "TIER 1} --- run first", "", ""],
@@ -1033,10 +1108,14 @@ def table_spec():
          "the only quantity the design turns on, and no published value for "
          "it exists"],
         ["what it must reach",
-         ("a coefficient of variation on $\\Delta$ below $%.1f\\%%$" % (100 * kap)
+         ("a coefficient of variation on $\\Delta$ below $%.1f\\%%$%s"
+          % (100 * kap, rng("kappa_monthly", digits=1, scale=100.0,
+                            unit=r"\%"))
           if kap else "a CV on $\\Delta$ inside the gate"),
          "derived from the gate, not chosen: at that precision monthly "
-         "sampling reaches $20\\%$ on $\\theta$"],
+         "sampling reaches $20\\%$ on $\\theta$. This is a \\emph{requirement}, "
+         "so it is quoted as a median over intake records rather than as one "
+         "draw"],
         ["what is known now",
          "between-visit CV, mean $14.0\\%$, range $0.4$--$50.8\\%$, $n=15$, "
          "intervals $2$ months to $4$ years",
@@ -1048,14 +1127,20 @@ def table_spec():
          "immunity to the carnitine sign reversal that disqualifies C3"],
         ["sampling schedule",
          "monthly across dose cycles, $n \\approx 25$ over two years "
-         "($%.3f$); two-monthly also passes ($%.3f$)"
-         % (N["sd_monthly"], N["sd_two_monthly"]),
+         "($%.3f$%s); two-monthly also passes ($%.3f$%s). These are "
+         "\\emph{sampling spreads} of $\\ln\\hat\\theta$, not interval "
+         "half-widths; see Remark~\\ref{rem:curvature}"
+         % (N["sd_monthly"], rng("sd_monthly", digits=4),
+            N["sd_two_monthly"], rng("sd_two_monthly", digits=4)),
          "ordinary outpatient density; what matters is covering the phase of "
          "the dose cycle, not the sampling rate"],
         ["sampling, the hard constraint",
          B + "never at the dose interval or a multiple of it}: fortnightly "
-         "gives $%.2f$, $14.5$-daily gives $%.3f$"
-         % (N["sd_aliased"], N["sd_aliased_off"]),
+         "gives $%.2f$%s, $14.5$-daily gives $%.3f$%s, a cost of $%.0f$-fold "
+         "($%.0f$ to $%.0f$ across records)"
+         % (N["sd_aliased"], rng("sd_aliased", digits=2),
+            N["sd_aliased_off"], rng("sd_aliased_off", digits=4),
+            N["alias_cost"], N["alias_cost_lo"], N["alias_cost_hi"]),
          "every draw lands at the same phase, the increment stops varying, "
          "and the therapy channel closes"],
         ["sampling, the other exclusion",
@@ -1067,8 +1152,10 @@ def table_spec():
          "$\\Delta(t_i)$ is a regressor, not a nuisance: it carries the "
          "excitation"],
         ["load record, precision",
-         "ordinary outpatient precision suffices ($%.3f$ at a $1\\%%$ record "
-         "against $%.3f$ at $20\\%%$)" % (N["sd_load_1pct"], N["sd_load_20pct"]),
+         "ordinary outpatient \\emph{variability} suffices ($%.3f$ at a $1\\%%$ "
+         "day-to-day CV against $%.3f$ at $20\\%%$); the recording "
+         "\\emph{accuracy} is the binding one and is the row below"
+         % (N["sd_load_1pct"], N["sd_load_20pct"]),
          "the load-bias column is nearly orthogonal to $\\theta$ once the "
          "increment is carried"],
         ["load record, variability",
@@ -1082,10 +1169,14 @@ def table_spec():
          % ("\\infty" if not np.isfinite(N["free_steady"])
             else "%.2f" % N["free_steady"], N["free_cv2"], N["free_cv20"])],
         ["$k_e$",
-         ("a literature prior within a factor of $%.1f$" % kefac if kefac
-          else "a literature prior"),
-         "the only prior the result depends on; no measurement programme is "
-         "proposed for it"],
+         ("a prior within a factor of $%.2f$ ($%.2f$ to $%.2f$ across records)"
+          % (kefac, np.exp(N["ke_needed_lo"]), np.exp(N["ke_needed_hi"]))
+          if kefac else "a prior of some width"),
+         B + "no published source supplies it}, so this is the one number the "
+         "design asks for and cannot cite. It is also the cheapest second "
+         "external measurement: tightening it is worth $2.1\\times$ at nominal "
+         "capacity and $6.9\\times$ in the disease range, though even an exact "
+         "$k_e$ leaves $0.388$ there (\\texttt{audit/n5\\_scope\\_contribution.py})"],
         ["$K_m$", "nothing at all",
          "every number here is unchanged by a $K_m$ prior twenty times "
          "looser, which is what Remark~\\ref{rem:no_km} demanded"],

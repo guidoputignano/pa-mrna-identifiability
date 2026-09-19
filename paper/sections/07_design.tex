@@ -33,13 +33,25 @@ in this section, and earlier drafts of this paper did not hold them fixed.
 \emph{not} fully described by the levels it visits: two samples at the same level under
 different $\Delta$ carry different information, which is the whole of Section~\ref{sec:therapychannel}.
 \item \textbf{$\theta$ and $K_m$ are free.} No prior is placed on either. Stripping the
-priors one at a time shows that the $K_m$ prior does no work at all (the accessible
-design gives $0.1474$ with it and $0.1474$ without it, and still $0.1474$ at a prior
-twenty times looser) so nothing here depends on knowing $K_m$, which
-Remark~\ref{rem:no_km} forbids.
-\item \textbf{$k_e$ carries a log-prior of $0.8$}, a factor of $2.2$, and is the only prior that does any work: removing it takes the same design from $0.1474$ to $0.6451$. The
-gate needs $k_e$ within a factor of $2.95$, which is the one thing this paper asks the
-literature for.
+priors one at a time shows that the $K_m$ prior does no work at all: the densest design
+in Table~\ref{tab:designs} gives $0.1500$ with it, $0.1500$ without it, and $0.1500$ at a
+prior twenty times looser, medians over twenty-four intake records with a range of
+$0.1498$ to $0.1501$ in every case. So nothing here depends on \emph{assuming} $K_m$,
+which Remark~\ref{rem:no_km} forbids. Nothing here depends on assuming it because the
+record determines it: see Remark~\ref{rem:kmrecovered}.
+\item \textbf{$k_e$ carries a log-prior of $0.8$}, a factor of $2.2$, and is the only
+prior that does any work: removing it takes the same design from $0.1500$
+($0.1498$ to $0.1501$) to $1.1096$ ($1.0313$ to $1.1923$), a factor of $7.4$ taken record
+by record ($6.9$ to $7.9$). \textbf{An earlier version of this list put that pair at
+$0.1474$ and $0.6451$, a factor of $4.4$. Neither figure is reproducible from this
+repository and both are withdrawn} (\texttt{REVIEW\_LOG.md} R19;
+\texttt{audit/n3\_ke\_prior\_worth.py} searched the five designs of
+Table~\ref{tab:designs} at twenty-four records each and sixty combinations of horizon,
+sampling interval and phase offset, and found nothing returning either). The correction
+roughly doubles what the prior is carrying, so it sharpens the concern rather than
+settling it. The gate needs $k_e$ within a factor of $2.67$ ($2.65$ to $2.68$), which is
+the one thing this paper asks the literature for and, by the $k_e$ row of
+Table~\ref{tab:params}, the one thing the literature does not supply.
 \item \textbf{Intake varies day to day at a $10\%$ coefficient of variation, and is
 recorded to $5\%$.} By Proposition~\ref{prop:rank} a perfectly steady load is the exactly
 singular case, so the variability is not noise to be averaged away.
@@ -80,9 +92,16 @@ levels, which is what earlier drafts of this paper reported.}
 \end{adjustwidth}
 
 The gate passes, and it passes on ordinary outpatient care. Sampling monthly
-across dose cycles for two years, twenty-five draws, no excursion, no admission, reaches $\operatorname{sd}(\ln\hat\theta) = 0.170$, inside the $20\%$ target. Two-monthly
-sampling, thirteen draws, reaches $0.187$ and also passes. Six-monthly visits reach
-$0.418$ and do not.
+across dose cycles for two years, twenty-five draws, no excursion, no admission, reaches
+$\operatorname{sd}(\ln\hat\theta) = 0.170$ ($0.168$ to $0.171$ across twenty-four
+simulated intake records), inside the $20\%$ target. Two-monthly sampling, thirteen
+draws, reaches $0.188$ ($0.184$ to $0.194$) and also passes. Six-monthly visits reach
+$0.457$ ($0.412$ to $0.510$) and do not.
+
+Every precision in this section is a median over twenty-four intake records with its
+range beside it. Until the September 2026 revision each was a single draw, because the
+record generator's seed was a default argument no caller ever set; the aliased row below
+is where that mattered most and the correction is recorded in Remark~\ref{rem:curvature}.
 
 What separates them is not $n$. Two-monthly sampling passes with thirteen samples
 while fortnightly sampling fails with fifty-three. Read the fourth column instead: the
@@ -95,13 +114,66 @@ two-monthly visits catch $1.94$.
 The fortnightly row of Table~\ref{tab:designs} is a catastrophe, and a \emph{designed} one rather than bad luck. The dose interval is fourteen days, so
 sampling every fourteen days lands every draw at the same phase of every cycle. The range
 of $\Delta/\theta$ collapses from $1.95$ to $0.13$, the correlation between $\ln\theta$ and
-$\ln K_m$ returns to $+0.998$, and $\operatorname{sd}(\ln\hat\theta)$ goes to $3.51$. The
-same happens at twenty-eight days, and at any multiple.
+$\ln K_m$ returns to $+0.998$, and $\operatorname{sd}(\ln\hat\theta)$ goes to $4.58$
+($3.51$ to $5.64$ across records). The same happens at twenty-eight days, and at any
+multiple.
 
-Moving the schedule by half a day fixes it: sampling every $14.5$ days gives
-$0.161$. A factor of twenty-two in the precision of the answer turns on a choice a protocol
-writer would make for administrative convenience, and would currently make the wrong way,
-because ``sample on dosing days'' is the obvious thing to write.
+Moving the schedule by half a day fixes it: sampling every $14.5$ days gives $0.161$
+($0.1611$ to $0.1618$). Taken record by record rather than as a ratio of two medians, the
+aliased design costs a factor of $27$ ($21$ to $33$). An earlier version of this remark
+put that factor at twenty-two, from a single intake record which turned out to be the
+most favourable of the twenty-four; \textbf{the correction makes the rule sharper, not
+weaker}. A factor of that size in the precision of the answer turns on a choice a
+protocol writer would make for administrative convenience, and would currently make the
+wrong way, because ``sample on dosing days'' is the obvious thing to write.
+\end{remark}
+
+\begin{remark}[Every precision here is a curvature, and an interval is about twice as wide]
+\label{rem:curvature}
+$\operatorname{sd}(\ln\hat\theta)$ as this paper reports it is
+$\sqrt{[\mathcal{I}^{-1}]_{11}}$, the Cram\'er--Rao bound. That is the \emph{curvature} of
+the log likelihood at its optimum, and it correctly describes the spread of $\hat\theta$
+over repeated records. A reader who multiplies it by $1.96$ and reads a confidence
+interval is doing something else, and that step needs the likelihood to be quadratic over
+that range, which Remark~\ref{rem:second_order} says it is not.
+
+Profiling $\ln\theta$ on a grid and re-optimising $(\ln K_m, b, \ln k_e)$ at each point
+with this paper's own priors, the $95\%$ profile interval on the recommended monthly
+design is a factor of $3.76$ wide, $2.86$ to $5.08$ across twenty-four records, against
+the factor of $1.95$ the bound implies. The interval is asymmetric and the asymmetry is
+the degeneracy of Proposition~\ref{prop:rank}: lowering $\theta$ is compensated by raising
+$K_m$, so the profile has a long tail downward while its upper end sits about where the
+bound puts it. On a noiseless record the profile's curvature reproduces the bound to
+$0.4\%$, so this is a property of the likelihood and not of the optimiser
+(\texttt{audit/n6\_profile\_vs\_crb.py}).
+
+\textbf{An earlier version of this paper quoted these curvatures without that
+distinction, and the abstract invited exactly the wrong reading. That is withdrawn.} The
+numbers are unchanged and correctly labelled: where this paper quotes
+$\operatorname{sd}(\ln\hat\theta)$ it means a sampling spread, and where a reader wants an
+interval the factor is about four.
+\end{remark}
+
+\begin{remark}[What the record determines is $K_m$, at every capacity]
+\label{rem:kmrecovered}
+Remark~\ref{rem:no_km} shows that no \emph{prior} on $K_m$ is needed. The reason is
+stronger than the claim: the record determines it. On the monthly design
+$\operatorname{sd}(\ln \hat K_m)$ is $0.072$ at normal capacity and $0.062$ at the $5\%$
+of normal that defines the disease, essentially flat across the whole range, and at
+disease-range capacity the best-determined direction in
+$(\ln\theta, \ln K_m, \ln k_e)$ is nearly pure $\ln K_m$
+(\texttt{audit/n5\_scope\_contribution.py}). Sampling at the dose interval costs a factor
+of $20$ on it, so Remark~\ref{rem:aliasing} governs this quantity too.
+
+So the design recovers something everywhere, including where
+Section~\ref{sec:scope} says $\theta$ is gone. Two qualifications, and both are real. The
+first is that this is the \emph{effective} $K_m$ of \eqref{eq:local}, a half-saturation
+at the plasma level, and not the in vitro Michaelis constant of the enzyme; the $K_m$ row
+of Table~\ref{tab:params} keeps those apart. The second is that it is identified
+\emph{relative to this structure}: the supplement's Remark on structure-relative
+identification exhibits a published alternative under which $\theta$ is not identifiable
+at all, at a residual too small to notice, and nothing here exempts $K_m$ from the same
+argument.
 \end{remark}
 
 Three more things in that table are worth reading against what this paper used to
@@ -141,8 +213,9 @@ nonlinear least squares started half a decade from the truth does worse still, b
 along the near-null direction of Proposition~\ref{prop:rank} the gradient is third order
 and a started-away optimiser does not climb back. So the honest claim is
 conditional and is stated as such: this design identifies $\theta$ to better than $20\%$
-\emph{given} $k_e$ within a factor of about three, and does not identify it at all
-without. What survives unconditionally is the comparison, carrying the increment is
+\emph{given} $k_e$ within a factor of $2.67$ ($2.65$ to $2.68$ across intake records),
+and does not identify it at all without. No published source supplies $k_e$ at any width
+($k_e$ row, Table~\ref{tab:params}), so that condition is a request and not a citation. What survives unconditionally is the comparison, carrying the increment is
 worth between one and two orders of magnitude on every design in the table, prior-free; the data specification rests on that comparison, not on the absolute number.
 \end{remark}
 
@@ -185,7 +258,7 @@ sacrificing anything the patient needs, but they should know that the record wil
 identify $\theta$ less well, and the sampling schedule then has to work harder.
 
 Contrast this with the sampling schedule, where the corresponding number is free.
-Remark~\ref{rem:aliasing} is a factor of twenty-two bought by moving draws half a day off
+Remark~\ref{rem:aliasing} is a factor of $27$ bought by moving draws half a day off
 the dosing day: no dose changes, no trough moves, no patient is exposed to anything
 different. \emph{The asymmetry is the recommendation.} Optimise the schedule that costs
 nothing and leave the one that costs the trough alone.
@@ -335,7 +408,7 @@ that it makes the \emph{sign of the margin} decidable, and it does not.
 \midrule
 fixed operating point, $n=9$ (the old design) & $6.9\% \pm 1.7$ & $44.0\% \pm 3.2$ & $4900$ \\
 monthly across dose cycles, $n=25$            & $19.1\% \pm 2.1$ & $41.6\% \pm 2.5$ & $2200$ \\
-\quad the same, increment known only to $11.7\%$ & $19.1\% \pm 1.7$ & $42.3\% \pm 2.9$ & n/a \\
+\quad the same, increment known only to $11.6\%$ & $19.1\% \pm 1.7$ & $42.3\% \pm 2.9$ & n/a \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -349,8 +422,9 @@ errs on about two patients in five, against the old design's four in nine. The c
 needed to place the fraction of patients with $\mu<0$ within ten points falls from about
 $4\,900$ to about $2\,200$: a real gain, and still a number no cohort of this disease reaches. The trial that established the therapy enrolled sixteen~\cite{trial_phase12}, and Section~\ref{sec:howmany} sets $2\,200$ against the size of the diagnosed population rather than against trial logistics. % C16
 \item \textbf{The dose-precision requirement does not bind here.} Degrading the increment
-from exact to the $11.7\%$ the identifiability gate asks for moves the sign error by less
-than its seed-to-seed spread. The $11.7\%$ is a requirement on \emph{identifying $\theta$},
+from exact to the $11.6\%$ the identifiability gate asks for moves the sign error by less
+than its seed-to-seed spread. The $11.6\%$ ($11.4$ to $11.9$ across intake records) is a
+requirement on \emph{identifying $\theta$},
 not on deciding $\mu$.
 \item \textbf{And the reason is not identifiability.} It is that the sign of a quantity
 near its own zero is hard for reasons that have nothing to do with what the record

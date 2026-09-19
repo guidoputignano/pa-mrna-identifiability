@@ -26,9 +26,9 @@ The table holds three kinds of number, and they do not carry equal weight.
 \paragraph{The requirements were solved for, not chosen.} Every precision here is the
 answer to an inverse question, found by root-finding: holding the rest of the design
 fixed, how well would this one quantity have to be known for monthly sampling to land
-exactly on $\operatorname{sd}(\ln\hat\theta) = 0.20$? The $11.7\%$ on the delivered
+exactly on $\operatorname{sd}(\ln\hat\theta) = 0.20$? The $11.6\%$ on the delivered
 increment is that answer for the increment; the factor of $2.7$ is that answer for $k_e$.
-The precisions quoted against each schedule ($0.170$ monthly, $0.187$ two-monthly, $3.51$
+The precisions quoted against each schedule ($0.170$ monthly, $0.188$ two-monthly, $4.58$
 when every sample lands on the dose interval) are forward evaluations of the same
 information matrix. No requirement in this table was put into the calculation that
 produced it, so none of them is a guess about what a good assay might manage.
@@ -80,6 +80,35 @@ bound that happens to sit near a threshold is not a measurement of it, and a per
 range reaching $50.8\%$ cannot be applied to an individual. Tier~1 replaces an inference
 with a number.
 
+\paragraph{And a second external measurement, cheaper and not proposed before.} Tier~1
+anchors capacity. The non-enzymatic clearance $k_e$ is the other quantity the record
+cannot supply, and unlike Tier~1 it can be bought incrementally: the design's precision is
+a smooth function of how well it is known, and the function is much steeper in the disease
+range than at the illustrative point, exactly as \eqref{eq:thetacolumn} predicts.
+
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+prior on $\ln k_e$ & factor per sd & $\operatorname{sd}(\ln\hat\theta)$ at nominal
+& at $5\%$ of nominal \\
+\midrule
+$0.8$ (as published here) & $2.23$ & $0.170$ & $3.07$ \\
+$0.2$                     & $1.22$ & $0.089$ & $0.964$ \\
+$0.05$                    & $1.05$ & $0.082$ & $0.447$ \\
+exact                     & $1.00$ & $0.081$ & $0.388$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Tightening $k_e$ from the published width to $5\%$ is worth a factor of $2.1$ at nominal
+capacity and $6.9$ in the disease range. It does not close the gate there: even an exact
+$k_e$ leaves $0.388$, about twice the target, so this is a second anchor and not a
+substitute for Tier~1. It is nonetheless the better-value measurement per unit of effort
+in exactly the population Tier~1 is hardest to run in
+(\texttt{audit/n5\_scope\_contribution.py}).
+
 \subsection{Tier 2: the identification study}
 
 \paragraph{Cover the dose cycle; do not chase the marker.} Monthly draws across dose cycles
@@ -93,7 +122,8 @@ Do not sample on dosing days, or at any multiple of the dose interval
 (Remark~\ref{rem:aliasing}). ``Draw bloods when the patient attends for dosing'' is the
 natural thing to write and it is the one schedule that destroys the result: every draw
 lands at the same phase, the range of $\Delta/\theta$ collapses from $1.95$ to $0.13$, and
-$\operatorname{sd}(\ln\hat\theta)$ goes from $0.17$ to $3.51$. Moving the schedule half a
+$\operatorname{sd}(\ln\hat\theta)$ goes from $0.170$ to $4.58$, a factor of $27$ ($21$ to
+$33$ across intake records). Moving the schedule half a
 day recovers it.
 
 \begin{figure}[htbp]
@@ -109,7 +139,7 @@ panel. Monthly sampling walks the cycle and spans $1.84$ of it; moving to $14.5$
 $1.99$. Sampling fortnightly puts every draw at one phase, so every draw sees the same
 increment and the range collapses to $0.13$: the record carries the therapy channel as a
 constant, which is no excitation at all, and
-$\operatorname{sd}(\ln\hat\theta)$ goes from $0.161$ to $3.51$. The excluded hour after each
+$\operatorname{sd}(\ln\hat\theta)$ goes from $0.161$ to $4.58$. The excluded hour after each
 dose is one twenty-fourth of a day against a fourteen-day axis, so the band marking it is
 drawn wider than scale.}
 \label{fig:D4}
@@ -125,10 +155,24 @@ load bias, and only real day-to-day variation lets the \emph{data} fill it inste
 support and one a prior supports. It costs nothing: it is an instruction to omit a
 data-cleaning step, not to add a measurement.
 
-\paragraph{$k_e$, and nothing else, is assumed.} The result needs the non-enzymatic
-clearance within a factor of about three, which the literature supplies; no measurement
-programme is proposed for it. $K_m$ is assumed at nothing: a prior twenty times looser
-leaves every number unchanged, which is what Remark~\ref{rem:no_km} demanded.
+\paragraph{$k_e$, and nothing else, is assumed, and nothing supplies it.} The result
+needs the non-enzymatic clearance within a factor of $2.67$ ($2.65$ to $2.68$ across
+intake records). \textbf{An earlier version of this paragraph said the literature supplies
+it. It does not, and that is withdrawn}: the nearest route named in the $k_e$ row of
+Table~\ref{tab:params} was a first-order marker elimination in the published translational
+model, and that model's marker is an algebraic function of the enzyme with no marker state
+and no elimination constant anywhere in it, which \texttt{claims.csv} C46 already recorded.
+So $k_e$ is the one quantity this design asks for and cannot cite, and it is the second
+tier of the specification below rather than something to be assumed away.
+
+$K_m$ is assumed at nothing, in the sense Remark~\ref{rem:no_km} demanded: a prior twenty
+times looser leaves every number unchanged. That is a statement about the \emph{prior}. It
+is not the larger claim that nothing depends on $K_m$, which is false and which the $K_m$
+row of Table~\ref{tab:params} now bounds: over $K_m$ from $5$ to $1000$~$\mu$M the
+achieved $\operatorname{sd}(\ln\hat\theta)$ runs $0.0507$ to $1.3608$, and the design
+crosses its target at $K_m = 124$~$\mu$M against the $100$ assumed. What rescues this is
+not the prior but the record, which determines $K_m$ to about $6\%$ at every capacity
+(Remark~\ref{rem:kmrecovered}).
 
 \subsection{Applicability}
 \label{sec:whoto}
@@ -147,8 +191,8 @@ each reported as a median over twenty-four seeds:
 \toprule
 \textbf{source of excitation} & $\operatorname{sd}(\ln\hat\theta)$ & \textbf{against $0.20$} \\
 \midrule
-spontaneous load variability alone, at $10\%$ day-to-day CV & $1.77$ & $9\times$ worse \\
-\quad the same at an implausible $40\%$ CV                  & $0.62$ & $3.1\times$ worse \\
+spontaneous load variability alone, at $10\%$ day-to-day CV & $1.79$ & $10.5\times$ worse \\
+\quad the same at an implausible $40\%$ CV                  & $0.70$ & $4.1\times$ worse \\
 plus recorded carnitine steps of $25$--$100\%$ in $k_e$     & $1.91$--$2.02$ & \emph{worse still} \\
 \textbf{the dose train}                                     & $\mathbf{0.170}$ & \textbf{passes} \\
 \bottomrule
@@ -265,11 +309,21 @@ cohort size would repair: the threshold it is posed against is not a measured qu
 \subsection{Coverage across a heterogeneous cohort}
 \label{sec:coverage}
 
-The $0.170$ quoted throughout is one patient: the illustrative parameter set. Across the
-four thousand simulated above the median is $0.192$ and just over half meet the
+The $0.170$ quoted throughout is one patient: the illustrative parameter set, and it is a
+sampling spread rather than an interval half-width (Remark~\ref{rem:curvature}). Across
+the four thousand simulated above the median is $0.192$ and just over half meet the
 $0.20$ target. That distribution is not a sensitivity analysis around the headline; it is
 the headline's actual standing. \emph{The design confirms identifiability in a cohort. It
 does not deliver the stated precision to every patient in one.}
+
+\textbf{And that cohort is drawn entirely above the disease.} Its $\theta$ spans nine-fold
+about the illustrative value, which is $33\%$ to $300\%$ of normal capacity; propionic
+acidemia sits under $5\%$. By Section~\ref{sec:scopeprec} the design meets its target only
+between about $82\%$ and $627\%$ of normal, and $41\%$ of this cohort's log-uniform span
+lies below that lower edge. So ``just over half meet the target'' is largely the working
+band's edge showing through the sampling distribution, and not only the dose-to-capacity
+ratio the next paragraph names. Both mechanisms are real and the band is the cleaner
+statement of the two.
 
 And the shortfall is systematic rather than random, which is what makes it worth a
 subsection. The strongest correlate of the achieved $\operatorname{sd}$ is $\Delta/\theta$

@@ -1070,3 +1070,96 @@ narrow enough.
 rule requires and which in this case produced the answer before the data were read. Had the
 table been read first, `-26` and `-25` points on two of four markers would have looked like a
 finding.
+
+---
+
+### R19. "Removing the $k_e$ prior takes the same design from 0.1474 to 0.6451"
+
+**Retracted** (Phase 7, step 2). Stated in three places and computed in none:
+`paper/sections/07_design.tex:40`, `paper/sections/A1_supplementary.tex:524`, and
+`src/design/run.py`'s `_filter` docstring in rounded form, "from 0.15 to 0.65".
+
+`audit/n3_ke_prior_worth.py` searched for them. Over the five designs Section 7 lists, 24
+intake records each, and 60 combinations of horizon, sampling interval and phase offset at
+the seed the paper itself used, nothing returns `0.1474` and nothing returns `0.6451` with
+the prior removed. The nearest approach to the first is `0.1490`; the prior-off values run
+from `0.92` upward.
+
+On the densest design that section lists, sampling every two days for two years, the pair
+is **`0.1500` `[0.1498, 0.1501]` with the prior and `1.1096` `[1.0313, 1.1923]` without**,
+medians over 24 records. Taken record by record the prior is worth a factor of **`7.4`
+(`6.9` to `7.9`)**, not the `4.4` the printed pair implies.
+
+**The correction roughly doubles what the prior is carrying.** It makes the paper's own
+concern sharper: the one prior the design depends on is doing twice the work the paper
+said, and by the `k_e` row of Table 2 no published source supplies the constant it is a
+prior on.
+
+**How it was found.** Not by looking for it. Registering `s_{ln k_e}` as a table row, which
+the Phase 7 provenance audit required because the width lived as a default argument, meant
+carrying the sentence into the table, and the table's rule is that a number arrives with
+its footing. There was no footing to find.
+
+---
+
+### R20. Quoting Cramér–Rao curvatures where a reader reads an interval
+
+**Retracted** (Phase 7, step 2), and this one is a labelling failure rather than a wrong
+number, which is why it touches every precision in the paper rather than one.
+
+`sd(ln theta-hat)` as reported throughout is `sqrt([F^-1]_11)`: the curvature of the log
+likelihood at its optimum. It correctly describes the **sampling spread** of `theta-hat`
+over repeated records, and `audit/n6_profile_vs_crb.py` confirms that it does, with the
+MLE running `2715` to `3757` over 16 records against a truth of `3000`.
+
+What it does not describe is the interval one record supports, and the abstract invited
+exactly that reading: "identify theta to 17% over two years". Profiling `ln theta` and
+re-optimising `(ln K_m, b, ln k_e)` at each point with the paper's own priors, the 95%
+profile interval on the recommended monthly design is a factor of **`3.76`** wide (`2.86`
+to `5.08` across records) against the **`1.95`** the bound implies, a ratio of `1.93`.
+
+The interval is asymmetric, and the asymmetry is the paper's own degeneracy: lowering
+`theta` is compensated by raising `K_m`, so the profile has a long tail downward while its
+upper end sits about where the bound puts it. The paper already knew the surface is not
+quadratic. `rem:second_order` says so and says the profile is the diagnostic that works.
+It had never run that profile at the design it recommends.
+
+At a disease-range capacity the failure is not one of width. Six of six profile intervals
+run off the bottom of a grid spanning four log units: the record does not bound `theta`
+from below **at all**, and the MLE itself lands between `3` and `224` against a truth of
+`150`. What the record does supply there is an upper bound, ruling out capacity above about
+24% of nominal.
+
+**What changed in the paper.** The abstract no longer quotes `17%`; it quotes the interval.
+`rem:curvature` states the distinction where the precisions are introduced, and the
+specification table labels its entries as sampling spreads.
+
+**Re-check.** On a noiseless record the profile's curvature at the truth is the same second
+derivative as the bound, and they agree to `0.39%`. So the optimiser is not what is being
+measured.
+
+---
+
+### R21. Every design number in the paper was a single draw
+
+**Retracted** (Phase 7, step 2) as a class, not as a figure.
+
+`design_record(times, load_cv=None, seed=3)` draws the day-to-day intake from
+`default_rng(seed)`. No caller in `src/design/run.py` ever passed a seed, so every number
+`table_designs` and `spec_numbers` produced, and every design figure in the paper, was one
+intake record. The author's standing rule is that anything with a random draw carries its
+seed spread.
+
+Mostly it did not matter. The monthly headline moves 0.11% from seed 3 to the 24-record
+median. **On the weak designs it mattered, and on one of them it mattered in the paper's
+favour**: the aliased fortnightly row's seed-3 value of `3.51` is the *minimum* of its own
+24-record range `[3.51, 5.64]`, and the median is `4.58`. Requoted record by record, the
+aliasing cost is a factor of **`27` (`21` to `33`)** rather than the twenty-two the paper
+claimed. The sharpest rule in the paper is sharper than it said.
+
+Other requotings: two-monthly `0.187` to `0.188` `[0.184, 0.194]`; six-monthly `0.418` to
+`0.457` `[0.412, 0.510]`; the Tier 1 requirement on the increment from `11.7%` to `11.6%`
+`[11.4, 11.9]`; the `k_e` factor the gate needs from `2.95` to `2.67` `[2.65, 2.68]`.
+
+`design_record`'s seed is now `BASE_SEED`, with `SEEDS`, `median_spread` and `tex_spread`
+beside it, and both generated tables carry medians with ranges.

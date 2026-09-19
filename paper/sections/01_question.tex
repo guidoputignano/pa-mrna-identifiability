@@ -17,16 +17,37 @@ The clinical decision it creates is a \emph{dosing interval}, and the interval i
 quantity nobody measures: the patient's residual enzymatic capacity, written $\theta$
 throughout. A patient with more residual capacity needs less frequent replacement.
 
-This paper asks whether, given a clinical record of the kind the disease actually generates (a marker series, a dosing diary, a dietary record), \emph{$\theta$ can be identified, and whether identifying it decides anything.} The answer is four results. The first is a design that the trial is already running without knowing it. The other three establish what that design decides, what it does not, and where it stops, so that a protocol can be written against its actual reach rather than an assumed one.
+This paper asks whether, given a clinical record of the kind the disease actually generates (a marker series, a dosing diary, a dietary record), \emph{$\theta$ can be identified, and whether identifying it decides anything.}
+
+The answer is a set of design rules together with a scope condition, and it is the pair
+that transfers rather than either alone. The rules say how to identify a saturable channel
+from a marker driven by a known periodic input: carry the input as a regressor, never
+sample at its period, record the driving load as eaten and to a stated accuracy. The scope
+condition says where in the parameter range the target is recoverable at all, and for this
+disease the honest answer is that it is not recoverable in the patients the question
+matters most for. \textbf{The precision this paper reports on $\theta$ is an illustration
+of the rules at normal enzymatic capacity, not the result.} What survives at every
+capacity is the design rules themselves and the half-saturation $K_m$; what does not is
+the capacity estimate.
+
+The four results below are organised that way. The first is a design the trial is already
+running without knowing it. The other three establish what that design decides, what it
+does not, and where it stops, so that a protocol can be written against its actual reach
+rather than an assumed one.
 
 \begin{enumerate}[leftmargin=*, itemsep=3pt]
 \item \textbf{The dose train is already the identification experiment.} The therapy is administered on a fixed biweekly schedule and read as treatment; it is
 also a known, exogenous, selective input on exactly the parameter in question, and it
 supplies forty-two times the excitation the marker's own excursions do. That is what makes
-$\theta$ identifiable: monthly outpatient draws across dose cycles reach $17\%$ over two
-years. The precision is lost by the one scheduling choice a protocol would make for convenience: sampling on dosing days, or at any multiple of the dose interval, costs a
-factor of twenty-two, and moving the schedule half a day recovers it
-(Sections~\ref{sec:excitation} and~\ref{sec:designsec}).
+$\theta$ identifiable at capacities near normal: monthly outpatient draws across dose
+cycles give a sampling spread of $17\%$ on $\ln\hat\theta$ over two years, which is a
+$95\%$ interval a factor of about four wide (Remark~\ref{rem:curvature}). It is lost by
+the one scheduling choice a protocol would make for convenience: sampling on dosing days,
+or at any multiple of the dose interval, costs a factor of $27$ ($21$ to $33$ across
+intake records), and moving the schedule half a day recovers it
+(Sections~\ref{sec:excitation} and~\ref{sec:designsec}). \textbf{That rule is the durable
+part, and it holds at every capacity}, including the disease range where the estimate
+itself does not (Section~\ref{sec:scopeprec}).
 
 The model is
 globally structurally identifiable, so the information is in the system; what a monthly

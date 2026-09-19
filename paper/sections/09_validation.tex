@@ -64,11 +64,16 @@ resolved band still leaves $\theta$ open across a factor given by \eqref{eq:span
 the illustrative values is $169$.
 
 \paragraph{Power, against the reference standard's own precision.} The breath test's
-repeatability is a coefficient of variation of $6.9\%$ in controls and $12.8\%$ in
-patients~\cite{breath_test_mma}. % C48
-A validation cannot resolve agreement more finely than the reference standard resolves
-itself, so $12.8\%$ is a floor on the width of any limits of agreement, whatever the marker
-side contributes. Two consequences follow and both should be stated before any data are
+repeatability is a coefficient of variation of $6.9\%$ in controls and, in patients, a
+mean of $14.0\%$ with a range of $0.4$ to $50.8\%$ over $n = 15$~\cite{breath_test_mma}.
+% C48
+\textbf{The widely quoted $12.8\%$ is the standard deviation of the per-subject
+coefficients and not their mean, and is withdrawn here as it is in
+Section~\ref{sec:spec}}; the paragraphs below are restated against $14.0\%$. A validation
+cannot resolve agreement more finely than the reference standard resolves itself, so
+$14.0\%$ is a floor on the width of any limits of agreement, whatever the marker side
+contributes, and the $0.4$ to $50.8\%$ spread means that floor is a property of the
+cohort and not of any one patient. Two consequences follow and both should be stated before any data are
 collected. First, a study powered to detect disagreement smaller than about a quarter
 (roughly two reference standard deviations) is not powered against anything. Second, the
 marker side's contribution is the quantity of Section~\ref{sec:collapse}, and at the
@@ -80,14 +85,17 @@ comparable methods.
 column of Table~\ref{tab:designs}, the increment used to generate the levels but dropped
 from the sensitivity, where the accessible designs do sit an order of magnitude above the
 reference standard. Read with the dose train carried, the design this protocol specifies
-gives $\operatorname{sd}(\ln\hat\theta) = 0.170$ against the $12.8\%$ quoted here, a
-factor of $1.3$ rather than an order of magnitude. The two sides are comparable, and the
+gives $\operatorname{sd}(\ln\hat\theta) = 0.170$ ($0.168$ to $0.171$ across intake
+records) against the $14.0\%$ above, a factor of $1.2$ rather than an order of magnitude.
+Both sides are sampling spreads, not interval half-widths; by
+Remark~\ref{rem:curvature} the marker side's interval is about twice as wide as its
+spread, which widens the gap again. The two sides are comparable, and the
 paired study measures agreement. The first consequence is unchanged: neither method
 resolves disagreement below about a quarter. Two qualifications survive and both narrow the
 claim rather than restore the old one. Across the heterogeneous cohort the marker side runs
 over an interquartile range of $0.132$ to $0.329$ (Section~\ref{sec:spec}), so
 comparability is a property of the mid-cohort patient and not of every enrollee. And the
-$12.8\%$ is a between-visit figure rather than the same-day repeatability a pre/post pair
+$14.0\%$ is a between-visit figure rather than the same-day repeatability a pre/post pair
 depends on, which is why Tier~1 of Table~\ref{tab:spec} exists and why that floor is an
 assumed one until it is measured (Remark~\ref{rem:no_pa_breath}).
 
@@ -128,7 +136,7 @@ cited here is methylmalonic acidemia~\cite{breath_test_mma}, % C48
 and the protocol above is written as though an equivalent series existed in PA. Confirming
 whether one does, and if not what it would take to establish the test in this disease, is a
 prerequisite rather than a detail. Until it is settled, the reference standard in the
-protocol is an assumed one, and the $12.8\%$ quoted as its precision is transferred from an
+protocol is an assumed one, and the $14.0\%$ quoted as its precision is transferred from an
 adjacent disorder on the same pathway.
 \end{remark}
 

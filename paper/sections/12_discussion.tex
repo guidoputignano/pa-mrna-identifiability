@@ -29,16 +29,34 @@ there.
 
 \subsection{Summary of the four claims}
 
-The identification result is the positive one and it is actionable now: the excitation is
-already being administered, and a protocol can lose it by scheduling bloods on dosing days: a choice made for convenience that costs a factor of twenty-two. That finding does not
-depend on the estimand question at all, and it survives everything below it.
+\textbf{The contribution is the design rules, with a scope condition attached, and not
+the capacity estimate.} What transfers from this paper is a set of statements about
+identifying a saturable channel from a marker under a known periodic input: carry the
+input as a regressor, never sample at its period or a multiple of it, record the driving
+load as eaten and to a stated accuracy, and establish where in the parameter range the
+target is recoverable before quoting a precision anywhere in it. The precision on $\theta$
+is an illustration of those rules at normal capacity. It is not the result, and
+Section~\ref{sec:scopeprec} is why.
 
-The second claim is the one that should change how the problem is posed. The
-decision was never blocked by identifiability. It is blocked because the boundary it is
-taken against is stipulated rather than measured: two chosen constants move it by a factor
-of $24$, and the paper's own choice sits a quarter of a per cent from its own sign-flip
-point. Improving the estimate of $\theta$ cannot repair that, and neither can a larger
-cohort.
+The first claim is the positive one and it is actionable now: the excitation is already
+being administered, and a protocol can lose it by scheduling bloods on dosing days, a
+choice made for convenience that costs a factor of $27$ ($21$ to $33$ across intake
+records). That finding does not depend on the estimand question at all, it survives
+everything below it, and it survives the scope limit: at a disease-range capacity the same
+choice still costs a factor of $16$ on $\theta$ and $20$ on $K_m$. \textbf{It is the rule,
+not the number, that is the result.}
+
+The second claim is the one that should change how the problem is posed, and it now
+needs a scope condition it did not carry before. At capacities near normal the decision is
+not blocked by identifiability. It is blocked because the boundary it is taken against is
+stipulated rather than measured: two chosen constants move it by a factor of $24$, and the
+paper's own choice sits a quarter of a per cent from its own sign-flip point. Improving
+the estimate of $\theta$ cannot repair that, and neither can a larger cohort.
+\emph{In the disease range both block}, because by Section~\ref{sec:scopeprec} the record
+does not bound $\theta$ from below at all there. An earlier version of this summary said
+the decision was never blocked by identifiability, without qualification. That is
+withdrawn: it was true of the illustrative patient and not of the patient the paper is
+about.
 
 The third and fourth claims bound what should replace it. The only endpoint evidence
 available reports a smooth dose--response and no threshold, which argues against the
@@ -48,8 +66,20 @@ patient's own operating point the model-based rate is thirteen times \emph{worse
 reading the same rate off the measured marker, the published exponent is known only to a
 factor of $4.8$, and the map has no published reference concentration to anchor it. The
 reasoning is in the audit record rather than here, because a rejected estimand is not a
-result. And by Section~\ref{sec:scope} the capacity a mechanistic estimand would report
-stops being recoverable in the patients it matters most for.
+result. And by Section~\ref{sec:scopeprec} the capacity a mechanistic estimand would
+report stops being recoverable in the patients it matters most for: the monthly design
+meets its target only for capacities between about $82\%$ and $627\%$ of normal, and the
+disease sits a factor of $16$ below that band.
+
+What is left in that range is not nothing, and it is the shape of the answer this paper
+can honestly give. The half-saturation $K_m$ is determined to about $6\%$ at every
+capacity (Remark~\ref{rem:kmrecovered}), the record supplies an upper bound on $\theta$
+even where it supplies no lower one, and every design rule above holds. What is gone is
+the point estimate of capacity. That is an argument for two external measurements rather
+than for a larger study: Tier~1 of Section~\ref{sec:spec} anchors capacity directly, and
+the non-enzymatic clearance $k_e$ is the cheaper second target, worth a factor of $2.1$ at
+normal capacity and $6.9$ in the disease range, though even an exact $k_e$ leaves $0.388$
+there.
 
 \subsection{A common pattern across the three results}
 \label{sec:pattern}
@@ -66,9 +96,14 @@ train contributes is not a bigger increment but a \emph{moving} one, and the fac
 $1 + \Delta/\theta$ ranging over $2.64$ is what supplies forty-two times the marker band.
 \item \textbf{The load.} Proposition~\ref{prop:rank} is exactly singular at a constant
 recorded load, and the identity names its own cure: it needs $-1/L$ to be one constant.
-So what closes it is the day-to-day \emph{variability} of ordinary eating. Recording the
-same intake twenty times more precisely is worth six per cent; half a per cent of variation
-restores full rank outright.
+So what closes it is the day-to-day \emph{variability} of ordinary eating, and half a per
+cent of it restores full rank outright. An earlier version of this bullet added that
+recording the same intake twenty times more precisely is worth six per cent, and that is
+withdrawn (\texttt{REVIEW\_LOG.md} R17): the sweep behind it moved the record's
+\emph{variability} and never its \emph{accuracy}, which enters through $\sigma$ and is the
+binding requirement of Section~\ref{sec:spec}. Both halves are true of this bullet's own
+point, that variability is what closes the rank deficiency; what is not true is that
+accuracy is therefore cheap.
 \item \textbf{The channels.} the channel-exchange result (supplement \S S1) breaks an exchange only when
 the inputs on two channels differ \emph{non-constantly}. A constant increment is absorbed
 into the amplitude it rides on and separates nothing, however large it is.
