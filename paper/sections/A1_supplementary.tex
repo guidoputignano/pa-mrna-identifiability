@@ -136,6 +136,79 @@ above, and Remark~\ref{rem:kmrecovered}'s $K_m$ is not exempt from the same argu
 Everything it might be read to claim about a \emph{number} is not.
 \end{remark}
 
+\subsection{Derivations for the excitation condition}
+\label{sec:excitationproofs}
+
+Three arguments moved here from Section~\ref{sec:excitation}, which states their
+conclusions. Nothing in them is new.
+
+\paragraph{Proposition~\ref{prop:excitation}, the two degeneracies.} Both are limits of the
+sensitivity columns \eqref{eq:columns}. The first three tend to
+$\bigl(\theta m/K_m,\, -(\theta+\Delta)m/K_m,\, k_e m\bigr)$ as $m/K_m \to 0$ and to
+$(\theta,\, 0,\, k_e m)$ as $m/K_m \to \infty$. At a fixed regimen, where $\Delta$ is
+constant over the record, all three of the first are proportional to $m$ at the low end,
+giving rank one together with the constant fourth; at the high end the first is constant and
+coincides with the fourth. Rank two at both ends.
+
+A varying $\Delta$ changes the low end and not the high end. At the low end the second
+column is proportional to $(\theta+\Delta_i)m_i$ rather than to $m_i$, so it leaves the span
+of the other two as soon as $\Delta$ takes more than one value, and the limit is rank three.
+At the high end $g \to 1$ makes the first column constant and therefore parallel to the
+fourth \emph{whatever $\Delta$ does}, because $\Delta$ multiplies $g$ and $g$ is no longer
+moving. Part~(2) is untouched by any dosing schedule.
+
+\paragraph{Proposition~\ref{prop:straddle}, the optimal placement.} Put $x = m_{\min}/K_m$,
+so $E = (1+x)^{-1} - (1+rx)^{-1}$. Then $\partial E/\partial x = -(1+x)^{-2} + r(1+rx)^{-2}$,
+which vanishes when $\sqrt r\,(1+x) = 1 + rx$, that is at $x = 1/\sqrt r$. Substituting gives
+$E_{\max} = \sqrt r/(\sqrt r + 1) - 1/(1+\sqrt r) = (\sqrt r - 1)/(\sqrt r + 1)$, and
+inverting it gives the requirement on $r$.
+
+\paragraph{Proposition~\ref{prop:rank}, the load-bias identity.} Written forwards, solving
+for the dependence rather than verifying a stated one, so that it is visible why $k_e$ drops
+out. Write $u = m/(K_m+m)$, so that $1-u = K_m/(K_m+m)$ and
+\begin{equation}
+m\,(1-u) \;=\; K_m\, u, \qquad m \;=\; \frac{K_m\,u}{1-u}.
+\label{eq:usubs}
+\end{equation}
+Work with the balance itself, $G := (\theta+\Delta)\,u + k_e m - L - b$. The marker enters
+every sensitivity through the same factor $\partial G/\partial m$, which cancels from any
+linear dependence among the columns, so it is enough to find a dependence among
+\begin{equation}
+\pd{G}{\theta} = u, \qquad
+\pd{G}{K_m} = -(\theta+\Delta)\,\frac{u(1-u)}{K_m}, \qquad
+\pd{G}{k_e} = m, \qquad
+\pd{G}{b} = -1.
+\label{eq:Gsens}
+\end{equation}
+Ask for constants $(a, \beta, \gamma, e)$, not depending on the sample, with
+$a\,\partial_\theta G + \beta\,\partial_{K_m} G + \gamma\,\partial_{k_e} G
++ e\,\partial_b G = 0$ for every $\Delta$. The increment is eliminated by the balance
+itself, $(\theta+\Delta)\,u = L + b - k_e m$, so the second term is
+$-(\beta/K_m)\bigl[(L+b)(1-u) - k_e K_m u\bigr]$ by \eqref{eq:usubs}. Substituting, and
+using $m = K_m u/(1-u)$ in the third term, the condition becomes
+\begin{equation}
+\underbrace{\gamma\,\frac{K_m u}{1-u}}_{\text{pole at }u=1}
+\;+\; \Bigl(a + \frac{\beta (L+b)}{K_m} + \beta k_e\Bigr) u
+\;-\; \Bigl(e + \frac{\beta (L+b)}{K_m}\Bigr) \;=\; 0.
+\label{eq:inu}
+\end{equation}
+The three groups are linearly independent as functions of $u$, so each vanishes. The first
+forces $\gamma = 0$: the alternative clearance is the one direction that cannot enter a
+dependence, because $m$ is the only sensitivity that is not a polynomial in $u$. The
+remaining two give $a = -\beta((L+b)/K_m + k_e)$ and $e = -\beta(L+b)/K_m$, a
+one-dimensional family, and taking $\beta = -K_m$ gives \eqref{eq:nullvec}. Dividing through
+by $\theta(L+b)$ and rescaling the first two components to logarithmic parameters gives
+$c_\theta = (1 + K_m k_e/(L+b))/\theta$ and $c_{K_m} = -1/(L+b)$.
+
+Every step used $L$ as a constant. If the recorded load varies, $L \to L_i$, then $e$ and
+$a$ acquire an index and no sample-independent $n$ exists, which is the last clause of the
+proposition.
+
+\textbf{Carrying $b$ is what makes this the tangent to the exact fibre.} The vector at
+$b = 0$ annihilates the Jacobian at the truth and fails to at $b = 31.6$, and integrating it
+gives $K_m = K_m^{0}e^{-b/L}$, which leaves \eqref{eq:fibrecl} at second order. With $b$
+carried, the field's integral curve \emph{is} that fibre, with symbolic difference zero.
+
 \subsection{Two conditionings, kept separate}
 
 \begin{remark}[Two conditionings, kept separate]
