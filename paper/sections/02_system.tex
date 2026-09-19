@@ -93,7 +93,6 @@ not reachable from the top box was moved to Appendix~\ref{sec:supp} in the restr
 \end{figure}
 
 
-\begin{adjustwidth}{-1.4cm}{-1.4cm}
 \begin{table}[htbp]
 \centering
 \footnotesize
@@ -197,9 +196,7 @@ admissions reliably coded; only a minority of all events lead to admission \\
 \bottomrule
 \end{tabular}
 \end{table}
-\end{adjustwidth}
 
-\begin{adjustwidth}{-1.4cm}{-1.4cm}
 \begin{table}[htbp]
 \centering
 \footnotesize
@@ -209,6 +206,10 @@ below which a tolerable steady state cannot be held, is used here ahead of its d
 the local reduction and the ceiling hypothesis define it by convention at
 \eqref{eq:thcrit}, and the equilibrium reduction intrinsically at \eqref{eq:thcrit_int}.}
 \label{tab:models}
+%  six columns of prose come to 0.905\textwidth plus five column gaps, which
+%  is 14.6pt past the measure. The widening goes here, inside the float,
+%  because a float sets its contents at \textwidth whatever wraps it.
+\begin{adjustwidth}{-1.0cm}{-1.0cm}
 \begin{tabular}{@{}p{0.035\textwidth} p{0.235\textwidth} p{0.175\textwidth} p{0.185\textwidth} p{0.145\textwidth} p{0.13\textwidth}@{}}
 \toprule
 & \textbf{Clearance structure} & \textbf{Equilibria} & \textbf{Question answered}
@@ -239,8 +240,8 @@ hypothesis; a discriminating observable exists and is tested at group level only
 one of the three in which $\thc$ is well posed \\
 \bottomrule
 \end{tabular}
-\end{table}
 \end{adjustwidth}
+\end{table}
 
 Every constant these three models use is registered, with its value, its source and
 what assuming it costs, in Table~\ref{tab:paramsfull} of \S S2. The register is generated

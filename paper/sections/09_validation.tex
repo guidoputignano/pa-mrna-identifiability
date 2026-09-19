@@ -80,7 +80,6 @@ study would be measuring the marker method's imprecision and not the agreement b
 comparable methods.
 
 
-\begin{adjustwidth}{-1.4cm}{-1.4cm}
 \begin{table}[htbp]
 \centering
 \footnotesize
@@ -89,9 +88,13 @@ restored: the same design evaluated with the therapeutic increment dropped from 
 sensitivity while still being used to generate the levels. That column is the error the
 corrected footing repairs, and it is here rather than in the paper because seven columns
 do not fit the page.}
+%  the widening has to be INSIDE the float: a float sets its contents at
+%  \textwidth whatever the surrounding text block is doing, so an
+%  adjustwidth wrapped around \begin{table} does nothing at all.
+\begin{adjustwidth}{-1.4cm}{-1.4cm}
 \input{../results/tables/tab_D_designs_full}
-\end{table}
 \end{adjustwidth}
+\end{table}
 
 \emph{The second consequence does not hold with the dose train carried.} It holds on the
 footing of the last column of Table~\ref{tab:designs}, the increment used to generate the

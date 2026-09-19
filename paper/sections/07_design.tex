@@ -84,7 +84,6 @@ much of the dose cycle they see, not how many samples they take.}
 \label{fig:D2}
 \end{figure}
 
-\begin{adjustwidth}{-1.4cm}{-1.4cm}
 \begin{table}[htbp]
 \centering
 \footnotesize
@@ -94,9 +93,13 @@ fourth column is the range of the therapeutic increment the design actually sees
 rather than $n$, is what orders the table. The supplement, \S S1, repeats the table with
 one further column: the same design evaluated with the increment dropped from the
 sensitivity while still being used to generate the levels.}
+%  the widening has to be INSIDE the float: a float sets its contents at
+%  \textwidth whatever the surrounding text block is doing, so an
+%  adjustwidth wrapped around \begin{table} does nothing at all.
+\begin{adjustwidth}{-1.4cm}{-1.4cm}
 \input{../results/tables/tab_D_designs}
-\end{table}
 \end{adjustwidth}
+\end{table}
 
 The gate passes, and it passes on ordinary outpatient care. Sampling monthly across dose
 cycles for two years, twenty-five draws, no excursion and no admission, reaches
@@ -324,7 +327,6 @@ capacity, and that no sample falls inside the post-dose settling window. All
 twenty hold for the design recommended here, as constructed rather than by
 repair.
 
-\begin{adjustwidth}{-1.0cm}{-1.0cm}
 \begin{table}[htbp]
 \centering
 \footnotesize
@@ -333,7 +335,6 @@ verdicts on the recommended design. The evidence for each is in the
 supplement, \S S1.}
 \input{../results/tables/tab_S_admissible_compact}
 \end{table}
-\end{adjustwidth}
 
 \paragraph{The settling window, and the two definitions of it.} How long after
 a dose the marker is still catching up is a tolerance and not a constant, and
@@ -367,7 +368,6 @@ the same gate is reached in ten monthly visits on one row and not at all
 within sixty on another. The committed calibration is one point in a
 defensible range, and the range is what a protocol should be written against.
 
-\begin{adjustwidth}{-1.0cm}{-1.0cm}
 \begin{table}[htbp]
 \centering
 \footnotesize
@@ -375,9 +375,13 @@ defensible range, and the range is what a protocol should be written against.
 costs the design. Every row is admissible on the capacity ceiling at the $5\%$
 reference. Visits are monthly visits to reach the $0.20$ gate, a median over
 eight intake records, searched to sixty.}
+%  the widening has to be INSIDE the float: a float sets its contents at
+%  \textwidth whatever the surrounding text block is doing, so an
+%  adjustwidth wrapped around \begin{table} does nothing at all.
+\begin{adjustwidth}{-1.0cm}{-1.0cm}
 \input{../results/tables/tab_S_dosesens}
-\end{table}
 \end{adjustwidth}
+\end{table}
 
 \subsection{Candidate sources of excitation}
 \label{sec:excursion_table}
@@ -385,8 +389,6 @@ eight intake records, searched to sixty.}
 Each accessible source of variation moves the marker by a known amount, in a known
 direction, from a known place. Table~\ref{tab:excursion} evaluates \eqref{eq:E} on each.
 
-\begin{adjustwidth}{-1.0cm}{-1.0cm}
-\begin{adjustwidth}{-1.4cm}{-1.4cm}
 \begin{table}[htbp]
 \centering
 \footnotesize
@@ -395,10 +397,14 @@ $E \approx 0.50$ the decision requires. Direction matters: the curvature is at h
 most of what a chart contains moves the patient the other way. The last column is how much
 of the excitation a band of that fold range \emph{could} have delivered if it had straddled
 $K_m$, so it separates being too narrow from being in the wrong place.}
+%  the widening has to be INSIDE the float. A float sets its contents at
+%  \textwidth whatever the surrounding text block is doing, so an adjustwidth
+%  wrapped around \begin{table} does nothing at all, and this table was
+%  overhanging the measure by 22.8pt while appearing to have been given room.
+\begin{adjustwidth}{-1.2cm}{-1.2cm}
 \input{../results/tables/tab_D_excursion}
+\end{adjustwidth}
 \end{table}
-\end{adjustwidth}
-\end{adjustwidth}
 
 Everything routine is in the wrong place rather than merely too narrow. The inter-dose
 recovery, the carnitine dose steps and the cyclical antibiotics all deliver between a

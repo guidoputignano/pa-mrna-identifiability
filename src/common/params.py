@@ -557,8 +557,11 @@ def write_params_table(compact=False, name=None):
     #  0.89 of the line the table ran 46pt past the rule
     widths = ((r"p{0.075\linewidth} p{0.085\linewidth} p{0.22\linewidth} "
                r"p{0.11\linewidth} p{0.31\linewidth}") if compact else
-              (r"p{0.06\linewidth} p{0.07\linewidth} p{0.17\linewidth} "
-               r"p{0.09\linewidth} p{0.40\linewidth}"))
+              #  the symbol and value columns carry unbreakable math --
+              #  $s_1 = s_2$, $3000$ $\mu$M/d -- which at 0.06 and 0.07 ran
+              #  past their own column and took the whole row with them
+              (r"p{0.08\linewidth} p{0.10\linewidth} p{0.15\linewidth} "
+               r"p{0.085\linewidth} p{0.335\linewidth}"))
     head = [r"\textbf{Symbol} & \textbf{Value} & \textbf{Meaning} & "
             r"\textbf{Source} & " + last + r" \\"]
     body = [r"\begin{longtable}{@{}" + widths + r"@{}}",
