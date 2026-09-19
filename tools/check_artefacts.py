@@ -27,6 +27,11 @@ decision characteristic costs minutes.
         hazard, since a dirty tree then says nothing about drift.
 
 Exit status is 1 if anything differs, so either mode can gate a build.
+
+One table is exempt from byte equality and compared number by number
+instead, because its cells are simulated and a simulated number does not
+reproduce bit for bit on another machine. What the exemption is, how narrow
+it is, and what measurement sets its tolerance are all at SIMULATED below.
 """
 import argparse
 import io
@@ -43,6 +48,96 @@ sys.path.insert(0, str(ROOT / "src"))
 #: matplotlib writes the wall clock into every PDF. Nothing about the drawing
 #: changes when it does, so the comparison ignores these two fields.
 PDF_DATES = re.compile(rb"/(CreationDate|ModDate)\s*\([^)]*\)")
+
+#: Tables whose cells are Monte Carlo estimates, with the relative tolerance
+#: their comparison allows.
+#:
+#: A simulated number is not byte-reproducible across machines. numpy's exp
+#: takes a different SIMD path on a different CPU, which moves a least-squares
+#: trajectory by an ulp, which flips the sign of a replicate that sat on the
+#: decision boundary. Measured here by perturbing the synthetic record by a
+#: relative 1e-13 -- a few ulp, the size of the effect -- a cell of the
+#: decision table moves by up to 0.04 percentage points, which is enough to
+#: print 2.9 where another machine prints 3.0. CI observed exactly that: two
+#: runners on the SAME commit, minutes apart, one passing and one failing
+#: (runs 35472135298 and 35472137934).
+#:
+#: So for these, and only these, the rule is weaker but still sharp: the first
+#: column and every non-numeric character must match exactly, the numbers must
+#: line up one for one, and each must agree to within the tolerance below.
+#: Five per cent is well inside the seed-to-seed spread of every cell in this
+#: table (6 to 11 per cent of its own value), so nothing meaningful about the
+#: estimate escapes the check, and it is orders of magnitude inside the drift
+#: the check exists to catch -- the design table froze at a factor of 20 off.
+SIMULATED = {"tab_D_decision.tex": 0.05}
+
+#: a signed decimal or scientific literal, wherever it sits in the markup
+NUMBER = re.compile(r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?")
+
+
+def cells_agree(old, new, rel):
+    """
+    True if two cells say the same thing and their numbers agree to `rel`.
+
+    The text around the numbers has to be identical -- a changed word, a
+    changed column, a number that appeared or vanished, all fail.
+    """
+    if NUMBER.sub("#", old) != NUMBER.sub("#", new):
+        return False
+    a = [float(x) for x in NUMBER.findall(old)]
+    b = [float(x) for x in NUMBER.findall(new)]
+    return all(abs(x - y) <= rel * max(abs(x), abs(y), 1e-30)
+               for x, y in zip(a, b))
+
+
+def simulated_match(old, new, rel):
+    """
+    Compare a table whose cells are simulated.
+
+    Structure is compared exactly: the same lines, the same number of columns
+    on each, the same row labels. Only the value columns get the tolerance.
+    """
+    a, b = old.splitlines(), new.splitlines()
+    if len(a) != len(b):
+        return False
+    for x, y in zip(a, b):
+        if x == y:
+            continue
+        fx, fy = x.split("&"), y.split("&")
+        #  a line with no columns is rule, header or note: it must match
+        if len(fx) != len(fy) or len(fx) == 1:
+            return False
+        #  the row label is not a simulated quantity
+        if fx[0] != fy[0]:
+            return False
+        if not all(cells_agree(u, v, rel) for u, v in zip(fx[1:], fy[1:])):
+            return False
+    return True
+
+
+def same_table(name, old, new):
+    """Byte equality, unless `name` is a table this file declares simulated."""
+    if old == new:
+        return True
+    rel = SIMULATED.get(name)
+    return rel is not None and simulated_match(old, new, rel)
+
+
+def tolerated(path, head):
+    """
+    True if a declared-simulated table differs only within its tolerance.
+
+    `head` is the committed copy as raw bytes, which is how git hands it over.
+    Anything that is not one of these tables, or does not decode as text, is
+    not tolerated and falls through to the ordinary comparison.
+    """
+    rel = SIMULATED.get(path.name)
+    if rel is None:
+        return False
+    try:
+        return simulated_match(head.decode(), path.read_text(), rel)
+    except UnicodeDecodeError:
+        return False
 
 
 def canonical(path_or_bytes):
@@ -116,7 +211,7 @@ def check_regenerated(live=None):
                 bad.append((name, "regenerated but not committed"))
                 continue
             checked += 1
-            if old.read_text() != new.read_text():
+            if not same_table(name, old.read_text(), new.read_text()):
                 a, b = old.read_text().splitlines(), new.read_text().splitlines()
                 n = sum(1 for x, y in zip(a, b) if x != y) + abs(len(a) - len(b))
                 bad.append((name, f"differs on {n} line(s)"))
@@ -163,7 +258,7 @@ def check_working_tree():
     out = subprocess.run(["git", "-C", str(ROOT), "status", "--porcelain",
                           "results"], capture_output=True, text=True).stdout
     paths = [line[3:].strip() for line in out.splitlines() if line.strip()]
-    real, dates_only, rendered = [], [], []
+    real, dates_only, rendered, simulated = [], [], [], []
     for rel in paths:
         p = ROOT / rel
         is_figure = "/figures/" in rel
@@ -177,6 +272,8 @@ def check_working_tree():
                 (rel, "not committed"))
         elif canonical(p) == canonical(head):
             dates_only.append(rel)
+        elif tolerated(p, head):
+            simulated.append(rel)
         elif is_figure:
             rendered.append((rel, "renders differently"))
         else:
@@ -189,6 +286,9 @@ def check_working_tree():
     real += missing
     print(f"  {len(paths)} artefact(s) differ from HEAD by bytes;"
           f" {len(dates_only)} by their embedded dates alone")
+    for rel in simulated:
+        print(f"  {rel}: simulated cells within tolerance, structure "
+              f"unchanged (see SIMULATED)")
     if rendered:
         print(f"  {len(rendered)} figure(s) render differently, which is not"
               f" checked here (see this function's docstring):")

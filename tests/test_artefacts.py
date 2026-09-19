@@ -77,3 +77,82 @@ def test_three_distinct_levels_identify_the_local_model():
                          ([10.0, 12.0, 14.0, 16.0], 3)):
         S = np.array([sensitivity_A(m, p) for m in levels])
         assert np.linalg.matrix_rank(S, tol=1e-10) == want, levels
+
+
+#  ------------------------------------------------------------------ the
+#  exemption for simulated cells. The decision table's cells come out of a
+#  nonlinear least-squares fit to 400 synthetic records, twelve times over.
+#  That does not reproduce bit for bit on another machine, and CI proved it:
+#  two runners on the same commit, one printing 2.9 where the other printed
+#  3.0. The guard tolerates that and nothing else, and these are the tests
+#  that say where the line is.
+
+def _decision_table():
+    return (ROOT / "results" / "tables" / "tab_D_decision.tex").read_text()
+
+
+def test_the_measured_machine_noise_is_tolerated():
+    """The exact difference CI saw between two runners must not fail."""
+    import check_artefacts
+    old = _decision_table()
+    new = old.replace(r"$42.3\% \pm 2.9$", r"$42.3\% \pm 3.0$", 1)
+    assert new != old, "the table no longer contains the cell this tests"
+    assert check_artefacts.same_table("tab_D_decision.tex", old, new)
+
+
+def test_the_tolerance_does_not_apply_to_other_tables():
+    """Only the declared table is exempt; every other one stays byte-exact."""
+    import check_artefacts
+    old = _decision_table()
+    new = old.replace(r"$42.3\% \pm 2.9$", r"$42.3\% \pm 3.0$", 1)
+    assert not check_artefacts.same_table("tab_D_designs.tex", old, new)
+
+
+def test_drift_past_the_tolerance_still_fails():
+    """A number that moved by more than the simulation's own noise."""
+    import check_artefacts
+    old = _decision_table()
+    for was, now in ((r"$19.1\% \pm 2.1$", r"$22.0\% \pm 2.1$"),
+                     (r"$4900$", r"$7000$")):
+        new = old.replace(was, now, 1)
+        assert new != old, f"the table no longer contains {was}"
+        assert not check_artefacts.same_table("tab_D_decision.tex", old, new)
+
+
+def test_structure_is_still_compared_exactly():
+    """Everything that is not a value in a value column fails on any change."""
+    import check_artefacts
+    old = _decision_table()
+    cases = {
+        "row label": (r"monthly across dose cycles", r"weekly across dose cycles"),
+        "words in a cell": (r"n/a", r"n/b"),
+        "the note": (r"twelve seeds", r"eleven seeds"),
+        "the header": (r"\textbf{cohort $N$}", r"\textbf{cohort $M$}"),
+    }
+    for what, (was, now) in cases.items():
+        new = old.replace(was, now, 1)
+        assert new != old, f"the table no longer contains {was} ({what})"
+        assert not check_artefacts.same_table("tab_D_decision.tex", old, new), what
+    #  a dropped row is a changed line count
+    lines = old.splitlines()
+    dropped = "\n".join(lines[:4] + lines[5:]) + "\n"
+    assert not check_artefacts.same_table("tab_D_decision.tex", old, dropped)
+
+
+def test_the_working_tree_mode_uses_the_same_rule(tmp_path):
+    """CI runs --working-tree, which compares a file on disk with git's bytes.
+
+    The unit tests above exercise the comparison; this one exercises the path
+    that reaches it from a working tree, because that is the one CI takes.
+    """
+    import check_artefacts
+    head = _decision_table()
+    on_disk = tmp_path / "tab_D_decision.tex"
+    on_disk.write_text(head.replace(r"$42.3\% \pm 2.9$", r"$42.3\% \pm 3.0$", 1))
+    assert check_artefacts.tolerated(on_disk, head.encode())
+    on_disk.write_text(head.replace(r"$42.3\% \pm 2.9$", r"$42.3\% \pm 9.9$", 1))
+    assert not check_artefacts.tolerated(on_disk, head.encode())
+    #  a table that is not declared simulated gets no tolerance at all
+    other = tmp_path / "tab_D_designs.tex"
+    other.write_text(head.replace(r"$42.3\% \pm 2.9$", r"$42.3\% \pm 3.0$", 1))
+    assert not check_artefacts.tolerated(other, head.encode())

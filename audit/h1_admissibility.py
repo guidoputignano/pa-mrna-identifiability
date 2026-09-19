@@ -106,9 +106,17 @@ def rates_and_increment():
     m = np.asarray(quasi_steady_level(t), float)
     res = (P.ke * m ** 2
            + (P.ke * P.Km + P.theta + d - LB) * m - LB * P.Km)
+    # The residual is at the level of double-precision rounding, and its
+    # leading digits are not reproducible: np.exp takes a different SIMD path
+    # on a different CPU, so the fourth significant figure of a 1e-9 residual
+    # is the machine, not the arithmetic. Report the decade it falls below,
+    # relative to the scale it is a residual OF, against the tolerance the
+    # check actually applies.
+    rel = float(np.max(np.abs(res))) / (LB * P.Km)
+    decade = 10.0 ** np.ceil(np.log10(rel)) if rel > 0 else 0.0
     record("the closed form solves the balance",
-           bool(np.max(np.abs(res)) < 1e-6 * LB * P.Km),
-           f"worst residual {np.max(np.abs(res)):.3e} against L K_m = {LB*P.Km:.1f}")
+           bool(rel < 1e-6),
+           f"worst residual below {decade:.0e} of L K_m = {LB*P.Km:.1f}")
     record("m(t) > 0 across the cycle", bool(m.min() > 0),
            f"m runs {m.min():.4f} to {m.max():.4f}, m_bar = {M_BAR:g}")
 
