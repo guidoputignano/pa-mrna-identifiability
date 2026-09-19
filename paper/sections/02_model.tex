@@ -334,14 +334,23 @@ either choice, it is not testable from the published data, and Section~\ref{sec:
 Every computed trajectory uses an adaptive
 stiff-capable solver (\texttt{LSODA} or \texttt{Radau}) at relative tolerance $10^{-8}$ or
 tighter, and the estimator of Section~\ref{sec:collapse} does not integrate at all: it uses
-the closed-form quasi-steady level of \eqref{eq:alphaqss}, whose validity is measured rather
-than assumed. Two tests guard this. One halves the integration step and asserts the answer
-does not move by more than $10^{-6}$ relative; the other asserts that an integrated steady
-state equals the closed-form equilibrium reduction to the same tolerance.
+the closed-form quasi-steady level of \eqref{eq:alphaqss}. Two tests guard the integration:
+one halves the step and asserts the answer does not move by more than $10^{-6}$ relative;
+the other asserts that an integrated steady state equals the closed-form equilibrium
+reduction to the same tolerance. \textbf{An earlier version of this paragraph said those
+tests measure the validity of the reduction rather than assuming it. That is withdrawn}:
+neither touches it. The first integrates the local model, and the second integrates the
+\emph{reduced} system and compares it against the algebraic root of the same reduced
+clearance, so the two-state system appears in neither. What licenses the reduction is the
+identity of \S\ref{sec:reduction}, and what bounds its cost off equilibrium is the $k$ row
+of Table~\ref{tab:params}.
 
 Every stochastic result uses \texttt{numpy.random.default\_rng} with an explicit seed named
-at the call site, and each quoted precision is a median over $24$ seeds unless stated
-otherwise. Fitted ensembles are cached on $(\text{design}, \sigma, \mathrm{CV},
+at the call site, and each quoted precision is a median over $24$ intake records with its
+range beside it, unless stated otherwise. \textbf{That sentence stood in this paper before
+it was true.} The record generator's seed was a default argument no caller ever set, so
+every design number was a single draw; the correction and what it moved are in
+\texttt{REVIEW\_LOG.md} R21. Fitted ensembles are cached on $(\text{design}, \sigma, \mathrm{CV},
 \text{reps}, \text{seed})$, so the same design is fitted once and reused across a sweep.
 
 The observation model is on the log scale, so a constant coefficient of variation is a

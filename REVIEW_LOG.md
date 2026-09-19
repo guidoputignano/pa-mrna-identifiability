@@ -1164,6 +1164,15 @@ Other requotings: two-monthly `0.187` to `0.188` `[0.184, 0.194]`; six-monthly `
 `design_record`'s seed is now `BASE_SEED`, with `SEEDS`, `median_spread` and `tex_spread`
 beside it, and both generated tables carry medians with ranges.
 
+**The sharpest part of this one.** Section 2.6 has said, since before this branch,
+that "every stochastic result uses `numpy.random.default_rng` with an explicit seed named
+at the call site, and each quoted precision is a median over 24 seeds unless stated
+otherwise". **Neither half was true.** The seed was a default argument named at no call
+site, and no design precision was a median over anything. The paper asserted a
+methodological standard it did not meet, in the section whose job is to state the standard,
+and the assertion is what makes the defect a retraction rather than an improvement. It is
+true now.
+
 ---
 
 ### R22. The carnitine reduction, reconciled with PR #3 rather than left in conflict
