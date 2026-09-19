@@ -577,3 +577,139 @@ unusual. The fifth column, "what fixes it, or what assuming it costs", does not 
 standard format. And several of the sharpest findings in this audit came out of the
 repository's own records contradicting its own table, which is a system working mid-cycle
 rather than a system failing.
+
+---
+---
+
+# Part 3. The completeness critic's return, checked
+
+The second commissioned lens returned 33 items. Verified as in Part 2. The ones below are new
+and check out; three did not survive and are recorded.
+
+## New and verified
+
+**X14. `kappa` cites the wrong registered source, and the right one is already registered.
+MEDIUM, and free to fix.** `src/common/params.py:101-102` says the direction "is established,
+**carnitine supplementation raising** propionylcarnitine excretion~\cite{carnitine_excretion_pa}".
+`refs.sources` annotates that key as describing the **untreated disease state**: "Two PA and two
+MMA patients ... URINARY EXCRETION OF FREE CARNITINE DECREASED, while excretion of short-chain
+acylcarnitines ... INCREASED." No supplementation. The supplementation experiment is registered
+under a different key, `coa_sequestration`: "Carnitine **given** to an MMA patient ... raised
+short-chain urinary acylcarnitines, and reduced methylmalonate and methylcitrate excretion."
+So the row's claim is true and its citation points at a study that does not make it. Re-cite to
+`coa_sequestration`, noting n = 1 and MMA.
+
+This blunts Part 1's praise of `kappa` slightly. The row's **handling** of an unassignable gain
+remains exemplary; its one citation is misattached.
+
+**X15. Seven registered sources are cited nowhere in the paper, and four of them bear on rows
+that say no source exists. MEDIUM-HIGH.** Counted here: `\cite` occurrences across
+`paper/sections/` and `paper/*.tex` are **zero** for `dbs_3hp_cutoff`, `pa_guidelines`,
+`propionate_sources`, `colonic_propionate`, `metronidazole_pa`, `muscle_catabolism` and
+`mrna_moa` (`breath_test_mma` returns 7, so the count is working).
+
+Four of those are the missing citations this audit has already found separately:
+`propionate_sources` for `s_base`'s partition (D17), `muscle_catabolism` for the illness fold's
+227% to 325% (D8, which quotes the figures with no `\cite` at all), `pa_guidelines` for
+`m_tol`'s "no numeric plasma 3-HP target is published", and `dbs_3hp_cutoff`, whose 38.13 umol/L
+99.9th-percentile cutoff sits beside `M_TOL = 40` with no row saying whether that is a
+coincidence.
+
+The most interesting is `metronidazole_pa`, annotated "Metronidazole 10-20 mg/kg/day in 5 MMA +
+4 PA children. Mean decrease in urinary propionate metabolites 41% ... mean plasma propionate
+45.0 -> 25.1 umol/l." That is a **human in vivo load perturbation with a measured plasma
+response**, which is the closest published object to the excitation experiment this paper
+designs, and it is cited nowhere. Whether it bounds `k_e` or the local slope is a question the
+`k_e` row's "no direct measurement exists" should answer rather than pass over.
+
+**X16. The claim register does not gate the table, and it extends D-nothing: this is new.**
+`paper/sections/A2_reproducibility.tex:53-56` states that "Every factual assertion has a row in
+`paper/claims.csv` ... `make audit` fails while any row is contradicted or unsourced".
+`claims.csv` has **46 rows across 9 file targets, none of which is `params.py` or the parameter
+table**. The table is injected from `results/tables/tab_params.tex`, so its cited assertions and
+its three uncited ones (the `<5%` figure, the 250-400 umol/kg/day figure, the 227-325% figure)
+never reach the gate at all. Four of the nine targets are also dead paths (X13).
+
+**X17. The untreated patient sits at 93% of the null ceiling. HIGH, and it sharpens D5 and X8.**
+Computed here from the registry: the load at the operating point is `L = 322.73`, so the
+`theta -> 0` ceiling is `L/k_e = 64.55 = 6.45x m-bar`, which matches
+`paper/sections/11_scope.tex:16` verbatim ("which at the illustrative values is `6.45` times the
+managed level"). The untreated 3-HP the `m-bar` row itself quotes, 60.1 uM, is **6.0x m-bar,
+which is 93% of that null ceiling**, and Section 11's table gives an elasticity of `0.072` at
+6.00x. So on the row's own quoted scale an untreated patient is indistinguishable from a patient
+with no capacity at all, and `m-bar = 10` is the favourable end of the interval. The row says
+only "a managed patient sits between the two" and nothing about where.
+
+**X18. The `<5% of control` figure is unsourced at the audited commit, and is the only empirical
+statement about `theta` in the paper.** It appears at `params.py:67` and `:144` with no `\cite`,
+and `refs.sources:177` shows the candidate `residual_carboxylase` commented out in a
+not-resolved block. **Scope correction to the critic:** this is true at `f71bf9a` and is already
+closed on this branch, where commit `5197106` registered `pcc_residual_activity` (Hsia et al.
+1979, PMID 481943, verified: "Each of seven lines from patients with propionic acidemia had
+clearly detectable PCC activity which was less than 5% of that in control lines"). The two
+`theta` rows can cite it today, with the caveat that it is fibroblast enzymology rather than in
+vivo hepatic capacity.
+
+**X19. `K_c`'s stated cost basis spans a range the repository's own admissibility analysis
+excludes.** `src/common/models.py:95-101` bounds the cost "over `Kc` from 25 to 800, a 32-fold
+range". `src/model_C/run.py:615-621` records that the published figures for this "do not
+reproduce under either" convention, and `REVIEW_LOG.md` section 0.1 gives the corrected reading:
+the admissible window is two-sided, roughly `K_c` in `[100, 300]`, inside which `theta` moves by
+1.41. So the cost is quoted over a range most of which is inadmissible, and `K_c = 100` sits at
+the edge of what survives.
+
+**X20. "Cost bounded in supplement S1" points nowhere locatable.** Three rows use it
+(`params.py:99`, `:151`, `:159`, `:181`) for three different things. S1 is the whole supplement:
+`A1_supplementary.tex:7` is its only `\section` and seven files are `\input` inside it. The cost
+bounds actually live in `rem:shape` at `paper/sections/03_dynamic.tex:395-425`.
+
+**X21. "Twenty registered constants" is seventeen.** The main caption
+(`02_model.tex:263`) counts twenty, but `kappa` is "not assigned", `sigma` is "a family" and `k`
+"cancels", so three rows carry no constant. Twenty **rows**, seventeen constants.
+
+**X22. Six rows violate the file's own governing rule, and `K_m` is the one that matters.**
+`params.py:19-20`: "An `assumed` row is not a defect on its own. An `assumed` row **with no bound
+on what it costs** is." No cost is stated for `K_m` (both blocks), `CV`, `D`, the illness fold,
+or the PARENT `theta`. `K_m` is the costly omission because the paper's central negative result
+is stated at `m-bar/K_m = 0.1`: `07_design.tex:291-293` says the routine sources deliver
+"between a fifth and a quarter of what their own fold range could deliver, **because they happen
+an order of magnitude below `K_m`**". Move `K_m` and that verdict moves. The caption's protection,
+that results are "reported relative to the patient's own operating level", does not reach it,
+because the excitation measure depends on `m/K_m` and not on `m/m-bar`. **The cost of assuming
+`K_m = 100`, expressed as the range of the excitation measure over a defensible `K_m` range,
+does not exist anywhere in the repository.** That is the single largest computable gap this
+audit found.
+
+## Three critic claims that did not survive
+
+**R-d. It says the capacity-ceiling test "passes only because it adopts the other reading".
+False.** `tests/test_models.py:1533` carries
+`@pytest.mark.parametrize("frac", [0.05, 0.10])` and the test is named
+`test_the_capacity_ceiling_holds_at_both_readings_of_the_reference`, with a docstring stating
+"**neither reading is chosen here: both must hold**". The test runs at both fractions and
+asserts the ceiling at each. The critic read the body and not the decorator. The underlying
+open question, 5% or 10%, is real and is `OPEN_QUESTIONS.md` (b); the test is not evidence for
+it.
+
+**R-e. Its `rho_0` item is a consistency defect only, and it says so itself.**
+`src/model_C/run.py:663` still samples `rng.uniform(0.35, 1.0)` using the bound `REVIEW_LOG.md:59`
+re-derived at 0.195. The critic recomputed `theta_crit` at 147.1 and 152.1 across the corrected
+range against 149.7 to 152.1 across the stale one, so the conclusion does not move. Recorded as
+the stale number it is (X12), not as a numerical error. Credit where due: the critic bounded its
+own finding rather than inflating it.
+
+**R-f. Its `sigma` units item is marked "COULD NOT SETTLE" and is left that way here.** It
+observes that `sigma_total` is built in flux units while `A2_reproducibility.tex:47-49` describes
+a log-scale observation model under which "`sigma` has unambiguous units", and could not
+determine which construction the specification numbers use. Neither could this pass. It is
+recorded as an open question, not a finding.
+
+## What this does to the priority list, finally
+
+No reordering. X22 joins the list as a new item: **compute what assuming `K_m = 100` costs**,
+because it is the one gap here that is both load-bearing and cheap, and the repository's own
+rule already requires it. X14, X15 and X18 are citation repairs that cost nothing and close four
+rows that currently assert "no source exists" while the source sits registered and uncited.
+
+The audit is complete. Both commissioned lenses have returned and been checked, three of their
+claims were rejected, and nothing outside this file has been changed.
