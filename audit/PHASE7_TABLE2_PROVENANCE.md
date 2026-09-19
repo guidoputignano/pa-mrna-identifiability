@@ -447,3 +447,133 @@ versus nominal 42-day dose-3 interval as new; `audit/PHASE5_ROBUSTNESS.md:685-68
 records both. And PHASE6 section 10 presents the content of the Manoli correction as new;
 `REVIEW_LOG.md` R4 already records that it "restores a graphical abstract and changes no
 numbers". What was new in PHASE6 was the registration of those corrections, not their content.
+
+---
+---
+
+# Part 2. The outside reviewer's return, checked
+
+The pharmacometrics lens commissioned in Part 1 returned after this file was committed. Every
+claim below was **verified against the file before being accepted**; three of its claims did
+not survive, and are recorded as such. The completeness critic has still not returned.
+
+## What it found that Part 1 did not, and that checks out
+
+**X8. D2 is understated. It is a scope objection, not a sensitivity objection. HIGH, and this
+supersedes D2's framing.** `paper/sections/11_scope.tex:22-33` carries a table Part 1 did not
+reach. Verified verbatim:
+
+| `theta`, as % of nominal | marker, x managed | `abs(d ln m / d ln theta)` |
+|---|---|---|
+| 100% | 1.00 | **0.915** |
+| 50% | 1.82 | 0.807 |
+| 20% | 3.41 | 0.537 |
+| 10% | 4.57 | 0.321 |
+| **5%** | 5.40 | **0.173** |
+| 2% | 6.00 | 0.072 |
+| 1% | 6.22 | 0.036 |
+
+The LOCAL block's `theta = 3000` **is the 100% row**, the top and most favourable line of the
+paper's own scope table. Both `theta` rows state that residual PCC activity in PA is under 5%
+of control, which is the `0.173` row, a fifth of the illustrative sensitivity and still
+falling. So the headline `sd(ln theta-hat) = 0.170` is computed at a capacity no patient in
+this indication has, and Section 11 already says in its own words that above about three to
+four times the reference level "residual capacity is no longer recoverable".
+
+The coverage study offered as the generalisation check does not close this.
+`paper/sections/08_specification.tex:216-217` says the sweep is "log-uniform over `theta`
+(nine-fold)" about the same 3000, so at its widest it reaches roughly a third of nominal and
+**never enters the disease range at all**. Part 1's D2 said a conclusion flips between 3000 and
+300. The correct and stronger statement is that the paper's own Section 11 shows the method
+decaying to near zero across exactly the interval the patients occupy, and every headline is
+computed outside it.
+
+**X9. The main-text caption asserts the opposite of the table it captions. HIGH.**
+`paper/sections/02_model.tex:265-266`, verified verbatim:
+
+> "**No conclusion below depends on a value in this table**, and the design results are
+> reported relative to the patient's own operating level."
+
+`paper/sections/08_specification.tex:223-224`, verified verbatim:
+
+> "What spreads it is `Delta/theta`, which correlates with the achieved `sd` at `+0.56` on
+> logs, alongside **`K_m` at `+0.59`**."
+
+So `K_m`'s value is the single strongest correlate of the achieved precision in the paper's own
+coverage study, and `Delta/theta` is next. The caption is false for at least `theta`, `K_m` and
+`D`. Note this is a **different and larger** claim than `rem:no_km`, which establishes only
+that no *prior* on `K_m` is needed: `07_design.tex:36-39` shows the design returns `0.1474`
+with the `K_m` prior, without it, and at a prior twenty times looser. "We need no prior on
+`K_m`" and "nothing depends on `K_m`" are being conflated, and only the first is proved.
+
+**X10. `ILLNESS_FOLD = 1.50` exceeds the load at which the parent model has no equilibrium.
+MEDIUM-HIGH.** Confirmed by my own computation in X1: the parent's clearance peaks at
+**706.4 at m = 276**, and `S_BASE_C = 600`, so the saddle-node sits at **1.177 x baseline
+load**. The registered illness amplitude of 1.50 is 27% beyond it. The row
+(`src/common/params.py:90-95`) discloses "Model C's own fold sits at 1.18" and in the same
+sentence calls 1.50 "a conservative value for a moderate intercurrent illness". Conservative
+for the local model's `theta_crit` arithmetic, and past the point of no return for the parent.
+The two senses are not distinguished.
+
+**X11. The same generated table is typeset twice, and only the supplement defines its Source
+column.** `paper/main.tex` places `tab:params` via `02_model.tex`; `A1_supplementary.tex:547`
+places the same `results/tables/tab_params.tex` as `tab:params_orig` via `02_system.tex:250-253`.
+Only the supplement caption (`02_system.tex:251`) defines `literature`, `derived` and `assumed`.
+A reader of the main paper meets a three-valued Source column that is never defined in the
+document they are holding.
+
+**X12. A second retracted number is still live, this time in the code.**
+`src/common/models.py:109` comments `rho0` as "Bounded below at about **0.35** by the same
+source". `REVIEW_LOG.md:59` retracted it: "lower bound 'about 0.35' is an `R0`-held number;
+**re-derived it is 0.195**." So alongside D10's retracted `12.8%` in the `CV` row, the tree
+carries a second figure the review log has corrected. Neither is in the `params.py` row text,
+so neither reaches Table 2 directly, but both reach a reader of the source.
+
+**X13. `paper/claims.csv` references four section files that no longer exist**:
+`sections/03_model_A.tex`, `sections/05_model_C.tex`, `sections/06_results.tex`,
+`sections/07_open.tex` (plus the sentinel `paper-wide`). The claim register has drifted from
+the section layout, which matters because C46, the claim that settles D1, is one of the rows
+pointing at a dead path.
+
+## Three claims from the reviewer that did not survive checking
+
+**R-a. It praises the `rho_0` lower bound of "about 0.35" as exemplary practice.** The *method*
+is good and the praise is kept, but the *number* is retracted (X12), and it is not in the
+`params.py` row at all, which states only a direction. The reviewer read `models.py:109` and
+took a corrected figure for a current one.
+
+**R-b. It states the coverage sweep is "centred on the same 3000".** The text says log-uniform
+over a nine-fold range; "centred on" is an inference, not a quotation. The conclusion it draws
+is nonetheless right, because even the bottom of a nine-fold range about 3000 is roughly a
+third of nominal and the disease range is under 5%.
+
+**R-c. It attributes "prior-free the design gives 1.03" to `07_design.tex:140-147`.** That span
+says "does not identify it at all without", which supports the direction but is not the number
+quoted. The figure `1.03` was not located and is not relied on here.
+
+## What this does to the priority list
+
+The Part 1 list stands with one change. **Item 3 moves to item 1** and is restated: re-anchor
+the LOCAL `theta`, because Section 11 shows the method dies across the range the patients
+occupy and every other number in the table is computed above it. Either move the illustrative
+`theta` into the disease range and re-report, or relabel the row as the nominal non-disease
+reference, add a disease-range row, re-centre the coverage sweep, and delete both "no
+conclusion may depend on its value" (the row) and "No conclusion below depends on a value in
+this table" (the main caption). The `k_e` route (D1) and the retracted `CV` figure (D10) follow
+as before.
+
+The reviewer's own ranking put this first for the same reason, independently.
+
+## What this registry does better than the norm
+
+The outside lens was explicit and unprompted on this, and it is worth recording against the
+length of the defect list. The `kappa` row is the correct handling of an unidentifiable gain
+and is rarely seen: it names what is established (a sign), what is not (a magnitude), and what
+the non-assignment costs (a rank deficiency). The `K_m` row **refuses** to import a citable in
+vitro constant on principled grounds and then demonstrates it did not need one, where the
+common failure in this literature is the opposite. The `m_tol` row ranks itself as "the most
+expensive assumption in the local model", and a table that ranks its own assumptions by cost is
+unusual. The fifth column, "what fixes it, or what assuming it costs", does not exist in the
+standard format. And several of the sharpest findings in this audit came out of the
+repository's own records contradicting its own table, which is a system working mid-cycle
+rather than a system failing.
