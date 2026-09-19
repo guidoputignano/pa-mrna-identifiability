@@ -106,10 +106,12 @@ class ParamsC:
                             # relative to the conjugation rate constant.
                             # Bounded above by Di Donato: the drain in PA is
                             # dominated by propionylcarnitine, so rho0 < 1.
-                            # Bounded below at about 0.35 by the same source,
-                            # since smaller values push the separatrix far
-                            # enough out that the model predicts free-carnitine
-                            # excretion RISING, which is measured falling.
+                            # Bounded below only by a DIRECTION, not a number:
+                            # free-carnitine excretion is measured falling while
+                            # short-chain acylcarnitine excretion rises. A figure
+                            # of "about 0.35" was quoted here and is RETRACTED;
+                            # re-derived it is 0.195 (REVIEW_LOG.md 0.1). See the
+                            # rho_0 row of common/params.py.
     R0: float = 1122.0085   # carnitine replenishment, CONSTANT. Not free: set
                             # so the alternative route alone peaks at 500
                             # against a baseline load of 600, so a patient with

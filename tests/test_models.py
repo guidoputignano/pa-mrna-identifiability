@@ -650,14 +650,37 @@ def test_params_table_is_the_model_and_not_a_transcription_of_it():
     them. M_i was missing from the paper entirely, which is why Figure 16
     could not be reproduced; a table that can drift would reintroduce that.
     """
-    from common.params import LOCAL, PARENT, M_OP, M_TOL, ILLNESS_FOLD
+    from common.params import (LOCAL, PARENT, M_OP, M_TOL, ILLNESS_FOLD,
+                               KE_PRIOR_LOG, LOAD_FRAC)
     import model_A.run as A
+    import design.run as DR
+    import inspect
     assert (M_OP, M_TOL, ILLNESS_FOLD) == (A.M_OP, A.M_TOL, A.ILLNESS_FOLD)
+    # Phase 7 X2: two constants reached the paper's numbers without a row.
+    # They are registered now, so they must be checked against the module that
+    # actually uses them, exactly as M_OP and its neighbours are.
+    assert LOAD_FRAC == DR.LOAD_FRAC
+    assert KE_PRIOR_LOG == inspect.signature(
+        DR._filter).parameters["ke_prior"].default
+    assert all(r.kind for r in LOCAL + PARENT), "a row with no kind stated" 
     by_symbol = {r.symbol: r for r in PARENT}
     p = ParamsC()
-    assert by_symbol[r"$M_i$"].value == f"{p.Mi:.0f}"
-    assert by_symbol[r"$K_c$"].value == f"{p.Kc:.0f}"
-    assert by_symbol[r"$\rho_0$"].value == f"{p.rho0:.2f}"
+    # The Value column carries units since September 2026, so the check is that
+    # the dataclass number APPEARS in the rendered value, not that it is the
+    # whole of it. The drift this guards against is unchanged: move Mi in the
+    # dataclass without regenerating and the substring stops matching.
+    assert f"{p.Mi:.0f}" in by_symbol[r"$M_i$"].value
+    assert f"{p.Kc:.0f}" in by_symbol[r"$K_c$"].value
+    assert f"{p.rho0:.2f}" in by_symbol[r"$\rho_0$"].value
+    # and a value that is only a number, with no unit, is now the exception
+    dimensionless = {r"$\rho_0$", r"$\kappa$", r"$k$", r"$\mathrm{CV}$",
+                     r"$\spk/s_{\mathrm{base}}$", r"$s_{\ln k_e}$",
+                     r"$\sigma_L/L$"}
+    for r in LOCAL + PARENT:
+        if r.symbol in dimensionless or r.value in ("not assigned", "cancels"):
+            continue
+        assert ("mu$M" in r.value or "d$^{-1}$" in r.value
+                or r.value.endswith("~d")), (r.symbol, r.value)
     assert by_symbol[r"$R_0$"].source == "derived"
     # every other constant of the parent model is assumed, and says so
     assert {r.source for r in PARENT} <= {"derived", "assumed", "literature"}
@@ -1531,16 +1554,18 @@ def test_the_total_load_stays_positive_across_the_load_prior():
 
 
 @pytest.mark.parametrize("frac", [0.05, 0.10])
-def test_the_capacity_ceiling_holds_at_both_readings_of_the_reference(frac):
+def test_the_capacity_ceiling_holds_at_the_adopted_reference_and_the_check(frac):
     """
     theta + Delta_peak <= normal capacity.
 
     `normal` is not a constant of this repository. It is implied by a stated
-    fraction, and src/common/params.py states two of them four lines apart,
-    "about 10% of normal" and "under 5% of control". THE REFERENCE IS A
-    PARAMETER OF THIS TEST and neither reading is chosen here: both must hold.
-    The used fraction is frac (1 + Delta_peak/theta), so theta cancels and the
-    answer is the same in the local and parent blocks.
+    fraction. The author settled the reference at 5% in September 2026
+    (audit/h1_admissibility.py REFERENCE_FRAC), and the 10% reading is kept
+    here as a check that the verdict does not turn on the choice. It cannot:
+    the used fraction is frac (1 + Delta_peak/theta), so theta cancels and the
+    answer is the same in the local and parent blocks. BOTH MUST STILL HOLD,
+    because a reference that changed the verdict would mean the ceiling was
+    being carried by the choice rather than by the model.
     """
     _, P, _, peak = _design()
     normal = P.theta / frac
