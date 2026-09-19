@@ -64,7 +64,10 @@ jobs:
         run: make figures PY=python
       # matplotlib stamps the wall clock into every PDF, so the whole tree
       # reports as changed on every run. The check strips /CreationDate and
-      # /ModDate before comparing, and fails only on a real difference.
+      # /ModDate before comparing. Tables and the numbers file fail on any
+      # remaining difference; figures do not, because a runner's matplotlib
+      # is not the author's and two versions do not render byte-identically
+      # from identical data. A missing or empty figure still fails.
       - name: compare against what is committed
         run: python tools/check_artefacts.py --working-tree
       - name: show what drifted

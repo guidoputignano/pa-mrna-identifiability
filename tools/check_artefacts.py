@@ -139,25 +139,60 @@ def check_regenerated(live=None):
 
 
 def check_working_tree():
+    """
+    Compare results/ against HEAD after a regeneration.
+
+    Tables and the numbers file are text the code writes, so any difference
+    is drift and fails.
+
+    Figures are not. A .pdf or .png is a rendering, and matplotlib does not
+    render byte-identically across versions: a runner with a newer
+    matplotlib, or different fonts, produces different bytes from identical
+    data. Failing on that would report library drift as artefact drift, and
+    the first thing it did was exactly that. So a figure difference is
+    reported and not fatal; what IS fatal for a figure is being missing or
+    empty, which means its generator did not run.
+
+    What this does not catch is a figure whose DATA changed while its table
+    did not. Nothing cheap does: the fix for that is to make the number the
+    figure turns on a generated number, where the guard above sees it.
+    """
     out = subprocess.run(["git", "-C", str(ROOT), "status", "--porcelain",
                           "results"], capture_output=True, text=True).stdout
     paths = [line[3:].strip() for line in out.splitlines() if line.strip()]
-    real, dates_only = [], []
+    real, dates_only, rendered = [], [], []
     for rel in paths:
         p = ROOT / rel
+        is_figure = "/figures/" in rel
         if not p.exists():
             real.append((rel, "deleted"))
             continue
         head = subprocess.run(["git", "-C", str(ROOT), "show", f"HEAD:{rel}"],
                               capture_output=True).stdout
         if not head:
-            real.append((rel, "not committed"))
+            (rendered if is_figure else real).append(
+                (rel, "not committed"))
         elif canonical(p) == canonical(head):
             dates_only.append(rel)
+        elif is_figure:
+            rendered.append((rel, "renders differently"))
         else:
             real.append((rel, "content differs"))
+    missing = []
+    for stem in sorted({p.stem for p in (ROOT / "results/figures").glob("*.pdf")}):
+        f = ROOT / "results/figures" / f"{stem}.pdf"
+        if not f.exists() or f.stat().st_size == 0:
+            missing.append((str(f.relative_to(ROOT)), "missing or empty"))
+    real += missing
     print(f"  {len(paths)} artefact(s) differ from HEAD by bytes;"
           f" {len(dates_only)} by their embedded dates alone")
+    if rendered:
+        print(f"  {len(rendered)} figure(s) render differently, which is not"
+              f" checked here (see this function's docstring):")
+        for rel, why in rendered[:8]:
+            print(f"    {rel}: {why}")
+        if len(rendered) > 8:
+            print(f"    ... and {len(rendered) - 8} more")
     for rel, why in real:
         print(f"    {rel}: {why}")
     return not real
