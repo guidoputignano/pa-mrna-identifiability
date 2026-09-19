@@ -963,3 +963,110 @@ round, that "one registry fetch would settle" the sampling time, was wrong in th
 direction and is withdrawn outright rather than scoped: the record has been read and its 3-HP
 time frame is "Baseline (predose levels) to postdose levels ... up to Week 40", a window and
 not a visit. The timing cannot be settled from public sources and must come from the sponsor.
+
+### R17. "Recording intake twenty times more precisely buys about six per cent, so precision is not the binding variable"
+
+**In the paper**, `08_specification.tex`, the load-record paragraph, and in the spec table's
+"How to read this table" as "the load record gives `0.170` whether it is kept to `1\%` or to
+`20\%`". Both are **true of the quantity that was swept and false of the quantity a reader will
+think was swept.**
+
+`src/design/run.py`, `spec_numbers()`, computes
+
+    sigma = LOC.sigma_total(LOAD_FRAC, ASSAY_CV)
+
+**once, at `LOAD_FRAC = 0.05`, and reuses that one `sigma` on every row of the table.** The rows
+labelled `sd_load_1pct` and `sd_load_20pct` pass `load_cv` to `design_record`, which is the
+**day-to-day variation in the record**. The **recording error** never moves. It cannot, because
+it enters only through `sigma`, and `sigma` was fixed before the sweep began.
+
+Swept on the quantity that was meant (`audit/m1_loadbias_prior.py`, 24 seeds, two independent
+code paths agreeing to `1e-14`):
+
+| recording error | `sigma` | `sd(ln theta)` median | over 24 seeds |
+|---|---|---|---|
+| `1%` | `15.24` | `0.1566` | `[0.1563, 0.1571]` |
+| `5%` | `21.96` | `0.1660` | `[0.1649, 0.1666]` |
+| `10%` | `35.54` | `0.1916` | `[0.1884, 0.1936]` |
+| `20%` | `66.24` | **`0.2637`** | `[0.2563, 0.2690]` |
+| `40%` | `129.95` | **`0.4023`** | `[0.3916, 0.4107]` |
+
+**The design meets the `0.20` target only if the substrate load is recorded to better than
+roughly `12\%`.** Precision is not merely binding, it is the tightest requirement in the
+specification after the increment itself, and at `20\%` the design fails.
+
+**Why this matters more than an arithmetic slip.** Daly et al. 2017 (PMID 29021961, verified:
+a cross-sectional survey reporting what patients were *prescribed*) and the absence of any PA
+study reporting repeated as-eaten intake mean the realistic PA record is a prescription. The
+only study anywhere in a protein-restricted inborn error that measures prescription against
+actual intake is *Nutrients* 2023;15(23):4903 (Pinto et al., verified; 16 children with PKU,
+three one-day diaries a month for six months): actual natural protein ran at **167% of
+prescribed, a median `+40%`**. At `40\%` the headline is `0.40`, twice the target.
+
+**A second correction inside the same paragraph, in the opposite direction.** The paragraph also
+says that at a perfectly steady load the null direction "is filled by the `5\%` prior on the load
+bias, and only real day-to-day variation lets the *data* fill it instead", so that recording
+intake as eaten "is the difference between a result the data support and one a prior supports".
+Measured, that overstates it. At a **constant** recorded load with the load-bias prior **removed
+entirely**, `sd(ln theta)` is `0.2659`, not infinity. The dose train breaks
+Proposition `prop:rank`'s singularity, because the increment varies even when the load does not.
+The correct statement is that the prior is worth a factor of `1.6` there, not that it is holding
+the result up.
+
+**How it was caught.** By asking what a verified `+40%` prescription-to-intake divergence would
+do to the specification, and finding that the table had no row for it. The two claims had been
+checked against each other and never against the thing they were about. This is a new failure
+mode for the list: **a sensitivity swept on the wrong one of two quantities that share a name.**
+`LOAD_FRAC` is the recording error in `sigma_total` and the load-bias prior in the information
+matrix, and `load_cv` is the record's variation. Three quantities, one word, "the load record".
+
+Proposed replacement text is passage 11 of `audit/PHASE4_PROPOSED_TEXT.md`, and the softening
+above is passage 15. **Neither is applied. No constant is moved.**
+
+### R18. "A systematic Q2W-versus-Q3W offset in the tabulated falls ... does not need the sponsor"
+
+**Mine, from `audit/PHASE6_REVIEWS_SEP2026.md` section 9, and withdrawn on the first test.**
+
+Having found that Extended Data Table 3 of the Nature 2024 trial reports cohort 1 (0.30 mg/kg
+Q3W) separately from cohorts 2 to 5 (Q2W), I proposed that the two candidate sampling
+conventions could be told apart from the table alone: a fixed clock time after dose 3 puts both
+arms at the same phase, whereas a next-predose reading puts Q3W at 21 days and Q2W at 14 days,
+which on a 3.5-day half-life is `2^-6` against `2^-4` of one dose.
+
+**The power was computed before the table was looked at** (`audit/m3_edt3_discriminator.py`,
+Part A prints before Part B by construction), and it kills the test:
+
+- The only contrast free of the dose confound is cohort 1 against cohort 2, both at 0.30 mg/kg,
+  `n = 4` against `n = 3`, with standard deviations of 22 to 31 points. The **smallest difference
+  detectable at 80% power is 59.5 to 74.2 percentage points** across the four markers.
+- The two conventions differ by at most **22.5 points**, and that is at `D_AMP = 24000`, four
+  times the repository's assumed value. At the assumed `D_AMP = 6000` they differ by
+  **8.1 against 1.2 points**.
+
+So the test is underpowered by a factor of between three and thirty, and no reading of the table
+can separate the conventions. The data agree: `p` is `0.215` to `0.964` on the four markers, and
+the two that move at all (3-HP `-26`, C3 `-25` points) move in the **direction opposite** to the
+trough hypothesis, which predicts a *smaller* fall in the Q3W arm.
+
+There is also no dose trend to lean on. Over the four Q2W dose levels the unweighted correlation
+between dose and fall is `-0.37` (3-HP), `-0.50` (2-MC), `-0.16` (C3) and **`+0.67`** (n-PG), on
+four points. Cohort-to-cohort differences are not reading dose, so they cannot be read as
+reading interval either.
+
+**Part D of the same script adds nothing new.** All twenty cohort-by-marker means sit above the
+fall a one-day-post-dose reading predicts (`-61.8%` at `D_AMP = 6000`), but only three of twenty
+reach `p < 0.05` individually, the cohorts within a marker are not independent, and the whole
+comparison is conditional on an assumed `D_AMP`: a smaller `D_AMP` moves the prediction up to
+meet the data. That is `PHASE5_ROBUSTNESS.md`'s existing observation that `D_AMP = 6000` implies
+a `62` to `66%` fall against reported falls of `-29%` to `+5%`, with the arithmetic done. It is a
+joint statement about the phase and the amplitude and cannot be split.
+
+**`OPEN_QUESTIONS.md` section 2 stands unchanged: the sampling time must come from the sponsor.**
+What is now pinned, and was not, is that the table is a change from a **predose** baseline
+measured **after the third dose**, which is narrower than "a window up to Week 40" but not
+narrow enough.
+
+**How it was caught.** By stating the power before running the test, which the author's standing
+rule requires and which in this case produced the answer before the data were read. Had the
+table been read first, `-26` and `-25` points on two of four markers would have looked like a
+finding.
