@@ -125,24 +125,20 @@ LOCAL = [
                  r"capacity is recoverable",
         kind=CONVENTION, species="mouse"),
     Row(r"$\theta$", f"${_A.theta:.0f}$~$\mu$M/d",
-        "capacity of the enzymatic channel, \textbf{at normal capacity}",
+        r"capacity of the enzymatic channel, \textbf{at normal capacity}",
         ASSUMED, r"illustrative, and \textbf{a normal-capacity illustration rather than a "
-                 r"patient}. That label is new and it resolves an ambiguity the row used to "
-                 r"carry: \texttt{src/common/models.py} annotates this constant as "
-                 r"$V_{\max}$, the \emph{maximal} enzymatic velocity, and annotates the "
-                 r"parent model's $\theta = 300$ as ``$\sim 10\%$ of normal'', which puts "
-                 r"normal at $3000$ and this block at $100\%$ of it. Residual PCC activity "
-                 r"in PA is under $5\%$ of control~\cite{pcc_residual_activity}, so the "
-                 r"disease sits at $\theta \le 150$, which is the row below. The two "
-                 r"annotations are not in conflict once the label is stated; what was in "
-                 r"conflict was reading an illustration of a healthy channel as a "
-                 r"description of the patient the paper is about. "
+                 r"patient}: \texttt{src/common/models.py} carries this constant as "
+                 r"$V_{\max}$, the \emph{maximal} enzymatic velocity, and the parent "
+                 r"model's $\theta = 300$ as $\sim 10\%$ of normal, which puts normal at "
+                 r"$3000$ and this block at $100\%$ of it. Residual PCC activity in PA is "
+                 r"under $5\%$ of control~\cite{pcc_residual_activity}, so the disease "
+                 r"sits at $\theta \le 150$, which is the row below. "
                  r"\textbf{Some conclusions do depend on this value}: "
                  r"the identifiability results do not, but the "
                  r"supplement's local-model section (\S S1) flips a qualitative conclusion "
                  r"across it, the anchor attenuating at $3000$ and amplifying at the "
-                 r"parent's $300$, and Section~\ref{sec:scope} now reports that the "
-                 r"design's own precision does too. It "
+                 r"parent's $300$, and by Section~\ref{sec:scope} the design's own "
+                 r"precision does too. It "
                  r"remains an order-of-magnitude quantity and is confounded with $V_{\max}$ "
                  r"by construction: at $\bar m/K_m = 0.1$ the channel runs at $9.1\%$ of "
                  r"$V_{\max}$, carrying $273$ against a load of $323$",
@@ -159,20 +155,20 @@ LOCAL = [
                     r"(medians over $24$ intake records; \texttt{audit/n4\_theta\_scope.py}). "
                     r"The gate holds only for $\theta$ between $2472$ and $18814$, that is "
                     r"$82\%$ to $627\%$ of nominal, so the disease sits a factor of $16$ "
-                    r"below the band. This is Section~\ref{sec:scope}'s own conclusion "
-                    r"given a number: that section already says no schedule, excursion or "
-                    r"precision recovers a quantity the observable has stopped responding "
-                    r"to, and sampling every two days for two years instead of monthly "
-                    r"moves the lower edge by $9\%$",
+                    r"below the band. This is Section~\ref{sec:scope}'s conclusion "
+                    r"given a number: no schedule, excursion or precision recovers a "
+                    r"quantity the observable has stopped responding to, and sampling "
+                    r"every two days for two years instead of monthly moves the lower "
+                    r"edge by $9\%$",
         kind=DERIVED, species="human"),
     Row(r"$K_m$", f"${_A.Km:.0f}$~$\mu$M",
         "half-saturation of the enzymatic channel, at the plasma level",
         ASSUMED, r"illustrative, and \emph{not} the in vitro Michaelis constant of PCC "
                  r"($0.29$ mM for propionyl-CoA~\cite{pcc_liver_kinetics}), a different "
                  r"molecule in a different compartment. The ratio $\bar m/K_m = 0.1$ is what "
-                 r"the excitation condition is stated against. \textbf{Cost, which this row "
-                 r"did not previously bound and which is the tightest in the local model "
-                 r"after the increment}: on the paper's own monthly record, holding the "
+                 r"the excitation condition is stated against. \textbf{Its cost is the "
+                 r"tightest in the local model after the increment}: on the paper's own "
+                 r"monthly record, holding the "
                  r"patient managed at $\bar m$ and re-solving the load, the ordinate sd and "
                  r"the load-bias prior at each $K_m$, $\mathrm{sd}(\ln\hat\theta)$ runs "
                  r"$0.0507$ to $1.3608$ over $K_m$ from $5$ to $1000$~$\mu$M, a factor of "
@@ -472,21 +468,25 @@ def _source_cell(r):
 MAIN_TEXT_NOTES = (r"$\theta$", r"$\theta_{\mathrm{PA}}$", r"$K_m$")
 
 
-def _tex(rows, compact=False):
+def _tex(rows, compact=False, keep_notes=()):
     """
     One LaTeX row per registry row.
 
-    `compact` drops the provenance note from every row except the three whose
-    cost bound is load-bearing, and points the rest at the supplement. It does
-    NOT drop the kind or species tags: those are one word each, they are what
-    stop a reader taking an assumed lumped murine constant for a measured
-    human one, and they were the whole point of Phase 7.
+    `compact` drops the provenance note from every row except those named in
+    `keep_notes`, and points the rest at the supplement. It does NOT drop the
+    kind or species tags: those are one word each, and they are what stop a
+    reader taking an assumed lumped murine constant for a measured human one.
+
+    `keep_notes` is matched per block rather than across the whole table,
+    because the parent model carries rows with the same symbols as the local
+    model. Matching on the symbol alone kept five long notes in the main-text
+    table where the text names three, and cost a page and a half.
     """
     out = []
     for r in rows:
         note = r.note
         if compact:
-            note = note if r.symbol in MAIN_TEXT_NOTES else r"\S S2"
+            note = note if r.symbol in keep_notes else r"\S S2"
         out.append(" & ".join([r.symbol, r.value, r.meaning,
                                _source_cell(r), note]) + r" \\")
     return out
@@ -533,7 +533,7 @@ def write_params_table(compact=False, name=None):
             r"\endlastfoot",
             r"\multicolumn{5}{@{}l}{\emph{The local identification model}} \\",
             r"\addlinespace[2pt]"]
-    body += _tex(LOCAL, compact)
+    body += _tex(LOCAL, compact, MAIN_TEXT_NOTES)
     body += [r"\addlinespace", r"\midrule",
              r"\multicolumn{5}{@{}l}{\emph{The parent model and its equilibrium reduction}} \\",
              r"\addlinespace[2pt]"]

@@ -799,8 +799,8 @@ def fig_decision():
     lv_km = np.geomspace(P.Km / 3.0, P.Km * 3.0, 9)
     for cv, col, ls in [(0.02, GREY, ":"), (0.05, GREEN, "-"), (0.128, RED, "--")]:
         ax[0].plot(folds, curve(lv9, cv=cv), color=col, ls=ls, lw=1.7,
-                   label=rf"{100*cv:.0f}\%")
-    ax[0].set_ylabel(r"sign error on $\mu$  [\%]")
+                   label=f"{100*cv:.0f}%")
+    ax[0].set_ylabel(r"sign error on $\mu$  [%]")
     ax[0].set_title("against assay variability", fontsize=8)
     ax[0].legend(fontsize=6, title="assay CV", title_fontsize=6)
 
@@ -1198,5 +1198,6 @@ if __name__ == "__main__":
     fig_collapse()
     fig_decision()
     fig_protocol()
+    table_designs()
     table_excursion()
     table_spec()

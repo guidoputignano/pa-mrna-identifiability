@@ -2,12 +2,11 @@
 \label{sec:model}
 %==========================================================================
 
-\emph{This section fixes the model, the parametrisation and the numerical conventions that
-every result below depends on. It is written to be read without the supplement: the
-derivations are given in the order they are used, and the longer versions, the alternative
-hypotheses that were rejected, and the checks behind each step are in the supplement,
-\S S1. One model is used throughout, at three levels of detail, and
-Section~\ref{sec:discussion} says what that does and does not license.}
+\emph{This section fixes the model, the parametrisation and the numerical conventions every
+result below depends on. One model is used throughout, at three levels of detail; the
+derivations, the alternative hypotheses that were rejected and the checks behind each step
+are in the supplement, \S S1, and Section~\ref{sec:discussion} says what one model at three
+levels of detail does and does not license.}
 
 \subsection{Notation}
 
@@ -37,6 +36,7 @@ $\mtol$ & tolerable level, a convention & $\spk$ & illness amplitude, as a fold 
 \end{table}
 \end{adjustwidth}
 
+
 \subsection{The dynamic model}
 \label{sec:parent}
 
@@ -49,38 +49,33 @@ The metabolite the clinic measures is written $m$. Its balance is
 with $L$ the \emph{recorded} component of the propiogenic load, $L_0$ its unrecorded
 component carried as an unknown constant, $\Delta$ the therapeutic increment known from
 the dosing record, and $\alpha$ an alternative clearance route: in propionic acidemia,
-principally conjugation to carnitine and renal loss of the conjugate.
+principally conjugation to carnitine and renal loss of the conjugate. Carrying $L_0$ as an
+unknown rather than assuming it away is what makes the identification problem well posed
+at all.
 
-\paragraph{Why the parametrisation is pinned.} $\theta$ \emph{absorbs} the
-maximal velocity: it \emph{is} the patient's residual $V_{\max}$, not a fraction of a
-population one. Carrying the two separately as $V_{\max}\theta\,g(m)$ adds a parameter that
-no excursion separates, since only the product multiplies $g$. Splitting them needs an
-anchor outside the marker, and a $1$-$^{13}$C-propionate breath test is what such an anchor
-looks like~\cite{breath_test_mma}. % C48
-Carrying $L_0$ as an unknown rather than assuming it away is what makes the identification
-problem well posed at all.
+The parametrisation is pinned: $\theta$ \emph{absorbs} the maximal velocity, so it
+\emph{is} the patient's residual $V_{\max}$ rather than a fraction of a population one.
+Carrying the two separately as $V_{\max}\theta\,g(m)$ adds a parameter no excursion
+separates, since only the product multiplies $g$; splitting them needs an anchor outside
+the marker, and a $1$-$^{13}$C-propionate breath test is what such an anchor looks
+like~\cite{breath_test_mma}. % C48
 
 \paragraph{Why $\alpha$ is not a rate constant.} Elimination proceeds by conjugating
-propionate with carnitine, and each molecule eliminated consumes one molecule of carnitine,
-which is excreted with the product. In two patients with propionic acidemia and two with
-methylmalonic aciduria, urinary excretion of free carnitine was decreased while excretion of
-short-chain acylcarnitines, mostly propionylcarnitine, was
-increased~\cite{carnitine_excretion_pa}. % C41
-Secondary carnitine deficiency follows, and is why supplementation is standard therapy.
-
-Stoichiometric consumption alone would give a ceiling rather than a decline. Promote
-carnitine to a state $c$, let conjugation draw on it, and replenish at a constant rate: if
-conjugation is the only route out of the pool, $\dot c = 0$ fixes the conjugation flux for
-every $m$. What is missing is a reason for the flux to vanish as the metabolite does, and a
-reason for it to decline. One mechanism supplies both. Carnitine is recovered from the
-glomerular filtrate by a renal transporter that acylcarnitines share; in a transporter
-solubilised from renal apical brush-border membrane and reconstituted into liposomes, the
-most effective inhibitors were acylcarnitines~\cite{octn2_renal_transport}. % C42
+propionate with carnitine, one molecule of carnitine per molecule eliminated, excreted
+with the product; in two patients with propionic acidemia and two with methylmalonic
+aciduria, urinary free carnitine was decreased while short-chain acylcarnitines, mostly
+propionylcarnitine, were increased~\cite{carnitine_excretion_pa}. % C41
+Stoichiometric consumption alone would give a ceiling rather than a decline: promote
+carnitine to a state $c$ with constant replenishment, and if conjugation is its only exit
+then $\dot c = 0$ fixes the conjugation flux at every $m$. What is missing is a reason for
+the flux to vanish as the metabolite does and a reason for it to decline, and one mechanism
+supplies both. Carnitine is recovered from the glomerular filtrate by a renal transporter
+that acylcarnitines share, and in a transporter solubilised from renal apical brush-border
+membrane and reconstituted into liposomes the most effective inhibitors were
+acylcarnitines~\cite{octn2_renal_transport}. % C42
 Propionylcarnitine rises with the metabolite, so the fraction of filtered carnitine
 recovered falls as the metabolite accumulates: the free pool has a second exit, and that
-exit grows with $m$.
-
-\paragraph{The two-state system.} Writing $c(t)$ for available carnitine,
+exit grows with $m$. Writing $c(t)$ for available carnitine,
 \begin{equation}
 \begin{aligned}
 \dot m &= s(t) \;-\; \theta\, g(m) \;-\; k\, c\, \frac{m}{K_c + m}, \\[2pt]
@@ -92,83 +87,28 @@ exit grows with $m$.
 with $K_c$ the half-saturation of the conjugation step, $\delta_0$ the basal rate of
 non-conjugative loss, $M_i$ the metabolite level at which competition doubles it, and $R_0$
 constant. The conjugation term is the one the two equations share, entering both with the
-same coefficient: that is the one-to-one stoichiometry, a molecule of propionate leaving
-only with a molecule of carnitine. The two equations are otherwise not symmetric, because
-carnitine has a second exit that propionate does not.
-
-\begin{figure}[!htbp]
-\centering
-\resizebox{0.90\linewidth}{!}{%
-\begin{tikzpicture}
-\node[mpool] (m) at (0,0) {$m$\\[1pt]\scriptsize\mdseries accumulated\\metabolite};
-\node[mlabel] (in) at (-3.6,0) {$s(t)$};
-\draw[mar] (in) -- (m);
-\node[msmall] at (-2.4,0.42) {load};
-
-\node[mpool] (c) at (5.6,0) {$c$\\[1pt]\scriptsize\mdseries available\\carnitine};
-\node[mlabel] (rep) at (9.6,0) {$R_0$};
-\draw[mar] (rep) -- (c);
-\node[msmall] at (8.0,0.42) {replenishment};
-
-\node[menzy] (enz) at (-2.3,-2.7) {$\theta\, g(m)$\\{\scriptsize saturating}};
-\channelglyph{(-3.55,-4.15)}{green!45!black}{s}
-\draw[mar] (m.south) -- ++(0,-0.85) -| (enz.north);
-\node[msmall] (o1) at (-2.3,-5.0) {eliminated};
-\draw[mar] (enz) -- (o1);
-
-\node[malt] (kcm) at (2.5,-2.7) {$k\, c\, m/(K_c+m)$\\[1pt]\scriptsize\mdseries consumes one $c$\\per $m$ removed};
-\channelglyph{(1.15,-4.15)}{blue!55!black}{n}
-\draw[mar, blue!55!black] (m.south east).. controls +(0.7,-0.9).. (kcm.north west);
-\draw[mar, blue!55!black] (c.south west).. controls +(-0.7,-0.9).. (kcm.north east);
-\node[msmall] (o2) at (2.5,-5.1) {eliminated together,\\as propionylcarnitine};
-\draw[mar] (kcm) -- (o2);
-
-\node[malt] (dc) at (6.9,-2.7) {$\delta(m)\, c$\\[1pt]\scriptsize\mdseries not recovered\\from the filtrate};
-\draw[mar, blue!55!black] (c.south east).. controls +(0.6,-0.9).. (dc.north);
-\node[msmall] (o3) at (6.9,-5.1) {lost in urine};
-\draw[mar] (dc) -- (o3);
-
-\draw[red!60!black, thick, -{Bar[width=2.4mm]}]
-      (m.north) -- ++(0,1.45) coordinate (fbtop) -| (10.35,-2.7) -- (dc.east);
-\node[msmall, red!60!black, fill=white, inner sep=3pt]
-     at ([shift={(5.0,0)}]fbtop)
-     {rising $m$ means more acylcarnitine competing for the renal\\
-      transporter, so less filtered carnitine is recovered};
-\end{tikzpicture}}
-\caption{The dynamic model \eqref{eq:twostate} as a block diagram. The pool $m$, the load $s(t)$
-and the enzymatic channel are placed and coloured as in Figure~\ref{fig:blockA}, and
-everything else differs. Carnitine is a second state $c$, and the conjugation term is drawn
-as a single node draining both pools, because the one-to-one stoichiometry is the
-mechanism: each molecule of propionate that leaves takes a molecule of carnitine with it.
-Replenishment $R_0$ is constant. The exit on the right is the one carnitine has and
-propionate does not, and the blunt-ended arrow is the whole content of the model:
-acylcarnitine rising with $m$ competes for the renal transporter, so less filtered carnitine
-is recovered and that exit widens. Having a second exit at all is what makes the flux vanish
-with the metabolite; the exit widening is what makes it decline rather than saturate. The
-glyph under each channel is its shape.}
-\label{fig:blockC}
-\end{figure}
+same coefficient, which is the one-to-one stoichiometry; they are otherwise not symmetric,
+because carnitine has a second exit that propionate does not. The supplement, \S S1, draws
+the system as a block diagram and works through the positive feedback it creates.
 
 \subsection{The equilibrium reduction}
 \label{sec:reduction}
 
 \textbf{The carnitine state is not fast relative to the metabolite, and no separation of
 timescales is needed to justify eliminating it.} The comparison that would be needed is
-carnitine against the \emph{marker}, not the marker against the \emph{therapy}, and it runs
-the wrong way: at the model's own $k$ the carnitine
-time constant is $0.92$~d against the marker's $0.81$~h, slower by a factor of $27$, and
-published human kinetics put whole-body carnitine turnover at $38$ to $119$~h with a
-rapidly equilibrating compartment at $2$ to $3$~h (Rebouche, \emph{Ann.\ N.\ Y.\ Acad.\
-Sci.} 2004; staged in \texttt{paper/refs.sources} and named here rather than cited,
+carnitine against the \emph{marker}, and it runs the wrong way: at the model's own $k$ the
+carnitine time constant is $0.92$~d against the marker's $0.81$~h, slower by a factor of
+$27$, and published human kinetics put whole-body carnitine turnover at $38$ to $119$~h
+with a rapidly equilibrating compartment at $2$ to $3$~h (Rebouche, \emph{Ann.\ N.\ Y.\
+Acad.\ Sci.} 2004; staged in \texttt{paper/refs.sources} and named here rather than cited,
 because this environment cannot resolve it and the claim register checks citations against
 the committed bibliography), slower on either reading.
 
 What justifies the reduction is algebraic and needs no separation at all. $\alpha$ is
 \emph{defined} by solving $\dot c = 0$, and $\dot c = 0$ holds exactly at any fixed point,
-so at equilibrium the two formulations are one equation rearranged and the reduction is
-exact there whatever the timescales do. Everything this paper computes from the parent is
-computed at equilibrium. Solving $\dot c = 0$ in \eqref{eq:twostate} for $c$ and
-substituting gives that flux in closed form,
+so at equilibrium the two formulations are one equation rearranged, whatever the timescales
+do, and everything this paper computes from the parent is computed at equilibrium. Solving
+$\dot c = 0$ in \eqref{eq:twostate} for $c$ and substituting gives that flux in closed form,
 \begin{equation}
 \alpha(m) \;=\; R_0\,\frac{u(m)}{u(m) + \rho(m)},
 \qquad u(m) = \frac{m}{K_c+m},
@@ -177,25 +117,24 @@ substituting gives that flux in closed form,
 \end{equation}
 with $\rho_0 = \delta_0/k$. The conjugation rate constant $k$ enters only through that
 ratio and cancels from the reduced clearance, exactly. \textbf{It does not follow that $k$
-is a free scale}: $k$ alone sets the carnitine relaxation rate, $\tau_c = 1/(k[u(m) + \rho(m)])$, so it sets the
-reduction's validity \emph{off} equilibrium even though it cancels from the curve. What
-assuming it costs is in the $k$ row of Table~\ref{tab:params} and is bounded rather than
-argued away. Substituting \eqref{eq:alphaqss} into \eqref{eq:parent} recovers the parent
-exactly and symbolically.
+is a free scale}: $k$ alone sets the carnitine relaxation rate,
+$\tau_c = 1/(k[u(m) + \rho(m)])$, so it sets the reduction's validity \emph{off}
+equilibrium even though it cancels from the curve, and what assuming it costs is bounded in
+the $k$ row of Table~\ref{tab:params} rather than argued away.
 
 Setting $\dot m = 0$ gives the equilibrium reduction, which is what a steady-state fit to a
 clinical record actually estimates. Its solutions are an attractor and a separatrix, and the
 fold at which the two collide defines the critical capacity $\thc$: below it a sufficiently
 large load leaves the system with no equilibrium at all, which is what a decompensation is
 in this model. \textbf{Integrating \eqref{eq:twostate} and watching it settle on the
-reduced attractor to fourteen digits is not evidence for the reduction}: it is the same
-identity as above, so it cannot fail at any parameter value and reports nothing about the
-premise. It confirms the algebra and no more. The divergence from above the separatrix
-needs a qualification: started \emph{on} the slow manifold a
-trajectory a tenth of a per cent above the separatrix does run away, but started off it,
-with carnitine at its pre-perturbation value, the same trajectory can return to the
-attractor. The reduced separatrix is a lower bound on the true basin and not the basin. The intrinsic definition of $\thc$, the fold, and the comparison against the
-alternative hypothesis with a ceiling instead of a fold are in the supplement, \S S1.
+reduced attractor to fourteen digits is not evidence for the reduction}: it is the identity
+above, so it cannot fail at any parameter value and reports nothing about the premise. The
+divergence from above the separatrix needs a qualification too. Started \emph{on} the slow
+manifold a trajectory a tenth of a per cent above the separatrix does run away, but started
+off it, with carnitine at its pre-perturbation value, the same trajectory can return to the
+attractor, so the reduced separatrix is a lower bound on the true basin and not the basin.
+The intrinsic definition of $\thc$, the fold, and the comparison against the alternative
+hypothesis with a ceiling instead of a fold are in the supplement, \S S1.
 
 \subsection{The local identification model}
 \label{sec:localmodel}
@@ -247,6 +186,7 @@ which one moved the patient. With $K_m$ free they are not interchangeable (suppl
 \label{fig:blockA}
 \end{figure}
 
+
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{fig_A1_channels.pdf}
@@ -261,19 +201,20 @@ around that point tells them apart.}
 \label{fig:A1}
 \end{figure}
 
-\paragraph{Why the local model is used.} It is not a
-reduction of the parent: the tangent to the parent's clearance curve carries an extra term
-in its intercept, and at the illustrative constants that term is $374$ against the enzymatic
-term's $61$, so the alternative channel owns six-sevenths of an intercept the residual
-capacity was supposed to carry. The local model is therefore a different hypothesis about
-one term, kept because it is the most favourable case for identification rather than because
-it approximates anything. That matters for the conclusion: the degeneracy this paper is
-about appears in the favourable structure and disappears in the awkward one, so it is not an
-artefact of a bad approximation. At matched parameter count the parent carries a degenerate
-family of the same dimension, admissible over a sixteen-fold range in $K_m$ and if anything
-harder to reject. What closes such a family, in either model, is an independent channel
-being known, not curvature in $\alpha$. The reduction hierarchy is verified symbolically and
-numerically (supplement, \S S2).
+
+\paragraph{Why the local model is used.} It is not a reduction of the parent. The tangent
+to the parent's clearance curve carries an extra term in its intercept, and at the
+illustrative constants that term is $374$ against the enzymatic term's $61$, so the
+alternative channel owns six-sevenths of an intercept the residual capacity was supposed to
+carry. The local model is therefore a different hypothesis about one term, kept because it
+is the most favourable case for identification rather than because it approximates
+anything, and that is what the conclusion needs: the degeneracy this paper is about appears
+in the favourable structure and disappears in the awkward one, so it is not an artefact of a
+bad approximation. At matched parameter count the parent carries a degenerate family of the
+same dimension, admissible over a sixteen-fold range in $K_m$ and if anything harder to
+reject. What closes such a family, in either model, is an independent channel being known,
+not curvature in $\alpha$. The reduction hierarchy is verified symbolically and numerically
+(supplement, \S S2).
 
 \subsection{Assumptions and their status}
 \label{sec:assumed}
@@ -296,6 +237,7 @@ worth.}
 \input{../results/tables/tab_params_compact}
 \end{adjustwidth}
 
+
 Two consequences of that table are load-bearing and are stated here rather than left to be
 inferred.
 
@@ -303,7 +245,7 @@ inferred.
 \label{rem:no_km}
 The in vitro Michaelis constant of PCC is for propionyl-CoA inside the mitochondrion. The
 $K_m$ of \eqref{eq:local} is for a plasma marker that is neither that molecule nor in that
-compartment, and the two are not interchangeable. So no literature value is used. The
+compartment, and the two are not interchangeable, so no literature value is used. The
 results below do not need one: a prior on $\ln K_m$ twenty times looser than the module's
 own changes $\operatorname{sd}(\ln\hat\theta)$ in the fourth decimal, and removing it
 entirely changes nothing at all (Section~\ref{sec:designsec}).
@@ -311,49 +253,34 @@ entirely changes nothing at all (Section~\ref{sec:designsec}).
 
 \begin{remark}[The marker, and the observation model both markers need]
 \label{sec:marker}
-Plasma 3-hydroxypropionate is used. It is the one marker with an endpoint association: a $50\%$ lower concentration carries a decompensation rate ratio of $0.7$ ($95\%$ CI
+Plasma 3-hydroxypropionate is used. It is the one marker with an endpoint association: a
+$50\%$ lower concentration carries a decompensation rate ratio of $0.7$ ($95\%$ CI
 $0.6$--$0.9$, $p<0.01$)~\cite{natural_history}, % C49
-where 2-methylcitrate has none ($1.0$, $0.7$--$1.3$), and it is not a carnitine
-conjugate, so carnitine supplementation does not raise it as it raises C3.
-
-But no marker is the PCC substrate. 3-HP is an overflow metabolite downstream of
-accumulated propionyl-CoA, and so is 2-MC. Writing either as the $m$ of \eqref{eq:parent}
-assumes it tracks the substrate monotonically. That assumption is required identically for
-either choice, it is not testable from the published data, and Section~\ref{sec:discussion} names it first among the limits on what any of this licenses.
+where 2-methylcitrate has none ($1.0$, $0.7$--$1.3$), and it is not a carnitine conjugate,
+so carnitine supplementation does not raise it as it raises C3. But no marker is the PCC
+substrate. 3-HP is an overflow metabolite downstream of accumulated propionyl-CoA, and so
+is 2-MC. Writing either as the $m$ of \eqref{eq:parent} assumes it tracks the substrate
+monotonically: an assumption required identically for either choice, not testable from the
+published data, and named first among the limits in Section~\ref{sec:discussion}.
 \end{remark}
 
 \subsection{Numerical methods}
 \label{sec:numerics}
 
-Every computed trajectory uses an adaptive
-stiff-capable solver (\texttt{LSODA} or \texttt{Radau}) at relative tolerance $10^{-8}$ or
-tighter, and the estimator of Section~\ref{sec:collapse} does not integrate at all: it uses
-the closed-form quasi-steady level of \eqref{eq:alphaqss}. Two tests guard the integration:
-one halves the step and asserts the answer does not move by more than $10^{-6}$ relative;
-the other asserts that an integrated steady state equals the closed-form equilibrium
-reduction to the same tolerance. \textbf{Neither measures the validity of the carnitine
-reduction.} The first integrates the local model, and the second integrates the
-\emph{reduced} system and compares it against the algebraic root of the same reduced
-clearance, so the two-state system appears in neither. What licenses the reduction is the
-identity of \S\ref{sec:reduction}, and what bounds its cost off equilibrium is the $k$ row
-of Table~\ref{tab:params}.
+Every computed trajectory uses an adaptive stiff-capable solver (\texttt{LSODA} or
+\texttt{Radau}) at relative tolerance $10^{-8}$ or tighter, and the estimator of
+Section~\ref{sec:collapse} does not integrate at all: it uses the closed-form quasi-steady
+level of \eqref{eq:alphaqss}. Two tests guard the integration, one halving the step and
+asserting the answer moves by less than $10^{-6}$ relative, the other asserting that an
+integrated steady state equals the closed-form equilibrium reduction to the same tolerance.
+\textbf{Neither measures the validity of the carnitine reduction}, because the first
+integrates the local model and the second integrates the \emph{reduced} system and compares
+it against the algebraic root of the same reduced clearance, so the two-state system appears
+in neither. What licenses the reduction is the identity of \S\ref{sec:reduction}, and what
+bounds its cost off equilibrium is the $k$ row of Table~\ref{tab:params}.
 
 Every stochastic result uses \texttt{numpy.random.default\_rng} with an explicit seed named
 at the call site, and each quoted precision is a median over $24$ intake records with its
-range beside it, unless stated otherwise. Fitted ensembles are cached on $(\text{design}, \sigma, \mathrm{CV},
-\text{reps}, \text{seed})$, so the same design is fitted once and reused across a sweep.
-
-The observation model is on the log scale, so a constant coefficient of variation is a
-constant variance and $\sigma$ has unambiguous units. Structural identifiability was checked
-mechanically as well as by hand: \texttt{StructuralIdentifiability.jl} returns globally
-identifiable for eight configurations of the model, including time-varying and constant
-load, a null-genotype anchor, carnitine as a known input, therapy as a known input, and a
-two-state carnitine model whose second state is never observed. The single exception is the
-variant in which both clearance channels saturate, and that exception is proved rather than
-reported (supplement, \S S1).
-
-\vspace{0.5em}
-\hrule
-\vspace{1em}
-
-%==========================================================================
+range beside it unless stated otherwise. Fitted ensembles are cached on
+$(\text{design}, \sigma, \mathrm{CV}, \text{reps}, \text{seed})$, so the same design is
+fitted once and reused across a sweep.
