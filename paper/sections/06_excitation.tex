@@ -31,10 +31,7 @@ the therapy carries a term in $\Delta$ so $K_m$ follows from that coefficient al
 the remaining three follow at three distinct levels.
 \texttt{StructuralIdentifiability.jl} returns globally identifiable for eight
 configurations, the one exception being the variant in which both clearance channels
-saturate (Remark~\ref{rem:modelB}). \emph{Structural} is used here in that technical sense;
-where this paper uses it loosely it means only that a claim follows from the form of the
-model rather than from a constant in it, and no claim here asserts structural
-non-identifiability in the technical sense.
+saturate (Remark~\ref{rem:modelB}).
 
 That information lives in the transient, and the clinic does not sample the transient. The
 marker's time constant is about $0.8$~h against a therapeutic half-life of $3.5$~d, a
@@ -65,10 +62,8 @@ K_m(b) = \frac{K_m^{0}\,L}{L+b},
 along which the marker itself is unchanged. Proposition~\ref{prop:rank}'s null vector is
 its tangent at $b=0$.
 
-\textbf{On this locus the combination is not recovered at all, and halving the assay CV
-buys nothing along it.} It is not recovered at second order either: the recoverable
-displacement does not scale as the square root of the noise level, and that claim is
-withdrawn (\texttt{REVIEW\_LOG.md} R14).
+\textbf{On this locus the combination is not recovered at any order, and halving the assay
+CV buys nothing along it.}
 
 Two things close the fibre from outside, and the paper uses both. A bound on the load bias
 closes it directly: \eqref{eq:fibrecl} is admissible for every $b > -272.7$, and at the
@@ -76,8 +71,8 @@ $5\%$ load record of Section~\ref{sec:spec} it leaves $\theta$ open by a factor 
 A recorded load that \emph{varies} closes it from the data, which is the last clause of
 Proposition~\ref{prop:rank}; there the price is ordinary, the half-width scaling as
 $\sigma^{0.98}$ rather than as $\sqrt\sigma$. A singular Fisher matrix here does not
-contradict the structural verdict, because the two read different records: one a transient,
-the other a locus on which $\dot m$ has already vanished.
+contradict the structural-identifiability verdict above, because the two read different
+records: one a transient, the other a locus on which $\dot m$ has already vanished.
 
 \subsection{Degeneracy at both ends of the band}
 
@@ -119,16 +114,13 @@ total clearance stays constrained: the data still say what the patient eliminate
 through which channel. At the high end the target parameter is lost against a quantity
 nobody records.
 
-\begin{remark}[Which makes the load record load-bearing]
-\label{rem:load_bearing}
-Part~(2) is conditional on $L_0$ being unknown. With the load recorded exactly, saturation
-would be the \emph{best} place to measure: $C(m) \to \theta + k_e m$, whose intercept is
-$\theta$ outright, with no extrapolation and no $K_m$. Figure~\ref{fig:D1}~(right) draws
-both cases and they differ qualitatively, the optimum being interior only when the load is
-partly unrecorded. What about the record matters is settled in Section~\ref{sec:rank}: its
-\emph{accuracy} binds and its \emph{variability} is what makes the problem identifiable at
-all.
-\end{remark}
+Part~(2) is conditional on $L_0$ being unknown, and that is what makes the load record
+load-bearing rather than a detail to be tidied up at the end. With the load recorded
+exactly, saturation would be the \emph{best} place to measure: $C(m) \to \theta + k_e m$,
+whose intercept is $\theta$ outright, with no extrapolation and no $K_m$.
+Figure~\ref{fig:D1}~(right) draws both cases and they differ qualitatively, the optimum
+being interior only when the load is partly unrecorded. Which property of the record
+matters is settled in Section~\ref{sec:rank}.
 
 \subsection{Curvature, and the two factors}
 
@@ -265,10 +257,10 @@ a statement about the \emph{exact} identity and says nothing about conditioning,
 two must not be run together. And the identity holds for \emph{every} $\Delta$, so the dose
 train does not close it. Only a varying load does.
 
-Carrying $b$ through the derivation is what makes \eqref{eq:nullvec} the tangent to the
-exact fibre \eqref{eq:fibrecl}: evaluated at $b = 0$ it annihilates the Jacobian at the
-truth and fails to at $b = 31.6$, and integrating that $b=0$ vector instead gives
-$K_m = K_m^{0}e^{-b/L}$, which leaves the fibre at second order.
+The bias has to be carried through the derivation for \eqref{eq:nullvec} to be the tangent
+to \eqref{eq:fibrecl}. Evaluated at $b = 0$ the vector annihilates the Jacobian only at the
+truth, failing to at $b = 31.6$, and its integral curve is $K_m = K_m^{0}e^{-b/L}$, which
+leaves the fibre at second order.
 
 The identity is checked by two routes with no shared code: on the two-year record
 $\lVert Qc\rVert/\lVert Q\rVert = 2.7\times10^{-17}$ with $c$ matching the smallest right
@@ -276,57 +268,52 @@ singular vector to $\lvert\cos\rvert = 1.000000000$; and \eqref{eq:nullvec} repr
 smallest right singular vector of a separately constructed quasi-steady design to a maximum
 component difference of $1.79\times10^{-7}$.
 
-\paragraph{Two consequences, and the second is the one to keep.} Load-record
-\emph{variability} is what makes the problem identifiable at all: a perfectly steady intake
-is exactly the singular case, and half a per cent of day-to-day variation moves the smallest
-singular value of the column-normalised matrix from $1.8\times10^{-15}$, numerically zero,
-to $1.2\times10^{-3}$. Load-record \emph{accuracy} is what decides whether the design
-reaches its target: swept properly, $\operatorname{sd}(\ln\hat\theta)$ runs $0.157$ at a
-$1\%$ recording error to $0.264$ at $20\%$, so the target holds only below about $12\%$
-(Section~\ref{sec:spec}). The claim that recording intake twenty times more precisely buys
-about six per cent is withdrawn (\texttt{REVIEW\_LOG.md} R17): the sweep behind it moved
-the record's variability and never its accuracy.
+\paragraph{Two things the load record decides, and they are not the same thing.}
+Its \emph{variability} is what makes the problem identifiable at all. At a perfectly steady
+intake the design matrix is exactly singular, so its smallest singular value is not a
+measurable quantity: what a computation returns there is arithmetic noise, $2\times10^{-15}$
+with the dose train and $5\times10^{-32}$ without it, both at the floor of the
+decomposition. Measured from the first record that is not exactly singular, a $0.1\%$
+coefficient of variation, to $40\%$, the ratio $s_{\min}/s_{\max}$ of the column-normalised
+matrix rises from $4.7\times10^{-8}$ to $7.2\times10^{-3}$ without the dose train and from
+$3.8\times10^{-4}$ to $1.1\times10^{-1}$ with it: about five orders of magnitude in the
+first case and two and a half in the second, medians over twenty-four records.
 
-\begin{remark}[Restoring rank is not achieving precision]
-\label{rem:rankvsprec}
-The two must not be run together. Without the dose train, load variation lifts the smallest
-singular value off zero by forty-four orders of magnitude between a steady record and a
-$40\%$ one, and prior-free $\operatorname{sd}(\ln\hat\theta)$ is still $28.1$ at half a per
-cent and $1.30$ at ten. A reader who takes Proposition~\ref{prop:rank} as a design result
-will expect otherwise.
+Its \emph{accuracy} is what decides whether the design reaches its target. Swept properly,
+$\operatorname{sd}(\ln\hat\theta)$ runs $0.157$ at a $1\%$ recording error to $0.264$ at
+$20\%$, so the target holds only below about $12\%$ (Section~\ref{sec:spec}). A sweep over
+the record's variability says nothing about this, because the recording error enters only
+through $\sigma$.
 
-With the dose train at a perfectly constant load the matrix is \emph{still} rank deficient
-and the filter reports $0.1696$: that is the load-record prior filling the deficient
+\textbf{Restoring rank is not achieving precision, and the two must not be run together.}
+Without the dose train, prior-free $\operatorname{sd}(\ln\hat\theta)$ is still $28.1$ at
+half a per cent of variation and $1.30$ at ten, while the rank has long since been restored.
+With the dose train at a perfectly constant load the matrix is still rank deficient and the
+filter nonetheless reports $0.1696$, because the load-record prior fills the deficient
 direction. At the variability the specification asks for the data fill it instead, though
-not at once, the $0.5\%$ and $2\%$ rows still returning $0.86$ and $0.26$ prior-free. What
-the prior holds is given back gradually and is not fully given back until the record
-carries several per cent.
-\end{remark}
+not at once: the $0.5\%$ and $2\%$ records return $0.86$ and $0.26$ prior-free, so what the
+prior holds is given back gradually and is not fully given back until the record carries
+several per cent.
+
+That is why the information filter cannot be read on its own here. It is a first-order
+object, so against a rank-deficient design it fills the deficient direction from the prior
+and reports the result as though the data had supplied it, and at a constant recorded load
+the prior's $95\%$ half-width of $\pm31.6$ in $b$ is the whole of what the number contains.
+A diagnostic reading the power of the noiseless $\chi^2$ along the smallest eigendirection
+will not show this: moving along the straight eigendirection departs from the curved fibre
+at second order, so $\chi^2 \propto \varepsilon^4$ whether or not the data constrain
+anything. That measurement is parametrisation dependent, changing by a factor of three
+between $(\theta, K_m)$ and $(\ln\theta, \ln K_m)$, and design dependent, its half-width
+running $36$, $49$, $69$ across two-daily, weekly and monthly sampling.
+\textbf{The diagnostic that works is the profile}: re-optimise the remaining parameters at
+each fixed value of the suspect coordinate. That profile is flat and its optimum traces
+\eqref{eq:fibrecl}; Remark~\ref{rem:curvature} runs it on the recommended design and reports
+what an interval there actually costs.
 
 So the specification asks for the ordinary variability of ordinary eating to be recorded and
 not smoothed. A dietary record averaged to a weekly mean, or imputed from a prescription,
 destroys the quantity that closes the fibre, which is the opposite of the instinct a
 data-management plan follows.
-
-\begin{remark}[A prior can do work the data cannot, and the ray will not show it]
-\label{rem:second_order}
-The information filter is a first-order object, so against a rank-deficient design it fills
-the deficient direction from the prior and reports the result as though the data had
-supplied it. At a constant recorded load that is what happens: the load-record prior gives
-a $95\%$ half-width of $\pm31.6$ in $b$, and the likelihood supplies nothing, because
-\eqref{eq:fibrecl} is an exact fibre.
-
-A diagnostic reading the power of the noiseless $\chi^2$ along the smallest eigendirection
-does not detect this. Moving along the straight eigendirection departs from the curved fibre
-at second order, so $\chi^2 \propto \varepsilon^4$ whether or not the data constrain
-anything; that measurement is also parametrisation dependent, changing by a factor of three
-between $(\theta, K_m)$ and $(\ln\theta, \ln K_m)$, and design dependent, its half-width
-running $36$, $49$, $69$ across two-daily, weekly and monthly sampling. \textbf{The
-diagnostic that works is the profile}: re-optimise the remaining parameters at each fixed
-value of the suspect coordinate. That profile is flat and its optimum traces
-\eqref{eq:fibrecl}; Remark~\ref{rem:curvature} runs it on the recommended design and
-reports what an interval there actually costs.
-\end{remark}
 
 \vspace{0.5em}
 \hrule

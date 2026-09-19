@@ -23,15 +23,13 @@ vector \eqref{eq:nullvec} has a zero in its $k_e$ slot, so the degenerate direct
 capacity, affinity and the load bias and $k_e$ is not in it; but $k_e$ escapes that identity
 only just, its column being nearly rather than exactly dependent on the rest. So $K_m$
 moves \emph{along} the degeneracy rather than across it, and $k_e$ lies just outside, where
-a modest prior does all the work. \textbf{An earlier version of this paragraph said a prior
-on $K_m$ therefore cannot help. That has the mechanism inverted}, and the supplement, \S
-S1, now gives the corrected version: a $K_m$ prior is precisely a prior on position along
-the fibre, so it does bound the load bias, and the conclusion survives because the
-tightness it would need is unobtainable rather than because it does nothing. The full argument, with the regression
+a modest prior does all the work. A prior on $K_m$ is therefore a prior on position along
+the fibre and does bound the load bias; what makes it useless here is the tightness it
+would need, which the supplement, \S S1, works out. The full argument, with the regression
 residuals that separate the two cases, is in the supplement, \S S1.
 
 \paragraph{The footing, stated once and used everywhere.} Four choices decide every number
-in this section, and earlier drafts of this paper did not hold them fixed.
+in this section.
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
 \item \textbf{$q$ carries the increment}, as \eqref{eq:columns} requires. A design is
 \emph{not} fully described by the levels it visits: two samples at the same level under
@@ -46,14 +44,8 @@ record determines it: see Remark~\ref{rem:kmrecovered}.
 \item \textbf{$k_e$ carries a log-prior of $0.8$}, a factor of $2.2$, and is the only
 prior that does any work: removing it takes the same design from $0.1500$
 ($0.1498$ to $0.1501$) to $1.1096$ ($1.0313$ to $1.1923$), a factor of $7.4$ taken record
-by record ($6.9$ to $7.9$). \textbf{An earlier version of this list put that pair at
-$0.1474$ and $0.6451$, a factor of $4.4$. Neither figure is reproducible from this
-repository and both are withdrawn} (\texttt{REVIEW\_LOG.md} R19;
-\texttt{audit/n3\_ke\_prior\_worth.py} searched the five designs of
-Table~\ref{tab:designs} at twenty-four records each and sixty combinations of horizon,
-sampling interval and phase offset, and found nothing returning either). The correction
-roughly doubles what the prior is carrying, so it sharpens the concern rather than
-settling it. The gate needs $k_e$ within a factor of $2.67$ ($2.65$ to $2.68$), which is
+by record ($6.9$ to $7.9$). That is the one prior the design depends on, and it is doing
+twice the work a factor of four would suggest. The gate needs $k_e$ within a factor of $2.67$ ($2.65$ to $2.68$), which is
 the one thing this paper asks the literature for and, by the $k_e$ row of
 Table~\ref{tab:params}, the one thing the literature does not supply.
 \item \textbf{Intake varies day to day at a $10\%$ coefficient of variation, and is
@@ -90,7 +82,7 @@ much of the dose cycle they see, not how many samples they take.}
 The fourth column is the range of the therapeutic increment the design actually sees, and
 it, rather than $n$, is what orders the table. The last column is the same design evaluated
 with the increment dropped from the sensitivity while still being used to generate the
-levels, which is what earlier drafts of this paper reported.}
+levels, which is the error the next remark quantifies.}
 \input{../results/tables/tab_D_designs}
 \end{table}
 \end{adjustwidth}
@@ -124,10 +116,7 @@ multiple.
 
 Moving the schedule by half a day fixes it: sampling every $14.5$ days gives $0.161$
 ($0.1611$ to $0.1618$). Taken record by record rather than as a ratio of two medians, the
-aliased design costs a factor of $27$ ($21$ to $33$). An earlier version of this remark
-put that factor at twenty-two, from a single intake record which turned out to be the
-most favourable of the twenty-four; \textbf{the correction makes the rule sharper, not
-weaker}. A factor of that size in the precision of the answer turns on a choice a
+aliased design costs a factor of $27$ ($21$ to $33$). A factor of that size in the precision of the answer turns on a choice a
 protocol writer would make for administrative convenience, and would currently make the
 wrong way, because ``sample on dosing days'' is the obvious thing to write.
 \end{remark}
@@ -139,7 +128,7 @@ $\sqrt{[\mathcal{I}^{-1}]_{11}}$, the Cram\'er--Rao bound. That is the \emph{cur
 the log likelihood at its optimum, and it correctly describes the spread of $\hat\theta$
 over repeated records. A reader who multiplies it by $1.96$ and reads a confidence
 interval is doing something else, and that step needs the likelihood to be quadratic over
-that range, which Remark~\ref{rem:second_order} says it is not.
+that range, which Section~\ref{sec:rank} shows it is not.
 
 Profiling $\ln\theta$ on a grid and re-optimising $(\ln K_m, b, \ln k_e)$ at each point
 with this paper's own priors, the $95\%$ profile interval on the recommended monthly
@@ -151,9 +140,8 @@ bound puts it. On a noiseless record the profile's curvature reproduces the boun
 $0.4\%$, so this is a property of the likelihood and not of the optimiser
 (\texttt{audit/n6\_profile\_vs\_crb.py}).
 
-\textbf{An earlier version of this paper quoted these curvatures without that
-distinction, and the abstract invited exactly the wrong reading. That is withdrawn.} The
-numbers are unchanged and correctly labelled: where this paper quotes
+\textbf{The distinction is not cosmetic}, because a bound quoted without it invites the
+wrong reading: where this paper quotes
 $\operatorname{sd}(\ln\hat\theta)$ it means a sampling spread, and where a reader wants an
 interval the factor is about four.
 \end{remark}
@@ -186,7 +174,7 @@ say.
 \begin{enumerate}[leftmargin=*, itemsep=3pt]
 \item \textbf{The last column is the error.} With the increment dropped from the
 sensitivity, every accessible design sits between $1.0$ and $9.4$ and none of them
-collapses, which is what earlier drafts reported as the result. The correction is checked
+collapses. The corrected column is checked
 against a finite difference of the integrated dynamics in two independent ways, on two
 integrators over two spans (supplement, \S S2); the uncorrected column is wrong by
 up to $64\%$ of itself at the top of a dose cycle.
@@ -196,13 +184,11 @@ design remains unavailable for the reasons of Section~\ref{sec:excursion_table},
 a statement about what is being given up, not a recommendation.
 \item \textbf{One dose cycle of seven samples does not do it.} It reaches $0.219$ and has a
 floor there: no improvement in how well the increment is known brings it inside the target,
-because what limits it is the design and not the product. An earlier report of this work
-claimed that single cycle passed; it did so only with $k_e$ held known, and the claim is
-withdrawn in \texttt{REVIEW\_LOG.md} rather than deleted.
+because what limits it is the design and not the product. A single cycle passes only with
+$k_e$ held exactly known, which is not a footing this paper claims.
 \end{enumerate}
 
-And the load record behaves in the way Proposition~\ref{prop:rank} says, not the
-way this paper used to assume. Recording the load ten times better (to $0.5\%$, which
+And the load record behaves in the way Proposition~\ref{prop:rank} says. Recording the load ten times better (to $0.5\%$, which
 nobody can do) moves the dense design by about one per cent. That retires the claim that
 load-record \emph{precision} is the binding design variable. What the record has to contain
 instead is \emph{variation}: by Proposition~\ref{prop:rank} a perfectly steady intake is the
@@ -503,11 +489,11 @@ the estimator, and
 taking the Gaussian tail at face value would throw away the one favourable result this paper
 has. Both numbers are reported by the code so that the gap stays visible.
 
-This is the first of the paper's two linearisation failures; the second is
-Remark~\ref{rem:second_order}, where a curvature measured along a ray was read as the data
-pinning a direction that an exact fibre leaves free. \textbf{They do not point the same
-way, and an earlier version of this remark said they did, with the second one stated
-backwards.} Remark~\ref{rem:second_order} says why.
+A linearisation misrepresents this estimand in one direction and the design matrix of
+Section~\ref{sec:rank} in the other. Here it \emph{understates} what the record contains;
+there a curvature measured along a ray reads as the data pinning a direction that an exact
+fibre leaves free. The two are not the same failure, and the difference is the lesson: a
+diagnostic is a model too.
 \end{remark}
 
 \vspace{0.5em}

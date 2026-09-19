@@ -152,13 +152,10 @@ glyph under each channel is its shape.}
 \subsection{The equilibrium reduction}
 \label{sec:reduction}
 
-\textbf{An earlier version of this passage justified eliminating the carnitine state by
-calling it fast relative to the metabolite, quoting $m$ settling in about $0.8$~h against a
-therapeutic half-life of $3.5$~d. That is withdrawn, and it was the wrong comparison twice
-over.} It compares the marker against the \emph{therapy}, which is the separation that
-licenses treating a clinic draw as a steady state and which Section~\ref{sec:collapse}
-already states with its own measured value; the reduction needs carnitine against the
-\emph{marker}. And that separation runs the other way: at the model's own $k$ the carnitine
+\textbf{The carnitine state is not fast relative to the metabolite, and no separation of
+timescales is needed to justify eliminating it.} The comparison that would be needed is
+carnitine against the \emph{marker}, not the marker against the \emph{therapy}, and it runs
+the wrong way: at the model's own $k$ the carnitine
 time constant is $0.92$~d against the marker's $0.81$~h, slower by a factor of $27$, and
 published human kinetics put whole-body carnitine turnover at $38$ to $119$~h with a
 rapidly equilibrating compartment at $2$ to $3$~h (Rebouche, \emph{Ann.\ N.\ Y.\ Acad.\
@@ -180,8 +177,7 @@ substituting gives that flux in closed form,
 \end{equation}
 with $\rho_0 = \delta_0/k$. The conjugation rate constant $k$ enters only through that
 ratio and cancels from the reduced clearance, exactly. \textbf{It does not follow that $k$
-is a free scale, and the claim that no conclusion depends on it is withdrawn}: $k$ alone
-sets the carnitine relaxation rate, $\tau_c = 1/(k[u(m) + \rho(m)])$, so it sets the
+is a free scale}: $k$ alone sets the carnitine relaxation rate, $\tau_c = 1/(k[u(m) + \rho(m)])$, so it sets the
 reduction's validity \emph{off} equilibrium even though it cancels from the curve. What
 assuming it costs is in the $k$ row of Table~\ref{tab:params} and is bounded rather than
 argued away. Substituting \eqref{eq:alphaqss} into \eqref{eq:parent} recovers the parent
@@ -191,12 +187,11 @@ Setting $\dot m = 0$ gives the equilibrium reduction, which is what a steady-sta
 clinical record actually estimates. Its solutions are an attractor and a separatrix, and the
 fold at which the two collide defines the critical capacity $\thc$: below it a sufficiently
 large load leaves the system with no equilibrium at all, which is what a decompensation is
-in this model. \textbf{An earlier version of this passage called the reduction verified
-rather than asserted, on the strength of integrating \eqref{eq:twostate} and settling on
-the reduced attractor to fourteen digits. That is withdrawn as evidence}: it is the same
+in this model. \textbf{Integrating \eqref{eq:twostate} and watching it settle on the
+reduced attractor to fourteen digits is not evidence for the reduction}: it is the same
 identity as above, so it cannot fail at any parameter value and reports nothing about the
-premise. It confirms the algebra and no more. The divergence from above the separatrix is
-kept with a qualification it did not carry: started \emph{on} the slow manifold a
+premise. It confirms the algebra and no more. The divergence from above the separatrix
+needs a qualification: started \emph{on} the slow manifold a
 trajectory a tenth of a per cent above the separatrix does run away, but started off it,
 with carnitine at its pre-perturbation value, the same trajectory can return to the
 attractor. The reduced separatrix is a lower bound on the true basin and not the basin. The intrinsic definition of $\thc$, the fold, and the comparison against the
@@ -292,10 +287,9 @@ concentration-scale constant is \emph{assumed} and illustrative. Each row carrie
 \emph{kind} of quantity it is, which is not the same question as where it came from: a
 constant can be honestly assumed and still be an effective or lumped parameter rather than
 one any experiment could measure. Four rows carry murine estimates and two rat \emph{in
-vitro} ones, and say so. An earlier version of this caption said that no conclusion below
-depends on a value in this table. \textbf{That is withdrawn}: it conflated
-Remark~\ref{rem:no_km}, which shows no \emph{prior} on $K_m$ is needed, with the much
-larger claim that nothing depends on $K_m$ at all. The last column therefore carries the
+vitro} ones, and say so. \textbf{Some conclusions do depend on values in this table.}
+Remark~\ref{rem:no_km} shows that no \emph{prior} on $K_m$ is needed, which is a narrower
+claim than nothing depending on $K_m$ at all. The last column therefore carries the
 cost bound for the three rows where it decides a result, and \S S2 of the supplement
 carries the full provenance of every row, with its sources and what each assumption is
 worth.}
@@ -337,9 +331,8 @@ tighter, and the estimator of Section~\ref{sec:collapse} does not integrate at a
 the closed-form quasi-steady level of \eqref{eq:alphaqss}. Two tests guard the integration:
 one halves the step and asserts the answer does not move by more than $10^{-6}$ relative;
 the other asserts that an integrated steady state equals the closed-form equilibrium
-reduction to the same tolerance. \textbf{An earlier version of this paragraph said those
-tests measure the validity of the reduction rather than assuming it. That is withdrawn}:
-neither touches it. The first integrates the local model, and the second integrates the
+reduction to the same tolerance. \textbf{Neither measures the validity of the carnitine
+reduction.} The first integrates the local model, and the second integrates the
 \emph{reduced} system and compares it against the algebraic root of the same reduced
 clearance, so the two-state system appears in neither. What licenses the reduction is the
 identity of \S\ref{sec:reduction}, and what bounds its cost off equilibrium is the $k$ row
@@ -347,10 +340,7 @@ of Table~\ref{tab:params}.
 
 Every stochastic result uses \texttt{numpy.random.default\_rng} with an explicit seed named
 at the call site, and each quoted precision is a median over $24$ intake records with its
-range beside it, unless stated otherwise. \textbf{That sentence stood in this paper before
-it was true.} The record generator's seed was a default argument no caller ever set, so
-every design number was a single draw; the correction and what it moved are in
-\texttt{REVIEW\_LOG.md} R21. Fitted ensembles are cached on $(\text{design}, \sigma, \mathrm{CV},
+range beside it, unless stated otherwise. Fitted ensembles are cached on $(\text{design}, \sigma, \mathrm{CV},
 \text{reps}, \text{seed})$, so the same design is fitted once and reused across a sweep.
 
 The observation model is on the log scale, so a constant coefficient of variation is a

@@ -137,9 +137,8 @@ LOCAL = [
                  r"annotations are not in conflict once the label is stated; what was in "
                  r"conflict was reading an illustration of a healthy channel as a "
                  r"description of the patient the paper is about. "
-                 r"\textbf{An earlier version of this row said "
-                 r"no conclusion may depend on its value. That is false and is withdrawn}: "
-                 r"the identifiability results do not depend on it, but the "
+                 r"\textbf{Some conclusions do depend on this value}: "
+                 r"the identifiability results do not, but the "
                  r"supplement's local-model section (\S S1) flips a qualitative conclusion "
                  r"across it, the anchor attenuating at $3000$ and amplifying at the "
                  r"parent's $300$, and Section~\ref{sec:scope} now reports that the "
@@ -150,8 +149,8 @@ LOCAL = [
         kind=CONVENTION),
     Row(r"$\theta_{\mathrm{PA}}$", r"$\le 150$~$\mu$M/d",
         "capacity in the disease, on the scale of the row above",
-        LITERATURE, r"\textbf{previously unregistered, and it is the row that says who the "
-                    r"paper is about}. Residual PCC activity in propionic acidemia is under "
+        LITERATURE, r"\textbf{This is the row that says who the paper is "
+                    r"about.} Residual PCC activity in propionic acidemia is under "
                     r"$5\%$ of control~\cite{pcc_residual_activity}, which on the scale "
                     r"the row above fixes is $\theta \le 150$. \textbf{The design does not "
                     r"reach its target there, and the gap is large}: on the monthly record "
@@ -193,7 +192,7 @@ LOCAL = [
                  r"which is the favourable case for identification. A rate of $5$~d$^{-1}$ is "
                  r"a marker half-life of $3.3$~h. \textbf{This is the priority gap}: "
                  r"Section~\ref{sec:designsec} needs it within a factor of about three, and "
-                 r"\textbf{no source supplies it}. An earlier version of this row named the "
+                 r"\textbf{no source supplies it}. The nearest candidate is the "
                  r"first-order 3-HP elimination of the translational model; \emph{that model "
                  r"contains none}. Its 3-HP is a direct algebraic $I_{\max}$ function of PCC "
                  r"protein with no marker state and no elimination "
@@ -276,10 +275,9 @@ LOCAL = [
         "standard deviation of the ordinate of the fit",
         ASSUMED, r"deliberately not assigned, because nothing in this paper bounds how well "
                  r"the substrate load is recorded. The assay contributes $b\,\sigma_m$ to the "
-                 r"same total. \textbf{An earlier version of this row said every design "
+                 r"same total. \textbf{Not every design conclusion is reported as a "
                  r"conclusion is reported as a function of it. That is false of "
-                 r"Section~\ref{sec:spec} as coded and is withdrawn} (\texttt{REVIEW\_LOG.md} "
-                 r"R17): \texttt{spec\_numbers()} computes one $\sigma$ at a recording error "
+                 r"function of it}: \texttt{spec\_numbers()} computes one $\sigma$ at a recording error "
                  r"of $5\%$ and reuses it on every row, so that table is reported \emph{at} "
                  r"one $\sigma$, not as a function of it. Swept properly, "
                  r"$\mathrm{sd}(\ln\hat\theta)$ runs $0.1566$ at $1\%$ recording error to "
@@ -297,7 +295,7 @@ LOCAL = [
                  r"$14.02 \pm 12.86\%$ in patients and $6.9\%$ in "
                  r"controls~\cite{breath_test_mma}; \textbf{the widely quoted $12.8\%$ is the "
                  r"standard deviation of the per-subject coefficients and not their mean, and "
-                 r"is withdrawn here} (\texttt{REVIEW\_LOG.md} R4). That figure is also "
+                 r"is not their mean}. That figure is also "
                  r"\emph{between-visit}, over two months to four years, so it bounds the "
                  r"same-day repeatability Tier~1 asks for from above rather than measuring "
                  r"it, and the cohort is methylmalonic acidemia. Biological variability is far "
@@ -308,8 +306,8 @@ LOCAL = [
         kind=MEASURABLE, species="human (MMA); mouse"),
     Row(r"$s_{\ln k_e}$", f"${KE_PRIOR_LOG:.1f}$",
         "sd of the log-normal prior on $k_e$",
-        ASSUMED, r"\textbf{previously unregistered}, and it is the only prior that does any "
-                 r"work. A factor of $e^{0.8} = 2.23$ per standard deviation, which is wider "
+        ASSUMED, r"\textbf{The only prior that does any work.} "
+                 r"A factor of $e^{0.8} = 2.23$ per standard deviation, which is wider "
                  r"than the factor of about three the gate needs, so the prior is "
                  r"deliberately weaker than the requirement. It lives as a default argument "
                  r"in \texttt{src/design/run.py} and is asserted against it in the tests. "
@@ -329,7 +327,7 @@ LOCAL = [
         kind=PRIOR),
     Row(r"$\sigma_L/L$", f"${100*LOAD_FRAC:.0f}\\%$",
         "relative error in the recorded substrate load",
-        ASSUMED, r"\textbf{previously unregistered}, and it sets $\sigma$ through "
+        ASSUMED, r"\textbf{Sets $\sigma$} through "
                  r"$\sigma_{\mathrm{total}}$ and the load-bias prior through "
                  r"$s_b = \sigma_L/L \cdot L$. It is the recording error, distinct from the "
                  r"day-to-day variation of the load itself, and the two were conflated in "
@@ -395,8 +393,7 @@ PARENT = [
                  r"in PA and MMA urinary free-carnitine excretion falls while short-chain "
                  r"acylcarnitine excretion rises~\cite{carnitine_excretion_pa}, which does "
                  r"not yield a number. A lower figure of ``about $0.35$'' quoted elsewhere in "
-                 r"the code was re-derived at $0.195$ and is withdrawn "
-                 r"(\texttt{REVIEW\_LOG.md} \S 0.1)",
+                 r"the code re-derives at $0.195$",
         kind=EFFECTIVE, species="human"),
     Row(r"$R_0$", f"${_C.R0:.1f}$~$\mu$M/d", "carnitine replenishment",
         DERIVED, r"\textbf{not free}. Fixed by requiring the alternative route alone to peak "
@@ -411,7 +408,8 @@ PARENT = [
         kind="derived"),
     Row(r"$\mathrm{ALT}_{\mathrm{peak}}$", f"${ALT_PEAK_C:.0f}$~$\mu$M/d",
         "peak of the alternative route alone, the constraint that fixes $R_0$",
-        ASSUMED, r"\textbf{previously unregistered}, which left a \textsc{derived} row derived "
+        ASSUMED, r"\textbf{The constraint behind $R_0$}, which would otherwise be a "
+                    r"\textsc{derived} row derived "
                  r"from a number with no row of its own, in a registry whose stated rule is "
                  rf"that no number reaches the paper without one. Set below the baseline load "
                  rf"of ${S_BASE_C:.0f}$ so that a patient with no residual capacity cannot be "
@@ -427,14 +425,14 @@ PARENT = [
                  r"metronidazole, and roughly $30\%$ unaccounted for and attributed to "
                  r"odd-chain fatty acids~\cite{propionate_sources}; a protein-restricted diet "
                  r"lowers the first two deliberately. A whole-body turnover of roughly $250$ "
-                 r"to $400$~$\mu$mol/kg/day was quoted here without a source and is withdrawn "
+                 r"to $400$~$\mu$mol/kg/day has no source and is not used "
                  r"pending one. The value here is not in those units and is not claimed to be",
         kind=LUMPED, species="human"),
     Row(r"$k$", r"$1$~d$^{-1}$, cancels from the curve", "conjugation rate constant",
         ASSUMED, r"drops out of the quasi-steady reduction of supplement \S S1 exactly, so the "
-                 r"reduced clearance does not depend on it. \textbf{An earlier version of "
+                 r"reduced clearance does not depend on it. \textbf{It is not therefore a "
                  r"this row concluded from that it is a free scale and reclassified it "
-                 r"\textsc{derived}. Both are withdrawn}: $k$ alone sets the carnitine "
+                 r"\textsc{derived}}: $k$ alone sets the carnitine "
                  r"relaxation rate, $\tau_c = 1/(k[u(m)+\rho(m)])$, so it fixes the "
                  r"reduction's validity \emph{off} equilibrium even though it cancels from "
                  r"the curve, and nothing in this model fixes $k$ itself. \textbf{Cost}: "

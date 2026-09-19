@@ -209,6 +209,19 @@ $b = 0$ annihilates the Jacobian at the truth and fails to at $b = 31.6$, and in
 gives $K_m = K_m^{0}e^{-b/L}$, which leaves \eqref{eq:fibrecl} at second order. With $b$
 carried, the field's integral curve \emph{is} that fibre, with symbolic difference zero.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig_D4_protocol.pdf}
+\caption{The schedule the specification asks for. \textbf{Left:} the marker under the
+biweekly dose train, and three candidate schedules over four months. \textbf{Right:} what
+each schedule sees of $\Delta/\theta$ across one dose cycle, with the range it spans drawn
+as the bar at each panel's right. That range, not the number of draws, is what identifies
+$\theta$: monthly sampling spans $1.84$ of the cycle and $14.5$-daily spans $1.99$, while
+fortnightly puts every draw at one phase and collapses it to $0.13$. The excluded hour after
+each dose is drawn wider than scale.}
+\label{fig:D4}
+\end{figure}
+
 \subsection{Two conditionings, kept separate}
 
 \begin{remark}[Two conditionings, kept separate]
@@ -249,9 +262,7 @@ results are stated separately.
       assumed $\alpha$ already accounts for more of the fitted intercept than the record
       contains, and above $K_c \approx 300$ it accounts for more of the slope. Inside the
       window the $\theta$ recovered from one fitted $(a,b)$ runs from $213$ to $300$, a
-      factor of $1.41$. Earlier figures for this ($300$ to $457$, a factor of $1.52$, and no
-      admissible solution above $K_c \approx 200$) do not reproduce under either convention
-      and are withdrawn. The two-sided bound is the useful part, and it is a real piece of
+      factor of $1.41$. The two-sided bound is the useful part, and it is a real piece of
       information: a record that fixes $(a,b)$ excludes nine-tenths of the range the
       arbitrariness of $K_c$ nominally spans. The identifiability of the dynamic model is
       not otherwise analysed in this paper.
@@ -558,10 +569,10 @@ there is no permutation of $(\theta, K_m, k_e)$ that exchanges them and nothing 
 The tool confirms it, saturating plus linear, with no input at all, returns globally
 identifiable.
 
-An earlier version of this section argued the same conclusion from the limit
-$\lim_{K_e \to \infty} k_e K_e\, m/(K_e+m) = k_e m$: that the linear channel is a
-saturating one with an infinite constant, so the two shapes differ. That reasoning
-is withdrawn. The limit is singular: it holds $k_e K_e$ fixed while $K_e$ grows, and
+The same conclusion does \emph{not} follow from the limit
+$\lim_{K_e \to \infty} k_e K_e\, m/(K_e+m) = k_e m$, which would make the linear channel a
+saturating one with an infinite constant. That limit is singular: it holds $k_e K_e$ fixed
+while $K_e$ grows, and
 $K_e = \infty$ is not a value of a positive parameter, so it does not place the two channels
 in one family and ``the shapes differ'' is not what the argument turns on. What it turns on
 is that there is no permutation available at all.
@@ -668,10 +679,9 @@ worst-conditioned of the directions that survive it.
 Together they decide every prior in this paper, and they decide it the way round
 that is easy to get backwards.
 \begin{itemize}[leftmargin=*, itemsep=2pt]
-\item \textbf{$K_m$ moves \emph{along} the degeneracy rather than across it.} \textbf{An
-earlier version of this item said a prior on $K_m$ therefore cannot help, and that is
-withdrawn: the mechanism was inverted.} A $K_m$ prior is precisely a prior on position
-along the fibre \eqref{eq:fibrecl}, so it \emph{does} bound the load bias, through
+\item \textbf{$K_m$ moves \emph{along} the degeneracy rather than across it.} A $K_m$ prior
+is precisely a prior on position along the fibre \eqref{eq:fibrecl}, so it \emph{does}
+bound the load bias, through
 $b = L(K_m^{0}/K_m - 1)$: a log-prior of standard deviation $s$ confines $b$ to
 $[L(e^{-1.96s}-1),\, L(e^{1.96s}-1)]$. What that shows is how tight such a prior would have
 to be. At $s = 0.8$ it leaves $b$ in $[-255, +1225]$, forty times the load record's own
@@ -686,7 +696,7 @@ times looser still changes $\operatorname{sd}(\ln\hat\theta)$ in the fourth deci
 is a reason, not a convenience, and it is why the note can decline to import a constant it
 has no right to.
 \item \textbf{$k_e$ lies just \emph{outside} it, so a prior on it does all the work.}
-Removing it takes the same design from $0.1500$ to $1.1096$, a factor of $7.4$ taken record by record ($6.9$ to $7.9$ over twenty-four intake records). The $0.1474$ and $0.6451$ quoted here previously are not reproducible and are withdrawn (\texttt{REVIEW\_LOG.md} R19). A direction that is nearly
+Removing it takes the same design from $0.1500$ to $1.1096$, a factor of $7.4$ taken record by record ($6.9$ to $7.9$ over twenty-four intake records). A direction that is nearly
 dependent is exactly the case where a modest prior buys a great deal, and it is the only
 such direction here.
 \item \textbf{$\theta$ is the target and carries no prior}, because a prior on the
