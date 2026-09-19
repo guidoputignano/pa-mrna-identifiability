@@ -158,7 +158,11 @@ LOCAL = [
                  r"\texttt{audit/n1\_km\_cost.py}). It is $0.1699$ here and crosses the "
                  r"$0.20$ target at $K_m = 124$~$\mu$M, so the design has a factor of "
                  r"\textbf{$1.24$} of headroom on this constant; at the in vitro value the "
-                 r"row declines to use, $290$~$\mu$M, it would be $0.4158$",
+                 r"row declines to use, $290$~$\mu$M, it would be $0.4158$. "
+                 r"\textbf{That headroom is smaller than it reads}: across the same $24$ "
+                 r"records the spread is $0.1684$ to $0.1709$ at $K_m = 100$ and $0.1987$ "
+                 r"to $0.2010$ at $K_m = 124$, so the crossing straddles the target and "
+                 r"which side of it a given record falls on is not settled by the median",
         kind=EFFECTIVE),
     Row(r"$k_e$", f"${_A.ke:.0f}$~d$^{{-1}}$",
         "alternative clearance rate constant",
@@ -257,7 +261,9 @@ LOCAL = [
                  r"one $\sigma$, not as a function of it. Swept properly, "
                  r"$\mathrm{sd}(\ln\hat\theta)$ runs $0.1566$ at $1\%$ recording error to "
                  r"$0.2637$ at $20\%$, and the design meets its target only below roughly "
-                 r"$12\%$",
+                 r"$12\%$ (median over $24$ simulated intake records at a load CV of "
+                 r"$10\%$, spread $[0.1563, 0.1571]$ at $1\%$ and $[0.2563, 0.2690]$ at "
+                 r"$20\%$; \texttt{audit/m1\_loadbias\_prior.py})",
         kind=LUMPED),
     Row(r"$\mathrm{CV}$", f"${ASSAY_CV:.0f}\\%$",
         "analytical variability of the marker assay",
@@ -280,13 +286,23 @@ LOCAL = [
     Row(r"$s_{\ln k_e}$", f"${KE_PRIOR_LOG:.1f}$",
         "sd of the log-normal prior on $k_e$",
         ASSUMED, r"\textbf{previously unregistered}, and it is the only prior that does any "
-                 r"work: Section~\ref{sec:designsec} records that removing it takes the same "
-                 r"design from $0.1474$ to $0.6451$. A factor of $e^{0.8} = 2.23$ per standard "
-                 r"deviation, which is wider than the factor of about three the gate needs, so "
-                 r"the prior is deliberately weaker than the requirement. It lives as a "
-                 r"default argument in \texttt{src/design/run.py} and is asserted against it "
-                 r"in the tests. What it is grounded in is the open question, since by the "
-                 r"$k_e$ row above no source supplies the constant it is a prior on",
+                 r"work. A factor of $e^{0.8} = 2.23$ per standard deviation, which is wider "
+                 r"than the factor of about three the gate needs, so the prior is "
+                 r"deliberately weaker than the requirement. It lives as a default argument "
+                 r"in \texttt{src/design/run.py} and is asserted against it in the tests. "
+                 r"What it is grounded in is the open question, since by the $k_e$ row above "
+                 r"no source supplies the constant it is a prior on. \textbf{What it is "
+                 r"worth is an open question too}: Section~\ref{sec:designsec} states that "
+                 r"removing it takes the same design from $0.1474$ to $0.6451$, and neither "
+                 r"figure reproduces from this repository. On the densest design that "
+                 r"section lists, sampling every two days for two years, "
+                 r"$\mathrm{sd}(\ln\hat\theta)$ is $0.1500$ with the prior and $1.1096$ "
+                 r"without, medians over $24$ simulated intake records with spreads "
+                 r"$[0.1498, 0.1501]$ and $[1.0313, 1.1923]$, so the prior is worth a factor "
+                 r"of $7.4$ rather than the $4.4$ the section prints "
+                 r"(\texttt{audit/n3\_ke\_prior\_worth.py}, which also reports that every "
+                 r"design figure in this paper is drawn at the one seed "
+                 r"\texttt{design\_record} hard-codes)",
         kind=PRIOR),
     Row(r"$\sigma_L/L$", f"${100*LOAD_FRAC:.0f}\\%$",
         "relative error in the recorded substrate load",
