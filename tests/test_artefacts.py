@@ -47,15 +47,18 @@ def test_check_artefacts_fails_when_a_table_drifts(tmp_path):
     evidence. This perturbs one committed number, asserts the check rejects
     it, and puts the file back.
     """
+    import shutil
     import check_artefacts
-    target = ROOT / "results" / "tables" / "tab_D_designs.tex"
+    live = ROOT / "results" / "tables"
+    copy = tmp_path / "tables"
+    shutil.copytree(live, copy)
+    target = copy / "tab_D_designs.tex"
     original = target.read_text()
-    try:
-        target.write_text(original.replace("0.1699", "0.1698", 1))
-        assert not check_artefacts.check_regenerated()
-    finally:
-        target.write_text(original)
-    assert target.read_text() == original
+    target.write_text(original.replace("0.1699", "0.1698", 1))
+    assert target.read_text() != original, "the perturbation did not apply"
+    assert not check_artefacts.check_regenerated(live=copy)
+    #  and nothing in the repository was touched to find that out
+    assert (live / "tab_D_designs.tex").read_text() == original
 
 
 def test_three_distinct_levels_identify_the_local_model():

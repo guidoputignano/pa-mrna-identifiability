@@ -174,16 +174,7 @@ factors are of completely different sizes:
 
 \begin{center}
 \footnotesize
-\begin{tabular}{@{}lrrr@{}}
-\toprule
-\textbf{factor} & \textbf{range over the record} & \textbf{as a ratio} & \textbf{drop} \\
-\midrule
-$\varphi(m)$, the marker band        & $0.9213$--$0.9675$ & $1.05\times$ & $0.046$ \\
-$1 + \Delta/\theta$, the dose train  & $1.186$--$3.133$   & $2.64\times$ & $1.948$ \\
-\addlinespace
-the product                          & $1.092$--$3.031$   &              & $\mathbf{1.939}$ \\
-\bottomrule
-\end{tabular}
+\input{../results/tables/tab_D_factors}
 \end{center}
 
 \noindent
@@ -280,8 +271,8 @@ $3.8\times10^{-4}$ to $1.1\times10^{-1}$ with it: about five orders of magnitude
 first case and two and a half in the second, medians over twenty-four records.
 
 Its \emph{accuracy} is what decides whether the design reaches its target. Swept properly,
-$\operatorname{sd}(\ln\hat\theta)$ runs $0.157$ at a $1\%$ recording error to $0.264$ at
-$20\%$, so the target holds only below about $12\%$ (Section~\ref{sec:spec}). A sweep over
+$\operatorname{sd}(\ln\hat\theta)$ runs $0.159$ at a $1\%$ recording error to $0.288$ at
+$20\%$, so the target holds only below about $10\%$ (Section~\ref{sec:spec}). A sweep over
 the record's variability says nothing about this, because the recording error enters only
 through $\sigma$.
 

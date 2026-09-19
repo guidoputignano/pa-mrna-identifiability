@@ -59,6 +59,12 @@ def regenerate_tables(out):
     import model_C.run as C
     import design.run as D
 
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "n4", ROOT / "audit" / "n4_theta_scope.py")
+    n4 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(n4)
+
     with output_to(out), redirect_stdout(io.StringIO()):
         params.write_params_table()
         params.write_params_table(compact=True)
@@ -66,17 +72,43 @@ def regenerate_tables(out):
         A.table_design()
         D.table_designs()
         D.table_excursion()
+        #  the quasi-steady check contributes the settling time a protocol
+        #  needs, so it runs here too or the numbers file comes out short
+        D.quasi_steady_check()
+        D.table_factors()
+        D.table_load_precision()
+        D.table_instruments()
         D.table_spec()
+        #  the scope convention lives in the audit script that checks it,
+        #  so the tables that use it are written there rather than copied
+        n4.table_elasticity()
+        n4.table_scope()
+        n4.table_ke_prior()
+        #  and the numbers the text quotes in prose, which drift the same way
+        from common.numbers import write_numbers, NUMDIR
+        import common.numbers as _num
+        _num.NUMDIR = Path(out) / "numbers"
+        write_numbers("design", D.PAPER_NUMBERS, D.PAPER_FORMATS)
+        _num.NUMDIR = NUMDIR
     return sorted(p.name for p in (Path(out) / "tables").glob("*.tex"))
 
 
-def check_regenerated():
+def check_regenerated(live=None):
+    """
+    Compare the regenerated tables with the committed ones.
+
+    `live` overrides the directory holding the committed copies, which is
+    what the guard's own self-test uses: it must be able to perturb a table
+    and see the check reject it WITHOUT editing anything in results/, or a
+    process killed mid-test leaves a corrupted number in the repository.
+    """
+    live = Path(live) if live else ROOT / "results" / "tables"
     with tempfile.TemporaryDirectory() as tmp:
         written = regenerate_tables(tmp)
         bad, checked = [], 0
         for name in written:
             new = Path(tmp) / "tables" / name
-            old = ROOT / "results" / "tables" / name
+            old = live / name
             if not old.exists():
                 bad.append((name, "regenerated but not committed"))
                 continue
@@ -85,7 +117,19 @@ def check_regenerated():
                 a, b = old.read_text().splitlines(), new.read_text().splitlines()
                 n = sum(1 for x, y in zip(a, b) if x != y) + abs(len(a) - len(b))
                 bad.append((name, f"differs on {n} line(s)"))
-        print(f"  {checked} generated tables checked against the code")
+        #  the generated numbers file, compared the same way
+        nums = Path(tmp) / "numbers" / "design.tex"
+        live = ROOT / "results" / "numbers" / "design.tex"
+        if not nums.exists():
+            bad.append(("numbers/design.tex", "not regenerated"))
+        elif not live.exists():
+            bad.append(("numbers/design.tex", "regenerated but not committed"))
+        else:
+            checked += 1
+            if live.read_text() != nums.read_text():
+                bad.append(("numbers/design.tex", "differs"))
+        print(f"  {checked} generated tables and number files checked "
+              f"against the code")
         # tab_claims is rendered from paper/claims.csv by claims_to_tex.py,
         # which `make refs` runs before every paper build, so it cannot go
         # stale the way a figure module's table can.

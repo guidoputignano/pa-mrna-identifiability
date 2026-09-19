@@ -24,6 +24,8 @@ figures:
 	@echo ">> the local identification model";                  $(PY) src/model_A/run.py
 	@echo ">> the ceiling hypothesis";                          $(PY) src/model_B/run.py
 	@echo ">> the design (slow: the decision characteristic is simulated)"; $(PY) src/design/run.py
+	@echo ">> the scope tables, whose convention lives in the audit script"; $(PY) audit/n4_theta_scope.py
+	@echo ">> the decision table (slow: 12 seeds x 400 replicates)";        $(PY) audit/d13_decision_therapy.py
 
 refs:
 	$(PY) tools/fetch_refs.py

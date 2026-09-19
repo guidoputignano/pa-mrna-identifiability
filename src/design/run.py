@@ -88,6 +88,30 @@ def load(t, base=None):
 #: fibre, and a dietary record smoothed to a weekly mean destroys it.
 LOAD_CV = 0.10
 
+#: every quantity this module computes that the PAPER QUOTES IN PROSE, keyed
+#: by the name the text cites it under. Written to results/numbers/design.tex
+#: at the end of a run and quoted as \num{<key>}, so a literal in a sentence
+#: is checked the same way a table is.
+PAPER_NUMBERS = {}
+
+#: the precision each quoted number is printed at, chosen to match the
+#: sentence that quotes it. A key with no entry is printed to four decimals.
+PAPER_FORMATS = {
+    "alias_cost": "{:.0f}", "alias_cost_lo": "{:.0f}", "alias_cost_hi": "{:.0f}",
+    "excitation_ratio": "{:.0f}", "load_accuracy_gate": "{:.0f}",
+    "ke_needed_factor": "{:.2f}", "ke_needed_factor_lo": "{:.2f}",
+    "ke_needed_factor_hi": "{:.2f}",
+    "sd_monthly": "{:.3f}", "sd_monthly_lo": "{:.3f}", "sd_monthly_hi": "{:.3f}",
+    "sd_two_monthly": "{:.3f}", "sd_two_monthly_lo": "{:.3f}",
+    "sd_two_monthly_hi": "{:.3f}",
+    "sd_aliased": "{:.2f}", "sd_aliased_lo": "{:.2f}", "sd_aliased_hi": "{:.2f}",
+    "sd_aliased_off": "{:.3f}", "free_cv2": "{:.3f}",
+    "kappa_monthly_pct": "{:.1f}", "kappa_monthly_pct_lo": "{:.1f}",
+    "kappa_monthly_pct_hi": "{:.1f}",
+    "settle_hours": "{:.2f}", "sigma": "{:.1f}",
+    "sd_load_acc_40pct": "{:.3f}", "timescale_ratio": "{:.0f}",
+}
+
 #: the seed `design_record` has always drawn its intake record from. Kept as
 #: the default so nothing computed before September 2026 changes silently.
 BASE_SEED = 3
@@ -281,6 +305,12 @@ def quasi_steady_check(tol=0.05, cycles=3):
     worst = float(after.max()) if after.size else 0.0
     print(f"    marker time constant {tau*24:.2f} h against a dose half-life of "
           f"{np.log(2)/LAMBDA:.1f} d, a ratio of {np.log(2)/LAMBDA/tau:.0f}")
+    PAPER_NUMBERS.update({
+        "settle_hours": settle * 24.0,
+        "track_pct": 100.0 * worst,
+        "tau_hours": tau * 24.0,
+        "timescale_ratio": np.log(2) / LAMBDA / tau,
+    })
     print(f"    after a dose the marker reaches {100*tol:.0f}% of quasi-steady in "
           f"{settle*24:.2f} h, and tracks to within {100*worst:.3f}% thereafter")
     return settle, worst
@@ -373,6 +403,180 @@ def _filter(levels, sigma, increments=None, prior_rel=(None, None),
         Finv = Finv + np.outer(q, q) / sigma ** 2
         out.append(_cov(Finv))
     return np.array(out)
+
+
+def table_factors(T=730.0):
+    """
+    The two factors of the sensitivity ratio, on the same record.
+
+    Section 3 typed this table into the .tex. The numbers are computed on the
+    two-daily grid over two years, which is the densest design the paper
+    prices, and the point of the table is the asymmetry between the factors
+    rather than either one.
+    """
+    from common.excitation import phi
+    t = np.arange(0.0, T, 2.0)
+    lv = quasi_steady_level(t)
+    inc = np.asarray(delta(t), dtype=float)
+    ph = phi(lv, P.Km)
+    fac = 1.0 + inc / P.theta
+    pr = ph * fac
+    def row(name, v, ratio=True):
+        return [name, f"${v.min():.4f}$--${v.max():.4f}$",
+                (f"${v.max() / v.min():.2f}\\times$" if ratio else ""),
+                f"${v.max() - v.min():.4f}$"]
+    rows = [row(r"$\varphi(m)$, the marker band", ph),
+            row(r"$1 + \Delta/\theta$, the dose train", fac)]
+    rows.append([r"the product", f"${pr.min():.3f}$--${pr.max():.3f}$", "",
+                 r"$\mathbf{%.3f}$" % (pr.max() - pr.min())])
+    write_table("tab_D_factors",
+                ["factor", "range over the record", "as a ratio", "drop"],
+                rows,
+                colspec="lrrr",
+                note=("the dose train supplies %.1f times the drop the marker "
+                      "band does" % ((pr.max() - pr.min()) / (ph.max() - ph.min()))))
+    PAPER_NUMBERS.update({
+        "excitation_ratio": (pr.max() - pr.min()) / (ph.max() - ph.min()),
+        "phi_drop": ph.max() - ph.min(),
+        "train_drop": fac.max() - fac.min(),
+        "train_ratio": fac.max() / fac.min(),
+    })
+    print("  wrote tab_D_factors.tex")
+    print(f"    ratio of drops: {PAPER_NUMBERS['excitation_ratio']:.1f}")
+
+
+def table_load_precision(T=730.0):
+    """
+    What recording the substrate load more accurately is worth.
+
+    The accuracy enters twice and both have to move together: through
+    `sigma`, which is the ordinate noise of the fit, and through the
+    load-bias prior, which is the same fraction of the load. Holding either
+    one fixed while sweeping the other prices something the specification
+    does not ask for.
+    """
+    import model_A.run as LOC
+    monthly = np.arange(0.0, T, 30.4)
+    rows, raw = [], []
+    for frac in (0.01, 0.05, 0.10, 0.20, 0.40):
+        sig = LOC.sigma_total(frac, ASSAY_CV)
+        sds = []
+        for s in SEEDS:
+            lv, inc = design_record(monthly, seed=s)
+            sds.append(float(np.sqrt(
+                _filter(lv, sig, inc, load_frac=frac)[-1][0, 0])))
+        med, lo, hi = median_spread(sds)
+        raw.append((frac, sig, med, lo, hi))
+        rows.append([f"${100 * frac:.0f}\\%$", f"${sig:.1f}$",
+                     tex_spread(med, lo, hi)])
+    write_table("tab_D_loadprec",
+                ["substrate load recorded to", r"$\sigma$",
+                 r"$\operatorname{sd}(\ln\hat\theta)$"],
+                rows, colspec="lcc",
+                note=("medians over %d intake records at a %.0f%% day-to-day "
+                      "variability, range in brackets" % (len(SEEDS), 100 * LOAD_CV)))
+    print("  wrote tab_D_loadprec.tex")
+    for frac, sig, med, lo, hi in raw:
+        print(f"    load to {100 * frac:5.1f}%  sigma {sig:7.1f}  "
+              f"sd {med:.4f} [{lo:.4f}, {hi:.4f}]")
+    #  where the design crosses the gate, by interpolation in log-log, which
+    #  is what the text quotes as the recording accuracy the gate requires
+    import numpy as _np
+    xs = _np.log([r[0] for r in raw])
+    ys = _np.log([r[2] for r in raw])
+    cross = float(_np.exp(_np.interp(_np.log(0.20), ys, xs)))
+    PAPER_NUMBERS.update({
+        "load_accuracy_gate": 100 * cross,
+        "sd_load_acc_1pct": raw[0][2],
+        "sd_load_acc_20pct": raw[3][2],
+        "sd_load_acc_40pct": raw[4][2],
+    })
+    print(f"    reaches 0.20 at a recording accuracy of {100 * cross:.1f}%")
+    return raw, cross
+
+
+def table_instruments(T=730.0):
+    """
+    Three sources of excitation on one metric.
+
+    Same footing throughout: theta and K_m free, a log-prior of 0.8 on ln k_e,
+    the load recorded to 5%, twenty-five monthly draws over two years. The
+    first two rows carry no therapy at all, so their levels solve the balance
+    without the increment; the carnitine row adds recorded steps in k_e.
+    """
+    import model_A.run as LOC
+    monthly = np.arange(0.0, T, 30.4)
+    sigma = LOC.sigma_total(LOAD_FRAC, ASSAY_CV)
+    Lb = load(0.0)
+
+    def med_of(fn):
+        return median_spread([fn(s) for s in SEEDS])
+
+    def sd_untreated(load_cv, ke_step=0.0):
+        """
+        No therapy at all, so the levels solve the balance without the
+        increment. A carnitine step is a RECORDED step in k_e on alternate
+        visits with its gain treated as known, which is the favourable case
+        for carnitine, and the level is re-solved at the stepped k_e: the
+        step moves the patient as well as the column, and moving the patient
+        is most of what it does (audit/e7_excitation_budget.py).
+        """
+        def one(s):
+            rng = np.random.default_rng(s)
+            Ls = Lb * (1.0 + load_cv * rng.standard_normal(monthly.size))
+            ke = P.ke * (1.0 + ke_step * (np.arange(monthly.size) % 2))
+            B = ke * P.Km + P.theta - Ls
+            lv = (-B + np.sqrt(B ** 2 + 4.0 * ke * Ls * P.Km)) / (2.0 * ke)
+            F = np.diag([0.0, 0.0, 1.0 / (LOAD_FRAC * Lb) ** 2, 1.0 / 0.8 ** 2])
+            for m, k in zip(lv, ke):
+                g = m / (P.Km + m)
+                q = np.array([P.theta * g,
+                              -P.theta * P.Km * m / (P.Km + m) ** 2, 1.0, k * m])
+                F = F + np.outer(q, q) / sigma ** 2
+            w = np.linalg.eigvalsh(F)
+            if w[0] <= 1e-14 * max(w[-1], 1e-300):
+                return np.inf
+            return float(np.sqrt(np.linalg.inv(F)[0, 0]))
+        return med_of(one)
+
+    def sd_dose(s):
+        lv, inc = design_record(monthly, seed=s)
+        return float(np.sqrt(_filter(lv, sigma, inc)[-1][0, 0]))
+
+    gate = 0.20
+    spont10 = sd_untreated(0.10)
+    spont40 = sd_untreated(0.40)
+    carn_lo = sd_untreated(0.10, ke_step=0.25)
+    carn_hi = sd_untreated(0.10, ke_step=1.00)
+    train = med_of(sd_dose)
+    rows = [
+        [r"spontaneous load variability alone, at $10\%$ day-to-day CV",
+         f"${spont10[0]:.2f}$", r"$%.1f\times$ worse" % (spont10[0] / gate)],
+        [r"\quad the same at an implausible $40\%$ CV",
+         f"${spont40[0]:.2f}$", r"$%.1f\times$ worse" % (spont40[0] / gate)],
+        [r"plus recorded carnitine steps of $25$--$100\%$ in $k_e$",
+         f"${min(carn_lo[0], carn_hi[0]):.2f}$--${max(carn_lo[0], carn_hi[0]):.2f}$",
+         r"\emph{worse still}"],
+        [r"\textbf{the dose train}", r"$\mathbf{%.3f}$" % train[0],
+         r"\textbf{passes}"],
+    ]
+    write_table("tab_D_instruments",
+                ["source of excitation",
+                 r"$\operatorname{sd}(\ln\hat\theta)$",
+                 r"against $0.20$"],
+                rows, colspec="lcc",
+                note=("medians over %d intake records, one footing throughout"
+                      % len(SEEDS)))
+    PAPER_NUMBERS.update({
+        "sd_spont_10": spont10[0], "sd_spont_40": spont40[0],
+        "sd_carn_lo": min(carn_lo[0], carn_hi[0]),
+        "sd_carn_hi": max(carn_lo[0], carn_hi[0]),
+    })
+    print("  wrote tab_D_instruments.tex")
+    for lab, v in (("load variability 10%", spont10), ("load variability 40%", spont40),
+                   ("carnitine 25%", carn_lo), ("carnitine 100%", carn_hi),
+                   ("the dose train", train)):
+        print(f"    {lab:>22}: {v[0]:.4f} [{v[1]:.4f}, {v[2]:.4f}]")
 
 
 def fig_collapse(T=730.0):
@@ -1084,6 +1288,15 @@ def table_spec():
     breath tests to ask for.
     """
     N = spec_numbers()
+    PAPER_NUMBERS.update(N)
+    if N.get("ke_needed"):
+        PAPER_NUMBERS["ke_needed_factor"] = float(np.exp(N["ke_needed"]))
+        PAPER_NUMBERS["ke_needed_factor_lo"] = float(np.exp(N["ke_needed_lo"]))
+        PAPER_NUMBERS["ke_needed_factor_hi"] = float(np.exp(N["ke_needed_hi"]))
+    for tag in ("", "_lo", "_hi"):
+        v = N.get("kappa_monthly" + tag)
+        if v is not None and np.isfinite(v):
+            PAPER_NUMBERS["kappa_monthly_pct" + tag] = 100.0 * v
     kap = N["kappa_monthly"]
     kefac = np.exp(N["ke_needed"]) if N["ke_needed"] else None
 
@@ -1200,4 +1413,9 @@ if __name__ == "__main__":
     fig_protocol()
     table_designs()
     table_excursion()
+    table_factors()
+    table_load_precision()
+    table_instruments()
     table_spec()
+    from common.numbers import write_numbers
+    write_numbers("design", PAPER_NUMBERS, PAPER_FORMATS)

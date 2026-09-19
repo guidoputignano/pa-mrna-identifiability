@@ -23,7 +23,7 @@ not known, and by the last row does not need to be.}
 
 Every requirement in the table was solved for rather than chosen: holding the rest of the
 design fixed, how well would this one quantity have to be known for monthly sampling to land
-exactly on $\operatorname{sd}(\ln\hat\theta) = 0.20$? The $11.6\%$ on the delivered
+exactly on $\operatorname{sd}(\ln\hat\theta) = 0.20$? The $\num{kappa_monthly_pct}\%$ on the delivered
 increment and the factor of $2.7$ on $k_e$ are those answers; the precisions quoted against
 each schedule are forward evaluations of the same information matrix. No requirement was an
 input to itself. Exactly one row is a measurement rather than a computation, the
@@ -77,17 +77,7 @@ range than at the illustrative point, exactly as \eqref{eq:thetacolumn} predicts
 
 \begin{center}
 \footnotesize
-\begin{tabular}{@{}lrrr@{}}
-\toprule
-prior on $\ln k_e$ & factor per sd & $\operatorname{sd}(\ln\hat\theta)$ at nominal
-& at $5\%$ of nominal \\
-\midrule
-$0.8$ (as published here) & $2.23$ & $0.170$ & $3.07$ \\
-$0.2$                     & $1.22$ & $0.089$ & $0.964$ \\
-$0.05$                    & $1.05$ & $0.082$ & $0.447$ \\
-exact                     & $1.00$ & $0.081$ & $0.388$ \\
-\bottomrule
-\end{tabular}
+\input{../results/tables/tab_S_keprior}
 \end{center}
 
 \noindent
@@ -111,7 +101,7 @@ Do not sample on dosing days, or at any multiple of the dose interval
 (Remark~\ref{rem:aliasing}). ``Draw bloods when the patient attends for dosing'' is the
 natural thing to write and it is the one schedule that destroys the result: every draw
 lands at the same phase, the range of $\Delta/\theta$ collapses from $1.95$ to $0.13$, and
-$\operatorname{sd}(\ln\hat\theta)$ goes from $0.170$ to $4.58$, a factor of $27$ ($21$ to
+$\operatorname{sd}(\ln\hat\theta)$ goes from $\num{sd_monthly}$ to $\num{sd_aliased}$, a factor of $\num{alias_cost}$ ($21$ to
 $33$ across intake records). Moving the schedule half a
 day recovers it.
 
@@ -124,38 +114,28 @@ more \emph{variable} buys nothing, and making it twenty times less variable cost
 Making it more \emph{accurate} is the third-tightest requirement here:
 \begin{center}
 \small
-\begin{tabular}{@{}lcc@{}}
-\toprule
-\textbf{substrate load recorded to} & $\sigma$ & $\operatorname{sd}(\ln\hat\theta)$ \\
-\midrule
-$1\%$  & $15.2$  & $\mathbf{0.157}$ \\
-$5\%$  & $22.0$  & $\mathbf{0.166}$ \\
-$10\%$ & $35.5$  & $\mathbf{0.192}$ \\
-$20\%$ & $66.2$  & $0.264$ \\
-$40\%$ & $130.0$ & $0.402$ \\
-\bottomrule
-\end{tabular}
+\input{../results/tables/tab_D_loadprec}
 \end{center}
 
 \noindent
-Medians over twenty-four intake records at a $10\%$ day-to-day variability, spreads
-$[0.1563, 0.1571]$ at $1\%$ and $[0.2563, 0.2690]$ at $20\%$, so the design reaches $0.20$
-only if intake is recorded to better than about $12\%$. A sweep over how much the record
-\emph{varies} says nothing about this, because the recording error enters only through
-$\sigma$.
+The accuracy enters twice and both move together: through $\sigma$, the ordinate noise of
+the fit, and through the load-bias prior, which is the same fraction of the load. On those
+numbers the design reaches $0.20$ only if intake is recorded to better than about
+$10\%$. A sweep over how much the record \emph{varies} says nothing about this, because
+the recording error enters only through $\sigma$.
 
-Twelve per cent is not a comfortable margin. European practice records what patients are
+Ten per cent is not a comfortable margin. European practice records what patients are
 \emph{prescribed} rather than what they eat~\cite{pa_diet_survey}, no study in propionic
 acidemia reports repeated as-eaten intake at all, and the one study in any
 protein-restricted inborn error that has compared the two found actual natural protein
 running at $167\%$ of prescribed, a median of $40\%$ above it~\cite{pku_prescribed_actual}.
-At $40\%$ this design returns $0.402$, twice its own target. \textbf{The feasibility of
+At $40\%$ this design returns $\num{sd_load_acc_40pct}$, two and a half times its own target. \textbf{The feasibility of
 everything downstream rests on a measurement of intake that is currently not made.}
 
 The variability enters separately and in the opposite direction. A perfectly steady load
 makes the \emph{untreated} design exactly rank deficient (Proposition~\ref{prop:rank});
 under the dose train it does not, because the increment varies even when the load does not,
-and $\operatorname{sd}(\ln\hat\theta)$ is $0.266$ rather than unbounded with the load-bias
+and $\operatorname{sd}(\ln\hat\theta)$ is $\num{free_cv2}$ rather than unbounded with the load-bias
 prior removed entirely. So ``record intake as eaten, do not smooth it'' buys a real but
 bounded improvement, and it costs nothing, being an instruction to omit a data-cleaning
 step. What decides whether the design works at all is the accuracy above.
@@ -180,7 +160,7 @@ unrecorded nuisance input; the two are not the same phenomenon and the first inv
 wrong guess about the second.
 
 \paragraph{$k_e$, and nothing else, is assumed, and nothing supplies it.} The result
-needs the non-enzymatic clearance within a factor of $2.67$ ($2.65$ to $2.68$ across
+needs the non-enzymatic clearance within a factor of $\num{ke_needed_factor}$ ($2.65$ to $2.68$ across
 intake records), and \textbf{the literature does not supply it}: the nearest route,
 recorded against the $k_e$ row in the supplement, \S S2, was a first-order marker
 elimination in the published translational model, and that model's marker is an algebraic
@@ -208,16 +188,7 @@ each reported as a median over twenty-four seeds:
 
 \begin{center}
 \small
-\begin{tabular}{@{}lcc@{}}
-\toprule
-\textbf{source of excitation} & $\operatorname{sd}(\ln\hat\theta)$ & \textbf{against $0.20$} \\
-\midrule
-spontaneous load variability alone, at $10\%$ day-to-day CV & $1.79$ & $10.5\times$ worse \\
-\quad the same at an implausible $40\%$ CV                  & $0.70$ & $4.1\times$ worse \\
-plus recorded carnitine steps of $25$--$100\%$ in $k_e$     & $1.91$--$2.02$ & \emph{worse still} \\
-\textbf{the dose train}                                     & $\mathbf{0.170}$ & \textbf{passes} \\
-\bottomrule
-\end{tabular}
+\input{../results/tables/tab_D_instruments}
 \end{center}
 
 Neither route to rescuing the first row exists. Making intake more variable does not reach
@@ -275,7 +246,7 @@ Two thousand is a substantial fraction of every diagnosed patient alive.
 simulated patients, log-uniform over $\theta$ and $K_m$ (nine-fold each), $k_e$ (the prior's
 own factor of $2.2$) and managed load (four-fold), every range assumed and none measured,
 the achieved precision has median $0.192$, quartiles $0.132$ and $0.329$, and just over half
-meet the $0.20$ target. The $0.170$ quoted throughout is one patient, the illustrative set,
+meet the $0.20$ target. The $\num{sd_monthly}$ quoted throughout is one patient, the illustrative set,
 and it is a sampling spread rather than an interval half-width
 (Remark~\ref{rem:curvature}). \emph{The design confirms identifiability in a cohort; it does
 not deliver the stated precision to every patient in one.}

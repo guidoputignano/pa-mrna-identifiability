@@ -322,7 +322,78 @@ def recheck(rows):
     return ok
 
 
+# --------------------------------------------------------------- the tables
+#  Section 6 typed these two tables into the .tex and Section 5 typed the
+#  third. They are generated here because this is where the convention lives:
+#  the recorded load is held at the nominal patient's and the operating level,
+#  sigma, the load-bias prior and the excitation are re-solved at each
+#  capacity. Reproducing that convention anywhere else would duplicate it.
+def table_elasticity():
+    """How far the marker moves per unit of capacity, capacity by capacity."""
+    from common.style import write_table
+    rows = []
+    for pct in (100, 50, 20, 10, 5, 2, 1):
+        th = TH0 * pct / 100.0
+        _, m = anchor(th, convention="A")
+        rows.append([f"${pct}\\%$", f"${m / M_BAR0:.2f}$",
+                     f"${elasticity(th, KM0, KE, m):.3f}$"])
+    write_table("tab_S_elasticity",
+                [r"$\theta$, as \% of nominal", r"marker, $\times$ managed",
+                 r"$\lvert\partial \ln m / \partial \ln\theta\rvert$"],
+                rows, colspec="rrr",
+                note="closed form at the untreated balance, R2 of this script")
+    print("  wrote tab_S_elasticity.tex")
+
+
+def table_scope():
+    """What the monthly design delivers at each capacity, and the visits to the gate."""
+    from common.style import write_table
+    rows = []
+    for pct in (100, 20, 10, 5, 2):
+        th = TH0 * pct / 100.0
+        _, m = anchor(th, convention="A")
+        med, lo, hi = over_seeds(theta=th, D=D0, convention="A")
+        n = visits_to_target(th, D=D0, convention="A")
+        sd = (r"$\mathbf{%.4f}$" % med) if med < GATE else f"${med:.4f}$"
+        rows.append([f"${pct}\\%$", f"${m / M_BAR0:.2f}$",
+                     f"${elasticity(th, KM0, KE, m):.3f}$", sd,
+                     ("---" if n is None or not np.isfinite(n) else f"${int(n)}$")])
+    write_table("tab_S_scope",
+                [r"$\theta$, as \% of nominal", r"marker, $\times$ managed",
+                 r"$\lvert\partial \ln m / \partial \ln\theta\rvert$",
+                 r"$\operatorname{sd}(\ln\hat\theta)$",
+                 r"monthly visits to $%.2f$" % GATE],
+                rows, colspec="rrrrr",
+                note=("medians over %d intake records at a 10%% day-to-day "
+                      "variability; a dash means the gate is not reached at "
+                      "any number of monthly visits up to 600" % len(list(SEEDS))))
+    print("  wrote tab_S_scope.tex")
+
+
+def table_ke_prior():
+    """What a tighter prior on the alternative clearance is worth, at two capacities."""
+    from common.style import write_table
+    rows = []
+    for s, label in ((0.8, r"$0.8$ (as published here)"), (0.2, r"$0.2$"),
+                     (0.05, r"$0.05$"), (0.001, r"exact")):
+        nom = over_seeds(theta=TH0, D=D0, convention="A", ke_prior=s)[0]
+        dis = over_seeds(theta=0.05 * TH0, D=D0, convention="A", ke_prior=s)[0]
+        rows.append([label, f"${np.exp(s):.2f}$", f"${nom:.3f}$", f"${dis:.3f}$"])
+    write_table("tab_S_keprior",
+                [r"prior on $\ln k_e$", "factor per sd",
+                 r"$\operatorname{sd}(\ln\hat\theta)$ at nominal",
+                 r"at $5\%$ of nominal"],
+                rows, colspec="lrrr",
+                note=("medians over %d intake records; the last row is a prior "
+                      "of 0.001, which is k_e known to a tenth of a per cent"
+                      % len(list(SEEDS))))
+    print("  wrote tab_S_keprior.tex")
+
+
 def main():
+    table_elasticity()
+    table_scope()
+    table_ke_prior()
     print("=" * 96)
     print("  WHAT THE DESIGN COSTS AT A DISEASE-RANGE CAPACITY")
     print("=" * 96)

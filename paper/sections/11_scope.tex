@@ -17,19 +17,7 @@ marker to capacity dies with it.
 
 \begin{center}
 \footnotesize
-\begin{tabular}{@{}rrr@{}}
-\toprule
-$\theta$, as \% of nominal & marker, $\times$ managed & $\lvert\partial \ln m / \partial \ln\theta\rvert$ \\
-\midrule
-$100\%$ & $1.00$ & $0.915$ \\
-$50\%$  & $1.82$ & $0.807$ \\
-$20\%$  & $3.41$ & $0.537$ \\
-$10\%$  & $4.57$ & $0.321$ \\
-$5\%$   & $5.40$ & $0.173$ \\
-$2\%$   & $6.00$ & $0.072$ \\
-$1\%$   & $6.22$ & $0.036$ \\
-\bottomrule
-\end{tabular}
+\input{../results/tables/tab_S_elasticity}
 \end{center}
 
 Stated in the units a clinic reads: once a patient's managed marker sits above
@@ -80,19 +68,7 @@ and the excitation at each capacity:
 
 \begin{center}
 \footnotesize
-\begin{tabular}{@{}rrrrr@{}}
-\toprule
-$\theta$, as \% of nominal & marker, $\times$ managed &
-$\lvert\partial \ln m / \partial \ln\theta\rvert$ &
-$\operatorname{sd}(\ln\hat\theta)$ & monthly visits to $0.20$ \\
-\midrule
-$100\%$ & $1.00$ & $0.915$ & $\mathbf{0.1699}$ & $11$ \\
-$20\%$  & $3.41$ & $0.537$ & $0.8107$ & --- \\
-$10\%$  & $4.57$ & $0.321$ & $1.5830$ & --- \\
-$5\%$   & $5.40$ & $0.173$ & $3.0673$ & --- \\
-$2\%$   & $6.00$ & $0.072$ & $7.4572$ & --- \\
-\bottomrule
-\end{tabular}
+\input{../results/tables/tab_S_scope}
 \end{center}
 
 \noindent
@@ -141,7 +117,7 @@ merged.} Sweeping $D$ from $10$ to $30000$ at a disease-range capacity, the best
 monthly design achieves is $2.75$ at $D \approx 100$ against $3.07$ at the booked $6000$,
 so no dose opens a window: below $D \sim \theta$ there is no excitation, above it the
 increment swamps the capacity, and ten per cent separates the two failures. At nominal
-capacity the same sweep says something else. The booked $D = 6000$ returns $0.170$ against
+capacity the same sweep says something else. The booked $D = 6000$ returns $\num{sd_monthly}$ against
 a sweep best of $0.165$, so \textbf{the trial's dose is within three per cent of optimal
 for identification}. Whether it is the right dose \emph{as a therapy} is a different
 question, and on the evidence of the trial's own reported falls and of the ceiling above

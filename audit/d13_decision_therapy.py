@@ -14,8 +14,60 @@ P = D.P
 base = D.clearance_A(D.M_BAR, P)
 
 
+def table_decision():
+    """
+    The decision characteristic of Section 4, generated rather than typed.
+
+    Twelve seeds at four hundred replicates each, at the two illness
+    amplitudes that put the margin at |mu| = 339 either side of the boundary,
+    plus the cohort each design implies. The third row degrades the delivered
+    increment to the 11.6% the identifiability gate asks for, which is the
+    comparison that shows the gate's requirement does not bind on THIS
+    estimand.
+    """
+    from common.style import write_table
+    old = np.geomspace(D.M_BAR, 5 * D.M_BAR, 9)
+    t_m = np.arange(0.0, 730.0, 30.4)
+    lv_m, inc_m = D.design_record(t_m)
+    cases = [(r"fixed operating point, $n=9$", old, None, 0.0),
+             (r"monthly across dose cycles, $n=25$", lv_m, inc_m, 0.0),
+             (r"\quad the same, increment known only to $11.6\%$",
+              lv_m, inc_m, 0.117)]
+    rows = []
+    for nm, lv, inc, kcv in cases:
+        a, b = [], []
+        for sd_ in range(12):
+            a.append(D.sign_error(lv, P.theta, P.Km, P.ke, reps=400, seed=sd_,
+                                  s_peak=2.98 * base, increments=inc,
+                                  kappa_cv=kcv)["p"])
+            b.append(D.sign_error(lv, P.theta, P.Km, P.ke, reps=400, seed=sd_,
+                                  s_peak=3.58 * base, increments=inc,
+                                  kappa_cv=kcv)["p"])
+        a, b = np.array(a), np.array(b)
+        if kcv == 0.0:
+            ps = [D.sign_error(lv, P.theta, P.Km, P.ke, reps=400, seed=sd_,
+                               s_peak=3.6 * base, increments=inc)["p"]
+                  for sd_ in range(8)]
+            N = D.cohort_size(float(np.mean(ps)))
+            coh = ("%d" % int(round(N, -2))) if np.isfinite(N) else "infinite"
+        else:
+            coh = "n/a"
+        rows.append([nm,
+                     r"$%.1f\%% \pm %.1f$" % (100 * a.mean(), 100 * a.std()),
+                     r"$%.1f\%% \pm %.1f$" % (100 * b.mean(), 100 * b.std()),
+                     f"${coh}$" if coh != "n/a" else "n/a"])
+    write_table("tab_D_decision",
+                ["design", "treat unneeded", "fail to treat", r"cohort $N$"],
+                rows, colspec="lrrr",
+                note=("twelve seeds at four hundred replicates each, the "
+                      "spread across seeds; the two error columns are at "
+                      "|mu| = 339 either side of the boundary"))
+    print("  wrote tab_D_decision.tex")
+
+
 def main():
     print(__doc__)
+    table_decision()
     old = np.geomspace(D.M_BAR, 5 * D.M_BAR, 9)
     t_m = np.arange(0.0, 730.0, 30.4)
     lv_m, inc_m = D.design_record(t_m)
