@@ -1,12 +1,12 @@
-\begin{longtable}{@{}p{0.09\textwidth} p{0.10\textwidth} p{0.26\textwidth} p{0.13\textwidth} p{0.34\textwidth}@{}}
+\begin{longtable}{@{}p{0.075\linewidth} p{0.085\linewidth} p{0.22\linewidth} p{0.11\linewidth} p{0.31\linewidth}@{}}
 \caption{\paramscaption}\label{\paramslabel}\\
 \toprule
-\textbf{Symbol} & \textbf{Value} & \textbf{Meaning} & \textbf{Source} & \textbf{Cost, where it decides the result} \\
+\textbf{Symbol} & \textbf{Value} & \textbf{Meaning} & \textbf{Source} & \textbf{What the value rests on} \\
 \midrule
 \endfirsthead
 \multicolumn{5}{@{}l}{\emph{Table \thetable, continued from the previous page}}\\
 \toprule
-\textbf{Symbol} & \textbf{Value} & \textbf{Meaning} & \textbf{Source} & \textbf{Cost, where it decides the result} \\
+\textbf{Symbol} & \textbf{Value} & \textbf{Meaning} & \textbf{Source} & \textbf{What the value rests on} \\
 \midrule
 \endhead
 \midrule
@@ -16,23 +16,23 @@
 \endlastfoot
 \multicolumn{5}{@{}l}{\emph{The local identification model}} \\
 \addlinespace[2pt]
-$\bar m$ & $10$~$\mu$M & operating point: the level management holds the patient at & \textsc{assumed}\newline \emph{convention}\newline \emph{mouse} & \S S2 \\
-$\theta$ & $3000$~$\mu$M/d & capacity of the enzymatic channel, \textbf{at normal capacity} & \textsc{assumed}\newline \emph{convention} & illustrative, and \textbf{a normal-capacity illustration rather than a patient}: \texttt{src/common/models.py} carries this constant as $V_{\max}$, the \emph{maximal} enzymatic velocity, and the parent model's $\theta = 300$ as $\sim 10\%$ of normal, which puts normal at $3000$ and this block at $100\%$ of it. Residual PCC activity in PA is under $5\%$ of control~\cite{pcc_residual_activity}, so the disease sits at $\theta \le 150$, which is the row below. \textbf{Some conclusions do depend on this value}: the identifiability results do not, but the supplement's local-model section (\S S1) flips a qualitative conclusion across it, the anchor attenuating at $3000$ and amplifying at the parent's $300$, and by Section~\ref{sec:scope} the design's own precision does too. It remains an order-of-magnitude quantity and is confounded with $V_{\max}$ by construction: at $\bar m/K_m = 0.1$ the channel runs at $9.1\%$ of $V_{\max}$, carrying $273$ against a load of $323$ \\
-$\theta_{\mathrm{PA}}$ & $\le 150$~$\mu$M/d & capacity in the disease, on the scale of the row above & \textsc{literature}\newline \emph{derived}\newline \emph{human} & \textbf{This is the row that says who the paper is about.} Residual PCC activity in propionic acidemia is under $5\%$ of control~\cite{pcc_residual_activity}, which on the scale the row above fixes is $\theta \le 150$. \textbf{The design does not reach its target there, and the gap is large}: on the monthly record $\mathrm{sd}(\ln\hat\theta)$ is $0.1699$ at nominal, $1.5830$ at $10\%$ of nominal and $3.0673$ at $5\%$, against a target of $0.20$ (medians over $24$ intake records; \texttt{audit/n4\_theta\_scope.py}). The gate holds only for $\theta$ between $2472$ and $18814$, that is $82\%$ to $627\%$ of nominal, so the disease sits a factor of $16$ below the band. This is Section~\ref{sec:scope}'s conclusion given a number: no schedule, excursion or precision recovers a quantity the observable has stopped responding to, and sampling every two days for two years instead of monthly moves the lower edge by $9\%$ \\
-$K_m$ & $100$~$\mu$M & half-saturation of the enzymatic channel, at the plasma level & \textsc{assumed}\newline \emph{effective} & illustrative, and \emph{not} the in vitro Michaelis constant of PCC ($0.29$ mM for propionyl-CoA~\cite{pcc_liver_kinetics}), a different molecule in a different compartment. The ratio $\bar m/K_m = 0.1$ is what the excitation condition is stated against. \textbf{Its cost is the tightest in the local model after the increment}: on the paper's own monthly record, holding the patient managed at $\bar m$ and re-solving the load, the ordinate sd and the load-bias prior at each $K_m$, $\mathrm{sd}(\ln\hat\theta)$ runs $0.0507$ to $1.3608$ over $K_m$ from $5$ to $1000$~$\mu$M, a factor of $26.8$ (median of $24$ load records, load CV $10\%$; \texttt{audit/n1\_km\_cost.py}). It is $0.1699$ here and crosses the $0.20$ target at $K_m = 124$~$\mu$M, so the design has a factor of \textbf{$1.24$} of headroom on this constant; at the in vitro value the row declines to use, $290$~$\mu$M, it would be $0.4158$. \textbf{That headroom is smaller than it reads}: across the same $24$ records the spread is $0.1684$ to $0.1709$ at $K_m = 100$ and $0.1987$ to $0.2010$ at $K_m = 124$, so the crossing straddles the target and which side of it a given record falls on is not settled by the median \\
-$k_e$ & $5$~d$^{-1}$ & alternative clearance rate constant & \textsc{assumed}\newline \emph{lumped} & \S S2 \\
-$\lambda$ & $\ln 2/3.5$~d$^{-1}$ & decay rate of the therapeutic increment & \textsc{literature}\newline \emph{measurable}\newline \emph{mouse, rat, monkey} & \S S2 \\
-$T_{\mathrm{dose}}$ & 14~d & interval between therapeutic doses & \textsc{literature}\newline \emph{measurable}\newline \emph{human} & \S S2 \\
-$D$ & $6000$~$\mu$M/d & size of one therapeutic increment & \textsc{assumed}\newline \emph{calibration}\newline \emph{mouse} & \S S2 \\
-$\sigma$ & a family, $\mu$M/d & standard deviation of the ordinate of the fit & \textsc{assumed}\newline \emph{lumped} & \S S2 \\
-$\mathrm{CV}$ & $5\%$ & analytical variability of the marker assay & \textsc{assumed}\newline \emph{measurable}\newline \emph{human (MMA); mouse} & \S S2 \\
-$s_{\ln k_e}$ & $0.8$ & sd of the log-normal prior on $k_e$ & \textsc{assumed}\newline \emph{prior width} & \S S2 \\
-$\sigma_L/L$ & $5\%$ & relative error in the recorded substrate load & \textsc{assumed}\newline \emph{measurable} & \S S2 \\
+$\bar m$ & $10$~$\mu$M & operating point: the level management holds the patient at & \textsc{assumed}\newline \emph{convention}\newline \emph{mouse} & chosen for illustration, and every design quantity is relative to it. The scale is murine~\cite{pkpd_translational}, within $1.6$ of the human newborn cut-off~\cite{dbs_3hp_cutoff} \\
+$\theta$ & $3000$~$\mu$M/d & capacity of the enzymatic channel, \textbf{at normal capacity} & \textsc{assumed}\newline \emph{convention} & chosen for illustration as \emph{normal} capacity on the parent model's scale, against residual activity under $5\%$~\cite{pcc_residual_activity} \\
+$\theta_{\mathrm{PA}}$ & $\le 150$~$\mu$M/d & capacity in the disease, on the scale of the row above & \textsc{literature}\newline \emph{derived}\newline \emph{human} & residual PCC activity in propionic acidemia is under $5\%$ of control~\cite{pcc_residual_activity}, which on the scale of the row above is $\theta \le 150$ \\
+$K_m$ & $100$~$\mu$M & half-saturation of the enzymatic channel, at the plasma level & \textsc{assumed}\newline \emph{effective} & chosen for illustration at $\bar m/K_m = 0.1$, and \emph{not} PCC's in vitro Michaelis constant, $0.29$~mM~\cite{pcc_liver_kinetics}, a different molecule in a different compartment \\
+$k_e$ & $5$~d$^{-1}$ & alternative clearance rate constant & \textsc{assumed}\newline \emph{lumped} & \textbf{searched for and not supplied}: the translational model has no marker state and no elimination constant~\cite{pkpd_translational}, and the one structure with a first-order marker loss publishes no value~\cite{dose_selection_poster}. Chosen so the enzymatic channel carries most of the flux \\
+$\lambda$ & $\ln 2/3.5$~d$^{-1}$ & decay rate of the therapeutic increment & \textsc{literature}\newline \emph{measurable}\newline \emph{mouse, rat, monkey} & the translational model's PK, allometrically scaled from mouse, rat and monkey~\cite{pkpd_translational} \\
+$T_{\mathrm{dose}}$ & 14~d & interval between therapeutic doses & \textsc{literature}\newline \emph{measurable}\newline \emph{human} & the biweekly schedule of model-informed dose selection~\cite{dose_selection_poster}; the trial dosed every two or three weeks~\cite{trial_phase12} \\
+$D$ & $6000$~$\mu$M/d & size of one therapeutic increment & \textsc{assumed}\newline \emph{calibration}\newline \emph{mouse} & chosen for illustration so the marker falls by about two thirds at peak, against the trial's reported falls~\cite{trial_phase12} \\
+$\sigma$ & a family, $\mu$M/d & standard deviation of the ordinate of the fit & \textsc{assumed}\newline \emph{lumped} & deliberately not assigned: nothing here bounds how well the load is recorded, so it is carried as a family indexed by the row below \\
+$\mathrm{CV}$ & $5\%$ & analytical variability of the marker assay & \textsc{assumed}\newline \emph{measurable}\newline \emph{human (MMA); mouse} & chosen for illustration. The nearest published repeatability, the breath test's, is between-visit and in methylmalonic acidemia~\cite{breath_test_mma}, so it bounds this from above rather than measuring it \\
+$s_{\ln k_e}$ & $0.8$ & sd of the log-normal prior on $k_e$ & \textsc{assumed}\newline \emph{prior width} & chosen for illustration, deliberately wider than the factor of about three the gate needs, so the prior is weaker than the requirement \\
+$\sigma_L/L$ & $5\%$ & relative error in the recorded substrate load & \textsc{assumed}\newline \emph{measurable} & chosen for illustration. Measurable by a weighed intake study; none exists in propionic acidemia, where records are prescriptions rather than intake as eaten \\
 \addlinespace
 \midrule
 \multicolumn{5}{@{}l}{\emph{The parent model and its equilibrium reduction}} \\
 \addlinespace[2pt]
-$k$ & $1$~d$^{-1}$, cancels from the curve & conjugation rate constant & \textsc{assumed}\newline \emph{eliminated}\newline \emph{human} & \S S2 \\
+$k$ & $1$~d$^{-1}$ & conjugation rate constant, which cancels from the reduced curve & \textsc{assumed}\newline \emph{eliminated}\newline \emph{human} & cancels from the reduced clearance exactly, and nothing fixes it. Chosen for illustration; its cost off equilibrium is bounded in \S S2 \\
 \addlinespace
 \multicolumn{5}{@{}p{0.92\textwidth}}{\emph{The remaining 11 registered constants are in the supplement, \S S2, with the full provenance of every row in this table.}} \\
 \end{longtable}

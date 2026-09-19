@@ -91,9 +91,9 @@ much of the dose cycle they see, not how many samples they take.}
 \caption{\label{tab:designs}What each design delivers, as a median over twenty-four
 simulated intake records with its range beneath. Bold is inside the $20\%$ target. The
 fourth column is the range of the therapeutic increment the design actually sees, and it,
-rather than $n$, is what orders the table. The last column is the same design evaluated
-with the increment dropped from the sensitivity while still being used to generate the
-levels.}
+rather than $n$, is what orders the table. The supplement, \S S1, repeats the table with
+one further column: the same design evaluated with the increment dropped from the
+sensitivity while still being used to generate the levels.}
 \input{../results/tables/tab_D_designs}
 \end{table}
 \end{adjustwidth}
@@ -142,8 +142,8 @@ across records) against the $1.95$ the bound implies, and it is asymmetric for t
 Proposition~\ref{prop:rank} gives: lowering $\theta$ is compensated by raising $K_m$, so
 the profile has a long tail downward while its upper end sits about where the bound puts
 it. On a noiseless record the profile's curvature reproduces the bound to $0.4\%$, so this
-is a property of the likelihood rather than of the optimiser
-(\texttt{audit/n6\_profile\_vs\_crb.py}). Where this paper quotes
+is a property of the likelihood rather than of the optimiser.
+Where this paper quotes
 $\operatorname{sd}(\ln\hat\theta)$ it means a sampling spread; where a reader wants an
 interval, the factor is about four.
 \end{remark}
@@ -154,8 +154,8 @@ No prior on $K_m$ is needed, and the reason is stronger than the claim: the reco
 determines it. On the monthly design $\operatorname{sd}(\ln \hat K_m)$ is $0.072$ at
 normal capacity and $0.062$ at the $5\%$ of normal that defines the disease, flat across
 the whole range, and at disease-range capacity the best-determined direction
-in $(\ln\theta, \ln K_m, \ln k_e)$ is nearly pure $\ln K_m$
-(\texttt{audit/n5\_scope\_contribution.py}). Sampling at the dose interval costs a factor
+in $(\ln\theta, \ln K_m, \ln k_e)$ is nearly pure $\ln K_m$.
+Sampling at the dose interval costs a factor
 of $20$ to $25$ on it, so Remark~\ref{rem:aliasing} governs this quantity too. The design
 therefore recovers something everywhere, including where Section~\ref{sec:scope} says
 $\theta$ is gone, subject to two real qualifications: this is the \emph{effective} $K_m$
@@ -173,9 +173,9 @@ reach $0.0157$ against $0.1500$. That is a statement of what is being given up r
 a recommendation, since Section~\ref{sec:excursion_table} shows the straddling design is
 unavailable. And one dose cycle of seven samples does not do it: it reaches $0.216$
 ($0.205$ to $0.230$) and has a floor there, because what limits it is the design and not
-how well the increment is known. The last column is the same design on a footing this
-paper does not use, with the increment dropped from the sensitivity while still generating
-the levels: it lands between $1.05$ and $10.6$ and never collapses, which is why an error
+how well the increment is known. Third, the same design evaluated on a footing this paper does not use, with the
+increment dropped from the sensitivity while still generating the levels (supplement,
+\S S1): it lands between $\num{dropped_lo}$ and $\num{dropped_hi}$ and never collapses, which is why an error
 of that kind is invisible from inside the arithmetic and has to be caught by finite
 difference against the integrated dynamics (supplement, \S S2).
 
@@ -186,8 +186,7 @@ conditional and is stated as such: this design identifies $\theta$ to better tha
 published source supplies $k_e$ at any width, so that condition is a request and not a
 citation. What survives unconditionally is the comparison: carrying the increment is worth
 a factor of $52$ to $141$ across the designs a protocol could adopt with no prior on $k_e$
-at all, and $7$ to $16$ with the prior in place, record by record over twenty-four records
-(\texttt{audit/n7\_increment\_worth.py}). The data specification rests on that comparison
+at all, and $7$ to $16$ with the prior in place, record by record over twenty-four records. The data specification rests on that comparison
 rather than on the absolute number.
 
 \paragraph{What a transient would be worth, and why none is proposed.} Monthly draws

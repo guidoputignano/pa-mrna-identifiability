@@ -110,6 +110,7 @@ PAPER_FORMATS = {
     "kappa_monthly_pct_hi": "{:.1f}",
     "settle_hours": "{:.2f}", "sigma": "{:.1f}",
     "sd_load_acc_40pct": "{:.3f}", "timescale_ratio": "{:.0f}",
+    "dropped_lo": "{:.2f}", "dropped_hi": "{:.1f}",
 }
 
 #: the seed `design_record` has always drawn its intake record from. Kept as
@@ -564,7 +565,9 @@ def table_instruments(T=730.0):
                 ["source of excitation",
                  r"$\operatorname{sd}(\ln\hat\theta)$",
                  r"against $0.20$"],
-                rows, colspec="lcc",
+                rows,
+                #  the first column holds sentences, so it has to wrap
+                colspec=(r">{\raggedright\arraybackslash}p{0.56\linewidth}cc"),
                 note=("medians over %d intake records, one footing throughout"
                       % len(SEEDS)))
     PAPER_NUMBERS.update({
@@ -696,12 +699,18 @@ def fig_collapse(T=730.0):
               f"  sd(ln theta) = {np.sqrt(Ps[-1][0,0]):8.4f}  corr = {rho:+.4f}"
               f"   [k_e held known: {kek:.4f};  Delta dropped too: {stale:.4f}]")
     ax[0].axhline(0.20, color=MUTED, ls="--", lw=1.0)
-    corner(ax[0], r"$20\%$ on $\theta$", "lower left", color=MUTED, fontsize=7)
+    #  the target label sat under its own line, where the dense design's
+    #  curve runs; above the line is clear
+    ax[0].annotate(r"$20\%$ on $\theta$", xy=(0.34, 0.21),
+                   xycoords=("axes fraction", "data"),
+                   color=MUTED, fontsize=7, ha="left", va="bottom")
     ax[0].set_xlabel("time  [days]")
     ax[0].set_ylabel(r"$\mathrm{sd}(\ln\hat\theta)$")
     ax[0].set_title(r"no process noise on $\theta$:" "\n"
                     "what does not collapse, stays", fontsize=8)
-    ax[0].legend(loc="upper right", fontsize=5.8)
+    #  both panels carry the same three series and the left panel's legend
+    #  sat on top of the six-monthly curve, so one legend goes under the
+    #  figure instead of two inside it
 
     th = np.linspace(0, 2 * np.pi, 240)
     for name, (times, lv, Ps) in finals.items():
@@ -714,7 +723,9 @@ def fig_collapse(T=730.0):
     ax[1].set_xlabel(r"$\ln\theta$ error")
     ax[1].set_ylabel(r"$\ln K_m$ error")
     ax[1].set_title("one-sigma ellipse, after two years", fontsize=8)
-    ax[1].legend(loc="upper left", fontsize=6)
+    handles, labels = ax[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=3, fontsize=7,
+               frameon=False, bbox_to_anchor=(0.5, -0.02))
     save(fig, "fig_D2_collapse")
 
     best = min(np.sqrt(f[2][-1][0, 0]) for f in finals.values())
@@ -1113,9 +1124,18 @@ def fig_decision():
     for a in ax:
         a.axvline(cross, color=MUTED, ls=":", lw=0.9)
         a.set_xlabel(r"illness amplitude  [$\times$ baseline]")
-        a.set_ylim(0, 60)
-    over_x(ax[0], cross, r"$\mu = 0$", frac=0.95, color=MUTED, fontsize=7,
-           ha="left")
+        #  headroom above the peaks so the per-panel legends sit in clear
+        #  air rather than on the curves they label. The same limit on all
+        #  three, because the panels are meant to be read against each other
+        a.set_ylim(0, 96)
+    #  the boundary label sat at the top of its own line, where all three
+    #  curves peak, and the mu was lost behind them. Low and to the left is
+    #  empty in every panel, because that is where the error rate is zero.
+    ax[0].annotate(r"$\mu = 0$", xy=(cross, 0.0), xycoords="data",
+                   xytext=(0.06, 0.14), textcoords="axes fraction",
+                   color=MUTED, fontsize=7, ha="left", va="center",
+                   arrowprops=dict(arrowstyle="-", color=MUTED, lw=0.6,
+                                   shrinkA=1, shrinkB=1))
     save(fig, "fig_D3_decision")
 
     print("    the decision, not a confidence interval "
@@ -1216,17 +1236,28 @@ def table_designs(T=730.0):
         rows.append([name, len(times), f"${lv.min():.2f}$--${lv.max():.2f}$",
                      f"${drng:.2f}$", tex_spread(sd, sd_lo, sd_hi),
                      f"${rho:+.4f}$", f"${dropped:.3f}$"])
-    write_table("tab_D_designs",
-                ["design", "$n$", "levels visited",
-                 r"range of $\Delta/\theta$",
-                 r"$\operatorname{sd}(\ln\hat\theta)$",
-                 r"$\operatorname{corr}(\ln\hat\theta, \ln \hat K_m)$",
-                 r"\emph{$\Delta$ dropped}"],
-                rows,
-                note=("theta and K_m free; priors only on ln k_e and the load "
-                      "record. Medians over %d intake records, range in "
-                      "brackets." % len(SEEDS)))
+    head = ["design", "$n$", "levels visited",
+            r"range of $\Delta/\theta$",
+            r"$\operatorname{sd}(\ln\hat\theta)$",
+            r"$\operatorname{corr}(\ln\hat\theta, \ln \hat K_m)$"]
+    note = ("theta and K_m free; priors only on ln k_e and the load record. "
+            "Medians over %d intake records, range in brackets." % len(SEEDS))
+    #  Seven columns do not fit the page: the last one ran off the right edge
+    #  and printed as a truncated word. The main text carries six, and the
+    #  column it drops -- the same design evaluated on a footing this paper
+    #  does not use -- goes to the supplement whole, where the validation
+    #  section reads it.
+    write_table("tab_D_designs", head, [r[:6] for r in rows], note=note)
     print("  wrote tab_D_designs.tex")
+    write_table("tab_D_designs_full", head + [r"\emph{$\Delta$ dropped}"],
+                rows, note=note)
+    print("  wrote tab_D_designs_full.tex")
+    #  what the dropped-increment column spans over the designs a protocol
+    #  could adopt, which is what the text quotes now that the column itself
+    #  has moved to the supplement. `raw` is
+    #  (name, n, lv_min, lv_max, range, sd, corr, dropped, sd_lo, sd_hi).
+    acc = [r[7] for r in raw if "straddling" not in r[0]]
+    PAPER_NUMBERS.update({"dropped_lo": min(acc), "dropped_hi": max(acc)})
     for nm, n, lo, hi, drng, sd, rho, drop, slo, shi in raw:
         print(f"    {nm[:40]:>40}: n={n:4d}  range(D/th)={drng:5.2f}  "
               f"sd={sd:.4f} [{slo:.4f}, {shi:.4f}]"
@@ -1253,7 +1284,10 @@ def table_excursion():
                  "$\\sqrt{m_{\\min}m_{\\max}}/K_m$", "$E$", "$E_{\\max}(r)$",
                  "frac.\\ of $E_{\\max}$"],
                 rows,
-                colspec=r"p{0.29\textwidth}lllllll",
+                #  ragged rather than justified: at this width LaTeX was
+                #  hyphenating the source names mid-word to make the lines
+                #  meet, which is unreadable in a column of labels
+                colspec=r">{\raggedright\arraybackslash}p{0.27\textwidth}lllllll",
                 note="E is the excitation the band delivers; E_max(r) is the most "
                      "a band of that fold range could deliver if it straddled K_m")
     print("    excursion available from each source:")
@@ -1474,16 +1508,23 @@ def table_spec():
          "design asks for and cannot cite. It is also the cheapest second "
          "external measurement: tightening it is worth $2.1\\times$ at nominal "
          "capacity and $6.9\\times$ in the disease range, though even an exact "
-         "$k_e$ leaves $0.388$ there (\\texttt{audit/n5\\_scope\\_contribution.py})"],
+         "$k_e$ leaves $0.388$  there"],
         ["$K_m$", "nothing at all",
          "every number here is unchanged by a $K_m$ prior twenty times "
          "looser, which is what Remark~\\ref{rem:no_km} demanded"],
     ]
     write_table("tab_D_spec", ["", "what the record must contain", "why"], rows,
                 note="two tiers; Tier 2 is conditional on Tier 1 clearing the gate",
-                colspec=(r"p{0.17\textwidth}@{\hskip 1em}"
-                         r"p{0.40\textwidth}@{\hskip 1em}"
-                         r"p{0.40\textwidth}"))
+                #  every column ragged. Justified at these widths LaTeX
+                #  hyphenates the row labels mid-word ("preci-sion",
+                #  "vari-ability") and opens gaps inside the sentences, which
+                #  is what made this unreadable as a table rather than the
+                #  content being wrong for one.
+                colspec=(r">{\raggedright\arraybackslash}p{0.19\textwidth}"
+                         r"@{\hskip 0.8em}"
+                         r">{\raggedright\arraybackslash}p{0.39\textwidth}"
+                         r"@{\hskip 0.8em}"
+                         r">{\raggedright\arraybackslash}p{0.38\textwidth}"))
     print("  wrote tab_D_spec.tex")
     for k, v in N.items():
         print("    %18s = %s" % (k, v))

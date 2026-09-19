@@ -431,7 +431,8 @@ def write_paper_table():
         pair.append(left + right)
     write_table("tab_S_admissible_compact",
                 ["constraint", "verdict", "constraint", "verdict"],
-                pair, colspec=r"p{0.40\textwidth}l p{0.40\textwidth}l",
+                pair, colspec=(r">{\raggedright\arraybackslash}p{0.38\linewidth}l "
+                         r">{\raggedright\arraybackslash}p{0.38\linewidth}l"),
                 note=("%d checks, %d pass, %d fail; the evidence for each is "
                       "in the supplement"
                       % (len(RESULTS),
@@ -441,7 +442,8 @@ def write_paper_table():
     write_table("tab_S_admissible",
                 ["constraint", "verdict", "evidence"],
                 rows,
-                colspec=r"p{0.36\textwidth}l p{0.44\textwidth}",
+                colspec=(r">{\raggedright\arraybackslash}p{0.34\linewidth}l "
+                         r">{\raggedright\arraybackslash}p{0.44\linewidth}"),
                 note=("%d checks, %d pass, %d fail"
                       % (len(RESULTS),
                          sum(1 for _, ok, _ in RESULTS if ok is True),

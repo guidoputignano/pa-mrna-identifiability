@@ -27,6 +27,51 @@ and below $0.1$ at $5.8$. At the bottom of that table two patients differing ten
 capacity, $10\%$ of nominal against $1\%$, are separated by less than a third in
 marker level, which no assay resolves against the day-to-day variability of the quantity.
 
+\subsection{What the estimate is relative to}
+\label{sec:structure}
+
+The limit above is a limit on where in the parameter range capacity is recoverable. There
+is a second limit, of a different kind, and it is the one a reader should carry furthest:
+\textbf{$\theta$ is identified relative to an assumed structure, and a published
+alternative fits the same record.}
+
+The alternative is the translational model's readout, in which the marker is an algebraic
+$I_{\max}$ function of enzyme rather than a flux balance~\cite{pkpd_translational}. Under
+it the marker is a M\"obius function of the increment, so a record carries three numbers
+about that map while the structure has four free parameters at a fixed $I_{\max}$.
+Eliminating the other three leaves \emph{no} relation on $\theta$: for any $\theta$ in the
+admissible interval there are values of the remaining parameters that reproduce the record
+exactly. Under that structure $\theta$ is not imprecise. It is \emph{not identifiable}, at
+any design and at any number of visits, and an estimator fitted to such a record is
+reporting a point on a fibre along which the data are silent.
+
+Fitting \eqref{eq:local} to records generated from that structure returns $\hat\theta$ high
+by a factor of $1.3$ to $2.0$ at this paper's own dose, and by a factor of $4$ to $20$ at a
+dose calibrated to the falls the phase 1/2 interim analysis reports~\cite{trial_phase12}.
+\textbf{The residual of that fit can be under a fifth of one $\sigma$}, so nothing in the
+fit signals the error: the misspecification is invisible in exactly the diagnostic a reader
+would use to detect it.
+
+Three things qualify that, and none of them removes it. The obstruction and the design
+advice survive the substitution: a record locked to one dose-cycle phase leaves $K_m$
+unbounded under every structure tested, the ranking of schedules is unchanged, and the two
+recommended designs agree across structures to about $3\%$. Whether $\theta$ is
+identifiable under the alternative is itself an assumption, because that structure was
+fitted to a fixed-diet animal colony and carries no substrate load at all; of four
+plausible ways to introduce one, three leave $\theta$ unidentifiable and one restores it.
+And it is not generic: the other published structure, a turnover marker whose production
+the therapy inhibits~\cite{dose_selection_poster,mrna_moa}, \emph{is} identifiable in
+$\theta$ with no external information. What creates the deficit is carrying a free marker
+offset alongside a free marker amplitude, which is what a phenomenological readout has and
+a flux balance does not.
+
+The practical consequence is short. A capacity estimate from a marker record is a statement
+about a model as much as about a patient, so \textbf{the structure belongs beside the
+estimate}, and the one measurement that would settle which structure a real record came
+from is a transient: the alternative's marker is algebraic in the enzyme, and a marker that
+is a state pins its own rate constant separately from the steady map. The supplement,
+\S S1, works both structures through.
+
 \subsection{What the estimate's own precision does across that range}
 \label{sec:scopeprec}
 
@@ -34,15 +79,14 @@ The table above is about the \emph{marker}. The same question can be put to the
 \emph{estimate}, and until now it had not been: every precision this paper reports is
 computed at $\theta = 3000$, and on the table above that is the $100\%$ row.
 
-That is worth stating plainly, because the repository had left it ambiguous.
-\texttt{src/common/models.py} annotates $\theta = 3000$ as $V_{\max}$, the \emph{maximal}
-enzymatic velocity, and annotates the parent model's $\theta = 300$ as ``$\sim 10\%$ of
-normal''. Together those put normal at $3000$ and the local block at $100\%$ of it, so the
-local block is a normal-capacity illustration and Table~\ref{tab:params} labels it as
-one. Residual PCC activity in propionic acidemia is under $5\%$ of
-control~\cite{pcc_residual_activity}, so the patient sits at $\theta \le 150$, which the
-table now carries as its own row. Nothing about the model changes; what changes is that the
-illustration is no longer available to be read as a description of the patient.
+That is worth stating plainly. The model carries $\theta = 3000$ as the \emph{maximal}
+enzymatic velocity and the parent model's $\theta = 300$ as about a tenth of normal, which
+together put normal at $3000$ and the illustrative block at $100\%$ of it: it is a
+normal-capacity illustration, and Table~\ref{tab:params} labels it as one. Residual PCC
+activity in propionic acidemia is under $5\%$ of control~\cite{pcc_residual_activity}, so
+the patient sits at $\theta \le 150$, which the table carries as its own row. Nothing
+about the model changes; what changes is that the illustration cannot be read as a
+description of the patient.
 
 \paragraph{The reason, before the measurement.} None of what follows needs a sweep to
 anticipate. Write the untreated balance, $\theta\,g(m) + k_e m = L$. The column the
@@ -73,7 +117,7 @@ and the excitation at each capacity:
 
 \noindent
 Medians over $24$ simulated intake records at the specification's own $10\%$ day-to-day
-variability; the seed ranges are in \texttt{audit/n4\_theta\_scope.py}. A dash means the
+variability, with the seed ranges in the accompanying code. A dash means the
 target is not reached at any number of monthly visits up to $600$, which is fifty years of
 follow-up. These are sampling spreads and not interval half-widths
 (Remark~\ref{rem:curvature}); at a disease-range capacity the distinction stops mattering,

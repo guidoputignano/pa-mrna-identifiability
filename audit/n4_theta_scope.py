@@ -339,7 +339,7 @@ def table_elasticity():
                      f"${elasticity(th, KM0, KE, m):.3f}$"])
     write_table("tab_S_elasticity",
                 [r"$\theta$, as \% of nominal", r"marker, $\times$ managed",
-                 r"$\lvert\partial \ln m / \partial \ln\theta\rvert$"],
+                 r"$\lvert\partial\ln m/\partial\ln\theta\rvert$"],
                 rows, colspec="rrr",
                 note="closed form at the untreated balance, R2 of this script")
     print("  wrote tab_S_elasticity.tex")
@@ -360,7 +360,7 @@ def table_scope():
                      ("---" if n is None or not np.isfinite(n) else f"${int(n)}$")])
     write_table("tab_S_scope",
                 [r"$\theta$, as \% of nominal", r"marker, $\times$ managed",
-                 r"$\lvert\partial \ln m / \partial \ln\theta\rvert$",
+                 r"$\lvert\partial\ln m/\partial\ln\theta\rvert$",
                  r"$\operatorname{sd}(\ln\hat\theta)$",
                  r"monthly visits to $%.2f$" % GATE],
                 rows, colspec="rrrrr",

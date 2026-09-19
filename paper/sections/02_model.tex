@@ -220,21 +220,43 @@ not curvature in $\alpha$. The reduction hierarchy is verified symbolically and 
 \begin{adjustwidth}{-1.0cm}{-1.0cm}
 \scriptsize
 \def\paramslabel{tab:params}
-\def\paramscaption{The constants this paper reasons about: those whose value is quoted
-here or decides a result. Three are taken from the literature and the rest are assumed and
-illustrative. Each row carries what \emph{kind} of quantity it is, which is not the same
-question as where it came from, since a constant can be honestly assumed and still be an
-effective or lumped parameter rather than one any experiment could measure, and it carries
-the species its evidence comes from where there is one. \textbf{Some conclusions do depend
-on values in this table.} Remark~\ref{rem:no_km} shows that no \emph{prior} on $K_m$ is
-needed, which is a narrower claim than nothing depending on $K_m$ at all, so the last
-column carries the cost bound for the three rows where it decides a result. The full
-registry is \S S2 of the supplement, which is the authority: it holds every registered
-constant, with its sources and what each assumption is worth, and this table is a
-selection from it.}
+\def\paramscaption{The constants this paper reasons about, and what each rests on. Three
+are from the literature and the rest are chosen for illustration, against what the last
+column says. Each row also carries what \emph{kind} of quantity it is, which is a
+different question from where it came from, and the species its evidence comes from where
+there is one. \textbf{Some conclusions do depend on values in this table}, and the three
+that decide a result are priced in the text below. The full registry is \S S2 of the
+supplement, which is the authority; this is a selection from it.}
 \input{../results/tables/tab_params_compact}
 \end{adjustwidth}
 
+
+\paragraph{The three rows that decide a result, and what each is worth.} Most of the table
+is illustrative in the harmless sense that every conclusion is stated relative to it. Three
+rows are not.
+
+\emph{Capacity.} The identifiability results do not turn on $\theta = 3000$, but two
+conclusions do. The supplement's local-model section flips a qualitative conclusion across
+it, the anchor attenuating at $3000$ and amplifying at the parent model's $300$, and by
+Section~\ref{sec:scopeprec} the design's own precision does too.
+
+\emph{Capacity in the disease.} On the monthly record $\operatorname{sd}(\ln\hat\theta)$ is
+$0.1699$ at nominal capacity, $1.5830$ at $10\%$ of nominal and $3.0673$ at $5\%$, against
+a target of $0.20$. The gate holds only for $\theta$ between $2472$ and $18814$, which is
+$82\%$ to $627\%$ of nominal, so the disease sits a factor of $16$ below the band. This is
+the row that says who the paper is about, and it is the reason the precision above is an
+illustration rather than the result.
+
+\emph{Half-saturation.} This is the tightest cost in the local model after the increment.
+Holding the patient managed at $\bar m$ and re-solving the load, the ordinate noise and the
+load-bias prior at each $K_m$, $\operatorname{sd}(\ln\hat\theta)$ runs $0.0507$ to $1.3608$
+over $K_m$ from $5$ to $1000$~$\mu$M, a factor of $26.8$. It is $0.1699$ at the
+illustrative $100$ and crosses the target at $K_m = 124$, so the design has a factor of
+$1.24$ of headroom; at the in vitro value the $K_m$ row declines to use, $290$~$\mu$M, it
+would be $0.4158$. That headroom is smaller than it reads: across twenty-four intake
+records the spread is $0.1684$ to $0.1709$ at $K_m = 100$ and $0.1987$ to $0.2010$ at
+$K_m = 124$, so the crossing straddles the target and which side of it a given record falls
+on is not settled by the median.
 
 Two consequences of that table are load-bearing and are stated here rather than left to be
 inferred.

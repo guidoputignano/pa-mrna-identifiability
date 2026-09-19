@@ -430,7 +430,11 @@ def write_paper_table(rows):
                  r"$\Delta_{\mathrm{peak}}/\theta$", "marker fall",
                  "capacity used", r"$\operatorname{sd}(\ln\hat\theta)$",
                  "visits to $0.20$"],
-                out, colspec="llrrrrrr",
+                out,
+                #  eight columns, one of them a sentence: that one wraps and
+                #  the rest are numbers
+                colspec=(r"l>{\raggedright\arraybackslash}p{0.22\linewidth}"
+                         r"rrrrrr"),
                 note=("every row admissible on the capacity ceiling at the 5% "
                       "reference; visits are monthly visits to the gate, "
                       "median over 8 intake records, searched to 60"))

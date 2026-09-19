@@ -1,4 +1,4 @@
-\begin{tabular}{@{}p{0.17\textwidth}@{\hskip 1em}p{0.40\textwidth}@{\hskip 1em}p{0.40\textwidth}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}@{\hskip 0.8em}>{\raggedright\arraybackslash}p{0.39\textwidth}@{\hskip 0.8em}>{\raggedright\arraybackslash}p{0.38\textwidth}@{}}
 \toprule
 \textbf{} & \textbf{what the record must contain} & \textbf{why} \\
 \midrule
@@ -14,7 +14,7 @@ sampling, the other exclusion & no sample within one hour of a dose & the marker
 dosing record & date, dose and product lot for every infusion & $\Delta(t_i)$ is a regressor, not a nuisance: it carries the excitation \\
 load record, precision & ordinary outpatient \emph{variability} suffices ($0.170$ at a $1\%$ day-to-day CV against $0.170$ at $20\%$); the recording \emph{accuracy} is the binding one and is the row below & the load-bias column is nearly orthogonal to $\theta$ once the increment is carried \\
 load record, variability & \textbf{record intake as eaten; do not smooth, average or impute} & a steady load is the exactly singular case of Proposition~\ref{prop:rank}. With the $5\%$ load prior in place that direction is filled by the prior and the answer barely moves; with no prior it is filled only by real variation ($\infty$ steady, $0.26$ at a $2\%$ CV, $0.17$ at $20\%$), so the variability is what makes the result independent of the prior \\
-$k_e$ & a prior within a factor of $2.67$ ($2.65$ to $2.68$ across records) & \textbf{no published source supplies it}, so this is the one number the design asks for and cannot cite. It is also the cheapest second external measurement: tightening it is worth $2.1\times$ at nominal capacity and $6.9\times$ in the disease range, though even an exact $k_e$ leaves $0.388$ there (\texttt{audit/n5\_scope\_contribution.py}) \\
+$k_e$ & a prior within a factor of $2.67$ ($2.65$ to $2.68$ across records) & \textbf{no published source supplies it}, so this is the one number the design asks for and cannot cite. It is also the cheapest second external measurement: tightening it is worth $2.1\times$ at nominal capacity and $6.9\times$ in the disease range, though even an exact $k_e$ leaves $0.388$  there \\
 $K_m$ & nothing at all & every number here is unchanged by a $K_m$ prior twenty times looser, which is what Remark~\ref{rem:no_km} demanded \\
 \bottomrule
 \end{tabular}

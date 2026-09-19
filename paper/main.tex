@@ -7,13 +7,20 @@
 
 \title{\textbf{The Dose Train is the Identification Experiment:\\
 Estimating Residual Enzymatic Capacity in Propionic Acidemia}}
-\author{Guido Putignano}
+\author{Guido Putignano\\[2pt]
+  \normalsize\itshape \textnormal{[affiliation]}\\
+  \normalsize\texttt{[corresponding author e-mail]}}
 \date{\today}
 
 \begin{document}
 \maketitle
 
 \input{sections/00_abstract}
+
+\vspace{0.6em}
+\noindent\textbf{Keywords.} structural identifiability; optimal experimental
+design; sampling schedule; enzyme replacement; propionic acidemia; pharmacokinetic
+excitation; Cram\'er--Rao bound.
 
 \vspace{0.5em}\hrule\vspace{1.5em}
 
@@ -31,6 +38,28 @@ Estimating Residual Enzymatic Capacity in Propionic Acidemia}}
 \input{sections/08_specification}
 \input{sections/11_scope}
 \input{sections/12_discussion}
+
+\clearpage
+
+\section*{Code and data availability}
+Every figure, table and quoted number in this paper is produced by the code that
+accompanies it, and the repository is the provenance for all of them: each table
+is written by the function that computes it, each quantity the text quotes is
+written to a generated file the text reads, and a check regenerates them and
+fails the build if a committed artefact no longer matches its generator. No
+patient data were used. The clinical record this paper specifies does not exist
+yet; every record analysed here is simulated from the model of
+Section~\ref{sec:model} with the constants of Table~\ref{tab:params}, and the
+seeds are fixed and named so that every number reproduces.
+
+\section*{Funding}
+[funding statement]
+
+\section*{Acknowledgements}
+[acknowledgements]
+
+\section*{Conflicts of interest}
+[conflicts of interest]
 
 \clearpage
 \printbibliography[title={References}]

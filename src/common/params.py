@@ -84,6 +84,12 @@ class Row:
     note: str            # what fixes it, or what its being assumed costs
     kind: str = ""       # measurable / effective / lumped / convention / ...
     species: str = ""    # where the supporting evidence comes from, if any
+    #: one line saying what the value rests on: a citation, an explicit
+    #: statement that nothing supplies it, or what it was chosen against.
+    #: The main-text table carries this in place of the abridged cost column,
+    #: whose cells were mostly a pointer at the supplement and told a reader
+    #: nothing about the row they were reading.
+    rests_on: str = ""
 
 
 _A = ParamsA()
@@ -123,7 +129,8 @@ LOCAL = [
                  r"the reach limit at three to four times the managed level, so a patient "
                  r"presenting untreated near $60$~$\mu$M is already outside the band in which "
                  r"capacity is recoverable",
-        kind=CONVENTION, species="mouse"),
+        kind=CONVENTION, species="mouse",
+        rests_on=r"chosen for illustration, and every design quantity is relative to it. The scale is murine~\cite{pkpd_translational}, within $1.6$ of the human newborn cut-off~\cite{dbs_3hp_cutoff}"),
     Row(r"$\theta$", f"${_A.theta:.0f}$~$\mu$M/d",
         r"capacity of the enzymatic channel, \textbf{at normal capacity}",
         ASSUMED, r"illustrative, and \textbf{a normal-capacity illustration rather than a "
@@ -142,7 +149,8 @@ LOCAL = [
                  r"remains an order-of-magnitude quantity and is confounded with $V_{\max}$ "
                  r"by construction: at $\bar m/K_m = 0.1$ the channel runs at $9.1\%$ of "
                  r"$V_{\max}$, carrying $273$ against a load of $323$",
-        kind=CONVENTION),
+        kind=CONVENTION,
+        rests_on=r"chosen for illustration as \emph{normal} capacity on the parent model's scale, against residual activity under $5\%$~\cite{pcc_residual_activity}"),
     Row(r"$\theta_{\mathrm{PA}}$", r"$\le 150$~$\mu$M/d",
         "capacity in the disease, on the scale of the row above",
         LITERATURE, r"\textbf{This is the row that says who the paper is "
@@ -160,7 +168,8 @@ LOCAL = [
                     r"quantity the observable has stopped responding to, and sampling "
                     r"every two days for two years instead of monthly moves the lower "
                     r"edge by $9\%$",
-        kind=DERIVED, species="human"),
+        kind=DERIVED, species="human",
+        rests_on=r"residual PCC activity in propionic acidemia is under $5\%$ of control~\cite{pcc_residual_activity}, which on the scale of the row above is $\theta \le 150$"),
     Row(r"$K_m$", f"${_A.Km:.0f}$~$\mu$M",
         "half-saturation of the enzymatic channel, at the plasma level",
         ASSUMED, r"illustrative, and \emph{not} the in vitro Michaelis constant of PCC "
@@ -181,7 +190,8 @@ LOCAL = [
                  r"records the spread is $0.1684$ to $0.1709$ at $K_m = 100$ and $0.1987$ "
                  r"to $0.2010$ at $K_m = 124$, so the crossing straddles the target and "
                  r"which side of it a given record falls on is not settled by the median",
-        kind=EFFECTIVE),
+        kind=EFFECTIVE,
+        rests_on=r"chosen for illustration at $\bar m/K_m = 0.1$, and \emph{not} PCC's in vitro Michaelis constant, $0.29$~mM~\cite{pcc_liver_kinetics}, a different molecule in a different compartment"),
     Row(r"$k_e$", f"${_A.ke:.0f}$~d$^{{-1}}$",
         "alternative clearance rate constant",
         ASSUMED, r"illustrative, chosen so the enzymatic channel carries most of the flux, "
@@ -196,7 +206,8 @@ LOCAL = [
                  r"already recorded. The only published structure carrying a first-order "
                  r"marker loss is the turnover model of the dose-selection "
                  r"abstract~\cite{dose_selection_poster}, which publishes no value for it",
-        kind=LUMPED),
+        kind=LUMPED,
+        rests_on=r"\textbf{searched for and not supplied}: the translational model has no marker state and no elimination constant~\cite{pkpd_translational}, and the one structure with a first-order marker loss publishes no value~\cite{dose_selection_poster}. Chosen so the enzymatic channel carries most of the flux"),
     Row(r"$\mtol$", f"${M_TOL:.0f}$~$\mu$M", "tolerable metabolite level",
         ASSUMED, r"a clinical convention, not a property of the patient. The width of the "
                  r"undetermined window runs $1.2\%$ to $67\%$ as it moves, so this is the most "
@@ -243,12 +254,14 @@ LOCAL = [
                  r"thereafter, which is the direction that makes the excursion look larger "
                  r"than it is. Its only role is to set how much excursion a fixed schedule "
                  r"creates, and Table~\ref{tab:excursion} reports the answer",
-        kind=MEASURABLE, species="mouse, rat, monkey"),
+        kind=MEASURABLE, species="mouse, rat, monkey",
+        rests_on=r"the translational model's PK, allometrically scaled from mouse, rat and monkey~\cite{pkpd_translational}"),
     Row(r"$T_{\mathrm{dose}}$", "14~d", "interval between therapeutic doses",
         LITERATURE, r"the biweekly schedule selected for mRNA-3927 by model-informed dose "
                     r"selection~\cite{dose_selection_poster}; the phase 1/2 trial dosed every "
                     r"two or three weeks~\cite{trial_phase12}. Adopted rather than assumed",
-        kind=MEASURABLE, species="human"),
+        kind=MEASURABLE, species="human",
+        rests_on=r"the biweekly schedule of model-informed dose selection~\cite{dose_selection_poster}; the trial dosed every two or three weeks~\cite{trial_phase12}"),
     Row(r"$D$", r"$6000$~$\mu$M/d", "size of one therapeutic increment",
         ASSUMED, r"chosen so the marker falls by \textbf{about two thirds} at peak effect. "
                  r"The computed range is $62$--$66\%$ and it varies for two reasons, both "
@@ -266,7 +279,8 @@ LOCAL = [
                  r"saying only the excursion is used understated the dependence. It is "
                  r"recoverable in principle from a measured per-dose fall, but the trial "
                  r"reports no sampling time for its falls, so the reading is not determined",
-        kind=CALIBRATION, species="mouse"),
+        kind=CALIBRATION, species="mouse",
+        rests_on=r"chosen for illustration so the marker falls by about two thirds at peak, against the trial's reported falls~\cite{trial_phase12}"),
     Row(r"$\sigma$", r"a family, $\mu$M/d",
         "standard deviation of the ordinate of the fit",
         ASSUMED, r"deliberately not assigned, because nothing in this paper bounds how well "
@@ -281,7 +295,8 @@ LOCAL = [
                  r"$12\%$ (median over $24$ simulated intake records at a load CV of "
                  r"$10\%$, spread $[0.1563, 0.1571]$ at $1\%$ and $[0.2563, 0.2690]$ at "
                  r"$20\%$; \texttt{audit/m1\_loadbias\_prior.py})",
-        kind=LUMPED),
+        kind=LUMPED,
+        rests_on=r"deliberately not assigned: nothing here bounds how well the load is recorded, so it is carried as a family indexed by the row below"),
     Row(r"$\mathrm{CV}$", f"${ASSAY_CV:.0f}\\%$",
         "analytical variability of the marker assay",
         ASSUMED, r"illustrative, and a \emph{percentage}: it is never absolute flux. It enters "
@@ -299,7 +314,8 @@ LOCAL = [
                  r"3-HP baseline~\cite{pkpd_translational}, \emph{between mice of one inbred "
                  r"strain}, which bounds between-patient variability from below rather than "
                  r"above",
-        kind=MEASURABLE, species="human (MMA); mouse"),
+        kind=MEASURABLE, species="human (MMA); mouse",
+        rests_on=r"chosen for illustration. The nearest published repeatability, the breath test's, is between-visit and in methylmalonic acidemia~\cite{breath_test_mma}, so it bounds this from above rather than measuring it"),
     Row(r"$s_{\ln k_e}$", f"${KE_PRIOR_LOG:.1f}$",
         "sd of the log-normal prior on $k_e$",
         ASSUMED, r"\textbf{The only prior that does any work.} "
@@ -320,7 +336,8 @@ LOCAL = [
                  r"(\texttt{audit/n3\_ke\_prior\_worth.py}, which also reports that every "
                  r"design figure in this paper is drawn at the one seed "
                  r"\texttt{design\_record} hard-codes)",
-        kind=PRIOR),
+        kind=PRIOR,
+        rests_on=r"chosen for illustration, deliberately wider than the factor of about three the gate needs, so the prior is weaker than the requirement"),
     Row(r"$\sigma_L/L$", f"${100*LOAD_FRAC:.0f}\\%$",
         "relative error in the recorded substrate load",
         ASSUMED, r"\textbf{Sets $\sigma$} through "
@@ -330,7 +347,8 @@ LOCAL = [
                  r"Section~\ref{sec:spec} until R17. Measurable in principle by a weighed "
                  r"intake study; no such study exists in PA, where records are typically "
                  r"prescriptions rather than intake as eaten",
-        kind=MEASURABLE),
+        kind=MEASURABLE,
+        rests_on=r"chosen for illustration. Measurable by a weighed intake study; none exists in propionic acidemia, where records are prescriptions rather than intake as eaten"),
 ]
 
 
@@ -424,7 +442,8 @@ PARENT = [
                  r"to $400$~$\mu$mol/kg/day has no source and is not used "
                  r"pending one. The value here is not in those units and is not claimed to be",
         kind=LUMPED, species="human"),
-    Row(r"$k$", r"$1$~d$^{-1}$, cancels from the curve", "conjugation rate constant",
+    Row(r"$k$", r"$1$~d$^{-1}$",
+        "conjugation rate constant, which cancels from the reduced curve",
         ASSUMED, r"drops out of the quasi-steady reduction of supplement \S S1 exactly, so the "
                  r"reduced clearance does not depend on it. \textbf{It is not therefore a "
                  r"this row concluded from that it is a free scale and reclassified it "
@@ -441,7 +460,8 @@ PARENT = [
                  r"equilibrium, where the reduction is an identity and the cost is zero; the "
                  r"bound above is what a transient would cost and is the third reason "
                  r"Section~\ref{sec:discussion} excludes the decompensation route",
-        kind=ELIMINATED, species="human"),
+        kind=ELIMINATED, species="human",
+        rests_on=r"cancels from the reduced clearance exactly, and nothing fixes it. Chosen for illustration; its cost off equilibrium is bounded in \S S2"),
 ]
 
 
@@ -486,7 +506,7 @@ MAIN_TEXT_ROWS = {
 }
 
 
-def _tex(rows, compact=False, keep_notes=()):
+def _tex(rows, compact=False):
     """
     One LaTeX row per registry row.
 
@@ -495,16 +515,15 @@ def _tex(rows, compact=False, keep_notes=()):
     kind or species tags: those are one word each, and they are what stop a
     reader taking an assumed lumped murine constant for a measured human one.
 
-    `keep_notes` is matched per block rather than across the whole table,
-    because the parent model carries rows with the same symbols as the local
-    model. Matching on the symbol alone kept five long notes in the main-text
-    table where the text names three, and cost a page and a half.
     """
     out = []
     for r in rows:
-        note = r.note
-        if compact:
-            note = note if r.symbol in keep_notes else r"\S S2"
+        #  The main-text table's last column used to be an abridged cost
+        #  column whose cells were mostly a pointer at the supplement, which
+        #  told a reader nothing about the row they were reading. It now says
+        #  what the value rests on: a citation, or what the value was chosen
+        #  against, or that the literature was searched and supplies nothing.
+        note = r.rests_on if compact else r.note
         out.append(" & ".join([r.symbol, r.value, r.meaning,
                                _source_cell(r), note]) + r" \\")
     return out
@@ -528,12 +547,18 @@ def write_params_table(compact=False, name=None):
     table is a selection from it and says so in its own caption.
     """
     from .style import TABDIR, ROOT
-    last = (r"\textbf{Cost, where it decides the result}" if compact
+    last = (r"\textbf{What the value rests on}" if compact
             else r"\textbf{What fixes it, or what assuming it costs}")
-    widths = ((r"p{0.09\textwidth} p{0.10\textwidth} p{0.26\textwidth} "
-               r"p{0.13\textwidth} p{0.34\textwidth}") if compact else
-              (r"p{0.07\textwidth} p{0.07\textwidth} p{0.20\textwidth} "
-               r"p{0.11\textwidth} p{0.45\textwidth}"))
+    #  \linewidth and not \textwidth: both tables are set inside an
+    #  adjustwidth, so \textwidth is the wrong measure and the sum of the
+    #  columns plus \tabcolsep ran past the rule by about 10pt
+    #  the widths have to leave room for \tabcolsep on both sides of five
+    #  columns, which is another 72pt on top of whatever they sum to; at
+    #  0.89 of the line the table ran 46pt past the rule
+    widths = ((r"p{0.075\linewidth} p{0.085\linewidth} p{0.22\linewidth} "
+               r"p{0.11\linewidth} p{0.31\linewidth}") if compact else
+              (r"p{0.06\linewidth} p{0.07\linewidth} p{0.17\linewidth} "
+               r"p{0.09\linewidth} p{0.40\linewidth}"))
     head = [r"\textbf{Symbol} & \textbf{Value} & \textbf{Meaning} & "
             r"\textbf{Source} & " + last + r" \\"]
     body = [r"\begin{longtable}{@{}" + widths + r"@{}}",
@@ -556,7 +581,7 @@ def write_params_table(compact=False, name=None):
              if compact else LOCAL)
     parent = ([r for r in PARENT if r.symbol in MAIN_TEXT_ROWS["PARENT"]]
               if compact else PARENT)
-    body += _tex(local, compact, MAIN_TEXT_NOTES)
+    body += _tex(local, compact)
     body += [r"\addlinespace", r"\midrule",
              r"\multicolumn{5}{@{}l}{\emph{The parent model and its equilibrium reduction}} \\",
              r"\addlinespace[2pt]"]

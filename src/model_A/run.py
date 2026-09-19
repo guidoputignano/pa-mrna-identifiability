@@ -173,9 +173,16 @@ def fig_channels():
     ax[1].plot(m, clearance_A(m, P2), color=RED, ls="--",
                label=rf"B: $\theta={thB:.0f},\ K_m=50,\ k_e={keB:.1f}$")
     ax[1].plot([m_op], [clearance_A(m_op, P)], "o", ms=5, color=MUTED, zorder=4)
-    at_point(ax[1], (m_op, clearance_A(m_op, P)), "same value\nand slope",
-             dx=26, dy=-16, arrow=True, fontsize=7.5, color=MUTED,
-             ha="left", va="top")
+    #  the label went BELOW the point, where it landed on the x-axis label
+    #  and printed over it; a small offset above put it on the curves
+    #  instead. The clear air is the upper middle of the panel, so the label
+    #  goes there in axes coordinates and reaches the point with an arrow.
+    ax[1].annotate("same value\nand slope",
+                   xy=(m_op, clearance_A(m_op, P)), xycoords="data",
+                   xytext=(0.30, 0.78), textcoords="axes fraction",
+                   fontsize=7.5, color=MUTED, ha="left", va="center",
+                   arrowprops=dict(arrowstyle="-", color=MUTED, lw=0.7,
+                                   shrinkA=2, shrinkB=3))
     over_x(ax[1], op_hi * 1.4, "operating\nregime", frac=0.97, color=BLUE,
            fontsize=7.5)
     ax[1].set_xlim(0, 300)

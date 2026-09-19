@@ -1,45 +1,33 @@
 \begin{abstract}
 \noindent
-The clinical decision in mRNA enzyme replacement for propionic acidemia is a dosing interval set by a quantity nobody measures: the patient's residual enzymatic
-capacity $\theta$.
+The clinical decision in mRNA enzyme replacement for propionic acidemia is a dosing
+interval, set by a quantity nobody measures: residual enzymatic capacity $\theta$. The
+trial is already running the experiment that would identify it: the therapy is a known
+exogenous input acting selectively on $\theta$, supplying forty-two times the excitation
+the marker's own excursions do.
 
-The trial is already running the experiment that would identify it. The therapy is a
-known, exogenous input acting selectively on $\theta$, and it supplies forty-two times
-the excitation the marker's own excursions do. What this paper contributes is the set of
-design rules that follow, rather than any one precision. Sampling must cover the phase of
-the dose cycle: draws taken at the dose interval, or at any multiple of it, cost a factor
-of $27$ in precision ($21$ to $33$ across simulated intake records), and moving the
-schedule half a day recovers it. The dosing record is a regressor carrying the excitation
-and not a nuisance. Intake must be recorded as eaten and to better than about $10\%$,
-which is a requirement on the \emph{accuracy} of the record and not on its variability.
-No prior on $K_m$ is needed or used.
+What transfers is the design rules that follow. Sampling must cover the phase of the
+dose cycle: draws at the dose interval, or any multiple of it, cost a factor of
+$\num{alias_cost}$ in precision, and moving the schedule half a day recovers it. The
+dosing record is a regressor carrying the excitation, not a nuisance. Intake must be
+recorded as eaten and to better than about $\num{load_accuracy_gate}\%$, a requirement on
+the record's \emph{accuracy} and not its variability. No prior on $K_m$ is needed.
 
-Those rules are statements about the observable and they hold whatever the patient's
-capacity. The capacity estimate does not, and the reason is one line of the balance. The
-information the record carries about $\ln\theta$ is exactly the flux through the enzyme,
-$\theta\,g(m) = L - k_e m$, so the record's sensitivity to capacity is the capacity's own
-share of the load. That share is $85\%$ at normal capacity and $16\%$ at the $5\%$ of
-normal that defines the disease, where the elasticity
-$\lvert\partial \ln m/\partial\ln\theta\rvert$ has fallen from $0.915$ to $0.173$.
-Monthly draws across dose cycles for two years therefore identify $\theta$ only for
-capacities roughly $82\%$ to $627\%$ of normal. Propionic acidemia sits about a factor of
-$16$ below that band, fifteen times the sampling moves its lower edge by $9\%$, and
-across a heterogeneous cohort the band edge is what the reported coverage of just over
-half is measuring. What survives in the disease range is the half-saturation $K_m$,
-identified to about $6\%$ at every capacity, and an upper bound on $\theta$.
+Those rules hold at every capacity. The estimate does not, for one line of the balance:
+what the record carries about $\ln\theta$ is the flux through the enzyme,
+$\theta\,g(m) = L - k_e m$, so its sensitivity to capacity is capacity's own share of the
+load, $85\%$ at normal and $16\%$ at the $5\%$ of normal that defines the disease.
+Monthly draws for two years therefore identify $\theta$ only between about $82\%$ and
+$627\%$ of normal, and propionic acidemia sits a factor of $16$ below that band. What
+survives there is $K_m$, to about $6\%$ at every capacity, and an upper bound on $\theta$.
+The estimate is relative to an assumed structure too: under a published alternative
+$\theta$ is not identifiable at all, at a residual too small to notice.
 
-Inside the band the honest figure is an interval rather than a standard error. The $95\%$
-profile interval on $\theta$ from one two-year monthly record is a factor of about four
-($2.9$ to $5.1$ across records), roughly twice what the Fisher curvature alone implies,
-because the likelihood has a long tail along the $\theta$--$K_m$ degeneracy.
-
-Identification is not the binding constraint on the decision in any case: the threshold
-$\theta$ would be compared against is stipulated rather than measured, and moves by a
-factor of $24$ across its defensible range. The paper therefore ends in a data
-specification rather than a dosing rule. Its first tier is one unpublished measurement,
-the same-day repeatability of a $1$-$^{13}$C-propionate breath test across a single dose.
-Its second is the non-enzymatic clearance $k_e$, which no published source supplies, and
-which is worth a factor of $2.1$ at normal capacity and $6.9$ in the disease range.
+Identification is not what binds the decision in any case, the threshold being stipulated
+rather than measured. The paper therefore ends in a data specification, whose first tier
+is one unpublished measurement, the same-day repeatability of a
+$1$-$^{13}$C-propionate breath test across a single dose, and whose second is the
+non-enzymatic clearance $k_e$, which no published source supplies.
 \end{abstract}
 
 \vspace{0.5em}
