@@ -133,8 +133,17 @@ def clearance_B(m, p: ParamsB):
 
 def alt_flux_C(m, p: ParamsC):
     """
-    Carnitine-mediated elimination after adiabatic elimination of the fast
-    carnitine state. This is alpha(m) of the paper, Section 5.1.
+    Carnitine-mediated elimination after eliminating the carnitine state at
+    its quasi-steady value. This is alpha(m) of the paper, Section 5.1.
+
+    NOT an adiabatic elimination of a FAST state, which is what this docstring
+    used to call it: at the model's own k the carnitine time constant is 0.92 d
+    against the marker's 0.81 h, so the separation runs the wrong way by a
+    factor of about 27. What licenses the elimination is that alpha is DEFINED
+    by solving dc/dt = 0 and dc/dt = 0 holds exactly at any fixed point, so at
+    equilibrium the two formulations are one equation rearranged. Everything
+    this repository computes from the parent is computed at equilibrium. See
+    REVIEW_LOG.md R22 and the k row of common/params.py.
 
     One mechanism supplies both features the curve needs.
 
@@ -184,7 +193,13 @@ def rhs_C(t, y, p: ParamsC, s, k=1.0):
     R0 and the same Kc. tests/test_models.py checks that directly.
 
     k is the conjugation rate constant. It cancels out of the reduction, so
-    the reduced curve does not depend on it and it is a free scale here.
+    the reduced CURVE does not depend on it.
+
+    It is NOT therefore a free scale, which is what this docstring used to say.
+    k alone sets the carnitine relaxation rate, tau_c = 1/(k[u + rho]), so it
+    sets how far off equilibrium the reduction remains usable: the peak
+    relative error in m on a transient is 21.6% at k = 1 and falls as 1/k.
+    See REVIEW_LOG.md R22 and the k row of common/params.py.
     """
     m, c = y
     conj = k * c * m / (p.Kc + m)

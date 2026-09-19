@@ -1134,5 +1134,6 @@ if __name__ == "__main__":
     table_rank()
     table_design()
     from common.params import write_params_table
-    write_params_table()
+    write_params_table()                 # full, for the supplement
+    write_params_table(compact=True)     # main text, cost bounds only
     print(f"  load-error amplification factor: {slope:.3f}")

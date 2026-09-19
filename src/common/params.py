@@ -30,7 +30,10 @@ the constant is:
     convention  a reporting or clinical choice, not a property of a patient
     calibration chosen to hit a stated target, and only that target is used
     derived     fixed by a constraint elsewhere
-    eliminated  cancels out of the reduction
+    eliminated  cancels out of the reduced curve. NOT the same as "does not
+                matter": k cancels from alpha(m) and still sets the
+                reduction's validity off equilibrium
+    prior width the standard deviation of a prior, not a physical quantity
 
 A row can be `literature` and `lumped` at once, and one is. The distinction
 matters because an effective or lumped constant cannot be checked against a
@@ -38,8 +41,8 @@ direct measurement even in principle, so "no measurement exists" is a
 different statement for those rows than for a measurable one.
 
 A third tag names the SPECIES the supporting evidence comes from, where there
-is any. Five rows in this table lean on a PK/PD model fitted in mice and two on
-a rat in vitro preparation, and until Phase 7 the table did not say so.
+is any. Four rows in this table lean on estimates fitted in mice and two on a
+rat in vitro preparation, and until Phase 7 the table did not say so.
 
 UNITS. The paper's local model is a flux balance at the plasma level,
 
@@ -427,11 +430,24 @@ PARENT = [
                  r"to $400$~$\mu$mol/kg/day was quoted here without a source and is withdrawn "
                  r"pending one. The value here is not in those units and is not claimed to be",
         kind=LUMPED, species="human"),
-    Row(r"$k$", "cancels", "conjugation rate constant",
-        DERIVED, r"drops out of the quasi-steady reduction of supplement \S S1 exactly, so the "
-                 r"reduced clearance does not depend on it and it is a free scale in the "
-                 r"two-state system",
-        kind=ELIMINATED),
+    Row(r"$k$", r"$1$~d$^{-1}$, cancels from the curve", "conjugation rate constant",
+        ASSUMED, r"drops out of the quasi-steady reduction of supplement \S S1 exactly, so the "
+                 r"reduced clearance does not depend on it. \textbf{An earlier version of "
+                 r"this row concluded from that it is a free scale and reclassified it "
+                 r"\textsc{derived}. Both are withdrawn}: $k$ alone sets the carnitine "
+                 r"relaxation rate, $\tau_c = 1/(k[u(m)+\rho(m)])$, so it fixes the "
+                 r"reduction's validity \emph{off} equilibrium even though it cancels from "
+                 r"the curve, and nothing in this model fixes $k$ itself. \textbf{Cost}: "
+                 r"starting the two-state system with carnitine at a pre-perturbation value "
+                 r"and comparing against the reduced system, the peak relative error in $m$ "
+                 r"is $21.6\%$ at the assumed $k = 1$, falling as $1/k$ for larger $k$ "
+                 r"($8.5\%$ at $k=10$, $1.3\%$ at $k=100$) and saturating below it "
+                 r"($26.9\%$ at $k=0.1$), because a relative error cannot exceed order one. "
+                 r"Everything this paper computes from the parent is computed \emph{at} "
+                 r"equilibrium, where the reduction is an identity and the cost is zero; the "
+                 r"bound above is what a transient would cost and is the third reason "
+                 r"Section~\ref{sec:discussion} excludes the decompensation route",
+        kind=ELIMINATED, species="human"),
 ]
 
 
@@ -451,15 +467,34 @@ def _source_cell(r):
     return r"\newline ".join(parts)
 
 
-def _tex(rows):
+#: the rows whose cost bound decides whether the paper's results hold, and so
+#: the only notes the MAIN-TEXT table carries. Everything else's provenance
+#: moves to the supplement, where a reader who wants it will look and a
+#: reviewer counting pages will not.
+MAIN_TEXT_NOTES = (r"$\theta$", r"$\theta_{\mathrm{PA}}$", r"$K_m$")
+
+
+def _tex(rows, compact=False):
+    """
+    One LaTeX row per registry row.
+
+    `compact` drops the provenance note from every row except the three whose
+    cost bound is load-bearing, and points the rest at the supplement. It does
+    NOT drop the kind or species tags: those are one word each, they are what
+    stop a reader taking an assumed lumped murine constant for a measured
+    human one, and they were the whole point of Phase 7.
+    """
     out = []
     for r in rows:
+        note = r.note
+        if compact:
+            note = note if r.symbol in MAIN_TEXT_NOTES else r"\S S2"
         out.append(" & ".join([r.symbol, r.value, r.meaning,
-                               _source_cell(r), r.note]) + r" \\")
+                               _source_cell(r), note]) + r" \\")
     return out
 
 
-def write_params_table():
+def write_params_table(compact=False, name=None):
     """Render both blocks as one longtable, source column included.
 
     A longtable rather than a tabular in a float: once every row carries its
@@ -470,12 +505,21 @@ def write_params_table():
     because the paper and the supplement caption this table differently and
     the supplement imports the paper's labels with xr, so a hard-coded label
     would collide.
+
+    `compact` writes the main-text version, which keeps every row and every
+    tag and carries the note only for the three rows of MAIN_TEXT_NOTES. The
+    full version goes in the supplement.
     """
     from .style import TABDIR, ROOT
+    last = (r"\textbf{Cost, where it decides the result}" if compact
+            else r"\textbf{What fixes it, or what assuming it costs}")
+    widths = ((r"p{0.09\textwidth} p{0.10\textwidth} p{0.26\textwidth} "
+               r"p{0.13\textwidth} p{0.34\textwidth}") if compact else
+              (r"p{0.07\textwidth} p{0.07\textwidth} p{0.20\textwidth} "
+               r"p{0.11\textwidth} p{0.45\textwidth}"))
     head = [r"\textbf{Symbol} & \textbf{Value} & \textbf{Meaning} & "
-            r"\textbf{Source} & \textbf{What fixes it, or what assuming it costs} \\"]
-    body = [r"\begin{longtable}{@{}p{0.07\textwidth} p{0.07\textwidth} "
-            r"p{0.20\textwidth} p{0.11\textwidth} p{0.45\textwidth}@{}}",
+            r"\textbf{Source} & " + last + r" \\"]
+    body = [r"\begin{longtable}{@{}" + widths + r"@{}}",
             r"\caption{\paramscaption}\label{\paramslabel}\\",
             r"\toprule"] + head + [
             r"\midrule",
@@ -491,13 +535,14 @@ def write_params_table():
             r"\endlastfoot",
             r"\multicolumn{5}{@{}l}{\emph{The local identification model}} \\",
             r"\addlinespace[2pt]"]
-    body += _tex(LOCAL)
+    body += _tex(LOCAL, compact)
     body += [r"\addlinespace", r"\midrule",
              r"\multicolumn{5}{@{}l}{\emph{The parent model and its equilibrium reduction}} \\",
              r"\addlinespace[2pt]"]
-    body += _tex(PARENT)
+    body += _tex(PARENT, compact)
     body += [r"\end{longtable}"]
-    path = TABDIR / "tab_params.tex"
+    path = TABDIR / (name or ("tab_params_compact.tex" if compact
+                              else "tab_params.tex"))
     path.write_text("\n".join(body))
     print(f"  wrote {path.relative_to(ROOT)}")
     return path
@@ -505,3 +550,4 @@ def write_params_table():
 
 if __name__ == "__main__":
     write_params_table()
+    write_params_table(compact=True)

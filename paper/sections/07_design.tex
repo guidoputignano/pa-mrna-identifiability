@@ -21,9 +21,13 @@ direction the data may never see, which is precisely the error at issue here; wi
 fact from Proposition~\ref{prop:rank} is put beside one fact about conditioning. The null
 vector \eqref{eq:nullvec} has a zero in its $k_e$ slot, so the degenerate direction is
 capacity, affinity and the load bias and $k_e$ is not in it; but $k_e$ escapes that identity
-only just, its column being nearly rather than exactly dependent on the rest. So $K_m$ lies
-\emph{inside} the exact degeneracy, where no prior on it can help, and $k_e$ lies just
-outside, where a modest one does all the work. The full argument, with the regression
+only just, its column being nearly rather than exactly dependent on the rest. So $K_m$
+moves \emph{along} the degeneracy rather than across it, and $k_e$ lies just outside, where
+a modest prior does all the work. \textbf{An earlier version of this paragraph said a prior
+on $K_m$ therefore cannot help. That has the mechanism inverted}, and the supplement, \S
+S1, now gives the corrected version: a $K_m$ prior is precisely a prior on position along
+the fibre, so it does bound the load bias, and the conclusion survives because the
+tightness it would need is unobtainable rather than because it does nothing. The full argument, with the regression
 residuals that separate the two cases, is in the supplement, \S S1.
 
 \paragraph{The footing, stated once and used everywhere.} Four choices decide every number
@@ -210,8 +214,9 @@ Table~\ref{tab:designs} reports posterior standard deviations under one prior, a
 prior is load-bearing. With \emph{no} prior at all, $k_e$ free as well, the same
 two-daily design gives $\operatorname{sd}(\ln\hat\theta) = 1.03$, and a prior-free
 nonlinear least squares started half a decade from the truth does worse still, because
-along the near-null direction of Proposition~\ref{prop:rank} the gradient is third order
-and a started-away optimiser does not climb back. So the honest claim is
+the direction of Proposition~\ref{prop:rank} is an exactly flat fibre at a constant load
+and a long shallow valley at the variability a real record carries, so a started-away
+optimiser reports the spread it started with rather than the spread the data imply. So the honest claim is
 conditional and is stated as such: this design identifies $\theta$ to better than $20\%$
 \emph{given} $k_e$ within a factor of $2.67$ ($2.65$ to $2.68$ across intake records),
 and does not identify it at all without. No published source supplies $k_e$ at any width
@@ -323,13 +328,23 @@ Whether that is clinically feasible is a different question, and this paper does
 claim it is. The infusion is administered in a clinic, so the patient is already present
 for the first hours; a series of draws at, say, $0$, $1$, $2$, $4$ and $8$~h is an ordinary
 pharmacokinetic sampling schedule and is not an excursion, an exposure or a provocation.
-Against that: the fast dynamics of a plasma overflow metabolite is not the fast dynamics of
-the mitochondrial substrate, and Remark~\ref{sec:marker} already names the monotone-tracking
-assumption as the weakest link in the chain. A transient interrogates exactly the part of
-the observation model that assumption is least able to support, at steady state the
-marker only has to track the substrate monotonically, whereas during a transient it has to
-track it with the right \emph{time constant}, and nothing in the literature establishes
-that.
+Against that, two things, and they are different objections. The first is the one
+Remark~\ref{sec:marker} already names: the fast dynamics of a plasma overflow metabolite is
+not the fast dynamics of the mitochondrial substrate, and at steady state the marker only
+has to track the substrate monotonically, whereas during a transient it has to track it
+with the right \emph{time constant}. Nothing in the literature establishes that.
+
+The second is about the plasma compartment itself, and it is the one piece of human
+evidence that bears on the $0.81$~h constant directly. After intermittent haemodialysis is
+stopped in an acute decompensation, the organic-acid pool does not stay drawn down: it
+refills, from continued extrahepatic production and from redistribution out of tissue,
+which is the standard argument for preferring continuous therapy~\cite{pa_guidelines}. A
+slow compartment behind the plasma pool is exactly the structure that would break the
+separation of $104$ this section is built on, and it would do so without violating
+monotone tracking at all. The observation is qualitative and it is made about crisis
+management rather than about steady state, so it does not move a number here. It does say
+that the two assumptions are independent, and that a transient design would be testing
+both at once.
 
 So this is recorded as an open direction and not as a recommendation. No design
 around it is computed here, and none should be until the observation model has been
@@ -489,8 +504,10 @@ taking the Gaussian tail at face value would throw away the one favourable resul
 has. Both numbers are reported by the code so that the gap stays visible.
 
 This is the first of the paper's two linearisation failures; the second is
-Remark~\ref{rem:second_order}, where a first-order filter reports a curvature-held
-direction as prior-held. They point the same way.
+Remark~\ref{rem:second_order}, where a curvature measured along a ray was read as the data
+pinning a direction that an exact fibre leaves free. \textbf{They do not point the same
+way, and an earlier version of this remark said they did, with the second one stated
+backwards.} Remark~\ref{rem:second_order} says why.
 \end{remark}
 
 \vspace{0.5em}

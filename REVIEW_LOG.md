@@ -1163,3 +1163,64 @@ Other requotings: two-monthly `0.187` to `0.188` `[0.184, 0.194]`; six-monthly `
 
 `design_record`'s seed is now `BASE_SEED`, with `SEEDS`, `median_spread` and `tex_spread`
 beside it, and both generated tables carry medians with ranges.
+
+---
+
+### R22. The carnitine reduction, reconciled with PR #3 rather than left in conflict
+
+**Retracted** (Phase 7, step 2), and the finding is not this branch's. `PR #3`
+(`claude/pensive-hamilton-1ga7l2`) established it; this branch was asserting the opposite in
+four places, and two branches must not go to review disagreeing about the same equations.
+
+**What PR #3 claims, and whether it holds.** Checked here from the equations rather than
+taken on trust, because adopting a reading on the strength of a PR description would be the
+same failure this log exists to record.
+
+`rhs_C` has `c-dot = R_0 - k c [u(m) + rho_0(1 + m/M_i)]`, so:
+
+1. **`k` cancels from the reduced curve.** Setting `c-dot = 0` gives
+   `c* = R_0 / (k[u + rho])`, and the conjugation flux `k c* u` is `R_0 u/(u + rho)`, with
+   `k` gone. Verified numerically over `m` from 1 to 1000 and `k` over four orders of
+   magnitude: worst relative spread `2.45e-16`, which is machine precision. **Holds.**
+2. **`k` alone sets the relaxation rate.** `d(c-dot)/dc = -k[u + rho]`, so
+   `tau_c = 1/(k[u+rho])`, exactly proportional to `1/k` at every `m`. **Holds.**
+3. **Therefore `k` sets the reduction's validity off equilibrium.** Starting the two-state
+   system with carnitine at a pre-perturbation value, the peak relative error in `m`
+   against the reduced system is **21.6% at the assumed `k = 1`**, `8.5%` at `k = 10`,
+   `1.3%` at `k = 100`, `0.14%` at `k = 1000`. Error times `k` settles to a constant, which
+   is the `1/k` scaling asymptotically; below `k = 1` it saturates (`26.9%` at `k = 0.1`)
+   because a relative error cannot exceed order one. **Holds, with that qualification**:
+   "scales as `1/k`" is asymptotic, not global, and PR #3's phrasing does not say so.
+4. **The timescale premise runs backwards.** At the model's own `k` the carnitine time
+   constant is `0.92` d against the marker's `0.81` h, slower by a factor of **27**. The
+   external half is Rebouche's whole-body turnover of 38 to 119 h with a fast compartment at
+   2 to 3 h, staged in `refs.sources` and named in prose rather than cited, because this
+   environment cannot resolve the DOI and the register checks citations against the
+   committed bibliography. **Holds.**
+
+**What this branch was asserting, now withdrawn.** `02_model.tex` said the carnitine state
+is fast relative to the metabolite, quoting `0.8` h against `3.5` d, which compares the
+marker against the *therapy* and not carnitine against the marker. It said `k` is a free
+scale and no conclusion depends on it. It called the reduction verified rather than
+asserted, on the strength of an integration that is the same identity and so cannot fail at
+any parameter value. And it stated the divergence above the separatrix without the
+qualification that the reduced separatrix is a lower bound on the basin rather than the
+basin. `alt_flux_C`'s docstring called this an adiabatic elimination of a fast state and
+`rhs_C`'s called `k` a free scale. All six are corrected here in the convention PR #3 uses.
+
+**What replaces the premise.** Nothing needs a separation of timescales. `alpha` is defined
+by solving `c-dot = 0`, and `c-dot = 0` holds exactly at any fixed point, so at equilibrium
+the two formulations are one equation rearranged. Every quantity this paper takes from the
+parent is computed at equilibrium, where the cost is zero. The bound above is what a
+*transient* would cost, and it is the third reason the discussion excludes the
+decompensation route.
+
+**Table 2's `k` row** is reclassified `derived -> assumed`, since nothing fixes `k`, and now
+carries that cost. `derived` meant "fixed by a constraint elsewhere in the model", and only
+"it cancels, so it does not matter" made it defensible.
+
+**Still to reconcile at merge.** PR #3 also rewrites Section 2.6's verification claim and
+the discussion's decompensation exclusion, and corrects the supplement's parallel passages.
+This branch has separately rewritten the discussion. Whichever merges second will need to
+take the other's wording in those three places; the equations and the `k` row now agree, so
+the conflict is textual only.

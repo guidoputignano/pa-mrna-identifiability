@@ -68,15 +68,52 @@ first order. Proposition~\ref{prop:rank} gives the null direction in closed form
 along it, the noiseless misfit grows as the \emph{square} of the displacement rather than
 linearly: root-mean-square residual $\propto \varepsilon^2$, checked to three figures over
 a decade in $\varepsilon$. Squaring it, $\chi^2 \propto \varepsilon^4$, which is the same
-statement Remark~\ref{rem:second_order} reports over four decades from the other direction. The combination is therefore recovered through curvature rather than through
-slope, and the consequence is a price rather than a prohibition: the recoverable
-displacement scales as the square root of the noise level, where a first-order
-direction would scale linearly. Halving the assay CV buys a factor of $\sqrt2$ along this
-direction and a factor of $2$ along every other.
+statement Remark~\ref{rem:second_order} reports over four decades from the other direction.
 
-A singular Fisher matrix at a point does not contradict global injectivity of the
-map; it sets the price. That sentence is the whole reconciliation between the structural
-result and everything that follows, and is not stated again.
+That is a statement about the null \emph{vector}, and the degeneracy is a \emph{curve}.
+Solving the balance for the increment that produces a level $m$ gives, with no remainder,
+\begin{equation}
+\Delta(m) \;=\; \frac{A}{m} \;+\; B \;+\; C\,m,
+\qquad A = K_m(L+b), \quad B = L + b - \theta - k_e K_m, \quad C = -k_e,
+\label{eq:invariants}
+\end{equation}
+so the increment that produces a given level depends on the parameters only through
+$(A,B,C)$. Since $A>0$ and $C<0$ the map is strictly decreasing from $(0,\infty)$ onto
+$\mathbb{R}$, hence a bijection, so the level a known $\Delta$ produces is a function of
+$(A,B,C)$ alone; and three distinct levels determine $(A,B,C)$, the relevant determinant
+being $-\prod_{i<j}(m_i-m_j)/(m_1m_2m_3)$. So on this locus, at a constant recorded load
+and a record visiting at least three levels, $(A,B,C)$ is exactly what the data contain.
+Four unknowns against three invariants leave a one-parameter family of exact
+observational twins,
+\begin{equation}
+K_m(b) = \frac{K_m^{0}\,L}{L+b},
+\qquad \theta(b) = \theta^{0} + b + k_e\bigl(K_m^{0} - K_m(b)\bigr),
+\qquad k_e \text{ unchanged},
+\label{eq:fibrecl}
+\end{equation}
+which is the integral curve of the null direction and along which the marker itself is
+unchanged. Proposition~\ref{prop:rank}'s null vector is its tangent at $b=0$, so the
+$\varepsilon^4$ above measures the curvature of \eqref{eq:fibrecl} against that tangent.
+
+\textbf{The combination is therefore not recovered at second order. On this locus it is not
+recovered at all, and halving the assay CV buys nothing along it. An earlier version of
+this passage said the recoverable displacement scales as the square root of the noise
+level, and that is withdrawn} (\texttt{REVIEW\_LOG.md} R14).
+
+Two things close it from outside the model, and the paper uses both. A bound on the load
+bias closes it directly: \eqref{eq:fibrecl} is admissible for every $b > -272.7$, and at
+the $5\%$ load record of Section~\ref{sec:spec} it leaves $\theta$ open by a factor of
+$1.028$. And a recorded load that \emph{varies} closes it from the data, because $L_k$ and
+the constant column separate; that is the last clause of Proposition~\ref{prop:rank} and
+the reason Section~\ref{sec:spec} asks for ordinary variability to be recorded rather than
+smoothed. Where the data do the work the price is ordinary: the half-width scales as
+$\sigma^{0.98}$, not as $\sqrt\sigma$.
+
+A singular Fisher matrix on this locus does not contradict the structural verdict of
+Section~\ref{sec:model}, because the two are statements about different records: the
+structural result reads a transient, from which every time derivative of the output is
+available, and the clinic samples a locus on which $\dot m$ has already vanished. That
+sentence is the whole reconciliation, and is not stated again.
 
 \begin{remark}[A word used in two senses, disambiguated once]
 \label{rem:twosenses}
@@ -368,28 +405,36 @@ Ask for constants $(a, \beta, \gamma, e)$, \emph{not} depending on the sample, w
 a\,\pd{G}{\theta} + \beta\,\pd{G}{K_m} + \gamma\,\pd{G}{k_e} + e\,\pd{G}{b} \;=\; 0
 \qquad\text{for every }\Delta.
 \]
-The increment is eliminated by the balance itself: $(\theta+\Delta)\,u = L - k_e m$, so the
-second term is $-(\beta/K_m)(L - k_e m)(1-u)$, and by \eqref{eq:usubs} this is
-$-(\beta/K_m)\bigl[L(1-u) - k_e K_m u\bigr]$. Substituting, and using
+The increment is eliminated by the balance itself: $(\theta+\Delta)\,u = L + b - k_e m$,
+so the second term is $-(\beta/K_m)(L + b - k_e m)(1-u)$, and by \eqref{eq:usubs} this is
+$-(\beta/K_m)\bigl[(L+b)(1-u) - k_e K_m u\bigr]$. \textbf{The bias $b$ is carried here, and
+an earlier version of this proof dropped it.} Substituting, and using
 $m = K_m u/(1-u)$ in the third term, the condition becomes
 \begin{equation}
 \underbrace{\gamma\,\frac{K_m u}{1-u}}_{\text{pole at }u=1}
-\;+\; \Bigl(a + \frac{\beta L}{K_m} + \beta k_e\Bigr) u
-\;-\; \Bigl(e + \frac{\beta L}{K_m}\Bigr) \;=\; 0.
+\;+\; \Bigl(a + \frac{\beta (L+b)}{K_m} + \beta k_e\Bigr) u
+\;-\; \Bigl(e + \frac{\beta (L+b)}{K_m}\Bigr) \;=\; 0.
 \label{eq:inu}
 \end{equation}
 The three groups are linearly independent as functions of $u$, so each vanishes. The first
 forces $\gamma = 0$: the alternative clearance is the one direction that cannot
 enter a dependence, because $m$ is the only sensitivity that is not a polynomial in $u$.
-The remaining two give $a = -\beta(L/K_m + k_e)$ and $e = -\beta L/K_m$, a one-dimensional
-family. Taking $\beta = -K_m$,
+The remaining two give $a = -\beta((L+b)/K_m + k_e)$ and $e = -\beta (L+b)/K_m$, a
+one-dimensional family. Taking $\beta = -K_m$,
 \begin{equation}
-n \;=\; \bigl(\,L + k_e K_m,\;\; -K_m,\;\; 0,\;\; L\,\bigr)
+n \;=\; \bigl(\,L + b + k_e K_m,\;\; -K_m,\;\; 0,\;\; L + b\,\bigr)
 \label{eq:nullvec}
 \end{equation}
-in $(\theta, K_m, k_e, b)$. Dividing through by $\theta L$ and rescaling the first two
-components to logarithmic parameters gives $c_\theta = (1 + K_m k_e/L)/\theta$ and
-$c_{K_m} = -1/L$, which is \eqref{eq:rank}.
+in $(\theta, K_m, k_e, b)$. Dividing through by $\theta(L+b)$ and rescaling the first two
+components to logarithmic parameters gives $c_\theta = (1 + K_m k_e/(L+b))/\theta$ and
+$c_{K_m} = -1/(L+b)$, which is \eqref{eq:rank}.
+
+Carrying $b$ matters and is not cosmetic. The vector as previously printed is the $b = 0$
+value of a field that depends on $b$: it annihilates the Jacobian at the truth and fails to
+at $b = 31.6$, and integrating it gives $K_m = K_m^{0}e^{-b/L}$, which leaves the exact
+fibre \eqref{eq:fibrecl} at second order. With $b$ carried, the field's integral curve
+\emph{is} that fibre, with symbolic difference zero. \textbf{The exact fibre was not
+derivable from the proposition as it stood.}
 
 Every step used $L$ as a constant. If the recorded load varies, $L \to L_i$, then $e$ and
 $a$ acquire an index and no sample-independent $n$ exists, which is the last sentence of
@@ -481,10 +526,15 @@ One entry deserves naming because it cuts the other way. With the dose train at 
 perfectly constant load the matrix is \emph{still} rank deficient, yet the table reports
 $0.1696$. That is the load-record prior filling the deficient direction and the filter
 reporting the result as though the data had supplied it: the failure
-Remark~\ref{rem:second_order} exists to diagnose. At any real day-to-day variation the data
-fill it instead and the same $0.1696$ is earned rather than assumed. So the headline
-number does not depend on that prior, but it does depend on intake actually varying, which
-is the specification's row and not an idealisation.
+Remark~\ref{rem:second_order} exists to diagnose. At the variability the specification asks
+for the data fill it instead, \textbf{though not at once, and an earlier version of this
+remark said the same $0.1696$ is earned at \emph{any} real day-to-day variation}: the same
+table's $0.5\%$ and $2\%$ rows still return $0.86$ and $0.26$ prior-free against the
+$0.1696$ the filter reports, so what the prior is holding is given back gradually and is
+not fully given back until the record carries several per cent. The reading of the zero-CV
+row, that the prior is filling the deficient direction, is correct and stands. So the
+headline number does not depend on that prior, but it does depend on intake varying by more
+than a token amount, which is the specification's row and not an idealisation.
 \end{remark}
 
 So the specification must ask for the ordinary variability of ordinary eating to be
@@ -495,28 +545,46 @@ row.
 
 \begin{remark}[When a prior is doing work the data could do, and how to tell]
 \label{rem:second_order}
-Proposition~\ref{prop:rank} is a statement about the \emph{linearised} design. The
-information filter of \eqref{eq:infofilter} is a first-order object, so when it meets a
-rank-deficient design it fills the deficient direction from the prior and reports the
-result as though the data had supplied it. Here the load-record prior gives a $95\%$
-half-width of $\pm 31.6$ along that direction; profiling the exact likelihood along the
-same direction gives $\pm 36.9$. The two agree to within a fifth, so every covariance this
-note reports survives, but it survives for a reason the filter does not contain, and on
-another problem the two would not agree.
+Proposition~\ref{prop:rank} is a statement about the design matrix. The information filter
+of \eqref{eq:infofilter} is a first-order object, so when it meets a rank-deficient design
+it fills the deficient direction from the prior and reports the result as though the data
+had supplied it. At a constant recorded load that is exactly what happens: the load-record
+prior gives a $95\%$ half-width of $\pm31.6$ in $b$, which is the $\sigma_L/L$ row of
+Table~\ref{tab:params} through $s_b = (\sigma_L/L)\,L$, and the likelihood supplies
+nothing, because \eqref{eq:fibrecl} is an exact fibre.
 
-The diagnostic is cheap and should be run whenever a covariance is quoted on a
-saturating model. Take the smallest eigendirection of the information matrix, profile the
-noiseless $\chi^2$ along it, and look at the power: $\chi^2 \propto \varepsilon^2$ means
-the direction is genuinely first-order flat and the prior is load-bearing;
-$\chi^2 \propto \varepsilon^4$ means the data do pin it, at second order, and the filter is
-understating what the record contains. On this design the profile is $\varepsilon^4$ to
-four decades, with $\chi^2/\varepsilon^4$ constant at $2.08\times10^{-6}$.
+A diagnostic that reads the power of the noiseless $\chi^2$ along the smallest
+eigendirection does not detect this, and \textbf{an earlier version of this remark drew the
+opposite conclusion from one}. Moving along the straight eigendirection departs from the
+curved fibre at second order, so $\chi^2 \propto \varepsilon^4$ whether or not the data
+constrain anything. Two further properties of that measurement are worth recording,
+because both are easy to mistake for evidence. It is \emph{parametrisation dependent},
+being second order: the same direction walked in $(\theta, K_m)$ rather than in
+$(\ln\theta, \ln K_m)$ changes the constant by a factor of three. And it is strongly
+\emph{design dependent}: the half-width runs $36$, $49$, $69$ across two-daily, weekly and
+monthly sampling, so no single value of it can speak for every covariance this note
+reports. The diagnostic that does work costs more and is the one to run: re-optimise the
+remaining parameters at each fixed value of the suspect coordinate. That \emph{profile} is
+flat, and its optimum traces \eqref{eq:fibrecl}. Remark~\ref{rem:curvature} runs it on the
+recommended design and reports what it costs there.
 
-This is the second time in this paper that a linearisation has misrepresented an estimand
-whose true behaviour was one order higher; the first is Remark~\ref{rem:no_delta}, where a
-Gaussian tail on $\mu$ reported a coin toss for a quantity whose sampling distribution does
-not cross zero. Both failures point the same way: propagate a covariance only after
-checking that the thing you are propagating it through is locally linear.
+What does the work instead is the last clause of Proposition~\ref{prop:rank}. At the
+day-to-day variability the specification asks for, the fibre closes and the profile becomes
+finite, though widely spread over realisations of the intake. Across eight simulated
+records the $95\%$ half-width in $b$ runs $2100$ to $4200$ at a load coefficient of
+variation of $0.5\%$, $420$ to $690$ at $2\%$ and $80$ to $130$ at $10\%$. Those remain
+wider than the prior's $\pm31.6$, so the prior stays the tighter of the two; what changes
+is that the direction is no longer exactly unidentified. Either way
+$\operatorname{sd}(\ln\hat\theta)$ barely moves: on the accessible monthly design the
+load-bias prior is worth $1.4\%$ of it.
+
+This is the second time in this paper that a linearisation has misrepresented an estimand;
+the first is Remark~\ref{rem:no_delta}. \textbf{They do not point the same way, and the
+difference is the lesson.} There the linearisation \emph{understated} what the record
+contained. Here a curvature measured along a ray was read as the record containing
+something, when the exact statement is that on this locus it contains nothing in that
+direction. A diagnostic is a model too, and a power law measured along the wrong curve
+answers a question the design cannot pose.
 \end{remark}
 
 \begin{remark}[Three ways to buy the same information, and the third is the one available]

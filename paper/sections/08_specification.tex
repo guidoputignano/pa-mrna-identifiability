@@ -45,9 +45,13 @@ criterion adopted in Section~\ref{sec:designsec} rather than derived. These numb
 therefore conditional on one patient rather than circular: no requirement was an input to
 itself. How far that conditionality reaches is measured in Section~\ref{sec:coverage},
 where the same calculation over four thousand simulated patients gives a median of
-$0.192$, with just over half meeting the target. Two rows already report their own
-insensitivity: the load record gives $0.170$ whether it is kept to $1\%$ or to $20\%$,
-and $K_m$ needs nothing at all.
+$0.192$, with just over half meeting the target. One row reports its own insensitivity:
+$K_m$ needs nothing at all. \textbf{An earlier version of this passage said the load record
+did too, and that is withdrawn} (\texttt{REVIEW\_LOG.md} R17). The load row reports two
+different quantities and only one of them is insensitive. How much the record \emph{varies}
+changes nothing ($0.170$ whether the day-to-day coefficient of variation is $1\%$ or
+$20\%$); how well it is \emph{recorded} is the third-tightest requirement in the table,
+after the increment and after $K_m$ itself.
 
 \subsection{Tier 1: the increment measurement}
 \label{sec:tier1}
@@ -70,9 +74,17 @@ are between-visit: controls repeated at one- to three-week intervals, and fiftee
 \emph{mut} patients at separate visits \emph{two months to four years apart}, with the
 authors naming changing renal status and varying $V\mathrm{CO}_2$ as causes. The Results
 give $14.02 \pm 12.86\%$ with a range of $0.39$ to $50.84\%$; the abstract's widely quoted
-$12.8\%$ is the standard deviation of the per-subject coefficients, not their mean. And the
-cohort is methylmalonic acidemia, not propionic acidemia, where the block sits at PCC
-itself.
+$12.8\%$ is the standard deviation of the per-subject coefficients, not their mean, as
+the supplement's validation section (\S S1) now also records. The cohort is also methylmalonic acidemia
+rather than propionic acidemia, where the block sits at PCC itself. That last point cuts
+less deeply than it appears, and in the favourable direction. The assay was first applied
+to this disease in five patients with propionic acidemia among twenty subjects, where
+recovery of $^{13}$CO$_2$ was significantly below normal and, notably, \emph{``well
+correlated with clinical severity in PA, but did not correlate in
+MMA''}~\cite{breath_test_original}. The measurement Tier~1 asks for is therefore not an
+extrapolation from the wrong disease. What is missing in propionic acidemia is narrower and
+more specific: a \emph{repeatability} figure, which that study does not report and which
+nobody has published since.
 
 Between-visit variation is an \emph{upper bound} on same-day error, because it contains
 drift a same-day pair removes, and the bound sits close to the requirement. But a
@@ -145,15 +157,87 @@ drawn wider than scale.}
 \label{fig:D4}
 \end{figure}
 
-\paragraph{The load record: ordinary precision, and keep the variation.} Recording intake
-twenty times more precisely buys about six per cent, so precision is not the binding
-variable. The variability is subtler and enters twice. By Proposition~\ref{prop:rank} a
-perfectly steady load makes the design exactly rank deficient, and that null direction must
-be filled by something; as the specification stands it is filled by the $5\%$ prior on the
-load bias, and only real day-to-day variation lets the \emph{data} fill it instead. So
-``record intake as eaten, do not smooth it'' is the difference between a result the data
-support and one a prior supports. It costs nothing: it is an instruction to omit a
-data-cleaning step, not to add a measurement.
+\paragraph{The load record: the recording error binds, and keep the variation.} Two
+different things are called the load record and they behave oppositely. Making the record
+more \emph{variable} buys nothing, and making it twenty times less variable costs nothing.
+Making it more \emph{accurate} is the third-tightest requirement here:
+\begin{center}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{substrate load recorded to} & $\sigma$ & $\operatorname{sd}(\ln\hat\theta)$ \\
+\midrule
+$1\%$  & $15.2$  & $\mathbf{0.157}$ \\
+$5\%$  & $22.0$  & $\mathbf{0.166}$ \\
+$10\%$ & $35.5$  & $\mathbf{0.192}$ \\
+$20\%$ & $66.2$  & $0.264$ \\
+$40\%$ & $130.0$ & $0.402$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Medians over twenty-four intake records at a $10\%$ day-to-day variability, spreads
+$[0.1563, 0.1571]$ at $1\%$ and $[0.2563, 0.2690]$ at $20\%$, so the design reaches $0.20$
+only if intake is recorded to better than about $12\%$. \textbf{An earlier version of this
+paragraph said recording intake twenty times more precisely buys about six per cent, so
+precision is not the binding variable. That is withdrawn} (\texttt{REVIEW\_LOG.md} R17):
+the sweep behind it moved the record's variability and never its accuracy, which enters
+only through $\sigma$.
+
+Twelve per cent is not a comfortable margin. European practice records what patients are
+\emph{prescribed} rather than what they eat~\cite{pa_diet_survey}, no study in propionic
+acidemia reports repeated as-eaten intake at all, and the one study in any
+protein-restricted inborn error that has compared the two found actual natural protein
+running at $167\%$ of prescribed, a median of $40\%$ above it~\cite{pku_prescribed_actual}.
+At $40\%$ this design returns $0.402$, twice its own target. \textbf{The feasibility of
+everything downstream rests on a measurement of intake that is currently not made.}
+
+The variability enters separately and in the opposite direction. By
+Proposition~\ref{prop:rank} a perfectly steady load makes the \emph{untreated} design
+exactly rank deficient. Under the dose train it does not, because the increment varies even
+when the load does not: at a constant recorded load with the prior on the load bias removed
+entirely, $\operatorname{sd}(\ln\hat\theta)$ is $0.266$ rather than unbounded. The prior is
+worth a factor of $1.6$ there and is not holding the result up. \textbf{An earlier version
+of this paragraph said ``record intake as eaten, do not smooth it'' is the difference
+between a result the data support and one a prior supports; that overstates it and is
+softened here}, which is the other half of the same retraction. The instruction buys a
+real but bounded improvement, and it still costs nothing, being an instruction to omit a
+data-cleaning step rather than to add a measurement. What decides whether the design works
+at all is the accuracy above.
+
+Three near-identical figures appear in the two paragraphs above and they are different
+quantities, so each is stated with its footing: $0.166$ is the design at a constant
+recorded load with the published $5\%$ prior; $0.170$ is the same design at the $10\%$
+day-to-day variability the specification asks for; $0.266$ is the constant-load case with
+the load-bias prior removed, against $0.264$ for the varying-load case at a $20\%$
+recording error, which is a coincidence of two unrelated sweeps and not a relation.
+
+\paragraph{Record the antibiotic weeks, and one reason that is not the reason you expect.}
+Most patients on this therapy are also on cyclical intestinal antibiotics. The consensus
+regimen is one to two weeks of metronidazole alternating with two to three weeks
+off~\cite{pa_guidelines}, and the measured effect on propionate metabolite excretion in
+four PA and five MMA children is a mean fall of $41\%$, range $12$ to $76\%$, with plasma
+propionate falling from $45.0$ to $25.1\,\mu$mol/L~\cite{metronidazole_pa}. So the
+non-enzymatic load is not a constant in these patients. It is close to a square wave of
+order $40\%$ amplitude on a three- to five-week period, running alongside a two- or
+three-week dose train and a monthly draw.
+
+Recorded, it is free and almost inert: it changes $\operatorname{sd}(\ln\hat\theta)$ from
+$0.166$ to between $0.167$ and $0.173$ at every period tried, which is what the
+supplement's section on selective instruments (\S S1) predicts for a perturbation an order
+of magnitude below $K_m$. \emph{Un}recorded, the same cycle lands in the residual and takes the design to
+between $0.297$ and $0.313$, missing the target by half. The instruction is therefore one
+line and it costs nothing: \textbf{record which weeks the patient was on antibiotics}, in
+the same record as intake and for the same reason.
+
+One row of that calculation is worth stating explicitly because it inverts the warning of
+Remark~\ref{rem:aliasing}. If the antibiotic period happens to equal the sampling interval,
+the unrecorded cycle becomes \emph{harmless} ($0.167$), because every draw then lands at
+the same phase, the swing is a constant offset, and the load-bias column absorbs it.
+Aliasing destroys the dose train, which is the \emph{signal}; aliasing rescues an
+unrecorded nuisance input. The two are not the same phenomenon and a reader who has just
+met the first will guess the wrong sign for the second.
 
 \paragraph{$k_e$, and nothing else, is assumed, and nothing supplies it.} The result
 needs the non-enzymatic clearance within a factor of $2.67$ ($2.65$ to $2.68$ across

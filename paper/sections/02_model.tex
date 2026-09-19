@@ -152,9 +152,26 @@ glyph under each channel is its shape.}
 \subsection{The equilibrium reduction}
 \label{sec:reduction}
 
-The carnitine state is fast relative to the metabolite: $m$ settles in about $0.8$~h against
-a therapeutic half-life of $3.5$~d. Solving $\dot c = 0$ in \eqref{eq:twostate} for $c$ and
-substituting gives a quasi-steady alternative flux in closed form,
+\textbf{An earlier version of this passage justified eliminating the carnitine state by
+calling it fast relative to the metabolite, quoting $m$ settling in about $0.8$~h against a
+therapeutic half-life of $3.5$~d. That is withdrawn, and it was the wrong comparison twice
+over.} It compares the marker against the \emph{therapy}, which is the separation that
+licenses treating a clinic draw as a steady state and which Section~\ref{sec:collapse}
+already states with its own measured value; the reduction needs carnitine against the
+\emph{marker}. And that separation runs the other way: at the model's own $k$ the carnitine
+time constant is $0.92$~d against the marker's $0.81$~h, slower by a factor of $27$, and
+published human kinetics put whole-body carnitine turnover at $38$ to $119$~h with a
+rapidly equilibrating compartment at $2$ to $3$~h (Rebouche, \emph{Ann.\ N.\ Y.\ Acad.\
+Sci.} 2004; staged in \texttt{paper/refs.sources} and named here rather than cited,
+because this environment cannot resolve it and the claim register checks citations against
+the committed bibliography), slower on either reading.
+
+What justifies the reduction is algebraic and needs no separation at all. $\alpha$ is
+\emph{defined} by solving $\dot c = 0$, and $\dot c = 0$ holds exactly at any fixed point,
+so at equilibrium the two formulations are one equation rearranged and the reduction is
+exact there whatever the timescales do. Everything this paper computes from the parent is
+computed at equilibrium. Solving $\dot c = 0$ in \eqref{eq:twostate} for $c$ and
+substituting gives that flux in closed form,
 \begin{equation}
 \alpha(m) \;=\; R_0\,\frac{u(m)}{u(m) + \rho(m)},
 \qquad u(m) = \frac{m}{K_c+m},
@@ -162,17 +179,27 @@ substituting gives a quasi-steady alternative flux in closed form,
 \label{eq:alphaqss}
 \end{equation}
 with $\rho_0 = \delta_0/k$. The conjugation rate constant $k$ enters only through that
-ratio and cancels from the reduced clearance, so it is a free scale of the two-state system
-and no conclusion depends on it. Substituting \eqref{eq:alphaqss} into \eqref{eq:parent}
-recovers the parent exactly and symbolically.
+ratio and cancels from the reduced clearance, exactly. \textbf{It does not follow that $k$
+is a free scale, and the claim that no conclusion depends on it is withdrawn}: $k$ alone
+sets the carnitine relaxation rate, $\tau_c = 1/(k[u(m) + \rho(m)])$, so it sets the
+reduction's validity \emph{off} equilibrium even though it cancels from the curve. What
+assuming it costs is in the $k$ row of Table~\ref{tab:params} and is bounded rather than
+argued away. Substituting \eqref{eq:alphaqss} into \eqref{eq:parent} recovers the parent
+exactly and symbolically.
 
 Setting $\dot m = 0$ gives the equilibrium reduction, which is what a steady-state fit to a
 clinical record actually estimates. Its solutions are an attractor and a separatrix, and the
 fold at which the two collide defines the critical capacity $\thc$: below it a sufficiently
 large load leaves the system with no equilibrium at all, which is what a decompensation is
-in this model. The reduction is verified rather than asserted. Integrating \eqref{eq:twostate} from
-below the separatrix settles on the reduced attractor to fourteen digits, and from above it
-diverges. The intrinsic definition of $\thc$, the fold, and the comparison against the
+in this model. \textbf{An earlier version of this passage called the reduction verified
+rather than asserted, on the strength of integrating \eqref{eq:twostate} and settling on
+the reduced attractor to fourteen digits. That is withdrawn as evidence}: it is the same
+identity as above, so it cannot fail at any parameter value and reports nothing about the
+premise. It confirms the algebra and no more. The divergence from above the separatrix is
+kept with a qualification it did not carry: started \emph{on} the slow manifold a
+trajectory a tenth of a per cent above the separatrix does run away, but started off it,
+with carnitine at its pre-perturbation value, the same trajectory can return to the
+attractor. The reduced separatrix is a lower bound on the true basin and not the basin. The intrinsic definition of $\thc$, the fold, and the comparison against the
 alternative hypothesis with a ceiling instead of a fold are in the supplement, \S S1.
 
 \subsection{The local identification model}
@@ -259,19 +286,20 @@ numerically (supplement, \S S2).
 \begin{adjustwidth}{-1.0cm}{-1.0cm}
 \scriptsize
 \def\paramslabel{tab:params}
-\def\paramscaption{Every constant this paper quotes, and where it came from. Of the
-twenty-four registered constants, three are taken from the literature and two are derived;
-every concentration-scale constant is \emph{assumed} and illustrative. Each row also carries
-what \emph{kind} of quantity it is, which is not the same question as where it came from: a
+\def\paramscaption{Every constant this paper quotes. Of the twenty-four registered
+constants, three are taken from the literature and two are derived; every
+concentration-scale constant is \emph{assumed} and illustrative. Each row carries what
+\emph{kind} of quantity it is, which is not the same question as where it came from: a
 constant can be honestly assumed and still be an effective or lumped parameter rather than
 one any experiment could measure. Four rows carry murine estimates and two rat \emph{in
 vitro} ones, and say so. An earlier version of this caption said that no conclusion below
 depends on a value in this table. \textbf{That is withdrawn}: it conflated
-Remark~\ref{rem:no_km}, which shows no \emph{prior} on $K_m$ is needed, with the much larger
-claim that nothing depends on $K_m$ at all, and the $K_m$, $\theta$ and
-$\theta_{\mathrm{PA}}$ rows now bound what does. Where a published value exists for a
-constant, or bounds it, the last column gives it and cites it.}
-\input{../results/tables/tab_params}
+Remark~\ref{rem:no_km}, which shows no \emph{prior} on $K_m$ is needed, with the much
+larger claim that nothing depends on $K_m$ at all. The last column therefore carries the
+cost bound for the three rows where it decides a result, and \S S2 of the supplement
+carries the full provenance of every row, with its sources and what each assumption is
+worth.}
+\input{../results/tables/tab_params_compact}
 \end{adjustwidth}
 
 Two consequences of that table are load-bearing and are stated here rather than left to be
