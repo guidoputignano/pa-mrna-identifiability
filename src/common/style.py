@@ -3,6 +3,7 @@
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from contextlib import contextmanager
 from pathlib import Path
 
 # repository root, two levels up from src/common/
@@ -11,6 +12,28 @@ FIGDIR = ROOT / "results" / "figures"
 TABDIR = ROOT / "results" / "tables"
 FIGDIR.mkdir(parents=True, exist_ok=True)
 TABDIR.mkdir(parents=True, exist_ok=True)
+
+
+@contextmanager
+def output_to(root):
+    """Send figure and table writes somewhere else for the duration.
+
+    `tools/check_artefacts.py` regenerates every table and compares it with
+    what is committed. It has to do that without overwriting the committed
+    files, or a failing check would destroy the evidence it just found. Both
+    writers read these two names at call time, so rebinding them here is
+    enough; nothing imports either at module scope.
+    """
+    global FIGDIR, TABDIR
+    old = (FIGDIR, TABDIR)
+    FIGDIR = Path(root) / "figures"
+    TABDIR = Path(root) / "tables"
+    FIGDIR.mkdir(parents=True, exist_ok=True)
+    TABDIR.mkdir(parents=True, exist_ok=True)
+    try:
+        yield Path(root)
+    finally:
+        FIGDIR, TABDIR = old
 
 # Text block of the paper: A4 with 2.1cm margins, in inches.
 TEXTWIDTH_IN = (21.0 - 2 * 2.1) / 2.54
@@ -77,7 +100,9 @@ def save(fig, name):
     fig.savefig(path)
     fig.savefig(FIGDIR / f"{name}.png")
     plt.close(fig)
-    print(f"  wrote {path.relative_to(ROOT)}")
+    #  a redirected write (output_to) lands outside the repo, where
+    #  relative_to would raise rather than report
+    print(f"  wrote {path.relative_to(ROOT) if path.is_relative_to(ROOT) else path}")
     return path
 
 
@@ -103,7 +128,9 @@ def write_table(name, header, rows, note="", colspec=None):
     if note:
         lines.append("% " + note)
     path.write_text("\n".join(lines))
-    print(f"  wrote {path.relative_to(ROOT)}")
+    #  a redirected write (output_to) lands outside the repo, where
+    #  relative_to would raise rather than report
+    print(f"  wrote {path.relative_to(ROOT) if path.is_relative_to(ROOT) else path}")
     return path
 
 

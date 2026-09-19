@@ -2,154 +2,107 @@
 \label{sec:discussion}
 %==========================================================================
 
-Everything above sits inside two boundaries.
+Everything above sits inside two boundaries. These are claims about identifiability, a
+property of a model and a design together, not about patients: every number is computed
+from \eqref{eq:local} with the constants of Table~\ref{tab:params}, of which three are
+taken from the literature and the rest are assumed, so what the analysis establishes is
+what a record \emph{of the kind assumed} could yield \emph{under the model assumed}.
+Whether a real record behaves that way turns on the observation model of
+Remark~\ref{sec:marker}, that a marker which is not the enzyme's substrate tracks it
+monotonically, and that assumption is not testable from anything published.
 
-These are claims about identifiability, which is a property of a model and a design
-together: not about patients. Every number in this paper is computed from
-\eqref{eq:local} with the constants of Table~\ref{tab:params}, of which exactly one is
-taken from the literature. What the analysis establishes is what a record \emph{of the kind
-assumed} could yield \emph{under the model assumed}. Whether a real record behaves that way
-turns on the observation model of Remark~\ref{sec:marker} (that a marker which is not
-the enzyme's substrate tracks it monotonically) and that assumption is not testable from
-anything published.
+The second boundary is that the model questions its own validity in the regime the
+excursion argument points at. The parent \eqref{eq:parent} has a clearance maximum at
+$3.4$ times the managed level and loses its stable equilibrium at $12.6$ times it, while
+both estimators here are steady-state fits: $42\%$ of a band running to eight times the
+managed level lies beyond the clearance peak, where the parent says there is no steady
+state to fit. Fitting the local model to the parent's own noiseless clearance over that
+band recovers $\hat\theta = 151$ against an intrinsic threshold of $150.8$, so
+misspecification alone, with no noise and no perturbation, consumes a true margin of
+$+149$, and the two models disagree by a factor of $4.6$ about the largest load a patient
+can clear. The decompensation route is therefore excluded twice over: the excursion it
+would supply is not observed at the magnitude required, and the model that would interpret
+it does not hold there.
 
-And the model questions its own validity in the regime the excursion argument
-points at. The parent \eqref{eq:parent} has a clearance maximum at $3.4$ times the managed
-level and loses its stable equilibrium at $12.6$ times it, which is what excludes
-acquiring data through decompensations. Both estimators used here are
-steady-state fits, and over most of that band the parent says there is no steady state to
-fit: $42\%$ of a band running to eight times the managed level lies beyond the clearance
-peak. Fitting the local model to the parent's own noiseless clearance over that band
-recovers $\hat\theta = 151$ against an intrinsic threshold of $150.8$, misspecification
-alone, with no noise and no perturbation, consuming a true margin of $+149$. The two models
-also disagree by a factor of $4.6$ about the largest load a patient can clear. The
-decompensation route is therefore excluded twice over: the excursion it would supply is
-not observed at the magnitude required, and the model that would interpret it does not hold
-there.
+\subsection{What the four results amount to}
 
-\subsection{Summary of the four claims}
+\textbf{The contribution is the design rules, with a scope condition attached, and not the
+capacity estimate.} What transfers is a set of statements about identifying a saturable
+channel from a marker under a known periodic input: carry the input as a regressor, never
+sample at its period or a multiple of it, record the driving load as eaten and to a stated
+accuracy, and establish where in the parameter range the target is recoverable before
+quoting a precision anywhere in it.
 
-\textbf{The contribution is the design rules, with a scope condition attached, and not
-the capacity estimate.} What transfers from this paper is a set of statements about
-identifying a saturable channel from a marker under a known periodic input: carry the
-input as a regressor, never sample at its period or a multiple of it, record the driving
-load as eaten and to a stated accuracy, and establish where in the parameter range the
-target is recoverable before quoting a precision anywhere in it. The precision on $\theta$
-is an illustration of those rules at normal capacity. It is not the result, and
-Section~\ref{sec:scopeprec} is why.
+The first result is actionable now and survives the scope limit: the excitation is already
+being administered, and a protocol loses a factor of $27$ by scheduling bloods on dosing
+days, which is still a factor of $16$ at a disease-range capacity where the estimate itself
+is gone. The second should change how the problem is posed. Near normal capacity the
+decision is blocked not by identifiability but by its own boundary, which is stipulated
+rather than measured and which no better estimate of $\theta$ and no larger cohort can
+repair; in the disease range both block. The third and fourth bound what should replace it.
+The only endpoint evidence reports a smooth dose--response and no threshold, which argues
+against the dichotomy rather than for a better-placed one, and an expected event rate does
+not serve either: at the operating point the model-based rate is thirteen times
+\emph{worse} than reading the same rate off the measured marker, the published exponent is
+known only to a factor of $4.8$, and the map has no published reference concentration to
+anchor it.
 
-The first claim is the positive one and it is actionable now: the excitation is already
-being administered, and a protocol can lose it by scheduling bloods on dosing days, a
-choice made for convenience that costs a factor of $27$ ($21$ to $33$ across intake
-records). That finding does not depend on the estimand question at all, it survives
-everything below it, and it survives the scope limit: at a disease-range capacity the same
-choice still costs a factor of $16$ on $\theta$ and $20$ on $K_m$. \textbf{It is the rule,
-not the number, that is the result.}
-
-The second claim is the one that should change how the problem is posed, and it now
-needs a scope condition it did not carry before. At capacities near normal the decision is
-not blocked by identifiability. It is blocked because the boundary it is taken against is
-stipulated rather than measured: two chosen constants move it by a factor of $24$, and the
-paper's own choice sits a quarter of a per cent from its own sign-flip point. Improving
-the estimate of $\theta$ cannot repair that, and neither can a larger cohort.
-\emph{In the disease range both block}, because by Section~\ref{sec:scopeprec} the record
-does not bound $\theta$ from below at all there. The unqualified claim, that the decision
-is never blocked by identifiability, holds of the illustrative patient and not of the
-patient the paper is about.
-
-The third and fourth claims bound what should replace it. The only endpoint evidence
-available reports a smooth dose--response and no threshold, which argues against the
-dichotomy rather than for a better-placed one. An expected event rate does not serve as
-the estimand either: at the patient's own operating point the model-based rate is thirteen
-times \emph{worse} than
-reading the same rate off the measured marker, the published exponent is known only to a
-factor of $4.8$, and the map has no published reference concentration to anchor it. The
-reasoning is in the audit record rather than here, because a rejected estimand is not a
-result. And by Section~\ref{sec:scopeprec} the capacity a mechanistic estimand would
-report stops being recoverable in the patients it matters most for: the monthly design
-meets its target only for capacities between about $82\%$ and $627\%$ of normal, and the
-disease sits a factor of $16$ below that band.
-
-What is left in that range is not nothing, and it is the shape of the answer this paper
-can honestly give. The half-saturation $K_m$ is determined to about $6\%$ at every
-capacity (Remark~\ref{rem:kmrecovered}), the record supplies an upper bound on $\theta$
-even where it supplies no lower one, and every design rule above holds. What is gone is
-the point estimate of capacity. That is an argument for two external measurements rather
-than for a larger study: Tier~1 of Section~\ref{sec:spec} anchors capacity directly, and
-the non-enzymatic clearance $k_e$ is the cheaper second target, worth a factor of $2.1$ at
-normal capacity and $6.9$ in the disease range, though even an exact $k_e$ leaves $0.388$
-there.
+What is left where capacity is not recoverable is not nothing: $K_m$ is determined at every
+capacity, the record still supplies an upper bound on $\theta$, and every design rule
+holds. What is gone is the point estimate, and that argues for an external measurement
+rather than a larger study.
 
 \subsection{A common pattern across the three results}
-\label{sec:pattern}
 
-Three degeneracies appear in this paper. They were reached by unrelated routes, they concern
-different parameters, and one of them was found by a general-purpose tool that knew nothing
-about the others. They have the same shape, and naming it is the most portable thing here.
+Three degeneracies appear in this paper, reached by unrelated routes and concerning
+different parameters. They have the same shape, and naming it is the most portable thing
+here. The excitation is a product of a therapy factor and a marker factor,
+$-(1 + \Delta(t)/\theta)\,\varphi(m)$, of which the literature had measured only the
+second, so what the dose train contributes is not a bigger increment but a \emph{moving}
+one. Proposition~\ref{prop:rank} is exactly singular at a constant recorded load and names
+its own cure, so what closes it is the day-to-day \emph{variability} of ordinary eating,
+while the record's \emph{accuracy} is a separate requirement entering through $\sigma$. And
+the channel-exchange result (supplement, \S S1) breaks an exchange only when the inputs on
+two channels differ \emph{non-constantly}, a constant increment being absorbed into the
+amplitude it rides on however large it is.
 
-\begin{itemize}[leftmargin=*, itemsep=3pt]
-\item \textbf{The excitation.} The ratio of the two sensitivities is
-$-(1 + \Delta(t)/\theta)\,\varphi(m)$, a product of a therapy factor and a marker factor.
-Neither is large on its own; the literature had measured only the second. What the dose
-train contributes is not a bigger increment but a \emph{moving} one, and the factor
-$1 + \Delta/\theta$ ranging over $2.64$ is what supplies forty-two times the marker band.
-\item \textbf{The load.} Proposition~\ref{prop:rank} is exactly singular at a constant
-recorded load, and the identity names its own cure: it needs $-1/L$ to be one constant.
-So what closes it is the day-to-day \emph{variability} of ordinary eating, and half a per
-cent of it restores full rank outright. The record's \emph{accuracy} is a separate
-requirement and the binding one, entering through $\sigma$ rather than through the rank
-(Section~\ref{sec:spec}): variability closing the rank deficiency does not make accuracy
-cheap.
-\item \textbf{The channels.} the channel-exchange result (supplement \S S1) breaks an exchange only when
-the inputs on two channels differ \emph{non-constantly}. A constant increment is absorbed
-into the amplitude it rides on and separates nothing, however large it is.
-\end{itemize}
-
-In every case the separating quantity is a difference that moves, and in every case
-the intuitive alternative fails. A bigger increment does not substitute for a varying one;
-a more precise load record does not substitute for a varying one; a larger constant input
-does not substitute for a varying one. \emph{Magnitude, precision and presence are each the
-wrong axis, and each is the axis a study would naturally be designed to improve.}
-
-That is the practical content, and two of the three failures are not merely neutral but
-actively harmful. A dietary record \emph{tightened} by averaging to a weekly mean or imputing
-from a prescription is more precise and destroys exactly the variability
-Proposition~\ref{prop:rank} needs, so the instruction Section~\ref{sec:spec} carries is to
-omit a data-cleaning step, not to add a measurement. A \emph{steadier} administration route
+In every case the separating quantity is a difference that moves, and in every case the
+intuitive alternative fails: a bigger increment does not substitute for a varying one, nor
+a more precise load record, nor a larger constant input. \emph{Magnitude, precision and
+presence are each the wrong axis, and each is the axis a study would naturally be designed
+to improve.} Two of the three are worse than neutral. A dietary record \emph{tightened} by
+averaging to a weekly mean is more precise and destroys the variability
+Proposition~\ref{prop:rank} needs, so Section~\ref{sec:spec} asks for a data-cleaning step
+to be omitted rather than a measurement added; a \emph{steadier} administration route
 removes the therapy's excitation entirely (Section~\ref{sec:route}). A larger dose is the
-exception: it raises $\Delta/\theta$ and so does help, which is worth saying because it is
-the only one of the three obvious moves that does.
+exception, since it raises $\Delta/\theta$ and does help, which is worth saying because it
+is the only one of the three obvious moves that does.
 
-This is a pattern across three results and not a theorem, and it should be read as
-one. The three are not instances of a single proposition; they are three different
-calculations that happen to resolve the same way, and the paper makes no claim that they must.
-What can be said is narrower and still useful: in a saturating compartment model observed
-through one marker, a design's information sits in what varies across its samples rather
-than in the levels the samples sit at, and a reader carrying this to another system should
-check the three separately rather than assume the shape transfers.
+This is a pattern across three results and not a theorem: they are three calculations that
+happen to resolve the same way, and nothing here says they must. What can be said is
+narrower and still useful. In a saturating compartment model observed through one marker, a
+design's information sits in what varies across its samples rather than in the levels the
+samples sit at, and a reader carrying that to another system should check the three
+separately rather than assume the shape transfers.
 
 \subsection{What would change the answer}
 
-\begin{itemize}[leftmargin=*, itemsep=3pt]
-\item \textbf{A same-day paired repeatability figure for the breath test.} It does not exist; Tier~1 of Section~\ref{sec:spec} asks for it. Everything the therapy
-channel buys is conditional on the delivered increment being characterisable, and only a
-between-visit upper bound is published.
-\item \textbf{An endpoint model that does not require a threshold.} The natural history
-study's own hazard formulation is the shape to build on. Doing so properly needs the
-reference concentration and the model specification that publication does not report.
-\item \textbf{A marker that is the substrate, or an assay of the substrate.} That would
-remove the observation-model assumption on which the whole construction rests, and is the single change that would most enlarge what a record can support.
-\item \textbf{An external anchor on $\theta$.} $\theta$ is identified relative to the model
-structure, and the supplement's remark on structure-relative identification (\S S1) shows
-a published alternative structure under which it is not identifiable at all, fitted at a
-residual too small to notice.
-Section~\ref{sec:scopeprec} reaches the same place by a different route, from the flux
-identity, and adds that in the disease range the record does not bound $\theta$ from below
-whatever the structure. Tier~1 of Section~\ref{sec:spec} is the only anchor here that sits
-outside the longitudinal record. A second one, independent of it, would turn every
-statement about the value of $\theta$ from conditional into checkable, and the non-enzymatic
-clearance is the cheaper candidate.
-\end{itemize}
+A same-day paired repeatability figure for the breath test, which does not exist and which
+Tier~1 of Section~\ref{sec:spec} asks for, since everything the therapy channel buys is
+conditional on the delivered increment being characterisable. An endpoint model that does
+not require a threshold, built on the natural history study's own hazard formulation, which
+needs the reference concentration and the model specification that publication does not
+report. A marker that is the substrate, or an assay of it, which would remove the
+observation-model assumption the whole construction rests on and is the single change that
+would most enlarge what a record can support. And an external anchor on $\theta$: capacity
+is identified relative to the model structure, and the supplement's remark on
+structure-relative identification (\S S1) exhibits a published alternative under which it is
+not identifiable at all, fitted at a residual too small to notice, while
+Section~\ref{sec:scopeprec} reaches the same place from the flux identity and adds that in
+the disease range the record does not bound $\theta$ from below whatever the structure.
+Tier~1 is the only anchor here outside the longitudinal record, and a second one
+independent of it would turn every statement about the value of $\theta$ from conditional
+into checkable.
 
 \vspace{0.5em}
 \hrule

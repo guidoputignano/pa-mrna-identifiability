@@ -6,6 +6,8 @@
 #   audit  the claim register: non-zero while any claim is contradicted or any
 #          identifier fails to resolve
 #   paper  the document builds and every reference resolves
+#   artefacts  every figure and table regenerated and compared with the
+#          committed copy, which is the check the design table needed
 #
 name: ci
 
@@ -40,6 +42,40 @@ jobs:
         run: pip install numpy scipy matplotlib sympy requests
       - name: make audit
         run: make audit PY=python
+
+  # Every figure and table, regenerated from the code and compared with what
+  # is committed. `make paper` deliberately does NOT depend on `make figures`:
+  # the decision characteristic is simulated and the target costs minutes, so
+  # making every local paper build pay that is how a slow check gets bypassed.
+  # It belongs here instead, once per push. Without it nothing compared the
+  # committed artefacts with their generators, and the design table drifted
+  # for a month (REVIEW_LOG.md R23).
+  artefacts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: install
+        run: pip install numpy scipy matplotlib sympy
+      - name: regenerate every figure and table
+        run: make figures PY=python
+      # matplotlib stamps the wall clock into every PDF, so the whole tree
+      # reports as changed on every run. The check strips /CreationDate and
+      # /ModDate before comparing, and fails only on a real difference.
+      - name: compare against what is committed
+        run: python tools/check_artefacts.py --working-tree
+      - name: show what drifted
+        if: failure()
+        run: |
+          echo "::group::git status"
+          git status --porcelain results
+          echo "::endgroup::"
+          echo "::group::table diffs"
+          git diff -- results/tables | head -200
+          echo "::endgroup::"
 
   paper:
     runs-on: ubuntu-latest

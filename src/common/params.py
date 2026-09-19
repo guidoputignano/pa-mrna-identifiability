@@ -571,7 +571,10 @@ def write_params_table(compact=False, name=None):
     path = TABDIR / (name or ("tab_params_compact.tex" if compact
                               else "tab_params.tex"))
     path.write_text("\n".join(body))
-    print(f"  wrote {path.relative_to(ROOT)}")
+    #  a redirected write (tools/check_artefacts.py) lands outside the repo,
+    #  where relative_to would raise rather than report
+    shown = path.relative_to(ROOT) if path.is_relative_to(ROOT) else path
+    print(f"  wrote {shown}")
     return path
 
 

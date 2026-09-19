@@ -130,8 +130,7 @@ obstruction is stated as a property of that range.
 \paragraph{Two conventions, fixed here because everything downstream turns on them.}
 $\Delta = m_{\max} - m_{\min}$ is the full width of $M$, not a half-width, and
 $\bar m$ is the point the affine fit is taken at and the sample mean of the band. Together
-they carry a constraint that Section~\ref{sec:design} previously walked past. The
-metabolite cannot be negative, so $m_{\min} \ge 0$ and
+they carry a constraint. The metabolite cannot be negative, so $m_{\min} \ge 0$ and
 \begin{equation}
 \frac{\Delta}{\bar m} \;\le\; 2.
 \label{eq:bandceiling}
@@ -463,9 +462,8 @@ prevent, which is the obstruction of Section~\ref{sec:structure} arriving by a s
 \label{prop:illcond}
 \emph{Given $K_m$ and the input gain}, the determinant \eqref{eq:det} is non-zero whenever
 $m \neq m'$, so the pair $(\theta, k_e)$ is identifiable from steady-state data before and
-after any such perturbation. The second proviso was previously left implicit and is not
-free: the right-hand side of \eqref{eq:system} is $\delta = \kappa u_c m'$ for carnitine,
-and $\kappa$ is never assigned a value anywhere in this paper (Table~\ref{tab:params_orig}), so on
+after any such perturbation. The second proviso is not free: the right-hand side of \eqref{eq:system} is $\delta = \kappa u_c m'$ for carnitine,
+and $\kappa$ is never assigned a value anywhere in this paper (Table~\ref{tab:paramsfull}), so on
 that channel the system is two equations in \emph{three} unknowns before $K_m$ is even
 raised. On the therapeutic channel $\delta = \Delta g(m')$ and $\Delta$ is known from the
 dosing schedule, which is a second respect, alongside
@@ -518,11 +516,10 @@ the analytical and biological variability of the assay.
 \subsubsection{What the accessible input costs}
 \label{sec:instruments}
 
-\begin{remark}[Superseded as the route; kept as a description of the records]
+\begin{remark}[Why the carnitine route is priced here, and why the paper does not take it]
 \label{rem:instruments_local}
-This subsection prices the design on carnitine, because carnitine was the input the
-analysis rested on. It is kept because the argument is the one a reader will try, and it is
-superseded on the point that matters. The therapy is administered, so the instrument
+This subsection prices the design on carnitine, which is the route a reader will try, and
+it is not the route the paper takes. The therapy is administered, so the instrument
 question is not reached, and it would not help if it were: carnitine acts on $k_e$, so it
 cannot move the first factor of $-(1 + \Delta(t)/\theta)\,\varphi(m)$ at all, and on the
 footing that gives the dose train $\operatorname{sd}(\ln\hat\theta) = 0.170$, adding
@@ -541,8 +538,8 @@ and was, when this was written, administered to nobody accessible. The last clau
 holds, and with it the compromise: the therapeutic schedule is the one the design uses.
 
 The way through is to use only the quasi-exogenous part of the variation in $u_c$. Three
-such instruments are present in routine care, and their directions matter more than
-the paper previously noticed: weight-based dose recalculation after growth raises the dose
+such instruments are present in routine care, and their directions are what decides them:
+weight-based dose recalculation after growth raises the dose
 and \emph{lowers} $m$; cyclical intestinal antibiotics lower the load and lower $m$; only a
 supply interruption raises $m$, and its amplitude is set by a stock-out rather than by a
 design. A change of load carries the same determinant as a channel perturbation and costs
@@ -685,8 +682,8 @@ formula close. It is not an elimination, and Remark~\ref{rem:shape} prices what 
 \subsubsection{What the design would have to deliver}
 \label{sec:design}
 
-\begin{remark}[This design is the carnitine one, and it is superseded]
-\label{rem:design_superseded}
+\begin{remark}[This design is the carnitine one, not the paper's]
+\label{rem:design_carnitine}
 Everything in this subsection prices a design whose $n$ counts quasi-exogenous carnitine
 steps. That is not the design the paper specifies. The dose train supplies the excitation,
 $n$ counts outpatient draws rather than instrument events, and twenty-five monthly draws
@@ -694,8 +691,8 @@ across dose cycles over two years reach $\operatorname{sd}(\ln\hat\theta) = 0.17
 (Section~\ref{sec:designsec}). The negative answer below is therefore the answer for the
 carnitine route, and it is the reason the therapy is the design's condition of existence
 rather than an improvement on an otherwise workable record (Section~\ref{sec:whoto}). The
-computation is kept because the instrument arithmetic it reports, a floor of $53\%$ at six
-instrument events and the wrong direction of travel, is what closes that route.
+instrument arithmetic below, a floor of $53\%$ at six instrument events and the wrong
+direction of travel, is what closes that route.
 \end{remark}
 
 Equation \eqref{eq:thetaerr} is derived above and left unevaluated. Evaluating it
@@ -729,7 +726,7 @@ Proposition~\ref{prop:degeneracy} immediate. And $n$ counts \emph{instrument eve
 quasi-exogenous carnitine steps of Section~\ref{sec:instruments}, not clinic visits, which
 is a much smaller number. On the design the paper specifies it counts draws, because the
 dose train and not an instrument supplies the perturbation, and a draw is then an
-observation of a known input (Remark~\ref{rem:design_superseded}).
+observation of a known input (Remark~\ref{rem:design_carnitine}).
 
 \paragraph{Two noise terms, and which one binds.} At steady state the ordinate is the
 recorded load and the abscissa is the assayed metabolite, so an abscissa error $\sigma_m$
@@ -803,9 +800,10 @@ Three readings, in order of how much they change the conclusion.
       requirement is an excursion to between $2.9$ and $5.4$ times the operating point, and
       it is not that the instruments fall short of it by a factor; it is that they move the
       patient the other way.
-\item \textbf{The earlier ``short by a factor of about $2.5$ to $26$'' is superseded.} It
-      compared a requirement stated as $\Delta/\bar m$ with an achievement stated as
-      $\Delta/m_{\max}$, and it was computed against a $\sigma$ carrying only the load term.
+\item \textbf{A shortfall stated as a factor does not survive stating both sides the same
+      way.} A requirement written as $\Delta/\bar m$ against an achievement written as
+      $\Delta/m_{\max}$, with a $\sigma$ carrying only the load term, is not a like-for-like
+      ratio, and the number it yields is an artefact of the mismatch.
 \end{enumerate}
 
 \begin{remark}[The noise is in the abscissa, and the fit announces its own failure]

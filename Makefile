@@ -11,7 +11,7 @@ PY      ?= python
 LATEX   ?= pdflatex
 PAPER    = paper/main
 
-.PHONY: all figures refs paper paper-draft test audit clean distclean symbolic
+.PHONY: all figures refs paper paper-draft test audit check-artefacts clean distclean symbolic
 
 all: figures paper
 
@@ -50,6 +50,13 @@ symbolic:
 
 test:
 	$(PY) -m pytest tests/ -q
+
+# Every committed table, regenerated and compared against what is on disk.
+# `make test` runs the same check; this target is for running it alone.
+# --working-tree instead compares all of results/ against HEAD, figures
+# included, and is what CI runs after `make figures`.
+check-artefacts:
+	$(PY) tools/check_artefacts.py
 
 # Non-zero while any claim is contradicted or unsourced, or any identifier
 # fails to resolve. Today it fails on 14 unresolved claims, which is the

@@ -12,7 +12,6 @@ Produces
                              response of each to a selective perturbation
     fig_A4_population        deficiency of the population system against N
     fig_A5_load_error        amplification of misspecification in s
-    tab_A_rank               rank against number of distinct levels
 
 Run:  python src/model_A/run.py
 """
@@ -1052,17 +1051,12 @@ def fig_design():
 
 
 # =====================================================================
-def table_rank():
-    rows = []
-    for levels in ([10.0], [10.0, 12.0], [10.0, 12.0, 14.0],
-                   [10.0, 50.0, 200.0], [10.0, 12.0, 14.0, 16.0]):
-        S = np.array([sensitivity_A(m, P) for m in levels])
-        rows.append([len(levels), np.linalg.matrix_rank(S, tol=1e-10),
-                     "yes" if np.linalg.matrix_rank(S, tol=1e-10) == 3 else "no"])
-    write_table("tab_A_rank",
-                ["distinct levels of $m$", "rank of $S$", "all three identifiable"],
-                rows,
-                note="three distinct levels are necessary and generically sufficient")
+#  table_rank() used to write results/tables/tab_A_rank.tex here, on every
+#  build, and no document ever showed it. Its claim -- the sensitivity matrix
+#  reaches full rank at three distinct marker levels and not before -- is
+#  Proposition 1's, and it is now asserted in
+#  tests/test_three_distinct_levels_identify_the_local_model rather than
+#  printed into a table nobody reads.
 
 
 def table_design():
@@ -1131,7 +1125,6 @@ if __name__ == "__main__":
     fig_fibre()
     fig_margin_fibre()
     fig_design()
-    table_rank()
     table_design()
     from common.params import write_params_table
     write_params_table()                 # full, for the supplement

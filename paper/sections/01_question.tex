@@ -8,16 +8,17 @@ propionyl-CoA, which propionyl-CoA carboxylase (PCC) carboxylates onward into th
 tricarboxylic acid cycle. When PCC is defective the intermediate accumulates, spills into
 alternative routes, and periodically overwhelms them: the patient decompensates, with
 hyperammonaemia and metabolic acidosis. Decompensations are frequent, $49$ of $50$
-participants in a natural history cohort reported at least one, at a mean annualised
+participants in a natural history cohort reporting at least one, at a mean annualised
 frequency of $1.0$~\cite{natural_history}, % C08
 and they carry the neurological damage that defines the disease's course.
 
 mRNA enzyme replacement supplies PCC transiently~\cite{trial_phase12}. % C16
 The clinical decision it creates is a \emph{dosing interval}, and the interval is set by a
 quantity nobody measures: the patient's residual enzymatic capacity, written $\theta$
-throughout. A patient with more residual capacity needs less frequent replacement.
-
-This paper asks whether, given a clinical record of the kind the disease actually generates (a marker series, a dosing diary, a dietary record), \emph{$\theta$ can be identified, and whether identifying it decides anything.}
+throughout. A patient with more residual capacity needs less frequent replacement. This
+paper asks whether, given a clinical record of the kind the disease actually generates, a
+marker series, a dosing diary and a dietary record, \emph{$\theta$ can be identified, and
+whether identifying it decides anything.}
 
 The answer is a set of design rules together with a scope condition, and it is the pair
 that transfers rather than either alone. The rules say how to identify a saturable channel
@@ -36,54 +37,48 @@ does not, and where it stops, so that a protocol can be written against its actu
 rather than an assumed one.
 
 \begin{enumerate}[leftmargin=*, itemsep=3pt]
-\item \textbf{The dose train is already the identification experiment.} The therapy is administered on a fixed biweekly schedule and read as treatment; it is
-also a known, exogenous, selective input on exactly the parameter in question, and it
-supplies forty-two times the excitation the marker's own excursions do. That is what makes
-$\theta$ identifiable at capacities near normal: monthly outpatient draws across dose
-cycles give a sampling spread of $17\%$ on $\ln\hat\theta$ over two years, which is a
-$95\%$ interval a factor of about four wide (Remark~\ref{rem:curvature}). It is lost by
-the one scheduling choice a protocol would make for convenience: sampling on dosing days,
-or at any multiple of the dose interval, costs a factor of $27$ ($21$ to $33$ across
-intake records), and moving the schedule half a day recovers it
-(Sections~\ref{sec:excitation} and~\ref{sec:designsec}). \textbf{That rule is the durable
-part, and it holds at every capacity}, including the disease range where the estimate
-itself does not (Section~\ref{sec:scopeprec}).
-
-The model is
-globally structurally identifiable, so the information is in the system; what a monthly
-record loses is the transient. On the quasi-steady locus that remains, the degeneracy has
-an exact closed form, a rank-one identity in capacity, affinity and the unrecorded load,
-and that identity names the input that closes it. The corollary is a limit on reach
-rather than on precision: nothing but the dose train supplies enough excitation, so the
-design applies to patients receiving the therapy and to no one else
-(Section~\ref{sec:whoto}).
-\item \textbf{Identification and the interval decision are different problems.} Identifying $\theta$ is worth doing on its own terms; deciding the interval needs something the marker record cannot supply. The decision is usually posed as the sign of $\mu = \theta - \thc$ against a critical capacity, and that threshold is not a measured quantity: it is defined through two chosen constants, and
-across their defensible range it moves by a factor of $24$ and the sign flips for the same
-patient with perfect data (Section~\ref{sec:decision}).
-\item \textbf{The endpoint evidence favours a smooth dose--response over a threshold.} The only endpoint evidence available reports no threshold at all. This paper records that
-as a finding rather than adopting a replacement estimand, for reasons given in
+\item \textbf{The dose train is already the identification experiment.} The therapy is
+administered on a fixed biweekly schedule and read as treatment; it is also a known,
+exogenous, selective input on exactly the parameter in question, and it supplies forty-two
+times the excitation the marker's own excursions do. That is what makes $\theta$
+identifiable at capacities near normal: monthly outpatient draws across dose cycles give a
+sampling spread of $17\%$ on $\ln\hat\theta$ over two years, which is a $95\%$ interval a
+factor of about four wide (Remark~\ref{rem:curvature}). It is lost by the one scheduling
+choice a protocol would make for convenience: sampling on dosing days, or at any multiple
+of the dose interval, costs a factor of $27$ ($21$ to $33$ across intake records), and
+moving the schedule half a day recovers it (Sections~\ref{sec:excitation}
+and~\ref{sec:designsec}). \textbf{That rule is the durable part, and it holds at every
+capacity}, including the disease range where the estimate itself does not
+(Section~\ref{sec:scopeprec}). The model is globally structurally identifiable, so the
+information is in the system; what a monthly record loses is the transient, and on the
+quasi-steady locus that remains the degeneracy has an exact closed form which names the
+input that closes it. The corollary is a limit on reach rather than on precision: nothing
+but the dose train supplies enough excitation, so the design applies to patients receiving
+the therapy and to no one else (Section~\ref{sec:whoto}).
+\item \textbf{Identification and the interval decision are different problems.} Identifying
+$\theta$ is worth doing on its own terms; deciding the interval needs something the marker
+record cannot supply. The decision is usually posed as the sign of $\mu = \theta - \thc$
+against a critical capacity, and that threshold is not a measured quantity: it is defined
+through two chosen constants, and across their defensible range it moves by a factor of
+$24$ and the sign flips for the same patient with perfect data
+(Section~\ref{sec:decision}).
+\item \textbf{The endpoint evidence favours a smooth dose--response over a threshold.} The
+only endpoint evidence available reports no threshold at all. This paper records that as a
+finding rather than adopting a replacement estimand, for reasons given in
 Section~\ref{sec:decision}.
-\item \textbf{The design has a located ceiling.} Above roughly three to four times the managed marker level, two patients differing tenfold in residual capacity are indistinguishable. That is the severely affected population, so the specification names the range it applies to instead of leaving it implied (Section~\ref{sec:scope}).
+\item \textbf{The design has a located ceiling.} Above roughly three to four times the
+managed marker level, two patients differing tenfold in residual capacity are
+indistinguishable. That is the severely affected population, so the specification names the
+range it applies to instead of leaving it implied (Section~\ref{sec:scope}).
 \end{enumerate}
 
-What this paper is not. It is a statement about identifiability, a property of a
-model and a design together. It is not a statement about patients, and
-Section~\ref{sec:discussion} says plainly where the model's own analysis questions its
-validity. The biological background, the disease's clinical course and the argument for
-treating $\theta$ as the decision variable are in the supplement, \S S1.
-
-\paragraph{How the argument is organised.} Section~\ref{sec:model} fixes the model at
-three resolutions, from the two-state dynamic system through its equilibrium reduction to
-the local identification model every design calculation uses, together with the assumptions
-and the numerical conventions. Section~\ref{sec:excitation} asks what a trajectory has to
-do for $\theta$ to be identifiable at all, and finds that the obstruction on a
-quasi-steady record has a closed form that names the input which closes it.
-Section~\ref{sec:designsec} asks what the accessible trajectories actually deliver, which
-is where the dose train, the sampling phase and the decision estimand are settled.
-Section~\ref{sec:spec} turns those results into a two-tier data specification, the first
-tier of which is a single measurement nobody has published.
-Section~\ref{sec:scope} gives the limit of the whole construction, and
-Section~\ref{sec:discussion} states what it does and does not license.
+What this paper is not. It is a statement about identifiability, a property of a model and
+a design together. It is not a statement about patients, and Section~\ref{sec:discussion}
+says plainly where the model's own analysis questions its validity. The biological
+background, the disease's clinical course and the argument for treating $\theta$ as the
+decision variable are in the supplement, \S S1, which also carries the derivations, the
+alternative hypotheses that were rejected and the full constant registry. Each section
+below opens with what it asks and what it settles.
 
 \vspace{0.5em}
 \hrule
