@@ -467,6 +467,24 @@ def _source_cell(r):
 #: reviewer counting pages will not.
 MAIN_TEXT_NOTES = (r"$\theta$", r"$\theta_{\mathrm{PA}}$", r"$K_m$")
 
+#: the rows the MAIN TEXT reasons about, block by block. A constant earns its
+#: place here by having its value quoted or depended on in the paper itself,
+#: not by being registered: the operating point and the ratio the excitation
+#: condition is stated against, the capacity rows, the two channels, the
+#: dosing schedule the aliasing rule turns on, the noise the fit carries, the
+#: one prior that does any work, and the load record. The parent block
+#: contributes only `k`, which two passages of Section 2 cite by name for its
+#: cost bound. Everything else is reference material and lives in the
+#: supplement's full registry, which remains the authority: this is a
+#: selection from it, not a second register.
+MAIN_TEXT_ROWS = {
+    "LOCAL": (r"$\bar m$", r"$\theta$", r"$\theta_{\mathrm{PA}}$", r"$K_m$",
+              r"$k_e$", r"$\lambda$", r"$T_{\mathrm{dose}}$", r"$D$",
+              r"$\sigma$", r"$\mathrm{CV}$", r"$s_{\ln k_e}$",
+              r"$\sigma_L/L$"),
+    "PARENT": (r"$k$",),
+}
+
 
 def _tex(rows, compact=False, keep_notes=()):
     """
@@ -504,9 +522,10 @@ def write_params_table(compact=False, name=None):
     the supplement imports the paper's labels with xr, so a hard-coded label
     would collide.
 
-    `compact` writes the main-text version, which keeps every row and every
-    tag and carries the note only for the three rows of MAIN_TEXT_NOTES. The
-    full version goes in the supplement.
+    `compact` writes the main-text version: the rows of MAIN_TEXT_ROWS, with
+    every tag, and a note only on the three rows of MAIN_TEXT_NOTES. The full
+    registry goes in the supplement and stays the authority; the main-text
+    table is a selection from it and says so in its own caption.
     """
     from .style import TABDIR, ROOT
     last = (r"\textbf{Cost, where it decides the result}" if compact
@@ -533,11 +552,21 @@ def write_params_table(compact=False, name=None):
             r"\endlastfoot",
             r"\multicolumn{5}{@{}l}{\emph{The local identification model}} \\",
             r"\addlinespace[2pt]"]
-    body += _tex(LOCAL, compact, MAIN_TEXT_NOTES)
+    local = ([r for r in LOCAL if r.symbol in MAIN_TEXT_ROWS["LOCAL"]]
+             if compact else LOCAL)
+    parent = ([r for r in PARENT if r.symbol in MAIN_TEXT_ROWS["PARENT"]]
+              if compact else PARENT)
+    body += _tex(local, compact, MAIN_TEXT_NOTES)
     body += [r"\addlinespace", r"\midrule",
              r"\multicolumn{5}{@{}l}{\emph{The parent model and its equilibrium reduction}} \\",
              r"\addlinespace[2pt]"]
-    body += _tex(PARENT, compact)
+    body += _tex(parent, compact)
+    if compact:
+        body += [r"\addlinespace",
+                 r"\multicolumn{5}{@{}p{0.92\textwidth}}{\emph{The remaining "
+                 + str(len(LOCAL) + len(PARENT) - len(local) - len(parent))
+                 + r" registered constants are in the supplement, \S S2, with "
+                 r"the full provenance of every row in this table.}} \\"]
     body += [r"\end{longtable}"]
     path = TABDIR / (name or ("tab_params_compact.tex" if compact
                               else "tab_params.tex"))

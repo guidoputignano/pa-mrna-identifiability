@@ -118,7 +118,7 @@ ratio and cancels from the reduced clearance, exactly. \textbf{It does not follo
 is a free scale}: $k$ alone sets the carnitine relaxation rate,
 $\tau_c = 1/(k[u(m) + \rho(m)])$, so it sets the reduction's validity \emph{off}
 equilibrium even though it cancels from the curve, and what assuming it costs is bounded in
-the $k$ row of Table~\ref{tab:params} rather than argued away.
+the $k$ row of the full registry, supplement \S S2, rather than argued away.
 
 Setting $\dot m = 0$ gives the equilibrium reduction, which is what a steady-state fit to a
 clinical record actually estimates. Its solutions are an attractor and a separatrix, and the
@@ -220,18 +220,18 @@ not curvature in $\alpha$. The reduction hierarchy is verified symbolically and 
 \begin{adjustwidth}{-1.0cm}{-1.0cm}
 \scriptsize
 \def\paramslabel{tab:params}
-\def\paramscaption{Every constant this paper quotes. Of the twenty-four registered
-constants, three are taken from the literature and two are derived; every
-concentration-scale constant is \emph{assumed} and illustrative. Each row carries what
-\emph{kind} of quantity it is, which is not the same question as where it came from: a
-constant can be honestly assumed and still be an effective or lumped parameter rather than
-one any experiment could measure. Four rows carry murine estimates and two rat \emph{in
-vitro} ones, and say so. \textbf{Some conclusions do depend on values in this table.}
-Remark~\ref{rem:no_km} shows that no \emph{prior} on $K_m$ is needed, which is a narrower
-claim than nothing depending on $K_m$ at all. The last column therefore carries the
-cost bound for the three rows where it decides a result, and \S S2 of the supplement
-carries the full provenance of every row, with its sources and what each assumption is
-worth.}
+\def\paramscaption{The constants this paper reasons about: those whose value is quoted
+here or decides a result. Three are taken from the literature and the rest are assumed and
+illustrative. Each row carries what \emph{kind} of quantity it is, which is not the same
+question as where it came from, since a constant can be honestly assumed and still be an
+effective or lumped parameter rather than one any experiment could measure, and it carries
+the species its evidence comes from where there is one. \textbf{Some conclusions do depend
+on values in this table.} Remark~\ref{rem:no_km} shows that no \emph{prior} on $K_m$ is
+needed, which is a narrower claim than nothing depending on $K_m$ at all, so the last
+column carries the cost bound for the three rows where it decides a result. The full
+registry is \S S2 of the supplement, which is the authority: it holds every registered
+constant, with its sources and what each assumption is worth, and this table is a
+selection from it.}
 \input{../results/tables/tab_params_compact}
 \end{adjustwidth}
 
@@ -275,7 +275,7 @@ integrated steady state equals the closed-form equilibrium reduction to the same
 integrates the local model and the second integrates the \emph{reduced} system and compares
 it against the algebraic root of the same reduced clearance, so the two-state system appears
 in neither. What licenses the reduction is the identity of \S\ref{sec:reduction}, and what
-bounds its cost off equilibrium is the $k$ row of Table~\ref{tab:params}.
+bounds its cost off equilibrium is the $k$ row of the supplement's registry, \S S2.
 
 Every stochastic result uses \texttt{numpy.random.default\_rng} with an explicit seed named
 at the call site, and each quoted precision is a median over $24$ intake records with its
