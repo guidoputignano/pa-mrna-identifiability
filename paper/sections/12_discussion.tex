@@ -3,9 +3,9 @@
 %==========================================================================
 
 Everything above sits inside two boundaries. These are claims about identifiability, a
-property of a model and a design together, not about patients: every number is computed
-from \eqref{eq:local} with the constants of Table~\ref{tab:params}, of which three are
-taken from the literature and the rest are assumed, so what the analysis establishes is
+property of a model and a design together, not about patients: every design number is
+computed from \eqref{eq:local} with the constants of Table~\ref{tab:params}, of which
+three are taken from the literature and the rest are assumed, so what the analysis establishes is
 what a record \emph{of the kind assumed} could yield \emph{under the model assumed}.
 Whether a real record behaves that way turns on the observation model of
 Remark~\ref{sec:marker}, that a marker which is not the enzyme's substrate tracks it
@@ -17,9 +17,9 @@ $3.4$ times the managed level and loses its stable equilibrium at $12.6$ times i
 both estimators here are steady-state fits: $42\%$ of a band running to eight times the
 managed level lies beyond the clearance peak, where the parent says there is no steady
 state to fit. Fitting the local model to the parent's own noiseless clearance over that
-band recovers $\hat\theta = 151$ against an intrinsic threshold of $150.8$, so
-misspecification alone, with no noise and no perturbation, consumes a true margin of
-$+149$, and the two models disagree by a factor of $4.6$ about the largest load a patient
+band recovers $\hat\theta = 151$ for a patient whose true capacity is the parent model's
+$\theta = 300$, against an intrinsic threshold of $150.8$, so misspecification alone, with
+no noise and no perturbation, turns a true margin of $+149$ into an estimated $+0.2$, and the two models disagree by a factor of $4.6$ about the largest load a patient
 can clear. The decompensation route is therefore excluded twice over: the excursion it
 would supply is not observed at the magnitude required, and the model that would interpret
 it does not hold there.
@@ -34,8 +34,8 @@ accuracy, and establish where in the parameter range the target is recoverable b
 quoting a precision anywhere in it.
 
 The first result is actionable now and survives the scope limit: the excitation is already
-being administered, and a protocol loses a factor of $\num{alias_cost}$ by scheduling bloods on dosing
-days, which is still a factor of $16$ at a disease-range capacity where the estimate itself
+being administered, and a protocol loses a factor of $\num{alias_cost}$ against monthly draws by scheduling bloods
+on dosing days, which is still a factor of $16$ at a disease-range capacity where the estimate itself
 is gone. The second should change how the problem is posed. Near normal capacity the
 decision is blocked not by identifiability but by its own boundary, which is stipulated
 rather than measured and which no better estimate of $\theta$ and no larger cohort can

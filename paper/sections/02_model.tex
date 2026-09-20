@@ -219,11 +219,12 @@ not curvature in $\alpha$. The reduction hierarchy is verified symbolically and 
 \scriptsize
 \def\paramslabel{tab:params}
 \def\paramscaption{The constants this paper reasons about, and what each rests on. Three
-are from the literature and the rest are chosen for illustration, against what the last
+rows are from the literature, $\theta_{\mathrm{PA}}$, $\lambda$ and
+$T_{\mathrm{dose}}$, and the rest are chosen for illustration, against what the last
 column says. Each row also carries what \emph{kind} of quantity it is, which is a
 different question from where it came from, and the species its evidence comes from where
 there is one. \textbf{Some conclusions do depend on values in this table}, and the three
-that decide a result are priced in the text below. The full registry is \S S2 of the
+rows that decide one, which are \emph{not} the same three, are priced in the text below. The full registry is \S S2 of the
 supplement, which is the authority; this is a selection from it.}
 \input{../results/tables/tab_params_compact}
 \end{adjustwidth}
@@ -231,7 +232,8 @@ supplement, which is the authority; this is a selection from it.}
 
 \paragraph{The three rows that decide a result, and what each is worth.} Most of the table
 is illustrative in the harmless sense that every conclusion is stated relative to it. Three
-rows are not.
+rows are not, and they are not the three taken from the literature: they are capacity,
+capacity in the disease, and the half-saturation.
 
 \emph{Capacity.} The identifiability results do not turn on $\theta = 3000$, but two
 conclusions do. The supplement's local-model section flips a qualitative conclusion across
@@ -264,9 +266,9 @@ inferred.
 The in vitro Michaelis constant of PCC is for propionyl-CoA inside the mitochondrion. The
 $K_m$ of \eqref{eq:local} is for a plasma marker that is neither that molecule nor in that
 compartment, and the two are not interchangeable, so no literature value is used. The
-results below do not need one: a prior on $\ln K_m$ twenty times looser than the module's
-own changes $\operatorname{sd}(\ln\hat\theta)$ in the fourth decimal, and removing it
-entirely changes nothing at all (Section~\ref{sec:designsec}).
+results below do not need one: loosening a prior on $\ln K_m$ twentyfold, and removing it
+altogether, both leave $\operatorname{sd}(\ln\hat\theta)$ at $0.1500$ on the densest
+design, moving it only in the fourth decimal (Section~\ref{sec:designsec}).
 \end{remark}
 
 \begin{remark}[The marker, and the observation model both markers need]

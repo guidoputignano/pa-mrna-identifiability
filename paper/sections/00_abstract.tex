@@ -4,11 +4,12 @@ The clinical decision in mRNA enzyme replacement for propionic acidemia is a dos
 interval, set by a quantity nobody measures: residual enzymatic capacity $\theta$. The
 trial is already running the experiment that would identify it: the therapy is a known
 exogenous input acting selectively on $\theta$, supplying forty-two times the excitation
-the marker's own excursions do.
+the marker's own band does.
 
 What transfers is the design rules that follow. Sampling must cover the phase of the
 dose cycle: draws at the dose interval, or any multiple of it, cost a factor of
-$\num{alias_cost}$ in precision, and moving the schedule half a day recovers it. The
+$\num{alias_cost}$ against monthly sampling, and moving them half a day off the dose day
+recovers it. The
 dosing record is a regressor carrying the excitation, not a nuisance. Intake must be
 recorded as eaten and to better than about $\num{load_accuracy_gate}\%$, a requirement on
 the record's \emph{accuracy} and not its variability. No prior on $K_m$ is needed.
@@ -19,7 +20,7 @@ $\theta\,g(m) = L - k_e m$, so its sensitivity to capacity is capacity's own sha
 load, $85\%$ at normal and $16\%$ at the $5\%$ of normal that defines the disease.
 Monthly draws for two years therefore identify $\theta$ only between about $82\%$ and
 $627\%$ of normal, and propionic acidemia sits a factor of $16$ below that band. What
-survives there is $K_m$, to about $6\%$ at every capacity, and an upper bound on $\theta$.
+survives there is $K_m$, to $6$--$7\%$ at every capacity, and an upper bound on $\theta$.
 The estimate is relative to an assumed structure too: under a published alternative
 $\theta$ is not identifiable at all, at a residual too small to notice.
 

@@ -1468,11 +1468,12 @@ def table_spec():
          "the dose cycle, not the sampling rate"],
         ["sampling, the hard constraint",
          B + "never at the dose interval or a multiple of it}: fortnightly "
-         "gives $%.2f$%s, $14.5$-daily gives $%.3f$%s, a cost of $%.0f$-fold "
-         "($%.0f$ to $%.0f$ across records)"
-         % (N["sd_aliased"], rng("sd_aliased", digits=2),
-            N["sd_aliased_off"], rng("sd_aliased_off", digits=4),
-            N["alias_cost"], N["alias_cost_lo"], N["alias_cost_hi"]),
+         "gives $%.2f$%s against the monthly design's $%.3f$, a cost of "
+         "$%.0f$-fold ($%.0f$ to $%.0f$ across records); $14.5$-daily gives "
+         "$%.3f$%s, which recovers it"
+         % (N["sd_aliased"], rng("sd_aliased", digits=2), N["sd_monthly"],
+            N["alias_cost"], N["alias_cost_lo"], N["alias_cost_hi"],
+            N["sd_aliased_off"], rng("sd_aliased_off", digits=4)),
          "every draw lands at the same phase, the increment stops varying, "
          "and the therapy channel closes"],
         ["sampling, the other exclusion",

@@ -130,11 +130,12 @@ At $40\%$ this design returns $\num{sd_load_acc_40pct}$, two and a half times it
 everything downstream rests on a measurement of intake that is currently not made.}
 
 The variability enters separately and in the opposite direction. A perfectly steady load
-makes the \emph{untreated} design exactly rank deficient (Proposition~\ref{prop:rank});
-under the dose train it does not, because the increment varies even when the load does not,
-and $\operatorname{sd}(\ln\hat\theta)$ is $\num{free_cv2}$ rather than unbounded with the load-bias
-prior removed entirely. So ``record intake as eaten, do not smooth it'' buys a real but
-bounded improvement, and it costs nothing, being an instruction to omit a data-cleaning
+makes the design exactly rank deficient, and the dose train does not repair it: the null
+vector of Proposition~\ref{prop:rank} holds identically in $\Delta$, so only a varying load
+closes the deficiency. What the dose train changes is how quickly the data take over the
+direction the load-bias prior would otherwise hold alone. Prior-free, a perfectly steady
+record gives $\num{free_steady}$ and a $2\%$ record already gives $\num{free_cv2}$.
+So ``record intake as eaten, do not smooth it'' buys a real but bounded improvement, and it costs nothing, being an instruction to omit a data-cleaning
 step. What decides whether the design works at all is the accuracy above.
 
 \paragraph{Record the antibiotic weeks.} Most patients on this therapy are also on cyclical
@@ -170,7 +171,7 @@ times looser leaves every number unchanged. That is a statement about the \emph{
 the larger claim that nothing depends on $K_m$: over $K_m$ from $5$ to $1000$~$\mu$M the
 achieved $\operatorname{sd}(\ln\hat\theta)$ runs $0.0507$ to $1.3608$ and crosses the target
 at $K_m = 124$~$\mu$M against the $100$ assumed. What rescues it is the record, which
-determines $K_m$ to about $6\%$ at every capacity (Remark~\ref{rem:kmrecovered}).
+determines $K_m$ to $6$ to $7\%$ at every capacity (Remark~\ref{rem:kmrecovered}).
 
 \subsection{Applicability}
 \label{sec:whoto}

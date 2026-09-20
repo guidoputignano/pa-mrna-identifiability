@@ -123,9 +123,12 @@ rather than bad luck. The dose interval is fourteen days, so sampling every four
 lands every draw at the same phase of every cycle. The range of $\Delta/\theta$ collapses
 from $1.95$ to $0.13$, the correlation between $\ln\theta$ and $\ln K_m$ returns to
 $+0.999$, and $\operatorname{sd}(\ln\hat\theta)$ goes to $\num{sd_aliased}$ ($\num{sd_aliased_lo}$ to $\num{sd_aliased_hi}$). The
-same happens at twenty-eight days and at any multiple. Moving the schedule half a day
-fixes it: every $14.5$ days gives $\num{sd_aliased_off}$ ($0.1611$ to $0.1618$), so the aliased design
-costs a factor of $\num{alias_cost}$ ($\num{alias_cost_lo}$ to $\num{alias_cost_hi}$) taken record by record. A factor of that size turns
+same happens at twenty-eight days and at any multiple. Taken record by record against the
+recommended monthly design, that is a factor of $\num{alias_cost}$ ($\num{alias_cost_lo}$ to
+$\num{alias_cost_hi}$). Every ratio this paper quotes for aliasing has that same baseline.
+Moving the schedule half a day fixes it: every $14.5$ days gives $\num{sd_aliased_off}$
+($\num{sd_aliased_off_lo}$ to $\num{sd_aliased_off_hi}$), which is monthly precision at
+fortnightly density. A factor of that size turns
 on a choice a protocol writer would make for administrative convenience, and would
 currently make the wrong way, because ``sample on dosing days'' is the obvious thing to
 write.
@@ -221,8 +224,8 @@ Shortening the interval to seven days \emph{doubles} the trough and costs $29\%$
 precision, so a clinician who shortens it on therapeutic grounds sacrifices nothing the
 patient needs and should know only that the sampling schedule then has to work harder. The
 sampling schedule, meanwhile, costs nothing at all: Remark~\ref{rem:aliasing} is a factor
-of $27$ bought by moving draws half a day off the dosing day, with no dose changed and no
-trough moved. \emph{That asymmetry is the recommendation.} Optimise the schedule that is
+of $\num{alias_cost}$ against monthly, bought by moving draws half a day off the dosing day,
+with no dose changed and no trough moved. \emph{That asymmetry is the recommendation.} Optimise the schedule that is
 free and leave alone the one that is paid for out of the trough.
 
 \paragraph{The administration route is a condition, and it is the limit of that trend.}
@@ -331,8 +334,11 @@ repair.
 \centering
 \footnotesize
 \caption{\label{tab:admissible}The twenty admissibility constraints and their
-verdicts on the recommended design. The evidence for each is in the
-supplement, \S S1.}
+verdicts on the recommended design. The capacity-ceiling row infers normal
+capacity from $\theta$ and the residual-activity reference, so $\theta$ cancels
+from it and it cannot report a breach in this disease; the paragraph above and
+Section~\ref{sec:scopeprec} give the other reading. The evidence for each row
+is in the supplement, \S S1.}
 \input{../results/tables/tab_S_admissible_compact}
 \end{table}
 
@@ -356,8 +362,18 @@ $\Delta_{\mathrm{peak}}/\theta = 19$ at the $5\%$ residual-activity reference
 this paper adopts, and at $9$ at the $10\%$ reading kept as a check. The
 committed dose sits at $\Delta_{\mathrm{peak}}/\theta = 2.13$ and uses $16\%$
 of normal capacity at the $5\%$ reference, so it is inside the ceiling by a
-factor of nine,
-and the ceiling is not what limits it.
+factor of nine, and the ceiling is not what limits it.
+
+\textbf{That verdict is conditional on how normal capacity is inferred, and the
+condition is not innocuous.} The check reads $\theta$ as the residual and normal
+as $\theta/\mathrm{frac}$, so $\theta$ cancels and the verdict is
+$\mathrm{frac} \times (1 + \Delta_{\mathrm{peak}}/\theta)$, which cannot report a
+breach below a residual activity of $32\%$ and therefore cannot bind on this
+disease at all. Read the other way, with $\theta = 3000$ as normal and $D$ held
+at its booked value rather than scaled with capacity, which is what a dose in
+mg/kg is, the same bound is breached at $10\%$ of nominal and below
+(Section~\ref{sec:scopeprec}). The pass in Table~\ref{tab:admissible} is the
+first reading, not the second.
 
 What does limit it is the calibration, and Table~\ref{tab:dosesens} is the
 sensitivity to that. Each row rebinds the dose and the decay rate, recomputes

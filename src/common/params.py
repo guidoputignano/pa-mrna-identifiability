@@ -319,25 +319,21 @@ LOCAL = [
     Row(r"$s_{\ln k_e}$", f"${KE_PRIOR_LOG:.1f}$",
         "sd of the log-normal prior on $k_e$",
         ASSUMED, r"\textbf{The only prior that does any work.} "
-                 r"A factor of $e^{0.8} = 2.23$ per standard deviation, which is wider "
-                 r"than the factor of about three the gate needs, so the prior is "
-                 r"deliberately weaker than the requirement. It lives as a default argument "
-                 r"in \texttt{src/design/run.py} and is asserted against it in the tests. "
-                 r"What it is grounded in is the open question, since by the $k_e$ row above "
-                 r"no source supplies the constant it is a prior on. \textbf{What it is "
-                 r"worth is an open question too}: Section~\ref{sec:designsec} states that "
-                 r"removing it takes the same design from $0.1474$ to $0.6451$, and neither "
-                 r"figure reproduces from this repository. On the densest design that "
-                 r"section lists, sampling every two days for two years, "
+                 r"A factor of $e^{0.8} = 2.23$ per standard deviation, which is "
+                 r"\emph{tighter} than the factor of $2.67$ the gate needs, which is why "
+                 r"Section~\ref{sec:designsec} can report that the gate passes: at the width "
+                 r"the requirement names it would be met exactly and no more. It lives as a "
+                 r"default argument in \texttt{src/design/run.py} and is asserted against it "
+                 r"in the tests. What it is grounded in is the open question, since by the "
+                 r"$k_e$ row above no source supplies the constant it is a prior on. What it "
+                 r"is worth: on the densest design Section~\ref{sec:designsec} lists, "
+                 r"sampling every two days for two years, "
                  r"$\mathrm{sd}(\ln\hat\theta)$ is $0.1500$ with the prior and $1.1096$ "
                  r"without, medians over $24$ simulated intake records with spreads "
-                 r"$[0.1498, 0.1501]$ and $[1.0313, 1.1923]$, so the prior is worth a factor "
-                 r"of $7.4$ rather than the $4.4$ the section prints "
-                 r"(\texttt{audit/n3\_ke\_prior\_worth.py}, which also reports that every "
-                 r"design figure in this paper is drawn at the one seed "
-                 r"\texttt{design\_record} hard-codes)",
+                 r"$[0.1498, 0.1501]$ and $[1.0313, 1.1923]$, a factor of $7.4$ "
+                 r"(\texttt{audit/n3\_ke\_prior\_worth.py})",
         kind=PRIOR,
-        rests_on=r"chosen for illustration, deliberately wider than the factor of about three the gate needs, so the prior is weaker than the requirement"),
+        rests_on=r"chosen for illustration, tighter than the factor of $2.67$ the gate needs, so the gate passes with it in place"),
     Row(r"$\sigma_L/L$", f"${100*LOAD_FRAC:.0f}\\%$",
         "relative error in the recorded substrate load",
         ASSUMED, r"\textbf{Sets $\sigma$} through "

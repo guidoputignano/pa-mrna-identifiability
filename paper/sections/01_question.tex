@@ -40,13 +40,15 @@ rather than an assumed one.
 \item \textbf{The dose train is already the identification experiment.} The therapy is
 administered on a fixed biweekly schedule and read as treatment; it is also a known,
 exogenous, selective input on exactly the parameter in question, and it supplies forty-two
-times the excitation the marker's own excursions do. That is what makes $\theta$
+times the excitation the marker's own band does, and five and a half times the largest
+excursion any accessible source supplies (Section~\ref{sec:excursion_table}). That is what makes $\theta$
 identifiable at capacities near normal: monthly outpatient draws across dose cycles give a
-sampling spread of $17\%$ on $\ln\hat\theta$ over two years, which is a $95\%$ interval a
-factor of about four wide (Remark~\ref{rem:curvature}). It is lost by the one scheduling
+sampling spread of $17\%$ on $\ln\hat\theta$ over two years. A $95\%$ interval is a separate
+quantity and a separate calculation, and on the same design it is a factor of about four
+wide; the two must not be read off one another (Remark~\ref{rem:curvature}). It is lost by the one scheduling
 choice a protocol would make for convenience: sampling on dosing days, or at any multiple
-of the dose interval, costs a factor of $\num{alias_cost}$ ($\num{alias_cost_lo}$ to $\num{alias_cost_hi}$ across intake records), and
-moving the schedule half a day recovers it (Sections~\ref{sec:excitation}
+of the dose interval, costs a factor of $\num{alias_cost}$ ($\num{alias_cost_lo}$ to $\num{alias_cost_hi}$ across intake records)
+against monthly draws, and moving the schedule half a day recovers it (Sections~\ref{sec:excitation}
 and~\ref{sec:designsec}). \textbf{That rule is the durable part, and it holds at every
 capacity}, including the disease range where the estimate itself does not
 (Section~\ref{sec:scopeprec}). The model is globally structurally identifiable, so the

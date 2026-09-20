@@ -168,7 +168,7 @@ def ceiling():
             print(f"    {mod:>8} {th:8.0f} {dpk:11.2f} {th+dpk:11.2f} "
                   f"{frac:9.0%} {nrm:10.0f} {used:8.4f} {1-used:9.4f}")
     ok = all(u <= 1.0 for _, _, u in rows)
-    record("theta + Delta_peak <= normal, at BOTH references", ok,
+    record("theta + Delta_peak <= normal, normal inferred as theta/frac", ok,
            f"worst used fraction {max(u for _, _, u in rows):.4f}")
     print("\n    The two readings give the same used fraction within a model,")
     print("    0.3133 at 10% and 0.1567 at 5%, because theta cancels: the ratio")
