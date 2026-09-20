@@ -82,7 +82,7 @@ anywhere between $3$ and $224$ against a truth of $150$.
 
 The specification's own requirements follow the same line. Tightening the delivered
 increment from a $30\%$ coefficient of variation to an exact one is worth $88\%$ of the
-precision at nominal capacity and $0.3\%$ at $5\%$ of nominal: \textbf{Tier~1 is
+precision at nominal capacity and $0.3\%$ at $5\%$ of nominal: \textbf{Tier~2 is
 load-bearing for the design as published and very nearly irrelevant where the clinical
 question is.} It is worth running because the normal-capacity design is what this paper
 offers, not because it opens the disease range.
@@ -148,7 +148,7 @@ the answer is probably not. A design argument for keeping the dose and a pharmac
 argument for lowering it are not in conflict; they are answers to different questions, and
 this paper makes only the first.
 
-\paragraph{Four routes in, all of them tested and all of them closed.} It matters that
+\paragraph{Six routes in, all of them tested and all of them closed.} It matters that
 these were measured rather than dismissed, because each is the first thing a reader
 proposes.
 
@@ -169,10 +169,21 @@ $88\%$ at nominal.
 \item \textbf{Modulate the diet on purpose.} A prescribed $\pm15\%$ swing in natural
 protein is worth $7\%$, and an implausible $\pm50\%$ swing $32\%$, leaving $2.32$ against
 a target of $0.20$ (Section~\ref{sec:whoto}).
+\item \textbf{Record the diet better.} Tightening the load record from $20\%$ to $1\%$ is
+worth a factor of $1.81$ at nominal capacity and $1.22$ to $1.46$ across the disease range
+--- \emph{less} where the question is, not more, although the flux identity makes a $5\%$
+error on $L$ six times larger a fraction of $\theta\,g(m)$ there. A perfect record in both
+channels leaves $2.659$ at $5\%$ of nominal.
+\item \textbf{Measure the diet instead of recording it.} Whole-body propionate turnover is
+measurable by isotope dilution, which removes $b$ from the parameter vector rather than
+bounding it. At nominal that is a real efficiency: thirteen measured-load visits match
+twenty-five recorded ones and six reach the target. Below nominal it opens nothing --- an
+\emph{exactly} known load leaves $2.659$ at $5\%$ of nominal --- and the advantage shrinks
+rather than reverses as capacity falls, from thirteen visits to eighteen.
 \end{enumerate}
 
 \noindent
-All four are routes to \emph{precision on $\theta$}, and that is the only question they
+All six are routes to \emph{precision on $\theta$}, and that is the only question they
 are closed on. The transient has a second job, and on that one it is not closed but
 recommended: it is the measurement that would say which structure a record came from
 (Section~\ref{sec:structuredep}), because the published alternative's marker is algebraic
@@ -236,12 +247,18 @@ $\theta$ with no external information. What creates the deficit is carrying a fr
 offset alongside a free marker amplitude, which is what a phenomenological readout has and
 a flux balance does not.
 
-The practical consequence is short. A capacity estimate from a marker record is a statement
-about a model as much as about a patient, so \textbf{the structure belongs beside the
-estimate}, and the one measurement that would settle which structure a real record came
-from is a transient: the alternative's marker is algebraic in the enzyme, and a marker that
-is a state pins its own rate constant separately from the steady map. The supplement,
-\S S1, works both structures through.
+The practical consequence is short, and it is not that the structure is undecidable. A
+capacity estimate from a marker record is a statement about a model as much as about a
+patient, so \textbf{the structure belongs beside the estimate} --- but the alternative
+above is ruled out by one blood draw. Its marker is algebraic in the enzyme and this
+paper's is a state, so the two agree on the whole steady map and disagree only in the
+minutes after an infusion, by $\num{struct_sigma_3min}$ standard deviations at three
+minutes and $\num{struct_sigma_15min}$ at fifteen. That measurement is Tier~1 of
+Section~\ref{sec:tierstruct}, it is the cheapest item in the specification, and it is the
+one thing in this paper that opens a question rather than closing one. What it does
+\emph{not} do is identify the structure: it rules out a family, the one whose marker
+carries no relaxation, and a third structure with a marker state and a different steady
+map would survive it. The supplement, \S S1, works both structures through.
 
 \vspace{0.5em}
 \hrule

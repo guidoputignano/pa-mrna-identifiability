@@ -4,8 +4,10 @@
 
 \emph{Table~\ref{tab:spec} is the specification and this section is its commentary. Every
 row is generated from the model code and is a consequence of something proved above. It has
-two tiers. Tier~1 is a single measurement nobody has published, and until it reports there
-is no defensible answer to the question Tier~2 asks.}
+three tiers and they are ordered by dependency rather than by cost. Tier~1 is one blood
+draw and it decides whether the model the other two calibrate is the right one; Tier~2 is a
+single measurement nobody has published, and until it reports there is no defensible answer
+to the question Tier~3 asks.}
 
 \begin{table}[htbp]
 \centering
@@ -25,7 +27,7 @@ exactly on $\operatorname{sd}(\ln\hat\theta) = 0.20$? The $\num{kappa_monthly_pc
 increment and the factor of $\num{ke_needed_factor}$ on $k_e$ are those answers; the precisions quoted against
 each schedule are forward evaluations of the same information matrix. No requirement was an
 input to itself. Exactly one row is a measurement rather than a computation, the
-between-visit repeatability in Tier~1~\cite{breath_test_mma}, and it is there to show that
+between-visit repeatability in Tier~2~\cite{breath_test_mma}, and it is there to show that
 the requirement above it is not met.
 
 The root-finding runs on the illustrative constants of Table~\ref{tab:params} and the $0.20$
@@ -35,10 +37,64 @@ row reports its own insensitivity, $K_m$, which needs nothing at all. \textbf{Th
 record is not a second such row}: how much it \emph{varies} changes nothing, and how well
 each visit is \emph{recorded} is the third-tightest requirement here. That requirement is
 on the per-visit scatter and not on the mean offset, which is a distinction
-Section~\ref{sec:tier2load} draws out because the two are bought by different studies.
+Section~\ref{sec:tierload} draws out because the two are bought by different studies.
 
-\subsection{Tier 1: the increment measurement}
-\label{sec:tier1}
+\subsection{Tier 1: which family of structures, and it is one blood draw}
+\label{sec:tierstruct}
+
+\textbf{Before either tier below is worth running, one measurement rules out the published
+alternative, and it is the cheapest thing this paper asks for.}
+Section~\ref{sec:structuredep} shows that alternative fitting the same record with $\theta$
+\emph{not identifiable} at any design, and that the residual of the fit can be under a
+fifth of one $\sigma$, so nothing in the fit signals the error. Stated there it reads as a
+limit no measurement resolves. It is not one.
+
+The two structures differ in a way a single post-dose draw exposes. This paper's marker is
+a \emph{state}: it relaxes towards the balance with its own rate constant, which is
+$(\theta+\Delta)\,g'(m) + k_e$. The alternative's marker is an algebraic $I_{\max}$
+function of enzyme, so it has no relaxation of its own and tracks the dose instantly.
+Calibrated to agree at \emph{both} ends of the transient, the pre-dose trough and the
+post-dose settled level, so that the two share the steady map exactly and are separated by
+the travel between levels and by nothing else, they differ by
+$\num{struct_sigma_3min}$ standard deviations at a $5\%$ assay from \emph{one} draw three
+minutes after an infusion, $\num{struct_sigma_15min}$ at fifteen minutes and
+$\num{struct_sigma_30min}$ at half an hour. One draw suffices at any assay precision to
+$20\%$; at a deliberately poor $40\%$ it takes $\num{struct_draws_40pct}$ draws over the
+first hour.
+
+\paragraph{What it rules out, which is less than settling the structure.} It separates a
+marker that is a \emph{state} from one that is algebraic in the enzyme, so it rules out the
+published alternative and every structure sharing that defining feature. It does not
+separate this paper's structure from a third one whose marker is also a state but whose
+steady map differs, and Section~\ref{sec:structuredep} records that of four plausible ways
+to introduce a substrate load into the alternative, three leave $\theta$ unidentifiable and
+one restores it. Ruling out a family is worth one blood draw; it is not the same as
+identifying the structure, and the specification should not be read as claiming it.
+
+\paragraph{It dies with the transient, so the timing is the whole protocol.} The same draw
+is worth $\num{struct_sigma_1h}$ standard deviations at one hour and
+$\num{struct_sigma_2h}$ at two. The window is also earlier than \eqref{eq:local} suggests:
+under the parent model with carnitine frozen, which is what a transient sees because
+carnitine moves only $\num{carn_travel_pct}\%$ of its journey in an hour, the relaxation
+time at matched capacity is $\num{tau_frozen_h}$~hours against the local model's
+$\num{tau_hours}$, so draw times designed on the local model sample late. \textbf{Draws in
+the first fifteen minutes carry almost all of it.}
+
+\paragraph{What it costs and what it settles.} One infusion visit, already scheduled, with
+two or three extra tubes drawn inside the first half hour and assayed at the precision the
+specification already assumes. It does not improve any estimate --- Section~\ref{sec:collapse}
+prices what post-dose draws are worth for $\theta$, and the answer is
+$\num{trans_gain_nominal}\%$ --- and that is not what it is for. It answers a prior
+question: whether the record being fitted came from a marker with its own kinetics, in
+which case the tiers below are estimating a parameter that exists, or from one algebraic in
+the enzyme, in which case $\theta$ is not identifiable from a marker record under any
+design and neither tier is worth running. \textbf{That makes it the first measurement in
+the specification and not an afterthought to it}, and it is why the post-dose exclusion of
+Section~\ref{sec:tierphase} is written as a rule about the steady-state fit rather than
+about the draw.
+
+\subsection{Tier 2: the increment measurement}
+\label{sec:tierincrement}
 
 What to run. One cohort, two $1$-$^{13}$C-propionate breath tests bracketing a
 single dose, on one day. The quantity measured is the repeatability of the assay
@@ -66,7 +122,7 @@ $\operatorname{sd}(\ln\hat\theta) = 0.212$ against a gate of $0.20$, and reaches
 only at $118$ monthly draws, which is nearly ten years of follow-up, against eleven with
 the increment known exactly. A same-day pair must therefore be a factor of $1.21$ tighter
 than a between-visit one, a $17\%$ reduction in the coefficient of variation, and that
-factor is the whole of what Tier~1 has to establish.
+factor is the whole of what Tier~2 has to establish.
 
 \textbf{And beyond a certain width no number of visits is enough.} The prior on the
 increment's scale does not shrink as the record lengthens, so the design has a floor, and
@@ -100,9 +156,9 @@ twenty subjects, where recovery of $^{13}$CO$_2$ was significantly below normal 
 MMA''}~\cite{breath_test_original}. What is missing in propionic acidemia is narrower: a
 repeatability figure, which that study does not report and nobody has published since.
 
-\paragraph{And a second external measurement, cheaper and not proposed before.} Tier~1
+\paragraph{And a second external measurement, cheaper and not proposed before.} Tier~2
 anchors capacity. The non-enzymatic clearance $k_e$ is the other quantity the record
-cannot supply, and unlike Tier~1 it can be bought incrementally: the design's precision is
+cannot supply, and unlike Tier~2 it can be bought incrementally: the design's precision is
 a smooth function of how well it is known, and the function is much steeper in the disease
 range than at the illustrative point, exactly as \eqref{eq:thetacolumn} predicts.
 Table~\ref{tab:keprior} prices it.
@@ -117,10 +173,10 @@ Table~\ref{tab:keprior} prices it.
 Tightening $k_e$ from the published width to $5\%$ is worth a factor of $2.1$ at nominal
 capacity and $6.9$ in the disease range. It does not close the gate there: even an exact
 $k_e$ leaves $0.388$, about twice the target, so this is a second anchor and not a
-substitute for Tier~1. It is nonetheless the better-value measurement per unit of effort
-in exactly the population Tier~1 is hardest to run in.
+substitute for Tier~2. It is nonetheless the better-value measurement per unit of effort
+in exactly the population Tier~2 is hardest to run in.
 
-\subsection{Tier 2: the identification study}
+\subsection{Tier 3: the identification study}
 
 \paragraph{Cover the dose cycle; do not chase the marker.} Monthly draws across dose cycles
 for two years reach the target, and two-monthly draws, thirteen over two years, also
@@ -143,7 +199,7 @@ $\num{delta_range_monthly}$ monthly, $\num{delta_range_off}$ at $14.5$ days and
 $\num{delta_range_aliased}$ fortnightly, and Figure~\ref{fig:E1} draws them.
 
 \paragraph{The load record: the recording error binds, and keep the variation.}
-\label{sec:tier2load}
+\label{sec:tierload}
 Two different things are called the load record and they behave oppositely. Making the
 record more \emph{variable} buys nothing, and making it twenty times less variable costs
 nothing. Making it more \emph{accurate} is the third-tightest requirement here, and
@@ -169,6 +225,17 @@ tighter than $10.4\%$, which is the requirement above almost exactly. The reason
 Proposition~\ref{prop:rank} read the other way: the offset is the direction the fibre runs
 along, and once the recorded load varies the data close that direction themselves, leaving
 the prior on it inert.
+
+\textbf{That split is a statement about nominal capacity and not a general one.} Repeating
+the decomposition at each capacity, the offset's share of the degradation runs $1.8\%$ at
+nominal, $9.9\%$ at half, $26.2\%$ at a fifth and about a quarter through the disease range
+below that. The offset stops being negligible almost exactly where the elasticity of the
+marker to capacity starts to fail. What keeps the conclusion above intact is not that the
+share stays small but that the gate is only in reach at nominal at all
+(Section~\ref{sec:scopeprec}): where the split changes, no load record of any accuracy
+reaches the target, and a perfect one in both channels still leaves $2.659$ at $5\%$ of
+nominal. So the study to run is still the better diary, and the reason is the scope limit
+rather than the decomposition.
 
 \textbf{So the requirement is a better diary at every visit, and a weighed-intake substudy
 is not a substitute for it.} Calibrating the mean offset is the cheaper study and it buys
@@ -332,7 +399,7 @@ $\num{cohort_q3_drawn}$, and \textbf{just over a third meet the $0.20$ target}:
 $\num{cov_drawn_pct}\%$. With the increment held exactly known, which is the footing every
 other number in this paper is computed on, the same cohort gives
 $\num{cov_exact_pct}\%$ --- just over half --- and that difference is the whole of what
-Tier~1 is for.
+Tier~2 is for.
 
 \textbf{And a fifth of the cohort is not short of the target but out of reach of it.} The
 floor above means that $\num{above_floor_pct}\%$ of these patients draw an increment

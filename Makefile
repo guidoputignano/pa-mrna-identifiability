@@ -37,6 +37,8 @@ figures:
 	$(PY) audit/t5_band_vs_ke.py
 	@echo ">> the cohort coverage with the increment CV drawn (Section 5.5)"
 	$(PY) audit/t6_cohort_with_kappa.py
+	@echo ">> what the structure test costs (Section 5.1)"
+	$(PY) audit/t7_structure_transient.py
 	@echo ">> the design figures: phase clock, visits, calendar, conditioning"
 	$(PY) audit/g1_phase_clock.py
 	$(PY) audit/g2_visits_vs_sd.py

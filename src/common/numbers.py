@@ -50,9 +50,11 @@ GENERATORS = {
     "reduction": "src/model_C/run.py",
     "kesweep": "audit/t5_band_vs_ke.py",
     "cohort": "audit/t6_cohort_with_kappa.py",
+    "structure": "audit/t7_structure_transient.py",
     "reduction": "src/model_C/run.py",
     "kesweep": "audit/t5_band_vs_ke.py",
     "cohort": "audit/t6_cohort_with_kappa.py",
+    "structure": "audit/t7_structure_transient.py",
 }
 
 

@@ -161,6 +161,56 @@ def separation(te, sigma_rel):
     return float(np.sqrt(np.sum(((a - b) / s) ** 2)))
 
 
+def structure_numbers():
+    """
+    What the structure test costs, as generated numbers.
+
+    WHAT IT RULES OUT, which is narrower than "settles which structure a
+    record came from" and is the claim the paper makes. The test separates a
+    marker that is a STATE, relaxing towards the balance with its own rate
+    constant, from one that is ALGEBRAIC in the enzyme and has none. That
+    rules out the published alternative and every structure sharing its
+    defining feature. It does not separate this paper's structure from a third
+    one whose marker is also a state but whose steady map differs, and
+    Section 6.1 already records that of four plausible ways to introduce a
+    substrate load into the alternative, three leave theta unidentifiable and
+    one restores it. A test that rules out a family is worth having; one
+    reported as settling the question is not the same thing.
+
+    The two structures are matched at BOTH ends of the transient, the pre-dose
+    trough and the post-dose settled level, so they share the steady map
+    exactly and are separated by the travel between levels and by nothing
+    else. Any looser calibration would let the test succeed on a level
+    difference, which the steady record already sees.
+    """
+    from common.numbers import write_numbers
+    p = ParamsC(theta=300.0, Km=KM)
+    m0, c0 = parent_state(p, TH_LOC)
+    trav, tau_c = carnitine_travel(p, *parent_state(p, p.theta))
+    N = {"struct_sigma_3min": separation(np.array([0.05 * HOUR]), 0.05),
+         "struct_sigma_15min": separation(np.array([0.25 * HOUR]), 0.05),
+         "struct_sigma_30min": separation(np.array([0.50 * HOUR]), 0.05),
+         "struct_sigma_1h": separation(np.array([1.00 * HOUR]), 0.05),
+         "struct_sigma_2h": separation(np.array([2.00 * HOUR]), 0.05),
+         "carn_travel_pct": 100.0 * trav,
+         "tau_frozen_h": 24.0 / parent_frozen_rate(p, TH_LOC, 0.0, m0, c0),
+         "tau_reduced_h": 24.0 / parent_reduced_rate(p, TH_LOC, 0.0, m0)}
+    #  the cheapest schedule reaching 3 sigma at a deliberately poor assay,
+    #  because the interesting claim is that it survives one
+    for n in range(1, 65):
+        if separation(np.geomspace(0.05, 1.0, n) * HOUR, 0.40) >= 3.0:
+            N["struct_draws_40pct"] = n
+            break
+    else:
+        N["struct_draws_40pct"] = float("inf")
+    fmt = {k: "{:.1f}" for k in N}
+    fmt.update({"struct_sigma_1h": "{:.2f}", "struct_sigma_2h": "{:.2f}",
+                "struct_draws_40pct": "{:.0f}",
+                "tau_frozen_h": "{:.3f}", "tau_reduced_h": "{:.3f}"})
+    write_numbers("structure", N, fmt)
+    return N
+
+
 def main():
     print(__doc__)
     bar = "=" * 78
@@ -301,3 +351,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    structure_numbers()

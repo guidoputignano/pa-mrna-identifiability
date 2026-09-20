@@ -1475,7 +1475,7 @@ def spec_numbers():
         """
         brentq per intake record, then the median and range of the answers.
 
-        These are the requirements Tier 1 is written against, so a single-draw
+        These are the requirements Tier 2 is written against, so a single-draw
         answer here is a single-draw REQUIREMENT, which is worse than a
         single-draw precision.
         """
@@ -1501,11 +1501,14 @@ def spec_numbers():
 
 def table_spec():
     """
-    The one-page data specification, in two tiers.
+    The one-page data specification, in three tiers.
 
-    The order is not cosmetic: Tier 1 measures the only quantity the method's
-    feasibility turns on, and until it reports there is no defensible number of
-    breath tests to ask for.
+    The order is not cosmetic and it is not cost: it is dependency. Tier 1 is
+    one blood draw and it rules out a family of structures under which theta
+    is not identifiable at all, so the tiers below it are calibrating a
+    parameter that may not exist until it reports. Tier 2 then measures the
+    only quantity the method's feasibility turns on, and until THAT reports
+    there is no defensible number of breath tests to ask for.
     """
     N = spec_numbers()
     PAPER_NUMBERS.update(N)
@@ -1534,7 +1537,20 @@ def table_spec():
                 % (digits, scale * lo, digits, scale * hi, unit, len(SEEDS)))
     B = "\\textbf{"
     rows = [
-        [B + "TIER 1} --- run first", "", ""],
+        [B + "TIER 1} --- run first, and it is one draw", "", ""],
+        ["what to measure",
+         r"two or three plasma draws inside the first half hour after one "
+         r"scheduled infusion, at the assay precision assumed throughout",
+         "rules out the published alternative and any structure whose marker "
+         "has no relaxation of its own, under which $\\theta$ is not "
+         "identifiable at any design; see Section~\\ref{sec:tierstruct}"],
+        ["what it must reach",
+         r"a draw within fifteen minutes of the dose; the separation is "
+         r"$16.3\sigma$ at three minutes and $0.68\sigma$ at one hour",
+         "the two structures share the steady map exactly and differ only in "
+         "the travel between levels, so the whole of the test is in the "
+         "first hour"],
+        [B + "TIER 2} --- conditional on Tier 1", "", ""],
         ["what to measure",
          "same-day repeatability of $1$-$^{13}$C-propionate oxidation: two "
          "breath tests bracketing one dose, on one day",
@@ -1554,7 +1570,7 @@ def table_spec():
          "intervals $2$ months to $4$ years",
          "an upper bound on same-day error, already close to the requirement, "
          "but it does not establish it; and it is MMA, not PA"],
-        [B + "TIER 2} --- conditional on Tier 1", "", ""],
+        [B + "TIER 3} --- conditional on Tier 2", "", ""],
         ["marker", "plasma 3-hydroxypropionate",
          "endpoint association (RR $0.7$, $95\\%$ CI $0.6$--$0.9$) and "
          "immunity to the carnitine sign reversal that disqualifies C3"],
@@ -1629,7 +1645,9 @@ def table_spec():
          "looser, which is what Remark~\\ref{rem:no_km} demanded"],
     ]
     write_table("tab_D_spec", ["", "what the record must contain", "why"], rows,
-                note="two tiers; Tier 2 is conditional on Tier 1 clearing the gate",
+                note="three tiers, ordered by dependency: Tier 2 is "
+                     "conditional on Tier 1 ruling out the alternative "
+                     "structure, and Tier 3 on Tier 2 clearing the gate",
                 #  every column ragged. Justified at these widths LaTeX
                 #  hyphenates the row labels mid-word ("preci-sion",
                 #  "vari-ability") and opens gaps inside the sentences, which
