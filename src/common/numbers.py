@@ -47,7 +47,131 @@ GENERATORS = {
     "decision": "audit/d13_decision_therapy.py",
     "profile": "audit/n6_profile_vs_crb.py",
     "transient": "audit/t1_transient_worth.py",
+    "reduction": "src/model_C/run.py",
+    "kesweep": "audit/t5_band_vs_ke.py",
+    "cohort": "audit/t6_cohort_with_kappa.py",
+    "reduction": "src/model_C/run.py",
+    "kesweep": "audit/t5_band_vs_ke.py",
+    "cohort": "audit/t6_cohort_with_kappa.py",
 }
+
+
+class DuplicateKey(Exception):
+    """A key given two different values."""
+
+
+class NumberBook(dict):
+    """
+    A dict of generated numbers that refuses to change a value silently.
+
+    THE BUG THIS EXISTS FOR. `track_pct` was the marker's departure AFTER a
+    tolerance-dependent settling window, keyed as though it were
+    tolerance-independent. Three quasi_steady_check() calls in one build each
+    ran .update() on it and whichever went last decided the value; the
+    artefact guard and `make figures` called that function a different number
+    of times in a different order and wrote 0.9861 and 4.9745 for the same
+    name. Nothing flagged it, because last-write-wins is silent.
+
+    A key with two values is worse than a stale one. A stale number is wrong
+    everywhere and can be caught by regenerating; a duplicated one is right on
+    the path that happened to run last and wrong on every other, so the two
+    paths have to disagree before anyone notices.
+
+    The check is at ACCUMULATION and not at the write, because that is where
+    the collision happens: by the time write_numbers() sees the dict it holds
+    one value and the other is gone. Rewriting a key with the SAME value is
+    allowed, since a generator legitimately called twice at the same settings
+    must not fail.
+    """
+
+    def __setitem__(self, key, value):
+        old = self.get(key, _MISSING)
+        if old is not _MISSING and not _same(old, value):
+            raise DuplicateKey(_explain({key: (old, value)}))
+        dict.__setitem__(self, key, value)
+
+    def update(self, other=(), **kw):
+        clashes = {}
+        items = dict(other, **kw) if other else dict(kw)
+        for k, v in items.items():
+            old = self.get(k, _MISSING)
+            if old is not _MISSING and not _same(old, v):
+                clashes[k] = (old, v)
+        if clashes:
+            raise DuplicateKey(_explain(clashes))
+        dict.update(self, items)
+
+    def setdefault(self, key, default=None):
+        if key not in self:
+            self[key] = default
+        return self[key]
+
+
+def _explain(clashes):
+    lines = "\n".join(f"    {k}: {a!r} then {b!r}"
+                       for k, (a, b) in sorted(clashes.items()))
+    return (f"{len(clashes)} generated key(s) given two different values:\n"
+            f"{lines}\n"
+            "  A generated key must name one quantity. If two callers compute\n"
+            "  different things, they need different keys; see\n"
+            "  quasi_steady_check's tolerance suffix for the pattern.")
+
+
+#: every (module, key) this process has written, and what it wrote.
+#:
+#: `track_pct` was the departure AFTER a tolerance-dependent settling window
+#: and was keyed as though it were tolerance-independent, so the three
+#: quasi_steady_check() calls in one build each overwrote it and whichever ran
+#: last decided the value. The guard and `make figures` called it a different
+#: number of times in a different order and wrote 0.9861 and 4.9745 for the
+#: same name. Nothing flagged it, because last-write-wins is silent.
+#:
+#: A key with two values is worse than a stale one: a stale number is wrong
+#: everywhere and a duplicated one is wrong only on some paths. So writing an
+#: existing key with a DIFFERENT value is an error, and writing it with the
+#: same value is fine -- a generator legitimately called twice at the same
+#: settings must not fail.
+_WRITTEN = {}
+
+
+def _check_duplicates(module, values):
+    """
+    The same rule across write_numbers() calls, for a module written twice.
+
+    NumberBook catches the collision inside one accumulating dict. This
+    catches a module whose generator is run twice in one process and produces
+    a different number the second time, which a fresh dict each time would
+    otherwise hide.
+    """
+    clashes = {}
+    for k, v in values.items():
+        seen = _WRITTEN.get((module, k), _MISSING)
+        if seen is not _MISSING and not _same(seen, v):
+            clashes[k] = (seen, v)
+        _WRITTEN[(module, k)] = v
+    if clashes:
+        raise DuplicateKey(f"into results/numbers/{module}.tex: "
+                           + _explain(clashes))
+
+
+class _Missing:
+    pass
+
+
+_MISSING = _Missing()
+
+
+def _same(a, b):
+    if isinstance(a, float) and isinstance(b, float):
+        if a != a and b != b:
+            return True
+        return a == b or abs(a - b) <= 1e-12 * max(abs(a), abs(b), 1.0)
+    return a == b
+
+
+def reset_duplicate_check():
+    """Forget what this process has written. For the guard's own self-test."""
+    _WRITTEN.clear()
 
 
 def write_numbers(module, values, formats=None, digits=4):
@@ -65,6 +189,7 @@ def write_numbers(module, values, formats=None, digits=4):
     hand, which is the habit this file exists to remove.
     """
     formats = formats or {}
+    _check_duplicates(module, values)
     NUMDIR.mkdir(parents=True, exist_ok=True)
     src = GENERATORS.get(module, f"an unregistered generator for {module!r}")
     lines = [f"%  generated by {src} -- do not edit",

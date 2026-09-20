@@ -30,6 +30,7 @@ from scipy.integrate import solve_ivp
 from scipy.optimize import least_squares
 
 from common.models import ParamsA, g, clearance_A
+from common.numbers import NumberBook
 from common.excitation import (phi, excitation, excitation_max, fold_range_for,
                                optimal_band, sd_log_theta, band_levels,
                                fold_range_for_precision,
@@ -92,7 +93,10 @@ LOAD_CV = 0.10
 #: by the name the text cites it under. Written to results/numbers/design.tex
 #: at the end of a run and quoted as \num{<key>}, so a literal in a sentence
 #: is checked the same way a table is.
-PAPER_NUMBERS = {}
+#: NumberBook, not a plain dict: this module's generators are called in
+#: different orders by `make figures` and by the artefact guard, and a key two
+#: of them disagree on then takes whichever value ran last. See NumberBook.
+PAPER_NUMBERS = NumberBook()
 
 #: the precision each quoted number is printed at, chosen to match the
 #: sentence that quotes it. A key with no entry is printed to four decimals.
@@ -1573,10 +1577,19 @@ def table_spec():
             N["sd_aliased_off"], rng("sd_aliased_off", digits=4)),
          "every draw lands at the same phase, the increment stops varying, "
          "and the therapy channel closes"],
+        #  the exclusion is on the FIT, not on the draw. A first-hour sample
+        #  is good data; it is inadmissible in a steady-state fit and in no
+        #  other sense, and the row used to say "no sample within one hour",
+        #  which forecloses the only window any dynamic estimator could use.
         ["sampling, the other exclusion",
-         "no sample within one hour of a dose",
+         r"\textbf{do not put a draw taken within one hour of a dose into "
+         r"the steady-state fit}. Such a draw may be taken, and is the only "
+         r"window that distinguishes the two structures of "
+         r"Section~\ref{sec:structuredep}; it is excluded from THIS fit, not "
+         r"from the protocol",
          "the marker is not at quasi-steady state there and a steady-state "
-         "fit does not apply to it"],
+         "fit does not apply to it. That is a constraint on the estimator "
+         "and not on the patient"],
         ["dosing record",
          "date, dose and product lot for every infusion",
          "$\\Delta(t_i)$ is a regressor, not a nuisance: it carries the "

@@ -33,6 +33,10 @@ figures:
 	$(PY) audit/n6_profile_vs_crb.py
 	@echo ">> the transient's worth, which Sections 4.1 and 6.2 quote"
 	$(PY) audit/t1_transient_worth.py
+	@echo ">> the band against the VALUE of k_e, which Section 6.2 quotes"
+	$(PY) audit/t5_band_vs_ke.py
+	@echo ">> the cohort coverage with the increment CV drawn (Section 5.5)"
+	$(PY) audit/t6_cohort_with_kappa.py
 	@echo ">> the design figures: phase clock, visits, calendar, conditioning"
 	$(PY) audit/g1_phase_clock.py
 	$(PY) audit/g2_visits_vs_sd.py

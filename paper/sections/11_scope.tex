@@ -106,6 +106,19 @@ fifteen times the draws, moves that edge only from $\num{band_lo_pct}\%$ to
 $\num{band_lo_dense_pct}\%$ of nominal. That $\num{band_dense_gain_pct}\%$ is the
 quantitative form of the sentence below: it is not a statement about sampling effort.
 
+\textbf{That band's location depends on the \emph{value} of $k_e$ and not only on how well
+it is known, which is worth separating because $k_e$ is the constant this paper states
+nothing supplies.} The enzymatic share is $1 - k_e m/L$, so quartering $k_e$ moves the band
+to $\num{band_lo_qtr_pct}\%$--$\num{band_hi_qtr_pct}\%$ of nominal and doubling it to
+$\num{band_lo_dbl_pct}\%$--$\num{band_hi_dbl_pct}\%$, and at four times the assumed value
+the gate is never met at any capacity. The requirement elsewhere in this paper, a factor of
+$\num{ke_needed_factor}$ on the prior, prices how well $k_e$ must be \emph{known}; this is
+the different question of where the band sits if the assumed value is wrong. The scope
+limit survives it, and not narrowly: \textbf{the disease would need
+$k_e = \num{ke_for_disease}$, fifty times smaller than the value carried here, for
+$\theta = 150$ to meet the gate at all}. So the limit is robust in direction and soft in
+location.
+
 One consequence follows for the dose and it is independent of the precision. The
 admissibility bound $\theta + \Delta_{\mathrm{peak}} \le$ normal is satisfied at the
 illustrative point only because the check reads $\theta$ as the \emph{residual} and infers
@@ -144,10 +157,12 @@ proposes.
 times the draws, moves the band's lower edge from $\num{band_lo_pct}\%$ to
 $\num{band_lo_dense_pct}\%$ of nominal. The disease is a factor of
 $\num{disease_factor}$ below it either way.
-\item \textbf{Sample the transient.} Eight post-dose draws move
-$\operatorname{sd}(\ln\hat\theta)$ by $\num{trans_gain_disease}\%$ here, because the
-transient sits $\num{trans_angle_disease}$ degrees from the direction the record is
-missing (Section~\ref{sec:collapse}).
+\item \textbf{Sample the transient.} Eight post-dose draws, placed where the information
+is, move $\operatorname{sd}(\ln\hat\theta)$ by $\num{trans_gain_disease}\%$ here and
+$\num{trans_gain_nominal}\%$ at nominal. The transient does carry what the steady record
+lacks, but it measures the load bias to $\pm\num{trans_b_disease}$ here against the
+diary's $\pm\num{trans_b_prior}$, and that channel was not the binding one
+(Section~\ref{sec:collapse}).
 \item \textbf{Measure the increment better.} Going from a $30\%$ coefficient of variation
 on the delivered increment to an exact one is worth $0.3\%$ at this capacity, against
 $88\%$ at nominal.
@@ -156,6 +171,17 @@ protein is worth $7\%$, and an implausible $\pm50\%$ swing $32\%$, leaving $2.32
 a target of $0.20$ (Section~\ref{sec:whoto}).
 \end{enumerate}
 
+\noindent
+All four are routes to \emph{precision on $\theta$}, and that is the only question they
+are closed on. The transient has a second job, and on that one it is not closed but
+recommended: it is the measurement that would say which structure a record came from
+(Section~\ref{sec:structuredep}), because the published alternative's marker is algebraic
+in the enzyme while a marker that is a state pins its own rate constant separately from
+the steady map. The two questions want the same blood draw and give opposite answers, and
+a reader who takes ``tested and closed'' to cover both will discard the one measurement
+this paper does ask for.
+
+\medskip
 \noindent
 This is the severely affected patient. The population in which the dosing question
 is most urgent is the population in which the record cannot answer it. This is not a statement about sampling effort: no schedule, no excursion and no precision on the dose

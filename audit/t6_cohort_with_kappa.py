@@ -121,6 +121,54 @@ def summarise(name, sd, extra=""):
     return frac, q[2]
 
 
+def cohort_numbers():
+    """
+    Section 5.5's coverage, with the increment CV drawn as a fifth factor.
+
+    The published sweep varies the four things that are properties of the
+    PATIENT -- capacity, half-saturation, alternative clearance, managed load
+    -- and holds fixed the one that is a property of the MEASUREMENT. It is
+    the measurement that has a floor: beyond an increment CV of about 18.7%
+    no number of monthly visits reaches the gate, and the published
+    per-subject repeatability runs to 50.84%.
+
+    Arm A is kept as a generated key so the published figure and the corrected
+    one cannot drift apart, and so a reader can see what changed.
+    """
+    from common.numbers import write_numbers
+    theta, Km, ke, lm, cv = draw()
+    seeds = 100 + np.arange(theta.size)
+    A = np.array([sd_for(t, k, e, l, s)
+                  for t, k, e, l, s in zip(theta, Km, ke, lm, seeds)])
+    C = np.array([sd_for(t, k, e, l, s, c)
+                  for t, k, e, l, s, c in zip(theta, Km, ke, lm, seeds, cv)])
+
+    def frac(v):
+        return 100.0 * np.mean(np.where(np.isfinite(v), v, np.inf) <= TARGET)
+
+    N = {
+        "cohort_n": theta.size,
+        "cov_exact_pct": frac(A),
+        "cov_drawn_pct": frac(C),
+        "cohort_med_exact": float(np.median(A[np.isfinite(A)])),
+        "cohort_med_drawn": float(np.median(C[np.isfinite(C)])),
+        "cohort_q1_drawn": float(np.percentile(C[np.isfinite(C)], 25)),
+        "cohort_q3_drawn": float(np.percentile(C[np.isfinite(C)], 75)),
+        "cv_floor_pct": 100.0 * CV_FLOOR,
+        "cv_hi_pct": 100.0 * CV_HI,
+        "above_floor_pct": 100.0 * float(np.mean(cv > CV_FLOOR)),
+        "unreachable_pct": 100.0 * float(np.mean(
+            (cv > CV_FLOOR) & np.isfinite(C) & (C > TARGET))),
+    }
+    fmt = {k: "{:.1f}" for k in N}
+    fmt.update({"cohort_n": "{:.0f}",
+                "cohort_med_exact": "{:.3f}", "cohort_med_drawn": "{:.3f}",
+                "cohort_q1_drawn": "{:.3f}", "cohort_q3_drawn": "{:.3f}",
+                "cv_floor_pct": "{:.1f}", "cv_hi_pct": "{:.1f}"})
+    write_numbers("cohort", N, fmt)
+    return N
+
+
 def main():
     print(__doc__)
     bar = "=" * 92
@@ -221,3 +269,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    cohort_numbers()

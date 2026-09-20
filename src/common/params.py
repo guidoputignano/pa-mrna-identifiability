@@ -466,15 +466,24 @@ PARENT = [
                  r"relaxation rate, $\tau_c = 1/(k[u(m)+\rho(m)])$, so it fixes the "
                  r"reduction's validity \emph{off} equilibrium even though it cancels from "
                  r"the curve, and nothing in this model fixes $k$ itself. \textbf{Cost}: "
-                 r"starting the two-state system with carnitine at a pre-perturbation value "
-                 r"and comparing against the reduced system, the peak relative error in $m$ "
-                 r"is $21.6\%$ at the assumed $k = 1$, falling as $1/k$ for larger $k$ "
-                 r"($8.5\%$ at $k=10$, $1.3\%$ at $k=100$) and saturating below it "
-                 r"($26.9\%$ at $k=0.1$), because a relative error cannot exceed order one. "
-                 r"Everything this paper computes from the parent is computed \emph{at} "
-                 r"equilibrium, where the reduction is an identity and the cost is zero; the "
-                 r"bound above is what a transient would cost and is the third reason "
-                 r"Section~\ref{sec:discussion} excludes the decompensation route",
+                 r"stepping the substrate load to $\num{illness_fold}$ times baseline, "
+                 r"which is the registered illness amplitude of the row above, with "
+                 r"carnitine held at its pre-perturbation value, the peak relative error in "
+                 r"$m$ against the reduced system is $\num{reduction_cost}\%$ at the "
+                 r"assumed $k = 1$, falling as $1/k$ for larger $k$ "
+                 r"($\num{reduction_cost_k10}\%$ at $k=10$, "
+                 r"$\num{reduction_cost_k100}\%$ at $k=100$) and saturating below it "
+                 r"($\num{reduction_cost_k0p1}\%$ at $k=0.1$), because a relative error "
+                 r"cannot exceed order one. \textbf{The perturbation is named because "
+                 r"without it the bound is not one}: an earlier version of this row gave "
+                 r"four percentages and no perturbation, and a $10\%$ load step reproduces "
+                 r"none of them, returning $9.9\%$ where this returns "
+                 r"$\num{reduction_cost}\%$. Everything this paper computes from the "
+                 r"parent is computed \emph{at} equilibrium, where the reduction is an "
+                 r"identity and the cost is zero. The bound above is what leaving "
+                 r"equilibrium costs, and \textbf{Section~\ref{sec:designsec}'s transient "
+                 r"leaves it}, so it is load-bearing there as well as being the third "
+                 r"reason Section~\ref{sec:discussion} excludes the decompensation route",
         kind=ELIMINATED, species="human",
         rests_on=r"cancels from the reduced clearance exactly, and nothing fixes it. Chosen for illustration; its cost off equilibrium is bounded in \S S2"),
 ]

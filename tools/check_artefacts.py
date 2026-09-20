@@ -196,6 +196,12 @@ def regenerate_tables(out):
         n1 = importlib.util.module_from_spec(spec_n1)
         spec_n1.loader.exec_module(n1)
         n1.km_numbers()
+        #  the reduction's off-equilibrium cost, which the k row of
+        #  the constants registry quotes as that constant's bound
+        C.reduction_cost_numbers()
+        #  the reduction's off-equilibrium cost, which the k row
+        #  of the constants registry quotes as that constant's bound
+        C.reduction_cost_numbers()
         #  the m_tol window, which the registry's m_tol row quotes as that
         #  convention's cost; it is produced by the fibre-margin figure
         A.fig_margin_fibre()
@@ -230,7 +236,7 @@ def check_regenerated(live=None):
         #  the generated numbers file, compared the same way
         #  decision.tex and profile.tex are written by the slow generators and
         #  are covered by --working-tree after `make figures`, not here
-        for stem in ("design", "scope", "kmcost", "local"):
+        for stem in ("design", "scope", "kmcost", "local", "reduction"):
             nums = Path(tmp) / "numbers" / f"{stem}.tex"
             here = ROOT / "results" / "numbers" / f"{stem}.tex"
             if not nums.exists():
@@ -317,6 +323,135 @@ def check_working_tree():
     return not real
 
 
+def _bodies(text):
+    """{function name: its source text}, for module-level defs only."""
+    out, name, buf = {}, None, []
+    for line in text.splitlines(keepends=True):
+        m = re.match(r"def (\w+)\(", line)
+        if m:
+            if name:
+                out[name] = "".join(buf)
+            name, buf = m.group(1), [line]
+        elif name is not None:
+            if line and not line[0].isspace() and line.strip():
+                out[name] = "".join(buf)
+                name, buf = None, []
+            else:
+                buf.append(line)
+    if name:
+        out[name] = "".join(buf)
+    return out
+
+
+def _reachable_from_main(text, main_body):
+    """
+    Every module-level function the __main__ block reaches, transitively.
+
+    A literal scan of the __main__ block is not enough: n1's km_numbers() and
+    n4's scope_numbers() are called from main(), and design/run.py's
+    spec_numbers() from table_spec(). Those are reachable and the first
+    version of this check called all three broken. What it must catch is a
+    generator NOTHING in the build reaches, which is a graph question.
+    """
+    bodies = _bodies(text)
+    seen, stack = set(), [fn for fn in bodies if f"{fn}(" in main_body]
+    while stack:
+        fn = stack.pop()
+        if fn in seen:
+            continue
+        seen.add(fn)
+        body = bodies.get(fn, "")
+        stack.extend(g for g in bodies if g not in seen and f"{g}(" in body)
+    return seen
+
+
+def check_generators_reachable():
+    """
+    Every *_numbers() function must be reachable from `make figures`.
+
+    THREE INSTANCES OF ONE BUG, found in a single session and all invisible:
+
+      * src/design/run.py defined quasi_steady_check() and its __main__ never
+        called it, so `make figures` wrote a design.tex five keys short;
+      * audit/t1_transient_worth.py defined transient_numbers() and nothing
+        called it, so the build ran the file and left transient.tex untouched;
+      * that file was not in the Makefile at all.
+
+    All three survived because THIS GUARD'S FAST PATH called the generators
+    directly while the build did not, so both paths were green and they were
+    green about different things. A generator the build cannot reach is a
+    generator that cannot catch drift, which is the one job it has.
+
+    The check is static: find every `def *_numbers()` and every module that
+    writes a numbers file, and require each to be named by a Makefile recipe
+    line AND to be called from that module's own `__main__` block.
+    """
+    mk = (ROOT / "Makefile").read_text()
+    figures = mk.split("figures:", 1)[1].split("\n\n", 1)[0] if "figures:" in mk else ""
+    problems = []
+    seen = 0
+    for py in sorted(list((ROOT / "src").rglob("*.py"))
+                     + list((ROOT / "audit").glob("*.py"))):
+        text = py.read_text()
+        if "write_numbers(" not in text:
+            continue
+        rel = str(py.relative_to(ROOT))
+        if py.name == "numbers.py":
+            continue
+        seen += 1
+        if rel not in figures:
+            problems.append(f"{rel} writes a numbers file and no `make "
+                            f"figures` recipe line runs it")
+            continue
+        main = text.split('if __name__ == "__main__":', 1)
+        if len(main) < 2:
+            problems.append(f"{rel} writes a numbers file and has no "
+                            f"__main__ block, so the build cannot reach it")
+            continue
+        reached = _reachable_from_main(text, main[1])
+        for fn in re.findall(r"^def (\w*numbers)\(", text, re.M):
+            if fn not in reached:
+                problems.append(f"{rel} defines {fn}() and nothing "
+                                f"__main__ runs ever calls it")
+        #  a module whose numbers come from helpers rather than a
+        #  *_numbers() function: require the write itself to be reachable
+        if not re.search(r"^def \w*numbers\(", text, re.M):
+            owner = [fn for fn in _bodies(text)
+                     if "write_numbers(" in _bodies(text)[fn]]
+            if owner and not any(fn in reached for fn in owner):
+                problems.append(f"{rel} calls write_numbers() only from "
+                                f"{', '.join(owner)}, which __main__ never "
+                                f"reaches")
+    #  the same standard C2 of audit/n2_table2_recheck.py holds itself to: a
+    #  check that cannot be shown to fail is not evidence. These are the three
+    #  shapes actually found, written out.
+    probe_ok = []
+    probe = ('def foo_numbers():\n    write_numbers("x", {})\n\n'
+             'def main():\n    print(1)\n\n'
+             'if __name__ == "__main__":\n    main()\n')
+    probe_ok.append("foo_numbers" not in
+                    _reachable_from_main(probe, probe.split(
+                        'if __name__ == "__main__":', 1)[1]))
+    probe2 = probe.replace("    print(1)", "    foo_numbers()")
+    probe_ok.append("foo_numbers" in
+                    _reachable_from_main(probe2, probe2.split(
+                        'if __name__ == "__main__":', 1)[1]))
+    probe3 = ('def foo_numbers():\n    write_numbers("x", {})\n\n'
+              'if __name__ == "__main__":\n    foo_numbers()\n')
+    probe_ok.append("foo_numbers" in
+                    _reachable_from_main(probe3, probe3.split(
+                        'if __name__ == "__main__":', 1)[1]))
+    if not all(probe_ok):
+        problems.append("the reachability check's own self-test failed: "
+                        f"{probe_ok}")
+    print(f"  {seen} numbers-file generator(s) checked for reachability from "
+          f"`make figures` (self-test: "
+          f"{'PASS' if all(probe_ok) else 'FAIL'})")
+    for why in problems:
+        print(f"    {why}")
+    return not problems
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--working-tree", action="store_true",
@@ -324,6 +459,10 @@ def main():
                          "regenerating the tables")
     args = ap.parse_args()
     ok = check_working_tree() if args.working_tree else check_regenerated()
+    #  run in BOTH modes: the reachability question is about the build, and
+    #  the fast path is precisely the place where a build-unreachable
+    #  generator looks fine.
+    ok = check_generators_reachable() and ok
     print("  ARTEFACTS MATCH THE CODE" if ok else "  ARTEFACTS HAVE DRIFTED")
     return 0 if ok else 1
 

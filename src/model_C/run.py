@@ -44,7 +44,7 @@ from scipy.optimize import brentq, minimize_scalar
 
 from common.models import (ParamsB, ParamsC, g, alt_flux_C, clearance_B,
                            clearance_C_quasistatic, equilibria_nonmonotone,
-                           steady_state)
+                           rhs_C, steady_state)
 from common.style import (save, figsize, GREEN, RED, BLUE, AMBER, GREY, MUTED,
                           corner, over_x, at_point)
 
@@ -52,6 +52,11 @@ from common.style import (save, figsize, GREEN, RED, BLUE, AMBER, GREY, MUTED,
 PC = ParamsC()
 PB = ParamsB()
 S_BASE = 600.0          # baseline substrate load, illustrative
+#: the registered illness amplitude, as a fold of baseline load. It is
+#: the `s_pk/s_base` row of the constants registry, and it is what the
+#: reduction-cost bound below perturbs with, so the bound names a
+#: perturbation the model already carries rather than one chosen for it.
+from common.params import ILLNESS_FOLD  # noqa: E402
 Y_MAX = 2600.0          # top of the basin panel, named once
 
 # Model B matched to Model C at the same operating point, for a fair
@@ -643,6 +648,65 @@ def identification_cost_of_Kc(values=(25, 50, 100, 150, 200, 300, 400, 800),
     return out
 
 
+def reduction_cost_numbers(ks=(0.1, 1.0, 10.0, 100.0)):
+    """
+    What the quasi-steady reduction costs OFF equilibrium, at four k.
+
+    WHY THIS IS NOW LOAD-BEARING. Section 2.3 justifies eliminating the
+    carnitine state algebraically: `c-dot = 0` holds exactly at any fixed
+    point, so at equilibrium the two formulations are one equation rearranged
+    and the cost is zero. Every steady-state number in the paper is computed
+    at equilibrium, and while that was the whole of the paper the k row could
+    bound the off-equilibrium cost loosely. It cannot now: the moment a
+    transient enters the specification, the reduction's validity OFF
+    equilibrium is what the transient rests on, and this row is the only thing
+    bounding it.
+
+    THE PERTURBATION, STATED, which is the point of this function. The row
+    used to quote 21.6% at k = 1 without saying what produced it, and the
+    figure was not reproducible: a 10% load step gives 9.91% and the model's
+    own illness gives 31.79%, a factor of three apart, both with the same
+    asymptotic 1/k. A bound whose two readings differ by three is not a bound.
+
+    So the perturbation is the one the model already carries: a step in the
+    substrate load to `ILLNESS_FOLD` times baseline, which is the registered
+    illness amplitude, with carnitine starting at its pre-perturbation value.
+    That is the largest defensible reading, and a cost bound should be the
+    largest defensible reading rather than the median of several.
+    """
+    from common.numbers import write_numbers
+    s_ill = S_BASE * ILLNESS_FOLD
+    roots, st = equilibria_nonmonotone(clearance_C_quasistatic, PC, S_BASE)
+    m0 = float(roots[st][0])
+    out = {}
+    for k in ks:
+        c0 = PC.R0 / (k * (m0 / (PC.Kc + m0)
+                           + PC.rho0 * (1.0 + m0 / PC.Mi)))
+        red = solve_ivp(
+            lambda t, y: [s_ill - clearance_C_quasistatic(y[0], PC)],
+            (0.0, 160.0), [m0], rtol=1e-10, atol=1e-12,
+            dense_output=True, method="Radau", max_step=0.5)
+        two = solve_ivp(
+            lambda t, y: rhs_C(t, y, PC, lambda _: s_ill, k=k),
+            (0.0, 160.0), [m0, c0], rtol=1e-10, atol=1e-12,
+            dense_output=True, method="Radau", max_step=0.5)
+        tt = np.linspace(0.0, 160.0, 8000)
+        a, b = two.sol(tt)[0], red.sol(tt)[0]
+        out[k] = 100.0 * float(np.max(np.abs(a - b) / b))
+    N = {"reduction_cost": out[1.0],
+         "reduction_cost_k10": out[10.0],
+         "reduction_cost_k100": out[100.0],
+         "reduction_cost_k0p1": out[0.1],
+         "illness_fold": ILLNESS_FOLD}
+    write_numbers("reduction", N,
+                  {k: "{:.1f}" for k in N if k != "illness_fold"}
+                  | {"illness_fold": "{:.2f}"})
+    for k in ks:
+        print(f"    k = {k:6.1f}: peak relative error in m "
+              f"{out[k]:6.2f}% on a step to {ILLNESS_FOLD:.2f}x baseline")
+    return N
+
+
 def collapse_check(n=12, seed=0):
     """
     Is theta_crit a function of the peak of alpha alone?
@@ -679,3 +743,4 @@ if __name__ == "__main__":
     table_shape()
     collapse_check()
     identification_cost_of_Kc()
+    reduction_cost_numbers()

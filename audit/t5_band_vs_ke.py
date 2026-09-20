@@ -42,6 +42,8 @@ KM, TH0, KE0 = 100.0, 3000.0, 5.0
 LB = load(0.0)
 KE_PRIOR_LOG = 0.8
 GATE = 0.20
+#: the residual-activity reference the paper adopts throughout
+REFERENCE = 0.05
 MONTHLY = np.arange(0.0, 730.0, 30.4)
 INC = np.asarray(delta(MONTHLY), float)
 
@@ -101,6 +103,39 @@ def band(ke, lo=100.0, hi=1e6):
     e_lo = brentq(f, grid[j], grid[j + 1], xtol=1.0) if j is not None else None
     e_hi = brentq(f, grid[k - 1], grid[k], xtol=1.0) if k is not None else None
     return e_lo, e_hi, float(vals[i]), float(grid[i])
+
+
+def kesweep_numbers():
+    """
+    The band's location against the VALUE of k_e, as generated numbers.
+
+    Section 6.2 quotes the working band at the assumed k_e = 5 and prices how
+    well that constant must be KNOWN. Where the band sits if the assumed value
+    is wrong is a different question, and it is the one that matters most,
+    because k_e is the constant the paper states nothing in the literature
+    supplies. The answer is that the limit is robust in direction and soft in
+    location, and the figure that makes it safe rather than fragile is the
+    last key here: the k_e at which the disease itself would meet the gate.
+    """
+    from common.numbers import write_numbers
+    N = {}
+    for mult, tag in ((0.25, "qtr"), (2.0, "dbl")):
+        lo, hi, _, _ = band(KE0 * mult)
+        N[f"band_lo_{tag}_pct"] = 100.0 * lo / TH0
+        N[f"band_hi_{tag}_pct"] = 100.0 * hi / TH0
+    N["share_5pct_half"] = 100.0 * share(REFERENCE * TH0, 0.5 * KE0)
+    try:
+        N["ke_for_disease"] = brentq(
+            lambda k: over(REFERENCE * TH0, k) - GATE, 1e-4, 5.0, xtol=1e-4)
+    except ValueError:
+        #  no k_e in the bracket opens the disease range. That is a result and
+        #  not a missing number, so it is written as one the text can print.
+        N["ke_for_disease"] = float("nan")
+    write_numbers("kesweep", N,
+                  {"band_lo_qtr_pct": "{:.0f}", "band_hi_qtr_pct": "{:.0f}",
+                   "band_lo_dbl_pct": "{:.0f}", "band_hi_dbl_pct": "{:.0f}",
+                   "share_5pct_half": "{:.1f}", "ke_for_disease": "{:.4f}"})
+    return N
 
 
 def main():
@@ -181,3 +216,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    kesweep_numbers()

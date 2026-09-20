@@ -71,6 +71,11 @@ LB = load(0.0)
 KE_PRIOR_LOG = 0.8
 GATE = 0.20
 HOUR = 1.0 / 24.0
+#: the post-dose settling window at the 1% tolerance, which the data
+#: specification excludes from the steady-state fit. It is quoted here
+#: because the excluded window and the informative one are the same
+#: window, which is the point Section 4.4 now has to make.
+SETTLE_1PCT = 1.30
 
 #: a late dose instant, so the train is at its steady peak and trough rather
 #: than still filling; the first dose of the record is not representative
@@ -243,45 +248,88 @@ def parent_gap(theta):
 
 def transient_numbers():
     """
-    The four figures Section 4.1 quotes, generated rather than typed.
+    The figures Sections 4.1 and 6.2 quote, generated rather than typed.
 
-    Only what the paper carries: what eight post-dose samples move at each
-    capacity, what they move for k_e, the angle between the transient and the
-    degeneracy, and the excursion in assay sigmas.
+    WHAT CHANGED, AND WHY THE OLD KEY SET WAS WRONG.
+
+    `trans_angle_*` is GONE and is not replaced. It took the top right
+    singular vector of the transient's sensitivity matrix and the bottom
+    eigenvector of the record's information matrix and dotted them in a basis
+    that mixes three log-parameters with b in umol/L/day. Those are not
+    commensurable objects and the angle between them has no referent: at
+    nominal capacity it read 89.7 degrees, "orthogonal", while the transient
+    carried 6.3 times the record's own information ALONG THAT SAME DIRECTION.
+    Correcting the number would preserve the impression that something had
+    been measured, so the key is deleted.
+
+    The claim it was used to support is false. The relaxation rate is
+    (theta + Delta) g'(m) + k_e, which is NOT constant along the load-bias
+    fibre: at b = 0 it is 29.79/d and at b = 400 it is 59.96/d, a factor of
+    two between two points the steady record declares identical. Integrating
+    through one dose at both ends separates them by 2.8 assay sigma at fifteen
+    minutes. The transient is not orthogonal to the degeneracy.
+
+    THE WINDOW. The old gains put eight draws over 0.25 to 6 h, which is four
+    to eight times worse than the best placement: the information lives in the
+    first hour and only three of those eight draws fell in it. A route has to
+    be closed at its best placement or it is not closed, so the gains below
+    are at 0.05 to 1.0 h, and `trans_gain_late_*` reports what the paper's own
+    post-dose exclusion leaves.
+
+    WHY IT IS STILL CLOSED, which is the C2 finding restated: eight draws pin
+    the load bias to +/- `trans_b_*` against the diary prior's
+    `trans_b_prior`, ten to thirty times looser, and dropping that prior
+    altogether costs almost nothing anyway. The transient aims at the channel
+    the load record was never binding through.
     """
     from common.numbers import write_numbers
     monthly = np.arange(0.0, 730.0, 30.4)
-    N = {}
+    BEST = (0.05, 1.0)
+    LATE = (SETTLE_1PCT, 6.0)
+    N = {"trans_window_lo": BEST[0], "trans_window_hi": BEST[1],
+         "trans_late_lo": LATE[0],
+         "trans_b_prior": LOAD_FRAC * LB}
     for th, tag in ((3000.0, "nominal"), (150.0, "disease")):
         S = [steady_block(th, monthly, s) for s in SEEDS]
-        tb = transient_block(th, post_times(8))
-        base = median_spread([sds(prior_block() + F)[0] for F in S])[0]
-        with8 = median_spread([sds(prior_block() + F + tb)[0] for F in S])[0]
-        ke0 = median_spread([sds(prior_block() + F)[1] for F in S])[0]
-        ke8 = median_spread([sds(prior_block() + F + tb)[1] for F in S])[0]
-        N["trans_gain_" + tag] = 100.0 * (1.0 - with8 / base)
-        N["trans_ke_gain_" + tag] = 100.0 * (1.0 - ke8 / ke0)
-        #  the angle between the transient's best direction and the record's worst
-        worst = np.linalg.eigh(prior_block() + S[0])[1][:, 0]
-        worst = worst / np.linalg.norm(worst)
-        te = post_times(8)
-        base_p = dict(theta=th, Km=KM, ke=KE, b=0.0)
-        cols = []
-        for name, step in (("theta", 1e-5 * th), ("Km", 1e-5 * KM),
-                           ("b", 1e-5 * LOAD_FRAC * LB), ("ke", 1e-5 * KE)):
-            hi, lo = dict(base_p), dict(base_p)
-            hi[name] = base_p[name] + step
-            lo[name] = base_p[name] - step
-            d = (_traj(t_eval=te, **hi) - _traj(t_eval=te, **lo)) / (2.0 * step)
-            cols.append(d * base_p[name] if name != "b" else d)
-        vt = np.linalg.svd(np.stack(cols, axis=-1), full_matrices=False)[2]
-        best = vt[0] / np.linalg.norm(vt[0])
-        N["trans_angle_" + tag] = float(
-            np.degrees(np.arccos(min(abs(float(best @ worst)), 1.0))))
-        m = _traj(th, KM, KE, 0.0, np.r_[1e-9, te])
+        P0 = prior_block()
+        flat = np.diag([0.0, 0.0, 0.0, 1.0 / KE_PRIOR_LOG ** 2])
+
+        def med(F_extra, mat=P0, which=0):
+            return median_spread([sds(mat + F + F_extra)[which]
+                                  for F in S])[0]
+
+        zero = np.zeros((4, 4))
+        tb8 = transient_block(th, np.geomspace(*BEST, 8) * HOUR)
+        tb20 = transient_block(th, np.geomspace(*BEST, 20) * HOUR)
+        tbl = transient_block(th, np.geomspace(*LATE, 8) * HOUR)
+
+        base = med(zero)
+        N["trans_base_" + tag] = base
+        N["trans_gain_" + tag] = 100.0 * (1.0 - med(tb8) / base)
+        N["trans_gain20_" + tag] = 100.0 * (1.0 - med(tb20) / base)
+        N["trans_gain_late_" + tag] = 100.0 * (1.0 - med(tbl) / base)
+        ke0 = med(zero, which=1)
+        N["trans_ke_gain_" + tag] = 100.0 * (1.0 - med(tb8, which=1) / ke0)
+        #  what the record is worth with NO prior on the load bias, which is
+        #  what a route that replaced the diary would have to beat
+        N["trans_noprior_" + tag] = med(zero, mat=flat)
+        #  and what the transient alone says about that bias
+        F = tb8 + flat
+        w = np.linalg.eigvalsh(F)
+        N["trans_b_" + tag] = (float(np.sqrt(np.linalg.inv(F)[2, 2]))
+                               if w[0] > 1e-12 * w[-1] else float("inf"))
+        m = _traj(th, KM, KE, 0.0, np.r_[1e-9, np.geomspace(0.25, 6.0, 8) * HOUR])
         N["trans_sigmas_" + tag] = abs(m[0] - m[-1]) / sigma_marker(th)
-    fmt = {k: ("{:.1f}" if "angle" in k or "sigmas" in k else "{:.1f}")
-           for k in N}
+    fmt = {k: "{:.1f}" for k in N}
+    fmt.update({"trans_window_lo": "{:.2f}", "trans_window_hi": "{:.1f}",
+                "trans_late_lo": "{:.2f}", "trans_b_prior": "{:.1f}",
+                "trans_base_nominal": "{:.4f}", "trans_base_disease": "{:.4f}",
+                "trans_noprior_nominal": "{:.4f}",
+                "trans_noprior_disease": "{:.4f}",
+                "trans_b_nominal": "{:.0f}", "trans_b_disease": "{:.0f}",
+                "trans_ke_gain_nominal": "{:.2f}",
+                "trans_gain_late_nominal": "{:.2f}",
+                "trans_gain_late_disease": "{:.2f}"})
     write_numbers("transient", N, fmt)
     return N
 

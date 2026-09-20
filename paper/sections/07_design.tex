@@ -74,8 +74,10 @@ $\num{timescale_ratio}$ that the code
 measures rather than asserts, so the marker is in quasi-steady state at every sampling
 instant a clinic could use and \eqref{eq:infofilter} is exact rather than approximate.
 One number in that calculation is for a protocol: a sample drawn inside the first hour
-after a dose is not at a steady state and does not belong in a steady-state fit, which
-Section~\ref{sec:admissible} makes precise.
+after a dose is not at a steady state and does not belong in a steady-state \emph{fit},
+which Section~\ref{sec:admissible} makes precise. That is a constraint on the estimator
+and not on the patient, and the difference matters: such a draw is good data, and it is
+the only window that separates this paper's structure from the published alternative.
 
 \begin{figure}[htbp]
 \centering
@@ -208,23 +210,39 @@ rather than on the absolute number.
 draws sample only the slow variable, and within a few multiples of $\num{tau_hours}$ hours
 after an infusion the balance is not algebraic, so a transient is the obvious thing to
 reach for: there the observation might separate $k_e$ from $K_m$ and measure the one
-parameter whose prior the design rests on. \textbf{Measured, it does not.} Eight post-dose
-draws added to the recommended record move $\operatorname{sd}(\ln\hat\theta)$ by
-$\num{trans_gain_nominal}\%$ at nominal capacity and $\num{trans_gain_disease}\%$ at
-$5\%$ of nominal, and move $\operatorname{sd}(\ln\hat k_e)$ by
-$\num{trans_ke_gain_nominal}\%$ and $\num{trans_ke_gain_disease}\%$.
+parameter whose prior the design rests on. It does carry information the steady record
+does not. The relaxation rate is $(\theta+\Delta)\,g'(m) + k_e$, which is \emph{not}
+constant along the fibre \eqref{eq:fibrecl}: at $b=0$ it is $29.79$~d$^{-1}$
+and at $b=400$ it is $59.96$~d$^{-1}$, a factor of two between two parameter points the
+steady record declares identical, and integrating through one dose at both of them
+separates the trajectories by $2.8$ assay standard deviations fifteen minutes after the
+infusion.
 
-The reason is geometric and not statistical, and it is worth carrying. The transient is
-not weak: the marker falls through $\num{trans_sigmas_disease}$ assay standard deviations
-in six hours at a disease-range capacity. But its best-determined direction sits
-$\num{trans_angle_disease}$ degrees from the record's worst-determined one, so it
-re-measures, with great precision, what the monthly record already knows. That is the
-pattern of Section~\ref{sec:discussion} once more: magnitude is the wrong axis. A
-transient would also cost the observation model, since at steady state the marker need
-only track the substrate monotonically whereas during a transient it must track it with
-the right time constant, which nothing in the literature establishes. Tier~1 of
-Section~\ref{sec:spec} asks for the measurement that would begin to settle that, and it
-is a better use of the same effort.
+\textbf{It is nonetheless closed, and the reason is the one Section~\ref{sec:tier2load}
+gives.} Eight post-dose draws placed where the information actually is, over the first
+$\num{trans_window_hi}$ hour, move $\operatorname{sd}(\ln\hat\theta)$ by
+$\num{trans_gain_nominal}\%$ at nominal capacity and $\num{trans_gain_disease}\%$ at $5\%$
+of nominal; twenty draws move it by $\num{trans_gain20_nominal}\%$ and
+$\num{trans_gain20_disease}\%$. What they are measuring is the load bias, and they measure
+it badly: eight draws pin $b$ to $\pm\num{trans_b_nominal}$ at nominal capacity and
+$\pm\num{trans_b_disease}$ in the disease range, against the $\pm\num{trans_b_prior}$ the
+diary already supplies. A route that could retire the dietary record would have to beat
+that prior, and this one is ten to thirty times looser than it. It could not help much in
+any case: removing the load-bias prior altogether moves the recommended record only from
+$\num{trans_base_nominal}$ to $\num{trans_noprior_nominal}$, because what the load record
+has to deliver is per-visit precision entering through $\sigma$ and not a calibrated mean
+offset, and a post-dose draw is an assay reading carrying its own $\sigma$.
+
+\textbf{And the window the information lives in is the window the specification excludes.}
+The same eight draws restricted to after the settling window, $\num{trans_late_lo}$ hours
+onwards, are worth $\num{trans_gain_late_nominal}\%$. The marker is not weak there --- it
+falls through $\num{trans_sigmas_disease}$ assay standard deviations in six hours at a
+disease-range capacity --- but by then it has arrived. Section~\ref{sec:tier2phase} states
+the exclusion in the form that does not foreclose this. A transient would also cost the
+observation model, since at steady state the marker need only track the substrate
+monotonically whereas during a transient it must track it with the right time constant,
+which nothing in the literature establishes. Tier~1 of Section~\ref{sec:spec} asks for the
+measurement that would begin to settle that, and it is a better use of the same effort.
 
 \subsection{What the therapy schedule can be asked to do}
 \label{sec:route}
@@ -337,7 +355,7 @@ discovered at the first missed visit.}
 Read together these say that the schedule a protocol should write is monthly
 across dose cycles, offset so that it is not a multiple of the dose interval,
 booked on the weekday each target phase forces (Figure~\ref{fig:E3}), with no
-draw inside the first hour after a dose. Nothing in that list costs a patient anything, and
+first-hour draw entering the steady-state fit. Nothing in that list costs a patient anything, and
 Figure~\ref{fig:E2} is the argument for stopping at about a dozen visits rather
 than extending the record: past the point where the curve meets its own floor,
 further visits buy a precision the prior and not the data would be supplying.
@@ -366,17 +384,32 @@ is in the supplement, \S S1.}
 \input{../results/tables/tab_S_admissible_compact}
 \end{table}
 
-\paragraph{The settling window, and the two definitions of it.} How long after
+\paragraph{The settling window, and the two definitions of it.}
+\label{sec:tier2phase}
+How long after
 a dose the marker is still catching up is a tolerance and not a constant, and
 the paper quotes two numbers for it because there are two tolerances. At the
 $5\%$ tolerance used in Section~\ref{sec:collapse} the window is
 $\num{settle_hours}$~hours; at a $1\%$ tolerance it is
 $\num{settle_hours_1pct}$~hours. Neither
-changes the rule, which is that no draw belongs inside it, and the recommended
-schedule satisfies that as constructed: none of its draws falls in the window
-at either tolerance. The window matters more in value than in time. It is
-$0.4\%$ of the dose cycle, but the phase it removes is the peak, so excluding
-it costs about a tenth of the reachable increment range.
+changes the rule, and the recommended schedule satisfies it as constructed:
+none of its draws falls in the window at either tolerance. The window matters
+more in value than in time. It is $0.4\%$ of the dose cycle, but the phase it
+removes is the peak, so excluding it costs about a tenth of the reachable
+increment range.
+
+\textbf{The rule is that no draw inside the window belongs in the
+\emph{steady-state fit}, and it must not be written any wider than that.} A
+draw taken fifteen minutes after an infusion is not bad data. It is
+inadmissible in a fit that assumes the balance is algebraic, and in no other
+sense, and it is the one measurement that tells this paper's structure from
+the published alternative of Section~\ref{sec:structuredep}: that alternative's
+marker is an algebraic function of the enzyme and has no relaxation of its own,
+so the two structures agree everywhere on the steady map and differ only inside
+this window. Written as ``no sample within one hour of a dose'' the
+specification permanently forecloses the only informative window for any future
+dynamic estimator, at no gain to the fit it was protecting. It is written as a
+rule about the fit in Table~\ref{tab:spec} accordingly.
 
 \paragraph{The capacity ceiling, and what it allows the dose to be.} The
 constraint that binds on dose is that capacity plus the peak increment cannot

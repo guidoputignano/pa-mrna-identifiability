@@ -322,14 +322,27 @@ the largest national cohort cited numbers eighty-four patients~\cite{saudi84}, %
 and the trial that established the therapy enrolled sixteen~\cite{trial_phase12}. % C16
 Two thousand is a substantial fraction of every diagnosed patient alive.
 
-\paragraph{And the design does not reach every patient in a cohort.} Across four thousand
-simulated patients, log-uniform over $\theta$ and $K_m$ (nine-fold each), $k_e$ (the prior's
-own factor of $2.2$) and managed load (four-fold), every range assumed and none measured,
-the achieved precision has median $0.192$, quartiles $0.132$ and $0.329$, and just over half
-meet the $0.20$ target. The $\num{sd_monthly}$ quoted throughout is one patient, the illustrative set,
-and it is a sampling spread rather than an interval half-width
-(Remark~\ref{rem:curvature}). \emph{The design confirms identifiability in a cohort; it does
-not deliver the stated precision to every patient in one.}
+\paragraph{And the design does not reach every patient in a cohort.} Across
+$\num{cohort_n}$ simulated patients, log-uniform over $\theta$ and $K_m$ (nine-fold each),
+$k_e$ (the prior's own factor of $2.2$), managed load (four-fold) and the delivered
+increment's coefficient of variation (the published per-subject range, to
+$\num{cv_hi_pct}\%$), every range assumed and none measured, the achieved precision has
+median $\num{cohort_med_drawn}$, quartiles $\num{cohort_q1_drawn}$ and
+$\num{cohort_q3_drawn}$, and \textbf{just over a third meet the $0.20$ target}:
+$\num{cov_drawn_pct}\%$. With the increment held exactly known, which is the footing every
+other number in this paper is computed on, the same cohort gives
+$\num{cov_exact_pct}\%$ --- just over half --- and that difference is the whole of what
+Tier~1 is for.
+
+\textbf{And a fifth of the cohort is not short of the target but out of reach of it.} The
+floor above means that $\num{above_floor_pct}\%$ of these patients draw an increment
+coefficient of variation past $\num{cv_floor_pct}\%$, and $\num{unreachable_pct}\%$ both
+draw past it and miss: for those, no schedule and no number of visits reaches $0.20$,
+which is a different statement from missing it on a two-year record. The
+$\num{sd_monthly}$ quoted throughout is one patient, the illustrative set, and it is a
+sampling spread rather than an interval half-width (Remark~\ref{rem:curvature}).
+\emph{The design confirms identifiability in a cohort; it does not deliver the stated
+precision to every patient in one, and for some it cannot.}
 
 Two mechanisms produce that. The strongest correlate of the achieved $\operatorname{sd}$ is
 $\Delta/\theta$ at $+0.56$ on logs, alongside $K_m$ at $+0.59$: the increment is fixed in
