@@ -22,7 +22,7 @@ not known, and by the last row does not need to be.}
 Every requirement in the table was solved for rather than chosen: holding the rest of the
 design fixed, how well would this one quantity have to be known for monthly sampling to land
 exactly on $\operatorname{sd}(\ln\hat\theta) = 0.20$? The $\num{kappa_monthly_pct}\%$ on the delivered
-increment and the factor of $2.7$ on $k_e$ are those answers; the precisions quoted against
+increment and the factor of $\num{ke_needed_factor}$ on $k_e$ are those answers; the precisions quoted against
 each schedule are forward evaluations of the same information matrix. No requirement was an
 input to itself. Exactly one row is a measurement rather than a computation, the
 between-visit repeatability in Tier~1~\cite{breath_test_mma}, and it is there to show that
@@ -46,7 +46,7 @@ on.
 Why it is first. By Section~\ref{sec:excitation} the therapy channel is what makes
 $\theta$ identifiable, and \eqref{eq:dosereq} is stated in units of $\theta$: the ratio
 $\Delta/\theta$ is only as well known as $\Delta$ is. Section~\ref{sec:designsec} turns
-that into one number: the delivered increment must be characterised to about $12\%$ for
+that into one number: the delivered increment must be characterised to $\num{kappa_monthly_pct}\%$ for
 monthly sampling to reach the $20\%$ target on $\theta$. Everything the therapy
 channel buys is conditional on that, and it has never been measured.
 
@@ -97,13 +97,15 @@ one that does not, does not, whatever its density.
 Do not sample on dosing days, or at any multiple of the dose interval
 (Remark~\ref{rem:aliasing}). ``Draw bloods when the patient attends for dosing'' is the
 natural thing to write and it is the one schedule that destroys the result: every draw
-lands at the same phase, the range of $\Delta/\theta$ collapses from $1.95$ to $0.13$, and
-$\operatorname{sd}(\ln\hat\theta)$ goes from $\num{sd_monthly}$ to $\num{sd_aliased}$, a factor of $\num{alias_cost}$ ($21$ to
-$33$ across intake records). Moving the schedule half a
+lands at the same phase, the range of $\Delta/\theta$ collapses from $\num{delta_range_monthly}$ to
+$\num{delta_range_aliased}$, and
+$\operatorname{sd}(\ln\hat\theta)$ goes from $\num{sd_monthly}$ to $\num{sd_aliased}$, a factor of $\num{alias_cost}$ ($\num{alias_cost_lo}$ to
+$\num{alias_cost_hi}$ across intake records). Moving the schedule half a
 day recovers it.
 
-The ranges those schedules span of the dose cycle are $1.84$ monthly, $1.99$ at $14.5$ days
-and $0.13$ fortnightly, and the supplement, \S S1, draws them.
+Over the whole two-year record the ranges those schedules span are
+$\num{delta_range_monthly}$ monthly, $\num{delta_range_off}$ at $14.5$ days and
+$\num{delta_range_aliased}$ fortnightly, and the supplement, \S S1, draws them.
 
 \paragraph{The load record: the recording error binds, and keep the variation.} Two
 different things are called the load record and they behave oppositely. Making the record
@@ -145,20 +147,21 @@ in four PA and five MMA children is a mean fall of $41\%$, range $12$ to
 $76\%$~\cite{metronidazole_pa}. The non-enzymatic load is therefore not a constant in these
 patients: it is close to a square wave of order $40\%$ amplitude on a three- to five-week
 period, running alongside a two- or three-week dose train and a monthly draw. Recorded, it
-is almost inert, moving $\operatorname{sd}(\ln\hat\theta)$ from $0.166$ to between $0.167$
-and $0.173$ at every period tried. \emph{Un}recorded it lands in the residual and takes the
-design to between $0.297$ and $0.313$, missing the target by half. \textbf{Record which
+is almost inert, moving $\operatorname{sd}(\ln\hat\theta)$ from the monthly design's own
+$\num{sd_monthly}$ to between $0.170$ and $0.177$ at every period tried. \emph{Un}recorded
+it lands in the residual and takes the design to between $0.327$ and $0.348$, more than
+half again its target. \textbf{Record which
 weeks the patient was on antibiotics}, in the same record as intake.
 
 One row of that sweep inverts the warning of Remark~\ref{rem:aliasing}. If the antibiotic
 period equals the sampling interval, the unrecorded cycle becomes \emph{harmless}
-($0.167$), because every draw lands at the same phase and the load-bias column absorbs a
+($0.170$), because every draw lands at the same phase and the load-bias column absorbs a
 constant offset. Aliasing destroys the dose train, which is the signal, and rescues an
 unrecorded nuisance input; the two are not the same phenomenon and the first invites the
 wrong guess about the second.
 
 \paragraph{$k_e$, and nothing else, is assumed, and nothing supplies it.} The result
-needs the non-enzymatic clearance within a factor of $\num{ke_needed_factor}$ ($2.65$ to $2.68$ across
+needs the non-enzymatic clearance within a factor of $\num{ke_needed_factor}$ ($\num{ke_needed_factor_lo}$ to $\num{ke_needed_factor_hi}$ across
 intake records), and \textbf{the literature does not supply it}: the nearest route,
 recorded against the $k_e$ row in the supplement, \S S2, was a first-order marker
 elimination in the published translational model, and that model's marker is an algebraic
@@ -265,7 +268,7 @@ $\theta$ is being far from normal, and management exists to keep them near it.
 The specification is therefore written as a cohort-level demonstration with a per-patient
 interval reported, never as a guarantee attached to an individual record. A study powered on
 the median will leave roughly half its patients short of the target, and reporting
-$\hat\theta$ without its own interval, or quoting $0.17$ as what a patient receives, would
+$\hat\theta$ without its own interval, or quoting $\num{sd_monthly}$ as what a patient receives, would
 misstate the result in the direction that matters.
 
 \subsection{Exclusions and limits}

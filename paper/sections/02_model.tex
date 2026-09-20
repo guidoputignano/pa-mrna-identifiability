@@ -95,7 +95,7 @@ the system as a block diagram and works through the positive feedback it creates
 \textbf{The carnitine state is not fast relative to the metabolite, and no separation of
 timescales is needed to justify eliminating it.} The comparison that would be needed is
 carnitine against the \emph{marker}, and it runs the wrong way: at the model's own $k$ the
-carnitine time constant is $0.92$~d against the marker's $0.81$~h, slower by a factor of
+carnitine time constant is $0.92$~d against the marker's $\num{tau_hours}$~h, slower by a factor of
 $27$, and published human kinetics put whole-body carnitine turnover at $38$ to $119$~h
 with a rapidly equilibrating compartment at $2$ to $3$~h (Rebouche, \emph{Ann.\ N.\ Y.\
 Acad.\ Sci.} 2004), slower on either reading.
@@ -241,16 +241,18 @@ it, the anchor attenuating at $3000$ and amplifying at the parent model's $300$,
 Section~\ref{sec:scopeprec} the design's own precision does too.
 
 \emph{Capacity in the disease.} On the monthly record $\operatorname{sd}(\ln\hat\theta)$ is
-$0.1699$ at nominal capacity, $1.5830$ at $10\%$ of nominal and $3.0673$ at $5\%$, against
-a target of $0.20$. The gate holds only for $\theta$ between $2472$ and $18814$, which is
-$82\%$ to $627\%$ of nominal, so the disease sits a factor of $16$ below the band. This is
+$\num{sd_monthly}$ at nominal capacity, $\num{sd_10pct}$ at $10\%$ of nominal and
+$\num{sd_5pct}$ at $5\%$, against a target of $0.20$. The gate holds only for $\theta$
+between $\num{band_lo}$ and $\num{band_hi}$, which is $\num{band_lo_pct}\%$ to
+$\num{band_hi_pct}\%$ of nominal, so the disease sits a factor of
+$\num{disease_factor}$ below the band. This is
 the row that says who the paper is about, and it is the reason the precision above is an
 illustration rather than the result.
 
 \emph{Half-saturation.} This is the tightest cost in the local model after the increment.
 Holding the patient managed at $\bar m$ and re-solving the load, the ordinate noise and the
 load-bias prior at each $K_m$, $\operatorname{sd}(\ln\hat\theta)$ runs $0.0507$ to $1.3608$
-over $K_m$ from $5$ to $1000$~$\mu$M, a factor of $26.8$. It is $0.1699$ at the
+over $K_m$ from $5$ to $1000$~$\mu$M, a factor of $26.8$. It is $\num{sd_monthly}$ at the
 illustrative $100$ and crosses the target at $K_m = 124$, so the design has a factor of
 $1.24$ of headroom; at the in vitro value the $K_m$ row declines to use, $290$~$\mu$M, it
 would be $0.4158$. That headroom is smaller than it reads: across twenty-four intake
@@ -267,7 +269,7 @@ The in vitro Michaelis constant of PCC is for propionyl-CoA inside the mitochond
 $K_m$ of \eqref{eq:local} is for a plasma marker that is neither that molecule nor in that
 compartment, and the two are not interchangeable, so no literature value is used. The
 results below do not need one: loosening a prior on $\ln K_m$ twentyfold, and removing it
-altogether, both leave $\operatorname{sd}(\ln\hat\theta)$ at $0.1500$ on the densest
+altogether, both leave $\operatorname{sd}(\ln\hat\theta)$ at $\num{sd_dense}$ on the densest
 design, moving it only in the fourth decimal (Section~\ref{sec:designsec}).
 \end{remark}
 

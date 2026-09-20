@@ -101,8 +101,9 @@ and the balance says what that equals:
 \end{equation}
 \textbf{The information the record carries about capacity is the flux through the enzyme.}
 The record's sensitivity to $\theta$ is $\theta$'s own share of the load, and in this
-disease the alternative channel carries almost all of it. The enzymatic share is $84.5\%$
-at nominal, $29.2\%$ at $10\%$ of nominal and $16.3\%$ at $5\%$. Against the $k_e$ column,
+disease the alternative channel carries almost all of it. The enzymatic share is
+$\num{share_nominal_pct}\%$ at nominal, $\num{share_10pct}\%$ at $10\%$ of nominal and
+$\num{share_5pct}\%$ at $5\%$. Against the $k_e$ column,
 $k_e m$, the ratio is exactly enzymatic flux over alternative flux and runs $5.455$ to
 $0.195$ across the same range, so at a disease-range capacity $\theta$ is recovered as a
 small difference of two large numbers, one of which is known only through a prior. That is
@@ -135,13 +136,15 @@ nothing from below. A clinician asking ``does this patient have usable residual 
 can be answered; one asking ``how much'' cannot.
 
 $\operatorname{sd}(\ln\hat\theta)$ is not monotone in $\theta$, so the gate is crossed twice.
-It holds for $\theta$ between $2472$ and $18814$, which is $82\%$ to $627\%$ of nominal, a
-band of $7.6$ fold, with the best precision $0.123$ at about twice nominal. Below the band
+It holds for $\theta$ between $\num{band_lo}$ and $\num{band_hi}$, which is
+$\num{band_lo_pct}\%$ to $\num{band_hi_pct}\%$ of nominal, a band of
+$\num{band_fold}$ fold, with the best precision $\num{band_best}$ at about twice nominal. Below the band
 the marker has stopped responding to capacity, which is the statement above. Above it the
 $\theta$ column saturates at $L$ while the assay term keeps growing, so information per draw
-stops improving. \textbf{The disease sits a factor of $16$ below the lower edge of the band
-the design works in.} Sampling every two days for two years instead of monthly, fifteen times
-the draws, moves that edge only from $82\%$ to $75\%$ of nominal. That $9\%$ is the
+stops improving. \textbf{The disease sits a factor of $\num{disease_factor}$ below the lower edge of the
+band the design works in.} Sampling every two days for two years instead of monthly,
+fifteen times the draws, moves that edge only from $\num{band_lo_pct}\%$ to
+$\num{band_lo_dense_pct}\%$ of nominal. That $\num{band_dense_gain_pct}\%$ is the
 quantitative form of the sentence below: it is not a statement about sampling effort.
 
 One consequence follows for the dose and it is independent of the precision. The

@@ -34,8 +34,8 @@ configurations, the one exception being the variant in which both clearance chan
 saturate (Remark~\ref{rem:modelB}).
 
 That information lives in the transient, and the clinic does not sample the transient. The
-marker's time constant is about $0.8$~h against a therapeutic half-life of $3.5$~d, a
-separation of about $10^2$, which is what licenses treating each visit as a point on an
+marker's time constant is $\num{tau_hours}$~h against a therapeutic half-life of
+$3.5$~d, a separation of $\num{timescale_ratio}$, which is what licenses treating each visit as a point on an
 algebraic balance. A record of monthly draws therefore contains points on the
 \emph{quasi-steady locus}, where $\dot m$ has vanished and the derivatives carrying the
 structural result are absent. What remains at each visit is one algebraic balance, and the
@@ -178,9 +178,13 @@ factors are of completely different sizes:
 \end{center}
 
 \noindent
-\textbf{The dose train supplies forty-two times the excitation the marker band does, on the
-same record.} Against the $E \approx 0.50$ the decision was said to require, the band
-delivers $0.046$ and the schedule $1.94$. The comparison against the marker's \emph{band} is
+\textbf{The dose train supplies $\num{excitation_ratio}$ times the excitation the marker
+band does, on the same record.} Against the $E \approx 0.50$ this paper adopts as its target, the band
+delivers $\num{phi_drop}$ and the schedule $\num{train_drop}$. \textbf{That target is a criterion adopted here
+and not a consequence of the decision problem.} By Proposition~\ref{prop:straddle} it is
+what a ninefold marker range placed about $K_m$ delivers, which is the round figure the
+excitation calculations below are measured against; no endpoint analysis supplies a
+required excitation, and if one did it would replace this. The comparison against the marker's \emph{band} is
 the one that holds on a single record, because both factors are read off the same two years
 of chart. Against an \emph{excursion} the ratio is smaller and the footing is different: the
 largest any accessible source supplies is a decompensation reaching $E = 0.35$
@@ -286,9 +290,9 @@ through $\sigma$.
 Without the dose train, prior-free $\operatorname{sd}(\ln\hat\theta)$ is still $28.1$ at
 half a per cent of variation and $1.30$ at ten, while the rank has long since been restored.
 With the dose train at a perfectly constant load the matrix is still rank deficient and the
-filter nonetheless reports $0.1696$, because the load-record prior fills the deficient
+filter nonetheless reports $\num{sd_load_steady}$, because the load-record prior fills the deficient
 direction. At the variability the specification asks for the data fill it instead, though
-not at once: the $0.5\%$ and $2\%$ records return $0.86$ and $0.26$ prior-free, so what the
+not at once: the $0.5\%$ and $2\%$ records return $0.86$ and $\num{free_cv2}$ prior-free, so what the
 prior holds is given back gradually and is not fully given back until the record carries
 several per cent.
 

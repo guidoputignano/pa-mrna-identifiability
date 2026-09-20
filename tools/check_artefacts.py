@@ -187,6 +187,9 @@ def regenerate_tables(out):
         import common.numbers as _num
         _num.NUMDIR = Path(out) / "numbers"
         write_numbers("design", D.PAPER_NUMBERS, D.PAPER_FORMATS)
+        #  the scope result: the band and the enzymatic share, which the
+        #  abstract, Section 2.5 and Section 6.2 all quote
+        n4.scope_numbers()
         _num.NUMDIR = NUMDIR
     return sorted(p.name for p in (Path(out) / "tables").glob("*.tex"))
 
@@ -216,16 +219,18 @@ def check_regenerated(live=None):
                 n = sum(1 for x, y in zip(a, b) if x != y) + abs(len(a) - len(b))
                 bad.append((name, f"differs on {n} line(s)"))
         #  the generated numbers file, compared the same way
-        nums = Path(tmp) / "numbers" / "design.tex"
-        live = ROOT / "results" / "numbers" / "design.tex"
-        if not nums.exists():
-            bad.append(("numbers/design.tex", "not regenerated"))
-        elif not live.exists():
-            bad.append(("numbers/design.tex", "regenerated but not committed"))
-        else:
-            checked += 1
-            if live.read_text() != nums.read_text():
-                bad.append(("numbers/design.tex", "differs"))
+        for stem in ("design", "scope"):
+            nums = Path(tmp) / "numbers" / f"{stem}.tex"
+            here = ROOT / "results" / "numbers" / f"{stem}.tex"
+            if not nums.exists():
+                bad.append((f"numbers/{stem}.tex", "not regenerated"))
+            elif not here.exists():
+                bad.append((f"numbers/{stem}.tex",
+                            "regenerated but not committed"))
+            else:
+                checked += 1
+                if here.read_text() != nums.read_text():
+                    bad.append((f"numbers/{stem}.tex", "differs"))
         print(f"  {checked} generated tables and number files checked "
               f"against the code")
         # tab_claims is rendered from paper/claims.csv by claims_to_tex.py,

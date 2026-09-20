@@ -44,13 +44,14 @@ not described by the levels it visits, because two samples at the same level und
 different $\Delta$ carry different information.
 \item \textbf{$\theta$ and $K_m$ are free.} No prior is placed on either, and a $K_m$
 prior would do no work if it were: the densest design of Table~\ref{tab:designs} gives
-$0.1500$ with it, $0.1500$ without it and $0.1500$ at a prior twenty times looser, medians
-over twenty-four intake records with a range of $0.1498$ to $0.1501$ in every case.
+$\num{sd_dense}$ with it, $\num{sd_dense}$ without it and $\num{sd_dense}$ at a prior
+twenty times looser, medians over twenty-four intake records with a range of
+$\num{sd_dense_lo}$ to $\num{sd_dense_hi}$ in every case.
 Nothing here assumes $K_m$, which Remark~\ref{rem:no_km} forbids, and nothing needs to:
 the record determines it (Remark~\ref{rem:kmrecovered}).
 \item \textbf{$k_e$ carries a log-prior of $0.8$}, a factor of $2.2$, and is the only
-prior that does any work: removing it takes the same design from $0.1500$ ($0.1498$ to
-$0.1501$) to $1.1096$ ($1.0313$ to $1.1923$), a factor of $7.4$ taken record by record
+prior that does any work: removing it takes the same design from $\num{sd_dense}$ ($\num{sd_dense_lo}$ to
+$\num{sd_dense_hi}$) to $1.1096$ ($1.0313$ to $1.1923$), a factor of $7.4$ taken record by record
 ($6.9$ to $7.9$). That the two priors divide this way is the null vector
 \eqref{eq:nullvec} showing itself: it has a zero in its $k_e$ slot, so $K_m$ moves
 \emph{along} the degeneracy, where a prior would have to be implausibly tight to bind,
@@ -66,8 +67,9 @@ $0.5\%$, moves the densest design by about one per cent.
 \end{enumerate}
 
 No extended Kalman filter is needed. The marker's time constant
-$\bigl((\theta+\Delta) g'(\bar m) + k_e\bigr)^{-1}$ is $0.81$ hours at the illustrative
-values against a therapeutic half-life of $3.5$ days, a separation of $104$ that the code
+$\bigl((\theta+\Delta) g'(\bar m) + k_e\bigr)^{-1}$ is $\num{tau_hours}$ hours at the illustrative
+values against a therapeutic half-life of $3.5$ days, a separation of
+$\num{timescale_ratio}$ that the code
 measures rather than asserts, so the marker is in quasi-steady state at every sampling
 instant a clinic could use and \eqref{eq:infofilter} is exact rather than approximate.
 One number in that calculation is for a protocol: the marker is within $5\%$ of
@@ -103,7 +105,7 @@ sensitivity while still being used to generate the levels.}
 
 The gate passes, and it passes on ordinary outpatient care. Sampling monthly across dose
 cycles for two years, twenty-five draws, no excursion and no admission, reaches
-$\operatorname{sd}(\ln\hat\theta) = 0.170$ ($\num{sd_monthly_lo}$ to $\num{sd_monthly_hi}$), inside the $20\%$ target;
+$\operatorname{sd}(\ln\hat\theta) = \num{sd_monthly}$ ($\num{sd_monthly_lo}$ to $\num{sd_monthly_hi}$), inside the $20\%$ target;
 two-monthly sampling, thirteen draws, reaches $\num{sd_two_monthly}$ ($\num{sd_two_monthly_lo}$ to $\num{sd_two_monthly_hi}$) and also
 passes; six-monthly visits reach $0.457$ ($0.412$ to $0.510$) and do not. Every precision
 in this section is a median over twenty-four simulated intake records with its range
@@ -114,14 +116,15 @@ What separates them is not $n$: two-monthly sampling passes with thirteen sample
 fortnightly sampling fails with fifty-three. Read the fourth column instead, and
 Figure~\ref{fig:D2} beside it. The designs
 that pass are the ones that see the increment vary, and six-monthly visits catch a range
-of $\Delta/\theta$ of $0.45$ against two-monthly visits' $1.94$.
+of $\Delta/\theta$ of $\num{delta_range_six_monthly}$ against two-monthly visits'
+$\num{delta_range_two_monthly}$.
 
 \begin{remark}[Do not sample at the dose interval. This is the sharpest rule in the paper.]
 \label{rem:aliasing}
 The fortnightly row of Table~\ref{tab:designs} is a catastrophe, and a \emph{designed} one
 rather than bad luck. The dose interval is fourteen days, so sampling every fourteen days
 lands every draw at the same phase of every cycle. The range of $\Delta/\theta$ collapses
-from $1.95$ to $0.13$, the correlation between $\ln\theta$ and $\ln K_m$ returns to
+from the monthly design's $\num{delta_range_monthly}$ to $\num{delta_range_aliased}$, the correlation between $\ln\theta$ and $\ln K_m$ returns to
 $+0.999$, and $\operatorname{sd}(\ln\hat\theta)$ goes to $\num{sd_aliased}$ ($\num{sd_aliased_lo}$ to $\num{sd_aliased_hi}$). The
 same happens at twenty-eight days and at any multiple. Taken record by record against the
 recommended monthly design, that is a factor of $\num{alias_cost}$ ($\num{alias_cost_lo}$ to
@@ -175,7 +178,7 @@ from that argument.
 
 \paragraph{Two further readings of the table.} Placement still helps, and by a factor
 of nine and a half rather than a hundred: the same $365$ samples placed to straddle $K_m$
-reach $0.0157$ against $0.1500$. That is a statement of what is being given up rather than
+reach $0.0157$ against $\num{sd_dense}$. That is a statement of what is being given up rather than
 a recommendation, since Section~\ref{sec:excursion_table} shows the straddling design is
 unavailable. And one dose cycle of seven samples does not do it: it reaches $0.216$
 ($0.205$ to $0.230$) and has a floor there, because what limits it is the design and not
@@ -196,7 +199,7 @@ at all, and $7$ to $16$ with the prior in place, record by record over twenty-fo
 rather than on the absolute number.
 
 \paragraph{What a transient would be worth, and why none is proposed.} Monthly draws
-sample only the slow variable. Within a few multiples of $0.81$ hours after an infusion
+sample only the slow variable. Within a few multiples of $\num{tau_hours}$ hours after an infusion
 the balance is not algebraic and the observation separates $k_e$ from $K_m$, so a
 transient is what would measure the one parameter whose prior the design rests on. It is
 not proposed here, because the quasi-steady marker and the transient marker are different
@@ -213,8 +216,8 @@ Proposition~\ref{prop:tworoutes} the increment supplies the excitation, the next
 is whether the \emph{dosing} schedule should be varied too. It should not, and the reason
 is a number rather than a principle. A dosing interval is chosen to protect the trough,
 the lowest enzymatic increment the patient sees before the next dose. Against the trial's
-fortnightly schedule ($\operatorname{sd}(\ln\hat\theta) = 0.170$, trough
-$0.128\,\theta$), alternating the amplitude by $\pm75\%$ at the same mean dose buys
+fortnightly schedule ($\operatorname{sd}(\ln\hat\theta) = \num{sd_monthly}$, trough
+$\num{train_trough_frac}\,\theta$), alternating the amplitude by $\pm75\%$ at the same mean dose buys
 $4.8\%$ of precision for a $65\%$ cut in the trough, and a twenty-eight-day interval at
 the same delivered rate buys $6.5\%$ for an $87\%$ cut: about thirteen to one against the
 patient either way, so the therapeutic optimum wins.
@@ -234,8 +237,8 @@ delivered rate has no trough at all, which is the therapeutic optimum on the met
 and also the point at which the identification this paper is built on stops existing. The
 therapy enters only through its \emph{variation}: the excitation of
 Proposition~\ref{prop:tworoutes} is carried by the factor $1 + \Delta(t)/\theta$, which
-ranges over $2.64$ on the biweekly schedule and supplies forty-two times what the marker
-band does, and which a constant increment does not move at all. A constant increment does
+has a ratio of $\num{train_ratio}$ over the biweekly schedule and a range of
+$\num{train_drop}$, which supplies $\num{excitation_ratio}$ times what the marker band does, and which a constant increment does not move at all. A constant increment does
 not make $\theta$ structurally unidentifiable, since the dosing record is known; what it
 removes is the excitation, leaving the design to fall back on the marker excursion alone,
 which Section~\ref{sec:excursion_table} shows is unavailable at the magnitude required.
@@ -261,10 +264,13 @@ visits buy, and which of the resulting phases a clinic can actually book.
 \caption{Where each schedule lands in the dose cycle. Visit times are folded
 onto the $14$-day cycle, with the dose at twelve o'clock and time running
 clockwise; radius is visit order, so the record reads outwards, and colour is
-the increment at that visit. Sampling at the dose interval collapses to one
-spoke and a $\Delta/\theta$ range of $0.13$; half a day off it fills the dial
-and reaches $1.80$; monthly reaches $1.84$ and a schedule designed to spread
-phase reaches $1.85$, so almost all of what phase-spreading buys is already
+the increment at that visit. These ranges are over the
+\emph{twelve visits drawn}, not over the two-year record of
+Table~\ref{tab:designs}, and a short record does not reach every phase:
+sampling at the dose interval collapses to one spoke and a $\Delta/\theta$
+range of $0.13$; half a day off it fills the dial and reaches $1.80$, against
+$\num{delta_range_off}$ over the full record; monthly reaches $1.84$ and a
+schedule designed to spread phase reaches $1.85$, so almost all of what phase-spreading buys is already
 bought by a schedule that simply is not a multiple of the dose interval. The
 second panel is a patient already on therapy when the record starts, whose
 increment range is exactly zero. The post-dose settling window is shaded and
@@ -390,7 +396,10 @@ defensible range, and the range is what a protocol should be written against.
 \caption{\label{tab:dosesens}The dose calibration, and what each reading of it
 costs the design. Every row is admissible on the capacity ceiling at the $5\%$
 reference. Visits are monthly visits to reach the $0.20$ gate, a median over
-eight intake records, searched to sixty.}
+eight intake records, searched to sixty. \textbf{The precision column is a
+twelve-visit record}, not the twenty-five of Table~\ref{tab:designs}, which is
+why the committed row reads $0.189$ where Table~\ref{tab:designs} reads
+$\num{sd_monthly}$: the two are the same design at different lengths.}
 %  the widening has to be INSIDE the float: a float sets its contents at
 %  \textwidth whatever the surrounding text block is doing, so an
 %  adjustwidth wrapped around \begin{table} does nothing at all.
@@ -409,7 +418,7 @@ direction, from a known place. Table~\ref{tab:excursion} evaluates \eqref{eq:E} 
 \centering
 \footnotesize
 \caption{\label{tab:excursion}Excitation available from each source, against the
-$E \approx 0.50$ the decision requires. Direction matters: the curvature is at high $m$, and
+$E \approx 0.50$ adopted in Section~\ref{sec:therapychannel}. Direction matters: the curvature is at high $m$, and
 most of what a chart contains moves the patient the other way. The last column is how much
 of the excitation a band of that fold range \emph{could} have delivered if it had straddled
 $K_m$, so it separates being too narrow from being in the wrong place.}
@@ -427,7 +436,7 @@ recovery, the carnitine dose steps and the cyclical antibiotics all deliver betw
 fifth and a quarter of what their own fold range could, because they happen an order of
 magnitude below $K_m$, so widening them does not fix it. Only a decompensation gets close
 and still falls short: an excursion to eight times the operating point reaches $E = 0.35$
-against the $0.50$ required, at $74\%$ of what its fold range could deliver, because it
+against the $0.50$ adopted, at $74\%$ of what its fold range could deliver, because it
 at least moves towards $K_m$. The excitation the decision needs is available only from the
 event the treatment exists to prevent, and even then not in full. The one designed source,
 a labelled-propionate bolus, is small at $E = 0.076$ for a doubling of the marker; its

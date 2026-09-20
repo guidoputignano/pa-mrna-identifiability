@@ -328,6 +328,60 @@ def recheck(rows):
 #  the recorded load is held at the nominal patient's and the operating level,
 #  sigma, the load-bias prior and the excitation are re-solved at each
 #  capacity. Reproducing that convention anywhere else would duplicate it.
+def scope_numbers():
+    """
+    The scope result as generated numbers, so the three sections that quote it
+    cannot drift apart.
+
+    Section 2.5, Section 6.2 and the abstract all carry the band and the
+    enzymatic share, and all three carried them as hand-typed literals. The
+    sweep is information-matrix work rather than simulation, so it is cheap
+    enough to run wherever the tables are written.
+    """
+    from common.numbers import write_numbers
+    f_m = lambda th: over_seeds(theta=th, D=D0, convention="A",
+                                times=MONTHLY)[0]
+    lo_edge = crossing(f_m, 3000.0, 300.0)
+    hi_edge = crossing(f_m, 6000.0, 30000.0)
+    lo_dense = crossing(lambda th: over_seeds(theta=th, D=D0, convention="A",
+                                              times=DENSE)[0], 3000.0, 100.0)
+    scan = [(th, f_m(th)) for th in np.geomspace(1000.0, 1.0e5, 22)]
+    best = min(scan, key=lambda r: r[1])
+
+    def share(th):
+        """theta's own share of the load: the flux identity of (16)."""
+        L, m, _, _ = footing(th, convention="A")
+        enz = th * m / (KM0 + m)
+        return enz / (enz + KE * m)
+
+    N = {
+        "band_lo": lo_edge, "band_hi": hi_edge,
+        "band_lo_pct": 100.0 * lo_edge / TH0,
+        "band_hi_pct": 100.0 * hi_edge / TH0,
+        "band_fold": hi_edge / lo_edge,
+        "band_best": best[1], "band_best_pct": 100.0 * best[0] / TH0,
+        "band_lo_dense_pct": 100.0 * lo_dense / TH0,
+        "band_dense_gain_pct": 100.0 * (1.0 - lo_dense / lo_edge),
+        "disease_factor": lo_edge / TH_DISEASE,
+        "share_nominal_pct": 100.0 * share(TH0),
+        "share_10pct": 100.0 * share(0.10 * TH0),
+        "share_5pct": 100.0 * share(REFERENCE_FRAC * TH0),
+        "sd_10pct": over_seeds(theta=0.10 * TH0, D=D0, convention="A",
+                               times=MONTHLY)[0],
+        "sd_5pct": over_seeds(theta=REFERENCE_FRAC * TH0, D=D0,
+                              convention="A", times=MONTHLY)[0],
+    }
+    fmt = {"band_lo": "{:.0f}", "band_hi": "{:.0f}", "band_lo_pct": "{:.0f}",
+           "band_hi_pct": "{:.0f}", "band_fold": "{:.1f}",
+           "band_best": "{:.3f}", "band_best_pct": "{:.0f}",
+           "band_lo_dense_pct": "{:.0f}", "band_dense_gain_pct": "{:.0f}",
+           "disease_factor": "{:.0f}", "share_nominal_pct": "{:.1f}",
+           "share_10pct": "{:.1f}", "share_5pct": "{:.1f}",
+           "sd_10pct": "{:.4f}", "sd_5pct": "{:.4f}"}
+    write_numbers("scope", N, fmt)
+    return N
+
+
 def table_elasticity():
     """How far the marker moves per unit of capacity, capacity by capacity."""
     from common.style import write_table
@@ -378,7 +432,7 @@ def table_ke_prior():
                      (0.05, r"$0.05$"), (0.001, r"exact")):
         nom = over_seeds(theta=TH0, D=D0, convention="A", ke_prior=s)[0]
         dis = over_seeds(theta=0.05 * TH0, D=D0, convention="A", ke_prior=s)[0]
-        rows.append([label, f"${np.exp(s):.2f}$", f"${nom:.3f}$", f"${dis:.3f}$"])
+        rows.append([label, f"${np.exp(s):.2f}$", f"${nom:.4f}$", f"${dis:.4f}$"])
     write_table("tab_S_keprior",
                 [r"prior on $\ln k_e$", "factor per sd",
                  r"$\operatorname{sd}(\ln\hat\theta)$ at nominal",
@@ -391,6 +445,7 @@ def table_ke_prior():
 
 
 def main():
+    scope_numbers()
     table_elasticity()
     table_scope()
     table_ke_prior()

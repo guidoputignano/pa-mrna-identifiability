@@ -101,16 +101,30 @@ PAPER_FORMATS = {
     "excitation_ratio": "{:.0f}", "load_accuracy_gate": "{:.0f}",
     "ke_needed_factor": "{:.2f}", "ke_needed_factor_lo": "{:.2f}",
     "ke_needed_factor_hi": "{:.2f}",
-    "sd_monthly": "{:.3f}", "sd_monthly_lo": "{:.3f}", "sd_monthly_hi": "{:.3f}",
-    "sd_two_monthly": "{:.3f}", "sd_two_monthly_lo": "{:.3f}",
-    "sd_two_monthly_hi": "{:.3f}",
-    "sd_aliased": "{:.2f}", "sd_aliased_lo": "{:.2f}", "sd_aliased_hi": "{:.2f}",
-    "sd_aliased_off": "{:.3f}", "free_cv2": "{:.3f}",
+    #  four decimals throughout, because Table 3 prints four and the same
+    #  quantity must not reach the page as 0.1699 in a table and 0.170 in a
+    #  sentence about that table
+    "sd_monthly": "{:.4f}", "sd_monthly_lo": "{:.4f}", "sd_monthly_hi": "{:.4f}",
+    "sd_two_monthly": "{:.4f}", "sd_two_monthly_lo": "{:.4f}",
+    "sd_two_monthly_hi": "{:.4f}",
+    "sd_aliased": "{:.4f}", "sd_aliased_lo": "{:.4f}", "sd_aliased_hi": "{:.4f}",
+    "sd_aliased_off": "{:.4f}", "free_cv2": "{:.3f}",
     "kappa_monthly_pct": "{:.1f}", "kappa_monthly_pct_lo": "{:.1f}",
     "kappa_monthly_pct_hi": "{:.1f}",
     "settle_hours": "{:.2f}", "sigma": "{:.1f}",
     "sd_load_acc_40pct": "{:.3f}", "timescale_ratio": "{:.0f}",
     "dropped_lo": "{:.2f}", "dropped_hi": "{:.1f}",
+    #  two decimals, matching the "range of Delta/theta" column of Table 3
+    "delta_range_monthly": "{:.2f}", "delta_range_two_monthly": "{:.2f}",
+    "delta_range_dense": "{:.2f}", "delta_range_aliased": "{:.2f}",
+    "delta_range_six_monthly": "{:.2f}", "delta_range_one_cycle": "{:.2f}",
+    "delta_range_off": "{:.2f}",
+    "sd_dense": "{:.4f}", "sd_dense_lo": "{:.4f}", "sd_dense_hi": "{:.4f}",
+    #  the dose train's own shape, quoted in four places from memory
+    "train_peak_frac": "{:.2f}", "train_trough_frac": "{:.3f}",
+    "train_ratio": "{:.2f}", "train_drop": "{:.2f}", "phi_drop": "{:.4f}",
+    #  the quasi-steady separation, quoted as 0.8 h and 0.81 h and 10^2 and 104
+    "tau_hours": "{:.2f}",
 }
 
 #: the seed `design_record` has always drawn its intake record from. Kept as
@@ -558,7 +572,7 @@ def table_instruments(T=730.0):
         [r"plus recorded carnitine steps of $25$--$100\%$ in $k_e$",
          f"${min(carn_lo[0], carn_hi[0]):.2f}$--${max(carn_lo[0], carn_hi[0]):.2f}$",
          r"\emph{worse still}"],
-        [r"\textbf{the dose train}", r"$\mathbf{%.3f}$" % train[0],
+        [r"\textbf{the dose train}", r"$\mathbf{%.4f}$" % train[0],
          r"\textbf{passes}"],
     ]
     write_table("tab_D_instruments",
@@ -765,10 +779,15 @@ def fig_protocol(T=112.0):
     Faceting the three schedules keeps that comparison a spatial one, so the
     reader never has to separate two hues to make it.
     """
+    #  no sd field: it was carried here as a hand-typed string, the aliased
+    #  entry still reading 3.51, which is that design's seed-3 MINIMUM and not
+    #  its median of 4.5845. Nothing drew it -- the panels compute their own
+    #  range -- but a stale number in a figure is invisible to the artefact
+    #  guard, which compares rendered bytes, so it does not get to live here.
     SCHEDULES = [
-        ("monthly, every 30.4 d", 30.4, GREEN, "o", "0.170"),
-        ("every 14.5 d, half a day off", 14.5, BLUE, "^", "0.161"),
-        ("fortnightly, on the dose", DOSE_INTERVAL, RED, "X", "3.51"),
+        ("monthly, every 30.4 d", 30.4, GREEN, "o"),
+        ("every 14.5 d, half a day off", 14.5, BLUE, "^"),
+        ("fortnightly, on the dose", DOSE_INTERVAL, RED, "X"),
     ]
 
     # Nested gridspecs rather than one mosaic: the trajectory and its rails are
@@ -811,7 +830,7 @@ def fig_protocol(T=112.0):
     r.set_ylim(-0.7, len(SCHEDULES) - 0.3)
     r.set_yticks(range(len(SCHEDULES)))
     r.set_yticklabels([s[0].split(",")[0] for s in reversed(SCHEDULES)], fontsize=6.4)
-    for i, (lab, dt, col, mk, sd) in enumerate(SCHEDULES):
+    for i, (lab, dt, col, mk) in enumerate(SCHEDULES):
         y = len(SCHEDULES) - 1 - i
         ts = np.arange(0.0, T + 1e-9, dt)
         r.axhline(y, color=GREY, lw=0.5, zorder=1)
@@ -826,7 +845,7 @@ def fig_protocol(T=112.0):
     curve = np.asarray(delta(20 * DOSE_INTERVAL + ph)) / P.theta
     ymax = float(curve.max()) * 1.18
 
-    for i, (lab, dt, col, mk, sd) in enumerate(SCHEDULES):
+    for i, (lab, dt, col, mk) in enumerate(SCHEDULES):
         b = ax[f"p{i}"]
         ts = np.arange(0.0, 730.0, dt)
         dph = np.mod(ts, DOSE_INTERVAL)
@@ -1258,6 +1277,24 @@ def table_designs(T=730.0):
     #  (name, n, lv_min, lv_max, range, sd, corr, dropped, sd_lo, sd_hi).
     acc = [r[7] for r in raw if "straddling" not in r[0]]
     PAPER_NUMBERS.update({"dropped_lo": min(acc), "dropped_hi": max(acc)})
+    #  the range of Delta/theta each design sees, which the text quoted from
+    #  memory in nine different values. One key per design, and the half-day
+    #  offset added here because the text quotes it and the table does not.
+    by_name = {"monthly": r"\textbf{monthly, across dose cycles}",
+               "two_monthly": "two-monthly, across dose cycles",
+               "dense": "every two days for two years",
+               "aliased": r"\emph{fortnightly: the dose interval itself}",
+               "six_monthly": "six-monthly clinic visits",
+               "one_cycle": "one dose cycle, every two days"}
+    dense = next(r for r in raw if r[0] == "every two days for two years")
+    PAPER_NUMBERS.update({"sd_dense": dense[5], "sd_dense_lo": dense[8],
+                          "sd_dense_hi": dense[9]})
+    lut = {r[0]: r[4] for r in raw}
+    PAPER_NUMBERS.update({f"delta_range_{k}": lut[v]
+                          for k, v in by_name.items() if v in lut})
+    off = design_record(np.arange(0.0, T, DOSE_INTERVAL + 0.5),
+                        seed=BASE_SEED)[1]
+    PAPER_NUMBERS["delta_range_off"] = float((off.max() - off.min()) / P.theta)
     for nm, n, lo, hi, drng, sd, rho, drop, slo, shi in raw:
         print(f"    {nm[:40]:>40}: n={n:4d}  range(D/th)={drng:5.2f}  "
               f"sd={sd:.4f} [{slo:.4f}, {shi:.4f}]"
@@ -1459,7 +1496,7 @@ def table_spec():
          "immunity to the carnitine sign reversal that disqualifies C3"],
         ["sampling schedule",
          "monthly across dose cycles, $n \\approx 25$ over two years "
-         "($%.3f$%s); two-monthly also passes ($%.3f$%s). These are "
+         "($%.4f$%s); two-monthly also passes ($%.4f$%s). These are "
          "\\emph{sampling spreads} of $\\ln\\hat\\theta$, not interval "
          "half-widths; see Remark~\\ref{rem:curvature}"
          % (N["sd_monthly"], rng("sd_monthly", digits=4),
@@ -1468,10 +1505,10 @@ def table_spec():
          "the dose cycle, not the sampling rate"],
         ["sampling, the hard constraint",
          B + "never at the dose interval or a multiple of it}: fortnightly "
-         "gives $%.2f$%s against the monthly design's $%.3f$, a cost of "
+         "gives $%.4f$%s against the monthly design's $%.4f$, a cost of "
          "$%.0f$-fold ($%.0f$ to $%.0f$ across records); $14.5$-daily gives "
-         "$%.3f$%s, which recovers it"
-         % (N["sd_aliased"], rng("sd_aliased", digits=2), N["sd_monthly"],
+         "$%.4f$%s, which recovers it"
+         % (N["sd_aliased"], rng("sd_aliased", digits=4), N["sd_monthly"],
             N["alias_cost"], N["alias_cost_lo"], N["alias_cost_hi"],
             N["sd_aliased_off"], rng("sd_aliased_off", digits=4)),
          "every draw lands at the same phase, the increment stops varying, "

@@ -2,33 +2,35 @@
 \noindent
 The clinical decision in mRNA enzyme replacement for propionic acidemia is a dosing
 interval, set by a quantity nobody measures: residual enzymatic capacity $\theta$. The
-trial is already running the experiment that would identify it: the therapy is a known
-exogenous input acting selectively on $\theta$, supplying forty-two times the excitation
+trial already runs the experiment that would identify it: the therapy is a known
+exogenous input acting selectively on $\theta$, supplying $\num{excitation_ratio}$ times the excitation
 the marker's own band does.
 
-What transfers is the design rules that follow. Sampling must cover the phase of the
-dose cycle: draws at the dose interval, or any multiple of it, cost a factor of
+What transfers is the design rules. Sampling must cover the phase of the
+dose cycle: draws at the dose interval, or a multiple of it, cost a factor of
 $\num{alias_cost}$ against monthly sampling, and moving them half a day off the dose day
 recovers it. The
-dosing record is a regressor carrying the excitation, not a nuisance. Intake must be
+dosing record is a regressor, not a nuisance. Intake must be
 recorded as eaten and to better than about $\num{load_accuracy_gate}\%$, a requirement on
-the record's \emph{accuracy} and not its variability. No prior on $K_m$ is needed.
+the record's \emph{accuracy}, not its variability. No prior on $K_m$ is needed.
 
 Those rules hold at every capacity. The estimate does not, for one line of the balance:
 what the record carries about $\ln\theta$ is the flux through the enzyme,
 $\theta\,g(m) = L - k_e m$, so its sensitivity to capacity is capacity's own share of the
-load, $85\%$ at normal and $16\%$ at the $5\%$ of normal that defines the disease.
-Monthly draws for two years therefore identify $\theta$ only between about $82\%$ and
-$627\%$ of normal, and propionic acidemia sits a factor of $16$ below that band. What
+load: $\num{share_nominal_pct}\%$ at normal, $\num{share_5pct}\%$ at the $5\%$ that
+defines the disease.
+The band in which $\theta$ is recoverable at all is $\num{band_lo_pct}\%$ to
+$\num{band_hi_pct}\%$ of normal, and propionic acidemia sits a factor of
+$\num{disease_factor}$ below it. Fifteen times the sampling moves its lower edge by
+$\num{band_dense_gain_pct}\%$: the limit is the identity, not the schedule. What
 survives there is $K_m$, to $6$--$7\%$ at every capacity, and an upper bound on $\theta$.
 The estimate is relative to an assumed structure too: under a published alternative
 $\theta$ is not identifiable at all, at a residual too small to notice.
 
-Identification is not what binds the decision in any case, the threshold being stipulated
-rather than measured. The paper therefore ends in a data specification, whose first tier
-is one unpublished measurement, the same-day repeatability of a
-$1$-$^{13}$C-propionate breath test across a single dose, and whose second is the
-non-enzymatic clearance $k_e$, which no published source supplies.
+Identification is not what binds the decision anyway, the threshold being stipulated
+rather than measured. The paper ends in a data specification: the first tier is one unpublished
+measurement, the same-day repeatability of a $1$-$^{13}$C-propionate breath test; the
+second is the non-enzymatic clearance $k_e$, which no published source supplies.
 \end{abstract}
 
 \vspace{0.5em}
