@@ -216,6 +216,29 @@ nbs_saudi_national      doi:10.1111/jpc.13469
 nbs_psmmc               doi:10.15537/smj.2020.7.25147
 
 # =====================================================================
+#  ON AUTOMATED LITERATURE SEARCHES. REPO FIRST, NETWORK SECOND.
+# =====================================================================
+# A seven-reference batch from an automated search, September 2026, was
+# checked against this file before anything was fetched. Four of the seven
+# were ALREADY CITED here under different names, and three carried errors:
+#
+#   * "Thompson et al., Pediatr Res 1991;30:135" is breath_test_original,
+#     already in this file. Wrong first author (Barshop) and wrong pages
+#     (30(1):15-22). The PMID it gave, 1909779, was correct and is what
+#     identified the duplicate.
+#   * "Attarwala et al., Nat Commun 2024" is mrna_moa, already in this file.
+#     Attarwala is not among its eighteen authors; the first author is Baek.
+#   * The Nucleic Acid Therapeutics 2023 paper it offered as new is
+#     pkpd_translational, already in this file and already cited for exactly
+#     the figures the batch reported as a finding.
+#
+# The lesson is the ordering, not the tool: every identifier in a batch
+# should be matched against this file and against refs.bib BEFORE any
+# fetch, because a duplicate under a wrong author name is invisible to a
+# check that only asks whether an identifier resolves. A PMID is the only
+# field in these batches that proved reliable.
+#
+# =====================================================================
 #  NOT YET RESOLVED. Do not cite until an identifier is confirmed.
 # =====================================================================
 # Nothing here is currently blocking: every claim in the paper is sourced.
@@ -274,7 +297,30 @@ muscle_catabolism       doi:10.1016/0026-0495(81)90022-6
 # Mechanism of action across mRNA-3927 (PA), mRNA-3705 (MMA), mRNA-3210
 # (PKU), with allometric human scaling. PD responses sustained 3-4 weeks
 # after dosing in Pcca-/- mice. Companion to the translational PK/PD model.
+#
+# ONE FILE REMAINS UNOPENED, and the k_e row is written so that it does not
+# matter which way it goes. This paper's SUPPLEMENT has not been read: every
+# publisher host is denied at this project's build proxy, and the September
+# 2026 pass that read pkpd_translational's Supplementary Table S1 could not
+# reach this one. If it carries a fitted kout for 3-HP, that would be a third
+# weak anchor alongside the methylmalonic-acid band and the paper is better
+# for it; it would NOT overturn the k_e row, which claims the absence of an
+# INDEPENDENT MEASUREMENT IN HUMANS, and a constant fitted to murine data
+# inside a PK/PD model is model-derived whatever its value. Anyone with
+# journal access should open it and record what is there.
 mrna_moa                doi:10.1038/s41467-024-47460-9
+
+# The nearest MEASURED analogue for k_e, and it is not 3-HP. Detailed
+# kinetics of methylmalonic acid in a 28-year-old mut0 patient: one
+# haemodialysis session cut plasma MMA by 54%, giving a plasma clearance of
+# 103 mL/min and a volume of distribution of 0.48 L/kg, which approximates
+# total body water; MMA then reaccumulated to the pre-dialysis concentration
+# within 24 h. CAVEATS, and they are load-bearing: the clearance is DIALYTIC
+# and not endogenous, so it bounds the endogenous route from above rather
+# than measuring it; and MMA is dicarboxylic with strong tubular handling
+# where 3-HP is monocarboxylic (pKa 4.9, MW 90), so this is a plausibility
+# band for k_e and not a substitute for measuring it.
+ke_mma_analogue         pmid:24961826
 
 # Guidelines for management of PA. Metabolic control judged clinically and
 # by ammonia, acid-base and trends in C3, C3/C2 and 2-MC. NOTE: specifies

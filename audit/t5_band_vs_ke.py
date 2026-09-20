@@ -118,7 +118,25 @@ def kesweep_numbers():
     last key here: the k_e at which the disease itself would meet the gate.
     """
     from common.numbers import write_numbers
-    N = {}
+    #  THE NEAREST MEASURED ANALOGUE, converted here rather than by hand.
+    #  Vernon et al. report a plasma clearance of 103 mL/min at a volume of
+    #  distribution of 0.48 L/kg for methylmalonic acid during haemodialysis
+    #  in a mut0 patient. V_D is PER KILOGRAM and the clearance is absolute,
+    #  so k = CL/(V_D * BW) FALLS as body weight rises and the comparison
+    #  against the illustrative 5/d depends on the weight assumed. The paper
+    #  states the weight for that reason, and the crossing weight below is
+    #  what makes the dependence checkable rather than hidden.
+    CL_ML_MIN, VD_L_KG, BW_KG = 103.0, 0.48, 70.0
+    cl_l_d = CL_ML_MIN / 1000.0 * 60.0 * 24.0
+    k_mma = cl_l_d / (VD_L_KG * BW_KG)
+    N = {"ke_mma": k_mma,
+         "ke_mma_bw": BW_KG,
+         "ke_mma_half_h": 24.0 * np.log(2.0) / k_mma,
+         "ke_mma_cross_bw": cl_l_d / (VD_L_KG * KE0),
+         "ke_mma_vs_carried_pct": 100.0 * (KE0 / k_mma - 1.0)}
+    lo_a, hi_a, _, _ = band(k_mma)
+    N["band_lo_mma_pct"] = 100.0 * lo_a / TH0
+    N["band_hi_mma_pct"] = 100.0 * hi_a / TH0
     for mult, tag in ((0.25, "qtr"), (2.0, "dbl")):
         lo, hi, _, _ = band(KE0 * mult)
         N[f"band_lo_{tag}_pct"] = 100.0 * lo / TH0
@@ -134,7 +152,11 @@ def kesweep_numbers():
     write_numbers("kesweep", N,
                   {"band_lo_qtr_pct": "{:.0f}", "band_hi_qtr_pct": "{:.0f}",
                    "band_lo_dbl_pct": "{:.0f}", "band_hi_dbl_pct": "{:.0f}",
-                   "share_5pct_half": "{:.1f}", "ke_for_disease": "{:.4f}"})
+                   "share_5pct_half": "{:.1f}", "ke_for_disease": "{:.4f}",
+                   "ke_mma": "{:.2f}", "ke_mma_bw": "{:.0f}",
+                   "ke_mma_half_h": "{:.1f}", "ke_mma_cross_bw": "{:.0f}",
+                   "ke_mma_vs_carried_pct": "{:.0f}",
+                   "band_lo_mma_pct": "{:.0f}", "band_hi_mma_pct": "{:.0f}"})
     return N
 
 
