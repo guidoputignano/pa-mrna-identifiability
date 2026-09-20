@@ -158,16 +158,19 @@ LOCAL = [
                     r"$5\%$ of control~\cite{pcc_residual_activity}, which on the scale "
                     r"the row above fixes is $\theta \le 150$. \textbf{The design does not "
                     r"reach its target there, and the gap is large}: on the monthly record "
-                    r"$\mathrm{sd}(\ln\hat\theta)$ is $0.1699$ at nominal, $1.5830$ at "
-                    r"$10\%$ of nominal and $3.0673$ at $5\%$, against a target of $0.20$ "
+                    r"$\mathrm{sd}(\ln\hat\theta)$ is $\num{sd_monthly}$ at nominal, "
+                    r"$\num{sd_10pct}$ at $10\%$ of nominal and $\num{sd_5pct}$ at $5\%$, "
+                    r"against a target of $0.20$ "
                     r"(medians over $24$ intake records; \texttt{audit/n4\_theta\_scope.py}). "
-                    r"The gate holds only for $\theta$ between $2472$ and $18814$, that is "
-                    r"$82\%$ to $627\%$ of nominal, so the disease sits a factor of $16$ "
+                    r"The gate holds only for $\theta$ between $\num{band_lo}$ and "
+                    r"$\num{band_hi}$, that is $\num{band_lo_pct}\%$ to "
+                    r"$\num{band_hi_pct}\%$ of nominal, so the disease sits a factor of "
+                    r"$\num{disease_factor}$ "
                     r"below the band. This is Section~\ref{sec:scope}'s conclusion "
                     r"given a number: no schedule, excursion or precision recovers a "
                     r"quantity the observable has stopped responding to, and sampling "
                     r"every two days for two years instead of monthly moves the lower "
-                    r"edge by $9\%$",
+                    r"edge by $\num{band_dense_gain_pct}\%$",
         kind=DERIVED, species="human",
         rests_on=r"residual PCC activity in propionic acidemia is under $5\%$ of control~\cite{pcc_residual_activity}, which on the scale of the row above is $\theta \le 150$"),
     Row(r"$K_m$", f"${_A.Km:.0f}$~$\mu$M",
@@ -180,15 +183,18 @@ LOCAL = [
                  r"monthly record, holding the "
                  r"patient managed at $\bar m$ and re-solving the load, the ordinate sd and "
                  r"the load-bias prior at each $K_m$, $\mathrm{sd}(\ln\hat\theta)$ runs "
-                 r"$0.0507$ to $1.3608$ over $K_m$ from $5$ to $1000$~$\mu$M, a factor of "
-                 r"$26.8$ (median of $24$ load records, load CV $10\%$; "
-                 r"\texttt{audit/n1\_km\_cost.py}). It is $0.1699$ here and crosses the "
-                 r"$0.20$ target at $K_m = 124$~$\mu$M, so the design has a factor of "
-                 r"\textbf{$1.24$} of headroom on this constant; at the in vitro value the "
-                 r"row declines to use, $290$~$\mu$M, it would be $0.4158$. "
+                 r"$\num{km_sweep_lo}$ to $\num{km_sweep_hi}$ over $K_m$ from $5$ to "
+                 r"$1000$~$\mu$M, a factor of $\num{km_sweep_fold}$ (median of $24$ load "
+                 r"records, load CV $10\%$; \texttt{audit/n1\_km\_cost.py}). It is "
+                 r"$\num{sd_monthly}$ here and crosses the $0.20$ target at $K_m = "
+                 r"\num{km_crossing}$~$\mu$M, so the design has a factor of "
+                 r"\textbf{$\num{km_headroom}$} of headroom on this constant; at the in "
+                 r"vitro value the row declines to use, $290$~$\mu$M, it would be "
+                 r"$\num{km_invitro_sd}$. "
                  r"\textbf{That headroom is smaller than it reads}: across the same $24$ "
-                 r"records the spread is $0.1684$ to $0.1709$ at $K_m = 100$ and $0.1987$ "
-                 r"to $0.2010$ at $K_m = 124$, so the crossing straddles the target and "
+                 r"records the spread is $\num{sd_monthly_lo}$ to $\num{sd_monthly_hi}$ at "
+                 r"$K_m = 100$ and $\num{km_crossing_sd_lo}$ to $\num{km_crossing_sd_hi}$ "
+                 r"at the crossing, so it straddles the target and "
                  r"which side of it a given record falls on is not settled by the median",
         kind=EFFECTIVE,
         rests_on=r"chosen for illustration at $\bar m/K_m = 0.1$, and \emph{not} PCC's in vitro Michaelis constant, $0.29$~mM~\cite{pcc_liver_kinetics}, a different molecule in a different compartment"),
@@ -210,7 +216,8 @@ LOCAL = [
         rests_on=r"\textbf{searched for and not supplied}: the translational model has no marker state and no elimination constant~\cite{pkpd_translational}, and the one structure with a first-order marker loss publishes no value~\cite{dose_selection_poster}. Chosen so the enzymatic channel carries most of the flux"),
     Row(r"$\mtol$", f"${M_TOL:.0f}$~$\mu$M", "tolerable metabolite level",
         ASSUMED, r"a clinical convention, not a property of the patient. The width of the "
-                 r"undetermined window runs $1.2\%$ to $67\%$ as it moves, so this is the most "
+                 r"undetermined window runs $\num{mtol_window_lo_pct}\%$ to "
+                 r"$\num{mtol_window_hi_pct}\%$ as it moves, so this is the most "
                  r"expensive assumption in the local model. No numeric plasma 3-HP target "
                  r"is published; the only quantitative anchor is that a $50\%$ lower 3-HP "
                  r"carries a decompensation rate ratio of $0.7$~\cite{natural_history}",
@@ -291,10 +298,14 @@ LOCAL = [
                  r"reported \emph{at} one $\sigma$, not as a function of it. Swept "
                  r"properly, moving the accuracy in both places it enters, the ordinate "
                  r"noise and the load-bias prior, $\mathrm{sd}(\ln\hat\theta)$ runs "
-                 r"$0.1590$ at $1\%$ recording error to $0.2876$ at $20\%$ and $0.5049$ "
-                 r"at $40\%$, and the design meets its target only below about $10\%$ "
+                 r"$\num{sd_load_acc_1pct}$ at $1\%$ recording error to "
+                 r"$\num{sd_load_acc_20pct}$ at $20\%$ and $\num{sd_load_acc_40pct}$ "
+                 r"at $40\%$, and the design meets its target only below about "
+                 r"$\num{load_accuracy_gate}\%$ "
                  r"(medians over $24$ simulated intake records at a load CV of $10\%$, "
-                 r"spread $[0.1583, 0.1599]$ at $1\%$ and $[0.2775, 0.2994]$ at $20\%$; "
+                 r"spread $[\num{sd_load_acc_1pct_lo}, \num{sd_load_acc_1pct_hi}]$ at "
+                 r"$1\%$ and $[\num{sd_load_acc_20pct_lo}, \num{sd_load_acc_20pct_hi}]$ "
+                 r"at $20\%$; "
                  r"the generated table is \texttt{tab\_D\_loadprec}, which "
                  r"Section~\ref{sec:spec} prints and the artefact check regenerates. An "
                  r"earlier draft of this row quoted $0.1566$ to $0.2637$ and a gate of "
@@ -325,7 +336,8 @@ LOCAL = [
         "sd of the log-normal prior on $k_e$",
         ASSUMED, r"\textbf{The only prior that does any work.} "
                  r"A factor of $e^{0.8} = 2.23$ per standard deviation, which is "
-                 r"\emph{tighter} than the factor of $2.67$ the gate needs, which is why "
+                 r"\emph{tighter} than the factor of $\num{ke_needed_factor}$ the gate "
+                 r"needs, which is why "
                  r"Section~\ref{sec:designsec} can report that the gate passes: at the width "
                  r"the requirement names it would be met exactly and no more. It lives as a "
                  r"default argument in \texttt{src/design/run.py} and is asserted against it "
@@ -333,12 +345,14 @@ LOCAL = [
                  r"$k_e$ row above no source supplies the constant it is a prior on. What it "
                  r"is worth: on the densest design Section~\ref{sec:designsec} lists, "
                  r"sampling every two days for two years, "
-                 r"$\mathrm{sd}(\ln\hat\theta)$ is $0.1500$ with the prior and $1.1096$ "
+                 r"$\mathrm{sd}(\ln\hat\theta)$ is $\num{sd_dense}$ with the prior and "
+                 r"$\num{sd_dense_flat}$ "
                  r"without, medians over $24$ simulated intake records with spreads "
-                 r"$[0.1498, 0.1501]$ and $[1.0313, 1.1923]$, a factor of $7.4$ "
+                 r"$[\num{sd_dense_lo}, \num{sd_dense_hi}]$ and $[\num{sd_dense_flat_lo}, "
+                 r"\num{sd_dense_flat_hi}]$, a factor of $\num{ke_prior_worth}$ "
                  r"(\texttt{audit/n3\_ke\_prior\_worth.py})",
         kind=PRIOR,
-        rests_on=r"chosen for illustration, tighter than the factor of $2.67$ the gate needs, so the gate passes with it in place"),
+        rests_on=r"chosen for illustration, tighter than the factor of $\num{ke_needed_factor}$ the gate needs, so the gate passes with it in place"),
     Row(r"$\sigma_L/L$", f"${100*LOAD_FRAC:.0f}\\%$",
         "relative error in the recorded substrate load",
         ASSUMED, r"\textbf{Sets $\sigma$} through "

@@ -445,3 +445,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+    #  main() only PRINTS. transient_numbers() is what the paper reads, and
+    #  nothing called it, so `make figures` ran this file and left
+    #  results/numbers/transient.tex untouched -- the same gap the design
+    #  module had with quasi_steady_check(). A generator the build does not
+    #  reach is a generator that cannot catch drift.
+    transient_numbers()

@@ -559,10 +559,21 @@ def fig_margin_fibre():
     print(f"    undetermined window: s_peak in ({lo:.1f}, {hi:.1f}) = "
           f"({lo / base:.2f}x, {hi / base:.2f}x) baseline, "
           f"width {100 * (hi - lo) / (0.5 * (lo + hi)):.1f}% of centre")
+    #  the width at the two ends of the m_tol sweep is what the registry's
+    #  m_tol row quotes as the cost of that convention, so it is generated
+    #  here rather than read off this function's stdout and typed in.
+    widths = {}
     for x in (15.0, 40.0, 160.0):
         w = margin_window(a0, b0, x)
-        print(f"      m_tol = {x:5.1f}: width "
-              f"{100 * (w[1] - w[0]) / (0.5 * (w[0] + w[1])):6.2f}% of centre")
+        widths[x] = 100 * (w[1] - w[0]) / (0.5 * (w[0] + w[1]))
+        print(f"      m_tol = {x:5.1f}: width {widths[x]:6.2f}% of centre")
+    from common.numbers import write_numbers
+    write_numbers("local",
+                  {"mtol_window_lo_pct": widths[15.0],
+                   "mtol_window_pct": widths[40.0],
+                   "mtol_window_hi_pct": widths[160.0]},
+                  {"mtol_window_lo_pct": "{:.1f}", "mtol_window_pct": "{:.1f}",
+                   "mtol_window_hi_pct": "{:.0f}"})
 
 
 # =====================================================================

@@ -51,7 +51,8 @@ Nothing here assumes $K_m$, which Remark~\ref{rem:no_km} forbids, and nothing ne
 the record determines it (Remark~\ref{rem:kmrecovered}).
 \item \textbf{$k_e$ carries a log-prior of $0.8$}, a factor of $2.2$, and is the only
 prior that does any work: removing it takes the same design from $\num{sd_dense}$ ($\num{sd_dense_lo}$ to
-$\num{sd_dense_hi}$) to $1.1096$ ($1.0313$ to $1.1923$), a factor of $7.4$ taken record by record
+$\num{sd_dense_hi}$) to $\num{sd_dense_flat}$ ($\num{sd_dense_flat_lo}$ to
+$\num{sd_dense_flat_hi}$), a factor of $\num{ke_prior_worth}$ taken record by record
 ($6.9$ to $7.9$). That the two priors divide this way is the null vector
 \eqref{eq:nullvec} showing itself: it has a zero in its $k_e$ slot, so $K_m$ moves
 \emph{along} the degeneracy, where a prior would have to be implausibly tight to bind,
@@ -72,9 +73,9 @@ values against a therapeutic half-life of $3.5$ days, a separation of
 $\num{timescale_ratio}$ that the code
 measures rather than asserts, so the marker is in quasi-steady state at every sampling
 instant a clinic could use and \eqref{eq:infofilter} is exact rather than approximate.
-One number in that calculation is for a protocol: the marker is within $5\%$ of
-quasi-steady $\num{settle_hours}$ hours after a dose, so a sample drawn inside the first hour is not a
-steady state and does not belong in a steady-state fit.
+One number in that calculation is for a protocol: a sample drawn inside the first hour
+after a dose is not at a steady state and does not belong in a steady-state fit, which
+Section~\ref{sec:admissible} makes precise.
 
 \begin{figure}[htbp]
 \centering
@@ -123,7 +124,8 @@ $\num{delta_range_two_monthly}$.
 \label{rem:aliasing}
 The fortnightly row of Table~\ref{tab:designs} is a catastrophe, and a \emph{designed} one
 rather than bad luck. The dose interval is fourteen days, so sampling every fourteen days
-lands every draw at the same phase of every cycle. The range of $\Delta/\theta$ collapses
+lands every draw at the same phase of every cycle, which is the bottom panel of
+Figure~\ref{fig:D0}. The range of $\Delta/\theta$ collapses
 from the monthly design's $\num{delta_range_monthly}$ to $\num{delta_range_aliased}$, the correlation between $\ln\theta$ and $\ln K_m$ returns to
 $+0.999$, and $\operatorname{sd}(\ln\hat\theta)$ goes to $\num{sd_aliased}$ ($\num{sd_aliased_lo}$ to $\num{sd_aliased_hi}$). The
 same happens at twenty-eight days and at any multiple. Taken record by record against the
@@ -171,18 +173,21 @@ therefore recovers something everywhere, including where Section~\ref{sec:scope}
 $\theta$ is gone, subject to two real qualifications: this is the \emph{effective} $K_m$
 of \eqref{eq:local}, a half-saturation at the plasma level rather than the in vitro
 Michaelis constant, which the $K_m$ row of Table~\ref{tab:params} keeps apart; and it is
-identified \emph{relative to this structure}, since the supplement's remark on
-structure-relative identification exhibits a published alternative under which $\theta$ is
+identified \emph{relative to this structure}, since
+Section~\ref{sec:structuredep} exhibits a published alternative under which $\theta$ is
 not identifiable at all, at a residual too small to notice, and nothing here exempts $K_m$
 from that argument.
 \end{remark}
 
-\paragraph{Two further readings of the table.} Placement still helps, and by a factor
-of nine and a half rather than a hundred: the same $365$ samples placed to straddle $K_m$
-reach $0.0157$ against $\num{sd_dense}$. That is a statement of what is being given up rather than
+\paragraph{Three further readings of the table.} Placement still helps, and by a factor
+of $\num{straddle_gain}$: the same $365$ samples placed to straddle $K_m$ reach
+$\num{sd_straddle}$ against $\num{sd_dense}$. That is far less than the factor of about two thousand
+Section~\ref{sec:excitation} gives for placement at a \emph{fixed} fold range, because
+these two designs differ in placement and in nothing else. That is a statement of what is being given up rather than
 a recommendation, since Section~\ref{sec:excursion_table} shows the straddling design is
-unavailable. And one dose cycle of seven samples does not do it: it reaches $0.216$
-($0.205$ to $0.230$) and has a floor there, because what limits it is the design and not
+unavailable. And one dose cycle of seven samples does not do it: it reaches
+$\num{sd_one_cycle}$ ($\num{sd_one_cycle_lo}$ to $\num{sd_one_cycle_hi}$) and has a floor
+there, because what limits it is the design and not
 how well the increment is known. Third, the same design evaluated on a footing this paper does not use, with the
 increment dropped from the sensitivity while still generating the levels (supplement,
 \S S1): it lands between $\num{dropped_lo}$ and $\num{dropped_hi}$ and never collapses, which is why an error
@@ -331,8 +336,8 @@ discovered at the first missed visit.}
 
 Read together these say that the schedule a protocol should write is monthly
 across dose cycles, offset so that it is not a multiple of the dose interval,
-booked on the weekday each target phase forces, with no draw inside the first
-hour after a dose. Nothing in that list costs a patient anything, and
+booked on the weekday each target phase forces (Figure~\ref{fig:E3}), with no
+draw inside the first hour after a dose. Nothing in that list costs a patient anything, and
 Figure~\ref{fig:E2} is the argument for stopping at about a dozen visits rather
 than extending the record: past the point where the curve meets its own floor,
 further visits buy a precision the prior and not the data would be supplying.
@@ -380,7 +385,7 @@ fraction of normal capacity used is the residual fraction times
 $1 + \Delta_{\mathrm{peak}}/\theta$, so the ceiling binds at
 $\Delta_{\mathrm{peak}}/\theta = 19$ at the $5\%$ residual-activity reference
 this paper adopts, and at $9$ at the $10\%$ reading kept as a check. The
-committed dose sits at $\Delta_{\mathrm{peak}}/\theta = 2.13$ and uses $16\%$
+committed dose sits at $\Delta_{\mathrm{peak}}/\theta = \num{train_peak_frac}$ and uses $16\%$
 of normal capacity at the $5\%$ reference, so it is inside the ceiling by a
 factor of nine, and the ceiling is not what limits it.
 
@@ -458,87 +463,6 @@ event the treatment exists to prevent, and even then not in full. The one design
 a labelled-propionate bolus, is small at $E = 0.076$ for a doubling of the marker; its
 value is not the excitation it supplies but that it measures capacity on a different axis
 entirely, which is the validation protocol of the supplement, \S S1.
-
-\subsection{The decision estimand}
-\label{sec:decision}
-
-Confidence intervals on $\theta$ are the wrong output. The clinical question is the
-\emph{sign} of $\mu = \theta - \thc$, and its two errors are not interchangeable: treating a
-patient who does not need it costs an infusion and a venous line, and failing to treat one
-who does costs a decompensation. Figure~\ref{fig:D3} is the operating characteristic of
-that decision, and it carries the negative result the paper ends on. Everything above says
-the therapy channel makes $\theta$ identifiable; it does not follow that it makes the sign
-of the margin decidable, and it does not.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{fig_D3_decision.pdf}
-\caption{The probability of getting the sign of $\mu$ wrong, by simulation, as a patient of
-fixed biology is swept across the decision boundary by the illness amplitude. Left of the
-dotted line the error is a patient treated who did not need it; right of it, a patient left
-untreated who did. Each panel varies one thing a protocol controls.}
-\label{fig:D3}
-\end{figure}
-
-\begin{center}
-\footnotesize
-\input{../results/tables/tab_D_decision}
-\end{center}
-
-Twelve seeds at four hundred replicates each, and both error columns taken at
-$|\mu| = 339$ either side of the boundary. The $\pm$ is the spread across seeds, which
-twelve seeds fix only to about a fifth of its own value, so it is a scale and not two
-significant figures. Near the
-boundary the therapy-channel design errs on about two patients in five, against four in
-nine for a design fixed at the operating point. The cohort needed to place the fraction of
-patients with $\mu<0$ within ten points falls from about $\num{cohort_fixed}$ to about $\num{cohort_monthly}$: a
-real gain, and still a number no cohort of this disease reaches, since the trial that
-established the therapy enrolled sixteen~\cite{trial_phase12} and
-Section~\ref{sec:howmany} sets $\num{cohort_monthly}$ against the size of the diagnosed population
-rather than against trial logistics. % C16
-The dose-precision requirement does not bind on this estimand: degrading the increment
-from exact to the $\num{kappa_monthly_pct}\%$ ($\num{kappa_monthly_pct_lo}$ to $\num{kappa_monthly_pct_hi}$) the identifiability gate asks for moves the
-sign error by less than its seed-to-seed spread. And the reason the decision does not
-improve is not identifiability at all, but that the sign of a quantity near its own zero
-is hard for reasons independent of what the record contains. These numbers do not
-contradict Table~\ref{tab:designs}, which reports a posterior standard deviation under
-the $k_e$ prior where this table reports a prior-free nonlinear least squares; the gap
-between them is the shape of the result. The therapy channel identifies $\theta$ given a
-defensible prior on the alternative channel, and does not make the decision reliable under
-any reading.
-
-\paragraph{The asymmetry reverses under crisis protocol.} The estimator regresses the
-\emph{recorded} load on the marker. Write the recorded load as
-$L_{\mathrm{base}} + \rho\,(s_{\mathrm{true}} - L_{\mathrm{base}})$, so $\rho = 1$ is a
-record that tracks the load to its recording error and $\rho \le 0$ is crisis protocol,
-where prescribed intake is cut while catabolic muscle breakdown supplies the load. On the
-monthly design $\rho = 1$ errs at $17.5\%$ and $41.8\%$ with a median $\hat\theta/\theta$
-of $1.03$; at $\rho = 0.5$ the two errors become $99.0\%$ and $0.0\%$ at $0.90$; at
-$\rho = 0$, intake pinned at baseline, $100\%$ and $0.0\%$ at $0.086$; at $\rho = -0.25$,
-protein stopped, $100\%$ and $0.0\%$ at $0.009$. The mechanism is in the last of those
-numbers: when recorded intake falls while the marker climbs, least squares has nowhere to
-put the marker except lost capacity, and $\hat\theta$ collapses by two orders of
-magnitude. ``The estimator fails towards declaring patients safe'' holds only while the
-record tracks the load; under the protocol a decompensation actually triggers, the same
-estimator declares every patient unsafe. Neither half belongs in an abstract on its own
-and neither is a bug to be fixed by weighting: they are one estimator meeting two
-data-generating processes, and which one a record came from is a fact about the chart
-rather than about the patient. Nor does a regret-equalised threshold repair it. At equal
-costs the managed regime wants the boundary at $+0.07\,\theta$ and the crisis regime wants
-it at $-0.39\,\theta$; at a cost ratio of ten to one or worse every regime wants every
-patient escalated, which is the decision-theoretic way of saying the test has stopped
-contributing.
-
-These error rates are simulated rather than propagated, and the difference matters. The
-design's near-null direction is very nearly the direction along which $\mu$ is monotone
-and of one sign, so the sampling distribution of $\hat\mu$ is skewed and does not cross
-zero anything like as often as its standard deviation suggests: a delta-method calculation
-reporting $\Phi(-|\mu|/\operatorname{sd}(\hat\mu))$ would throw away the one favourable
-result this paper has. That is the margin theorem of the supplement's fibre calculation
-(\S S1) showing up in the estimator, and both numbers are reported by the code so the gap
-stays visible. A linearisation understates what the record contains here and overstates it
-in the design matrix of Section~\ref{sec:rank}, which is the lesson: a diagnostic is a
-model too.
 
 \vspace{0.5em}
 \hrule

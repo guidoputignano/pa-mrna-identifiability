@@ -31,10 +31,10 @@ of the rules at normal enzymatic capacity, not the result.} What survives at eve
 capacity is the design rules themselves and the half-saturation $K_m$; what does not is
 the capacity estimate.
 
-The four results below are organised that way. The first is a design the trial is already
-running without knowing it. The other three establish what that design decides, what it
-does not, and where it stops, so that a protocol can be written against its actual reach
-rather than an assumed one.
+The five results below are organised that way. The first is a design the trial is already
+running without knowing it. The rest establish what that design decides, what it does not,
+and where it stops, so that a protocol can be written against its actual reach rather than
+an assumed one.
 
 \begin{enumerate}[leftmargin=*, itemsep=3pt]
 \item \textbf{The dose train is already the identification experiment.} The therapy is
@@ -60,18 +60,25 @@ the therapy and to no one else (Section~\ref{sec:whoto}).
 \item \textbf{Identification and the interval decision are different problems.} Identifying
 $\theta$ is worth doing on its own terms; deciding the interval needs something the marker
 record cannot supply. The decision is usually posed as the sign of $\mu = \theta - \thc$
-against a critical capacity, and that threshold is not a measured quantity: it is defined
-through two chosen constants, and across their defensible range it moves by a factor of
-$24$ and the sign flips for the same patient with perfect data
-(Section~\ref{sec:decision}).
+against a critical capacity, and that threshold is not a measured quantity but a convention
+defined through two chosen constants; across their defensible range it moves by a factor of
+$24$ and the sign flips for the same patient with perfect data (supplement, \S S1).
+Section~\ref{sec:decision} shows that even with $\theta$ identified the sign is not
+reliably decidable.
 \item \textbf{The endpoint evidence favours a smooth dose--response over a threshold.} The
 only endpoint evidence available reports no threshold at all. This paper records that as a
 finding rather than adopting a replacement estimand, for reasons given in
-Section~\ref{sec:decision}.
+Section~\ref{sec:discussion}.
 \item \textbf{The design has a located ceiling.} Above roughly three to four times the
 managed marker level, two patients differing tenfold in residual capacity are
 indistinguishable. That is the severely affected population, so the specification names the
 range it applies to instead of leaving it implied (Section~\ref{sec:scope}).
+\item \textbf{The estimate is relative to an assumed structure.} Under a published
+alternative readout $\theta$ is not identifiable at any design or number of visits, and a
+fit through that misspecification returns it high by a factor of $1.3$ to $2.0$ at a
+residual under a fifth of one $\sigma$, so nothing in the fit signals the error. What
+survives the substitution is the obstruction and the design advice
+(Section~\ref{sec:structuredep}).
 \end{enumerate}
 
 What this paper is not. It is a statement about identifiability, a property of a model and

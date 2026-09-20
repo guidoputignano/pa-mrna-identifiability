@@ -111,8 +111,10 @@ PAPER_FORMATS = {
     "sd_aliased_off": "{:.4f}", "free_cv2": "{:.3f}",
     "kappa_monthly_pct": "{:.1f}", "kappa_monthly_pct_lo": "{:.1f}",
     "kappa_monthly_pct_hi": "{:.1f}",
-    "settle_hours": "{:.2f}", "sigma": "{:.1f}",
-    "sd_load_acc_40pct": "{:.3f}", "timescale_ratio": "{:.0f}",
+    "settle_hours": "{:.2f}", "settle_hours_1pct": "{:.2f}",
+    "track_pct": "{:.4f}", "track_pct_1pct": "{:.4f}",
+    "sigma": "{:.1f}",
+    "timescale_ratio": "{:.0f}",
     "dropped_lo": "{:.2f}", "dropped_hi": "{:.1f}",
     #  two decimals, matching the "range of Delta/theta" column of Table 3
     "delta_range_monthly": "{:.2f}", "delta_range_two_monthly": "{:.2f}",
@@ -120,6 +122,14 @@ PAPER_FORMATS = {
     "delta_range_six_monthly": "{:.2f}", "delta_range_one_cycle": "{:.2f}",
     "delta_range_off": "{:.2f}",
     "sd_dense": "{:.4f}", "sd_dense_lo": "{:.4f}", "sd_dense_hi": "{:.4f}",
+    "sd_straddle": "{:.4f}", "sd_straddle_lo": "{:.4f}",
+    "sd_straddle_hi": "{:.4f}", "straddle_gain": "{:.1f}",
+    "sd_one_cycle": "{:.4f}", "sd_one_cycle_lo": "{:.4f}",
+    "sd_one_cycle_hi": "{:.4f}",
+    "sd_six_monthly": "{:.4f}", "sd_six_monthly_lo": "{:.4f}",
+    "sd_six_monthly_hi": "{:.4f}",
+    "sd_dense_flat": "{:.4f}", "sd_dense_flat_lo": "{:.4f}",
+    "sd_dense_flat_hi": "{:.4f}", "ke_prior_worth": "{:.1f}",
     #  the dose train's own shape, quoted in four places from memory
     "train_peak_frac": "{:.2f}", "train_trough_frac": "{:.3f}",
     "train_ratio": "{:.2f}", "train_drop": "{:.2f}", "phi_drop": "{:.4f}",
@@ -323,12 +333,17 @@ def quasi_steady_check(tol=0.05, cycles=3):
     print(f"    marker time constant {tau*24:.2f} h against a dose half-life of "
           f"{np.log(2)/LAMBDA:.1f} d, a ratio of {np.log(2)/LAMBDA/tau:.0f}")
     #  the window is a TOLERANCE, not a constant, and the paper quotes it at
-    #  two: 5% in Section 4.1 and 1% in Section 4.4 and Figure 6's caption
-    key = "settle_hours" if abs(tol - 0.05) < 1e-12 else \
-        "settle_hours_%dpct" % round(100 * tol)
+    #  two: 5% in Section 4.1 and 1% in Section 4.4 and Figure 6's caption.
+    #  `track_pct` is the departure AFTER that window, so it moves with the
+    #  tolerance too and needs the same treatment -- it was keyed as though it
+    #  did not, so whichever call ran last decided its value, and the guard's
+    #  fast path and `make figures` called this function a different number of
+    #  times in a different order and wrote 0.9861 and 4.9745 for the same
+    #  key. tau and the timescale ratio do not depend on the tolerance at all.
+    suffix = "" if abs(tol - 0.05) < 1e-12 else "_%dpct" % round(100 * tol)
     PAPER_NUMBERS.update({
-        key: settle * 24.0,
-        "track_pct": 100.0 * worst,
+        "settle_hours" + suffix: settle * 24.0,
+        "track_pct" + suffix: 100.0 * worst,
         "tau_hours": tau * 24.0,
         "timescale_ratio": np.log(2) / LAMBDA / tau,
     })
@@ -506,11 +521,17 @@ def table_load_precision(T=730.0):
     xs = _np.log([r[0] for r in raw])
     ys = _np.log([r[2] for r in raw])
     cross = float(_np.exp(_np.interp(_np.log(0.20), ys, xs)))
+    #  the seed spreads as well as the medians, because the registry row for
+    #  sigma quotes both and a spread typed beside a generated median is the
+    #  same hazard one column over
     PAPER_NUMBERS.update({
         "load_accuracy_gate": 100 * cross,
         "sd_load_acc_1pct": raw[0][2],
+        "sd_load_acc_1pct_lo": raw[0][3], "sd_load_acc_1pct_hi": raw[0][4],
         "sd_load_acc_20pct": raw[3][2],
+        "sd_load_acc_20pct_lo": raw[3][3], "sd_load_acc_20pct_hi": raw[3][4],
         "sd_load_acc_40pct": raw[4][2],
+        "sd_load_acc_40pct_lo": raw[4][3], "sd_load_acc_40pct_hi": raw[4][4],
     })
     print(f"    reaches 0.20 at a recording accuracy of {100 * cross:.1f}%")
     return raw, cross
@@ -1295,9 +1316,36 @@ def table_designs(T=730.0):
     dense = next(r for r in raw if r[0] == "every two days for two years")
     PAPER_NUMBERS.update({"sd_dense": dense[5], "sd_dense_lo": dense[8],
                           "sd_dense_hi": dense[9]})
+    #  the same design with the k_e prior taken away, which is what that prior
+    #  is worth and what the registry's s_lnke row quotes. A width of 1e9 is
+    #  flat here and NOT the same as ke_prior=None, which holds k_e exactly
+    #  known and drops the column altogether.
+    flat = []
+    for s in SEEDS:
+        lv, inc = design_record(dense_t, seed=s)
+        flat.append(float(np.sqrt(
+            _filter(lv, sigma, inc, ke_prior=1e9)[-1][0, 0])))
+    flat = median_spread(flat)
+    PAPER_NUMBERS.update({"sd_dense_flat": flat[0], "sd_dense_flat_lo": flat[1],
+                          "sd_dense_flat_hi": flat[2],
+                          "ke_prior_worth": flat[0] / dense[5]})
     lut = {r[0]: r[4] for r in raw}
     PAPER_NUMBERS.update({f"delta_range_{k}": lut[v]
                           for k, v in by_name.items() if v in lut})
+    #  the two rows the text quotes that spec_numbers() does not recompute:
+    #  the K_m-straddling design, which is the placement argument, and the
+    #  single dose cycle. Both were hand-typed in Section 4, one of them to
+    #  three decimals against the table's four.
+    sd_lut = {r[0]: (r[5], r[8], r[9]) for r in raw}
+    for key, nm in (("straddle", r"\emph{the same $365$ straddling $K_m$}"),
+                    ("one_cycle", "one dose cycle, every two days"),
+                    ("six_monthly", "six-monthly clinic visits")):
+        if nm in sd_lut:
+            med, slo, shi = sd_lut[nm]
+            PAPER_NUMBERS.update({f"sd_{key}": med, f"sd_{key}_lo": slo,
+                                  f"sd_{key}_hi": shi})
+    if "sd_straddle" in PAPER_NUMBERS:
+        PAPER_NUMBERS["straddle_gain"] = dense[5] / PAPER_NUMBERS["sd_straddle"]
     off = design_record(np.arange(0.0, T, DOSE_INTERVAL + 0.5),
                         seed=BASE_SEED)[1]
     PAPER_NUMBERS["delta_range_off"] = float((off.max() - off.min()) / P.theta)
@@ -1588,6 +1636,12 @@ def table_spec():
 if __name__ == "__main__":
     print("DESIGN")
     fig_excitation()
+    #  the settling window and the two time constants are quoted in prose,
+    #  not drawn, so nothing else here would produce them and the numbers
+    #  file would come out five keys short of what the paper inputs. The
+    #  paper quotes the window at two tolerances, 5% and 1%, so both run.
+    quasi_steady_check()
+    quasi_steady_check(tol=0.01)
     fig_dose_train()
     fig_collapse()
     fig_decision()

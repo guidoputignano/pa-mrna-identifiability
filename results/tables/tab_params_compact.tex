@@ -26,7 +26,7 @@ $T_{\mathrm{dose}}$ & 14~d & interval between therapeutic doses & \textsc{litera
 $D$ & $6000$~$\mu$M/d & size of one therapeutic increment & \textsc{assumed}\newline \emph{calibration}\newline \emph{mouse} & chosen for illustration so the marker falls by about two thirds at peak, against the trial's reported falls~\cite{trial_phase12} \\
 $\sigma$ & a family, $\mu$M/d & standard deviation of the ordinate of the fit & \textsc{assumed}\newline \emph{lumped} & deliberately not assigned: nothing here bounds how well the load is recorded, so it is carried as a family indexed by the row below \\
 $\mathrm{CV}$ & $5\%$ & analytical variability of the marker assay & \textsc{assumed}\newline \emph{measurable}\newline \emph{human (MMA); mouse} & chosen for illustration. The nearest published repeatability, the breath test's, is between-visit and in methylmalonic acidemia~\cite{breath_test_mma}, so it bounds this from above rather than measuring it \\
-$s_{\ln k_e}$ & $0.8$ & sd of the log-normal prior on $k_e$ & \textsc{assumed}\newline \emph{prior width} & chosen for illustration, tighter than the factor of $2.67$ the gate needs, so the gate passes with it in place \\
+$s_{\ln k_e}$ & $0.8$ & sd of the log-normal prior on $k_e$ & \textsc{assumed}\newline \emph{prior width} & chosen for illustration, tighter than the factor of $\num{ke_needed_factor}$ the gate needs, so the gate passes with it in place \\
 $\sigma_L/L$ & $5\%$ & relative error in the recorded substrate load & \textsc{assumed}\newline \emph{measurable} & chosen for illustration. Measurable by a weighed intake study; none exists in propionic acidemia, where records are prescriptions rather than intake as eaten \\
 \addlinespace
 \midrule

@@ -17,9 +17,9 @@ configurations, the one exception being the variant in which both clearance chan
 saturate (Remark~\ref{rem:modelB}).
 
 That information lives in the transient, and the clinic does not sample the transient. The
-marker's time constant is $\num{tau_hours}$~h against a therapeutic half-life of
-$3.5$~d, a separation of $\num{timescale_ratio}$, which is what licenses treating each visit as a point on an
-algebraic balance. A record of monthly draws therefore contains points on the
+marker's time constant is shorter than the therapeutic half-life by a factor of
+$\num{timescale_ratio}$ (Section~\ref{sec:collapse}), which is what licenses treating each
+visit as a point on an algebraic balance. A record of monthly draws therefore contains points on the
 \emph{quasi-steady locus}, where $\dot m$ has vanished and the derivatives carrying the
 structural result are absent. What remains at each visit is one algebraic balance, and the
 degeneracy below is a property of that.
@@ -153,14 +153,16 @@ unrecorded the optimum is interior. The dotted line is where management holds th
 $\Delta(t)$ is a \emph{known input}, read off the dosing record, and it multiplies exactly
 the term whose curvature the identification needs. On the phase 1/2
 schedule~\cite{trial_phase12}, with the patient held where management holds them, the two
-factors are of completely different sizes:
+factors are of completely different sizes, and Table~\ref{tab:factors} sets them side by
+side over the same record.
 
-\begin{center}
+\begin{table}[htbp]
+\centering
 \footnotesize
+\caption{\label{tab:factors}The two factors of the excitation, over the phase 1/2 record. The marker band moves $\varphi$ by a twentieth; the dose train moves $1+\Delta/\theta$ by nearly two. Their product is what a design has to move.}
 \input{../results/tables/tab_D_factors}
-\end{center}
+\end{table}
 
-\noindent
 \textbf{The dose train supplies $\num{excitation_ratio}$ times the excitation the marker
 band does, on the same record.} Against the $E \approx 0.50$ this paper adopts as its target, the band
 delivers $\num{phi_drop}$ and the schedule $\num{train_drop}$. \textbf{That target is a criterion adopted here
@@ -192,8 +194,8 @@ twenty times its managed level, or a fold range of order ten from below; the saf
 constraint is on the level, both violate it, and no published series records any propionate
 marker at either. The dose route needs a varying enzymatic increment, which the therapy
 supplies by construction on a schedule the protocol already fixes. Equation~\eqref{eq:dosereq}
-asks for a \emph{range}, and the biweekly schedule moves $\Delta/\theta$ over $1.95$ against
-the $0.55$ that would suffice. \textbf{The excitation was
+asks for a \emph{range}, and the biweekly schedule moves $\Delta/\theta$ over
+$\num{train_drop}$ against the $0.55$ that would suffice. \textbf{The excitation was
 being administered on every dosing day of the trial and read as a nuisance.}
 
 It is not free. Equation~\eqref{eq:dosereq} is in units of $\theta$, so $\Delta/\theta$ is

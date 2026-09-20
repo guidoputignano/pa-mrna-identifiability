@@ -386,28 +386,11 @@ def scope_numbers():
     return N
 
 
-def table_elasticity():
-    """How far the marker moves per unit of capacity, capacity by capacity."""
-    from common.style import write_table
-    rows = []
-    for pct in (100, 50, 20, 10, 5, 2, 1):
-        th = TH0 * pct / 100.0
-        _, m = anchor(th, convention="A")
-        rows.append([f"${pct}\\%$", f"${m / M_BAR0:.2f}$",
-                     f"${elasticity(th, KM0, KE, m):.3f}$"])
-    write_table("tab_S_elasticity",
-                [r"$\theta$, as \% of nominal", r"marker, $\times$ managed",
-                 r"$\lvert\partial\ln m/\partial\ln\theta\rvert$"],
-                rows, colspec="rrr",
-                note="closed form at the untreated balance, R2 of this script")
-    print("  wrote tab_S_elasticity.tex")
-
-
 def table_scope():
     """What the monthly design delivers at each capacity, and the visits to the gate."""
     from common.style import write_table
     rows = []
-    for pct in (100, 20, 10, 5, 2):
+    for pct in (100, 50, 20, 10, 5, 2, 1):
         th = TH0 * pct / 100.0
         _, m = anchor(th, convention="A")
         med, lo, hi = over_seeds(theta=th, D=D0, convention="A")
@@ -450,7 +433,6 @@ def table_ke_prior():
 
 def main():
     scope_numbers()
-    table_elasticity()
     table_scope()
     table_ke_prior()
     print("=" * 96)

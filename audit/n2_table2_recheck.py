@@ -60,15 +60,25 @@ def c2_retractions():
     instead of loosened: a phrase is a LIVE assertion unless it sits inside a
     withdrawal span, meaning between a phrase that marks the text as reported
     ("An earlier version of this row said", "the widely quoted", ...) and the
-    "is withdrawn" that closes it. Two of the seven items below now appear in
-    the table only inside such a span, and the self-test at the end proves the
-    check still fails on the same phrase asserted live.
+    "is withdrawn" that closes it. The span machinery is kept although the
+    table currently uses none: the rows that used to quote a withdrawn figure
+    now state the correction instead, so there is nothing left to bracket, and
+    a future row that quotes one again must still be able to. The self-test at
+    the end proves the check fails on the same phrase asserted live.
+
+    One pattern below carries a negative lookbehind, for the reason given at
+    it: a row that says "Not <the withdrawn claim>" is the retraction, and a
+    bare substring match cannot tell the two apart.
     """
     banned = [
         (r"12\.8\\%\s*in patients", "R4: the breath-test 12.8% as a mean"),
         (r"no conclusion may depend on (its|this) value",
          "Phase 7 D2: contradicted by the supplement's local-model section"),
-        (r"Every design conclusion is reported as a function",
+        #  the negative lookbehind is load-bearing, not tidiness: the row now
+        #  asserts the CORRECTION, "Not every design conclusion is reported as
+        #  a function of it", and a bare substring match fires on the very
+        #  sentence that withdraws the claim. A retraction is not a relapse.
+        (r"(?<!not )Every design conclusion is reported as a function",
          "R17 / D9: false of Section 8 as coded"),
         (r"first-order 3-HP elimination implicit",
          "Phase 7 D1: that model contains no marker elimination constant"),

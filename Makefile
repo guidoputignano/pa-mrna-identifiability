@@ -31,6 +31,8 @@ figures:
 	@echo ">> the K_m sweep and the profile interval, which the text quotes"
 	$(PY) audit/n1_km_cost.py
 	$(PY) audit/n6_profile_vs_crb.py
+	@echo ">> the transient's worth, which Sections 4.1 and 6.2 quote"
+	$(PY) audit/t1_transient_worth.py
 	@echo ">> the design figures: phase clock, visits, calendar, conditioning"
 	$(PY) audit/g1_phase_clock.py
 	$(PY) audit/g2_visits_vs_sd.py

@@ -2,10 +2,10 @@
 \label{sec:spec}
 %==========================================================================
 
-\emph{Every row is generated from the model code and is a consequence of something proved
-above. It has two tiers. Tier~1 is a single measurement
-nobody has published, and until it reports there is no defensible answer to the question
-Tier~2 asks.}
+\emph{Table~\ref{tab:spec} is the specification and this section is its commentary. Every
+row is generated from the model code and is a consequence of something proved above. It has
+two tiers. Tier~1 is a single measurement nobody has published, and until it reports there
+is no defensible answer to the question Tier~2 asks.}
 
 \begin{table}[htbp]
 \centering
@@ -69,19 +69,24 @@ than a between-visit one, a $17\%$ reduction in the coefficient of variation, an
 factor is the whole of what Tier~1 has to establish.
 
 \textbf{And beyond a certain width no number of visits is enough.} The prior on the
-increment's scale does not shrink as the record lengthens, so the design has a floor:
+increment's scale does not shrink as the record lengthens, so the design has a floor, and
+Table~\ref{tab:incfloor} is where it sits.
 
-\begin{center}
+\begin{table}[htbp]
+\centering
 \footnotesize
+\caption{\label{tab:incfloor}The precision no number of visits improves on, against how
+well the delivered increment is known. The prior on the increment's scale does not shrink
+with the record, so each column has a floor; the $\num{kappa_monthly_pct}\%$ column is the
+requirement the identifiability gate names.}
 \begin{tabular}{@{}rccccc@{}}
 \toprule
-increment CV & $10\%$ & $11.6\%$ & $14\%$ & $20\%$ & $30\%$ \\
+increment CV & $10\%$ & $\num{kappa_monthly_pct}\%$ & $14\%$ & $20\%$ & $30\%$ \\
 floor as $n \to \infty$ & $0.151$ & $0.160$ & $0.174$ & $0.207$ & $0.248$ \\
 \bottomrule
 \end{tabular}
-\end{center}
+\end{table}
 
-\noindent
 The floor crosses the target at an increment CV of $18.7\%$, and past that point no
 schedule and no number of visits reaches $0.20$. The published \emph{per-patient} range
 runs to $50.8\%$, so the requirement is on the spread and not only on the mean: a cohort
@@ -100,13 +105,15 @@ anchors capacity. The non-enzymatic clearance $k_e$ is the other quantity the re
 cannot supply, and unlike Tier~1 it can be bought incrementally: the design's precision is
 a smooth function of how well it is known, and the function is much steeper in the disease
 range than at the illustrative point, exactly as \eqref{eq:thetacolumn} predicts.
+Table~\ref{tab:keprior} prices it.
 
-\begin{center}
+\begin{table}[htbp]
+\centering
 \footnotesize
+\caption{\label{tab:keprior}What tightening the prior on $k_e$ buys, at nominal capacity and in the disease range. The function is much steeper in the disease range, and even an exact $k_e$ does not close the gate there.}
 \input{../results/tables/tab_S_keprior}
-\end{center}
+\end{table}
 
-\noindent
 Tightening $k_e$ from the published width to $5\%$ is worth a factor of $2.1$ at nominal
 capacity and $6.9$ in the disease range. It does not close the gate there: even an exact
 $k_e$ leaves $0.388$, about twice the target, so this is a second anchor and not a
@@ -133,19 +140,21 @@ day recovers it.
 
 Over the whole two-year record the ranges those schedules span are
 $\num{delta_range_monthly}$ monthly, $\num{delta_range_off}$ at $14.5$ days and
-$\num{delta_range_aliased}$ fortnightly, and the supplement, \S S1, draws them.
+$\num{delta_range_aliased}$ fortnightly, and Figure~\ref{fig:E1} draws them.
 
 \paragraph{The load record: the recording error binds, and keep the variation.}
 \label{sec:tier2load}
 Two different things are called the load record and they behave oppositely. Making the
 record more \emph{variable} buys nothing, and making it twenty times less variable costs
-nothing. Making it more \emph{accurate} is the third-tightest requirement here:
-\begin{center}
+nothing. Making it more \emph{accurate} is the third-tightest requirement here, and
+Table~\ref{tab:loadprec} is what it costs.
+\begin{table}[htbp]
+\centering
 \small
+\caption{\label{tab:loadprec}What the load record's accuracy costs. Both channels move together here; the paragraph below separates them, and it is the per-visit half that carries the requirement.}
 \input{../results/tables/tab_D_loadprec}
-\end{center}
+\end{table}
 
-\noindent
 The accuracy enters twice: through $\sigma$, the ordinate noise of the fit, and through
 the load-bias prior, which is the same fraction of the load. The table moves both at once,
 and on those numbers the design reaches $0.20$ only if intake is recorded to better than
@@ -221,9 +230,8 @@ function of the enzyme with no marker state and no elimination constant anywhere
 So $k_e$ is the one quantity this design asks for and cannot cite, and it is the second
 tier of the specification below rather than something to be assumed away.
 
-$K_m$ is assumed at nothing, in the sense Remark~\ref{rem:no_km} demanded: a prior twenty
-times looser leaves every number unchanged. That is a statement about the \emph{prior}, not
-the larger claim that nothing depends on $K_m$: over $K_m$ from $5$ to $1000$~$\mu$M the
+$K_m$ is assumed at nothing, in the sense Remark~\ref{rem:no_km} demanded. That is a
+statement about the \emph{prior}, not the larger claim that nothing depends on $K_m$: over $K_m$ from $5$ to $1000$~$\mu$M the
 achieved $\operatorname{sd}(\ln\hat\theta)$ runs $\num{km_sweep_lo}$ to
 $\num{km_sweep_hi}$ and crosses the target at $K_m = \num{km_crossing}$~$\mu$M against
 the $100$ assumed. What rescues it is the record, which
@@ -237,13 +245,15 @@ That is a limit on the specification's reach and it must be stated before the ex
 because it is larger than any of them. The obvious question is whether an untreated patient
 could be identified from what varies about them anyway. On one footing, $\theta$ and
 $K_m$ free, a log-prior of $0.8$ on $\ln k_e$, the load recorded to $5\%$, twenty-five
-monthly draws over two years: three sources of excitation were put on the same metric,
-each reported as a median over twenty-four seeds:
+monthly draws over two years: Table~\ref{tab:instruments} puts three sources of excitation
+on that one metric, each as a median over twenty-four seeds.
 
-\begin{center}
+\begin{table}[htbp]
+\centering
 \small
+\caption{\label{tab:instruments}Three sources of excitation on one footing, against the $0.20$ target. Only the dose train reaches it, which is why the design has the reach it has.}
 \input{../results/tables/tab_D_instruments}
-\end{center}
+\end{table}
 
 Neither route to rescuing the first row exists. Making intake more variable does not reach
 $0.20$ at any coefficient of variation: the median floors at about $0.376$ near a
@@ -331,7 +341,8 @@ Section~\ref{sec:scopeprec}.
 Both run the wrong way for the question the paper is about, which concerns patients near a
 boundary in capacity while the design serves worst the ones with most of it. That is the
 third place where identifiability and clinical need point in opposite directions, after the
-excursion requirement and the null-genotype anchor: what makes a patient informative about
+excursion requirement and the null-genotype anchor of the supplement, \S S1, which
+recovers $\theta$ only in patients with none of it: what makes a patient informative about
 $\theta$ is being far from normal, and management exists to keep them near it.
 
 The specification is therefore written as a cohort-level demonstration with a per-patient

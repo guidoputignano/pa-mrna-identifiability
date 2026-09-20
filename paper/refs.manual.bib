@@ -1,5 +1,7 @@
 % =====================================================================
-%  Hand-written entries, for sources with no resolvable DOI.
+%  Hand-written entries, for sources this project cannot fetch: either no
+%  resolvable DOI, or a DOI no build environment available to the project
+%  can reach.
 %
 %  Everything here was typed rather than fetched, so everything here is
 %  suspect. Each entry carries a `note` saying which fields have NOT
@@ -29,3 +31,35 @@
 %   acute encephalopathy or metabolic instability; plasma amino acids, urine
 %   organic acids, acylcarnitine profile and fibroblast enzymatic analyses are
 %   unreliable for the detection of heterozygotes.
+
+@article{carnitine_turnover,
+  author  = {Rebouche, Charles J.},
+  title   = {Kinetics, Pharmacokinetics, and Regulation of
+             L-Carnitine and Acetyl-L-carnitine Metabolism},
+  journal = {Annals of the New York Academy of Sciences},
+  year    = {2004},
+  volume  = {1033},
+  number  = {1},
+  pages   = {30--41},
+  doi     = {10.1196/annals.1320.003},
+  pmid    = {15591001}
+}
+% Verification status of the entry above, as a comment for the reason given
+% at the top of this file.
+%   This one HAS a resolvable DOI and belongs in paper/refs.sources, where its
+%   line is kept commented out. It is here because every environment this
+%   project has been built in denies doi.org, CrossRef and PubMed at the proxy
+%   (403 on CONNECT), and a tracked refs.bib exists so that the paper builds
+%   without network access. fetch_refs.py never writes a refs.bib with fewer
+%   keys than the one on disk, so the entry could not otherwise reach it.
+%   CHECKED against two independent index records, which agree: author,
+%   title, journal, 2004, volume 1033, pages 30-41, DOI, PMID 15591001.
+%   NOT CHECKED: the issue number, which is inferred from the series and is
+%   not load-bearing for the citation.
+%   Cited for: whole-body carnitine turnover of 38 to 119 h with a rapidly
+%   equilibrating compartment at 2 to 3 h. Those two figures are the claim
+%   registered as C59 and are recorded there as drift, not as a match: the
+%   abstract was not reachable from the build environment either, so the
+%   values carried over from the branch of PR #3 that found them could not
+%   be re-read against the record here. Anyone with registrar access should
+%   restore the refs.sources line, delete this entry, and confirm C59.

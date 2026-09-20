@@ -150,13 +150,20 @@ def km_numbers():
     sd_lo = over_seeds(lo_km)[0]
     sd_hi = over_seeds(hi_km)[0]
     cross = brentq(lambda k: over_seeds(k)[0] - GATE, 100.0, 400.0, xtol=1e-3)
+    #  the seed spread AT the crossing, because the headroom reads tighter
+    #  than it is: the spread there straddles the gate, so which side of it a
+    #  given record falls on is not settled by the median. The registry's K_m
+    #  row makes that point and quoted both ends by hand.
+    _, cross_lo, cross_hi = over_seeds(cross)
     N = {"km_sweep_lo": sd_lo, "km_sweep_hi": sd_hi,
          "km_sweep_fold": sd_hi / sd_lo,
          "km_crossing": cross, "km_headroom": cross / 100.0,
+         "km_crossing_sd_lo": cross_lo, "km_crossing_sd_hi": cross_hi,
          "km_invitro_sd": over_seeds(290.0)[0]}
     fmt = {"km_sweep_lo": "{:.4f}", "km_sweep_hi": "{:.4f}",
            "km_sweep_fold": "{:.1f}", "km_crossing": "{:.0f}",
-           "km_headroom": "{:.2f}", "km_invitro_sd": "{:.4f}"}
+           "km_headroom": "{:.2f}", "km_invitro_sd": "{:.4f}",
+           "km_crossing_sd_lo": "{:.4f}", "km_crossing_sd_hi": "{:.4f}"}
     write_numbers("kmcost", N, fmt)
     return N
 

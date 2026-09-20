@@ -10,11 +10,15 @@ levels of detail does and does not license.}
 
 \subsection{Notation}
 
+Every symbol the paper uses is collected in Table~\ref{tab:notation}, which is the only
+place any of them is defined; a symbol not in it does not appear below.
+
 \begin{table}[htbp]
 \centering
 \footnotesize
-\caption{\label{tab:notation}Notation, once, in one place. Values and sources are in
-Table~\ref{tab:params}.}
+\caption{\label{tab:notation}Notation, once, in one place. Values and sources for the
+constants Table~\ref{tab:params} carries are there; the rest, including $\thc$, $\mu$,
+$\mtol$ and $\spk$, are in the full registry, supplement \S S2.}
 \begin{tabular}{@{}ll@{\hskip 2em}ll@{}}
 \toprule
 $m$ & the plasma marker, 3-HP & $\bar m$ & the operating point, and the sample mean \\
@@ -97,8 +101,8 @@ timescales is needed to justify eliminating it.} The comparison that would be ne
 carnitine against the \emph{marker}, and it runs the wrong way: at the model's own $k$ the
 carnitine time constant is $0.92$~d against the marker's $\num{tau_hours}$~h, slower by a factor of
 $27$, and published human kinetics put whole-body carnitine turnover at $38$ to $119$~h
-with a rapidly equilibrating compartment at $2$ to $3$~h (Rebouche, \emph{Ann.\ N.\ Y.\
-Acad.\ Sci.} 2004), slower on either reading.
+with a rapidly equilibrating compartment at $2$ to $3$~h~\cite{carnitine_turnover}, slower
+on either reading. % C59
 
 What justifies the reduction is algebraic and needs no separation at all. $\alpha$ is
 \emph{defined} by solving $\dot c = 0$, and $\dot c = 0$ holds exactly at any fixed point,
@@ -141,6 +145,13 @@ every design calculation below uses:
 \dot m \;=\; L(t) + L_0 \;-\; \bigl(\theta + \Delta(t)\bigr) g(m) \;-\; k_e\, m.
 \label{eq:local}
 \end{equation}
+
+\noindent
+Figure~\ref{fig:blockA} draws it: one pool, two channels, and the two known inputs that
+ride on one channel each. Figure~\ref{fig:A1} then shows the difficulty it creates, which
+is that over the band a managed patient occupies the two channels are both close to linear,
+so a pair of patients can agree in the value \emph{and} the slope of total clearance while
+differing threefold in capacity.
 
 \begin{figure}[htbp]
 \centering
@@ -240,26 +251,21 @@ conclusions do. The supplement's local-model section flips a qualitative conclus
 it, the anchor attenuating at $3000$ and amplifying at the parent model's $300$, and by
 Section~\ref{sec:scopeprec} the design's own precision does too.
 
-\emph{Capacity in the disease.} On the monthly record $\operatorname{sd}(\ln\hat\theta)$ is
-$\num{sd_monthly}$ at nominal capacity, $\num{sd_10pct}$ at $10\%$ of nominal and
-$\num{sd_5pct}$ at $5\%$, against a target of $0.20$. The gate holds only for $\theta$
-between $\num{band_lo}$ and $\num{band_hi}$, which is $\num{band_lo_pct}\%$ to
-$\num{band_hi_pct}\%$ of nominal, so the disease sits a factor of
-$\num{disease_factor}$ below the band. This is
-the row that says who the paper is about, and it is the reason the precision above is an
-illustration rather than the result.
+\emph{Capacity in the disease.} On the monthly record $\operatorname{sd}(\ln\hat\theta)$
+is $\num{sd_monthly}$ at nominal capacity and $\num{sd_5pct}$ at the $5\%$ of nominal that
+defines the disease, against a target of $0.20$. This is the row that says who the paper
+is about, and it is the reason the precision above is an illustration rather than the
+result; Section~\ref{sec:scopeprec} works out the band it holds in.
 
 \emph{Half-saturation.} This is the tightest cost in the local model after the increment.
-Holding the patient managed at $\bar m$ and re-solving the load, the ordinate noise and the
-load-bias prior at each $K_m$, $\operatorname{sd}(\ln\hat\theta)$ runs $\num{km_sweep_lo}$ to
-$\num{km_sweep_hi}$ over $K_m$ from $5$ to $1000$~$\mu$M, a factor of
-$\num{km_sweep_fold}$. It is $\num{sd_monthly}$ at the illustrative $100$ and crosses the
-target at $K_m = \num{km_crossing}$, so the design has a factor of $\num{km_headroom}$ of
-headroom; at the in vitro value the $K_m$ row declines to use, $290$~$\mu$M, it would be
-$\num{km_invitro_sd}$. That headroom is smaller than it reads: across twenty-four intake
-records the spread is $0.1684$ to $0.1709$ at $K_m = 100$ and $0.1987$ to $0.2010$ at
-$K_m = 124$, so the crossing straddles the target and which side of it a given record falls
-on is not settled by the median.
+Over $K_m$ from $5$ to $1000$~$\mu$M, $\operatorname{sd}(\ln\hat\theta)$ runs
+$\num{km_sweep_lo}$ to $\num{km_sweep_hi}$ and crosses the target at
+$K_m = \num{km_crossing}$ against the $100$ assumed, a factor of $\num{km_headroom}$ of
+headroom on a constant Remark~\ref{rem:no_km} declines to import. That headroom is smaller
+than it reads: across twenty-four intake records the spread is $\num{sd_monthly_lo}$ to
+$\num{sd_monthly_hi}$ at $K_m = 100$ and $\num{km_crossing_sd_lo}$ to
+$\num{km_crossing_sd_hi}$ at $K_m = \num{km_crossing}$, so the crossing straddles the
+target and which side of it a given record falls on is not settled by the median.
 
 Two consequences of that table are load-bearing and are stated here rather than left to be
 inferred.

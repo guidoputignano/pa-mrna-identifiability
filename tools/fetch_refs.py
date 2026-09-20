@@ -32,6 +32,10 @@ TODO = ROOT / "paper" / "refs.todo"
 MANUAL = ROOT / "paper" / "refs.manual.bib"
 CACHE = ROOT / ".refcache.json"
 
+#: the line that separates refs.bib's fetched half from its hand-written one.
+#: It is a marker, not decoration: the offline path below splits on it.
+MANUAL_MARK = "\n% ---- hand-written entries, from paper/refs.manual.bib ----\n"
+
 MAILTO = "you@example.org"        # CrossRef asks for a contact; be polite
 UA = f"pa-identifiability-refs/1.0 (mailto:{MAILTO})"
 PAUSE = 0.4                        # seconds between requests
@@ -243,8 +247,7 @@ def main():
     )
     manual = ""
     if MANUAL.exists():
-        manual = ("\n% ---- hand-written entries, from paper/refs.manual.bib "
-                  "----\n\n" + MANUAL.read_text().strip() + "\n")
+        manual = (MANUAL_MARK + "\n" + MANUAL.read_text().strip() + "\n")
 
     text = sanitize(header + "\n\n".join(out) + "\n" + manual)
 
@@ -271,6 +274,19 @@ def main():
               f"{', '.join(sorted(dropped))}.")
         print("    The committed bibliography is kept, so the build still "
               "succeeds. Re-run with network access to the registrars.")
+        # The hand-written half of refs.bib is not fetched from anywhere, so
+        # refusing the whole write also froze it, and an entry added to
+        # refs.manual.bib could never reach the bibliography from an
+        # environment the registrars are unreachable from -- which is the only
+        # kind of environment that file exists for. Splice that half in on its
+        # own. The fetched half is copied across untouched, and the splice is
+        # abandoned rather than allowed to drop a key.
+        head = existing.split(MANUAL_MARK)[0].rstrip("\n") + "\n"
+        spliced = sanitize(head + manual) if manual else existing
+        if spliced != existing and not citekeys(existing) - citekeys(spliced):
+            OUT.write_text(spliced)
+            print(f"    refreshed the hand-written half from "
+                  f"{MANUAL.relative_to(ROOT)}; the fetched half is unchanged.")
     else:
         OUT.write_text(text)
         wrote = True

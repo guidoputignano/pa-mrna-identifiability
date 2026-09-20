@@ -180,7 +180,6 @@ def regenerate_tables(out):
         D.table_spec()
         #  the scope convention lives in the audit script that checks it,
         #  so the tables that use it are written there rather than copied
-        n4.table_elasticity()
         n4.table_scope()
         n4.table_ke_prior()
         #  and the numbers the text quotes in prose, which drift the same way
@@ -197,6 +196,9 @@ def regenerate_tables(out):
         n1 = importlib.util.module_from_spec(spec_n1)
         spec_n1.loader.exec_module(n1)
         n1.km_numbers()
+        #  the m_tol window, which the registry's m_tol row quotes as that
+        #  convention's cost; it is produced by the fibre-margin figure
+        A.fig_margin_fibre()
         _num.NUMDIR = NUMDIR
     return sorted(p.name for p in (Path(out) / "tables").glob("*.tex"))
 
@@ -228,7 +230,7 @@ def check_regenerated(live=None):
         #  the generated numbers file, compared the same way
         #  decision.tex and profile.tex are written by the slow generators and
         #  are covered by --working-tree after `make figures`, not here
-        for stem in ("design", "scope", "kmcost"):
+        for stem in ("design", "scope", "kmcost", "local"):
             nums = Path(tmp) / "numbers" / f"{stem}.tex"
             here = ROOT / "results" / "numbers" / f"{stem}.tex"
             if not nums.exists():
