@@ -648,6 +648,24 @@ def identification_cost_of_Kc(values=(25, 50, 100, 150, 200, 300, 400, 800),
     return out
 
 
+#: the perturbations the reduction's cost is quoted against, as a fold of the
+#: baseline load. The cost is a FUNCTION of the perturbation and not a
+#: constant, which is the whole reason the row names one: a 1.10x step returns
+#: 9.9% where a 1.50x step returns 31.8%, and an earlier version of the row
+#: gave four percentages and named neither.
+#:
+#: The third entry is the one item 11 of the September review needs. An
+#: isotope-dilution measurement of whole-body propionate turnover is itself a
+#: load perturbation, and a tracer is administered in tracer quantities by
+#: construction, so it is a SMALL one: the reduction has to be re-read for
+#: that step rather than for either of the two the registry already carries.
+#: If measuring the load opens anything, this is the number that says whether
+#: the measurement is readable off the reduced model at all.
+PERTURBATIONS = {"": None,               # filled from ILLNESS_FOLD below
+                 "_step10": 1.10,
+                 "_tracer": 1.01}
+
+
 def reduction_cost_numbers(ks=(0.1, 1.0, 10.0, 100.0)):
     """
     What the quasi-steady reduction costs OFF equilibrium, at four k.
@@ -675,35 +693,46 @@ def reduction_cost_numbers(ks=(0.1, 1.0, 10.0, 100.0)):
     largest defensible reading rather than the median of several.
     """
     from common.numbers import write_numbers
-    s_ill = S_BASE * ILLNESS_FOLD
     roots, st = equilibria_nonmonotone(clearance_C_quasistatic, PC, S_BASE)
     m0 = float(roots[st][0])
-    out = {}
-    for k in ks:
+    folds = dict(PERTURBATIONS)
+    folds[""] = ILLNESS_FOLD
+
+    def cost(fold, k):
+        s_new = S_BASE * fold
         c0 = PC.R0 / (k * (m0 / (PC.Kc + m0)
                            + PC.rho0 * (1.0 + m0 / PC.Mi)))
         red = solve_ivp(
-            lambda t, y: [s_ill - clearance_C_quasistatic(y[0], PC)],
+            lambda t, y: [s_new - clearance_C_quasistatic(y[0], PC)],
             (0.0, 160.0), [m0], rtol=1e-10, atol=1e-12,
             dense_output=True, method="Radau", max_step=0.5)
         two = solve_ivp(
-            lambda t, y: rhs_C(t, y, PC, lambda _: s_ill, k=k),
+            lambda t, y: rhs_C(t, y, PC, lambda _: s_new, k=k),
             (0.0, 160.0), [m0, c0], rtol=1e-10, atol=1e-12,
             dense_output=True, method="Radau", max_step=0.5)
         tt = np.linspace(0.0, 160.0, 8000)
         a, b = two.sol(tt)[0], red.sol(tt)[0]
-        out[k] = 100.0 * float(np.max(np.abs(a - b) / b))
-    N = {"reduction_cost": out[1.0],
-         "reduction_cost_k10": out[10.0],
-         "reduction_cost_k100": out[100.0],
-         "reduction_cost_k0p1": out[0.1],
-         "illness_fold": ILLNESS_FOLD}
-    write_numbers("reduction", N,
-                  {k: "{:.1f}" for k in N if k != "illness_fold"}
-                  | {"illness_fold": "{:.2f}"})
-    for k in ks:
-        print(f"    k = {k:6.1f}: peak relative error in m "
-              f"{out[k]:6.2f}% on a step to {ILLNESS_FOLD:.2f}x baseline")
+        return 100.0 * float(np.max(np.abs(a - b) / b))
+
+    N = {"illness_fold": ILLNESS_FOLD,
+         "tracer_fold": PERTURBATIONS["_tracer"],
+         "step10_fold": PERTURBATIONS["_step10"]}
+    suffix_k = {1.0: "", 10.0: "_k10", 100.0: "_k100", 0.1: "_k0p1"}
+    for tag, fold in folds.items():
+        for k in ks:
+            N[f"reduction_cost{tag}{suffix_k[k]}"] = cost(fold, k)
+        print(f"    a step to {fold:.2f}x baseline:")
+        for k in ks:
+            print(f"      k = {k:6.1f}: peak relative error in m "
+                  f"{N[f'reduction_cost{tag}{suffix_k[k]}']:6.2f}%")
+    fmt = {k: "{:.1f}" for k in N}
+    fmt.update({"illness_fold": "{:.2f}", "tracer_fold": "{:.2f}",
+                "step10_fold": "{:.2f}",
+                "reduction_cost_tracer": "{:.2f}",
+                "reduction_cost_tracer_k10": "{:.2f}",
+                "reduction_cost_tracer_k100": "{:.3f}",
+                "reduction_cost_tracer_k0p1": "{:.2f}"})
+    write_numbers("reduction", N, fmt)
     return N
 
 
