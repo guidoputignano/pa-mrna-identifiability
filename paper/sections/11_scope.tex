@@ -183,6 +183,28 @@ the answer is probably not. A design argument for keeping the dose and a pharmac
 argument for lowering it are not in conflict; they are answers to different questions, and
 this paper makes only the first.
 
+\paragraph{Four routes in, all of them tested and all of them closed.} It matters that
+these were measured rather than dismissed, because each is the first thing a reader
+proposes.
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item \textbf{Sample harder.} Every two days for two years instead of monthly, fifteen
+times the draws, moves the band's lower edge from $\num{band_lo_pct}\%$ to
+$\num{band_lo_dense_pct}\%$ of nominal. The disease is a factor of
+$\num{disease_factor}$ below it either way.
+\item \textbf{Sample the transient.} Eight post-dose draws move
+$\operatorname{sd}(\ln\hat\theta)$ by $\num{trans_gain_disease}\%$ here, because the
+transient sits $\num{trans_angle_disease}$ degrees from the direction the record is
+missing (Section~\ref{sec:collapse}).
+\item \textbf{Measure the increment better.} Going from a $30\%$ coefficient of variation
+on the delivered increment to an exact one is worth $0.3\%$ at this capacity, against
+$88\%$ at nominal.
+\item \textbf{Modulate the diet on purpose.} A prescribed $\pm15\%$ swing in natural
+protein is worth $7\%$, and an implausible $\pm50\%$ swing $32\%$, leaving $2.32$ against
+a target of $0.20$ (Section~\ref{sec:whoto}).
+\end{enumerate}
+
+\noindent
 This is the severely affected patient. The population in which the dosing question
 is most urgent is the population in which the record cannot answer it. This is not a statement about sampling effort: no schedule, no excursion and no precision on the dose
 recovers a quantity the observable has stopped responding to. The therapy channel of

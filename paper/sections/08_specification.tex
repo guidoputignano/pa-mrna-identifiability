@@ -32,8 +32,10 @@ The root-finding runs on the illustrative constants of Table~\ref{tab:params} an
 target is a criterion adopted in Section~\ref{sec:designsec}, so these numbers are
 conditional on one patient; Section~\ref{sec:coverage} measures how far that reaches. One
 row reports its own insensitivity, $K_m$, which needs nothing at all. \textbf{The load
-record is not a second such row}: how much it \emph{varies} changes nothing, and how well it
-is \emph{recorded} is the third-tightest requirement here.
+record is not a second such row}: how much it \emph{varies} changes nothing, and how well
+each visit is \emph{recorded} is the third-tightest requirement here. That requirement is
+on the per-visit scatter and not on the mean offset, which is a distinction
+Section~\ref{sec:tier2load} draws out because the two are bought by different studies.
 
 \subsection{Tier 1: the increment measurement}
 \label{sec:tier1}
@@ -133,29 +135,53 @@ Over the whole two-year record the ranges those schedules span are
 $\num{delta_range_monthly}$ monthly, $\num{delta_range_off}$ at $14.5$ days and
 $\num{delta_range_aliased}$ fortnightly, and the supplement, \S S1, draws them.
 
-\paragraph{The load record: the recording error binds, and keep the variation.} Two
-different things are called the load record and they behave oppositely. Making the record
-more \emph{variable} buys nothing, and making it twenty times less variable costs nothing.
-Making it more \emph{accurate} is the third-tightest requirement here:
+\paragraph{The load record: the recording error binds, and keep the variation.}
+\label{sec:tier2load}
+Two different things are called the load record and they behave oppositely. Making the
+record more \emph{variable} buys nothing, and making it twenty times less variable costs
+nothing. Making it more \emph{accurate} is the third-tightest requirement here:
 \begin{center}
 \small
 \input{../results/tables/tab_D_loadprec}
 \end{center}
 
 \noindent
-The accuracy enters twice and both move together: through $\sigma$, the ordinate noise of
-the fit, and through the load-bias prior, which is the same fraction of the load. On those
-numbers the design reaches $0.20$ only if intake is recorded to better than about
-$10\%$. A sweep over how much the record \emph{varies} says nothing about this, because
-the recording error enters only through $\sigma$.
+The accuracy enters twice: through $\sigma$, the ordinate noise of the fit, and through
+the load-bias prior, which is the same fraction of the load. The table moves both at once,
+and on those numbers the design reaches $0.20$ only if intake is recorded to better than
+about $10\%$.
+
+\textbf{The two do not carry equal weight, and which one carries the requirement decides
+what study to run.} Separating them at the $20\%$ row: the per-visit scatter alone gives
+$0.283$, the systematic offset alone gives $0.172$ against a $0.170$ baseline, so $98\%$ of
+the degradation is scatter and $2\%$ is offset. Holding the scatter at $5\%$, the target is
+met at every offset from $1\%$ to $500\%$; holding the offset at $5\%$, the scatter must be
+tighter than $10.4\%$, which is the requirement above almost exactly. The reason is
+Proposition~\ref{prop:rank} read the other way: the offset is the direction the fibre runs
+along, and once the recorded load varies the data close that direction themselves, leaving
+the prior on it inert.
+
+\textbf{So the requirement is a better diary at every visit, and a weighed-intake substudy
+is not a substitute for it.} Calibrating the mean offset is the cheaper study and it buys
+almost nothing: from no knowledge of the offset at all to knowing it within $1\%$ is worth
+under three per cent of the precision, and it never carries a failing design across the
+target.
 
 Ten per cent is not a comfortable margin. European practice records what patients are
 \emph{prescribed} rather than what they eat~\cite{pa_diet_survey}, no study in propionic
 acidemia reports repeated as-eaten intake at all, and the one study in any
 protein-restricted inborn error that has compared the two found actual natural protein
 running at $167\%$ of prescribed, a median of $40\%$ above it~\cite{pku_prescribed_actual}.
-At $40\%$ this design returns $\num{sd_load_acc_40pct}$, two and a half times its own target. \textbf{The feasibility of
-everything downstream rests on a measurement of intake that is currently not made.}
+With both channels at $40\%$ this design returns $\num{sd_load_acc_40pct}$, two and a half
+times its own target.
+
+That evidence has to be read carefully against the decomposition above. A population
+eating a steady $167\%$ of prescription is a pure offset, and an offset of that size costs
+under two per cent. What costs is the day-to-day deviation from prescription, and the PKU
+study reports a ratio rather than a within-patient scatter, so it does not measure the
+quantity the requirement is on. \textbf{The feasibility of everything downstream rests on a
+measurement of intake that is currently not made, and it is a repeated as-eaten record
+rather than a calibration of the mean.}
 
 The variability enters separately and in the opposite direction. A perfectly steady load
 makes the design exactly rank deficient, and the dose train does not repair it: the null
@@ -228,6 +254,21 @@ stays between $0.06$ and $0.24$ out to $n = 3\times10^{5}$. That is not informat
 saturating but a fixed prior: the data's information in the degenerate direction grows
 roughly in proportion to $n$ and never arrives, because the load-record prior holds about
 $1.05$ there and does not move (supplement, \S S1).
+
+Nor does \emph{designing} the variation rescue it. A prescribed modulation of natural
+protein, recorded as prescribed and carried as a known regressor, is worth $7\%$ at a
+disease-range capacity at a $\pm15\%$ swing and $32\%$ at an implausible $\pm50\%$, which
+leaves $2.32$ against a target of $0.20$; at nominal capacity it is worth nothing and at
+large amplitudes slightly less than nothing, because the dose train already supplies the
+excitation. Against the same swing arriving spontaneously, prescribing it is worth between
+nothing and two per cent: the information is in which levels the record visits, not in who
+chose them.
+
+\textbf{And there is a protocol trap in it}, which is Remark~\ref{rem:aliasing} inverted.
+A modulation whose period is the dose interval or the sampling interval lands every draw at
+the same phase of it and is \emph{worse} than no modulation at all. The same geometry that
+makes an unrecorded antibiotic cycle harmless when it aliases makes a designed one
+counterproductive.
 
 \emph{The therapy is therefore not a design improvement on an otherwise workable record. It
 is the design's condition of existence.} Every number in

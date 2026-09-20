@@ -263,11 +263,16 @@ matrix rises from $4.7\times10^{-8}$ to $7.2\times10^{-3}$ without the dose trai
 $3.8\times10^{-4}$ to $1.1\times10^{-1}$ with it: about five orders of magnitude in the
 first case and two and a half in the second, medians over twenty-four records.
 
-Its \emph{accuracy} is what decides whether the design reaches its target. Swept properly,
-$\operatorname{sd}(\ln\hat\theta)$ runs $0.159$ at a $1\%$ recording error to $0.288$ at
-$20\%$, so the target holds only below about $10\%$ (Section~\ref{sec:spec}). A sweep over
-the record's variability says nothing about this, because the recording error enters only
-through $\sigma$.
+Its \emph{accuracy} is what decides whether the design reaches its target, \textbf{and the
+mechanism is not the fibre}. Swept properly, $\operatorname{sd}(\ln\hat\theta)$ runs
+$0.159$ at a $1\%$ recording error to $0.288$ at $20\%$, so the target holds only below
+about $10\%$ (Section~\ref{sec:spec}). Decomposed, $98\%$ of that is the per-visit scatter
+entering through $\sigma$ and $2\%$ is the systematic offset the fibre runs along: once the
+recorded load varies, the data fill the deficient direction themselves and the prior on
+$b$ is inert, so that with the scatter at $5\%$ the target is met at every bias from $1\%$
+to $500\%$. A weighed-intake calibration of the mean offset, which is the cheap study,
+therefore buys almost nothing. What the requirement asks for is a better diary at every
+visit.
 
 \textbf{Restoring rank is not achieving precision, and the two must not be run together.}
 Without the dose train, prior-free $\operatorname{sd}(\ln\hat\theta)$ is still $28.1$ at

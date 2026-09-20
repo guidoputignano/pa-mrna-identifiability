@@ -1534,12 +1534,16 @@ def table_spec():
          "$\\Delta(t_i)$ is a regressor, not a nuisance: it carries the "
          "excitation"],
         ["load record, precision",
-         "ordinary outpatient \\emph{variability} suffices ($%.3f$ at a $1\\%%$ "
-         "day-to-day CV against $%.3f$ at $20\\%%$); the recording "
-         "\\emph{accuracy} is the binding one and is the row below"
+         "ordinary outpatient \\emph{variability} suffices ($%.4f$ at a $1\\%%$ "
+         "day-to-day CV against $%.4f$ at $20\\%%$); what binds is the "
+         "\\emph{per-visit recording error}, and it is the row below. It is "
+         "\\textbf{not} the mean offset: $98\\%%$ of the degradation at a $20\\%%$ "
+         "recording error is per-visit scatter and $2\\%%$ is offset, so a "
+         "weighed-intake calibration of the mean is not a substitute for a "
+         "repeated as-eaten record"
          % (N["sd_load_1pct"], N["sd_load_20pct"]),
-         "the load-bias column is nearly orthogonal to $\\theta$ once the "
-         "increment is carried"],
+         "the offset is the direction the fibre runs along, and a varying "
+         "recorded load closes it from the data, leaving its prior inert"],
         ["load record, variability",
          B + "record intake as eaten; do not smooth, average or impute}",
          "a steady load is the exactly singular case of "
