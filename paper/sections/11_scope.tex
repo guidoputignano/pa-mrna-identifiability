@@ -148,9 +148,11 @@ the answer is probably not. A design argument for keeping the dose and a pharmac
 argument for lowering it are not in conflict; they are answers to different questions, and
 this paper makes only the first.
 
-\paragraph{Six routes in, all of them tested and all of them closed.} It matters that
-these were measured rather than dismissed, because each is the first thing a reader
-proposes.
+\paragraph{Six routes in, all of them tested and all of them closed.} None of what
+follows touches the design rules of Section~\ref{sec:designsec}, which hold at every
+capacity and under every structure tested; each is a bound on how far \emph{the estimate}
+reaches, which is the narrower claim this section is about. It matters that they were
+measured rather than dismissed, because each is the first thing a reader proposes.
 
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
 \item \textbf{Sample harder.} Every two days for two years instead of monthly, fifteen
@@ -184,7 +186,18 @@ rather than reverses as capacity falls, from thirteen visits to eighteen.
 
 \noindent
 All six are routes to \emph{precision on $\theta$}, and that is the only question they
-are closed on. The transient has a second job, and on that one it is not closed but
+are closed on. \textbf{They also fail in the same way, which is worth saying once because
+a reader who doubts one will propose the others.} Every one of them attacks the parameter
+count: each closes, tightens or removes the load-bias direction the fibre runs along. But
+what binds is not the parameter count. It is $\sigma$ at nominal capacity and the marker's
+sensitivity to $\theta$ below it, and the fibre has been worth a couple of per cent
+wherever this paper has priced it --- $2\%$ of the load-record requirement
+(Section~\ref{sec:tierload}), under one per cent of what measuring the load instead of
+recording it would buy, and the difference between $\num{trans_base_nominal}$ and
+$\num{trans_noprior_nominal}$ when the prior on it is removed outright. That is an
+observation across six results rather than a theorem, and it does not say no route exists.
+It says where one would have to act: on $\sigma$, or on an observable that still responds
+to $\theta$ where the marker has stopped. The transient has a second job, and on that one it is not closed but
 recommended: it is the measurement that would say which structure a record came from
 (Section~\ref{sec:structuredep}), because the published alternative's marker is algebraic
 in the enzyme while a marker that is a state pins its own rate constant separately from

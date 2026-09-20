@@ -73,12 +73,18 @@ Section~\ref{sec:discussion}.
 managed marker level, two patients differing tenfold in residual capacity are
 indistinguishable. That is the severely affected population, so the specification names the
 range it applies to instead of leaving it implied (Section~\ref{sec:scope}).
-\item \textbf{The estimate is relative to an assumed structure.} Under a published
-alternative readout $\theta$ is not identifiable at any design or number of visits, and a
-fit through that misspecification returns it high by a factor of $1.3$ to $2.0$ at a
-residual under a fifth of one $\sigma$, so nothing in the fit signals the error. What
-survives the substitution is the obstruction and the design advice
-(Section~\ref{sec:structuredep}).
+\item \textbf{The estimate is relative to an assumed structure, and one blood draw rules
+the alternative out.} Under a published alternative readout $\theta$ is not identifiable at
+any design or number of visits, and a fit through that misspecification returns it high by
+a factor of $1.3$ to $2.0$ at a residual under a fifth of one $\sigma$, so nothing in the
+fit signals the error (Section~\ref{sec:structuredep}). That is a limit with a remedy, and
+it is the cheapest item in this paper. The alternative's marker is algebraic in the enzyme
+and has no relaxation of its own; this paper's is a state. The two therefore agree on the
+whole steady map and disagree only in the minutes after an infusion, by
+$\num{struct_sigma_3min}$ standard deviations at three minutes from a single draw. It
+rules out that alternative and every structure sharing its defining feature, though not a
+third with a marker state and a different steady map, and it is Tier~1 of the specification
+(Section~\ref{sec:tierstruct}).
 \end{enumerate}
 
 What this paper is not. It is a statement about identifiability, a property of a model and
