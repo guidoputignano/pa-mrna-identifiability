@@ -241,6 +241,51 @@ def parent_gap(theta):
                 in_sigmas=float(dm.max() / sigma_marker(theta)))
 
 
+def transient_numbers():
+    """
+    The four figures Section 4.1 quotes, generated rather than typed.
+
+    Only what the paper carries: what eight post-dose samples move at each
+    capacity, what they move for k_e, the angle between the transient and the
+    degeneracy, and the excursion in assay sigmas.
+    """
+    from common.numbers import write_numbers
+    monthly = np.arange(0.0, 730.0, 30.4)
+    N = {}
+    for th, tag in ((3000.0, "nominal"), (150.0, "disease")):
+        S = [steady_block(th, monthly, s) for s in SEEDS]
+        tb = transient_block(th, post_times(8))
+        base = median_spread([sds(prior_block() + F)[0] for F in S])[0]
+        with8 = median_spread([sds(prior_block() + F + tb)[0] for F in S])[0]
+        ke0 = median_spread([sds(prior_block() + F)[1] for F in S])[0]
+        ke8 = median_spread([sds(prior_block() + F + tb)[1] for F in S])[0]
+        N["trans_gain_" + tag] = 100.0 * (1.0 - with8 / base)
+        N["trans_ke_gain_" + tag] = 100.0 * (1.0 - ke8 / ke0)
+        #  the angle between the transient's best direction and the record's worst
+        worst = np.linalg.eigh(prior_block() + S[0])[1][:, 0]
+        worst = worst / np.linalg.norm(worst)
+        te = post_times(8)
+        base_p = dict(theta=th, Km=KM, ke=KE, b=0.0)
+        cols = []
+        for name, step in (("theta", 1e-5 * th), ("Km", 1e-5 * KM),
+                           ("b", 1e-5 * LOAD_FRAC * LB), ("ke", 1e-5 * KE)):
+            hi, lo = dict(base_p), dict(base_p)
+            hi[name] = base_p[name] + step
+            lo[name] = base_p[name] - step
+            d = (_traj(t_eval=te, **hi) - _traj(t_eval=te, **lo)) / (2.0 * step)
+            cols.append(d * base_p[name] if name != "b" else d)
+        vt = np.linalg.svd(np.stack(cols, axis=-1), full_matrices=False)[2]
+        best = vt[0] / np.linalg.norm(vt[0])
+        N["trans_angle_" + tag] = float(
+            np.degrees(np.arccos(min(abs(float(best @ worst)), 1.0))))
+        m = _traj(th, KM, KE, 0.0, np.r_[1e-9, te])
+        N["trans_sigmas_" + tag] = abs(m[0] - m[-1]) / sigma_marker(th)
+    fmt = {k: ("{:.1f}" if "angle" in k or "sigmas" in k else "{:.1f}")
+           for k in N}
+    write_numbers("transient", N, fmt)
+    return N
+
+
 # -------------------------------------------------------------------- main
 def main():
     print(__doc__)

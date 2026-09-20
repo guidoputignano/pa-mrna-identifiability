@@ -56,9 +56,35 @@ are between-visit, on fifteen \emph{mut} patients at visits two months to four y
 $14.02 \pm 12.86\%$ with a range of $0.39$ to $50.84\%$. The widely quoted $12.8\%$ is the
 standard deviation of the per-subject coefficients and not their mean. Between-visit
 variation bounds same-day error from above, because it contains drift a same-day pair
-removes, and the bound sits close to the requirement; a bound that happens to sit near a
-threshold is not a measurement of it, and a per-subject range reaching $50.8\%$ cannot be
-applied to an individual.
+removes.
+
+\textbf{That bound is on the wrong side of the requirement, and not by a little.} At a
+$14.0\%$ coefficient of variation the recommended record returns
+$\operatorname{sd}(\ln\hat\theta) = 0.212$ against a gate of $0.20$, and reaches the gate
+only at $118$ monthly draws, which is nearly ten years of follow-up, against eleven with
+the increment known exactly. A same-day pair must therefore be a factor of $1.21$ tighter
+than a between-visit one, a $17\%$ reduction in the coefficient of variation, and that
+factor is the whole of what Tier~1 has to establish.
+
+\textbf{And beyond a certain width no number of visits is enough.} The prior on the
+increment's scale does not shrink as the record lengthens, so the design has a floor:
+
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}rccccc@{}}
+\toprule
+increment CV & $10\%$ & $11.6\%$ & $14\%$ & $20\%$ & $30\%$ \\
+floor as $n \to \infty$ & $0.151$ & $0.160$ & $0.174$ & $0.207$ & $0.248$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+The floor crosses the target at an increment CV of $18.7\%$, and past that point no
+schedule and no number of visits reaches $0.20$. The published \emph{per-patient} range
+runs to $50.8\%$, so the requirement is on the spread and not only on the mean: a cohort
+whose average repeatability met the gate could still contain patients for whom no record
+suffices. The specification as written does not say that, and a protocol should.
 
 The cohort is methylmalonic acidemia rather than propionic acidemia, which cuts less deeply
 than it appears. The assay was first applied to this disease in five PA patients among

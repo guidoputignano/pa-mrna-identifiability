@@ -199,15 +199,27 @@ a factor of $52$ to $141$ across the designs a protocol could adopt with no prio
 at all, and $7$ to $16$ with the prior in place, record by record over twenty-four records. The data specification rests on that comparison
 rather than on the absolute number.
 
-\paragraph{What a transient would be worth, and why none is proposed.} Monthly draws
-sample only the slow variable. Within a few multiples of $\num{tau_hours}$ hours after an infusion
-the balance is not algebraic and the observation separates $k_e$ from $K_m$, so a
-transient is what would measure the one parameter whose prior the design rests on. It is
-not proposed here, because the quasi-steady marker and the transient marker are different
-claims: at steady state the marker need only track the substrate monotonically, whereas
-during a transient it must track it with the right time constant, which nothing in the
-literature establishes. Tier~1 of Section~\ref{sec:spec} asks for the measurement that
-would begin to settle it.
+\paragraph{What a transient would be worth, which is a route tested and closed.} Monthly
+draws sample only the slow variable, and within a few multiples of $\num{tau_hours}$ hours
+after an infusion the balance is not algebraic, so a transient is the obvious thing to
+reach for: there the observation might separate $k_e$ from $K_m$ and measure the one
+parameter whose prior the design rests on. \textbf{Measured, it does not.} Eight post-dose
+draws added to the recommended record move $\operatorname{sd}(\ln\hat\theta)$ by
+$\num{trans_gain_nominal}\%$ at nominal capacity and $\num{trans_gain_disease}\%$ at
+$5\%$ of nominal, and move $\operatorname{sd}(\ln\hat k_e)$ by
+$\num{trans_ke_gain_nominal}\%$ and $\num{trans_ke_gain_disease}\%$.
+
+The reason is geometric and not statistical, and it is worth carrying. The transient is
+not weak: the marker falls through $\num{trans_sigmas_disease}$ assay standard deviations
+in six hours at a disease-range capacity. But its best-determined direction sits
+$\num{trans_angle_disease}$ degrees from the record's worst-determined one, so it
+re-measures, with great precision, what the monthly record already knows. That is the
+pattern of Section~\ref{sec:discussion} once more: magnitude is the wrong axis. A
+transient would also cost the observation model, since at steady state the marker need
+only track the substrate monotonically whereas during a transient it must track it with
+the right time constant, which nothing in the literature establishes. Tier~1 of
+Section~\ref{sec:spec} asks for the measurement that would begin to settle that, and it
+is a better use of the same effort.
 
 \subsection{What the therapy schedule can be asked to do}
 \label{sec:route}
