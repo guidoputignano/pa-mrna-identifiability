@@ -28,6 +28,9 @@ figures:
 	@echo ">> the decision table (slow: 12 seeds x 400 replicates)";        $(PY) audit/d13_decision_therapy.py
 	@echo ">> the admissibility checks and the dose sensitivity";           $(PY) audit/h1_admissibility.py
 	@echo ">> the dose calibration table (slow)";                           $(PY) audit/k4_admissibility.py
+	@echo ">> the K_m sweep and the profile interval, which the text quotes"
+	$(PY) audit/n1_km_cost.py
+	$(PY) audit/n6_profile_vs_crb.py
 	@echo ">> the design figures: phase clock, visits, calendar, conditioning"
 	$(PY) audit/g1_phase_clock.py
 	$(PY) audit/g2_visits_vs_sd.py

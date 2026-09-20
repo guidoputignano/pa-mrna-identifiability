@@ -146,8 +146,9 @@ repeated records. Multiplying it by $1.96$ to read a confidence interval is a di
 step, and it needs the likelihood to be quadratic over that range, which
 Section~\ref{sec:rank} shows it is not. Profiling $\ln\theta$ and re-optimising
 $(\ln K_m, b, \ln k_e)$ at each point under this paper's own priors, the $95\%$ profile
-interval on the recommended monthly design is a factor of $3.76$ wide ($2.86$ to $5.08$
-across records) against the $1.95$ the bound implies, and it is asymmetric for the reason
+interval on the recommended monthly design is a factor of $\num{profile_factor}$ wide
+($\num{profile_factor_lo}$ to $\num{profile_factor_hi}$ across records) against the
+$\num{crb_factor}$ the bound implies, and it is asymmetric for the reason
 Proposition~\ref{prop:rank} gives: lowering $\theta$ is compensated by raising $K_m$, so
 the profile has a long tail downward while its upper end sits about where the bound puts
 it. On a noiseless record the profile's curvature reproduces the bound to $0.4\%$, so this
@@ -274,8 +275,8 @@ schedule designed to spread phase reaches $1.85$, so almost all of what phase-sp
 bought by a schedule that simply is not a multiple of the dose interval. The
 second panel is a patient already on therapy when the record starts, whose
 increment range is exactly zero. The post-dose settling window is shaded and
-is all but invisible: at a $1\%$ tolerance it is $1.3$~hours, which is $0.4\%$
-of the dial, but the phase it removes is the peak, so excluding it costs about
+is all but invisible: at a $1\%$ tolerance it is $\num{settle_hours_1pct}$~hours, which
+is $0.4\%$ of the dial, but the phase it removes is the peak, so excluding it costs about
 a tenth of the reachable increment range.}
 \label{fig:E1}
 \end{figure}
@@ -352,7 +353,8 @@ is in the supplement, \S S1.}
 a dose the marker is still catching up is a tolerance and not a constant, and
 the paper quotes two numbers for it because there are two tolerances. At the
 $5\%$ tolerance used in Section~\ref{sec:collapse} the window is
-$\num{settle_hours}$~hours; at a $1\%$ tolerance it is $1.30$~hours. Neither
+$\num{settle_hours}$~hours; at a $1\%$ tolerance it is
+$\num{settle_hours_1pct}$~hours. Neither
 changes the rule, which is that no draw belongs inside it, and the recommended
 schedule satisfies that as constructed: none of its draws falls in the window
 at either tolerance. The window matters more in value than in time. It is
@@ -374,7 +376,8 @@ factor of nine, and the ceiling is not what limits it.
 condition is not innocuous.} The check reads $\theta$ as the residual and normal
 as $\theta/\mathrm{frac}$, so $\theta$ cancels and the verdict is
 $\mathrm{frac} \times (1 + \Delta_{\mathrm{peak}}/\theta)$, which cannot report a
-breach below a residual activity of $32\%$ and therefore cannot bind on this
+breach below a residual activity of $\num{ceiling_blind_pct}\%$ and therefore cannot
+bind on this
 disease at all. Read the other way, with $\theta = 3000$ as normal and $D$ held
 at its booked value rather than scaled with capacity, which is what a dose in
 mg/kg is, the same bound is breached at $10\%$ of nominal and below
@@ -435,8 +438,9 @@ Everything routine is in the wrong place rather than merely too narrow. The inte
 recovery, the carnitine dose steps and the cyclical antibiotics all deliver between a
 fifth and a quarter of what their own fold range could, because they happen an order of
 magnitude below $K_m$, so widening them does not fix it. Only a decompensation gets close
-and still falls short: an excursion to eight times the operating point reaches $E = 0.35$
-against the $0.50$ adopted, at $74\%$ of what its fold range could deliver, because it
+and still falls short: an excursion to eight times the operating point reaches $E = \num{decomp_E}$
+against the $0.50$ adopted, at $\num{decomp_frac_pct}\%$ of what its fold range could
+deliver, because it
 at least moves towards $K_m$. The excitation the decision needs is available only from the
 event the treatment exists to prevent, and even then not in full. The one designed source,
 a labelled-propionate bolus, is small at $E = 0.076$ for a doubling of the marker; its
@@ -475,10 +479,10 @@ twelve seeds fix only to about a fifth of its own value, so it is a scale and no
 significant figures. Near the
 boundary the therapy-channel design errs on about two patients in five, against four in
 nine for a design fixed at the operating point. The cohort needed to place the fraction of
-patients with $\mu<0$ within ten points falls from about $4\,900$ to about $2\,200$: a
+patients with $\mu<0$ within ten points falls from about $\num{cohort_fixed}$ to about $\num{cohort_monthly}$: a
 real gain, and still a number no cohort of this disease reaches, since the trial that
 established the therapy enrolled sixteen~\cite{trial_phase12} and
-Section~\ref{sec:howmany} sets $2\,200$ against the size of the diagnosed population
+Section~\ref{sec:howmany} sets $\num{cohort_monthly}$ against the size of the diagnosed population
 rather than against trial logistics. % C16
 The dose-precision requirement does not bind on this estimand: degrading the increment
 from exact to the $\num{kappa_monthly_pct}\%$ ($\num{kappa_monthly_pct_lo}$ to $\num{kappa_monthly_pct_hi}$) the identifiability gate asks for moves the

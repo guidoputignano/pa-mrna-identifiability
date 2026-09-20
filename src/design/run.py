@@ -124,7 +124,9 @@ PAPER_FORMATS = {
     "train_peak_frac": "{:.2f}", "train_trough_frac": "{:.3f}",
     "train_ratio": "{:.2f}", "train_drop": "{:.2f}", "phi_drop": "{:.4f}",
     #  the quasi-steady separation, quoted as 0.8 h and 0.81 h and 10^2 and 104
-    "tau_hours": "{:.2f}",
+    "tau_hours": "{:.2f}", "settle_hours_1pct": "{:.2f}",
+    #  the K_m sweep and the excursion table's decompensation row
+    "decomp_E": "{:.2f}", "decomp_frac_pct": "{:.0f}",
 }
 
 #: the seed `design_record` has always drawn its intake record from. Kept as
@@ -320,8 +322,12 @@ def quasi_steady_check(tol=0.05, cycles=3):
     worst = float(after.max()) if after.size else 0.0
     print(f"    marker time constant {tau*24:.2f} h against a dose half-life of "
           f"{np.log(2)/LAMBDA:.1f} d, a ratio of {np.log(2)/LAMBDA/tau:.0f}")
+    #  the window is a TOLERANCE, not a constant, and the paper quotes it at
+    #  two: 5% in Section 4.1 and 1% in Section 4.4 and Figure 6's caption
+    key = "settle_hours" if abs(tol - 0.05) < 1e-12 else \
+        "settle_hours_%dpct" % round(100 * tol)
     PAPER_NUMBERS.update({
-        "settle_hours": settle * 24.0,
+        key: settle * 24.0,
         "track_pct": 100.0 * worst,
         "tau_hours": tau * 24.0,
         "timescale_ratio": np.log(2) / LAMBDA / tau,
@@ -1316,6 +1322,12 @@ def table_excursion():
                      f"{E:.4f}",
                      f"{excitation_max(r):.4f}",
                      f"{E / excitation_max(r):.2f}"])
+    for name, lo, hi, _d in excursion_sources():
+        if "decompensation" in name:
+            PAPER_NUMBERS.update({
+                "decomp_E": excitation(lo, hi, P.Km),
+                "decomp_frac_pct": 100.0 * excitation(lo, hi, P.Km)
+                / excitation_max(hi / lo)})
     write_table("tab_D_excursion",
                 ["source", "$m$ range", "fold", "direction",
                  "$\\sqrt{m_{\\min}m_{\\max}}/K_m$", "$E$", "$E_{\\max}(r)$",

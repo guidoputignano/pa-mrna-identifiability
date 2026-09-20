@@ -172,8 +172,9 @@ tier of the specification below rather than something to be assumed away.
 $K_m$ is assumed at nothing, in the sense Remark~\ref{rem:no_km} demanded: a prior twenty
 times looser leaves every number unchanged. That is a statement about the \emph{prior}, not
 the larger claim that nothing depends on $K_m$: over $K_m$ from $5$ to $1000$~$\mu$M the
-achieved $\operatorname{sd}(\ln\hat\theta)$ runs $0.0507$ to $1.3608$ and crosses the target
-at $K_m = 124$~$\mu$M against the $100$ assumed. What rescues it is the record, which
+achieved $\operatorname{sd}(\ln\hat\theta)$ runs $\num{km_sweep_lo}$ to
+$\num{km_sweep_hi}$ and crosses the target at $K_m = \num{km_crossing}$~$\mu$M against
+the $100$ assumed. What rescues it is the record, which
 determines $K_m$ to $6$ to $7\%$ at every capacity (Remark~\ref{rem:kmrecovered}).
 
 \subsection{Applicability}
@@ -223,7 +224,7 @@ is fixed by protocol and exogenous by construction.
 \label{sec:howmany}
 \label{sec:coverage}
 
-The cohort arithmetic elsewhere in this paper, roughly $2\,200$, is for the \emph{decision}
+The cohort arithmetic elsewhere in this paper, roughly $\num{cohort_monthly}$, is for the \emph{decision}
 question, which Section~\ref{sec:decision} declares blocked for reasons that have nothing to
 do with cohort size. The claim on this page is narrower and within-patient: that a monthly
 record identifies a patient's own $\theta$ to the stated precision. Patients are needed only
@@ -235,7 +236,8 @@ fourteen patients, and to $\pm 15\%$ about twenty-four. Bounding the \emph{fract
 patients it works for needs twenty-four to within twenty points and ninety-six to within
 ten.
 
-Fourteen is inside a phase 1/2 trial of sixteen; ninety-six is not. The $2\,200$ is not a
+Fourteen is inside a phase 1/2 trial of sixteen; ninety-six is not. The
+$\num{cohort_monthly}$ is not a
 study this paper asks for, and the obstacle is not recruitment effort: propionic acidemia is
 rare, the highest-incidence population cited here screens about one in fourteen
 thousand~\cite{nbs_saudi_national}, % C10

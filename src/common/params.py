@@ -286,15 +286,20 @@ LOCAL = [
         ASSUMED, r"deliberately not assigned, because nothing in this paper bounds how well "
                  r"the substrate load is recorded. The assay contributes $b\,\sigma_m$ to the "
                  r"same total. \textbf{Not every design conclusion is reported as a "
-                 r"conclusion is reported as a function of it. That is false of "
-                 r"function of it}: \texttt{spec\_numbers()} computes one $\sigma$ at a recording error "
-                 r"of $5\%$ and reuses it on every row, so that table is reported \emph{at} "
-                 r"one $\sigma$, not as a function of it. Swept properly, "
-                 r"$\mathrm{sd}(\ln\hat\theta)$ runs $0.1566$ at $1\%$ recording error to "
-                 r"$0.2637$ at $20\%$, and the design meets its target only below roughly "
-                 r"$12\%$ (median over $24$ simulated intake records at a load CV of "
-                 r"$10\%$, spread $[0.1563, 0.1571]$ at $1\%$ and $[0.2563, 0.2690]$ at "
-                 r"$20\%$; \texttt{audit/m1\_loadbias\_prior.py})",
+                 r"function of it}: \texttt{spec\_numbers()} computes one $\sigma$ at a "
+                 r"recording error of $5\%$ and reuses it on every row, so that table is "
+                 r"reported \emph{at} one $\sigma$, not as a function of it. Swept "
+                 r"properly, moving the accuracy in both places it enters, the ordinate "
+                 r"noise and the load-bias prior, $\mathrm{sd}(\ln\hat\theta)$ runs "
+                 r"$0.1590$ at $1\%$ recording error to $0.2876$ at $20\%$ and $0.5049$ "
+                 r"at $40\%$, and the design meets its target only below about $10\%$ "
+                 r"(medians over $24$ simulated intake records at a load CV of $10\%$, "
+                 r"spread $[0.1583, 0.1599]$ at $1\%$ and $[0.2775, 0.2994]$ at $20\%$; "
+                 r"the generated table is \texttt{tab\_D\_loadprec}, which "
+                 r"Section~\ref{sec:spec} prints and the artefact check regenerates. An "
+                 r"earlier draft of this row quoted $0.1566$ to $0.2637$ and a gate of "
+                 r"$12\%$, from a sweep that moved the accuracy in only one of the two "
+                 r"places)",
         kind=LUMPED,
         rests_on=r"deliberately not assigned: nothing here bounds how well the load is recorded, so it is carried as a family indexed by the row below"),
     Row(r"$\mathrm{CV}$", f"${ASSAY_CV:.0f}\\%$",

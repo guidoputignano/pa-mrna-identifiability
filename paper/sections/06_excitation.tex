@@ -5,28 +5,11 @@
 \emph{What a clinical record has to do for $\theta$ to be recoverable, and which of the two
 available ways of doing it is actually available.}
 
-\subsection{Parametrisation}
-\label{sec:pinned}
-
-The enzymatic flux is written $\theta\,g(m)$ with $g(m) = m/(K_m+m)$, and $\theta$
-\emph{absorbs} the maximal velocity: it \emph{is} the patient's residual $V_{\max}$, not a
-fraction of a population one. Carrying the two separately adds a parameter no excursion
-separates, since only the product multiplies $g$; splitting them needs an anchor outside
-the marker, which is what the $1$-$^{13}$C-propionate breath test
-is~\cite{breath_test_mma}. % C48
-The dynamic model is then
-\begin{equation}
-\dot m \;=\; L(t) + L_0 \;-\; \bigl(\theta + \Delta(t)\bigr) g(m) \;-\; k_e\, m,
-\label{eq:dyn}
-\end{equation}
-with $L$ the recorded propiogenic load, $L_0$ its unrecorded component carried as an
-unknown constant, and $\Delta$ the therapeutic increment, known from the dosing record.
-
 \subsection{What the sampling regime destroys}
 \label{sec:regime}
 
 Everything below is a statement about a \emph{design}, not about the model. Under a generic
-trajectory \eqref{eq:dyn} is globally structurally identifiable: $\dot m$ is known, only
+trajectory \eqref{eq:local} is globally structurally identifiable: $\dot m$ is known, only
 the therapy carries a term in $\Delta$ so $K_m$ follows from that coefficient alone, and
 the remaining three follow at three distinct levels.
 \texttt{StructuralIdentifiability.jl} returns globally identifiable for eight
@@ -78,7 +61,7 @@ records: one a transient, the other a locus on which $\dot m$ has already vanish
 
 \begin{proposition}[Two degeneracies]
 \label{prop:excitation}
-In \eqref{eq:dyn} with $(\theta, K_m, k_e, L_0)$ unknown:
+In \eqref{eq:local} with $(\theta, K_m, k_e, L_0)$ unknown:
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
 \item \textbf{Below the half-saturation level.} As $m/K_m \to 0$, total clearance collapses
 to $(\theta/K_m + k_e)\,m$: only the lumped ratio is identifiable, and $\theta$, $K_m$ and
@@ -187,7 +170,7 @@ excitation calculations below are measured against; no endpoint analysis supplie
 required excitation, and if one did it would replace this. The comparison against the marker's \emph{band} is
 the one that holds on a single record, because both factors are read off the same two years
 of chart. Against an \emph{excursion} the ratio is smaller and the footing is different: the
-largest any accessible source supplies is a decompensation reaching $E = 0.35$
+largest any accessible source supplies is a decompensation reaching $E = \num{decomp_E}$
 (Section~\ref{sec:excursion_table}), against which the train is worth $5.5$ times, and that
 source is the event the therapy exists to prevent.
 

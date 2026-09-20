@@ -170,6 +170,7 @@ def regenerate_tables(out):
         #  the quasi-steady check contributes the settling time a protocol
         #  needs, so it runs here too or the numbers file comes out short
         D.quasi_steady_check()
+        D.quasi_steady_check(tol=0.01)
         #  the dose-train figure contributes the increment's peak and trough
         #  and the phase coverage of each schedule, which the captions quote
         D.fig_dose_train()
@@ -190,6 +191,12 @@ def regenerate_tables(out):
         #  the scope result: the band and the enzymatic share, which the
         #  abstract, Section 2.5 and Section 6.2 all quote
         n4.scope_numbers()
+        #  the K_m sweep, quoted in two sections; 0.6 s
+        spec_n1 = importlib.util.spec_from_file_location(
+            "n1", ROOT / "audit" / "n1_km_cost.py")
+        n1 = importlib.util.module_from_spec(spec_n1)
+        spec_n1.loader.exec_module(n1)
+        n1.km_numbers()
         _num.NUMDIR = NUMDIR
     return sorted(p.name for p in (Path(out) / "tables").glob("*.tex"))
 
@@ -219,7 +226,9 @@ def check_regenerated(live=None):
                 n = sum(1 for x, y in zip(a, b) if x != y) + abs(len(a) - len(b))
                 bad.append((name, f"differs on {n} line(s)"))
         #  the generated numbers file, compared the same way
-        for stem in ("design", "scope"):
+        #  decision.tex and profile.tex are written by the slow generators and
+        #  are covered by --working-tree after `make figures`, not here
+        for stem in ("design", "scope", "kmcost"):
             nums = Path(tmp) / "numbers" / f"{stem}.tex"
             here = ROOT / "results" / "numbers" / f"{stem}.tex"
             if not nums.exists():

@@ -251,11 +251,12 @@ illustration rather than the result.
 
 \emph{Half-saturation.} This is the tightest cost in the local model after the increment.
 Holding the patient managed at $\bar m$ and re-solving the load, the ordinate noise and the
-load-bias prior at each $K_m$, $\operatorname{sd}(\ln\hat\theta)$ runs $0.0507$ to $1.3608$
-over $K_m$ from $5$ to $1000$~$\mu$M, a factor of $26.8$. It is $\num{sd_monthly}$ at the
-illustrative $100$ and crosses the target at $K_m = 124$, so the design has a factor of
-$1.24$ of headroom; at the in vitro value the $K_m$ row declines to use, $290$~$\mu$M, it
-would be $0.4158$. That headroom is smaller than it reads: across twenty-four intake
+load-bias prior at each $K_m$, $\operatorname{sd}(\ln\hat\theta)$ runs $\num{km_sweep_lo}$ to
+$\num{km_sweep_hi}$ over $K_m$ from $5$ to $1000$~$\mu$M, a factor of
+$\num{km_sweep_fold}$. It is $\num{sd_monthly}$ at the illustrative $100$ and crosses the
+target at $K_m = \num{km_crossing}$, so the design has a factor of $\num{km_headroom}$ of
+headroom; at the in vitro value the $K_m$ row declines to use, $290$~$\mu$M, it would be
+$\num{km_invitro_sd}$. That headroom is smaller than it reads: across twenty-four intake
 records the spread is $0.1684$ to $0.1709$ at $K_m = 100$ and $0.1987$ to $0.2010$ at
 $K_m = 124$, so the crossing straddles the target and which side of it a given record falls
 on is not settled by the median.

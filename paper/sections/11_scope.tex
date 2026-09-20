@@ -152,7 +152,8 @@ admissibility bound $\theta + \Delta_{\mathrm{peak}} \le$ normal is satisfied at
 illustrative point only because the check reads $\theta$ as the \emph{residual} and infers
 normal as $\theta/0.05$; written out, its verdict is
 $\operatorname{frac} \times (1 + \Delta_{\mathrm{peak}}/\theta)$ with $\theta$ cancelled,
-which cannot report a breach below a residual activity of $32\%$ and so cannot bind on this
+which cannot report a breach below a residual activity of $\num{ceiling_blind_pct}\%$
+and so cannot bind on this
 disease at all. Read instead with $\theta = 3000$ as normal and $D$ held at its booked value
 rather than scaled with capacity, which is what a dose in mg/kg is, the bound is breached at
 $10\%$ of nominal and below: at $5\%$ the booked increment would drive the enzyme to $2.18$

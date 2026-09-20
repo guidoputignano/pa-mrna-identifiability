@@ -147,6 +147,19 @@ def main():
         print(f"    over {len(w)} records: median width a factor of "
               f"{np.median(w):.2f} (range {w.min():.2f} to {w.max():.2f}),")
         print(f"    against the {implied:.2f} the CRB implies.")
+        if theta == TH0:
+            #  Remark 2 and the introduction both quote these, and both
+            #  quoted them as literals
+            from common.numbers import write_numbers
+            write_numbers("profile",
+                          {"profile_factor": float(np.median(w)),
+                           "profile_factor_lo": float(w.min()),
+                           "profile_factor_hi": float(w.max()),
+                           "crb_factor": float(implied)},
+                          {"profile_factor": "{:.2f}",
+                           "profile_factor_lo": "{:.2f}",
+                           "profile_factor_hi": "{:.2f}",
+                           "crb_factor": "{:.2f}"})
         if edges:
             print(f"    {edges} of {len(w)} intervals reach the grid edge, so "
                   f"those widths are LOWER")

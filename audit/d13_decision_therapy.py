@@ -56,6 +56,13 @@ def table_decision():
                      r"$%.1f\%% \pm %.1f$" % (100 * a.mean(), 100 * a.std()),
                      r"$%.1f\%% \pm %.1f$" % (100 * b.mean(), 100 * b.std()),
                      f"${coh}$" if coh != "n/a" else "n/a"])
+    #  the two cohort sizes, which Sections 4.6 and 5.5 both quote
+    from common.numbers import write_numbers
+    coh = [r[3] for r in rows]
+    write_numbers("decision",
+                  {"cohort_fixed": float(coh[0].strip("$")),
+                   "cohort_monthly": float(coh[1].strip("$"))},
+                  {"cohort_fixed": "{:.0f}", "cohort_monthly": "{:.0f}"})
     write_table("tab_D_decision",
                 ["design", "treat unneeded", "fail to treat", r"cohort $N$"],
                 rows, colspec="lrrr",

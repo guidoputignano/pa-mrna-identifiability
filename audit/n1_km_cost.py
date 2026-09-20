@@ -135,6 +135,32 @@ def columns_numeric(m, inc, Km, h=1e-4):
     return np.stack(out, axis=1)
 
 
+def km_numbers():
+    """
+    The K_m sweep as generated numbers.
+
+    Section 2.5 and Section 5.3 both carry this sweep, each with four
+    hand-typed literals, and the registry's K_m row carried a fifth set. One
+    computation, one set of keys.
+    """
+    from common.numbers import write_numbers
+    from scipy.optimize import brentq
+    GATE = 0.20
+    lo_km, hi_km = 5.0, 1000.0
+    sd_lo = over_seeds(lo_km)[0]
+    sd_hi = over_seeds(hi_km)[0]
+    cross = brentq(lambda k: over_seeds(k)[0] - GATE, 100.0, 400.0, xtol=1e-3)
+    N = {"km_sweep_lo": sd_lo, "km_sweep_hi": sd_hi,
+         "km_sweep_fold": sd_hi / sd_lo,
+         "km_crossing": cross, "km_headroom": cross / 100.0,
+         "km_invitro_sd": over_seeds(290.0)[0]}
+    fmt = {"km_sweep_lo": "{:.4f}", "km_sweep_hi": "{:.4f}",
+           "km_sweep_fold": "{:.1f}", "km_crossing": "{:.0f}",
+           "km_headroom": "{:.2f}", "km_invitro_sd": "{:.4f}"}
+    write_numbers("kmcost", N, fmt)
+    return N
+
+
 def recheck():
     print("\n  RE-CHECK: the analytic columns against central differences of the")
     print("  ordinate, at every K_m in the sweep. Same filter, independent Jacobian.")
@@ -170,6 +196,7 @@ KM_GRID = np.array([5.0, 10.0, 25.0, 50.0, 100.0, 200.0, 290.0, 500.0, 1000.0])
 
 
 def main():
+    km_numbers()
     print("=" * 78)
     print("  X22. WHAT ASSUMING K_m = 100 COSTS")
     print("=" * 78)

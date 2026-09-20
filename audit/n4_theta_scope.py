@@ -370,6 +370,9 @@ def scope_numbers():
                                times=MONTHLY)[0],
         "sd_5pct": over_seeds(theta=REFERENCE_FRAC * TH0, D=D0,
                               convention="A", times=MONTHLY)[0],
+        #  the residual activity below which the capacity-ceiling check
+        #  cannot report a breach, because theta cancels from its verdict
+        "ceiling_blind_pct": 100.0 / (1.0 + peak_increment(D0) / TH0),
     }
     fmt = {"band_lo": "{:.0f}", "band_hi": "{:.0f}", "band_lo_pct": "{:.0f}",
            "band_hi_pct": "{:.0f}", "band_fold": "{:.1f}",
@@ -377,7 +380,8 @@ def scope_numbers():
            "band_lo_dense_pct": "{:.0f}", "band_dense_gain_pct": "{:.0f}",
            "disease_factor": "{:.0f}", "share_nominal_pct": "{:.1f}",
            "share_10pct": "{:.1f}", "share_5pct": "{:.1f}",
-           "sd_10pct": "{:.4f}", "sd_5pct": "{:.4f}"}
+           "sd_10pct": "{:.4f}", "sd_5pct": "{:.4f}",
+           "ceiling_blind_pct": "{:.0f}"}
     write_numbers("scope", N, fmt)
     return N
 
