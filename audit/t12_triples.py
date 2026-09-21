@@ -220,8 +220,17 @@ def beta_ols(m, y):
     """
     The least-squares solution of the SAME linear system over all 25 visits.
 
-    This is the estimator a triple is the exactly-determined case of, so it is
-    the one comparison in which nothing but the number of equations differs.
+    This is the estimator a triple is the exactly-determined case of, so both
+    sides solve the same system with the same unknowns and no prior.
+
+    WHAT THE RATIO IN SECTION 5 THEREFORE PRICES, and it is not what it first
+    looks like. The left-hand side there is the MEDIAN OVER ALL 2300 TRIPLES,
+    which uses all 25 visits and merely recombines them, so the ratio is the
+    cost of the ensemble-median COMBINATION RULE and not the cost of using
+    three equations instead of twenty-five. The genuine three-against-25
+    comparison is a single triple against beta-OLS, and it is nothing like as
+    kind: the best-conditioned triple alone runs about 5 times the sd of the
+    full fit, an efficiency near 0.04 rather than 0.74.
     It is audit/i1_estimator.py's `beta_fit` with the load-bias column removed,
     and it inherits that function's stated price: it reweights every residual
     by (K_m + m_i), so it is not minimising the paper's objective, and it
@@ -555,9 +564,14 @@ def s4_why_mean(reps=60):
 def s5_ladder(reps=120, facs=(1.0, 0.3, 0.1, 0.03, 0.01, 0.003)):
     bars("5. THE EFFICIENCY GAP WITH THE PRIORS TAKEN OUT OF IT: A NOISE LADDER")
     print("  Both sides now solve the SAME linear system with the SAME three")
-    print("  unknowns and no prior: the triple uses 3 equations, beta-OLS uses")
-    print("  all 25. Nothing differs but the number of equations, so the ratio")
-    print("  of their sd(ln theta-hat) is the efficiency the question asks for.")
+    print("  unknowns and no prior, so the ratio of their sd(ln theta-hat) is")
+    print("  an efficiency and not a difference of footing.")
+    print("  READ IT FOR WHAT IT IS: the left-hand side is the MEDIAN OVER")
+    print("  2300 TRIPLES, which uses all 25 visits and only recombines them,")
+    print("  so this prices the ensemble-median COMBINATION RULE. It is not")
+    print("  the cost of three equations against twenty-five -- a single")
+    print("  best-conditioned triple runs about 5 times the full fit's sd,")
+    print("  an efficiency near 0.04 rather than the 0.74 below.")
     print("\n  The ladder is needed because Section 2's third row says the")
     print("  prior-free problem is not identified at the specification's noise.")
     print("  An efficiency can only be read where both estimators exist, so the")

@@ -227,6 +227,20 @@ def sd_vandermonde(m, inc, Ls, weight="1/(K_m+m)", b_free=False,
     m = np.asarray(m, float)
     s = sigma * (KM + m)                  # sd of the TRANSFORMED residual
     w = WEIGHTS[weight](m)
+    #  NORMALISE THE WEIGHT TO THE EXACT ONE'S SCALE, and this is a
+    #  correctness fix rather than tidiness. A weighting is a statement about
+    #  the RELATIVE precision of the rows; its overall scale is not part of
+    #  it. The normal matrix below is built as Vw'Vw/sigma^2 + pen, so an
+    #  un-normalised weight changes the size of the data term against the
+    #  ridge penalties that carry the paper's priors: with w = 1 the
+    #  transformed residual has sd sigma*(K_m+m), about 106 sigma here, so
+    #  the data term came out ~1.1e4 too large and BOTH PRIORS WERE
+    #  SILENTLY DISCARDED. That produced a "cost of leaving the weights out"
+    #  of a factor of 59 which was really the cost of throwing the priors
+    #  away -- dropping them outright gives 66. Scaled so that the
+    #  transformed residual has sd sigma on average, every weighting is
+    #  compared on the footing it claims to be compared on.
+    w = w * (sigma / np.mean(s * w))
     if b_free:
         V = np.stack([Ls, np.ones_like(m), m, m ** 2], axis=1)
         grad = np.array([-KE, 1.0 / KM, -1.0, KM])   # d theta / d coefficients
@@ -485,10 +499,18 @@ def section3():
     print("  the result: read literally, cond(V) says the straddling design is")
     print(f"  {s_[3]/d[3]:.0f} times WORSE conditioned than the band the patient is")
     print("  actually held in, while the estimator says it is 9.5 times better.")
-    print("  That is a units artefact and it should be named as one: at m ~ 150")
-    print("  the third column is 2.3e4 times the second and 1e0 against the")
-    print("  first, so cond(V) is measuring micromolar-squared against nothing")
-    print("  in particular. Equilibrating the columns removes it and leaves")
+    #  computed, not asserted. An earlier version of these two lines carried
+    #  the ratios as hardcoded literals, and had them both wrong and the wrong
+    #  way round: exactly the claim this repository exists to make impossible.
+    nrm = np.linalg.norm(np.stack([np.ones_like(STRADDLE), STRADDLE,
+                                   STRADDLE ** 2], axis=1), axis=0)
+    print("  That is a units artefact and it should be named as one: on the")
+    print(f"  straddling band the three column norms are {nrm[0]:.3g}, "
+          f"{nrm[1]:.3g} and {nrm[2]:.3g}, so the")
+    print(f"  quadratic column is {nrm[2]/nrm[1]:.0f} times the linear one and "
+          f"{nrm[2]/nrm[0]:.3g} times the constant:")
+    print("  cond(V) is comparing micromolar-squared with a pure number.")
+    print("  Equilibrating the columns removes it and leaves")
     print(f"  {d[4]/s_[4]:.2f}, the right sign now but still {9.5/(d[4]/s_[4]):.0f} times too small.")
     print("\n  The reason is the same as in section 2 and it is the paper's own:")
     print("  placement buys precision through the SENSITIVITY K_m m/(K_m+m)^2,")
@@ -672,9 +694,12 @@ def section5(a, b, c):
           f"says {a['sd_const']:.0f}, at a constant")
     print(f"      load; and {a['steady']:.0e} once the patient is already on "
           f"therapy.")
-    print("      Delta lives in the response, not in the design matrix. The")
-    print(f"      range of Delta/theta, which the paper already quotes, gives "
-          f"{a['drange']:.1f}.")
+    print("      Delta lives in the response, not in the design matrix.")
+    print("      And the ratio is not even scale-free: putting m in units of")
+    print("      K_m moves it to 22.7, 16% from 27, which looks like a hit --")
+    print("      but the SAME rescaling puts (b) at 76 against an estimator")
+    print("      value of 9.5. No one choice of units prices both, and that")
+    print(f"      is the finding. (The Delta/theta range gives {a['drange']:.1f}.)")
     print(f"  (b) NO, and read literally it inverts the result: raw cond(V) "
           f"makes the")
     print(f"      straddling design {b['raw']:.0f} times WORSE where the "
@@ -682,17 +707,22 @@ def section5(a, b, c):
     print(f"      {b['sd']:.1f} times better. Equilibrated it gets the sign "
           f"right and is still")
     print(f"      {b['sd']/b['eq']:.0f} times too small.")
-    print(f"  (c) YES on the footing the paper actually uses -- unweighted "
-          f"costs a")
-    print(f"      factor of {c['paper_ols']:.0f} there -- and NO on the footing "
-          f"the three-coefficient")
-    print(f"      form offers, where it costs {c['known_ols']:.2%}. The "
-          f"premise's stated weight")
-    print(f"      1/m_i is not the right one either: it costs "
-          f"{c['known_m']:.1%} on the")
-    print(f"      well-posed footing and a factor of {c['paper_m']:.0f} on the "
-          f"paper's. The")
-    print("      right weight is 1/(K_m + m_i).")
+    print("  (c) NO, and this reverses an earlier reading of this script.")
+    print("      Once every weighting is compared at the same SCALE -- see")
+    print("      the note in sd_vandermonde -- leaving the weights out costs")
+    print(f"      {c['known_ols']:.2%} on the three-coefficient footing and a factor of "
+          f"{c['paper_ols']:.2f} on")
+    print("      the paper's own. The multiplier (K_m + m_i) spans 6.5%")
+    print("      because the patient sits at m << K_m, and a 6.5%")
+    print("      misweighting costs what a 6.5% misweighting should: the")
+    print("      reframing is FREE as an estimator. What is not free is the")
+    print(f"      premise's stated weight. 1/m_i costs {c['known_m']:.1%} on the")
+    print(f"      well-posed footing and a factor of {c['paper_m']:.2f} on the paper's,")
+    print("      because m_i spans a factor of 3.37 where (K_m + m_i) spans")
+    print("      6.5%. The right weight is 1/(K_m + m_i) -- and an")
+    print("      UNNORMALISED weight is a third thing again, because it")
+    print("      rescales the paper's priors against the data rather than")
+    print("      reweighting the rows.")
 
 
 # ==========================================================================
