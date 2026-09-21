@@ -298,22 +298,30 @@ visits buy, and which of the resulting phases a clinic can actually book.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{fig_E1_phaseclock.pdf}
-\caption{Where each schedule lands in the dose cycle. Visit times are folded
-onto the $14$-day cycle, with the dose at twelve o'clock and time running
-clockwise; radius is visit order, so the record reads outwards, and colour is
-the increment at that visit. These ranges are over the
-\emph{twelve visits drawn}, not over the two-year record of
-Table~\ref{tab:designs}, and a short record does not reach every phase:
-sampling at the dose interval collapses to one spoke and a $\Delta/\theta$
-range of $0.13$; half a day off it fills the dial and reaches $1.80$, against
-$\num{delta_range_off}$ over the full record; monthly reaches $1.84$ and a
-schedule designed to spread phase reaches $1.85$, so almost all of what phase-spreading buys is already
-bought by a schedule that simply is not a multiple of the dose interval. The
-second panel is a patient already on therapy when the record starts, whose
-increment range is exactly zero. The post-dose settling window is shaded and
-is all but invisible: at a $1\%$ tolerance it is $\num{settle_hours_1pct}$~hours, which
-is $0.4\%$ of the dial, but the phase it removes is the peak, so excluding it costs about
-a tenth of the reachable increment range.}
+\caption{Where each schedule lands in the dose cycle. Every panel shows
+\emph{the same} $25$ visits folded onto the $14$-day cycle, $t \mapsto t \bmod
+14$. \textbf{Top: the increment.} Because $\Delta$ is a deterministic function
+of phase, every draw of every schedule lies \emph{exactly} on the one decay
+curve, and all a schedule chooses is where on that curve its draws sit.
+Sampling at the dose interval puts all $25$ on a single point of it, which is
+Remark~\ref{rem:aliasing} drawn; half a day off fills the cycle. \textbf{Bottom:
+the marker.} Here the draws do \emph{not} lie on the curve. The gap is the
+day-to-day variation in the recorded load, so this row is $\sigma$ --- the
+quantity Section~\ref{sec:tierload} finds binding at nominal capacity --- shown
+rather than stated. The phase counts in the headers are counts of
+\emph{the $25$ draws at distinct phases}, capped by that number rather than by
+the schedule's own lattice; the $\Delta/\theta$ ranges are likewise
+over these $25$ draws and not over the two-year record of
+Table~\ref{tab:designs}, which is why monthly reads $1.84$ here against
+$\num{delta_range_monthly}$ there. The phase axis is periodic, so the right
+edge of each panel is the left edge. The first two panels differ only in
+enrolment: at $t=0$ the dose train is still filling, so the draws smear over a
+range of $0.13$, while for a patient already on therapy the increment is
+identical at every visit and the range is exactly zero. The post-dose settling
+window is shaded and is all but invisible: at a $1\%$ tolerance it is
+$\num{settle_hours_1pct}$~hours, $0.4\%$ of the cycle, but the phase it removes
+is the peak, so excluding it from the steady-state fit costs about a tenth of
+the reachable increment range.}
 \label{fig:E1}
 \end{figure}
 

@@ -190,6 +190,20 @@ def sd_over_seeds(times, load_cv, ke_prior=0.8, seeds=range(8),
 
 
 # --------------------------------------------------------------------------
+def level(theta, inc, L):
+    """
+    The quasi-steady marker: the positive root of the balance.
+
+    (theta + inc) m/(K_m + m) + k_e m = L, solved in closed form. It is here
+    rather than in a figure module because g1 draws it and the design code
+    solves the same root; two spellings of one equation is how they drift.
+    """
+    inc = np.asarray(inc, float)
+    L = np.asarray(L, float)
+    B = KE * KM + theta + inc - L
+    return (-B + np.sqrt(B ** 2 + 4.0 * KE * L * KM)) / (2.0 * KE)
+
+
 def cycle_phases(times, period=T, tol=1e-6):
     """The distinct dose-cycle phases a schedule visits."""
     ph = np.sort(np.asarray(times, float) % period)

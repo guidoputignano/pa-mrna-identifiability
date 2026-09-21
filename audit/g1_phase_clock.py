@@ -1,17 +1,42 @@
 """
-Phase 3, the phase clock: where in the dose cycle a schedule actually lands.
+Phase 3, the phase overlay: where in the dose cycle a schedule actually lands.
 
 The design rule this paper turns on is invisible on a calendar axis. Sampling
 every 14 days and every 14.5 days look alike on a timeline and differ by a
-factor of twenty in the precision of the answer. Folding the visit times onto
-the dose cycle, t -> t mod 14, makes the difference the first thing a reader
-sees: one schedule collapses to a single spoke, the other fills the dial.
+factor of twenty-seven in the precision of the answer. Folding the visit times
+onto the dose cycle, t -> t mod 14, makes the difference the first thing a
+reader sees.
 
-    angle   2 pi (t mod 14)/14, dose at 12 o'clock, time running clockwise
-    radius  visit order, so the record reads outwards
-    colour  Delta/theta at that visit, which f4 found is the binding quantity
-    shaded  the post-dose settling window, inside which a draw is not a
-            steady state and does not belong in a steady-state fit
+WHY THIS IS AN OVERLAY AND NOT THE POLAR DIAL IT REPLACED. The dial plotted
+the same fold in polar coordinates with RADIUS AS VISIT ORDER, and visit order
+carries nothing about identifiability. Worse, it separated on the page points
+that lie on one curve: because Delta is a deterministic function of phase,
+every draw of every schedule falls exactly on the single decay curve drawn
+here, and the dial's radius pushed them off it into a spiral that reads as a
+trajectory. A reader seeing it for the first time could not tell that the
+points were one set. On the phase axis the collapse is immediate: the
+fortnightly schedule is twenty-five draws stacked on ONE POINT of the curve.
+
+The dial could show one thing this cannot, that phase is circular, so a draw
+at 13.9 d is adjacent to one at 0.1 d. The curve is periodic and the caption
+says so. That is a small loss against a large gain.
+
+TWO ROWS, AND THE SECOND IS THE ONE THE PAPER HAS NEVER DRAWN.
+
+    top     Delta/theta against phase. Every point lies EXACTLY on the curve,
+            because the increment is a deterministic function of phase. The
+            only thing a schedule chooses is WHERE on the curve its draws sit.
+    bottom  the marker m against phase. Here the points do NOT lie on the
+            curve: they scatter around it by the day-to-day variation in the
+            recorded load. That scatter is sigma, drawn rather than stated,
+            and sigma is what Section 5.3 identifies as the binding constraint
+            at nominal capacity.
+
+The fortnightly panels carry the whole aliasing result between them. At
+enrolment (t0 = 0) the dose train is still filling, so its draws smear over a
+Delta/theta range of 0.13; for a patient ALREADY ON THERAPY the train is at
+steady state and the range is EXACTLY ZERO. The dial showed both as one spoke
+and could not tell them apart.
 
 Writes results/figures/fig_E1_phaseclock.{pdf,png}.
 
@@ -29,39 +54,78 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from common.style import save, figsize, INK, MUTED, RED, GREEN, BLUE, AMBER
-from design.run import delta
+from design.run import delta, D_AMP, DOSE_INTERVAL, LAMBDA, LOAD_CV
 import g_design_common as G
 
 N = 25          # the accessible design's visit count, held across panels
 
+#: panel titles. The registry names are written for a table and are too long
+#: for five columns at text width; these say the same thing in the space there
+#: actually is.
+SHORT = {
+    "14 d (the dose interval)": "14 d, the dose interval",
+    "14 d, already on therapy": "14 d, on therapy already",
+    "14.5 d": "14.5 d",
+    "monthly (30.4 d)": "monthly, 30.4 d",
+    "phase-spread": "phase-spread",
+}
+#: the steady-state peak of the dose train, which is the top of the curve
+#: every panel is drawn against
+PEAK = D_AMP / (1.0 - np.exp(-LAMBDA * DOSE_INTERVAL))
 
-def panel(ax, times, title, settle, cmap, norm):
-    inc = np.asarray(delta(times), dtype=float) / G.TH
-    ph = np.asarray(times, float) % G.T
-    ang = 2 * np.pi * ph / G.T
-    rad = np.arange(1, len(times) + 1, dtype=float)
 
-    # the settling window, a wedge from the dose instant
-    ax.bar(x=[0.5 * 2 * np.pi * settle / G.T], height=[len(times) + 1.4],
-           width=[2 * np.pi * settle / G.T], bottom=0.0,
-           color=RED, alpha=0.16, edgecolor="none", zorder=0)
+def _steady_curve(n=400):
+    """
+    The increment and the marker across one steady-state dose cycle.
 
-    ax.plot(ang, rad, color=MUTED, lw=0.5, alpha=0.45, zorder=1)
-    ax.scatter(ang, rad, c=inc, cmap=cmap, norm=norm, s=17,
-               edgecolors="white", linewidths=0.35, zorder=3)
+    Drawn from the STEADY-STATE train rather than from the first cycle: it is
+    the curve every schedule's late draws sit on, and a curve taken from the
+    filling train would put the fortnightly panel's points visibly off it for
+    a reason that has nothing to do with the schedule.
+    """
+    ph = np.linspace(0.0, G.T, n)
+    inc = PEAK * np.exp(-LAMBDA * ph)
+    return ph, inc / G.TH, G.level(G.TH, inc, G.LB)
 
-    ax.set_theta_zero_location("N")
-    ax.set_theta_direction(-1)
-    ax.set_rticks([])
-    ax.set_rlim(0, len(times) + 1.4)
-    ax.set_xticks(np.arange(0, 2 * np.pi, 2 * np.pi / 7))
-    ax.set_xticklabels([f"{d:g}" for d in np.arange(0, G.T, G.T / 7)],
-                       fontsize=6.5, color=MUTED)
-    ax.grid(color="#e6e4dd", lw=0.5)
-    nph = len(G.cycle_phases(times))
-    ax.set_title(f"{title}\n{nph} phase{'s' if nph != 1 else ''}, "
-                 f"$\\Delta/\\theta$ range {G.delta_range(times):.2f}",
-                 fontsize=7, pad=6, linespacing=1.5)
+
+def panel_increment(ax, times, name, curve):
+    """Delta/theta against phase. Every draw lies exactly on the curve."""
+    ph_c, d_c, _ = curve
+    t = np.asarray(times, float)
+    inc = np.asarray(delta(t), float)
+    ax.plot(ph_c, d_c, color=MUTED, lw=1.2, zorder=1)
+    ax.scatter(t % G.T, inc / G.TH, s=24, color=GREEN, edgecolors="white",
+               linewidths=0.4, zorder=3, clip_on=False)
+    nph = len(G.cycle_phases(t))
+    rng = inc.max() / G.TH - inc.min() / G.TH
+    #  "of N draws" is not decoration. The count is capped by the number of
+    #  visits drawn, not by the schedule's phase lattice, and a header that
+    #  says only "25 phases" invites a reader to think the lattice has 25.
+    ax.set_title(f"{SHORT.get(name, name)}\n"
+                 f"{nph} phase{'s' if nph != 1 else ''}, range {rng:.2f}",
+                 fontsize=7.2, pad=4, linespacing=1.5)
+
+
+def panel_marker(ax, times, curve, seed=3):
+    """
+    m against phase. The draws do NOT lie on the curve, and the gap is sigma.
+
+    One intake record is drawn rather than a median over the usual
+    twenty-four, because the object of this panel is the SCATTER of a single
+    patient's record and a median over records would average exactly that
+    away. The seed is fixed so the figure is reproducible.
+    """
+    ph_c, _, m_c = curve
+    t = np.asarray(times, float)
+    inc = np.asarray(delta(t), float)
+    L = G.LB * (1.0 + LOAD_CV *
+                np.random.default_rng(seed).standard_normal(t.size))
+    m_obs, m_ref = G.level(G.TH, inc, L), G.level(G.TH, inc, G.LB)
+    ax.plot(ph_c, m_c, color=MUTED, lw=1.2, zorder=1)
+    ax.vlines(t % G.T, np.minimum(m_obs, m_ref), np.maximum(m_obs, m_ref),
+              color=BLUE, lw=0.7, alpha=0.5, zorder=2)
+    ax.scatter(t % G.T, m_obs, s=24, color=BLUE, edgecolors="white",
+               linewidths=0.4, zorder=3, clip_on=False)
 
 
 def figure():
@@ -71,42 +135,46 @@ def figure():
           f"(worst departure after it {100*worst:.3f}%),")
     print(f"                   {settle5*24:.2f} h at the repository's own 5% "
           f"(worst after {100*worst5:.3f}%).")
-    print(f"  the shaded wedge is the 1% window, "
-          f"{360*settle/G.T:.2f} degrees of the dial.\n")
 
     designs = [(name, fn(N)) for name, fn in G.SCHEDULES.items()]
-    allinc = np.concatenate([np.asarray(delta(t), float) / G.TH
-                             for _, t in designs])
-    norm = plt.Normalize(allinc.min(), allinc.max())
-    cmap = plt.get_cmap("viridis")
+    curve = _steady_curve()
 
-    fig, axes = plt.subplots(1, len(designs), figsize=figsize(1.0, 0.27),
-                             subplot_kw={"projection": "polar"})
-    fig.set_layout_engine("none")
-    fig.subplots_adjust(left=0.015, right=0.985, top=0.80, bottom=0.30,
-                        wspace=0.50)
-    for ax, (name, t) in zip(axes, designs):
-        panel(ax, t, name, settle, cmap, norm)
+    fig, axes = plt.subplots(2, len(designs), figsize=figsize(1.0, 0.52),
+                             sharex=True, sharey="row")
+    for j, (name, t) in enumerate(designs):
+        panel_increment(axes[0, j], t, name, curve)
+        panel_marker(axes[1, j], t, curve)
+        for ax in (axes[0, j], axes[1, j]):
+            ax.set_xlim(-0.5, G.T + 0.5)
+            ax.set_xticks([0, 7, 14])
+            ax.grid(color="#eeece6", lw=0.5)
+            ax.tick_params(labelsize=7)
+            for sp in ax.spines.values():
+                sp.set_color("#d8d5cc")
+        #  the settling window, shaded on the phase axis rather than as a
+        #  wedge. It is 0.4% of the cycle and the point of drawing it is
+        #  that it removes the PEAK, not that it removes much time.
+        for ax in (axes[0, j], axes[1, j]):
+            ax.axvspan(0.0, settle, color=RED, alpha=0.13, lw=0, zorder=0)
         print(f"  {name:28} n={len(t):3d}  horizon {t[-1]:7.1f} d  "
               f"phases {len(G.cycle_phases(t)):3d}  "
               f"Delta/theta range {G.delta_range(t):.4f}")
-
-    sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
-    cax = fig.add_axes([0.34, 0.035, 0.32, 0.045])
-    cb = fig.colorbar(sm, cax=cax, orientation="horizontal")
-    cb.ax.set_title(r"$\Delta/\theta$ at the visit", fontsize=7.5, pad=3)
-    cb.ax.tick_params(labelsize=6.5, length=2, pad=1)
-    #  the reading of this figure is the paper's caption, not a block
-    #  of small type inside the axes: a figure that has to be annotated
-    #  to be read is a figure that will be read wrongly when the caption
-    #  is what gets quoted.
-    print(f"    settling window {360*settle/G.T:.1f} deg of the dial, "
+    axes[0, 0].set_ylabel(r"increment  $\Delta/\theta$", fontsize=8.5)
+    axes[1, 0].set_ylabel(r"marker  $m$  [$\mu$M]", fontsize=8.5)
+    #  ONE shared x-label. Five copies is five times the ink for one fact and
+    #  at text width they collide. tight_layout reserves no room for a figure
+    #  label, so the room is reserved with `rect` and the text placed into it
+    #  afterwards; supxlabel alone lands off the bottom of the canvas.
+    fig.tight_layout(pad=0.6, rect=(0, 0.085, 1, 1))
+    fig.text(0.5, 0.028, "phase of the dose cycle (days after a dose)",
+             ha="center", va="bottom", fontsize=8.5)
+    print(f"    settling window {100*settle/G.T:.1f}% of the cycle, "
           f"{settle*24:.1f} h at a 1% tolerance")
     save(fig, "fig_E1_phaseclock")
 
 
 def numbers():
-    print("\n  what the dial is showing, at load CV 10%, 8 seeds, "
+    print("\n  what the overlay is showing, at load CV 10%, 8 seeds, "
           "k_e log-prior 0.8, load record 5%:")
     print(f"    {'schedule':>28} {'n':>4} {'phases':>7} {'range':>8} "
           f"{'sd(ln theta): min':>18} {'median':>9} {'max':>9}")
