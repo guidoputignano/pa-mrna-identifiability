@@ -2173,3 +2173,102 @@ check that cannot be shown to fail is not evidence.
 So: one mechanical case caught by a guard, and the semantic remainder left as a declared
 habit --- **when a number crosses a boundary, carry its referent across with it** --- with
 no pretence that anything enforces it.
+
+### R45. The two theta_crit values agreed, and now they cannot disagree (item 36)
+
+They were identical: both call sites ran `theta_crit_intrinsic(PC, S_BASE)` with the same
+arguments, so both held `150.7747475984808` exactly, gap `0.000e+00`. Unlike the
+`np.interp` case there was no drift to report.
+
+**But they printed at different precisions, and that was its own hazard.** `margin.tex`
+carried `theta_crit` at `{:.0f}` and rendered it **`151`**; `boundary.tex` carried
+`fit_theta_crit` at `{:.1f}` and rendered `150.8`. So the figure said the threshold was
+`151` while the text said `150.8`, in the one paragraph where the threshold sits beside a
+fitted `theta_hat` of `151.01`. A reader could not have told the threshold from the
+estimate.
+
+Fixed as one computation and one key. `model_C.theta_crit_ref()` is memoised and is now the
+only caller of `theta_crit_intrinsic(PC, S_BASE)` in the module; `margin.tex` owns the key
+and prints `150.8`; `fit_theta_crit` is gone from `boundary.tex` and the three places the
+discussion quoted it now read `\num{theta_crit}`; and the margin figure draws the threshold
+at one decimal too, so nothing in the document prints `151` for it any more.
+
+### R46. The two key mechanisms do not conflict, and the rule needed stating precisely
+
+Item 37, and the answer is the precise version of the user's first branch.
+
+**The shared-key trick is stem-local.** It works because `NumberBook` guards one
+accumulating dict, which is one module's numbers, which becomes one file. The protocol
+figure and `tab_D_designs` both write `delta_range_monthly` because both live in
+`design/run.py` and therefore in `design.tex`. A differing value raises at accumulation.
+
+**The collision guard is cross-stem.** It fails on a key defined in two *files*, because
+there the preamble's `\input` order decides in silence and nothing raises.
+
+So the rule is: **shared keys agree within a file; distinct names across files.** The two
+dispositions apply to disjoint cases and there is no conflict today.
+
+**But the user's second branch is the real point: the shared-key mechanism is then not
+available across stems, and item 36 was exactly that case.** Two stems, one quantity, no
+mechanism to make a drift raise. The answer is that there is a third mechanism and it
+already exists: **one stem owns the quantity and the other reads it**, either through
+`common.numbers.num(module, key)` or, within one module, through a shared helper. That is
+the third shape `check_figure_numbers` already accepts for drawn numbers, generalised.
+Item 36 is fixed that way: one memoised helper, one registered key, and no second copy for
+a guard to have to compare.
+
+Neither rule gives way. What was missing was the statement that they cover different
+scopes, plus the third mechanism for the case neither covers.
+
+### R47. Warnings are errors now (item 38)
+
+A warning appeared in one run of the suite and did not reproduce on the next. With CI down
+there are no repeated runs to catch a recurrence, so an intermittent warning arrives as a
+count in a summary line with no text and no traceback --- and would arrive the same way the
+second time.
+
+`pytest.ini` now sets `filterwarnings = error`. It cost nothing: the suite passes under
+`-W error` today, so it only ever fires on something new.
+
+It earns its place more here than in most repositories. This project's stated characteristic
+failure is a silent numerical error, and numpy reports exactly that as a `RuntimeWarning`
+--- an invalid value in a divide, an overflow in an exp, an all-NaN slice. Those are what
+the setting is for; the deprecation notices are a bonus. It also reaches the generators,
+because `tests/test_artefacts.py` regenerates every table and numbers file through the
+guard, so the code that produces the paper's numbers runs under it too.
+
+Shown to fire before being trusted, which is this repository's standard: a probe test
+raising a `RuntimeWarning` fails the suite with the warning's text and its line, and was
+then removed.
+
+The one thing it does not cover is a warning raised in a generator that the guard's fast
+path does not reach --- `fig_margin`, `d13_decision_therapy` and the other slow ones. Those
+run only under `make figures`, outside pytest. Noted rather than solved.
+
+### R48. A second pattern, across the two misspecification results (item 39)
+
+It earns a paragraph, and it is now Section 8.3 beside the three-degeneracies one.
+
+**Two results, unrelated routes, opposite directions.** Section 7.2 fits the local form to
+records from a published alternative readout and recovers a capacity too **high**, `1.3` to
+`2.0`. The discussion's opening fits the same form to the parent's own noiseless clearance
+and recovers one too **low**, `151.01` against a true `300`. The mechanisms share nothing: a
+free marker offset carried alongside a free amplitude in the first, a curved alternative
+channel driving `k_e_hat` onto its bound in the second.
+
+**What they share is the symptom: the residual stays inside the noise the specification
+already asks for while the capacity is wrong.** Under a fifth of one sigma in the first,
+`0.77` of a single load error in the second. So on this model **residual size does not
+bound structural error**, and the diagnostic a reader would reach for to detect a wrong
+structure is the one that cannot see it. That is the argument for Tier 1 being a
+*structure* test rather than a goodness-of-fit threshold, and the paragraph says so.
+
+**And the opposite directions foreclose the repair.** A bias of known sign could be carried
+as a correction or a one-sided bound; these cannot, because nothing in a record says which
+structure is the wrong one. Hedged as the three-degeneracies paragraph is: two results, not
+a theorem.
+
+**One correction it forced.** The clause written last batch said the boundary result finds
+what Section 7.2 finds "by the same mechanism". It does not --- same symptom, different
+mechanism, and the difference is the reason the directions differ. Corrected where it
+stands and the cross-reference now points at the new subsection.

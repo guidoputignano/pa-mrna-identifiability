@@ -378,6 +378,25 @@ def fig_basin():
 
 
 # =====================================================================
+_THETA_CRIT = {}
+
+
+def theta_crit_ref():
+    """
+    The intrinsic critical capacity, computed ONCE for the whole module.
+
+    Two call sites had it -- the margin figure and the boundary numbers --
+    and they agreed exactly, because both called theta_crit_intrinsic with
+    the same arguments. Agreeing by coincidence of argument lists is what
+    REVIEW_LOG.md calls an agreement that has to be checked. One memoised
+    helper makes it an agreement that cannot fail, and the quantity is
+    registered exactly once, as margin.tex's `theta_crit`.
+    """
+    if "v" not in _THETA_CRIT:
+        _THETA_CRIT["v"] = float(theta_crit_intrinsic(PC, S_BASE))
+    return _THETA_CRIT["v"]
+
+
 def fig_margin():
     """
     The safety margin against theta, at baseline load.
@@ -394,14 +413,14 @@ def fig_margin():
     unconditionally safe at that load: total clearance tends to theta from
     above, so it never falls back through s.
     """
-    thc = theta_crit_intrinsic(PC, S_BASE)
+    thc = theta_crit_ref()
     #  The four numbers this figure ASSERTS about the model, registered so they
     #  are diffed against HEAD like a table cell and can be quoted with \num{}
     #  rather than retyped. Both panels draw out of this dict, so the drawn
     #  value and the registered value are one object and cannot drift apart.
     #  It is a NumberBook, so a second writer giving a key a different value
     #  fails at accumulation instead of last-write-wins.
-    MARG = NumberBook({"theta_crit": float(thc)})
+    MARG = NumberBook({"theta_crit": theta_crit_ref()})
     thetas = np.linspace(thc * 1.002, 0.86 * S_BASE, 260)
     grid = np.linspace(1e-3, 30000.0, 90000)
 
@@ -424,7 +443,7 @@ def fig_margin():
     # clearance whatever theta_crit turns out to be.
     at_point(ax[0], (th_ok[0], 0.5 * (attr[0] + sep[0])),
              r"$\theta_{\mathrm{crit}}$"
-             + f" = {MARG['theta_crit']:.0f}:" "\nthe curves merge",
+             + f" = {MARG['theta_crit']:.1f}:" "\nthe curves merge",
              dx=16, dy=0, arrow=True, fontsize=7.5, color=MUTED,
              ha="left", va="center")
     ax[0].plot([PC.theta], [attr[np.argmin(abs(th_ok - PC.theta))]], "o", ms=5,
@@ -508,7 +527,7 @@ def fig_margin():
     print("    m_bar does NOT appear anywhere in this construction. s does.")
     from common.numbers import write_numbers
     write_numbers("margin", MARG,
-                  {"theta_crit": "{:.0f}", "margin_nominal": "{:.0f}",
+                  {"theta_crit": "{:.1f}", "margin_nominal": "{:.0f}",
                    "margin_band_lo": "{:.0f}", "margin_band_hi": "{:.0f}"})
     return thc
 
@@ -816,7 +835,6 @@ def boundary_numbers():
         return float(np.sqrt(np.mean(res ** 2))
                      / (LOAD_FRAC * float(np.mean(s))))
 
-    thc = theta_crit_intrinsic(PC, S_BASE)
     N.update({
         "fit_levels": 9,
         "fit_band_top": 8,
@@ -843,11 +861,15 @@ def boundary_numbers():
         "fit_resid_sigma": _resid_sigma(8),
         "fit_ke_hat": _ke_hat(8),
         "fit_ke_hat_free": _ke_hat(8, free_ke=True),
-        "fit_theta_crit": thc,
-        "fit_margin_true": PC.theta - thc,
-        "fit_margin_est": _ladder(8) - thc,
-        "fit_margin_eaten_pct": 100.0 * (1.0 - (_ladder(8) - thc)
-                                         / (PC.theta - thc)),
+        #  theta_crit is NOT registered again here. margin.tex owns it, and
+        #  a second copy under a second name is the np.interp situation with
+        #  the collision guard blind to it: two values of one quantity in one
+        #  document, agreeing today by coincidence of argument lists. The
+        #  arithmetic below reads the shared helper instead.
+        "fit_margin_true": PC.theta - theta_crit_ref(),
+        "fit_margin_est": _ladder(8) - theta_crit_ref(),
+        "fit_margin_eaten_pct": 100.0 * (1.0 - (_ladder(8) - theta_crit_ref())
+                                         / (PC.theta - theta_crit_ref())),
     })
     write_numbers("boundary", N,
                   {"parent_mbar": "{:.1f}", "peak_over_mbar": "{:.2f}",
@@ -865,7 +887,7 @@ def boundary_numbers():
                    "fit_theta_hat_free_ke": "{:.0f}",
                    "fit_resid_sigma": "{:.2f}", "fit_ke_hat": "{:.2f}",
                    "fit_ke_hat_free": "{:.2f}",
-                   "fit_theta_crit": "{:.1f}", "fit_margin_true": "{:.1f}",
+                   "fit_margin_true": "{:.1f}",
                    "fit_margin_est": "{:.2f}",
                    "fit_margin_eaten_pct": "{:.1f}"})
     for k in sorted(N):
