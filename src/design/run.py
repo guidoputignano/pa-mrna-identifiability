@@ -138,6 +138,8 @@ PAPER_FORMATS = {
     "sd_two_monthly_hi": "{:.4f}",
     "sd_aliased": "{:.4f}", "sd_aliased_lo": "{:.4f}", "sd_aliased_hi": "{:.4f}",
     "sd_aliased_off": "{:.4f}", "free_cv2": "{:.3f}",
+    "n_aliased_off": "{:.0f}", "laps_aliased_off": "{:.1f}",
+    "span_aliased_off": "{:.0f}",
     "kappa_monthly_pct": "{:.1f}", "kappa_monthly_pct_lo": "{:.1f}",
     "kappa_monthly_pct_hi": "{:.1f}",
     "settle_hours": "{:.2f}", "settle_hours_1pct": "{:.2f}",
@@ -1497,7 +1499,17 @@ def spec_numbers():
         "free_cv10": over_seeds(times=monthly, load_cv=0.10, load_prior=False),
         "free_cv20": over_seeds(times=monthly, load_cv=0.20, load_prior=False),
     }
-    N = {"sigma": sigma}
+    #: the 14.5-day record's own visit count and how many laps of the dial it
+    #: sweeps. Both are quoted where sd_aliased_off is, because Figure E1
+    #: draws a DIFFERENT 14.5-day design -- 25 visits, 89% of one lap -- and
+    #: a reader who sees the figure's range and this sd will otherwise take
+    #: them for one schedule. They are not: 51 visits against 25, 725 days
+    #: against 348, a range of 1.99 against 1.80.
+    off_t = np.arange(0.0, 730.0, DOSE_INTERVAL + 0.5)
+    N = {"sigma": sigma,
+         "n_aliased_off": len(off_t),
+         "laps_aliased_off": len(off_t) * 0.5 / DOSE_INTERVAL,
+         "span_aliased_off": float(off_t[-1] - off_t[0])}
     #: the headline keys keep their names and now carry the MEDIAN; the
     #: <key>_lo / <key>_hi keys carry the range that median came from, and the
     #: paper quotes both wherever it quotes the median.

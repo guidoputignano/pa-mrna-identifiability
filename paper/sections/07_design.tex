@@ -148,9 +148,15 @@ $\operatorname{sd}(\ln\hat\theta)$ goes to $\num{sd_aliased}$ ($\num{sd_aliased_
 $\num{sd_aliased_hi}$) --- a factor of $\num{alias_cost}$ ($\num{alias_cost_lo}$ to
 $\num{alias_cost_hi}$) against the recommended monthly design, record by record. Every
 ratio this paper quotes for aliasing has that baseline. Moving the schedule half a day
-satisfies \eqref{eq:lap} with room to spare: every $14.5$ days gives
-$\num{sd_aliased_off}$ ($\num{sd_aliased_off_lo}$ to $\num{sd_aliased_off_hi}$), monthly
-precision at fortnightly density.
+satisfies \eqref{eq:lap} with room to spare: every $14.5$ days over the full two-year
+record, $\num{n_aliased_off}$ visits across $\num{span_aliased_off}$~days and
+$\num{laps_aliased_off}$ laps of the dial, gives $\num{sd_aliased_off}$
+($\num{sd_aliased_off_lo}$ to $\num{sd_aliased_off_hi}$): monthly precision at
+fortnightly density. \emph{This is not the $14.5$-day design of
+Figure~\ref{fig:E1}}, which holds $n$ at $\num{visits}$ and is therefore
+$\num{lap_pct_off}\%$ of one lap; that shorter record spans $\num{range_off}$ of
+$\Delta/\theta$ rather than $\num{delta_range_off}$. The two differ in $n$, not in the
+rule.
 
 \textbf{The lap is the statement and the prohibition is not, because a schedule can avoid
 every multiple of $T$ and still fail.} Sampling every $\num{near_step}$~days has a phase

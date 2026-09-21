@@ -1329,6 +1329,40 @@ before it is written. It extends the same standard to the ordinary case.
 
 ---
 
+## Standing rule: where two artefacts must agree, have them write the same key
+
+**An agreement that has to be checked is an agreement that can fail silently.** When two
+pieces of this repository compute the same quantity, do not add a check that they match.
+Make them write the same generated key, so that a disagreement raises `DuplicateKey` at
+accumulation and there is no path on which the build is green and the two differ.
+
+The instance that prompted it. The protocol figure drew a `range` bar per schedule and
+`tab_D_designs` published `delta_range_*` for the same three steps over the same two-year
+grid. Two computations of one quantity, in one document, with nothing comparing them. The
+fix was not a test. The figure now writes `PAPER_NUMBERS["delta_range_monthly"]` itself,
+so `NumberBook.__setitem__` is the comparison: if the figure ever drifted from the table,
+the build would stop at the second write rather than print two numbers and pass.
+
+It is the same shape that fixed `track_pct`, and that is the point. There the two values
+were the same key written twice with different meanings, and the repair was to make the
+key say which. Here they are one meaning computed twice, and the repair is to make the
+two writes land on one key. Both turn "someone has to notice" into "it cannot happen".
+
+Where to reach for it: a figure and a table that state the same number; a figure and a
+sentence; a fast generator and a slow one that must agree; a value computed in two modules
+because importing across them would be circular. Prefer it over an `assert`, over a unit
+test, and over a comment saying the two must be kept in step.
+
+**Its converse is a rule too, and it is the one that bites.** Shared keys are only correct
+for the same quantity at the same settings. Two computations that legitimately differ need
+different keys *and* a sentence saying how they differ, or the shared name becomes a
+false claim of agreement. Figure~E1's $14.5$-day panel and the $14.5$-day row of the text
+are the case: $25$ visits against $51$, $348$ days against $725$, a range of $1.80$
+against $1.99$. Same schedule, different records. They keep separate keys and Section 4.3
+now says so, because a reader who met only the numbers would have merged them.
+
+---
+
 ### R26. Two conditioning claims about the Vandermonde form, neither of which holds
 
 Recorded because a negative that is not written down gets re-proposed. The reframing
@@ -1540,3 +1574,148 @@ and the map from a load bias to the **fitted capacity** is affine. So the factor
 than near it. The slope `2.549` and the factor `1.028` are now generated
 (`bias_slope`, `bias_theta_factor`), and the `1.028` that had been typed into the sentence
 is a `\num{}` like everything else.
+
+### R34. The two 14.5-day designs, and what the lap condition is actually shaped like
+
+**The check first, because it could have gone the other way.** `sd_aliased_off` = `0.1614`
+is computed on `np.arange(0, 730, 14.5)`: **51 visits across 725 days, 1.82 laps of the
+dial, 28 of 28 phases reached**. The lap completes with room to spare, so the figure is
+not quoting a number earned on a record short of a lap and the lap condition has no
+unpriced consequence hiding behind it.
+
+**But the figure and the text were two designs wearing one name**, which is what a reader
+would have merged:
+
+| | visits | span | laps | phases | range | sd |
+|---|---|---|---|---|---|---|
+| the text's $14.5$-day row | 51 | 725 d | 1.82 | 28/28 | 1.99 | 0.1614 |
+| Figure 6's $14.5$-day panel | 25 | 348 d | 0.89 | 25/28 | 1.80 | 0.1739 |
+
+Section 4.3 now gives the first its `n`, its span and its lap count, and says in one
+clause that the panel is not it. That is the converse of the standing rule above: the two
+keep separate keys *because* they are separate quantities.
+
+**And the shape of the rule came out of the check.** `n eps >= T` reads like a knife-edge
+and is not one. Sweeping the lap fraction at three fixed visit counts, so that `n` cannot
+be doing the work:
+
+| `n eps / T` | 0.02–0.04 | 0.19 | 0.38 | 0.50 | 0.75 | **1.00** | 1.50 | 3.00 |
+|---|---|---|---|---|---|---|---|---|
+| sd at n=25 | 4.044 | 0.924 | 0.456 | 0.207 | 0.180 | **0.171** | 0.172 | 0.171 |
+| sd at n=40 | 2.228 | 0.452 | 0.251 | 0.187 | 0.169 | **0.164** | 0.165 | 0.164 |
+| sd at n=53 | 1.455 | 0.309 | 0.196 | 0.177 | 0.164 | **0.160** | 0.161 | 0.161 |
+
+The cost falls steeply up to one lap and is flat afterwards, at **every** `n`, and the
+`Delta/theta` range saturates in the same place, which is the mechanism. So `n eps >= T`
+is not a threshold chosen for tidiness: it is exactly where the cost stops falling. Being
+half a lap short costs about 20%; being at 4% of a lap costs a factor of 9. The rule is
+earned. Recorded here and not put in the paper, which states the inequality correctly
+already.
+
+### R35. Item 22. Forward simulation of the therapy against capacity
+
+`audit/t13_therapy_forward.py`, 81 s, measurement only. No paper text, and nothing here is
+dosing guidance: Section 5.6 already says a protocol written from this work is not a rule
+for escalating a patient, and a forward simulation at an **assumed** capacity is weaker
+evidence than that, not stronger. What it can inform is a protocol's missed-dose
+contingency, which is a document-level decision.
+
+Needs no identifiability at all, which is the point. `theta` is swept as a percentage of
+the model's normal (100, 20, 10, 5, 2, 1) and never estimated or cited; the objective is
+marker exposure and not the sign of `theta - theta_crit`, whose threshold Section 4.6
+shows moving by a factor of 24 across its own constants; and every trajectory past the
+parent's clearance maximum is marked rather than reported beside the rest. The four
+constants the setup rests on are computed from the code and reproduce what the paper
+already commits to: clearance maximum `3.365` against 3.4 times managed, upper equilibrium
+`12.607` against 12.6, ceiling `6.455` against 6.45, largest admissible `D` at 5% of
+`2671.9` against 2672.
+
+**(a) The swing grows as capacity falls, and the disease-range column is flagged before
+anything is even perturbed.** A dose in mg/kg is fixed in absolute terms while `theta` is
+not, so `Delta_peak/theta` runs from 2.1 to 213 across the sweep.
+
+| theta | untreated | mean | peak | trough | fold | above managed |
+|---|---|---|---|---|---|---|
+| 100% | 10.00 | 6.50 | 8.91 | 3.40 | 2.62 | 0% |
+| 20% | 34.06 | 13.70 | 24.68 | 4.57 | 5.40 | 64% |
+| 10% | 45.72 | 16.02 | 31.00 | 4.78 | 6.49 | 69% |
+| 5% | 54.02 | 17.51 | **35.32** | 4.89 | 7.22 | 71% |
+| 2% | 60.04 | 18.55 | **38.41** | 4.96 | 7.74 | 72% |
+| 1% | 62.24 | 18.92 | **39.55** | 4.99 | 7.93 | 72% |
+
+The bolded peaks are past the clearance maximum at `3.4 x managed = 34`. **At 5% of
+nominal and below the BOOKED, UNDISTURBED schedule is already outside what the parent
+supports**, which is a stronger statement than the one the missed-dose run was expected to
+produce. Admissibility breaches at 10% and below, reproducing Section 7.1 row for row.
+
+**(b) The interval has no pharmacological optimum, and "7 days" would have been the edge
+of a sweep reported as a result.** At fixed delivered rate, exposure falls monotonically
+as the interval shortens, at every capacity, towards the continuous-delivery limit where
+`Delta -> R/lambda = 2164`:
+
+| theta | h=28 | h=14 | h=7 | h=3.5 | h=1 | continuous |
+|---|---|---|---|---|---|---|
+| 100% | 7.23 | 6.50 | 6.15 | 6.05 | 6.01 | 6.008 |
+| 5% | 26.59 | 17.51 | 13.91 | 12.95 | 12.66 | 12.634 |
+| 1% | 29.74 | 18.92 | 14.71 | 13.60 | 13.26 | 13.240 |
+
+So the answer to "does the best interval depend on theta" is that there is no best
+interval to depend on it: within this model more often is monotonically better and the
+question is practical, not pharmacological. What *does* move with capacity is the peak,
+and the peak is what the admissibility ceiling binds on, so the trade a protocol faces is
+peak against burden. (The convergence to the closed-form continuous limit is also a free
+check on the integrator: `13.264` at h=1 against `13.240`.)
+
+**(c) The missed dose: the effect is large, it grows sharply as capacity falls, and the
+obvious remedy is inadmissible exactly where it would help.** Excess exposure is in
+undisturbed-cycle equivalents.
+
+| scenario | 100%: peak / excess / rejoin | 5%: peak / excess / rejoin |
+|---|---|---|
+| 1 d late | 9.08 / 0.001x / 14 d | 37.79 / 0.008x / 20 d |
+| 3 d late | 9.36 / 0.012x / 24 d | 42.13 / 0.076x / 28 d |
+| 7 d late | 9.70 / 0.065x / 28 d | 48.09 / 0.393x / 30 d |
+| skipped | 9.92 / 0.500x / 26 d | 52.44 / 1.710x / 28 d |
+| skipped, double at next | 9.92 / 0.258x / 39 d | 52.44 / 1.275x / 42 d |
+
+A day late costs nothing. A skipped dose costs half a cycle's exposure at normal capacity
+and **1.7 to 1.9 cycles at 5% and below**, and its peak goes from `0.99 x managed` at
+normal to `6.03 x` at 1%, against a `theta -> 0` ceiling of `6.45 x`. So yes, a patient
+with more residual capacity tolerates a gap far better, and the size of that effect is a
+factor of about 3.8 in excess exposure and 6.1 in peak across the sweep.
+
+**The double dose was checked against the ceiling before being reported as an option, and
+it fails.** It does help: it cuts excess exposure roughly in half at normal capacity and
+by a quarter at 5%. But it drives `theta + Delta_peak` to `4.05 x normal` at 5% and
+`10.7 x` at 1%, so it is inadmissible at exactly the capacities where the gap hurts most,
+and it lengthens the return to the steady cycle rather than shortening it (26 to 39 days
+at normal). Reported as a negative.
+
+**The honest limit on all of (c).** Every disease-range row is past the clearance maximum,
+including the undisturbed baseline. The model can say a gap is bad and cannot say how bad.
+
+**Two bugs the adversarial pass caught before any of this was reported**, which is the
+standing policy earning its place again in the same session it was written down.
+
+* *The admissibility check was rewritten instead of imported, and got it wrong.* The first
+  version used a fixed `normal = 3000`; the check infers `normal = theta / 0.05`, so the
+  bound is `Delta_peak <= 19 theta` and it tightens as capacity falls. The two agree at 5%
+  of nominal, where `theta/0.05` is exactly 3000, and disagree everywhere else: the wrong
+  one reported the booked dose inadmissible at **normal** capacity and would have been
+  presented as a contradiction of Section 7.1 that did not exist. It now calls
+  `n4_theta_scope.d_ceiling` rather than carrying a second spelling.
+* *The doubled dose was silently merged into a single one.* `forward()` keyed its jump off
+  `np.isclose(doses, a)` after a `np.unique()` on the segment edges, so two doses at one
+  time delivered one dose. "Skipped, double at next" came out **bit-identical** to
+  "skipped" and read as a real null result. Doses now carry per-dose amplitudes, and R4 of
+  the recheck section is a regression for exactly this.
+
+Twelve checks in the adversarial pass, all passing: the cycle-map fixed point against a
+sixty-dose forward run by a route sharing no code (`4e-11`), the six constants against the
+paper's committed values, the increment channel against its closed-form geometric sum
+(`1.5e-15`, off the dose times where the output carries both sides of the jump), the
+doubled-dose regression, tolerance invariance at seven times the sampling, and the rejoin
+time against a doubled watch window.
+
+**Provisional, as item 22 asks.** CI cannot verify anything pushed at the moment, so every
+number above stands on the local run and the twelve checks, and on nothing else.
