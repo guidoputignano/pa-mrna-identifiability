@@ -724,6 +724,7 @@ def boundary_numbers():
     """
     from common.numbers import write_numbers
     from design.run import P as PA, M_BAR, load
+    from scipy.optimize import brentq
     from common.models import clearance_A
     L = float(load(0))
     peak, m_peak = clearance_peak(PC)
@@ -767,6 +768,62 @@ def boundary_numbers():
     #  (the floor being below the ceiling is necessary for the peak to be),
     #  it is exact, and it is the one the paper quotes. The swept figure is
     #  recorded in REVIEW_LOG.md instead, where a measurement belongs.
+    #  THE theta_hat LADDER, generated at last. It carried Section 8's
+    #  sharpest sentence and lived only in audit/PHASE2A.md: git log -S finds
+    #  its digits nowhere else in the history, no deleted script produced it,
+    #  and four plausible reconstructions missed it. What they all missed is
+    #  the FREE LOAD-BIAS INTERCEPT. The estimator of Section 4.1 carries one
+    #  and a curve fit does not, so fitting clearance-to-clearance is the
+    #  wrong object: the design fits a BALANCE, with a constant it does not
+    #  know. With b free the ladder comes out to every digit.
+    #
+    #  The definition, stated so it can be rerun: m_bar is the PARENT's own
+    #  attractor at its own load; nine geometrically spaced levels run from
+    #  m_bar to top*m_bar; the load at each level is the parent's own
+    #  noiseless clearance there; and the local form
+    #      s = theta g(m, K_m) + k_e m + b,    K_m = 100,  theta, k_e >= 0
+    #  is fitted to those pairs by unweighted least squares IN LOAD.
+    from scipy.optimize import lsq_linear
+    mbar_p = float(brentq(lambda m: clearance_C_quasistatic(m, PC) - S_BASE,
+                          10.0, 200.0))
+
+    def _ladder(top, n=9, logsp=True, weight=None, free_ke=False):
+        lv = (np.geomspace(mbar_p, top * mbar_p, n) if logsp
+              else np.linspace(mbar_p, top * mbar_p, n))
+        s = clearance_C_quasistatic(lv, PC)
+        w = np.ones_like(s) if weight is None else 1.0 / s
+        A = np.column_stack([g(lv, PA.Km), lv, np.ones_like(lv)])
+        lo = [0.0, -np.inf if free_ke else 0.0, -np.inf]
+        r = lsq_linear(A * w[:, None], s * w,
+                       bounds=(lo, [np.inf, np.inf, np.inf]))
+        return float(r.x[0])
+
+    thc = theta_crit_intrinsic(PC, S_BASE)
+    N.update({
+        "fit_levels": 9,
+        "fit_band_top": 8,
+        "fit_theta_hat": _ladder(8),
+        #  the two nearest equally defensible readings, so the sentence can
+        #  say what the choice is worth: weighting the residual by the load
+        #  (which is what the estimator's multiplicative load error implies)
+        #  and spacing the nine levels linearly instead of geometrically
+        "fit_theta_hat_rel": _ladder(8, weight="rel"),
+        "fit_theta_hat_lin": _ladder(8, logsp=False),
+        #  the dense-grid reading: a reader told only "fit to the clearance
+        #  over the band" would not choose nine points. It matters, because
+        #  it moves mu_hat across zero.
+        "fit_theta_hat_dense": _ladder(8, n=200),
+        #  and what the admissibility bound is worth. k_e_hat is pinned at
+        #  zero on every band; released it goes NEGATIVE and theta_hat rises
+        #  fourfold. The bound is not a technicality, it is the whole result:
+        #  the best ADMISSIBLE fit sits on the boundary of admissibility.
+        "fit_theta_hat_free_ke": _ladder(8, free_ke=True),
+        "fit_theta_crit": thc,
+        "fit_margin_true": PC.theta - thc,
+        "fit_margin_est": _ladder(8) - thc,
+        "fit_margin_eaten_pct": 100.0 * (1.0 - (_ladder(8) - thc)
+                                         / (PC.theta - thc)),
+    })
     write_numbers("boundary", N,
                   {"parent_mbar": "{:.1f}", "peak_over_mbar": "{:.2f}",
                    "sep_over_mbar": "{:.1f}", "fold_m": "{:.0f}",
@@ -775,7 +832,15 @@ def boundary_numbers():
                    "band_beyond_pct": "{:.0f}", "hold8_ratio": "{:.2f}",
                    "clear_ratio": "{:.1f}", "local_ceiling": "{:.1f}",
                    "peak_floor": "{:.0f}", "peak_margin": "{:.2f}",
-                   "prior_floor_pct": "{:.1f}"})
+                   "prior_floor_pct": "{:.1f}", "fit_levels": "{:.0f}",
+                   "fit_band_top": "{:.0f}", "fit_theta_hat": "{:.1f}",
+                   "fit_theta_hat_rel": "{:.0f}",
+                   "fit_theta_hat_lin": "{:.0f}",
+                   "fit_theta_hat_dense": "{:.0f}",
+                   "fit_theta_hat_free_ke": "{:.0f}",
+                   "fit_theta_crit": "{:.1f}", "fit_margin_true": "{:.1f}",
+                   "fit_margin_est": "{:.2f}",
+                   "fit_margin_eaten_pct": "{:.1f}"})
     for k in sorted(N):
         print(f"    {k:22} {N[k]}")
     return N

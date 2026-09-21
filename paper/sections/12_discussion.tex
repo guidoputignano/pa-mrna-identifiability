@@ -33,9 +33,43 @@ Both estimators here are steady-state fits, and $\num{band_beyond_pct}\%$ of a b
 running to eight times the parent's reference level, $\num{band_parent}$, lies beyond that
 clearance maximum, where the parent says there is no steady state to fit. Fitting the
 local model to the parent's own noiseless clearance over that band recovers
-$\hat\theta = 151$ for a patient whose true capacity is the parent model's $\theta = 300$,
-against an intrinsic threshold of $150.8$, so misspecification alone, with no noise and no
-perturbation, turns a true margin of $+149$ into an estimated $+0.2$. And the two models
+$\hat\theta = \num{fit_theta_hat}$ for a patient whose true capacity is the parent
+model's $\theta = 300$, against an intrinsic threshold of $\num{fit_theta_crit}$: so
+misspecification alone, with no noise and no perturbation, eats
+$\num{fit_margin_eaten_pct}\%$ of a true margin of $+\num{fit_margin_true}$ and leaves
+$+\num{fit_margin_est}$.
+
+\emph{That fit has to be specified, because the number moves with its definition.} The
+levels are $\num{fit_levels}$, spaced geometrically from the parent's reference level to
+$\num{fit_band_top}$ times it; the load at each is the parent's own noiseless clearance
+there; and what is fitted is the \emph{balance} this paper's estimator actually solves,
+$s = \theta\,g(m,K_m) + k_e m + b$ with $K_m$ at its population value, $\theta$ and $k_e$
+non-negative and the load constant $b$ \emph{free}, by unweighted least squares in the
+load. The free $b$ is the part that matters: the estimator of \S\ref{sec:collapse}
+carries a load constant it does not know, and a fit of one clearance curve onto another
+does not, which makes the curve-to-curve reading a different and much more favourable
+exercise.
+
+\textbf{The non-negativity of $k_e$ is not a technicality either: it is the result.} On
+every band the fit puts $\hat k_e$ exactly on its lower bound of zero. Released, $\hat
+k_e$ goes \emph{negative} and $\hat\theta$ at the same band rises to
+$\num{fit_theta_hat_free_ke}$. So the parent's clearance over this band is not merely
+badly approximated by the local form --- it is approximated best by a local model that is
+physically inadmissible, and the best \emph{admissible} fit is the one sitting on the
+boundary of admissibility.
+
+\emph{What is robust here is that the margin is consumed, not what is left of it.} Three
+equally defensible readings move $\hat\theta$ at the same band: weighting the residual by
+the load, which is what a multiplicative load error implies, gives
+$\num{fit_theta_hat_rel}$; reading ``over the band'' as a dense grid rather than the
+design's own nine levels gives $\num{fit_theta_hat_dense}$; spacing the nine levels
+linearly gives $\num{fit_theta_hat_lin}$. Against
+$\theta_{\mathrm{crit}} = \num{fit_theta_crit}$ those span an estimated margin from about
+$-4$ to $+9$, so \textbf{the sign of what survives is not determined by the data at all},
+and the $+\num{fit_margin_est}$ above is the design's own nine levels and nothing more
+general. The conclusion that carries is the one that holds across every reading: a
+noiseless, unperturbed fit of the admissible local form to the parent over this band
+consumes essentially the whole of a $+\num{fit_margin_true}$ margin. And the two models
 disagree by a factor of $\num{clear_ratio}$ about the largest load a patient can clear:
 the local model needs $\num{hold8_ratio}$ times baseline to hold eight times \emph{its}
 managed level, $\num{band_local}$, while the parent cannot clear more than

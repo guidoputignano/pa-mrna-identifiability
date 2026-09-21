@@ -1363,6 +1363,66 @@ now says so, because a reader who met only the numbers would have merged them.
 
 ---
 
+## Standing rule: a generated number must be stable at the sample size it is generated at
+
+Not "no stochastic numbers": this repository is full of legitimate ones, medians over
+twenty-four intake records at fixed seeds, and they are the right way to report a
+simulated quantity. The rule is narrower and it is about **stability**, because a
+generated number is diffed against HEAD on every build and one that wanders with the seed
+turns the artefact guard into a coin flip.
+
+**If a candidate figure moves between sample sizes by more than its own reported
+precision, it does not get generated at that sample size.** Three ways out, in order of
+preference: raise `n` until it is stable; replace it with a closed form; or leave it in
+this log, where a measurement belongs and where nothing diffs it.
+
+The case that produced the rule. The fraction of this module's prior box in which the
+parent's clearance peak drops below the local model's ceiling reads `0.14%` at 600 draws
+and `0.23%` at 4000. That is sampling noise on about five events, and `{:.1f}` on it
+claims a precision the estimate does not have. It was replaced by the closed-form upper
+bound, `1.5%`, which is exact, seed-free and still says the thing the sentence needs.
+The swept figure is two paragraphs up in R39.
+
+The test is cheap and should be run before any new key is added: generate it at `n` and
+at `4n` and compare against the format string it will be written with.
+
+---
+
+## This project's characteristic failure: a number that does not say what it is a number of
+
+Six instances now, which is past coincidence and worth naming so the next person looks
+for it by default instead of finding it a seventh time.
+
+| | what was displayed | what it was actually a number of |
+|---|---|---|
+| `trans_angle` | an angle, in degrees | a quantity with no referent; deleted, not corrected |
+| `track_pct` | the marker's departure | the departure after a tolerance-dependent window, keyed as though tolerance-free |
+| `min(q, N)` | "25 phases" | the panel's own visit count, on three of five panels |
+| the two managed levels | "the managed level" | `10` in the local model and `81.93` in the parent, in one paragraph |
+| the three admissibility readings | one verdict | three checks that agree only at two coincidence points |
+| the `theta_hat = 151` ladder | a fitted capacity | a fit whose band, weighting and free parameters were never recorded |
+
+**The shape is always the same.** A quantity is computed correctly, reported accurately,
+and displayed without the qualifier that fixes its referent. Nothing is wrong with the
+arithmetic in any of the six. What is missing is the part of the label that would let a
+second person recompute it and get the same thing. That is why none of them failed a test
+and why all six survived a green build: **a check can compare two numbers but it cannot
+tell you what a number is of.**
+
+Where it comes from is worth naming too. Five of the six arose at a boundary --- between
+two models, between two readings of one check, between a figure and a table, between a
+tolerance and the quantity it conditions. Inside one module the referent is carried by
+context and never needs saying; the moment a number crosses a boundary the context does
+not cross with it.
+
+So the habit to acquire: **when a number crosses a boundary, carry its referent across
+with it explicitly**, in the label, in the key name, or in the sentence. The three rules
+above are all special cases. The adversarial pass catches it when the referent is wrong;
+the shared-key rule prevents it by making two computations one; this rule says the missing
+referent is the thing to look for first.
+
+---
+
 ### R26. Two conditioning claims about the Vandermonde form, neither of which holds
 
 Recorded because a negative that is not written down gets re-proposed. The reframing
@@ -1970,3 +2030,69 @@ route to the local one at the operating point leaves several capacities with no
 equilibrium at all. So the direction is a choice, not a result, and no such comparison is
 reported. What survives every convention is that the parent's clearance peak lies above
 `sqrt(K_c M_i)`, which is `R_0`-free, and that is what R39's margin rests on.
+
+### R42. The theta_hat ladder reproduces, and the missing ingredient was the load constant
+
+Item 32. It was a candidate for retraction and it survives: **all five rungs come out to
+every digit PHASE2A printed**, under a definition that is now written into the paper and
+generated in `results/numbers/boundary.tex`.
+
+| band top | 1.6 | 5 | **8** | 12.6 | 20 |
+|---|---|---|---|---|---|
+| `PHASE2A.md` | 557.8 | 277.0 | **151.01** | 27.3 | 0.00 |
+| regenerated | 557.797 | 277.020 | **151.012** | 27.281 | 0.000 |
+
+**The definition, which had never been recorded.** `m_bar` is the PARENT's own attractor
+at its own load, `81.9344`; nine levels run geometrically from `m_bar` to `top x m_bar`;
+the load at each level is the parent's own noiseless clearance there; and the local form
+`s = theta g(m,K_m) + k_e m + b` is fitted to those pairs with `K_m` fixed at `100`,
+`theta, k_e >= 0` and **`b` free**, by unweighted least squares in the load.
+
+**The free load constant is the whole thing, and it is why four reconstructions missed.**
+Every failed attempt fitted one clearance CURVE onto another. The estimator of Section 4.1
+does not do that: it fits a balance and carries a load constant it does not know. Without
+`b` the same nine levels give `1243 / 1032 / 953 / 883 / 818`, monotone but never
+approaching the threshold; with `b` free they give the ladder. A curve-to-curve reading is
+a different and much more favourable exercise, and the sentence in the paper had been
+describing the favourable one while quoting the number from the other.
+
+**And the archaeology says it never had a generator.** `git log -S` on `151.01`, `557.8`
+and `277.0` across every ref hits only `audit/PHASE2A.md`, which arrived in one bulk
+import and was never edited. One deleted `.py` in the entire history, unrelated; no orphan
+bytecode; no dropped stash; the neighbouring `a4_check.py` generates the rest of the
+paragraph and contains no fit at all. So this was a number computed once, in a session, and
+written down without its construction --- the sixth instance of this project's
+characteristic failure, and the one that took a nine-agent search to undo.
+
+**Two qualifications the first draft of this entry did not have, both of which change what
+the paper may claim.**
+
+*`k_e >= 0` is doing the entire job, and that is the result rather than a technicality.*
+`k_e_hat` is pinned at exactly zero on all five rungs. Released, it goes **negative** on
+every band (`-1.11` to `-0.18`) and `theta_hat` at the 8 rung rises from `151.01` to
+`604.06`. So the parent's clearance over this band is not merely badly approximated by the
+local form, it is approximated best by a local model that is physically inadmissible, and
+the best admissible fit sits on the boundary of admissibility. The paper now says so.
+
+*The residual margin's SIGN is not determined.* Three defensible readings of the same
+definition give, at the 8 rung: `159.46` (load-weighted residual), `146.72` (a dense grid
+rather than the design's nine levels), `128.96` (linear spacing). Against
+`theta_crit = 150.77` that is `mu_hat` from about `-4` to `+9`. So the `+0.24` is the
+design's own `n = 9` unweighted reading and nothing more general, and the vividness ---
+that the fit lands essentially exactly on the threshold --- is an artefact of that choice.
+**What survives every reading is that the margin is consumed**, which is what the
+paragraph needs and all it now claims.
+
+That is the `k` row's remedy applied here: state the perturbation, generate the number
+under it, report what a second reading gives --- and, this time, notice that the second
+reading moves a sign and say so.
+
+*(The first version of this entry said "all three land within a few per cent, so the
+conclusion is robust and the third digit is not." True but far too generous: a spread that
+takes `mu_hat` from `-4` to `+9` does not merely move a digit, it moves the sign of the
+conclusion a reader would draw. Corrected before the commit.)*
+
+Nine new generated keys. Nine agents across four reconstruction families --- estimand,
+tangent, archaeology and a 252-variant definition sweep --- with two arriving at the same
+definition independently, and the ladder reproduced a third time here before any of it was
+written.
