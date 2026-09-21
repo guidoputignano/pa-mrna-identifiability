@@ -538,6 +538,49 @@ def lattice_numbers():
         "near_span_h": 24.0 * float(ph_near.max() - ph_near.min()),
         "near_sd": sd_over_seeds(t_near)[0],
     }
+    #  WHAT THE LAP COSTS WHEN IT IS NOT MET, which is the question a
+    #  protocol writer actually faces. The inequality says whether; these say
+    #  how much, and the shape is the useful part: the price is nearly nil
+    #  down to three quarters of a lap and then turns over hard.
+    #
+    #  Two separate penalties have to be kept apart. Booking fewer visits at a
+    #  FIXED step loses information AND lap fraction at once, so the lap's own
+    #  contribution is isolated by comparing each n against the same n at the
+    #  smallest step that does complete a lap, eps = T/n.
+    for n in (12, 16, 20, 25):
+        off = sd_over_seeds(np.arange(n) * 14.5)[0]
+        lap = sd_over_seeds(np.arange(n) * (T + T / n))[0]
+        N[f"lap_pen_n{n}"] = off / lap
+        N[f"lap_frac_n{n}"] = 100.0 * n * 0.5 / T
+    #  and the price of being far short, at a fixed n so it is the lap alone
+    n_ref = n_fortnightly
+    lap_ref = sd_over_seeds(np.arange(n_ref) * (T + T / n_ref))[0]
+    for pct in (4, 10, 25, 50, 75):
+        eps = 0.01 * pct * T / n_ref
+        N[f"lap_cost_{pct:02d}"] = (sd_over_seeds(np.arange(n_ref)
+                                                  * (T + eps))[0] / lap_ref)
+    N["lap_n_off"] = int(np.ceil(T / 0.5))
+    #  And the decomposition a clinic actually asks for: booking 20 visits
+    #  instead of 25 at the 14.5-day step. The total splits into the lap it
+    #  loses and the visits it loses, and the two multiply to the total. The
+    #  LAP is the larger part, which is the opposite of what "fewer visits"
+    #  suggests and is the reason this decomposition is reported rather than
+    #  the bare total.
+    a20, a25 = sd_over_seeds(np.arange(20) * 14.5)[0], \
+        sd_over_seeds(np.arange(25) * 14.5)[0]
+    l20, l25 = sd_over_seeds(np.arange(20) * (T + T / 20))[0], \
+        sd_over_seeds(np.arange(25) * (T + T / 25))[0]
+    N["drop_total"] = a20 / a25
+    N["drop_lap"] = (a20 / l20) / (a25 / l25)
+    N["drop_visits"] = l20 / l25
+    #  the remedy, which is the step and not the calendar: 20 visits at a step
+    #  that completes a lap all but matches 25 at one that does not
+    N["lap_eps_h_n20"] = 24.0 * T / 20
+    N["lap_step_n20"] = T + T / 20
+    N["sd_n20_off"] = a20
+    N["sd_n20_lap"] = l20
+    N["sd_n25_off"] = a25
+    N["n20_vs_n25"] = l20 / a25
     write_numbers("lattice", N,
                   {"lap_eps_h": "{:.1f}", "lap_n": "{:.0f}",
                    "lap_horizon_y": "{:.0f}", "q_off": "{:.0f}",
@@ -545,7 +588,16 @@ def lattice_numbers():
                    "monthly_days_to_exhaust": "{:.0f}",
                    "monthly_unreached": "{:.0f}", "near_step": "{:.2f}",
                    "near_q": "{:.0f}", "near_phases": "{:.0f}",
-                   "near_span_h": "{:.1f}", "near_sd": "{:.4f}"})
+                   "near_span_h": "{:.1f}", "near_sd": "{:.4f}",
+                   "lap_n_off": "{:.0f}", "drop_total": "{:.2f}",
+                   "drop_lap": "{:.2f}", "drop_visits": "{:.2f}",
+                   "lap_eps_h_n20": "{:.1f}", "lap_step_n20": "{:.1f}",
+                   "sd_n20_off": "{:.4f}", "sd_n20_lap": "{:.4f}",
+                   "sd_n25_off": "{:.4f}", "n20_vs_n25": "{:.3f}",
+                   **{f"lap_pen_n{n}": "{:.2f}" for n in (12, 16, 20, 25)},
+                   **{f"lap_frac_n{n}": "{:.0f}" for n in (12, 16, 20, 25)},
+                   **{f"lap_cost_{p:02d}": "{:.1f}" for p in
+                      (4, 10, 25, 50, 75)}})
     for k in sorted(N):
         print(f"    {k:26} {N[k]}")
     return N

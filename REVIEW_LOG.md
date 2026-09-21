@@ -1630,6 +1630,11 @@ already commits to: clearance maximum `3.365` against 3.4 times managed, upper e
 `12.607` against 12.6, ceiling `6.455` against 6.45, largest admissible `D` at 5% of
 `2671.9` against 2672.
 
+> **RETRACTED IN PART, see R36.** The flag this section reports, "past the clearance
+> maximum", was computed against a threshold that misread the paper. **No row of (a), (b)
+> or (c) is outside what the parent supports.** Everything else below stands; the
+> retraction is confined to the flags and to the sentences that read them.
+
 **(a) The swing grows as capacity falls, and the disease-range column is flagged before
 anything is even perturbed.** A dose in mg/kg is fixed in absolute terms while `theta` is
 not, so `Delta_peak/theta` runs from 2.1 to 213 across the sweep.
@@ -1719,3 +1724,137 @@ time against a doubled watch window.
 
 **Provisional, as item 22 asks.** CI cannot verify anything pushed at the moment, so every
 number above stands on the local run and the twelve checks, and on nothing else.
+
+### R36. The "past the clearance maximum" flag was mine and it was wrong
+
+R35 reported that at 5% of nominal and below the booked, undisturbed therapy schedule is
+already outside what the parent model supports, and called that a stronger statement than
+the missed-dose run was asked to produce. **It is withdrawn.** No trajectory in any of the
+three runs is outside what the parent supports, and at the constants this repository
+carries none can be.
+
+**The error.** Section 8 says the parent "has a clearance maximum at $3.4$ times the
+managed level". `audit/t13_therapy_forward.py` applied that $3.4$ to the LOCAL model's
+managed level of `10`, giving a fixed threshold of `33.6`. The $3.4$ is a ratio to the
+PARENT's own attractor, `81.93`, at the parent's own defaults. Two things are wrong with
+transferring it:
+
+* the two reference levels are not the same kind of thing. `11_scope.tex` says the
+  parent's `theta = 300` is "about a tenth of normal", so `81.93` is a **disease-range**
+  operating point, while the local `10` is the **100%** row of the same table;
+* and the ratio is not scale-free in the first place. Across capacity and load it runs
+  from about `2.9` to `275`, a spread of ninety-fold, so no fixed multiple stands in for
+  it. The companion figure `12.6` is worse: an upper equilibrium exists only when
+  `theta < s`, so at this load there is none at all at `100%` or `20%` of nominal.
+
+**The paper is not at fault, and that was tested rather than assumed.** The discussion's
+own arithmetic, that 42% of a band running to eight times the managed level lies beyond
+the clearance peak, is coherent only if every "managed level" in it is the parent's
+`81.93`: with the local `10` the whole band sits below the peak and the fraction is `0%`,
+not `42%`. The sentence is self-consistent and the misreading was entirely at this end.
+
+**What the bound actually is.** `dC/dm = 0` carries no load, verified symbolically, so the
+clearance maximum's LOCATION is a function of capacity alone and needs no cross-model load
+calibration to mean anything. In absolute marker units, and as a multiple of the local
+managed level:
+
+| theta | 100% | 20% | 10% | 5% | 2% | 1% |
+|---|---|---|---|---|---|---|
+| parent clearance maximum | 1768.3 | 388.8 | 275.7 | 222.6 | 192.4 | 182.7 |
+| as a multiple of managed | 176.8x | 38.9x | 27.6x | 22.3x | 19.2x | 18.3x |
+| run (a)'s peak, as a fraction of it | 0.5% | 6.3% | 11.2% | **15.9%** | 20.0% | **21.6%** |
+
+The withdrawn threshold of `33.6` was too low by `5.4x` to `52.6x`. The closest any run
+gets to the real bound is `21.6%` of it.
+
+**And it can never fire here, which is worth stating as structure rather than as a table.**
+`dm/dt = L - (theta+Delta) g(m) - k_e m <= L - k_e m`, so every trajectory at this load
+obeys `m <= L/k_e = 64.5`; and the parent's peak lies above `sqrt(K_c M_i) = 173.2` for
+every `theta > 0`, because that is where the alternative route's derivative changes sign.
+A margin of `2.68x`. This is a fact about the carried constants and not a theorem: over
+this repository's own prior box on `(K_c, M_i, rho_0)` the inequality reverses in about
+`0.3%` of corners, where `sqrt(K_c M_i)` falls near `50`.
+
+**What item 23 actually asked, and the answer.** The question was whether the local model
+places the disease-range patient on a branch the parent calls a separatrix. **It does
+not.** The local model's operating point is `0.5%` to `34%` of the way to the parent's
+clearance maximum at every capacity swept, always on the rising branch, and it cannot be
+otherwise given the `64.5 < 173.2` margin above. So `11_scope.tex`'s disease-range numbers
+are not computed at a point the parent refuses as a steady state, and nothing needs saying
+in Section 8 beside the existing misspecification result.
+
+**One thing the adversarial pass killed that had looked like a finding.** An intermediate
+route reported that the parent puts the same patient `2.28x` lower than the local model
+does, and that the parent would therefore clear the patient down to its own attractor.
+That is an artefact. `R0` is not a free parameter: `R0_for_peak` solves it against a named
+baseline load, and `tests/test_models.py` enforces the constraint. Holding `R0 = 1122` while
+moving the load to `322.727` breaks it. Re-derive `R0` at the new load and the parent puts
+the patient `1.61x` **higher** instead; under the repository's other cross-model convention
+(`t12_triples.py`'s `R0_STAR`, matched at the operating point) several capacities have no
+equilibrium at all. **The direction of the cross-model disagreement is whatever one
+chooses `R0` to be, so there is no finding there and none is reported.** The separatrix
+answer above survives because it needs only the load-free `173.2`, which is `R0`-free too.
+
+**Checks.** Four independent establishing routes and three adversarial lenses
+(calibration, numerics, semantics); the numerics lens re-derived the clearance curve
+symbolically with exact rationals and Sturm sequences, at 40-digit precision, and by
+integrating the unreduced two-state parent. None broke the retraction. `t13` now carries
+`R7`, a regression proving the withdrawn threshold fires at `5%`, `2%` and `1%` and the
+corrected bound at nothing; `R8`, the symbolic load-freeness; and `R9`, the margin.
+Fifteen checks, all passing.
+
+### R37. Which admissibility reading each verdict is on: three, not two, and t13 is on one
+
+Item 24 asked whether `t13` mixes readings. **It does not: every admissibility number and
+verdict in runs (a), (b) and (c) is on one reading, R2, including the double dose's
+`4.05x` and `10.7x`.** They are now labelled as such where they print.
+
+But the audit turned up a third reading and a trap worth recording.
+
+| | normal | D | verdict across 100/20/10/5/2/1% | breaches |
+|---|---|---|---|---|
+| **R1** | inferred, `theta/0.05` | scaled with capacity | `0.157` at every capacity | never |
+| **R2** | inferred, `theta/0.05` | booked | `0.157 / 0.583 / 1.117 / 2.183 / 5.383 / 10.717` | 10% and below |
+| **R3** | fixed at `3000` | booked | `3.133 / 2.333 / 2.233 / 2.183 / 2.153 / 2.143` | everywhere |
+
+R1 is what `ceiling_blind_pct` describes, the version that cannot bind. **R1 and R2
+coincide at `theta = 3000`; R2 and R3 coincide at `theta = 150`, where `theta/0.05` is
+exactly `3000`. Every anchor number the paper quotes, the `2.18` and the `2672`, sits on
+one of those two coincidence points**, so no number currently in the paper discriminates
+the readings, and a reader cannot tell from the text which is meant.
+
+`11_scope.tex`'s sentence is where that bites: it introduces the alternative as "read
+instead with `theta = 3000` as normal and `D` held at its booked value", which is R3, and
+then states R2's verdict, "breached at `10%` of nominal and below". R3 breaches at every
+capacity including normal. The sentence is not wrong at the disease point it is discussing,
+where the two coincide, and it is ambiguous everywhere else. Flagged, not edited: which
+reading the paper intends is the author's call and not a measurement.
+
+### R38. Found while checking R36: Section 8's "$12.6$ times" names the separatrix, not the loss
+
+Not part of item 23 and not edited, because which quantity the sentence means is the
+author's call. Section 8 says the parent "has a clearance maximum at $3.4$ times the
+managed level **and loses its stable equilibrium at $12.6$ times it**". Those are two
+different events and the second is at the first.
+
+Raise the load on the parent at its own defaults and watch the two roots:
+
+| load | roots |
+|---|---|
+| 600 (baseline) | 81.93 stable, **1033.0** unstable |
+| 650 | 115.2, 692.4 |
+| 700 | 205.9, 370.9 |
+| 706.0 | 256.5, 296.4 |
+| **706.388** (`Cmax`) | **275.67, 275.68** merged |
+| 710 | none |
+
+The stable equilibrium is lost by a saddle-node **at the clearance maximum**, `m = 275.67
+= 3.365x` the attractor. It is the same event as the clearance maximum, not a second one
+further out. The `12.6x` is the *unstable* root at the *baseline* load: the separatrix,
+which is how large a perturbation has to be to escape the basin, not where the stable
+state ceases to exist.
+
+Both are real and both are worth quoting. The sentence as written attaches the second
+number to the first event. Flagged for the author; a possible rewording is "has a
+clearance maximum at $3.4$ times the managed level, where the stable equilibrium is lost
+as the load rises, and a separatrix at $12.6$ times it at baseline load".

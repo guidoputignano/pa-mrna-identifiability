@@ -41,6 +41,8 @@ figures:
 	$(PY) audit/t7_structure_transient.py
 	@echo ">> the phase lattice and the lap condition (Remark 4)"
 	$(PY) audit/t11_phase_lattice.py
+	@echo ">> the forward therapy simulation, whose run (b) Section 4.2 quotes"
+	$(PY) audit/t13_therapy_forward.py
 	@echo ">> the design figures: phase clock, visits, calendar, conditioning"
 	$(PY) audit/g1_phase_clock.py
 	$(PY) audit/g2_visits_vs_sd.py

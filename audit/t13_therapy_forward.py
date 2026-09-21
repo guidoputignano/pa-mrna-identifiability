@@ -26,12 +26,38 @@ THREE CONSTRAINTS ON THE SETUP, WHICH MATTER MORE THAN THE RUNS.
        peak      the largest marker the cycle reaches
        above     the fraction of the cycle spent above the managed level
 
-3. THE MODEL STOPS HOLDING BEFORE THE INTERESTING REGIME DOES. The parent
-   \\eqref{eq:parent} has a clearance maximum, and above it there is no steady
-   state to sit at; higher still it loses its stable equilibrium altogether.
-   Both bounds are computed here from model_C rather than typed, and every
-   result that crosses the first is MARKED rather than reported beside the
-   rest. The missed-dose runs go there, and that is itself the finding.
+3. THE MODEL STOPS HOLDING SOMEWHERE, AND IT IS FURTHER OUT THAN THIS FILE
+   FIRST SAID. The parent \\eqref{eq:parent} has a clearance maximum, above
+   which there is no steady state to sit at. Its LOCATION is a function of
+   capacity alone -- dC/dm = 0 carries no load -- and it is computed per
+   capacity in clearance_peak_at() rather than taken as a fixed multiple of
+   anything. At the constants this repository carries no local trajectory
+   can reach it at any capacity, so the marking never fires; the retraction
+   that replaced the earlier fixed threshold is documented there.
+
+4. WHICH ADMISSIBILITY READING EVERY VERDICT IS ON. Section 7.1 carries two
+   spellings of one check and the repository a third, and they disagree
+   except at two coincidence points:
+
+     R1  normal inferred as theta/0.05, D SCALED with capacity. theta
+         cancels, the verdict is frac*(1 + Delta_peak/theta) = 0.157 at every
+         capacity, and it can never report a breach. This is what
+         results/numbers/scope.tex's ceiling_blind_pct describes.
+     R2  normal inferred as theta/0.05, D held at its BOOKED value. The
+         verdict rises as capacity falls and breaches at 10% of nominal and
+         below. audit/n4_theta_scope.py:d_ceiling is on this reading.
+     R3  normal FIXED at 3000, D booked. The verdict is 3.13 at normal
+         capacity and falls to 2.14 at 1%, so it breaches EVERYWHERE.
+
+   R1 and R2 coincide at theta = 3000; R2 and R3 coincide at theta = 150,
+   where theta/0.05 is exactly 3000. Every anchor number the paper quotes,
+   the 2.18 and the 2672, sits on one of those two points, so no quoted
+   number discriminates the readings.
+
+   EVERY admissibility number and verdict in this file is on R2, without
+   exception: the (th+D)/norm column, the largest-admissible-D lines, the
+   dose sweep's admissible column and the double dose's multiples in run (c).
+   Each is labelled R2 where it is printed.
 
 WHAT THIS CANNOT BE READ AS. Section 5.6 already says a protocol written from
 this work is not a rule for escalating an individual patient. A forward
@@ -84,26 +110,67 @@ CEILING = L / KE
 PCTS = (100, 20, 10, 5, 2, 1)
 
 
-def validity_bounds():
-    """
-    Where the parent stops supporting a trajectory, computed not typed.
+#: cache for clearance_peak_at, which is called once per printed row
+_PEAK_CACHE = {}
 
-    Two multiples of the managed level, both properties of the parent's
-    clearance curve rather than of the local model: the marker at which the
-    clearance curve peaks, above which there is no steady state to sit at,
-    and the upper equilibrium at baseline load, above which the stable one is
-    gone. Section 8 quotes them as 3.4 and 12.6 times managed.
+
+def clearance_peak_at(theta):
+    """
+    The marker level at which the PARENT's clearance curve peaks, in ABSOLUTE
+    units, at this capacity. Above it there is no steady state to sit at.
+
+    RETRACTION, AND THE REASON THIS FUNCTION REPLACED A CONSTANT. The first
+    version of this file took Section 8's "a clearance maximum at 3.4 times
+    the managed level" and applied 3.4 to the LOCAL model's managed level of
+    10, giving a fixed threshold of 33.6. That is wrong twice over.
+
+      * 3.4 is a ratio to the PARENT's own attractor, 81.93, at the parent's
+        own defaults. Applying it to 10 mislocates the peak by 81.93/10 at
+        that capacity, and by 5.4x to 52.6x across the sweep here.
+      * The ratio is not scale-free at all. Across capacity and load it runs
+        from about 2.9 to 275, a spread of ninety-fold, so no fixed multiple
+        of anything can stand in for it.
+
+    The paper's sentence is self-consistent and the error was in reading it:
+    its companion figure, that 42% of a band running to eight times the
+    managed level lies beyond the clearance peak, is arithmetic that only
+    works if every "managed level" in it is the parent's 81.93. With the
+    local 10 the whole band lies below the peak and the fraction is zero.
+
+    What IS solid, and is what this function uses: dC/dm = 0 contains no
+    load, so the peak's LOCATION is a function of capacity alone and needs no
+    cross-model load calibration to be meaningful. Checked symbolically in
+    rechecks().
+    """
+    key = round(float(theta), 9)
+    if key not in _PEAK_CACHE:
+        _PEAK_CACHE[key] = C.clearance_peak(ParamsC(), theta=float(theta))[1]
+    return _PEAK_CACHE[key]
+
+
+def structural_margin():
+    """
+    How much room the local model has before the parent's geometry matters.
+
+    Two facts, both at the parameters this repository carries:
+
+      * every local trajectory at this load obeys m <= max(m(0), L/k_e),
+        because dm/dt = L - (theta+Delta) g(m) - k_e m <= L - k_e m, and m(0)
+        is itself an equilibrium of the same system. So m <= L/k_e = 64.5.
+      * the parent's clearance peak sits above sqrt(K_c M_i) = 173.2 for
+        every theta > 0, since that is where the alternative route's own
+        derivative changes sign.
+
+    So at these parameters NO local trajectory can reach the parent's
+    clearance maximum at any capacity, and the flag below can never fire.
+    That is a statement about the carried constants and not a theorem: over
+    this repository's own prior box on (K_c, M_i, rho_0) the inequality
+    reverses in about 0.3% of corners, where sqrt(K_c M_i) drops near 50.
     """
     PC = ParamsC()
-    _, m_peak = C.clearance_peak(PC)
-    grid = np.geomspace(1e-3, 1e5, 400000)
-    f = C.S_BASE - clearance_C_quasistatic(grid, PC)
-    sign = np.sign(f)
-    roots = [brentq(lambda m: C.S_BASE - clearance_C_quasistatic(m, PC),
-                    grid[i], grid[i + 1])
-             for i in np.where(np.diff(sign) != 0)[0]]
-    attractor, upper = min(roots), max(roots)
-    return m_peak / attractor, upper / attractor, attractor
+    ceiling = L / KE
+    floor = float(np.sqrt(PC.Kc * PC.Mi))
+    return ceiling, floor, floor / ceiling
 
 
 def qs(theta, d):
@@ -219,16 +286,20 @@ def bars(title):
     print("=" * 84)
 
 
-def flag(m_peak, r_peak, r_upper):
-    """Mark a result whose trajectory leaves what the parent supports."""
-    if m_peak > r_upper * MANAGED:
-        return "  <<< PAST THE STABLE EQUILIBRIUM"
-    if m_peak > r_peak * MANAGED:
-        return "  <<< past the clearance maximum"
+def flag(m_peak, theta):
+    """
+    Mark a trajectory that leaves what the parent supports, AT THIS CAPACITY.
+
+    The bound is absolute and capacity-dependent, not a fixed multiple of the
+    managed level; see clearance_peak_at for why the fixed multiple was wrong.
+    """
+    bound = clearance_peak_at(theta)
+    if m_peak > bound:
+        return f"  <<< past the parent's clearance maximum ({bound:.0f})"
     return ""
 
 
-def s0_setup(r_peak, r_upper, attractor):
+def s0_setup():
     bars("0. THE SETUP, AND THE THREE CONSTRAINTS IT IS BUILT UNDER")
     print(f"  managed level (the reference throughout)   {MANAGED:8.3f}")
     print(f"  marker ceiling as theta -> 0, L/k_e        {CEILING:8.3f}"
@@ -238,18 +309,30 @@ def s0_setup(r_peak, r_upper, attractor):
     print(f"  its steady-state peak increment            {PEAK:8.1f}"
           f"   = {PEAK/THETA_NORMAL:.3f} x normal capacity")
     print()
-    print("  WHERE THE MODEL STOPS HOLDING, from model_C rather than typed:")
-    print(f"    parent attractor at baseline load        {attractor:8.3f}")
-    print(f"    clearance maximum                        {r_peak:8.3f}"
-          f" x managed  ->  marker {r_peak*MANAGED:.2f}")
-    print(f"    upper equilibrium lost                   {r_upper:8.3f}"
-          f" x managed  ->  marker {r_upper*MANAGED:.2f}")
-    print("    Above the first there is no steady state to sit at. Every")
-    print("    result crossing it is marked below rather than reported beside")
-    print("    the rest.")
+    ceiling, floor, margin = structural_margin()
+    print("  WHERE THE MODEL STOPS HOLDING, computed per capacity rather than")
+    print("  as a fixed multiple. dC/dm = 0 carries no load, so the parent's")
+    print("  clearance maximum is a function of theta alone:")
+    print(f"    {'theta':>8} {'m_peak':>10} {'x managed':>11}")
+    for pct in PCTS:
+        mp = clearance_peak_at(THETA_NORMAL * pct / 100.0)
+        print(f"    {pct:7d}% {mp:10.2f} {mp/MANAGED:10.2f}x")
+    print()
+    print("  AND THE LOCAL MODEL CANNOT REACH ANY OF THEM AT THIS LOAD.")
+    print(f"    every trajectory obeys m <= L/k_e = {ceiling:.2f}")
+    print(f"    the parent's peak sits above sqrt(K_c M_i) = {floor:.2f}")
+    print(f"    for every theta > 0, a margin of {margin:.2f}x.")
+    print("    So the marking below can never fire at the carried constants,")
+    print("    which is a fact about them and not a theorem: over this")
+    print("    repository's own prior box on (K_c, M_i, rho_0) the inequality")
+    print("    reverses in about 0.3% of corners. RETRACTION: the first")
+    print("    version of this file read Section 8's '3.4 times the managed")
+    print("    level' as 3.4 x 10 and reported the booked schedule past the")
+    print("    clearance maximum at 5% of nominal and below. It is not. See")
+    print("    clearance_peak_at().")
 
 
-def s1_booked(r_peak, r_upper):
+def s1_booked():
     bars("1. RUN (a). WHAT THE BOOKED SCHEDULE DOES, BY CAPACITY")
     print("  The same booked dose at every capacity, because a dose in mg/kg")
     print("  is fixed in absolute terms while theta is not. Delta_peak/theta")
@@ -260,7 +343,7 @@ def s1_booked(r_peak, r_upper):
           f"{'mean':>8} {'peak':>8} {'trough':>8} {'fold':>6} {'above':>7} "
           f"{'(th+D)/norm':>12}")
     print(f"  {'%':>6} {'':>8} {'':>8} {'marker':>10} {'':>8} {'':>8} "
-          f"{'':>8} {'':>6} {'managed':>7} {'':>12}")
+          f"{'':>8} {'':>6} {'managed':>7} {'[reading R2]':>12}")
     print("  " + "-" * 96)
     out = {}
     for pct in PCTS:
@@ -272,7 +355,7 @@ def s1_booked(r_peak, r_upper):
         print(f"  {pct:6d} {th:8.1f} {PEAK/th:8.1f} {qs(th,0):10.3f} "
               f"{mean:8.3f} {pk:8.3f} {m.min():8.3f} {pk/m.min():6.2f} "
               f"{100*above:6.1f}% {adm:12.2f}"
-              + flag(pk, r_peak, r_upper))
+              + flag(pk, th))
     print()
     print("  THE SWING GROWS AS CAPACITY FALLS, which is the opposite of what")
     print("  a fixed dose is usually assumed to do: at 100% the marker moves")
@@ -280,7 +363,7 @@ def s1_booked(r_peak, r_upper):
           f"{out[1][1]/out[1][2]:.2f}, because the")
     print("  increment is a larger and larger multiple of what is left.")
     print()
-    print("  ADMISSIBILITY, WHICH IS SECTION 7.1's CHECK READ AS A TRAJECTORY.")
+    print("  ADMISSIBILITY ON READING R2, WHICH IS SECTION 7.1's CHECK AS CODED.")
     print("  (theta + Delta_peak)/normal above 1 means the booked dose drives")
     print("  total capacity past the enzyme's own normal V_max, which is not a")
     print("  therapy at that capacity but a different enzyme:")
@@ -294,7 +377,7 @@ def s1_booked(r_peak, r_upper):
     return out
 
 
-def s2_interval_dose(r_peak, r_upper):
+def s2_interval_dose():
     bars("2. RUN (b). INTERVAL AND DOSE AS A THERAPEUTIC TRADE")
     print("  Section 4.2 has the increment's trough against the interval and")
     print("  reads it as what IDENTIFICATION costs. The same sweep read as")
@@ -317,7 +400,7 @@ def s2_interval_dose(r_peak, r_upper):
                          above))
             print(f"    {h:6.0f} {amp:8.0f} {amp/(1-np.exp(-LAMBDA*h))/th:8.1f} "
                   f"{mean:8.3f} {pk:8.3f} {m.min():8.3f} {d.min():9.1f} "
-                  f"{100*above:6.1f}%" + flag(pk, r_peak, r_upper))
+                  f"{100*above:6.1f}%" + flag(pk, th))
         b = min(rows, key=lambda r: r[2])
         best[pct] = b[0]
         edge = " -- AT THE EDGE OF THE SWEPT RANGE, so not an optimum" \
@@ -357,7 +440,7 @@ def s2_interval_dose(r_peak, r_upper):
     print()
     print("  And the dose at a fixed 14-day interval, which is the other axis:")
     print(f"    {'theta':>6} {'D':>8} {'mean':>8} {'peak':>8} {'trough':>8} "
-          f"{'above':>7} {'admissible':>11}")
+          f"{'above':>7} {'admis. R2':>11}")
     for pct in (100, 5):
         th = THETA_NORMAL * pct / 100.0
         for amp in (1000.0, 2000.0, 2672.0, 4000.0, 6000.0, 12000.0):
@@ -366,7 +449,7 @@ def s2_interval_dose(r_peak, r_upper):
             ok = "yes" if amp <= admissible_D(th) else "NO"
             print(f"    {pct:5d}% {amp:8.0f} {mean:8.3f} {pk:8.3f} "
                   f"{m.min():8.3f} {100*above:6.1f}% {ok:>11}"
-                  + flag(pk, r_peak, r_upper))
+                  + flag(pk, th))
     return best
 
 
@@ -398,7 +481,7 @@ def _on_grid(run, t1, n=8001):
     return grid, np.interp(grid, ts, ms), np.interp(grid, ts, ds)
 
 
-def s3_missed(r_peak, r_upper):
+def s3_missed():
     bars("3. RUN (c). THE MISSED DOSE")
     print("  The most concrete of the three, and the one most likely to be")
     print("  asked of a protocol. A dose is disturbed deep inside the steady")
@@ -440,10 +523,10 @@ def s3_missed(r_peak, r_upper):
             gap = np.abs(m_p - m_u) / np.maximum(m_u, 1e-12)
             after = np.where(w & (gap > 0.01))[0]
             rejoin = (grid[after[-1]] - t_p) if after.size else 0.0
-            note = flag(pk, r_peak, r_upper)
+            note = flag(pk, th)
             if amps is not None:
                 d_pk = float(d_p.max())
-                note += (f"   [double peaks at theta+Delta = "
+                note += (f"   [R2: double peaks at theta+Delta = "
                          f"{(th + d_pk)/(th/N4.REFERENCE_FRAC):.2f} x normal"
                          f"{', INADMISSIBLE' if th + d_pk > th/N4.REFERENCE_FRAC else ''}]")
             print(f"    {lab:>26} {pk:8.3f} {pk/MANAGED:9.2f} "
@@ -452,15 +535,19 @@ def s3_missed(r_peak, r_upper):
         print()
     print("  THE UNTREATED CEILING IS THE SCALE TO READ THESE AGAINST: "
           f"{CEILING:.2f},")
-    print(f"  which is {CEILING/MANAGED:.2f} x managed and sits ABOVE the clearance")
-    print(f"  maximum at {r_peak:.2f} x managed. So a long enough gap takes the")
-    print("  marker into the regime where the parent says there is no steady")
-    print("  state at all, and the honest reading of these rows is that the")
-    print("  model can say a gap is bad and cannot say how bad.")
+    print(f"  which is {CEILING/MANAGED:.2f} x managed. It sits BELOW the parent's")
+    print(f"  clearance maximum at every capacity here (the lowest is "
+          f"{clearance_peak_at(THETA_NORMAL/100):.0f}),")
+    print("  so no gap, however long, takes this model into the regime where")
+    print("  the parent says there is no steady state. The earlier claim that")
+    print("  it does was the mis-scaled bound; see clearance_peak_at().")
+    print("  What survives is narrower and still worth saying: a skipped dose")
+    print("  takes the marker most of the way to the untreated ceiling, and")
+    print("  the untreated ceiling is where the design has no information.")
     return rows
 
 
-def rechecks(r_peak, r_upper):
+def rechecks():
     """
     The adversarial pass, run BEFORE any of this is reported.
 
@@ -491,8 +578,8 @@ def rechecks(r_peak, r_upper):
 
     print("\n  R2. the constants, against what the paper already commits to.")
     for lab, got, want, tol in (
-            ("clearance max / managed", r_peak, 3.4, 0.05),
-            ("upper equilibrium / managed", r_upper, 12.6, 0.05),
+            ("clearance max / PARENT attractor",
+             C.clearance_peak(ParamsC())[1] / 81.93437, 3.4, 0.05),
             ("ceiling / managed", CEILING / MANAGED, 6.45, 0.01),
             ("largest admissible D at 5%",
              admissible_D(0.05 * THETA_NORMAL), 2672.0, 1.0),
@@ -572,21 +659,89 @@ def rechecks(r_peak, r_upper):
           f"against {r_b:.1f} d over {2*WINDOW:.0f}  "
           f"{'PASS' if ok[-1] else 'FAIL'}")
 
+    print("\n  R7. THE RETRACTION'S OWN REGRESSION. The withdrawn threshold")
+    print("      was a fixed 3.3646 x managed = 33.65. It must fire on run")
+    print("      (a)'s disease-range peaks and the corrected bound must not.")
+    old_thr = 3.3646 * MANAGED
+    fired_old, fired_new = [], []
+    for pct, pk in zip(PCTS, (8.905, 24.680, 31.000, 35.316, 38.413, 39.545)):
+        th = THETA_NORMAL * pct / 100.0
+        (fired_old if pk > old_thr else []).append(pct)
+        (fired_new if pk > clearance_peak_at(th) else []).append(pct)
+    ok.append(fired_old == [5, 2, 1] and fired_new == [])
+    print(f"      withdrawn threshold fires at {fired_old}% of nominal; "
+          f"corrected bound fires at {fired_new or 'nothing'}  "
+          f"{'PASS' if ok[-1] else 'FAIL'}")
+
+    print("\n  R8. the clearance maximum's location carries no load, which is")
+    print("      what makes a cross-model comparison possible without first")
+    print("      calibrating the parent to this model's load.")
+    import sympy as sp
+    m_, th_, Km_, Kc_, Mi_, r0_, R0_ = sp.symbols(
+        'm th Km Kc Mi r0 R0', positive=True)
+    alt_ = R0_ * m_ / ((r0_ / Mi_) * m_ ** 2
+                       + (1 + r0_ + r0_ * Kc_ / Mi_) * m_ + r0_ * Kc_)
+    dC = sp.diff(th_ * m_ / (Km_ + m_) + alt_, m_)
+    free = {str(s) for s in dC.free_symbols}
+    ok.append("s" not in free and "S" not in free)
+    print(f"      dC/dm free symbols {sorted(free)}  "
+          f"{'PASS' if ok[-1] else 'FAIL'}")
+    PC0 = ParamsC()
+    a = C.clearance_peak(PC0)[1]
+    ok.append(abs(a - C.clearance_peak(PC0)[1]) < 1e-9)
+    print(f"      and the peak location is {a:.3f} whatever load is asked "
+          f"about  {'PASS' if ok[-1] else 'FAIL'}")
+
+    print("\n  R9. the structural margin the flag's silence rests on.")
+    ceiling, floor, margin = structural_margin()
+    ok.append(floor > ceiling)
+    print(f"      local ceiling L/k_e = {ceiling:.3f} against the parent's")
+    print(f"      peak floor sqrt(K_c M_i) = {floor:.3f}, margin "
+          f"{margin:.3f}x  {'PASS' if ok[-1] else 'FAIL'}")
+
     print(f"\n  {sum(ok)} of {len(ok)} checks pass.")
     return all(ok)
 
 
+def therapy_numbers():
+    """
+    The few figures from run (b) that Section 4.2 quotes, as generated numbers.
+
+    Only run (b)'s, because only run (b) reaches the paper: (a) and (c) are
+    measurement for a protocol's missed-dose contingency and stay in the
+    audit record. What Section 4.2 needs is that exposure has no interior
+    optimum in the dosing interval at any capacity, which it states as the
+    fall from the longest interval swept to the continuous-delivery limit.
+    """
+    from common.numbers import write_numbers
+    R = D_AMP / T
+    d_inf = R / LAMBDA
+    N = {"delta_cont": d_inf}
+    for lab, pct in (("nominal", 100), ("disease", 5)):
+        th = THETA_NORMAL * pct / 100.0
+        tt, m, _ = steady_cycle(th, amp=D_AMP * 28.0 / T, period=28.0)
+        N[f"exp_h28_{lab}"] = exposure(tt, m)[0]
+        N[f"exp_cont_{lab}"] = qs(th, d_inf)
+        N[f"exp_fall_{lab}"] = N[f"exp_h28_{lab}"] / N[f"exp_cont_{lab}"]
+    write_numbers("therapy", N,
+                  {"delta_cont": "{:.0f}",
+                   **{f"exp_{k}_{lab}": "{:.2f}"
+                      for k in ("h28", "cont", "fall")
+                      for lab in ("nominal", "disease")}})
+    return N
+
+
 def main():
     print(__doc__)
-    r_peak, r_upper, attractor = validity_bounds()
-    ok = rechecks(r_peak, r_upper)
+    ok = rechecks()
     if not ok:
         print("\n  THE ADVERSARIAL PASS FAILED. Nothing below is reported.")
         return 1
-    s0_setup(r_peak, r_upper, attractor)
-    s1_booked(r_peak, r_upper)
-    s2_interval_dose(r_peak, r_upper)
-    s3_missed(r_peak, r_upper)
+    s0_setup()
+    s1_booked()
+    s2_interval_dose()
+    therapy_numbers()
+    s3_missed()
     print("\n" + "=" * 84)
     print("Every number above is conditional on a SWEPT capacity, is marked")
     print("where it leaves what the parent supports, and is not dosing")

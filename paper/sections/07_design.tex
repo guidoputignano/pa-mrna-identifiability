@@ -139,6 +139,41 @@ Over the two-year record, $n = \num{lap_n}$ fortnightly visits, that is
 $\varepsilon \ge \num{lap_eps_h}$~hours. \textbf{Everything else in this remark is a
 corollary.}
 
+\paragraph{What it costs when it is not met, because that is the question a protocol is
+written against.} An inequality reads as a knife edge and this one is not. Holding $n$
+fixed, so that the comparison is the lap alone and not the loss of data, and measuring
+each schedule against the same $n$ at the smallest step that does lap:
+
+\begin{center}
+\begin{tabular}{lccccc}
+\toprule
+fraction of a lap swept, $n\varepsilon/T$ & $4\%$ & $10\%$ & $25\%$ & $50\%$ & $75\%$ \\
+\midrule
+$\operatorname{sd}(\ln\hat\theta)$, against a lapping schedule
+ & $\num{lap_cost_04}\times$ & $\num{lap_cost_10}\times$ & $\num{lap_cost_25}\times$
+ & $\num{lap_cost_50}\times$ & $\num{lap_cost_75}\times$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent The price is nil down to about three quarters of a lap, mild at a half, and
+turns over hard below a quarter. So \eqref{eq:lap} is where the cost stops falling
+rather than a cliff a schedule falls off, and a design that misses it narrowly is not
+thereby spoiled.
+
+\textbf{But the lap is a larger part of what a short record loses than the missing visits
+are, which is the reverse of the natural reading.} At the $14.5$-day step a clinic that
+can book $20$ visits instead of $25$ sweeps $\num{lap_frac_n20}\%$ of a lap rather than
+$\num{lap_frac_n25}\%$ and pays $\num{drop_total}\times$ in all. That factor splits as
+$\num{drop_lap}\times$ for the lap it no longer completes and only
+$\num{drop_visits}\times$ for the five visits it no longer has. The remedy is therefore
+the step and not the calendar. At $20$ visits a lap needs
+$\varepsilon \ge T/20 = \num{lap_eps_h_n20}$~hours, so booking
+$\num{lap_step_n20}$~days instead of $14.5$ takes the same $20$ visits from
+$\num{sd_n20_off}$ to $\num{sd_n20_lap}$ --- within $\num{n20_vs_n25}$ of what $25$
+visits at $14.5$~days achieve. \textbf{Five hours on the step buy back almost exactly
+what five visits would}, and cost nothing.
+
 At $\varepsilon = 0$, sampling exactly at the dose interval or any multiple of it, the
 schedule never laps at any $n$: every draw lands at the same phase of every cycle, which
 is the bottom panel of Figure~\ref{fig:D0}. The range of $\Delta/\theta$ collapses from
@@ -306,7 +341,23 @@ free and leave alone the one that is paid for out of the trough.
 \paragraph{The administration route is a condition, and it is the limit of that trend.}
 Follow shorter intervals to their limit. A \emph{continuous infusion} at the same
 delivered rate has no trough at all, which is the therapeutic optimum on the metric above
-and also the point at which the identification this paper is built on stops existing. The
+and also the point at which the identification this paper is built on stops existing.
+\textbf{And there is no compromise in the middle of that conflict, because the trend has
+no interior optimum on any therapeutic metric we can compute.} The trough is a property
+of the dose train alone; \emph{marker exposure}, the time-averaged marker over a cycle,
+is not --- it runs through the balance and depends on the patient's capacity, so it could
+have turned over at some intermediate interval and does not. Swept from $28$ days down to
+the continuous limit at the same delivered rate, where the increment settles at
+$\Delta \to R/\lambda = \num{delta_cont}$, exposure falls monotonically at every capacity
+in Table~\ref{tab:scope}: by a factor of $\num{exp_fall_nominal}$ at normal capacity
+($\num{exp_h28_nominal}$ to $\num{exp_cont_nominal}$) and
+$\num{exp_fall_disease}$ at $5\%$ of it ($\num{exp_h28_disease}$ to
+$\num{exp_cont_disease}$). The peak marker and the admissibility ratio of
+\S\ref{sec:scopeprec} fall with it, on either reading of that check. So every
+therapeutic quantity this paper can compute improves as the interval shortens, and the
+only two that worsen are the patient's burden and the excitation. \emph{The route that is
+therapeutically optimal is the one that removes the design outright, and there is no
+interval at which the two are balanced.} The
 therapy enters only through its \emph{variation}: the excitation of
 Proposition~\ref{prop:tworoutes} is carried by the factor $1 + \Delta(t)/\theta$, which
 has a ratio of $\num{train_ratio}$ over the biweekly schedule and a range of
