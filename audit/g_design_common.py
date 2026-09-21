@@ -190,6 +190,46 @@ def sd_over_seeds(times, load_cv, ke_prior=0.8, seeds=range(8),
 
 
 # --------------------------------------------------------------------------
+#: the sampling step each named schedule runs at, in days. `phase-spread`
+#: has none: it picks phases first and finds a calendar day for each, so
+#: there is no ratio h/T to reduce and no lattice to report.
+SCHEDULE_STEP = {
+    "14 d (the dose interval)": 14.0,
+    "14 d, already on therapy": 14.0,
+    "14.5 d": 14.5,
+    "monthly (30.4 d)": 30.4,
+    "phase-spread": None,
+}
+
+
+def lattice_phases(name_or_step, period=T):
+    """
+    q: how many distinct dose-cycle phases a step can EVER reach.
+
+    Write h/T = p/q in lowest terms; the phases lie on a lattice of spacing
+    T/q and a record of n visits reaches min(q, n) of them. The distinction
+    matters because a bare count of phases reached is capped by n and is then
+    not a property of the schedule at all -- see audit/t11_phase_lattice.py,
+    which found three of the phase-overlay's five panels reporting their own
+    visit count back at them.
+
+    Reduced as an exact fraction of the decimals rather than through the
+    float, because 30.4/14 as a binary double has no small denominator and
+    limit_denominator would be answering a question about the rounding.
+    """
+    from fractions import Fraction
+    if isinstance(name_or_step, str):
+        step = SCHEDULE_STEP.get(name_or_step)
+        if step is None:
+            #  phase-spread has no step to reduce, but it is not unbounded
+            #  either: it books on the half-day grid, so the phases available
+            #  to it are the grid points of one cycle.
+            return int(round(period / GRID))
+    else:
+        step = name_or_step
+    return (Fraction(str(float(step))) / Fraction(str(float(period)))).denominator
+
+
 def level(theta, inc, L):
     """
     The quasi-steady marker: the positive root of the balance.

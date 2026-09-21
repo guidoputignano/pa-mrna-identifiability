@@ -308,9 +308,15 @@ Remark~\ref{rem:aliasing} drawn; half a day off fills the cycle. \textbf{Bottom:
 the marker.} Here the draws do \emph{not} lie on the curve. The gap is the
 day-to-day variation in the recorded load, so this row is $\sigma$ --- the
 quantity Section~\ref{sec:tierload} finds binding at nominal capacity --- shown
-rather than stated. The phase counts in the headers are counts of
-\emph{the $25$ draws at distinct phases}, capped by that number rather than by
-the schedule's own lattice; the $\Delta/\theta$ ranges are likewise
+rather than stated. Each header reads
+\emph{reached of available}, and the distinction is not pedantry: write
+$h/T = p/q$ in lowest terms and a step can only ever visit the $q$ phases of a
+lattice of spacing $T/q$, of which $n$ visits reach $\min(q,n)$. At $25$ draws
+the monthly schedule reaches $25$ of the $35$ its step admits and the $14.5$-day
+schedule $25$ of $28$, so a bare count would print ``$25$ phases'' for both and
+be reporting the visit count back at the reader rather than any property of the
+schedule. Only the fortnightly panels print a number of their own, $1$ of $1$,
+because only there does the lattice bind. The $\Delta/\theta$ ranges are likewise
 over these $25$ draws and not over the two-year record of
 Table~\ref{tab:designs}, which is why monthly reads $1.84$ here against
 $\num{delta_range_monthly}$ there. The phase axis is periodic, so the right

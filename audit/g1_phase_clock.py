@@ -98,12 +98,18 @@ def panel_increment(ax, times, name, curve):
                linewidths=0.4, zorder=3, clip_on=False)
     nph = len(G.cycle_phases(t))
     rng = inc.max() / G.TH - inc.min() / G.TH
-    #  "of N draws" is not decoration. The count is capped by the number of
-    #  visits drawn, not by the schedule's phase lattice, and a header that
-    #  says only "25 phases" invites a reader to think the lattice has 25.
+    #  REACHED OF AVAILABLE, not a bare count. audit/t11_phase_lattice.py
+    #  established that a bare count is not a property of the schedule on
+    #  three of these five panels: with N visits at a step whose lattice q
+    #  exceeds N, EVERY visit lands on a fresh phase and the count is N by
+    #  construction, whatever the step. Monthly, 14.5 d and phase-spread all
+    #  printed "25 phases" for lattices of 35, 28 and 28. Only the two
+    #  fortnightly panels printed a number of their own, and only because
+    #  there q = 1 < N and the lattice is what binds.
     ax.set_title(f"{SHORT.get(name, name)}\n"
-                 f"{nph} phase{'s' if nph != 1 else ''}, range {rng:.2f}",
-                 fontsize=7.2, pad=4, linespacing=1.5)
+                 f"{nph} of {G.lattice_phases(name)} phases\n"
+                 f"range {rng:.2f}",
+                 fontsize=7.0, pad=4, linespacing=1.55)
 
 
 def panel_marker(ax, times, curve, seed=3):
@@ -139,7 +145,7 @@ def figure():
     designs = [(name, fn(N)) for name, fn in G.SCHEDULES.items()]
     curve = _steady_curve()
 
-    fig, axes = plt.subplots(2, len(designs), figsize=figsize(1.0, 0.52),
+    fig, axes = plt.subplots(2, len(designs), figsize=figsize(1.0, 0.56),
                              sharex=True, sharey="row")
     for j, (name, t) in enumerate(designs):
         panel_increment(axes[0, j], t, name, curve)
