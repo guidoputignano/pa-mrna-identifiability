@@ -50,13 +50,27 @@ carries a load constant it does not know, and a fit of one clearance curve onto 
 does not, which makes the curve-to-curve reading a different and much more favourable
 exercise.
 
-\textbf{The non-negativity of $k_e$ is not a technicality either: it is the result.} On
-every band the fit puts $\hat k_e$ exactly on its lower bound of zero. Released, $\hat
-k_e$ goes \emph{negative} and $\hat\theta$ at the same band rises to
-$\num{fit_theta_hat_free_ke}$. So the parent's clearance over this band is not merely
-badly approximated by the local form --- it is approximated best by a local model that is
-physically inadmissible, and the best \emph{admissible} fit is the one sitting on the
-boundary of admissibility.
+\textbf{The fit lands on the boundary of admissibility, and that, rather than the number
+it lands at, is the finding.} On every band $\hat k_e$ sits exactly on its lower bound of
+zero. Released, it goes \emph{negative} --- $\num{fit_ke_hat_free}$ at this band --- and
+$\hat\theta$ rises to $\num{fit_theta_hat_free_ke}$. So the local form's best
+approximation to the parent's clearance here describes a patient who clears the metabolite
+by a route running backwards, and the best \emph{admissible} approximation describes one
+with no non-enzymatic clearance at all. Neither is a patient. \emph{Over this band the
+local family represents the parent only at its own edge.}
+
+Two things follow, and the first disarms the number. \textbf{A boundary solution is not a
+point estimate}: $\hat\theta = \num{fit_theta_hat}$ is where the constraint stops the fit,
+not where the likelihood peaks, so the gap between it and
+$\theta_{\mathrm{crit}} = \num{fit_theta_crit}$ is not a margin and should not be read as
+one --- a conclusion that holds whatever the spacing and the weighting, and therefore more
+firmly than the spread below. \textbf{And nothing in the fit would reveal any of it.} The
+admissible fit's residual over these levels is $\num{fit_resid_sigma}$ of a single $5\%$
+error in the recorded load, which is the accuracy
+Section~\ref{sec:tierload} asks for: the misspecification is invisible in exactly the
+diagnostic that would be used to look for it, which is the same thing
+Section~\ref{sec:structuredep} finds for the published alternative and by the same
+mechanism.
 
 \emph{What is robust here is that the margin is consumed, not what is left of it.} Three
 equally defensible readings move $\hat\theta$ at the same band: weighting the residual by

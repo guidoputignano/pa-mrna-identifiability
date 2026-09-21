@@ -2096,3 +2096,80 @@ Nine new generated keys. Nine agents across four reconstruction families --- est
 tangent, archaeology and a 252-variant definition sweep --- with two arriving at the same
 definition independently, and the ladder reproduced a third time here before any of it was
 written.
+
+### R43. The boundary is the finding, and it says something the ladder did not (items 34, 35)
+
+**The unconstrained optimum is outside the admissible set.** `k_e_hat` sits exactly on zero
+on all five rungs; released it goes negative, `-0.36` at the 8 rung, and `theta_hat` rises
+from `151.01` to `604.06`.
+
+Two consequences, and the first disarms the number the entry before this one spent nine
+agents recovering.
+
+**A boundary solution is not a point estimate.** `151.01` is where the constraint stops the
+fit, not where the likelihood peaks, so `theta_hat - theta_crit` is not a margin whatever
+the spacing or the weighting. That is an independent and firmer reason for the correction
+in R42: the sign spread says the third digit is an artefact of `n = 9`; the boundary says
+the point estimate was never a point estimate.
+
+**And the positive statement is sharper than "biased".** The local form's best
+approximation to the parent over that band describes a patient who clears the metabolite by
+a route running backwards; the best admissible approximation describes one with no
+non-enzymatic clearance at all. Neither is a patient. Over that band the local family
+represents the parent only at its own edge.
+
+**The measurement that sets how strongly to say it.** The admissible fit's rms residual
+over the nine levels is `25.76`, which is `0.77` of a single `5%` error in the recorded
+load --- the accuracy Tier 3 asks for. So the misfit is *invisible* in the diagnostic a
+reader would use, which is the same mechanism Section 7.2 already reports for the published
+alternative and is why "cannot represent the parent" would have been too strong: it
+represents it to within the assumed noise, and still lands on the boundary with a capacity
+at the threshold. That is worse than a visible misfit, not better.
+
+**Item 35, the placement judgement.** Section 2.4 asserts that the local model is "kept
+because it is the most favourable case for identification rather than because it
+approximates anything", and offers the tangent's intercept, `374` against `61`, as
+evidence. That is a comparison at a POINT. The boundary result is the same claim over a
+BAND and is strictly stronger.
+
+My reading, having the two paragraphs side by side: **the fact belongs in 2.4, the
+consequence stays in 8, and a forward reference alone is not enough.** A claim needs its
+evidence where the claim is made, and this one is made immediately before the reader spends
+four sections working inside the favourable structure --- asking them to take "rather than
+because it approximates anything" on credit through all of it, and settle up thirty pages
+later, is the wrong order. But the consequence needs `theta_crit` as a decision quantity,
+the excursion band and the estimator, none of which Section 2 has; moving it there would
+make Section 2 argue a conclusion before the paper has a design. So one sentence of fact in
+2.4, with its two numbers, and the consequence where it already is.
+
+### R44. Is the referent failure enforceable? One case is; the rest is a declaration
+
+Asked of the class named two entries above. The honest answer has two parts and the small
+one is the true one.
+
+**Not enforceable, and nothing makes it so: the semantic case.** Whether "the managed
+level" names `10` or `81.93`, whether a verdict is on R1, R2 or R3, whether `theta_hat` is
+a point estimate or a boundary --- these are questions about what a phrase denotes. No
+static property separates a label that fixes its referent from one that does not, and
+unlike the figure guard there is not even a syntactic locus to hang a declaration on: a
+drawing call is enumerable, a sentence is not. There is no set of "numbers that cross a
+boundary" for a checker to walk. **This stays a habit and a review question, and it is
+recorded as one rather than dressed up as a check.**
+
+**Enforceable, and now checked: the mechanical case.** The crudest form of the same failure
+is two different quantities wearing one key. The preamble `\input`s every file in
+`results/numbers/`, so a key defined in two of them does not collide, error or warn --- the
+last `\input` silently wins and every `\num{}` of that key takes whichever file the preamble
+listed second. Two quantities, one macro, green build.
+
+`tools/check_artefacts.py:check_key_collisions` now walks all `330` keys across the `17`
+numbers files and fails on any name defined twice. There is no collision today. There
+nearly was: `margin.tex` owns `theta_crit` and `boundary.tex` was one key away from taking
+the same name for the same quantity computed a different way, which would have been the
+figure-versus-table drift of R29 with no diff to reveal it. Its self-test feeds the detector
+a synthetic colliding pair and a clean pair and requires it to separate them, because a
+check that cannot be shown to fail is not evidence.
+
+So: one mechanical case caught by a guard, and the semantic remainder left as a declared
+habit --- **when a number crosses a boundary, carry its referent across with it** --- with
+no pretence that anything enforces it.

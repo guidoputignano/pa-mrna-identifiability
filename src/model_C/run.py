@@ -798,6 +798,24 @@ def boundary_numbers():
                        bounds=(lo, [np.inf, np.inf, np.inf]))
         return float(r.x[0])
 
+    def _fit(top, n=9, free_ke=False):
+        lv = np.geomspace(mbar_p, top * mbar_p, n)
+        s = clearance_C_quasistatic(lv, PC)
+        A = np.column_stack([g(lv, PA.Km), lv, np.ones_like(lv)])
+        lo = [0.0, -np.inf if free_ke else 0.0, -np.inf]
+        r = lsq_linear(A, s, bounds=(lo, [np.inf] * 3))
+        return r.x, A @ r.x - s, s
+
+    def _ke_hat(top, **kw):
+        return float(_fit(top, **kw)[0][1])
+
+    def _resid_sigma(top, **kw):
+        """rms residual of the fit, in units of a 5% error in the load."""
+        from common.params import LOAD_FRAC
+        _, res, s = _fit(top, **kw)
+        return float(np.sqrt(np.mean(res ** 2))
+                     / (LOAD_FRAC * float(np.mean(s))))
+
     thc = theta_crit_intrinsic(PC, S_BASE)
     N.update({
         "fit_levels": 9,
@@ -818,6 +836,13 @@ def boundary_numbers():
         #  fourfold. The bound is not a technicality, it is the whole result:
         #  the best ADMISSIBLE fit sits on the boundary of admissibility.
         "fit_theta_hat_free_ke": _ladder(8, free_ke=True),
+        #  and how visible the misfit is. The admissible fit's residual is
+        #  reported against a 5% load error, the specification's own figure,
+        #  because the question a reader has is whether anything in the fit
+        #  would reveal the problem. It would not.
+        "fit_resid_sigma": _resid_sigma(8),
+        "fit_ke_hat": _ke_hat(8),
+        "fit_ke_hat_free": _ke_hat(8, free_ke=True),
         "fit_theta_crit": thc,
         "fit_margin_true": PC.theta - thc,
         "fit_margin_est": _ladder(8) - thc,
@@ -838,6 +863,8 @@ def boundary_numbers():
                    "fit_theta_hat_lin": "{:.0f}",
                    "fit_theta_hat_dense": "{:.0f}",
                    "fit_theta_hat_free_ke": "{:.0f}",
+                   "fit_resid_sigma": "{:.2f}", "fit_ke_hat": "{:.2f}",
+                   "fit_ke_hat_free": "{:.2f}",
                    "fit_theta_crit": "{:.1f}", "fit_margin_true": "{:.1f}",
                    "fit_margin_est": "{:.2f}",
                    "fit_margin_eaten_pct": "{:.1f}"})

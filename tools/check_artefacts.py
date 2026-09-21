@@ -72,6 +72,9 @@ PDF_DATES = re.compile(rb"/(CreationDate|ModDate)\s*\([^)]*\)")
 #: the check exists to catch -- the design table froze at a factor of 20 off.
 SIMULATED = {"tab_D_decision.tex": 0.05}
 
+#: one generated macro line, as common/numbers.py writes it
+_MACRO_LINE = re.compile(r"\\csname paper@num@([A-Za-z0-9_]+)\\endcsname\{(.*)\}$")
+
 #: a signed decimal or scientific literal, wherever it sits in the markup
 NUMBER = re.compile(r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?")
 
@@ -656,6 +659,64 @@ def _built_elsewhere(text, helpers):
     return len(total)
 
 
+def _collisions(sources):
+    """{key: (stem, value)} and the collisions, from {stem: file text}."""
+    seen, problems = {}, []
+    for stem in sorted(sources):
+        for line in sources[stem].splitlines():
+            m = _MACRO_LINE.search(line)
+            if not m:
+                continue
+            key, val = m.group(1), m.group(2)
+            if key in seen:
+                other, oval = seen[key]
+                problems.append(
+                    f"{key!r} is defined in both {other}.tex and {stem}.tex "
+                    f"({oval!r} against {val!r}); the preamble's input order "
+                    f"would decide which the paper uses")
+            else:
+                seen[key] = (stem, val)
+    return seen, problems
+
+
+def check_key_collisions():
+    """
+    No generated key may be defined in two numbers files.
+
+    THE ONE MECHANICAL CASE of this repository's characteristic failure, a
+    number that does not say what it is a number of (REVIEW_LOG.md). Most of
+    that class is semantic and no check can see it: whether "the managed
+    level" means 10 or 81.93 is a question about a phrase. But its crudest
+    form IS visible, and is the one that would be worst if it happened.
+
+    The preamble \input{}s every file in results/numbers/. A key defined in
+    two of them does not collide, error or warn: the LAST \input silently
+    wins, and every \num{} of that key in the paper takes whichever file the
+    preamble happened to list second. Two different quantities would then be
+    one macro, and the build would be green. There is no collision today; this
+    is here so that there is still none the day a second module wants a name
+    like theta_crit, which margin.tex already owns and which boundary.tex
+    came within one key of taking.
+    """
+    numdir = ROOT / "results" / "numbers"
+    sources = {f.stem: f.read_text() for f in sorted(numdir.glob("*.tex"))}
+    seen, problems = _collisions(sources)
+    #  the same standard the other checks hold themselves to: a check that
+    #  cannot be shown to fail is not evidence. The detector is run against a
+    #  synthetic pair that DOES collide and a pair that does not, so the
+    #  green result above is a result and not an absence.
+    line = r"\expandafter\def\csname paper@num@%s\endcsname{%s}"
+    clash = _collisions({"a": line % ("k", "1"), "b": line % ("k", "2")})[1]
+    clean = _collisions({"a": line % ("k", "1"), "b": line % ("j", "2")})[1]
+    probe_ok = len(clash) == 1 and not clean
+    print(f"  {len(seen)} generated key(s) checked for cross-file collisions "
+          f"across {len(list(numdir.glob('*.tex')))} numbers files "
+          f"(self-test: {'PASS' if probe_ok else 'FAIL'})")
+    for why in problems:
+        print(f"    {why}")
+    return not problems
+
+
 def check_figure_numbers():
     """
     Every number a figure DRAWS must be classified, and a claim must be
@@ -797,6 +858,9 @@ def main():
     #  and the same question for a number a figure DRAWS, which until this
     #  existed was the one number in the repository with no provenance at all
     ok = check_figure_numbers() and ok
+    #  and the one mechanical case of the referent failure: two files
+    #  defining one key, which \input order would settle in silence
+    ok = check_key_collisions() and ok
     print("  ARTEFACTS MATCH THE CODE" if ok else "  ARTEFACTS HAVE DRIFTED")
     return 0 if ok else 1
 
