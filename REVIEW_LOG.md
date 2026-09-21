@@ -1858,3 +1858,115 @@ Both are real and both are worth quoting. The sentence as written attaches the s
 number to the first event. Flagged for the author; a possible rewording is "has a
 clearance maximum at $3.4$ times the managed level, where the stable equilibrium is lost
 as the load rises, and a separatrix at $12.6$ times it at baseline load".
+
+### R39. Section 8's validity boundary, corrected and narrowed (items 27, 29, 30)
+
+R38 flagged the wrong-event sentence; it is now fixed rather than flagged, and two things
+that sat beside it turned out to need the same repair.
+
+**The sentence.** "Loses its stable equilibrium at `12.6` times it" named the separatrix.
+Section 2.3's own definition is that the attractor and separatrix collide at the fold, and
+the fold is at the clearance maximum: raising the load walks the two roots together and
+they merge at `m = 275.7` at a load of `706.4`, `1.177` times baseline. So the stable
+equilibrium is lost at **`3.4`** times the attractor, the same event as the clearance
+maximum, and `12.6` is how large a perturbation must be to escape the basin at baseline
+load. Both are worth quoting; the paragraph now quotes each for what it is.
+
+**The two derived numbers in the paragraph do NOT move, and that was checked rather than
+assumed.** `audit/a4_check.py` builds them, and neither touches the separatrix:
+
+* the `42%` is `(log 8 - log(m_peak/m_bar))/log 8`, a function of the `3.365` peak ratio
+  alone. Recomputed: `41.7%`.
+* the `4.6` is the local model's `5.37x` baseline to hold eight times its managed level,
+  divided by the parent's ceiling of `1.177x`. Recomputed: `4.56`. It uses the clearance
+  maximum's VALUE, not the separatrix's location.
+
+**And the paragraph contained the collision itself (item 29).** "Eight times the managed
+level" appeared twice in adjacent sentences meaning two different bands: `655` (eight
+times the parent's attractor, in the `42%`) and `80` (eight times the local `m_bar`, in
+the `4.6`). One phrase, two referents, which is exactly the trap that produced R36. The
+paragraph now states its referent once at the top and names both bands where they are
+used.
+
+**The boundary is also narrower than it read (item 30).** It said the model questions its
+own validity out there and left it general. It is bounded: `dot m <= L - k_e m` caps every
+local trajectory at `L/k_e = 64.5`, and the parent's clearance maximum cannot fall below
+`sqrt(K_c M_i) = 173.2` at any capacity because that is where the alternative route's
+derivative turns. A margin of `2.68`, so **no operating point of any design in this paper
+lies past the parent's peak at any capacity**; only the excursion band the paper declines
+to use goes beyond it. The exception is carried with a number rather than dropped: across
+this paper's own prior range for `K_c`, `M_i` and `rho_0`, fewer than `1.5%` of draws even
+place `sqrt(K_c M_i)` below `L/k_e`.
+
+**One number deliberately NOT generated.** A swept count of the prior-box corners that
+actually reverse reads `0.14%` at 600 draws and `0.23%` at 4000: sampling noise on about
+five events. A generated number the artefact guard diffs against HEAD must not wander with
+the seed, so the paper quotes the closed-form `1.5%` upper bound, which is exact, and the
+swept figure is recorded here, where a measurement belongs.
+
+**Sixteen literals became generated numbers** (`results/numbers/boundary.tex`,
+`src/model_C/run.py:boundary_numbers`). The paragraph had every one of its figures typed
+by hand, in the one place the paper states the limits of its own model.
+
+**Pre-existing debt, found and not fixed.** The `theta_hat = 151` / `theta = 300` /
+`150.8` / `+149` / `+0.2` ladder in the same paragraph has no generator anywhere in the
+repository: it appears only in `audit/PHASE2A.md`, and four plausible reconstructions of
+the fit did not reproduce `151`. It is left alone because reconstructing it is a
+measurement and not an edit, but it is the last block of hand-typed numbers in that
+paragraph and it should get a generator before the preprint.
+
+### R40. Admissibility: three readings named in the text, with numbers that tell them apart
+
+Item 28. R37 recorded that the check has three readings and that every anchor the paper
+quotes sits on a coincidence point. Flagging that was not enough, because a reader cannot
+tell which reading is in force and neither can a future editor, which is the same failure
+as `min(q, N)` and `trans_angle`: **a displayed number that does not identify what it is a
+number of.**
+
+Section 7.1 now names all three in a table, evaluated at `20%` and `10%` of nominal where
+all three disagree, and states which one the paper is on.
+
+| | normal | `D` | at `20%` | at `10%` |
+|---|---|---|---|---|
+| R1 | inferred, `theta/0.05` | scaled | `0.16` | `0.16` |
+| R2 | inferred, `theta/0.05` | booked | `0.58` | `1.12` |
+| R3 | fixed at `3000` | booked | `2.33` | `2.23` |
+
+The old sentence introduced R3's setup and then stated R2's verdict. It now says that R2
+is the reading under which the bound is breached at `10%` and below, that R3 breaches
+everywhere including at normal capacity where it reads `3.13`, and that the two anchors
+the paper carries, `2.18` and `2672`, hold on **either** R2 or R3 because `theta = 150` is
+where those two coincide.
+
+The discriminating pair is the largest admissible dose, and the two readings run in
+opposite directions in capacity: R2's allowance rises with `theta` (`19 theta` times the
+train factor) while R3's falls (`3000 - theta` times it). At `10%` of nominal R2 permits
+`5344` against R3's `2531`, both below the booked `6000`; at normal capacity R2 permits
+`53438` and R3 permits nothing at all. A reader meeting only the old text could not have
+told which was meant.
+
+*(My first draft of that sentence said `5344` was above the booked value. It is below it.
+Caught on re-reading the draft against the generator before the commit, which is the
+adversarial pass applied to prose.)*
+
+Eight new generated keys in `results/numbers/scope.tex`; `audit/t13_therapy_forward.py`
+labels every verdict `R2` where it prints.
+
+### R41. The R0 row now bounds what the parent can be asked (item 31)
+
+The row said `R_0` must be re-derived when `K_c`, `M_i` or `rho_0` move. It must be
+re-derived when the **load** moves too, because the constraint that defines it names a
+baseline load: evaluate the parent at the local model's `L = 322.7` while holding
+`R_0 = 1122` and a null genotype becomes maintainable, `theta_crit_intrinsic` returns
+`nan`, and the module's own sweep calls such points vacuous. `tests/test_models.py`
+already enforces the constraint for the three shape constants; the load was the case
+nobody had written down.
+
+The consequence is the part worth carrying. **Any comparison of the two models at
+disease-range capacity turns on the convention chosen**, and the direction reverses
+between them: holding `R_0` puts the parent's patient below the local model's level,
+re-deriving `R_0` at the new load puts it `1.61x` above, and matching the alternative
+route to the local one at the operating point leaves several capacities with no
+equilibrium at all. So the direction is a choice, not a result, and no such comparison is
+reported. What survives every convention is that the parent's clearance peak lies above
+`sqrt(K_c M_i)`, which is `R_0`-free, and that is what R39's margin rests on.

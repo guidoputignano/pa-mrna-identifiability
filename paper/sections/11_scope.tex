@@ -120,16 +120,48 @@ $\theta = 150$ to meet the gate at all}. So the limit is robust in direction and
 location.
 
 One consequence follows for the dose and it is independent of the precision. The
-admissibility bound $\theta + \Delta_{\mathrm{peak}} \le$ normal is satisfied at the
-illustrative point only because the check reads $\theta$ as the \emph{residual} and infers
-normal as $\theta/0.05$; written out, its verdict is
-$\operatorname{frac} \times (1 + \Delta_{\mathrm{peak}}/\theta)$ with $\theta$ cancelled,
-which cannot report a breach below a residual activity of $\num{ceiling_blind_pct}\%$
-and so cannot bind on this
-disease at all. Read instead with $\theta = 3000$ as normal and $D$ held at its booked value
-rather than scaled with capacity, which is what a dose in mg/kg is, the bound is breached at
-$10\%$ of nominal and below: at $5\%$ the booked increment would drive the enzyme to $2.18$
-times normal, and the largest admissible increment there is $D = 2672$ rather than $6000$.
+admissibility bound is $\theta + \Delta_{\mathrm{peak}} \le \text{normal}$, and
+\textbf{it has three readings that disagree, so every verdict below names which one it
+is on.} They differ in where ``normal'' comes from and in whether the dose is held at its
+booked value or scaled with capacity:
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+ & normal & dose $D$ & verdict at $20\%$ / $10\%$ of nominal \\
+\midrule
+\textbf{R1} & inferred, $\theta/0.05$ & scaled with $\theta$ &
+ $\num{adm_r1}$ / $\num{adm_r1}$ \\
+\textbf{R2} & inferred, $\theta/0.05$ & booked &
+ $\num{adm_r2_20}$ / $\num{adm_r2_10}$ \\
+\textbf{R3} & fixed at $3000$ & booked &
+ $\num{adm_r3_20}$ / $\num{adm_r3_10}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Under \textbf{R1} the check reads $\theta$ as the \emph{residual} and scales the
+dose with it, so written out its verdict is
+$\operatorname{frac} \times (1 + \Delta_{\mathrm{peak}}/\theta)$ with $\theta$ cancelled:
+a constant $\num{adm_r1}$ at every capacity, which cannot report a breach below a residual
+activity of $\num{ceiling_blind_pct}\%$ and so cannot bind on this disease at all.
+\textbf{R2} keeps the inferred normal but holds $D$ at its booked value, which is what a
+dose in mg/kg is, and \emph{that} is the reading under which the bound is breached at
+$10\%$ of nominal and below. \textbf{R3} instead fixes normal at $3000$ and breaches at
+every capacity in the table, $100\%$ included, where it reads $\num{adm_r3_100}$.
+
+\emph{The three coincide at exactly two points, and both of this paper's anchor numbers
+sit on one of them}, which is why the readings have to be named rather than inferred: R1
+and R2 agree at $\theta = 3000$, where the booked dose \emph{is} the scaled dose, and R2
+and R3 agree at $\theta = 150$, where $\theta/0.05$ is exactly $3000$. So at $5\%$ of
+nominal the booked increment drives the enzyme to $2.18$ times normal \emph{on either R2
+or R3}, and the largest admissible increment there is $D = 2672$ rather than $6000$ on
+either. Away from those points the readings separate, and they run in opposite
+directions: R2's allowance \emph{rises} with capacity and R3's \emph{falls}, so at
+$10\%$ of nominal R2 permits $D = \num{dceil_r2_10}$ against R3's
+$\num{dceil_r3_10}$, and at normal capacity R2 reads $\num{adm_r1}$ while R3 reads
+$\num{adm_r3_100}$ and permits no positive dose at all. \textbf{Everything this paper reports about
+admissibility is on R2.}
 That does not rescue the precision, since at $D = 2672$ and $\theta = 150$ the monthly design
 returns $2.96$, but it is a second and independent reason to think the increment is set too
 high, alongside the trial's own reported falls, recorded against the $D$ row in the

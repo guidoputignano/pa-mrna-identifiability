@@ -702,6 +702,85 @@ PERTURBATIONS = {"": None,               # filled from ILLNESS_FOLD below
                  "_tracer": 1.01}
 
 
+def boundary_numbers():
+    """
+    Section 8's validity boundary, generated rather than typed.
+
+    Every number in that paragraph was a literal, in the one paragraph where
+    the paper states the limits of its own model, and one of them described
+    the wrong event: "loses its stable equilibrium at 12.6 times it" names the
+    SEPARATRIX at baseline load, while the stable equilibrium is lost at the
+    FOLD, where attractor and separatrix collide, which Section 2.3 defines
+    and which sits at the clearance maximum. Raising the load walks the two
+    roots together and they merge at m = 275.7 at a load of 706.4, i.e. at
+    3.4 times the attractor and not 12.6.
+
+    THE TWO MANAGED LEVELS, which is the trap underneath it. The parent's
+    reference level is its OWN attractor, 81.93 at its own theta and load; the
+    local model's is m_bar = 10. The paragraph used one phrase for both and
+    therefore meant two different bands by "eight times the managed level":
+    655 in the 42% figure and 80 in the factor of 4.6. Both are computed here
+    so the referents are visible.
+    """
+    from common.numbers import write_numbers
+    from design.run import P as PA, M_BAR, load
+    from common.models import clearance_A
+    L = float(load(0))
+    peak, m_peak = clearance_peak(PC)
+    eq = equilibria_nonmonotone(clearance_C_quasistatic, PC, S_BASE,
+                                np.linspace(1e-3, 3000.0, 120000))[0]
+    mbar, sep = float(eq[0]), float(eq[1])
+    #  the fold: raise the load until the two roots merge, which is exactly
+    #  the clearance maximum. Reported as the load and the level.
+    N = {
+        "parent_mbar": mbar,
+        "peak_over_mbar": m_peak / mbar,
+        "sep_over_mbar": sep / mbar,
+        "fold_m": m_peak,
+        "fold_load": peak,
+        "fold_load_ratio": peak / S_BASE,
+        "band_parent": 8.0 * mbar,
+        "band_local": 8.0 * M_BAR,
+        "band_beyond_pct": 100.0 * max(
+            0.0, (np.log(8.0) - np.log(m_peak / mbar)) / np.log(8.0)),
+        "hold8_ratio": clearance_A(8 * M_BAR, PA) / clearance_A(M_BAR, PA),
+        "clear_ratio": (clearance_A(8 * M_BAR, PA) / clearance_A(M_BAR, PA))
+        / (peak / S_BASE),
+        #  the structural margin: no local operating point can lie past the
+        #  parent's peak, because the local marker is capped and the peak has
+        #  a floor that no capacity can lower
+        "local_ceiling": L / PA.ke,
+        "peak_floor": float(np.sqrt(PC.Kc * PC.Mi)),
+        "peak_margin": float(np.sqrt(PC.Kc * PC.Mi)) / (L / PA.ke),
+    }
+    #  and how often the margin reverses over this module's own prior box.
+    #  Analytic first, because sqrt(Kc Mi) = 10^((u+v)/2) with u, v uniform
+    #  makes P(floor < ceiling) a triangle, and a closed form is not a seed.
+    a = np.log10(L / PA.ke)
+    slack = 2 * a - (1.4 + 2.0)
+    N["prior_floor_pct"] = 100.0 * (0.5 * max(0.0, slack) ** 2) / (1.5 * 1.1)
+    #  A Monte-Carlo count of the cells that actually reverse is NOT written
+    #  here, deliberately. The event is rare: at 600 draws it reads 0.14% and
+    #  at 4000 it reads 0.23%, which is sampling noise on five or so events,
+    #  and a generated number the artefact guard diffs against HEAD must not
+    #  wander with the seed. The closed form above is an upper bound on it
+    #  (the floor being below the ceiling is necessary for the peak to be),
+    #  it is exact, and it is the one the paper quotes. The swept figure is
+    #  recorded in REVIEW_LOG.md instead, where a measurement belongs.
+    write_numbers("boundary", N,
+                  {"parent_mbar": "{:.1f}", "peak_over_mbar": "{:.2f}",
+                   "sep_over_mbar": "{:.1f}", "fold_m": "{:.0f}",
+                   "fold_load": "{:.1f}", "fold_load_ratio": "{:.3f}",
+                   "band_parent": "{:.0f}", "band_local": "{:.0f}",
+                   "band_beyond_pct": "{:.0f}", "hold8_ratio": "{:.2f}",
+                   "clear_ratio": "{:.1f}", "local_ceiling": "{:.1f}",
+                   "peak_floor": "{:.0f}", "peak_margin": "{:.2f}",
+                   "prior_floor_pct": "{:.1f}"})
+    for k in sorted(N):
+        print(f"    {k:22} {N[k]}")
+    return N
+
+
 def reduction_cost_numbers(ks=(0.1, 1.0, 10.0, 100.0)):
     """
     What the quasi-steady reduction costs OFF equilibrium, at four k.
@@ -809,3 +888,4 @@ if __name__ == "__main__":
     collapse_check()
     identification_cost_of_Kc()
     reduction_cost_numbers()
+    boundary_numbers()

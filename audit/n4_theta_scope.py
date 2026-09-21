@@ -354,7 +354,32 @@ def scope_numbers():
         enz = th * m / (KM0 + m)
         return enz / (enz + KE * m)
 
+    #  THE THREE ADMISSIBILITY READINGS, evaluated AWAY from the two points
+    #  where they coincide. The check has three spellings and the paper quotes
+    #  only 2.18 and 2672, both of which sit on a coincidence: R1 and R2 agree
+    #  at theta = 3000, where the booked D is the scaled D, and R2 and R3
+    #  agree at theta = 150, where theta/0.05 is exactly 3000. So no number
+    #  currently in the text tells a reader which reading is in force. These
+    #  do: at 20% and 10% of nominal all three disagree.
+    pk = peak_increment(D0)
+    adm = {
+        #  R1: normal inferred, D SCALED with capacity -- theta cancels
+        "adm_r1": REFERENCE_FRAC * (1.0 + pk / TH0),
+        #  R2: normal inferred, D booked
+        "adm_r2_20": (0.20 * TH0 + pk) / (0.20 * TH0 / REFERENCE_FRAC),
+        "adm_r2_10": (0.10 * TH0 + pk) / (0.10 * TH0 / REFERENCE_FRAC),
+        #  R3: normal FIXED at TH0, D booked
+        "adm_r3_100": (TH0 + pk) / TH0,
+        "adm_r3_20": (0.20 * TH0 + pk) / TH0,
+        "adm_r3_10": (0.10 * TH0 + pk) / TH0,
+        #  and the largest admissible D at 10%, where the two readings put it
+        #  on opposite sides of the booked value
+        "dceil_r2_10": d_ceiling(0.10 * TH0),
+        "dceil_r3_10": (TH0 - 0.10 * TH0) * (1.0 - np.exp(-LAMBDA
+                                                          * DOSE_INTERVAL)),
+    }
     N = {
+        **adm,
         "band_lo": lo_edge, "band_hi": hi_edge,
         "band_lo_pct": 100.0 * lo_edge / TH0,
         "band_hi_pct": 100.0 * hi_edge / TH0,
@@ -381,7 +406,11 @@ def scope_numbers():
            "disease_factor": "{:.0f}", "share_nominal_pct": "{:.1f}",
            "share_10pct": "{:.1f}", "share_5pct": "{:.1f}",
            "sd_10pct": "{:.4f}", "sd_5pct": "{:.4f}",
-           "ceiling_blind_pct": "{:.0f}"}
+           "ceiling_blind_pct": "{:.0f}",
+           "adm_r1": "{:.2f}", "adm_r2_20": "{:.2f}", "adm_r2_10": "{:.2f}",
+           "adm_r3_100": "{:.2f}", "adm_r3_20": "{:.2f}",
+           "adm_r3_10": "{:.2f}", "dceil_r2_10": "{:.0f}",
+           "dceil_r3_10": "{:.0f}"}
     write_numbers("scope", N, fmt)
     return N
 

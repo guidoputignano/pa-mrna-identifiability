@@ -57,6 +57,7 @@ GENERATORS = {
     "fibre": "src/model_A/run.py",
     "margin": "src/model_C/run.py",
     "therapy": "audit/t13_therapy_forward.py",
+    "boundary": "src/model_C/run.py",
 }
 
 
