@@ -66,6 +66,32 @@ D_AMP = 6000.0           # ASSUMED. Chosen so the marker falls by about half at
                          # reported in the phase 1/2 interim analysis.
 
 
+#: every interpolated number this module draws on a figure, classified for
+#: tools/check_artefacts.py:check_figure_numbers. `registered:` is checked;
+#: the rest are declarations, and `UNREGISTERED:` is debt the guard prints on
+#: every run until a generator owns the number.
+DRAWN = {
+    "lab": "text: which of the two bands the marker sits on",
+    "excitation(lo, hi, Km)": "UNREGISTERED: E is drawn for BOTH bands and "
+        "only the K_m band's value is registered, as decomp_E",
+    "trough": "registered: the same object write_numbers takes as "
+              "train_trough_frac",
+    "DOSE_INTERVAL": "input: a model constant from common.params, which the "
+                     "constants table registers",
+    "np.log(2) / LAMBDA": "input: the dose half-life, likewise a constant of "
+                          "the parameter set this figure was drawn at",
+    "name": "text: the schedule's name",
+    "len(times)": "input: the schedule's own visit count",
+    "rng": "UNREGISTERED: the Delta/theta range per schedule. design.tex "
+           "holds delta_range_* over the two-year record and this panel "
+           "recomputes it over the schedule as drawn, which is a second "
+           "computation of one quantity",
+    "100 * cv": "input: the load CV this curve was drawn at",
+    "nn": "input: the visit count this curve was drawn at",
+    "top": "input: the band top this curve was drawn at",
+}
+
+
 def delta(t):
     """The therapeutic increment from a biweekly schedule of decaying doses."""
     t = np.atleast_1d(np.asarray(t, dtype=float))

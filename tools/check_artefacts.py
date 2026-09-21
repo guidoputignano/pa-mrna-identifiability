@@ -34,6 +34,7 @@ reproduce bit for bit on another machine. What the exemption is, how narrow
 it is, and what measurement sets its tolerance are all at SIMULATED below.
 """
 import argparse
+import ast
 import io
 import re
 import subprocess
@@ -452,6 +453,321 @@ def check_generators_reachable():
     return not problems
 
 
+
+#: matplotlib calls that put a string on a figure. `set_xticklabels` and
+#: `set_yticklabels` are deliberately NOT here: a tick is a coordinate, not a
+#: claim, and the rule below is about claims. They are counted and reported so
+#: the exclusion is visible rather than assumed.
+DRAWS_TEXT = {"set_title", "suptitle", "text", "figtext", "annotate",
+              "set_xlabel", "set_ylabel", "supxlabel", "supylabel",
+              "set_label", "bar_label"}
+TICK_TEXT = {"set_xticklabels", "set_yticklabels"}
+
+#: the classifications a module may give a number it draws. Everything drawn
+#: must carry one of these, and `registered:` is the only one the machine can
+#: check; the rest are declarations a person made and signed.
+DRAWN_KINDS = ("registered:", "own:", "input:", "geometry:", "text:",
+               "UNREGISTERED:")
+
+
+def _text_helpers():
+    """
+    This repository's own text-drawing wrappers, found rather than listed.
+
+    corner(), over_x(), beside_y() and at_point() all end in ax.text or
+    ax.annotate, so a number passed to one of them is drawn exactly as if it
+    had been passed to matplotlib. A hardcoded list of matplotlib names misses
+    every one of them, and did: the first version of this check saw 23 drawn
+    numbers and the four helpers were hiding 8 more, among them theta_crit and
+    the safety margin, which are two of the figures' load-bearing claims.
+    """
+    sty = (ROOT / "src" / "common" / "style.py").read_text()
+    return set(re.findall(r"^def (\w+)\(ax[^)]*\btext\b", sty, re.M))
+
+
+def _interpolations(node):
+    """
+    Every expression whose VALUE is formatted into a string inside `node`.
+
+    Covers the three ways this repository builds text: f-strings, `%` on a
+    literal (which design/run.py uses for the dose-train trough) and
+    "...".format(). A number reaching a drawn string by any other route is
+    outside this check; see check_figure_numbers.__doc__.
+    """
+    out = []
+    for sub in ast.walk(node):
+        if isinstance(sub, ast.JoinedStr):
+            out += [ast.unparse(v.value) for v in sub.values
+                    if isinstance(v, ast.FormattedValue)]
+        elif (isinstance(sub, ast.BinOp) and isinstance(sub.op, ast.Mod)
+              and isinstance(sub.left, ast.Constant)
+              and isinstance(sub.left.value, str)):
+            r = sub.right
+            out += [ast.unparse(e)
+                    for e in (r.elts if isinstance(r, ast.Tuple) else [r])]
+        elif (isinstance(sub, ast.Call) and isinstance(sub.func, ast.Attribute)
+              and sub.func.attr == "format"
+              and isinstance(sub.func.value, ast.Constant)):
+            out += [ast.unparse(a) for a in sub.args]
+    return out
+
+
+def _drawn(text, helpers):
+    """
+    {expression source: first line it is drawn on}, plus the tick-label ones.
+
+    A `label=` keyword on any call counts: a legend is drawn text, and
+    design/run.py draws the excitation number E in one.
+    """
+    drawn, ticks = {}, {}
+    for node in ast.walk(ast.parse(text)):
+        if not isinstance(node, ast.Call):
+            continue
+        fn = node.func
+        nm = (fn.attr if isinstance(fn, ast.Attribute) else
+              fn.id if isinstance(fn, ast.Name) else None)
+        into = (drawn if nm in DRAWS_TEXT or nm in helpers else
+                ticks if nm in TICK_TEXT else None)
+        if into is not None:
+            for e in _interpolations(node):
+                into.setdefault(e, node.lineno)
+        for kw in node.keywords:
+            if kw.arg == "label":
+                for e in _interpolations(kw.value):
+                    drawn.setdefault(e, node.lineno)
+    return drawn, ticks
+
+
+def _registered_exprs(text):
+    """
+    The source text of every expression this module registers as a number.
+
+    Collected from the two ways a value reaches results/numbers/: a dict
+    literal handed straight to write_numbers(), and a `.update({...})` on the
+    module's accumulating numbers dict, which is how design/run.py and
+    model_A/run.py build theirs across a dozen functions.
+    """
+    tree = ast.parse(text)
+    books, out = set(), set()
+    for node in ast.walk(tree):
+        if (isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+                and node.func.id == "write_numbers"):
+            if len(node.args) > 1 and isinstance(node.args[1], ast.Name):
+                books.add(node.args[1].id)
+            for a in node.args[1:2]:
+                if isinstance(a, ast.Dict):
+                    out |= {ast.unparse(v) for v in a.values}
+    for node in ast.walk(tree):
+        if (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                and node.func.attr == "update"
+                and isinstance(node.func.value, ast.Name)
+                and node.func.value.id in books
+                and node.args and isinstance(node.args[0], ast.Dict)):
+            out |= {ast.unparse(v) for v in node.args[0].values}
+    return books, out
+
+
+def _registers(text, expr):
+    """
+    True if `expr` draws a registered number rather than recomputing one.
+
+    Three shapes count, and all three are checked rather than declared.
+
+      num("design", "delta_range_off")   reads the committed file. This is
+                                         the cross-module case: the figure
+                                         draws what \num{} typesets.
+      N["key"] where write_numbers(_, N) the drawn value and the registered
+                                         value are one object.
+      the same expression registered      `trough` is drawn by the dose-train
+      elsewhere in this module            figure and registered four lines
+                                         later as train_trough_frac. One
+                                         computation, two uses.
+
+    The third is text identity and is therefore narrow on purpose. A figure
+    that draws np.interp(M_TOL, mts, wid) while the register holds
+    margin_window(a0, b0, 40.0) is drawing a DIFFERENT computation of the
+    same quantity, which is exactly the drift this check is for, so it does
+    not pass -- it has to be made one computation first.
+    """
+    if re.search(r"\bnum\(", expr):
+        return True
+    books, regd = _registered_exprs(text)
+    if expr in regd:
+        return True
+    m = re.match(r"^(\w+)\[", expr)
+    return bool(m) and m.group(1) in books
+
+
+def _built_elsewhere(text, helpers):
+    """
+    How many interpolated strings this module builds away from a drawing call.
+
+    THE LIMIT OF THE CHECK, counted rather than assumed. A number reaches
+    drawn text two ways: formatted inside the call, which _drawn() sees, or
+    formatted into a name and drawn later, which it cannot see without
+    following the value. g5_conditions.py builds its legend strings into a
+    list first; so, harmlessly, does every module that formats a table cell.
+
+    Console output and table cells are subtracted, because those have their
+    own guards -- stdout is not an artefact and a table cell is compared
+    line by line by check_regenerated(). What is left is the residue this
+    check does not cover, and it is printed so the gap is a number.
+    """
+    tree = ast.parse(text)
+    drawn_at, _ = _drawn(text, helpers)
+    covered, total = set(), []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        fn = node.func
+        nm = (fn.attr if isinstance(fn, ast.Attribute) else
+              fn.id if isinstance(fn, ast.Name) else None)
+        if nm in ("print", "write_numbers", "write_table", "append", "update",
+                  "format", "join", "warn") or nm in DRAWS_TEXT \
+                or nm in TICK_TEXT or nm in helpers:
+            for sub in ast.walk(node):
+                if isinstance(sub, ast.JoinedStr):
+                    covered.add(id(sub))
+        for kw in node.keywords:
+            if kw.arg == "label":
+                for sub in ast.walk(kw.value):
+                    if isinstance(sub, ast.JoinedStr):
+                        covered.add(id(sub))
+    for node in ast.walk(tree):
+        if (isinstance(node, ast.JoinedStr) and id(node) not in covered
+                and any(isinstance(v, ast.FormattedValue)
+                        for v in node.values)):
+            total.append(node)
+    return len(total)
+
+
+def check_figure_numbers():
+    """
+    Every number a figure DRAWS must be classified, and a claim must be
+    registered.
+
+    THE BUG THIS EXISTS FOR. The phase overlay drew "25 phases" as a panel
+    header on three of five schedules whose lattices are 35, 28 and 28. The
+    header was min(q, N) and N was the visit count, so three panels printed
+    their own sample size back at the reader as though it were a property of
+    the schedule. Nothing caught it: the number was computed inside the
+    figure module at draw time, so it was in no table, in no numbers file, and
+    in nothing the artefact guard compares. A table cell that wrong fails
+    check_regenerated() the same day.
+
+    THE RULE. A number a figure draws as a claim about the design must come
+    from a registered generator, exactly as a table number does. A number that
+    is an axis tick, a geometry fact about the drawing, or a restatement of
+    the setting the panel was drawn at, need not.
+
+    WHAT IS ENFORCEABLE AND WHAT IS NOT. The machine can find every number
+    drawn at a call site and it can verify that an expression reads the
+    register. It CANNOT tell a claim from an axis annotation: `{v:.2f}` in a
+    title is the same syntax either way, and no amount of static analysis
+    decides which one it is. So the rule is enforced as a DECLARATION. Each
+    figure module carries a DRAWN dict mapping the source text of every
+    interpolation it draws to one of DRAWN_KINDS, and:
+
+      * a number drawn and not declared FAILS -- so nothing new slips in;
+      * a declaration for a number no longer drawn FAILS -- so the list
+        cannot rot into a blanket exemption;
+      * a `registered:` declaration is checked, by _registers(), against what
+        the expression actually does;
+      * `UNREGISTERED:` is a claim with no generator yet. It is counted and
+        printed on every run, so the debt is a number that can be driven to
+        zero rather than a silence.
+
+    What is NOT enforceable: whether a declaration is honest. Writing
+    `geometry:` over a claim passes. That is a review question, and the
+    declaration is what gives a reviewer something to review.
+
+    Also outside the check: text assembled away from the drawing call, as
+    g5_conditions.py builds its legend strings into a list first. Those are
+    reported by count at the end and are not classified.
+    """
+    helpers = _text_helpers()
+    problems, debt, n_drawn, n_ticks, n_reg = [], [], 0, 0, 0
+    elsewhere = []
+    for py in sorted(list((ROOT / "audit").glob("*.py"))
+                     + list((ROOT / "src").rglob("*.py"))):
+        text = py.read_text()
+        if "save(" not in text and "savefig(" not in text:
+            continue
+        rel = str(py.relative_to(ROOT))
+        drawn, ticks = _drawn(text, helpers)
+        n_drawn += len(drawn)
+        n_ticks += len(ticks)
+        n_away = _built_elsewhere(text, helpers)
+        if n_away:
+            elsewhere.append(f"{rel}: {n_away}")
+        if not drawn:
+            continue
+        ns = {}
+        for node in ast.walk(ast.parse(text)):
+            if (isinstance(node, ast.Assign) and len(node.targets) == 1
+                    and isinstance(node.targets[0], ast.Name)
+                    and node.targets[0].id == "DRAWN"):
+                ns = ast.literal_eval(node.value)
+        if not ns:
+            problems.append(f"{rel} draws {len(drawn)} interpolated "
+                            f"number(s) and declares no DRAWN dict")
+            continue
+        for expr, line in sorted(drawn.items(), key=lambda kv: kv[1]):
+            kind = ns.get(expr)
+            if kind is None:
+                problems.append(f"{rel}:{line} draws {expr!r} and DRAWN does "
+                                f"not classify it")
+            elif not kind.startswith(DRAWN_KINDS):
+                problems.append(f"{rel}:{line} classifies {expr!r} as "
+                                f"{kind!r}, which is not one of "
+                                f"{DRAWN_KINDS}")
+            elif kind.startswith("registered:"):
+                n_reg += 1
+                if not _registers(text, expr):
+                    problems.append(
+                        f"{rel}:{line} declares {expr!r} registered, but it "
+                        f"neither calls num() nor indexes the dict this "
+                        f"module writes")
+            elif kind.startswith("UNREGISTERED:"):
+                debt.append(f"{rel}:{line} {expr} -- {kind.split(':', 1)[1].strip()}")
+        for expr in sorted(set(ns) - set(drawn)):
+            problems.append(f"{rel} DRAWN classifies {expr!r} and nothing "
+                            f"draws it")
+    #  the same standard the reachability check holds itself to: a check that
+    #  cannot be shown to fail is not evidence. These are the three shapes
+    #  that matter -- an undeclared number, a false `registered:`, and a
+    #  helper-drawn number the matplotlib name list would miss.
+    probe = ('import x\ndef f(ax, v, N):\n'
+             '    ax.set_title(f"factor {v:.2f}")\n'
+             '    at_point(ax, (0, 0), f"q = {N[\'k\']}")\n'
+             '    save(fig, "p")\n')
+    pd, pt = _drawn(probe, {"at_point"})
+    probe_ok = [set(pd) == {"v", "N['k']"},
+                not _registers(probe, "v"),
+                not _registers(probe, "N['k']"),
+                _registers(probe + 'write_numbers("m", N)\n', "N['k']"),
+                _registers(probe + 'write_numbers("m", {"a": v})\n', "v"),
+                _registers(probe + 'B = {}\nwrite_numbers("m", B)\n'
+                           'B.update({"a": v})\n', "v"),
+                _registers(probe, 'num("design", "sigma")')]
+    if not all(probe_ok):
+        problems.append(f"the figure-number check's own self-test failed: "
+                        f"{probe_ok}")
+    if elsewhere:
+        print(f"  {sum(int(e.split(': ')[1]) for e in elsewhere)} "
+              f"interpolated string(s) in figure modules are built away from "
+              f"any drawing call and are NOT classified: "
+              f"{'; '.join(elsewhere)}")
+    print(f"  {n_drawn} number(s) drawn on figures checked for provenance "
+          f"({n_reg} registered, {len(debt)} unregistered claim(s), "
+          f"{n_ticks} tick-label interpolation(s) out of scope) "
+          f"(self-test: {'PASS' if all(probe_ok) else 'FAIL'})")
+    for d in debt:
+        print(f"    debt: {d}")
+    for why in problems:
+        print(f"    {why}")
+    return not problems
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--working-tree", action="store_true",
@@ -463,6 +779,9 @@ def main():
     #  the fast path is precisely the place where a build-unreachable
     #  generator looks fine.
     ok = check_generators_reachable() and ok
+    #  and the same question for a number a figure DRAWS, which until this
+    #  existed was the one number in the repository with no provenance at all
+    ok = check_figure_numbers() and ok
     print("  ARTEFACTS MATCH THE CODE" if ok else "  ARTEFACTS HAVE DRIFTED")
     return 0 if ok else 1
 

@@ -494,6 +494,63 @@ def r_rechecks(bar):
 
 
 # ==========================================================================
+def lattice_numbers():
+    """
+    The lap condition and the lattice counts, as generated numbers.
+
+    Section 5.3 and Remark 4 now state the aliasing rule as ONE inequality
+    rather than as a prohibition plus a fix, and these are the quantities that
+    inequality is written in. They are generated because the rule is arithmetic
+    and a hand-typed arithmetic claim is the thing this repository's number
+    discipline exists to prevent.
+
+    The lap condition. A schedule at step h = T + eps advances its phase by
+    eps each visit, so after n visits it has swept n*eps of the dial. It has
+    completed a lap, and therefore reached the whole increment range, only if
+    n*eps >= T, i.e.
+
+        eps  >=  T / n.
+
+    Everything else follows: 14 d is eps = 0 and never laps at any n; 14.5 d
+    laps comfortably; and 14.01 d has a LARGE phase lattice and still does not
+    lap, which is the case a prohibition on multiples does not catch.
+    """
+    from common.numbers import write_numbers
+    T, HORIZON = G.T, 730.0
+    n_fortnightly = int(np.floor(HORIZON / T)) + 1
+    eps_min = T / n_fortnightly
+    #: the near-miss the rule has to catch. Its lattice is huge and useless.
+    NEAR = 14.01
+    t_near = np.arange(0.0, HORIZON, NEAR)
+    ph_near = np.sort(np.asarray(t_near, float) % T)
+    N = {
+        "lap_eps_h": 24.0 * eps_min,
+        "lap_n": n_fortnightly,
+        "lap_horizon_y": HORIZON / 365.0,
+        "q_off": ratio(14.5).denominator,
+        "q_monthly": ratio(30.4).denominator,
+        "n_monthly": int(np.floor(HORIZON / 30.4)) + 1,
+        "monthly_days_to_exhaust": ratio(30.4).denominator * 30.4,
+        "monthly_unreached": ratio(30.4).denominator - (int(np.floor(HORIZON / 30.4)) + 1),
+        "near_step": NEAR,
+        "near_q": ratio(NEAR).denominator,
+        "near_phases": len(G.cycle_phases(t_near)),
+        "near_span_h": 24.0 * float(ph_near.max() - ph_near.min()),
+        "near_sd": sd_over_seeds(t_near)[0],
+    }
+    write_numbers("lattice", N,
+                  {"lap_eps_h": "{:.1f}", "lap_n": "{:.0f}",
+                   "lap_horizon_y": "{:.0f}", "q_off": "{:.0f}",
+                   "q_monthly": "{:.0f}", "n_monthly": "{:.0f}",
+                   "monthly_days_to_exhaust": "{:.0f}",
+                   "monthly_unreached": "{:.0f}", "near_step": "{:.2f}",
+                   "near_q": "{:.0f}", "near_phases": "{:.0f}",
+                   "near_span_h": "{:.1f}", "near_sd": "{:.4f}"})
+    for k in sorted(N):
+        print(f"    {k:26} {N[k]}")
+    return N
+
+
 def main():
     print(__doc__)
     bar = "=" * 84
@@ -508,3 +565,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    lattice_numbers()

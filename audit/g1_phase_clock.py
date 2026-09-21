@@ -21,6 +21,16 @@ The dial could show one thing this cannot, that phase is circular, so a draw
 at 13.9 d is adjacent to one at 0.1 d. The curve is periodic and the caption
 says so. That is a small loss against a large gain.
 
+REPEATING THE FIRST DAY FADED PAST THE RIGHT EDGE WAS TRIED AND DROPPED. It
+recovers the adjacency at the cost of the two panels that carry the result:
+the fortnightly draws all sit at phase 0, so the repeat puts a second cluster
+at 14 d and the panel reads as TWO groups of draws where the caption says all
+twenty-five are on one point. The marker row is worse, because the repeated
+points sit near m = 3.5 under a curve that ends near 9 and read as stray data
+rather than as the next cycle. The faded curve segment is also too faint at
+this width to be seen as a curve. One strip of ink is not worth weakening the
+aliasing panels, so the adjacency stays a sentence in the caption.
+
 TWO ROWS, AND THE SECOND IS THE ONE THE PAPER HAS NEVER DRAWN.
 
     top     Delta/theta against phase. Every point lies EXACTLY on the curve,
@@ -57,7 +67,7 @@ from common.style import save, figsize, INK, MUTED, RED, GREEN, BLUE, AMBER
 from design.run import delta, D_AMP, DOSE_INTERVAL, LAMBDA, LOAD_CV
 import g_design_common as G
 
-N = 25          # the accessible design's visit count, held across panels
+N_VISITS = 25   # the accessible design's visit count, held across panels
 
 #: panel titles. The registry names are written for a table and are too long
 #: for five columns at text width; these say the same thing in the space there
@@ -69,6 +79,30 @@ SHORT = {
     "monthly (30.4 d)": "monthly, 30.4 d",
     "phase-spread": "phase-spread",
 }
+#: a key per panel for the generated numbers below. The registry names carry
+#: punctuation and a decimal point and would make poor LaTeX control
+#: sequences; these are the same five schedules under names \num{} accepts.
+SLUG = {
+    "14 d (the dose interval)": "fortnightly",
+    "14 d, already on therapy": "fortnightly_steady",
+    "14.5 d": "off",
+    "monthly (30.4 d)": "monthly",
+    "phase-spread": "spread",
+}
+
+#: what every interpolated number in this module's figure text is, for
+#: tools/check_artefacts.py:check_figure_numbers. The three numbers in a
+#: panel header are all claims about the schedule, so all three are drawn out
+#: of the dict phaseclock_numbers() registers rather than recomputed here --
+#: which is the whole point, since the header used to compute min(q, N) and
+#: printed three panels' visit count back at the reader as a lattice size.
+DRAWN = {
+    "SHORT.get(name, name)": "text: the panel's own title, not a number",
+    "N['reached_' + s]": "registered: phases the schedule reaches",
+    "N['available_' + s]": "registered: phases its lattice offers",
+    "N['range_' + s]": "registered: the Delta/theta range it spans",
+}
+
 #: the steady-state peak of the dose train, which is the top of the curve
 #: every panel is drawn against
 PEAK = D_AMP / (1.0 - np.exp(-LAMBDA * DOSE_INTERVAL))
@@ -88,7 +122,7 @@ def _steady_curve(n=400):
     return ph, inc / G.TH, G.level(G.TH, inc, G.LB)
 
 
-def panel_increment(ax, times, name, curve):
+def panel_increment(ax, times, name, curve, N):
     """Delta/theta against phase. Every draw lies exactly on the curve."""
     ph_c, d_c, _ = curve
     t = np.asarray(times, float)
@@ -96,8 +130,6 @@ def panel_increment(ax, times, name, curve):
     ax.plot(ph_c, d_c, color=MUTED, lw=1.2, zorder=1)
     ax.scatter(t % G.T, inc / G.TH, s=24, color=GREEN, edgecolors="white",
                linewidths=0.4, zorder=3, clip_on=False)
-    nph = len(G.cycle_phases(t))
-    rng = inc.max() / G.TH - inc.min() / G.TH
     #  REACHED OF AVAILABLE, not a bare count. audit/t11_phase_lattice.py
     #  established that a bare count is not a property of the schedule on
     #  three of these five panels: with N visits at a step whose lattice q
@@ -106,9 +138,14 @@ def panel_increment(ax, times, name, curve):
     #  printed "25 phases" for lattices of 35, 28 and 28. Only the two
     #  fortnightly panels printed a number of their own, and only because
     #  there q = 1 < N and the lattice is what binds.
+    #
+    #  All three come out of `N`, the dict phaseclock_numbers() registers, so
+    #  the header and results/numbers/phaseclock.tex are the same object and
+    #  a header that drifts fails the artefact guard.
+    s = SLUG[name]
     ax.set_title(f"{SHORT.get(name, name)}\n"
-                 f"{nph} of {G.lattice_phases(name)} phases\n"
-                 f"range {rng:.2f}",
+                 f"{N['reached_' + s]} of {N['available_' + s]} phases\n"
+                 f"range {N['range_' + s]}",
                  fontsize=7.0, pad=4, linespacing=1.55)
 
 
@@ -134,7 +171,41 @@ def panel_marker(ax, times, curve, seed=3):
                linewidths=0.4, zorder=3, clip_on=False)
 
 
-def figure():
+def phaseclock_numbers():
+    """
+    The three numbers each panel header states, as generated numbers.
+
+    A panel header is a claim about the schedule, and until this existed it
+    was a claim nothing checked: it was computed inside the drawing call from
+    whatever the module had to hand, so it was in no table, in no numbers
+    file, and in nothing the artefact guard compares. It was also wrong. The
+    header printed min(q, N) as "phases", which for monthly, 14.5 d and
+    phase-spread is just the visit count N, so three of five panels reported
+    their own sample size as though it were a property of the schedule.
+
+    Registered here, the same number is in results/numbers/phaseclock.tex,
+    the guard diffs it against HEAD like any table, and the text can quote it
+    with \num{} instead of retyping it.
+
+    The strings are preformatted, because the figure has to draw exactly what
+    \num{} would typeset: a header rounding 1.9873 to 1.99 while the sentence
+    beside it prints 1.987 is the same drift in miniature.
+    """
+    from common.numbers import write_numbers
+    N = {}
+    for name, fn in G.SCHEDULES.items():
+        t = fn(N_VISITS)
+        s = SLUG[name]
+        N[f"reached_{s}"] = len(G.cycle_phases(t))
+        N[f"available_{s}"] = G.lattice_phases(name)
+        N[f"range_{s}"] = f"{G.delta_range(t):.2f}"
+    N["visits"] = N_VISITS
+    write_numbers("phaseclock", N)
+    return N
+
+
+def figure(N=None):
+    N = N if N is not None else phaseclock_numbers()
     settle, worst = G.settling_days(tol=0.01)
     settle5, worst5 = G.settling_days(tol=0.05)
     print(f"  settling window: {settle*24:.2f} h at a 1% tolerance "
@@ -142,13 +213,13 @@ def figure():
     print(f"                   {settle5*24:.2f} h at the repository's own 5% "
           f"(worst after {100*worst5:.3f}%).")
 
-    designs = [(name, fn(N)) for name, fn in G.SCHEDULES.items()]
+    designs = [(name, fn(N_VISITS)) for name, fn in G.SCHEDULES.items()]
     curve = _steady_curve()
 
     fig, axes = plt.subplots(2, len(designs), figsize=figsize(1.0, 0.56),
                              sharex=True, sharey="row")
     for j, (name, t) in enumerate(designs):
-        panel_increment(axes[0, j], t, name, curve)
+        panel_increment(axes[0, j], t, name, curve, N)
         panel_marker(axes[1, j], t, curve)
         for ax in (axes[0, j], axes[1, j]):
             ax.set_xlim(-0.5, G.T + 0.5)
@@ -186,7 +257,7 @@ def numbers():
           f"{'sd(ln theta): min':>18} {'median':>9} {'max':>9}")
     print("  " + "-" * 92)
     for name, fn in G.SCHEDULES.items():
-        t = fn(N)
+        t = fn(N_VISITS)
         lo, md, hi = G.sd_over_seeds(t, 0.10)
         f = lambda v: "singular" if not np.isfinite(v) else f"{v:.4f}"
         print(f"    {name:>28} {len(t):4d} {len(G.cycle_phases(t)):7d} "
@@ -195,5 +266,5 @@ def numbers():
 
 if __name__ == "__main__":
     print(__doc__)
-    figure()
+    figure(phaseclock_numbers())
     numbers()

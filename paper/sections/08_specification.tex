@@ -196,19 +196,35 @@ reach it. This is ordinary outpatient blood work. What buys the information is t
 \emph{phase}, not the rate: a schedule that sees the increment vary identifies $\theta$ and
 one that does not, does not, whatever its density.
 
-\paragraph{And one hard exclusion a protocol would currently get wrong.}
-Do not sample on dosing days, or at any multiple of the dose interval
+\paragraph{And one hard requirement a protocol would currently get wrong.}
+\textbf{The schedule must complete at least one lap of the dose cycle within the record}:
+with the sampling interval written as $h = T + \varepsilon$ against the $14$-day dose
+interval, $n$ visits sweep $n\varepsilon$ of the cycle, so the requirement is
+$\varepsilon \ge T/n$, which over two years is $\varepsilon \ge \num{lap_eps_h}$~hours
 (Remark~\ref{rem:aliasing}). ``Draw bloods when the patient attends for dosing'' is the
-natural thing to write and it is the one schedule that destroys the result: every draw
-lands at the same phase, the range of $\Delta/\theta$ collapses from $\num{delta_range_monthly}$ to
-$\num{delta_range_aliased}$, and
-$\operatorname{sd}(\ln\hat\theta)$ goes from $\num{sd_monthly}$ to $\num{sd_aliased}$, a factor of $\num{alias_cost}$ ($\num{alias_cost_lo}$ to
-$\num{alias_cost_hi}$ across intake records). Moving the schedule half a
-day recovers it.
+natural thing to write and it is $\varepsilon = 0$: every draw lands at the same phase,
+the range of $\Delta/\theta$ collapses from $\num{delta_range_monthly}$ to
+$\num{delta_range_aliased}$, and $\operatorname{sd}(\ln\hat\theta)$ goes from
+$\num{sd_monthly}$ to $\num{sd_aliased}$, a factor of $\num{alias_cost}$
+($\num{alias_cost_lo}$ to $\num{alias_cost_hi}$ across intake records). Moving the
+schedule half a day recovers it, and that is the practical form of the rule: it is the
+smallest offset the booking grid allows and it clears $T/n$ by a factor of nearly two.
+
+\textbf{Stated as ``avoid multiples of the dose interval'' the rule has a gap, and it is
+the one a protocol writer would fall into.} Sampling every $\num{near_step}$~days avoids
+every multiple, has a phase lattice of $\num{near_q}$ points and reaches
+$\num{near_phases}$ distinct phases --- more than any other schedule in this paper --- and
+still fails, because those phases are packed into $\num{near_span_h}$~hours of the dial
+and $n\varepsilon$ never reaches a lap. It returns $\num{near_sd}$. A large phase count is
+not coverage, and only $\varepsilon \ge T/n$ distinguishes the two.
 
 Over the whole two-year record the ranges those schedules span are
 $\num{delta_range_monthly}$ monthly, $\num{delta_range_off}$ at $14.5$ days and
-$\num{delta_range_aliased}$ fortnightly, and Figure~\ref{fig:E1} draws them.
+$\num{delta_range_aliased}$ fortnightly. Figure~\ref{fig:E1} draws the same
+three over the $\num{visits}$ draws of the accessible design, where the
+$14.5$-day schedule has reached only half the record and spans
+$\num{range_off}$; the fortnightly collapse to $\num{range_fortnightly}$ is the
+same either way, because it does not depend on how long one samples.
 
 \paragraph{The load record: the recording error binds, and keep the variation.}
 \label{sec:tierload}

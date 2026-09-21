@@ -122,23 +122,52 @@ that pass are the ones that see the increment vary, and six-monthly visits catch
 of $\Delta/\theta$ of $\num{delta_range_six_monthly}$ against two-monthly visits'
 $\num{delta_range_two_monthly}$.
 
-\begin{remark}[Do not sample at the dose interval. This is the sharpest rule in the paper.]
+\begin{remark}[The sampling schedule must complete one lap of the dose cycle. This is the
+sharpest rule in the paper.]
 \label{rem:aliasing}
-The fortnightly row of Table~\ref{tab:designs} is a catastrophe, and a \emph{designed} one
-rather than bad luck. The dose interval is fourteen days, so sampling every fourteen days
-lands every draw at the same phase of every cycle, which is the bottom panel of
-Figure~\ref{fig:D0}. The range of $\Delta/\theta$ collapses
-from the monthly design's $\num{delta_range_monthly}$ to $\num{delta_range_aliased}$, the correlation between $\ln\theta$ and $\ln K_m$ returns to
-$+0.999$, and $\operatorname{sd}(\ln\hat\theta)$ goes to $\num{sd_aliased}$ ($\num{sd_aliased_lo}$ to $\num{sd_aliased_hi}$). The
-same happens at twenty-eight days and at any multiple. Taken record by record against the
-recommended monthly design, that is a factor of $\num{alias_cost}$ ($\num{alias_cost_lo}$ to
-$\num{alias_cost_hi}$). Every ratio this paper quotes for aliasing has that same baseline.
-Moving the schedule half a day fixes it: every $14.5$ days gives $\num{sd_aliased_off}$
-($\num{sd_aliased_off_lo}$ to $\num{sd_aliased_off_hi}$), which is monthly precision at
-fortnightly density. A factor of that size turns
-on a choice a protocol writer would make for administrative convenience, and would
-currently make the wrong way, because ``sample on dosing days'' is the obvious thing to
-write.
+Write the sampling interval as $h = T + \varepsilon$ against the dose interval
+$T = 14$~d. Each visit advances the phase by $\varepsilon$, so after $n$ visits the
+schedule has swept $n\varepsilon$ of the cycle and has seen the whole increment range only
+if it has completed a lap:
+\begin{equation}
+n\,\varepsilon \;\ge\; T,
+\qquad\text{equivalently}\qquad
+\varepsilon \;\ge\; T/n .
+\label{eq:lap}
+\end{equation}
+Over the two-year record, $n = \num{lap_n}$ fortnightly visits, that is
+$\varepsilon \ge \num{lap_eps_h}$~hours. \textbf{Everything else in this remark is a
+corollary.}
+
+At $\varepsilon = 0$, sampling exactly at the dose interval or any multiple of it, the
+schedule never laps at any $n$: every draw lands at the same phase of every cycle, which
+is the bottom panel of Figure~\ref{fig:D0}. The range of $\Delta/\theta$ collapses from
+the monthly design's $\num{delta_range_monthly}$ to $\num{delta_range_aliased}$, the
+correlation between $\ln\theta$ and $\ln K_m$ returns to $+0.999$, and
+$\operatorname{sd}(\ln\hat\theta)$ goes to $\num{sd_aliased}$ ($\num{sd_aliased_lo}$ to
+$\num{sd_aliased_hi}$) --- a factor of $\num{alias_cost}$ ($\num{alias_cost_lo}$ to
+$\num{alias_cost_hi}$) against the recommended monthly design, record by record. Every
+ratio this paper quotes for aliasing has that baseline. Moving the schedule half a day
+satisfies \eqref{eq:lap} with room to spare: every $14.5$ days gives
+$\num{sd_aliased_off}$ ($\num{sd_aliased_off_lo}$ to $\num{sd_aliased_off_hi}$), monthly
+precision at fortnightly density.
+
+\textbf{The lap is the statement and the prohibition is not, because a schedule can avoid
+every multiple of $T$ and still fail.} Sampling every $\num{near_step}$~days has a phase
+lattice of $\num{near_q}$ points and reaches $\num{near_phases}$ distinct phases in two
+years --- more than any other schedule here --- and it is aliased in everything but name:
+those $\num{near_phases}$ phases are packed into $\num{near_span_h}$~hours of a $14$-day
+dial, because $n\varepsilon$ falls short of a lap, and
+$\operatorname{sd}(\ln\hat\theta)$ is $\num{near_sd}$. A large phase count is what a
+protocol writer produces when told only to avoid multiples. \textbf{Count is not
+coverage}, and \eqref{eq:lap} is a condition on coverage.
+
+The lattice is also finite, which matters in the other direction. The monthly design's
+step admits $\num{q_monthly}$ phases but a two-year record spends only
+$\num{n_monthly}$ visits, so it never reaches $\num{monthly_unreached}$ of them and would
+need $\num{monthly_days_to_exhaust}$~days to do so. Reaching the whole lattice is not
+what \eqref{eq:lap} asks for, and is not needed: the monthly design laps on its first two
+visits.
 \end{remark}
 
 \begin{remark}[Every precision here is a curvature, and an interval is about twice as wide]
@@ -303,27 +332,31 @@ visits buy, and which of the resulting phases a clinic can actually book.
 14$. \textbf{Top: the increment.} Because $\Delta$ is a deterministic function
 of phase, every draw of every schedule lies \emph{exactly} on the one decay
 curve, and all a schedule chooses is where on that curve its draws sit.
-Sampling at the dose interval puts all $25$ on a single point of it, which is
-Remark~\ref{rem:aliasing} drawn; half a day off fills the cycle. \textbf{Bottom:
+Sampling at the dose interval puts all $\num{visits}$ on a single point of it,
+which is Remark~\ref{rem:aliasing} drawn; half a day off fills the cycle. \textbf{Bottom:
 the marker.} Here the draws do \emph{not} lie on the curve. The gap is the
 day-to-day variation in the recorded load, so this row is $\sigma$ --- the
 quantity Section~\ref{sec:tierload} finds binding at nominal capacity --- shown
 rather than stated. Each header reads
 \emph{reached of available}, and the distinction is not pedantry: write
 $h/T = p/q$ in lowest terms and a step can only ever visit the $q$ phases of a
-lattice of spacing $T/q$, of which $n$ visits reach $\min(q,n)$. At $25$ draws
-the monthly schedule reaches $25$ of the $35$ its step admits and the $14.5$-day
-schedule $25$ of $28$, so a bare count would print ``$25$ phases'' for both and
-be reporting the visit count back at the reader rather than any property of the
-schedule. Only the fortnightly panels print a number of their own, $1$ of $1$,
-because only there does the lattice bind. The $\Delta/\theta$ ranges are likewise
-over these $25$ draws and not over the two-year record of
-Table~\ref{tab:designs}, which is why monthly reads $1.84$ here against
-$\num{delta_range_monthly}$ there. The phase axis is periodic, so the right
+lattice of spacing $T/q$, of which $n$ visits reach $\min(q,n)$. At $\num{visits}$ draws
+the monthly schedule reaches $\num{reached_monthly}$ of the
+$\num{available_monthly}$ its step admits and the $14.5$-day schedule
+$\num{reached_off}$ of $\num{available_off}$, so a bare count would print
+``$\num{visits}$ phases'' for both and be reporting the visit count back at the
+reader rather than any property of the schedule. Only the fortnightly panels
+print a number of their own, $\num{reached_fortnightly}$ of
+$\num{available_fortnightly}$, because only there does the lattice bind. The
+$\Delta/\theta$ ranges are likewise over these $\num{visits}$ draws and not over
+the two-year record of Table~\ref{tab:designs}: monthly reads
+$\num{range_monthly}$ here against $\num{delta_range_monthly}$ there, and the
+$14.5$-day schedule $\num{range_off}$ against $\num{delta_range_off}$, because
+$\num{visits}$ visits a fortnight apart cover less than half the record. The phase axis is periodic, so the right
 edge of each panel is the left edge. The first two panels differ only in
 enrolment: at $t=0$ the dose train is still filling, so the draws smear over a
-range of $0.13$, while for a patient already on therapy the increment is
-identical at every visit and the range is exactly zero. The post-dose settling
+range of $\num{range_fortnightly}$, while for a patient already on therapy the
+increment is identical at every visit and the range is exactly zero. The post-dose settling
 window is shaded and is all but invisible: at a $1\%$ tolerance it is
 $\num{settle_hours_1pct}$~hours, $0.4\%$ of the cycle, but the phase it removes
 is the peak, so excluding it from the steady-state fit costs about a tenth of

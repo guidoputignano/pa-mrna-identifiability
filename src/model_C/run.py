@@ -73,6 +73,17 @@ PB2 = ParamsB(theta=PC.theta, Km=PC.Km, ke=_KE_B, Ke=50.0)
 
 
 # =====================================================================
+#: every interpolated number this module draws on a figure, classified for
+#: tools/check_artefacts.py:check_figure_numbers. All four are claims and none
+#: has a generator yet, so all four are debt the guard prints on every run.
+DRAWN = {
+    "thc": "UNREGISTERED: theta_crit, where attractor and separatrix merge",
+    "margin[i]": "UNREGISTERED: the nominal patient's safety margin",
+    "lo[i]": "UNREGISTERED: the low end of that margin over the M_i range",
+    "hi[i]": "UNREGISTERED: the high end of it",
+}
+
+
 def clearance_peak(p: ParamsC, theta=None):
     """
     The maximum of the Model C clearance curve, and where it occurs.

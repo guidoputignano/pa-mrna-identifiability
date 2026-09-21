@@ -1292,3 +1292,174 @@ about three and a half pages to two and a half.
 **Figure 6's axis read `sign error on mu [\%]`.** Matplotlib mathtext renders `\%` outside
 math mode literally, so the escape reached the page, in the axis label and in all three
 legend entries. Fixed and the figure regenerated.
+
+---
+
+## Standing policy: the adversarial pass runs before a measurement is reported, not after
+
+Until now the order was measure, report, then check. It is now measure, check, then
+report. **A first report of a new measurement is provisional until the adversarial pass
+has run**, and it is to be labelled as provisional if it is handed over before then.
+
+The two cases that set the rule, both from the Vandermonde round:
+
+**A weighting claim reported as fact, refuted by the check that should have preceded it.**
+`audit/t10_vandermonde.py`'s `sd_vandermonde` built `A = Vw' Vw / sigma^2 + pen` without
+normalising the weight to the exact weight's scale. With `w = 1` the transformed residual
+has standard deviation `sigma (K_m + m)`, about `106 sigma` on this record, so the data
+term came out roughly `1.1e4` too large and **both priors were silently discarded**. The
+number that reached the PI, a factor of 59 for going unweighted, was an artefact of that.
+Corrected, unweighted costs 0.06%, a factor of 1.00. The fix is one line,
+`w = w * (sigma / np.mean(s * w))`, and the check that found it was the one that ought to
+have run before the number was quoted, not after.
+
+**A hardcoded literal in a script whose job was to compute that literal.** The same file
+printed "2.3e4 times the second" for a column-norm ratio it never computed. The true
+ratios are 146 and 1.7e4, and they are now computed. A number typed into a measurement
+script is the same hazard as a number typed into a sentence, with the additional
+property that it looks measured.
+
+Both survived a green build and a read-through. Neither would have survived being asked
+to refute itself, which costs minutes. The cost of the old order is not the wrong number,
+it is that the wrong number arrives with the authority of a measurement and has to be
+walked back.
+
+This does not replace the rule from R14 that a retraction goes through adversarial lenses
+before it is written. It extends the same standard to the ordinary case.
+
+---
+
+### R26. Two conditioning claims about the Vandermonde form, neither of which holds
+
+Recorded because a negative that is not written down gets re-proposed. The reframing
+itself was adopted and is in Section 3.2; these two claims about it were not.
+
+The form is right, and it is the paper's own. Clearing the balance by `(K_m + m)`, not by
+`m`, gives `Delta_i m_i = A + B m_i + C m_i^2`, a Vandermonde system in `(A, B, C)` whose
+nodes are the marker levels. Checked symbolically: `A = K_m(L+b)`, `B = L+b-theta-k_e K_m`,
+`C = -k_e`, which are Section 3.2's three invariants exactly. Same three numbers, same
+fibre.
+
+**(a) `cond(V)` does not price the factor of 27.** It cannot: `Delta` lives in the
+response and `V` is built from the marker levels alone, so `V` cannot express aliasing at
+all. With a varying load the nodes stay distinct even at the dose interval, and `cond(V)`
+is finite there while the design is singular. This is also why the Vandermonde vocabulary
+went into Section 3.2 and not into Remark 4.
+
+**(b) `cond(V)` does not price the factor of 9.5 either**, and no choice of units prices
+both: in `m/K_m` units the ratio comes to 22.7 on (a) but 76 on (b). The column norms are
+19.1, 2.22e3 and 3.25e5, so the second column is 146 times the first and the third 1.7e4
+times it. That spread is the units of `m`, not a property of the design.
+
+**(c) The unweighted fit costs nothing worth naming.** 0.06%, a factor of 1.00. See the
+standing policy above for what the first answer to this was and why.
+
+### R27. The closed form for the triples estimator is the fibre of (7), by a third route
+
+`audit/t12_triples.py` R2b, and it came free. Section 3.2's invariants are
+`A = K_m(L+b)`, `B = L+b-theta-k_e K_m`, `C = -k_e`. A record generated at load `L+b` and
+fitted with the load held at `L` has to match all three, and `C` matches for nothing, so
+
+    K_m_hat = K_m (1 + b/L),    theta_hat = theta - b (1 + K_m k_e / L)
+
+which is the triples estimator's own bias formula, derived for a different purpose.
+Differentiated at `b = 0` it gives `d(theta)/db = 1 + K_m k_e / L = 2.5492957746`, and
+that is exactly the `theta`-to-`b` ratio of `prop:rank`'s null vector with the bias
+carried, `n = (L + b + k_e K_m, -K_m, 0, L + b)` (R14). The two agree to `0.00e+00`.
+
+Stronger than the tangent claim it was put as: the closed form is **exact in `b`**, not a
+first-order approximation. Refitting a record made at load `L+b` with the load held at `L`
+reproduces both `theta_hat` and `K_m_hat` to a relative `7e-15` to `4e-14` across
+`b` in `[-150, +300]`, with residuals at `9e-14`, a range far wider than any study would
+see.
+
+So the identity now has three verifications that share no code: `audit/f5_fibre.py`
+integrates the null field; this solves the invariants; and the estimator was built to
+answer a different question and landed on the same number.
+
+### R28. The parent channel is nearly quadratic over the working band, and the queue stays closed
+
+Recorded, not chased. Over the 3.4-fold band the record visits, `alpha(m) - k_e m` is
+nearly quadratic in `m`, so a misspecified parent channel is very nearly inside the span
+of the quadratic every triple fits. That is why the triple-averaging diagnostic of item 18
+cannot separate the two channels: a 55% bias in `theta` moves the statistic by a few per
+cent. A load bias does the same thing at degree one, and degree one is inside the same
+span. The observation says what the failure is rather than suggesting a fix, and no fix
+is being looked for.
+
+### R29. The number-provenance rule now reaches figure text, and the first thing it caught was a caption
+
+`tools/check_artefacts.py:check_figure_numbers`. The rule: a number a figure draws as a
+claim about the design must come from a registered generator, exactly as a table number
+does. A number that is an axis tick, a fact about the drawing, or a restatement of the
+setting the panel was drawn at, need not.
+
+**How much of it is enforceable, and which part is not.** Three parts, and only two of
+them are machine-checkable.
+
+1. *Finding the numbers: enforceable.* An AST pass finds every interpolation in text
+   built at a drawing call, across f-strings, `%` on a literal and `.format()`. It
+   resolves this repository's own text helpers (`corner`, `over_x`, `beside_y`,
+   `at_point`) out of `common/style.py` rather than listing them, which matters: the
+   first version listed matplotlib names only, saw 23 drawn numbers, and the four helpers
+   were hiding 8 more, among them `theta_crit` and the safety margin.
+2. *Checking that a number is registered: enforceable.* Three shapes pass, all verified
+   rather than declared: a call to `common.numbers.num(module, key)`, which reads the
+   committed file so the figure draws what `\num{}` typesets; an index into the dict the
+   module hands to `write_numbers`; and an expression the module registers verbatim
+   elsewhere, which is how the dose train's `trough` is also `train_trough_frac`.
+3. *Deciding whether a number is a claim: NOT enforceable, and nothing makes it so.*
+   `{v:.2f}` in a title is the same syntax whether it is a design claim or an axis
+   annotation. So the rule is enforced as a **declaration**: each figure module carries a
+   `DRAWN` dict classifying every interpolation it draws, a drawn number that is not
+   declared fails, a declaration for a number no longer drawn fails, and
+   `UNREGISTERED:` is debt the guard prints on every run. What the guard cannot check is
+   whether a declaration is honest. Writing `geometry:` over a claim passes. The
+   declaration is what gives a reviewer something to review, which is the most that is
+   available here.
+
+Also outside it, and counted rather than assumed: 28 interpolated strings in figure
+modules are built away from any drawing call, console output and table cells subtracted.
+The guard prints that number so the gap is a number and not a silence.
+
+**Standing: 29 drawn numbers, 5 registered, 8 unregistered claims.** The eight are named
+with their reasons in the modules' own `DRAWN` dicts and printed on every run.
+
+**What it found on day one.**
+
+*Section 5.3 said the figure draws three numbers it does not draw.* The sentence gave the
+two-year ranges as 1.84 monthly, 1.99 at 14.5 days and 0.13 fortnightly, then said
+"Figure 6 draws them". Figure 6 draws 25 visits, and 25 visits a fortnight apart cover
+348 days, so its 14.5-day panel reads **1.80**, not 1.99. Monthly and fortnightly happen
+to agree, the first because 25 monthly visits is already the two-year record and the
+second because the collapse does not depend on how long one samples. Corrected, and
+Figure 6 now registers its own fifteen numbers into `results/numbers/phaseclock.tex`, so
+the caption's five hand-typed figures (`25 of 35`, `25 of 28`, `1 of 1`, `1.84`, `0.13`)
+are `\num{}` keys the guard diffs against HEAD.
+
+*The margin panel and the registry were two computations of one number.* Panel (c) of the
+fibre-margin figure read its dot off a 400-point sweep grid with `np.interp`, while
+`results/numbers/local.tex` registered `mtol_window_pct` from an exact `margin_window`
+solve at the same abscissa. Nothing compared them. They are now one object.
+
+*Two duplicated literal blocks.* `GENERATORS` in `src/common/numbers.py` listed five stems
+twice and `paper/preamble.tex` input five numbers files twice. Both harmless, both the
+same class as the duplicate-key bug `NumberBook` exists for, and both removed.
+
+### R30. The periodicity strip on Figure 6, tried and dropped
+
+The phase overlay gives up one thing the polar dial it replaced could show: that phase is
+circular, so a draw at 13.9 d is adjacent to one at 0.1 d rather than at the far end of
+the panel. The cheap fix is to repeat the first day or so of the cycle, faded, past the
+right edge. It was implemented and rejected on looking at it.
+
+It costs the two panels that carry the result. The fortnightly draws all sit at phase 0,
+so the repeat puts a second cluster at 14 d and the panel reads as **two** groups of
+draws, against a caption that says all twenty-five are on one point. The marker row is
+worse: the repeated points sit near `m = 3.5` beneath a curve that ends near `9`, which
+reads as stray data rather than as the next cycle beginning. At text width the faded
+curve segment is also too faint to be seen as a curve at all.
+
+One strip of ink is not worth weakening the aliasing panels. The adjacency stays a
+sentence in the caption, and the reasoning is in the module docstring so the next reader
+does not re-propose it.

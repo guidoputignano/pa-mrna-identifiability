@@ -824,6 +824,52 @@ def rechecks():
         print(f"  {lab:>28}: {got:12.6f} against the committed {want:9.4f} "
               f"({abs(got - want) / want:.3%} apart)")
 
+    bars("R2b. THE CLOSED FORM IS THE FIBRE OF (7), BY A ROUTE THAT SHARES"
+         " NO CODE WITH audit/f5_fibre.py")
+    print("  This came free and it is a third independent check on the same")
+    print("  identity, so it is recorded rather than left in a transcript.")
+    print()
+    print("  Section 3.2's invariants are A = K_m(L+b), B = L+b-theta-k_e K_m,")
+    print("  C = -k_e. A record generated at load L+b and fitted with the load")
+    print("  held at L must match all three, and C matches for free, so")
+    print()
+    print("      K_m_hat = K_m (1 + b/L),   theta_hat = theta - b(1 + K_m k_e/L)")
+    print()
+    print("  which is the triples estimator's own bias formula. Differentiated")
+    print("  at b = 0 it is d(theta)/db = 1 + K_m k_e / L, and that is the")
+    print("  theta-to-b ratio of prop:rank's null vector with the bias carried,")
+    print("  n = (L + b + k_e K_m, -K_m, 0, L + b) -- REVIEW_LOG.md R14. Three")
+    print("  routes, one number. f5_fibre.py integrates the field; this solves")
+    print("  the invariants; the estimator was derived for something else.")
+    print()
+    tangent = 1.0 + KM * KE / LB
+    nvec = np.array([LB + KE * KM, -KM, 0.0, LB])
+    print(f"  1 + K_m k_e / L                              {tangent:.10f}")
+    print(f"  n[theta] / n[b] of the carried null vector   {nvec[0]/nvec[3]:.10f}")
+    print(f"  they differ by                               "
+          f"{abs(tangent - nvec[0]/nvec[3]):.2e}")
+    print()
+    print("  And the closed form is EXACT in b, not merely tangent: refitting")
+    print("  a record made at load L+b with the load held at L returns it to")
+    print("  working precision across a range of b no study would see.\n")
+    print(f"    {'b':>8} {'theta_hat':>13} {'closed form':>13} {'rel':>9}"
+          f" {'K_m_hat':>10} {'closed form':>12} {'max resid':>11}")
+    #  level_A holds K_m at the module constant, and the whole point here is
+    #  that K_m moves with b, so the balance is solved locally with K_m free.
+    def lvl(theta, Km, L):
+        B = KE * Km + theta + INC - L
+        return (-B + np.sqrt(B ** 2 + 4.0 * KE * L * Km)) / (2.0 * KE)
+
+    for b in (-150.0, -50.0, 1.0, 20.0, 100.0, 300.0):
+        m_b = lvl(TH, KM, np.full(N, LB + b))
+        s = least_squares(
+            lambda q: lvl(np.exp(q[0]), np.exp(q[1]), np.full(N, LB)) - m_b,
+            np.log([TH, KM]), xtol=1e-15, ftol=1e-15, gtol=1e-15)
+        th_h, km_h = np.exp(s.x)
+        print(f"    {b:8.1f} {th_h:13.5f} {TH - b*tangent:13.5f} "
+              f"{abs(th_h - (TH - b*tangent))/TH:9.1e} {km_h:10.5f} "
+              f"{KM*(1.0 + b/LB):12.5f} {np.abs(s.fun).max():11.2e}")
+
     bars("R3. RE-CHECK: the triple's algebra against the repository's own"
          " beta-form fit")
     print("  audit/i1_estimator.py's beta_fit solves the same rearrangement with")

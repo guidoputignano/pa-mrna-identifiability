@@ -49,6 +49,26 @@ ASSAY_CV = 5.0     # per cent, never flux units. A sigma comes from sigma_from_l
 #  Km, a known (a, b) leaves a one-parameter family, not a point. These are
 #  its parametrisation and its endpoints.
 # =====================================================================
+#: every interpolated number this module draws on a figure, classified for
+#: tools/check_artefacts.py:check_figure_numbers.
+DRAWN = {
+    "thB": "input: patient B's capacity, a setting of the comparison",
+    "keB": "input: patient B's k_e, likewise",
+    "theta": "input: the capacity this panel was drawn at",
+    "slope": "UNREGISTERED: the load-error amplification factor, which "
+             "Section 2.5 discusses and no generator owns",
+    "th.max() / th.min()": "UNREGISTERED: the fold of theta consistent with "
+        "(a, b) across the K_m band under noiseless data. NOT scope.tex's "
+        "band_fold, which is the working band in theta",
+    "WIN['mtol_window_pct']": "registered: the same object write_numbers "
+                              "takes as mtol_window_pct",
+    "M_TOL": "input: the tolerable-level convention this panel is drawn "
+             "against",
+    "100 * sf": "input: the load fraction this curve was drawn at",
+    "nn": "input: the visit count this curve was drawn at",
+}
+
+
 def fit_ab(p: ParamsA, m_bar=M_OP):
     """The tangent intercept and slope of total clearance at m_bar."""
     gm = g(m_bar, p.Km)
@@ -509,13 +529,23 @@ def fig_margin_fibre():
     mts = np.linspace(12.0, 320.0, 400)
     wid = np.array([(lambda w: 100 * (w[1] - w[0]) / (0.5 * (w[0] + w[1])))
                     (margin_window(a0, b0, x)) for x in mts])
+    #  The three widths the registry's m_tol row quotes, computed HERE so the
+    #  number this panel draws and the number results/numbers/local.tex holds
+    #  are one object. They were two: the panel read its dot off the sweep
+    #  grid with np.interp while the registered value solved margin_window at
+    #  m_tol exactly, so the figure and the registry were two computations of
+    #  one quantity with nothing comparing them.
+    WIN = {x: 100 * (lambda w: (w[1] - w[0]) / (0.5 * (w[0] + w[1])))
+                 (margin_window(a0, b0, x)) for x in (15.0, M_TOL, 160.0)}
+    WIN = {"mtol_window_lo_pct": WIN[15.0], "mtol_window_pct": WIN[M_TOL],
+           "mtol_window_hi_pct": WIN[160.0]}
     ax[2].semilogx(mts, wid, color=BLUE, lw=2.0)
-    ax[2].plot([M_TOL], [np.interp(M_TOL, mts, wid)], "o", ms=6, color=MUTED,
+    ax[2].plot([M_TOL], [WIN["mtol_window_pct"]], "o", ms=6, color=MUTED,
                zorder=5)
     ax[2].axvline(M_OP, color=GREY, ls=":", lw=1.0)
     over_x(ax[2], M_OP, r"  $\bar m$", frac=0.94, color=MUTED, fontsize=7)
-    at_point(ax[2], (M_TOL, np.interp(M_TOL, mts, wid)),
-             f"{np.interp(M_TOL, mts, wid):.0f}% at "
+    at_point(ax[2], (M_TOL, WIN["mtol_window_pct"]),
+             f"{WIN['mtol_window_pct']:.0f}% at "
              f"$m_{{\\mathrm{{tol}}}} = {M_TOL:.0f}$",
              dx=10, dy=-4, arrow=True, fontsize=7, color=MUTED,
              ha="left", va="top")
@@ -562,16 +592,10 @@ def fig_margin_fibre():
     #  the width at the two ends of the m_tol sweep is what the registry's
     #  m_tol row quotes as the cost of that convention, so it is generated
     #  here rather than read off this function's stdout and typed in.
-    widths = {}
-    for x in (15.0, 40.0, 160.0):
-        w = margin_window(a0, b0, x)
-        widths[x] = 100 * (w[1] - w[0]) / (0.5 * (w[0] + w[1]))
-        print(f"      m_tol = {x:5.1f}: width {widths[x]:6.2f}% of centre")
+    for k in ("mtol_window_lo_pct", "mtol_window_pct", "mtol_window_hi_pct"):
+        print(f"      {k}: width {WIN[k]:6.2f}% of centre")
     from common.numbers import write_numbers
-    write_numbers("local",
-                  {"mtol_window_lo_pct": widths[15.0],
-                   "mtol_window_pct": widths[40.0],
-                   "mtol_window_hi_pct": widths[160.0]},
+    write_numbers("local", WIN,
                   {"mtol_window_lo_pct": "{:.1f}", "mtol_window_pct": "{:.1f}",
                    "mtol_window_hi_pct": "{:.0f}"})
 

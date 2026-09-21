@@ -18,6 +18,7 @@ transliterated wrongly. The preamble defines
 
 and \\csname accepts any character tokens, so nothing has to be renamed.
 """
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -51,10 +52,8 @@ GENERATORS = {
     "kesweep": "audit/t5_band_vs_ke.py",
     "cohort": "audit/t6_cohort_with_kappa.py",
     "structure": "audit/t7_structure_transient.py",
-    "reduction": "src/model_C/run.py",
-    "kesweep": "audit/t5_band_vs_ke.py",
-    "cohort": "audit/t6_cohort_with_kappa.py",
-    "structure": "audit/t7_structure_transient.py",
+    "lattice": "audit/t11_phase_lattice.py",
+    "phaseclock": "audit/g1_phase_clock.py",
 }
 
 
@@ -217,3 +216,50 @@ def write_numbers(module, values, formats=None, digits=4):
     rel = path.relative_to(ROOT) if path.is_relative_to(ROOT) else path
     print(f"  wrote {rel}  ({len(lines) - 2} numbers)")
     return path
+
+
+#: a \expandafter\def line as write_numbers() emits it
+_MACRO = re.compile(r"\\csname paper@num@([A-Za-z0-9_]+)\\endcsname\{(.*)\}$")
+
+
+def num(module, key):
+    """
+    The registered value of a generated number, as the paper prints it.
+
+    For FIGURE TEXT. A table cell and a \\num{} in a sentence both come from
+    results/numbers/, and until this existed a number drawn onto a figure did
+    not: it was recomputed at draw time from whatever the figure module had
+    to hand, so the figure and the sentence beside it could disagree and
+    nothing would say so. The phase overlay did exactly that -- it printed
+    min(q, N) as "phases" on three of five panels while the lattice count in
+    the text was 35, 28 and 28 (REVIEW_LOG.md, the phase-lattice entry).
+
+    The STRING is returned, not the float, and that is the point: the figure
+    then draws character for character what \\num{key} typesets, so the two
+    cannot differ by a rounding either. A caller wanting arithmetic should
+    compute it and register the result, not parse this back.
+
+    Raises rather than falling back, because a silent fallback is how a
+    figure goes back to drawing its own number.
+    """
+    path = NUMDIR / f"{module}.tex"
+    if not path.exists():
+        raise KeyError(
+            f"results/numbers/{module}.tex does not exist; "
+            f"{GENERATORS.get(module, 'its generator')} has not run. "
+            f"`make figures` runs the generators in dependency order.")
+    for line in path.read_text().splitlines():
+        m = _MACRO.search(line)
+        if m and m.group(1) == key:
+            return m.group(2)
+    raise KeyError(f"{module}.tex has no key {key!r}; it has "
+                   f"{', '.join(sorted(registered(module)))}")
+
+
+def registered(module):
+    """Every key results/numbers/<module>.tex defines."""
+    path = NUMDIR / f"{module}.tex"
+    if not path.exists():
+        return set()
+    return {m.group(1) for m in
+            (_MACRO.search(ln) for ln in path.read_text().splitlines()) if m}
