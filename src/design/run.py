@@ -951,7 +951,7 @@ def fig_protocol(T=112.0):
             b.set_ylabel(r"increment $\Delta/\theta$")
 
     ax["p0"].set_title("what each schedule sees of the increment", fontsize=7.4)
-    ax["p2"].annotate("every draw at one phase,\nso one value of $\Delta$",
+    ax["p2"].annotate("every draw at one phase,\n" r"so one value of $\Delta$",
                       xy=(0.35, curve.max() * 0.99), xytext=(2.4, ymax * 0.42),
                       fontsize=6.0, color=RED,
                       arrowprops=dict(arrowstyle="->", color=RED, lw=0.7))

@@ -112,7 +112,7 @@ LOAD_FRAC = 0.05        # relative error in the RECORDED substrate load
 
 
 LOCAL = [
-    Row(r"$\bar m$", f"${M_OP:.0f}$~$\mu$M",
+    Row(r"$\bar m$", rf"${M_OP:.0f}$~$\mu$M",
         "operating point: the level management holds the patient at",
         ASSUMED, r"illustrative, and every design quantity is reported relative to it, so "
                  r"its absolute value cancels out of the conclusions. \textbf{The scale "
@@ -131,7 +131,7 @@ LOCAL = [
                  r"capacity is recoverable",
         kind=CONVENTION, species="mouse",
         rests_on=r"chosen for illustration, and every design quantity is relative to it. The scale is murine~\cite{pkpd_translational}, within $1.6$ of the human newborn cut-off~\cite{dbs_3hp_cutoff}"),
-    Row(r"$\theta$", f"${_A.theta:.0f}$~$\mu$M/d",
+    Row(r"$\theta$", rf"${_A.theta:.0f}$~$\mu$M/d",
         r"capacity of the enzymatic channel, \textbf{at normal capacity}",
         ASSUMED, r"illustrative, and \textbf{a normal-capacity illustration rather than a "
                  r"patient}: \texttt{src/common/models.py} carries this constant as "
@@ -173,7 +173,7 @@ LOCAL = [
                     r"edge by $\num{band_dense_gain_pct}\%$",
         kind=DERIVED, species="human",
         rests_on=r"residual PCC activity in propionic acidemia is under $5\%$ of control~\cite{pcc_residual_activity}, which on the scale of the row above is $\theta \le 150$"),
-    Row(r"$K_m$", f"${_A.Km:.0f}$~$\mu$M",
+    Row(r"$K_m$", rf"${_A.Km:.0f}$~$\mu$M",
         "half-saturation of the enzymatic channel, at the plasma level",
         ASSUMED, r"illustrative, and \emph{not} the in vitro Michaelis constant of PCC "
                  r"($0.29$ mM for propionyl-CoA~\cite{pcc_liver_kinetics}), a different "
@@ -249,7 +249,7 @@ LOCAL = [
                  r"disease, which sits at $5\%$",
         kind=LUMPED,
         rests_on=r"\textbf{no independent human measurement}: the translational model has no marker state and no elimination constant~\cite{pkpd_translational}, and the one structure with a first-order marker loss publishes no value~\cite{dose_selection_poster}. Bounded from above by the methylmalonic-acid analogue, $\num{ke_mma}$~d$^{-1}$~\cite{ke_mma_analogue}"),
-    Row(r"$\mtol$", f"${M_TOL:.0f}$~$\mu$M", "tolerable metabolite level",
+    Row(r"$\mtol$", rf"${M_TOL:.0f}$~$\mu$M", "tolerable metabolite level",
         ASSUMED, r"a clinical convention, not a property of the patient. The width of the "
                  r"undetermined window runs $\num{mtol_window_lo_pct}\%$ to "
                  r"$\num{mtol_window_hi_pct}\%$ as it moves, so this is the most "
@@ -403,7 +403,7 @@ LOCAL = [
 
 
 PARENT = [
-    Row(r"$\theta$", f"${_C.theta:.0f}$~$\mu$M/d", "residual capacity, parent model",
+    Row(r"$\theta$", rf"${_C.theta:.0f}$~$\mu$M/d", "residual capacity, parent model",
         ASSUMED, r"illustrative, chosen to sit above $\thc^{\,\mathrm{int}}$ so the patient "
                  r"has a margin to measure. On the scale \texttt{models.py} sets, where the "
                  r"local block's $3000$ is nominal, this is about $10\%$ of normal. "
@@ -417,7 +417,7 @@ PARENT = [
                  r"$V_{\max}$ has never been done and would need a PA-specific "
                  r"$1$-$^{13}$C-propionate breath test~\cite{breath_test_mma}",
         kind=LUMPED),
-    Row(r"$K_m$", f"${_C.Km:.0f}$~$\mu$M", "half-saturation of the enzymatic channel",
+    Row(r"$K_m$", rf"${_C.Km:.0f}$~$\mu$M", "half-saturation of the enzymatic channel",
         ASSUMED, r"as above, and shared with the local model so the two can be compared. "
                  r"Sharing it across a tenfold difference in capacity assumes $K_m$ does not "
                  r"depend on residual activity, and \textbf{that assumption is supported}: "
@@ -426,7 +426,7 @@ PARENT = [
                  r"$k_{\mathrm{cat}}/K_m$~\cite{pcc_variants_kinetics}. The cost bound on the "
                  r"local $K_m$ row applies here too",
         kind=EFFECTIVE, species="human, in vitro"),
-    Row(r"$K_c$", f"${_C.Kc:.0f}$~$\mu$M", "half-saturation of the conjugation step",
+    Row(r"$K_c$", rf"${_C.Kc:.0f}$~$\mu$M", "half-saturation of the conjugation step",
         ASSUMED, r"no measurement, and no reason a conjugation reaction should share an "
                  r"enzyme's half-saturation. Cost bounded in supplement \S S1: over $K_c$ "
                  r"from $25$ to $800$, a $32$-fold range, $\thc$ spans $186$ to $120$, a "
@@ -436,7 +436,7 @@ PARENT = [
                  r"\textbf{a rat preparation measured in vitro}; no half-saturation for the "
                  r"conjugation itself is published",
         kind=EFFECTIVE, species="rat, in vitro"),
-    Row(r"$M_i$", f"${_C.Mi:.0f}$~$\mu$M",
+    Row(r"$M_i$", rf"${_C.Mi:.0f}$~$\mu$M",
         "metabolite level at which acylcarnitine competition doubles the non-conjugative loss",
         ASSUMED, r"no measurement. Previously not written down anywhere, which is why "
                  r"the margin figure could not be reproduced from the paper. \textbf{Its cost "
@@ -459,7 +459,7 @@ PARENT = [
                  r"not yield a number. A lower figure of ``about $0.35$'' quoted elsewhere in "
                  r"the code re-derives at $0.195$",
         kind=EFFECTIVE, species="human"),
-    Row(r"$R_0$", f"${_C.R0:.1f}$~$\mu$M/d", "carnitine replenishment",
+    Row(r"$R_0$", rf"${_C.R0:.1f}$~$\mu$M/d", "carnitine replenishment",
         DERIVED, r"\textbf{not free}. Fixed by requiring the alternative route alone to peak "
                  rf"at $\mathrm{{ALT}}_{{\mathrm{{peak}}}} = {ALT_PEAK_C:.0f}$ against a "
                  rf"baseline load of ${S_BASE_C:.0f}$, so that a patient with $\theta = 0$ "
@@ -482,7 +482,7 @@ PARENT = [
                  r"derivation and carry no precision. It is left unrounded because every "
                  r"parent-model figure was produced with it",
         kind="derived"),
-    Row(r"$\mathrm{ALT}_{\mathrm{peak}}$", f"${ALT_PEAK_C:.0f}$~$\mu$M/d",
+    Row(r"$\mathrm{ALT}_{\mathrm{peak}}$", rf"${ALT_PEAK_C:.0f}$~$\mu$M/d",
         "peak of the alternative route alone, the constraint that fixes $R_0$",
         ASSUMED, r"\textbf{The constraint behind $R_0$}, which would otherwise be a "
                     r"\textsc{derived} row derived "
@@ -493,7 +493,7 @@ PARENT = [
                  r"The ratio to $s_{\mathrm{base}}$ is what matters and it is "
                  rf"${ALT_PEAK_C/S_BASE_C:.3f}$",
         kind=CALIBRATION),
-    Row(r"$s_{\mathrm{base}}$", f"${S_BASE_C:.0f}$~$\mu$M/d", "baseline propiogenic load",
+    Row(r"$s_{\mathrm{base}}$", rf"${S_BASE_C:.0f}$~$\mu$M/d", "baseline propiogenic load",
         ASSUMED, r"illustrative, and sets the scale everything else in the parent model is "
                  r"quoted against. The partition of whole-body propionate production is "
                  r"measured: amino-acid catabolism a mean of $51.7\%$ (range $24.5$ to "
@@ -607,7 +607,7 @@ def _tex(rows, compact=False):
 
 
 def write_params_table(compact=False, name=None):
-    """Render both blocks as one longtable, source column included.
+    r"""Render both blocks as one longtable, source column included.
 
     A longtable rather than a tabular in a float: once every row carries its
     literature footing the table is taller than a page, and a tabular inside a

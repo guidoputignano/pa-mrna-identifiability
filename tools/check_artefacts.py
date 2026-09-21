@@ -680,7 +680,7 @@ def _collisions(sources):
 
 
 def check_key_collisions():
-    """
+    r"""
     No generated key may be defined in two numbers files.
 
     THE ONE MECHANICAL CASE of this repository's characteristic failure, a

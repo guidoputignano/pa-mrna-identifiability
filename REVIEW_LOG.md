@@ -1390,8 +1390,10 @@ at `4n` and compare against the format string it will be written with.
 
 ## This project's characteristic failure: a number that does not say what it is a number of
 
-Six instances now, which is past coincidence and worth naming so the next person looks
-for it by default instead of finding it a seventh time.
+Six instances of one shape, and a seventh of another. That is past coincidence and
+worth naming so the next person looks for it by default instead of finding it an
+eighth time. The six below share a shape and a fix. The seventh shares neither and is
+recorded after them, because a reader who applies the six's fix to it will not catch it.
 
 | | what was displayed | what it was actually a number of |
 |---|---|---|
@@ -1420,6 +1422,87 @@ with it explicitly**, in the label, in the key name, or in the sentence. The thr
 above are all special cases. The adversarial pass catches it when the referent is wrong;
 the shared-key rule prevents it by making two computations one; this rule says the missing
 referent is the thing to look for first.
+
+---
+
+### The seventh instance, whose shape is not the same (item 42)
+
+**What happened.** `theta_crit` was one value, `150.7747475984808`, computed once and
+reported twice. `margin.tex` carried it at `{:.0f}` and the margin figure drew `151`;
+`boundary.tex` carried `fit_theta_crit` at `{:.1f}` and the discussion wrote `150.8`. In
+the one paragraph where the threshold sits beside a fitted `theta_hat` of `151.01`, the
+figure said the threshold was `151`, and a reader could not tell the threshold from the
+estimate. R45 has the repair.
+
+**Why it is not one of the six.** In all six the referent was missing or wrong: the label
+did not say what the number was a number of. Here both labels were right. `theta_crit`
+said threshold, `fit_theta_crit` said threshold, and both printed values were correct to
+every digit shown. What failed was the precision. Rounding a threshold of `150.77` to
+`151` did not misdescribe it, it made it collide with the one quantity the paragraph put
+it next to. The six's fix, carry the referent across the boundary, would have changed
+nothing here. That is why it is recorded apart from them.
+
+**So the shape is: one quantity, two renderings, and the coarser rendering collided with
+what the sentence was comparing it against.** The fault is not in the number and not in
+the label. It is in the distance between two printed numbers, which is a property of
+neither of them alone.
+
+**Is it enforceable? Half of it, and the half that is not is the half that bit.**
+
+The route of fixing precision where the quantity is computed, generators emitting
+formatted strings rather than raw numbers, is already this repository's practice and was
+already its practice when this happened. `results/numbers/*.tex` stores rendered strings
+and not floats, so a key has exactly one rendering in the document; `common.numbers.num`
+returns that same string so a figure draws what `\num{}` typesets; and
+`audit/g1_phase_clock.py` states the rule in its own docstring, "a header rounding 1.9873
+to 1.99 while the sentence beside it prints 1.987 is the same drift in miniature". So the
+other route, looking for one key that appears with two format specifiers, is already
+looking for something that cannot happen. It is also not what happened. This seam was two
+*keys*.
+
+**The checkable generalisation is indistinguishability, not equality.** Flag two keys
+quoted in one paragraph whose values agree once both are rounded to the coarser of their
+two displayed precisions. That rule catches this case exactly, because `151` and `151.01`
+agree at nought decimal places. Measured against the document as it stands: 326 of the 329
+generated keys are plain numbers, 57 paragraphs quote more than one key, and the rule
+flags **17 pairs**.
+
+Triaging the 17 is what decides whether it can be a gate, and it decides that it cannot.
+
+- Three are the `min(q, N)` instance already in the table above: `reached_monthly`,
+  `reached_off` and `visits`, all at 25.
+- Several are equal for a reason, and the reason is a small theorem. `available_off` (28
+  lattice phases) and `lap_visits_off` (28 visits to a full lap) agree because a lap
+  visits each lattice phase exactly once. `available_fortnightly` and
+  `reached_fortnightly` are both 1 because the dose-interval schedule has one phase and
+  reaches it.
+- Some are coincidences between unrelated quantities, such as `share_5pct` at 16.3 beside
+  `struct_sigma_3min` at 16.3 in the abstract.
+- And **two are this same shape, live.** `delta_range_monthly` (design.tex) and
+  `range_monthly` (phaseclock.tex) are the range of `Delta/theta` at the 30.4 d step and
+  both print `1.84`. `delta_range_aliased` (design.tex) and `range_fortnightly`
+  (phaseclock.tex) are the same thing at 14.0 d and both print `0.13`. It is not only two
+  keys, it is two implementations: `src/design/run.py:1323` computes
+  `(inc.max() - inc.min()) / P.theta` and `audit/g_design_common.py:259` computes
+  `(inc.max() - inc.min()) / TH`, which is the hazard `g_design_common.level`'s own
+  docstring names, "two spellings of one equation is how they drift". Two stems, one
+  quantity, two keys, agreeing today by construction with nothing that would raise if one
+  drifted. That is R46's third mechanism, one stem owns the quantity and the other reads
+  it, not applied. Reported rather than merged here, because merging them moves a figure
+  label and three sentences and that is an authoring decision, not a log entry.
+
+So: a report, not a gate. Seventeen flags of which most are correct and waivable is a
+check that gets switched off within a week if it fails a build. What it is worth is a
+listing that requires each pair to be waived by name or merged, and the argument for it is
+that it found two real ones on its first run.
+
+**The residue is habit, and it is the part that bit.** The rule needs both numbers to be
+`\num{}` keys in one paragraph. The collision here was between a *figure label* and a
+*sentence*, and no paragraph-scoped rule sees a figure. Nor is "a threshold and an
+estimate must be distinguishable" a numerical fact; it is a claim about what the sentence
+is for. So the habit is: **when a number is printed in order to be compared with the one
+beside it, print both to the precision that separates them**, and read the figure against
+the paragraph, not only the paragraph against itself.
 
 ---
 
