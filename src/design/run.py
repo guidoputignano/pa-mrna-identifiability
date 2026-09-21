@@ -72,8 +72,8 @@ D_AMP = 6000.0           # ASSUMED. Chosen so the marker falls by about half at
 #: every run until a generator owns the number.
 DRAWN = {
     "lab": "text: which of the two bands the marker sits on",
-    "excitation(lo, hi, Km)": "UNREGISTERED: E is drawn for BOTH bands and "
-        "only the K_m band's value is registered, as decomp_E",
+    "PAPER_NUMBERS[key]": "registered: E for whichever of the two bands this "
+        "marker is on, as E_held and E_info",
     "trough": "registered: the same object write_numbers takes as "
               "train_trough_frac",
     "DOSE_INTERVAL": "input: a model constant from common.params, which the "
@@ -82,10 +82,9 @@ DRAWN = {
                           "the parameter set this figure was drawn at",
     "name": "text: the schedule's name",
     "len(times)": "input: the schedule's own visit count",
-    "rng": "UNREGISTERED: the Delta/theta range per schedule. design.tex "
-           "holds delta_range_* over the two-year record and this panel "
-           "recomputes it over the schedule as drawn, which is a second "
-           "computation of one quantity",
+    "PAPER_NUMBERS[rkey]": "registered: the Delta/theta range this schedule "
+        "spans, under the same delta_range_* key tab_D_designs uses, so the "
+        "NumberBook itself is the comparison between figure and table",
     "100 * cv": "input: the load CV this curve was drawn at",
     "nn": "input: the visit count this curve was drawn at",
     "top": "input: the band top this curve was drawn at",
@@ -167,6 +166,8 @@ PAPER_FORMATS = {
     "tau_hours": "{:.2f}", "settle_hours_1pct": "{:.2f}",
     #  the K_m sweep and the excursion table's decompensation row
     "decomp_E": "{:.2f}", "decomp_frac_pct": "{:.0f}",
+    #  the two bands fig_excitation draws, at the precision its legend prints
+    "E_held": "{:.3f}", "E_info": "{:.3f}",
 }
 
 #: the seed `design_record` has always drawn its intake record from. Kept as
@@ -236,13 +237,18 @@ def fig_excitation():
     # (left) phi(m) = K_m/(K_m+m), and the excitation as the drop across a band
     m = np.geomspace(0.1, 1e4, 800)
     ax[0].semilogx(m, phi(m, Km), color=BLUE, lw=2.0)
-    for lo, hi, col, lab in [(M_BAR / np.sqrt(2), M_BAR * np.sqrt(2), RED,
-                              "where the patient is held"),
-                             (Km / np.sqrt(2), Km * np.sqrt(2), GREEN,
-                              "where the information is")]:
+    #  E for the two bands the panel draws. decomp_E is a THIRD band, the
+    #  decompensation excursion of tab_D_excursion, so neither of these was
+    #  registered anywhere and the legend was asserting two numbers about the
+    #  design that nothing compared against anything.
+    for lo, hi, col, lab, key in [(M_BAR / np.sqrt(2), M_BAR * np.sqrt(2), RED,
+                                   "where the patient is held", "E_held"),
+                                  (Km / np.sqrt(2), Km * np.sqrt(2), GREEN,
+                                   "where the information is", "E_info")]:
+        PAPER_NUMBERS[key] = float(excitation(lo, hi, Km))
         ax[0].axvspan(lo, hi, color=col, alpha=0.14)
         ax[0].plot([lo, hi], [phi(lo, Km), phi(hi, Km)], "o-", color=col, ms=4,
-                   lw=1.4, label=f"{lab}: $E$ = {excitation(lo, hi, Km):.3f}")
+                   lw=1.4, label=f"{lab}: $E$ = {PAPER_NUMBERS[key]:.3f}")
     ax[0].axvline(Km, color=MUTED, ls=":", lw=1.0)
     over_x(ax[0], Km, r"$K_m$", frac=0.94, color=MUTED, fontsize=8, ha="left")
     ax[0].set_xlabel(r"metabolite $m$")
@@ -841,10 +847,15 @@ def fig_protocol(T=112.0):
     #  its median of 4.5845. Nothing drew it -- the panels compute their own
     #  range -- but a stale number in a figure is invisible to the artefact
     #  guard, which compares rendered bytes, so it does not get to live here.
+    #  the fifth field is the delta_range_* key each panel's range bar draws.
+    #  These three schedules are exactly three rows of tab_D_designs over the
+    #  same two-year grid, so the bar and the table are ONE number: writing it
+    #  into PAPER_NUMBERS under that key makes the NumberBook the comparison,
+    #  and a figure that drifted from the table would fail at accumulation.
     SCHEDULES = [
-        ("monthly, every 30.4 d", 30.4, GREEN, "o"),
-        ("every 14.5 d, half a day off", 14.5, BLUE, "^"),
-        ("fortnightly, on the dose", DOSE_INTERVAL, RED, "X"),
+        ("monthly, every 30.4 d", 30.4, GREEN, "o", "monthly"),
+        ("every 14.5 d, half a day off", 14.5, BLUE, "^", "off"),
+        ("fortnightly, on the dose", DOSE_INTERVAL, RED, "X", "aliased"),
     ]
 
     # Nested gridspecs rather than one mosaic: the trajectory and its rails are
@@ -887,7 +898,7 @@ def fig_protocol(T=112.0):
     r.set_ylim(-0.7, len(SCHEDULES) - 0.3)
     r.set_yticks(range(len(SCHEDULES)))
     r.set_yticklabels([s[0].split(",")[0] for s in reversed(SCHEDULES)], fontsize=6.4)
-    for i, (lab, dt, col, mk) in enumerate(SCHEDULES):
+    for i, (lab, dt, col, mk, _key) in enumerate(SCHEDULES):
         y = len(SCHEDULES) - 1 - i
         ts = np.arange(0.0, T + 1e-9, dt)
         r.axhline(y, color=GREY, lw=0.5, zorder=1)
@@ -902,12 +913,13 @@ def fig_protocol(T=112.0):
     curve = np.asarray(delta(20 * DOSE_INTERVAL + ph)) / P.theta
     ymax = float(curve.max()) * 1.18
 
-    for i, (lab, dt, col, mk) in enumerate(SCHEDULES):
+    for i, (lab, dt, col, mk, key) in enumerate(SCHEDULES):
         b = ax[f"p{i}"]
         ts = np.arange(0.0, 730.0, dt)
         dph = np.mod(ts, DOSE_INTERVAL)
         dval = np.asarray(delta(ts)) / P.theta
-        rng = float(np.ptp(dval))
+        rkey = f"delta_range_{key}"
+        PAPER_NUMBERS[rkey] = float(np.ptp(dval))
 
         b.plot(ph, curve, color=GREY, lw=1.0, zorder=2)
         b.axvspan(0.0, 0.22, color=RED, alpha=0.18, lw=0, zorder=1)
@@ -921,8 +933,8 @@ def fig_protocol(T=112.0):
         b.plot([xr, xr], [dval.min(), dval.max()], color=col, lw=2.4,
                solid_capstyle="butt", zorder=6, clip_on=False)
         b.text(DOSE_INTERVAL * 1.10, (dval.min() + dval.max()) / 2.0,
-               f"range\n{rng:.2f}", fontsize=5.9, color=col, va="center",
-               ha="left")
+               f"range\n{PAPER_NUMBERS[rkey]:.2f}", fontsize=5.9, color=col,
+               va="center", ha="left")
 
         b.set_xlim(0, DOSE_INTERVAL)
         b.set_ylim(0, ymax)

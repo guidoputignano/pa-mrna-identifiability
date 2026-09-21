@@ -1440,7 +1440,16 @@ are `\num{}` keys the guard diffs against HEAD.
 *The margin panel and the registry were two computations of one number.* Panel (c) of the
 fibre-margin figure read its dot off a 400-point sweep grid with `np.interp`, while
 `results/numbers/local.tex` registered `mtol_window_pct` from an exact `margin_window`
-solve at the same abscissa. Nothing compared them. They are now one object.
+solve at the same abscissa. Nothing compared them.
+
+They are now one object: `fig_margin_fibre` builds the three widths into the dict it hands
+`write_numbers` and draws out of that dict, so `np.interp` no longer appears in any drawn
+string. **And the two agreed, which is worth saying plainly rather than leaving the entry
+to imply otherwise.** The grid was fine enough that the gap was `14.778341` against
+`14.778437`, a relative `1e-5`, and both round to the `15%` the panel drew and the `14.8`
+the registry held. Nothing in the paper was wrong. What was wrong was that two
+computations of one quantity sat in one document with nothing to make them agree, and the
+next person to coarsen that grid would have found out from a reader.
 
 *Two duplicated literal blocks.* `GENERATORS` in `src/common/numbers.py` listed five stems
 twice and `paper/preamble.tex` input five numbers files twice. Both harmless, both the
@@ -1463,3 +1472,71 @@ curve segment is also too faint to be seen as a curve at all.
 One strip of ink is not worth weakening the aliasing panels. The adjacency stays a
 sentence in the caption, and the reasoning is in the module docstring so the next reader
 does not re-propose it.
+
+### R31. The eight unregistered figure claims, cleared before the preprint
+
+R29 left eight numbers that figures assert about the design with no generator behind them.
+That is the population that produced `trans_angle`, `track_pct` and the `min(q,N)` header,
+and a preprint is the point after which they stop being cheap to fix. All eight are now
+registered, and `check_figure_numbers` reports **29 drawn, 13 registered, 0 unregistered**.
+
+| was | is |
+|---|---|
+| `excitation(lo, hi, Km)`, drawn in the excitation legend for two bands | `E_held` and `E_info` in `design.tex`. Neither was `decomp_E`, which is a third band, the decompensation excursion of `tab_D_excursion` |
+| `rng`, the range bar of the protocol figure | keyed straight into `PAPER_NUMBERS` under the same `delta_range_*` names `tab_D_designs` writes |
+| `slope`, the load-error amplification factor | `load_error_factor` in the new `fibre.tex` |
+| `th.max()/th.min()` | `fibre_theta_fold`, `169`. Not `band_fold`, which is the working band in `theta` |
+| `thc`, `margin[i]`, `lo[i]`, `hi[i]` | `theta_crit`, `margin_nominal`, `margin_band_lo`, `margin_band_hi` in the new `margin.tex` |
+
+**The range bar is the one worth reading twice.** Rather than give it a key of its own, it
+writes the key `tab_D_designs` already owns. Both compute the range over
+`np.arange(0, 730, dt)` on the same three steps, so if they ever disagreed the
+`NumberBook` would raise `DuplicateKey` at accumulation. The comparison is no longer a
+check somebody has to remember to write; it is the data structure. `make figures` runs
+both and does not raise, so they agree to a relative `1e-12`.
+
+Two new stems, because a module's numbers file is written in one call and a second call
+would clobber it: `fibre` (`src/model_A/run.py`, accumulated across two figure functions
+into a `NumberBook` and written by `fibre_numbers()`, which asserts every expected key is
+present so a partial write fails loudly) and `margin` (`src/model_C/run.py`). `fibre` is
+cheap and joins the guard's fast path; `margin` costs 48 s and is covered by
+`--working-tree` after `make figures`, as `decision` and `profile` already are. The guard's
+fast path also gained `fig_excitation` and `fig_protocol`, without which the regenerated
+`design.tex` comes out two keys short.
+
+### R32. Figure 6's 14.5-day panel is the lap condition, drawn
+
+The caption said every panel shows "*the same* 25 visits". It shows the same *number* of
+visits. `n` is held at `\num{visits}` and the spans run from `\num{span_fortnightly}` days
+at the dose interval to `\num{span_spread}` phase-spread, so the ranges are not like for
+like in calendar time. The caption now says which is held fixed and why.
+
+**And the two shortfalls in "25 of 35" and "25 of 28" are not the same kind**, which the
+bare counts hide completely.
+
+* Monthly's step leaves `eps = 2.4` days, so 25 visits sweep **4.3 laps** of the dial. It
+  exhausted what its step can reach long ago and its `25 of 35` is `q > n`, nothing more.
+  Its range is the complete one, `1.84` here and `1.84` in `tab:designs`.
+* The 14.5-day step leaves `eps = 0.5` days, so 25 visits sweep **89% of one lap** and
+  stop. It needs **28** visits to satisfy `n eps >= T`, and the `1.80` it reads against the
+  `1.99` of a completed lap is exactly what that shortfall costs.
+
+So the figure was already illustrating `eq:lap` in the one panel where it binds, by
+accident. It says so now, out of `lap_pct_off`, `lap_visits_off`, `laps_monthly`,
+`eps_off_d` and `eps_monthly_d`, all generated.
+
+### R33. The load-bias map is exactly affine, and the paper now says so
+
+R27 established the closed form by three routes. The consequence belongs in the text, not
+only here. Section 3.2 said `prop:rank`'s null vector is the fibre's tangent at `b = 0`
+and left it there, which reads as though a bound on the load bias is priced by a
+linearisation. It is not:
+
+    K_m_hat = K_m (1 + b/L),    theta_hat = theta - b (1 + K_m k_e / L)
+
+exactly, at every `b`, with no higher-order term. The fibre is curved in `(theta, K_m)`
+and the map from a load bias to the **fitted capacity** is affine. So the factor of
+`1.028` that a 5% load record leaves open is that map evaluated **at** the bound rather
+than near it. The slope `2.549` and the factor `1.028` are now generated
+(`bias_slope`, `bias_theta_factor`), and the `1.028` that had been typed into the sentence
+is a `\num{}` like everything else.

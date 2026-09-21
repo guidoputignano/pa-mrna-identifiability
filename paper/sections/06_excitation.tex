@@ -46,14 +46,27 @@ K_m(b) = \frac{K_m^{0}\,L}{L+b},
 \label{eq:fibrecl}
 \end{equation}
 along which the marker itself is unchanged. Proposition~\ref{prop:rank}'s null vector is
-its tangent at $b=0$.
+its tangent at $b=0$. For the capacity the tangent is the whole story. Matching the three
+invariants of \eqref{eq:invariants} for a record generated at load $L+b$ and fitted with
+the load held at $L$ gives
+\[
+  \hat K_m = K_m\Bigl(1 + \frac{b}{L}\Bigr),
+  \qquad
+  \hat\theta = \theta - b\Bigl(1 + \frac{K_m k_e}{L}\Bigr)
+      = \theta - \num{bias_slope}\,b ,
+\]
+exactly and at every $b$, with no higher-order term: the fibre is curved in
+$(\theta,K_m)$, but the map from a load bias to the \emph{fitted capacity} is affine. So
+what a bound on $b$ leaves open in $\theta$ below is arithmetic and not a linearisation.
 
 \textbf{On this locus the combination is not recovered at any order, and halving the assay
 CV buys nothing along it.}
 
 Two things close the fibre from outside, and the paper uses both. A bound on the load bias
 closes it directly: \eqref{eq:fibrecl} is admissible for every $b > -272.7$, and at the
-$5\%$ load record of Section~\ref{sec:spec} it leaves $\theta$ open by a factor of $1.028$.
+$5\%$ load record of Section~\ref{sec:spec} it leaves $\theta$ open by a factor of
+$\num{bias_theta_factor}$, which is that affine map evaluated at the bound rather than
+near it.
 A recorded load that \emph{varies} closes it from the data, which is the last clause of
 Proposition~\ref{prop:rank}; there the price is ordinary, the half-width scaling as
 $\sigma^{0.98}$ rather than as $\sqrt\sigma$. A singular Fisher matrix here does not

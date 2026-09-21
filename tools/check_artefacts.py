@@ -175,6 +175,13 @@ def regenerate_tables(out):
         #  the dose-train figure contributes the increment's peak and trough
         #  and the phase coverage of each schedule, which the captions quote
         D.fig_dose_train()
+        #  the two figures that contribute generated numbers rather than a
+        #  table: the excitation legend's E for each band, and the protocol
+        #  figure's range bars, which write the SAME delta_range_* keys
+        #  tab_D_designs does. Without them the regenerated design.tex comes
+        #  out short and the comparison fails on the guard's own fast path.
+        D.fig_excitation()
+        D.fig_protocol()
         D.table_factors()
         D.table_load_precision()
         D.table_instruments()
@@ -206,6 +213,13 @@ def regenerate_tables(out):
         #  the m_tol window, which the registry's m_tol row quotes as that
         #  convention's cost; it is produced by the fibre-margin figure
         A.fig_margin_fibre()
+        #  the fibre figures' two asserted numbers, which are cheap; the
+        #  margin figure's four are not (48 s), so results/numbers/margin.tex
+        #  is covered by --working-tree after `make figures` instead, as
+        #  decision.tex and profile.tex are.
+        A.fig_load_error()
+        A.fig_fibre()
+        A.fibre_numbers()
         _num.NUMDIR = NUMDIR
     return sorted(p.name for p in (Path(out) / "tables").glob("*.tex"))
 
@@ -237,7 +251,8 @@ def check_regenerated(live=None):
         #  the generated numbers file, compared the same way
         #  decision.tex and profile.tex are written by the slow generators and
         #  are covered by --working-tree after `make figures`, not here
-        for stem in ("design", "scope", "kmcost", "local", "reduction"):
+        for stem in ("design", "scope", "kmcost", "local", "reduction",
+                     "fibre"):
             nums = Path(tmp) / "numbers" / f"{stem}.tex"
             here = ROOT / "results" / "numbers" / f"{stem}.tex"
             if not nums.exists():

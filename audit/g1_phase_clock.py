@@ -194,13 +194,32 @@ def phaseclock_numbers():
     from common.numbers import write_numbers
     N = {}
     for name, fn in G.SCHEDULES.items():
-        t = fn(N_VISITS)
+        t = np.asarray(fn(N_VISITS), float)
         s = SLUG[name]
         N[f"reached_{s}"] = len(G.cycle_phases(t))
         N[f"available_{s}"] = G.lattice_phases(name)
         N[f"range_{s}"] = f"{G.delta_range(t):.2f}"
+        N[f"span_{s}"] = f"{t[-1] - t[0]:.0f}"
     N["visits"] = N_VISITS
-    write_numbers("phaseclock", N)
+    #  HOW MUCH OF A LAP EACH FIXED STEP COMPLETES, which is what separates
+    #  the two ways a panel can fall short of its lattice. A step h = T + eps
+    #  advances the phase by eps a visit, so n visits sweep n*eps of the dial
+    #  and lap only if n*eps >= T. At 14.5 d, eps is half a day and 25 visits
+    #  sweep 12.5 of 14, so that panel is 89% of one lap and its range is
+    #  short for that reason. Monthly's eps is 2.4 d and 25 visits lap more
+    #  than four times over; its 25 of 35 is the lattice being larger than the
+    #  sample, not a lap unfinished. The two look identical as a bare count.
+    eps_off = G.SCHEDULE_STEP["14.5 d"] % G.T
+    N["eps_off_d"] = eps_off
+    N["eps_monthly_d"] = G.SCHEDULE_STEP["monthly (30.4 d)"] % G.T
+    N["lap_pct_off"] = 100.0 * N_VISITS * eps_off / G.T
+    N["lap_visits_off"] = int(np.ceil(G.T / eps_off))
+    N["laps_monthly"] = (N_VISITS
+                         * (G.SCHEDULE_STEP["monthly (30.4 d)"] % G.T) / G.T)
+    write_numbers("phaseclock", N,
+                  {"lap_pct_off": "{:.0f}", "lap_visits_off": "{:.0f}",
+                   "laps_monthly": "{:.1f}", "eps_off_d": "{:.1f}",
+                   "eps_monthly_d": "{:.1f}"})
     return N
 
 

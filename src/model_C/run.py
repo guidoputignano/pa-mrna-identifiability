@@ -42,6 +42,7 @@ import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 from scipy.optimize import brentq, minimize_scalar
 
+from common.numbers import NumberBook
 from common.models import (ParamsB, ParamsC, g, alt_flux_C, clearance_B,
                            clearance_C_quasistatic, equilibria_nonmonotone,
                            rhs_C, steady_state)
@@ -74,13 +75,16 @@ PB2 = ParamsB(theta=PC.theta, Km=PC.Km, ke=_KE_B, Ke=50.0)
 
 # =====================================================================
 #: every interpolated number this module draws on a figure, classified for
-#: tools/check_artefacts.py:check_figure_numbers. All four are claims and none
-#: has a generator yet, so all four are debt the guard prints on every run.
+#: tools/check_artefacts.py:check_figure_numbers. All four are claims about the
+#: model, and fig_margin() is their generator: it writes them into
+#: results/numbers/margin.tex and both panels draw out of that same dict.
 DRAWN = {
-    "thc": "UNREGISTERED: theta_crit, where attractor and separatrix merge",
-    "margin[i]": "UNREGISTERED: the nominal patient's safety margin",
-    "lo[i]": "UNREGISTERED: the low end of that margin over the M_i range",
-    "hi[i]": "UNREGISTERED: the high end of it",
+    "MARG['theta_crit']": "registered: theta_crit, where attractor and "
+                          "separatrix merge",
+    "MARG['margin_nominal']": "registered: the nominal patient's safety margin",
+    "MARG['margin_band_lo']": "registered: the low end of that margin over the "
+                              "M_i range",
+    "MARG['margin_band_hi']": "registered: the high end of it",
 }
 
 
@@ -391,6 +395,13 @@ def fig_margin():
     above, so it never falls back through s.
     """
     thc = theta_crit_intrinsic(PC, S_BASE)
+    #  The four numbers this figure ASSERTS about the model, registered so they
+    #  are diffed against HEAD like a table cell and can be quoted with \num{}
+    #  rather than retyped. Both panels draw out of this dict, so the drawn
+    #  value and the registered value are one object and cannot drift apart.
+    #  It is a NumberBook, so a second writer giving a key a different value
+    #  fails at accumulation instead of last-write-wins.
+    MARG = NumberBook({"theta_crit": float(thc)})
     thetas = np.linspace(thc * 1.002, 0.86 * S_BASE, 260)
     grid = np.linspace(1e-3, 30000.0, 90000)
 
@@ -412,7 +423,8 @@ def fig_margin():
     # Anchored to the merge point and offset in POINTS, so it keeps its
     # clearance whatever theta_crit turns out to be.
     at_point(ax[0], (th_ok[0], 0.5 * (attr[0] + sep[0])),
-             r"$\theta_{\mathrm{crit}}$" + f" = {thc:.0f}:" "\nthe curves merge",
+             r"$\theta_{\mathrm{crit}}$"
+             + f" = {MARG['theta_crit']:.0f}:" "\nthe curves merge",
              dx=16, dy=0, arrow=True, fontsize=7.5, color=MUTED,
              ha="left", va="center")
     ax[0].plot([PC.theta], [attr[np.argmin(abs(th_ok - PC.theta))]], "o", ms=5,
@@ -458,10 +470,19 @@ def fig_margin():
     ax[1].plot(th_ok, margin, color=BLUE, lw=2.0, label="nominal $M_i = 300$")
     ax[1].axvline(thc, color=MUTED, ls=":", lw=1.2)
     i = np.argmin(abs(th_ok - PC.theta))
-    ax[1].plot([PC.theta], [margin[i]], "o", ms=5.5, color=MUTED, zorder=5)
-    at_point(ax[1], (PC.theta, margin[i]),
-             f"nominal patient\nmargin = {margin[i]:.0f}\n"
-             f"band {lo[i]:.0f}--{hi[i]:.0f}",
+    #  The four numbers this figure ASSERTS about the model, registered so
+    #  they are diffed against HEAD like a table cell and can be quoted with
+    #  \num{} rather than retyped. Both panels draw out of this dict, so the
+    #  drawn value and the registered value are one object.
+    MARG.update({"margin_nominal": float(margin[i]),
+                 "margin_band_lo": float(lo[i]),
+                 "margin_band_hi": float(hi[i])})
+    ax[1].plot([PC.theta], [MARG["margin_nominal"]], "o", ms=5.5, color=MUTED,
+               zorder=5)
+    at_point(ax[1], (PC.theta, MARG["margin_nominal"]),
+             "nominal patient\n"
+             f"margin = {MARG['margin_nominal']:.0f}\n"
+             f"band {MARG['margin_band_lo']:.0f}--{MARG['margin_band_hi']:.0f}",
              dx=10, dy=34, arrow=True, fontsize=7.5, color=MUTED,
              ha="left", va="bottom")
     over_x(ax[1], thc, "margin vanishes:\nsaddle-node", frac=0.97,
@@ -485,6 +506,10 @@ def fig_margin():
           f"{lo[i]:.0f} to {hi[i]:.0f}, a factor of {hi[i]/lo[i]:.1f}. "
           f"Quote it as an order of magnitude.")
     print("    m_bar does NOT appear anywhere in this construction. s does.")
+    from common.numbers import write_numbers
+    write_numbers("margin", MARG,
+                  {"theta_crit": "{:.0f}", "margin_nominal": "{:.0f}",
+                   "margin_band_lo": "{:.0f}", "margin_band_hi": "{:.0f}"})
     return thc
 
 

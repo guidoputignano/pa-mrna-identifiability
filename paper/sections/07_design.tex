@@ -327,9 +327,14 @@ visits buy, and which of the resulting phases a clinic can actually book.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{fig_E1_phaseclock.pdf}
-\caption{Where each schedule lands in the dose cycle. Every panel shows
-\emph{the same} $25$ visits folded onto the $14$-day cycle, $t \mapsto t \bmod
-14$. \textbf{Top: the increment.} Because $\Delta$ is a deterministic function
+\caption{Where each schedule lands in the dose cycle. Every panel folds the
+same \emph{number} of visits, $\num{visits}$, onto the $14$-day cycle,
+$t \mapsto t \bmod 14$. The visits themselves differ, and so does the calendar
+time they occupy: from $\num{span_fortnightly}$ days at the dose interval to
+$\num{span_spread}$ phase-spread. It is $n$ and not the duration that is held
+fixed, because $n$ is what a protocol buys, but it means the ranges below are
+not like for like in calendar time and the last paragraph is where that
+bites. \textbf{Top: the increment.} Because $\Delta$ is a deterministic function
 of phase, every draw of every schedule lies \emph{exactly} on the one decay
 curve, and all a schedule chooses is where on that curve its draws sit.
 Sampling at the dose interval puts all $\num{visits}$ on a single point of it,
@@ -351,8 +356,18 @@ $\num{available_fortnightly}$, because only there does the lattice bind. The
 $\Delta/\theta$ ranges are likewise over these $\num{visits}$ draws and not over
 the two-year record of Table~\ref{tab:designs}: monthly reads
 $\num{range_monthly}$ here against $\num{delta_range_monthly}$ there, and the
-$14.5$-day schedule $\num{range_off}$ against $\num{delta_range_off}$, because
-$\num{visits}$ visits a fortnight apart cover less than half the record. The phase axis is periodic, so the right
+$14.5$-day schedule $\num{range_off}$ against $\num{delta_range_off}$.
+\emph{The two shortfalls are not the same kind, and the difference is
+\eqref{eq:lap}.} Monthly's step leaves $\varepsilon = \num{eps_monthly_d}$
+days, so $\num{visits}$ visits sweep $\num{laps_monthly}$ laps of the dial:
+that schedule exhausted what its step can reach long ago, and its
+$\num{reached_monthly}$ of $\num{available_monthly}$ is $q > n$ and nothing
+else. The $14.5$-day schedule leaves $\varepsilon = \num{eps_off_d}$ days, so
+$\num{visits}$ visits sweep only $\num{lap_pct_off}\%$ of one lap and stop:
+it would need $\num{lap_visits_off}$ visits to satisfy $n\varepsilon \ge T$,
+and the gap between the $\num{range_off}$ it reads here and the
+$\num{delta_range_off}$ of a completed lap is precisely what that shortfall
+costs. That panel is the lap condition drawn, in the one place it binds. The phase axis is periodic, so the right
 edge of each panel is the left edge. The first two panels differ only in
 enrolment: at $t=0$ the dose train is still filling, so the draws smear over a
 range of $\num{range_fortnightly}$, while for a patient already on therapy the

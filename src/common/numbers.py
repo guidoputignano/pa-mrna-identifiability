@@ -54,6 +54,8 @@ GENERATORS = {
     "structure": "audit/t7_structure_transient.py",
     "lattice": "audit/t11_phase_lattice.py",
     "phaseclock": "audit/g1_phase_clock.py",
+    "fibre": "src/model_A/run.py",
+    "margin": "src/model_C/run.py",
 }
 
 

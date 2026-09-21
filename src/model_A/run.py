@@ -27,6 +27,7 @@ from scipy.optimize import brentq, least_squares
 from common.models import (ParamsA, g, clearance_A, steady_state,
                            sensitivity_A, condition_number)
 from common.style import save, write_table, figsize, GREEN, RED, BLUE, AMBER, GREY, MUTED, corner, over_x, at_point
+from common.numbers import NumberBook
 
 
 P = ParamsA()
@@ -49,17 +50,24 @@ ASSAY_CV = 5.0     # per cent, never flux units. A sigma comes from sigma_from_l
 #  Km, a known (a, b) leaves a one-parameter family, not a point. These are
 #  its parametrisation and its endpoints.
 # =====================================================================
+#: the two numbers this module's figures assert about the model, accumulated
+#: here and written by fibre_numbers() rather than recomputed at draw time.
+#: Two figure functions contribute, so it is a NumberBook: a second writer
+#: giving a key a different value fails at accumulation instead of
+#: last-write-wins, which is the bug that gave track_pct two values.
+FIBRE_NUMBERS = NumberBook()
+
 #: every interpolated number this module draws on a figure, classified for
 #: tools/check_artefacts.py:check_figure_numbers.
 DRAWN = {
     "thB": "input: patient B's capacity, a setting of the comparison",
     "keB": "input: patient B's k_e, likewise",
     "theta": "input: the capacity this panel was drawn at",
-    "slope": "UNREGISTERED: the load-error amplification factor, which "
-             "Section 2.5 discusses and no generator owns",
-    "th.max() / th.min()": "UNREGISTERED: the fold of theta consistent with "
-        "(a, b) across the K_m band under noiseless data. NOT scope.tex's "
-        "band_fold, which is the working band in theta",
+    "FIBRE_NUMBERS['load_error_factor']": "registered: the load-error "
+        "amplification factor, which Section 2.5 discusses",
+    "FIBRE_NUMBERS['fibre_theta_fold']": "registered: the fold of theta "
+        "consistent with (a, b) across the K_m band under noiseless data. "
+        "NOT scope.tex's band_fold, which is the working band in theta",
     "WIN['mtol_window_pct']": "registered: the same object write_numbers "
                               "takes as mtol_window_pct",
     "M_TOL": "input: the tolerable-level convention this panel is drawn "
@@ -393,9 +401,11 @@ def fig_load_error():
     ax[0].axhline(0, color=GREY, lw=0.6)
     ax[0].axvline(0, color=GREY, lw=0.6)
     slope = np.polyfit(eps * 100, rel, 1)[0]
+    FIBRE_NUMBERS["load_error_factor"] = float(slope)
     ax[0].set_xlabel(r"error in assumed load $s$  [%]")
     ax[0].set_ylabel(r"resulting error in $\theta$  [%]")
-    ax[0].set_title(f"at $\\theta = {theta:.0f}$: factor {slope:.2f}")
+    ax[0].set_title(f"at $\\theta = {theta:.0f}$: "
+                    f"factor {FIBRE_NUMBERS['load_error_factor']:.2f}")
     ax[0].legend()
 
     # The factor is not a property of the model. It is C(m)/(theta g(m)),
@@ -444,8 +454,9 @@ def fig_fibre():
              arrow=True, fontsize=7.5, color=MUTED, ha="right", va="top")
     ax[0].set_xlabel(r"$K_m$")
     ax[0].set_ylabel(r"$\theta$ consistent with $(a,b)$")
-    ax[0].set_title(f"one band, {th.max() / th.min():.0f}-fold in "
-                    r"$\theta$" "\nwith noiseless data")
+    FIBRE_NUMBERS["fibre_theta_fold"] = float(th.max() / th.min())
+    ax[0].set_title(f"one band, {FIBRE_NUMBERS['fibre_theta_fold']:.0f}-fold "
+                    "in " r"$\theta$" "\nwith noiseless data")
 
     ax[1].plot(Ks, kes, color=AMBER, lw=2.0)
     ax[1].plot([P.Km], [P.ke], "o", ms=6, color=MUTED, zorder=5)
@@ -1157,6 +1168,59 @@ def table_design():
     return rows
 
 
+def fibre_bias_numbers():
+    """
+    What a bounded load bias leaves open in the capacity, computed exactly.
+
+    Matching the three invariants of Section 3.2 for a record generated at
+    load L+b and fitted with the load held at L gives
+
+        K_m_hat = K_m (1 + b/L),   theta_hat = theta - b (1 + K_m k_e / L)
+
+    with NO higher-order term: the fibre is curved in (theta, K_m) but the map
+    from a load bias to the fitted capacity is affine. So the interval a bound
+    on b leaves open is arithmetic rather than a linearisation, and the paper
+    can say so. audit/t12_triples.py R2b checks it three ways, one of which
+    shares no code with audit/f5_fibre.py.
+    """
+    from common.params import LOAD_FRAC
+    L = baseline_load()
+    slope = 1.0 + P.Km * P.ke / L
+    b = LOAD_FRAC * L
+    FIBRE_NUMBERS["bias_slope"] = float(slope)
+    FIBRE_NUMBERS["bias_theta_factor"] = float(
+        (P.theta + b * slope) / (P.theta - b * slope))
+    print(f"    the load-bias map is exactly affine, slope {slope:.4f}; "
+          f"a {100*LOAD_FRAC:.0f}% load record leaves theta open by "
+          f"{FIBRE_NUMBERS['bias_theta_factor']:.4f}")
+
+
+def fibre_numbers():
+    """
+    Write what the two fibre figures assert, once both have contributed.
+
+    The assert is not decoration. A partial write is the failure mode this
+    file has already had twice: a generator the build did not reach wrote a
+    file five keys short and nothing noticed, because a short file is a
+    valid file (REVIEW_LOG.md R23 and the reachability check that followed).
+    Here the keys come from two different figure functions, so the way to be
+    short is to call one and not the other, and that fails loudly.
+    """
+    from common.numbers import write_numbers
+    fibre_bias_numbers()
+    want = {"load_error_factor", "fibre_theta_fold", "bias_slope",
+            "bias_theta_factor"}
+    missing = want - set(FIBRE_NUMBERS)
+    assert not missing, (
+        f"fibre_numbers() called before {sorted(missing)} were computed; "
+        f"fig_load_error() and fig_fibre() must both run first")
+    write_numbers("fibre", FIBRE_NUMBERS,
+                  {"load_error_factor": "{:.2f}",
+                   "fibre_theta_fold": "{:.0f}",
+                   "bias_slope": "{:.3f}",
+                   "bias_theta_factor": "{:.3f}"})
+
+
 if __name__ == "__main__":
     print("MODEL A")
     fig_channels()
@@ -1165,6 +1229,7 @@ if __name__ == "__main__":
     fig_population()
     slope = fig_load_error()
     fig_fibre()
+    fibre_numbers()
     fig_margin_fibre()
     fig_design()
     table_design()
