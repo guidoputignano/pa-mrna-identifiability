@@ -1478,23 +1478,23 @@ Triaging the 17 is what decides whether it can be a gate, and it decides that it
   reaches it.
 - Some are coincidences between unrelated quantities, such as `share_5pct` at 16.3 beside
   `struct_sigma_3min` at 16.3 in the abstract.
-- And **two are this same shape, live.** `delta_range_monthly` (design.tex) and
-  `range_monthly` (phaseclock.tex) are the range of `Delta/theta` at the 30.4 d step and
-  both print `1.84`. `delta_range_aliased` (design.tex) and `range_fortnightly`
-  (phaseclock.tex) are the same thing at 14.0 d and both print `0.13`. It is not only two
-  keys, it is two implementations: `src/design/run.py:1323` computes
-  `(inc.max() - inc.min()) / P.theta` and `audit/g_design_common.py:259` computes
-  `(inc.max() - inc.min()) / TH`, which is the hazard `g_design_common.level`'s own
-  docstring names, "two spellings of one equation is how they drift". Two stems, one
-  quantity, two keys, agreeing today by construction with nothing that would raise if one
-  drifted. That is R46's third mechanism, one stem owns the quantity and the other reads
-  it, not applied. Reported rather than merged here, because merging them moves a figure
-  label and three sentences and that is an authoring decision, not a log entry.
+- And **one is this same shape, live.** This entry first said two, and one of the two was
+  not. `delta_range_monthly` (design.tex) and `range_monthly` (phaseclock.tex) were two
+  implementations of one quantity on one record: `np.arange(0, 730, 30.4)` is 25 points,
+  `fixed(25, 30.4)` is the same array, the arrays compare identical and both ranges are
+  `1.843777`. `src/design/run.py` computed `(inc.max() - inc.min()) / P.theta` inline
+  while `audit/g_design_common.py` computed `(inc.max() - inc.min()) / TH` as a function,
+  which is the hazard `g_design_common.level`'s own docstring names, "two spellings of
+  one equation is how they drift". The second pair, `delta_range_aliased` and
+  `range_fortnightly`, is **not** a duplication: 53 visits against 25, a genuinely
+  different record, agreeing because a schedule at `eps = 0` saturates, which Section 8
+  already states. Merged, and this bullet corrected, in R51.
 
 So: a report, not a gate. Seventeen flags of which most are correct and waivable is a
 check that gets switched off within a week if it fails a build. What it is worth is a
 listing that requires each pair to be waived by name or merged, and the argument for it is
-that it found two real ones on its first run.
+what it found on its first run: one true duplication, and through it a sentence in
+Section 7 asserting a contrast that does not exist (R51).
 
 **The residue is habit, and it is the part that bit.** The rule needs both numbers to be
 `\num{}` keys in one paragraph. The collision here was between a *figure label* and a
@@ -2310,8 +2310,17 @@ there are no repeated runs to catch a recurrence, so an intermittent warning arr
 count in a summary line with no text and no traceback --- and would arrive the same way the
 second time.
 
-`pytest.ini` now sets `filterwarnings = error`. It cost nothing: the suite passes under
-`-W error` today, so it only ever fires on something new.
+`pytest.ini` now sets `filterwarnings = error`.
+
+**CORRECTED IN PLACE.** What stood here said the setting cost nothing, because "the
+suite passes under `-W error` today". The suite did pass. It passed on a warm
+`__pycache__`, which for the one warning class already present in this repository is
+not a test: an invalid escape sequence is raised when a module is *compiled*, and a
+cached `.pyc` skips the compile. From a cold cache the same commit gave 38 failed of
+92. The setting cost fifteen missing raw-string prefixes, paid in R49, and only after
+that did it fire on nothing. The sentence is replaced rather than annotated because as
+written it recorded a verification that had not run, which is the `theta_hat = 151`
+ladder's defect in a different medium. R50 has the class and what now enforces it.
 
 It earns its place more here than in most repositories. This project's stated characteristic
 failure is a silent numerical error, and numpy reports exactly that as a `RuntimeWarning`
@@ -2326,9 +2335,8 @@ then removed.
 
 The one thing it does not cover is a warning raised in a generator that the guard's fast
 path does not reach --- `fig_margin`, `d13_decision_therapy` and the other slow ones. Those
-run only under `make figures`, outside pytest. Noted rather than solved. **Closed in
-R49**, which also corrects the cost claim above: the suite's clean run had been
-measured on a warm `__pycache__`.
+run only under `make figures`, outside pytest. Noted rather than solved,
+and closed in R49.
 
 ### R48. A second pattern, across the two misspecification results (item 39)
 
@@ -2407,3 +2415,116 @@ fix, from a cold cache: `92 passed in 149.39s`.
 
 That is the honest cost accounting. The setting did not cost nothing. It cost fifteen
 missing `r` prefixes, and it was not paying until they were fixed.
+
+### R50. A verification whose verdict depended on build state, and the audit it forced (item 43)
+
+**The class, kept separate because its fix is not the seven's.** `make test` green and
+`make clean && make test` red, 38 failed of 92, on one tree, with nothing in either run
+saying why they differed. Each of the seven referent instances produced a wrong or
+unlabelled *number*, which failed visibly the moment anyone looked at it. This produced a
+correct-looking report of a verification that had not happened. A number nobody can check
+is one problem; a check nobody can check is a worse one, because it is what you consult
+about the first.
+
+**It is not the first instance.** R10 is the same class from the other side: the em-dash
+sweep deleted `\input{sections/01_biology}`, took a 1,400-word section out of the document,
+and was followed by "no LaTeX error, no undefined reference, no failed test". The page
+count fell by four and the fall was put down to a shorter abstract. Two instances make it a
+class rather than an accident.
+
+**What enforces it now.** `check_source_warnings()` in the artefact guard compiles every
+tracked `.py` from its source text on every run and never consults `__pycache__`: 99 files,
+0 warnings, with the self-test this repository requires, a source that does warn and one
+that does not. It was preferred to putting `make clean` in front of `make test`, which was
+the other option offered, for two reasons. `make clean` makes the suite slower without
+making its verdict independent of anything except the cache, and the guard reaches `tools/`
+and `tests/`, which `-W error` on `make figures` does not.
+
+**The audit, by mechanism rather than by entry**, because "measured warm" is only one way a
+verdict can depend on state the verdict does not name.
+
+1. **Bytecode cache.** Reaches exactly one thing, a warning raised at compile time, and
+   nothing numerical. One recorded claim sat on it, R47's, corrected in place. Now
+   unreachable.
+
+2. **LaTeX auxiliary state.** Reaches every "N pages, no undefined references" claim.
+   `REVIEW_LOG.md` carries one, R10's, and R10 is the entry about its being worthless. The
+   rest were reported in batch summaries rather than recorded here, and every one of them
+   was taken after two `pdflatex` passes on a warm `.aux`, where `make paper` runs four
+   passes and `biber` for the paper and three and `biber` for the supplement. **Measured
+   from clean:** paper 43 pages, supplement 62, and in both logs 0 `LaTeX Warning:
+   Reference`, 0 `LaTeX Warning: Citation` and 0 `Rerun to get`. The claims were right.
+   The measure was not: `grep -c undefined main.log`, which is what had been reported,
+   also counts a font-shape warning, and on the supplement it returns 1 for
+   `T1/lmr/bx/sc`. Counted precisely from here.
+
+3. **Committed artefact state.** A figure drawing `num(module, key)` reads the committed
+   numbers file, and R51 has just made the first such reader. That dependence is by
+   construction, and `check_regenerated` compares the committed file against the code, so a
+   stale one fails rather than passing quietly.
+
+4. **Generator numerics, which is everything the paper quotes.** Not exposed, and this is
+   the part worth being able to say. The generators are seeded, the guard regenerates them
+   into a temporary directory and compares byte for byte, and two independent cold runs
+   this session left `results/**/*.tex` unchanged except for the one key R51 deliberately
+   removed. An environment that moved a number would show as drift rather than hide.
+
+5. **CI.** 44 commits on this branch and nothing has executed on any of them. "The suite
+   passes" has meant "the suite passes in this container" for the whole of it, which is why
+   the warm-cache distinction was load-bearing here and would not have been in a repository
+   whose CI ran. Stating it rather than implying it.
+
+**The list is short because the exposure is narrow, and that is the result.** The numbers
+were never at risk: regeneration guards them, and a clean rebuild confirms it. What was
+unguarded was the statement that a guard had run, and only two mechanisms could reach it,
+one now closed by a check and one now measured. The full clean sequence,
+`make clean && make figures && make paper && make test && check_artefacts`, returns 0 at
+every stage: 92 passed in 144 s from a cold cache, 328 generated keys, 99 files compiled
+with 0 warnings, artefacts match the code.
+
+### R51. Two implementations made one, and the false contrast underneath them (item 44)
+
+**The pair was real and the entry above overstated it, so both go here.** The
+indistinguishability sweep flagged two design.tex/phaseclock.tex pairs. Measured, they are
+not the same case:
+
+| | design.tex record | phaseclock.tex record | values |
+|---|---|---|---|
+| monthly | `np.arange(0, 730, 30.4)`, 25 pts | `fixed(25, 30.4)`, 25 pts | identical arrays, both `1.843777` |
+| fortnightly | `np.arange(0, 730, 14.0)`, 53 pts | `fixed(25, 14.0)`, 25 pts | different records, both `0.133333` |
+| 14.5 d | `np.arange(0, 730, 14.5)`, 51 pts | `fixed(25, 14.5)`, 25 pts | `1.986121` against `1.801867` |
+
+Only the first row is a duplication. The second is two different records agreeing because a
+schedule at `eps = 0` saturates, which Section 8 states in as many words, and the third is a
+difference the paper draws on purpose. The claim that both pairs agreed "by construction"
+was wrong for the fortnightly one and is corrected above.
+
+**What the duplication was hiding is worse than the duplication.** Section 7 read: *the
+ranges are over these 25 draws and not over the two-year record of Table D: monthly reads
+`range_monthly` here against `delta_range_monthly` there, and the 14.5-day schedule
+`range_off` against `delta_range_off`.* For the 14.5-day schedule that contrast is real,
+51 visits against 25. For monthly the two-year record **is** those 25 visits, so the
+sentence set one number against itself and called it a comparison. It read as a claim only
+because the quantity had two names; with one name it would have been visibly a tautology.
+Corrected in Section 7, and Section 8's version, which was already careful about the
+fortnightly case, now says the same about monthly.
+
+**Merged in two layers, because there were two duplications.**
+
+*One implementation.* `delta_range` now lives in `src/design/run.py`, which owns `delta`,
+and `audit/g_design_common.py` imports it. It could not go the other way: that module
+already imports `delta` from this one, so the dependency had a direction. Its
+nineteen call sites across ten modules keep writing `G.delta_range(t)`, and
+`G.delta_range is design.run.delta_range` is true.
+
+*One key.* `audit/g1_phase_clock.py` no longer computes monthly's range. It reads
+`num("design", "delta_range_monthly")` **after** `write_numbers`, so `phaseclock.tex`
+carries no second key for a quantity `design.tex` owns, and the panel header draws to the
+character what `\num{delta_range_monthly}` typesets beside it. `make figures` runs the
+design module before this one.
+
+**And this is the first call of `num()` in the repository.** R46 named "one stem owns the
+quantity and the other reads it" as the third mechanism, the one for the case neither the
+shared-key trick nor the collision guard covers. It had never been used: `num()` was
+written, self-tested through `check_figure_numbers`'s first accepted shape, and left
+without a caller for the want of a case. This was the case.

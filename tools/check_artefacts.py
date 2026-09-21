@@ -844,6 +844,75 @@ def check_figure_numbers():
         print(f"    {why}")
     return not problems
 
+def _compile_warnings(sources):
+    """{path: [(line, category, message)]} from {path: source text}."""
+    import warnings
+    out = {}
+    for path in sorted(sources):
+        with warnings.catch_warnings(record=True) as got:
+            warnings.simplefilter("always")
+            try:
+                compile(sources[path], path, "exec")
+            except SyntaxError as e:
+                out.setdefault(path, []).append(
+                    (e.lineno, "SyntaxError", str(e.msg)))
+                continue
+        for w in got:
+            out.setdefault(path, []).append(
+                (w.lineno, w.category.__name__, str(w.message)))
+    return out
+
+
+def _tracked_python():
+    """Every .py file under version control, as {path: source text}."""
+    try:
+        out = subprocess.run(["git", "ls-files", "*.py"], cwd=ROOT,
+                             capture_output=True, text=True, check=True).stdout
+        names = out.split()
+    except (OSError, subprocess.CalledProcessError):
+        names = [str(p.relative_to(ROOT)) for p in ROOT.rglob("*.py")
+                 if ".git" not in p.parts]
+    return {n: (ROOT / n).read_text() for n in sorted(names)}
+
+
+def check_source_warnings():
+    r"""
+    Every tracked module must compile from source without a warning.
+
+    THE BUG THIS EXISTS FOR, and its shape is not the shape of the others.
+    `pytest.ini` sets `filterwarnings = error`, and that was recorded as
+    having cost nothing because the suite passed under it. The suite passed
+    on a warm `__pycache__`. A warning about a string literal is raised when
+    a module is COMPILED; once a `.pyc` is on disk the module is not
+    recompiled and the warning is never raised again. Fifteen invalid escape
+    sequences sat in four files while the same tree returned `92 passed` or
+    `38 failed, 54 passed` depending on nothing but whether `make clean` had
+    run first, and neither run said why (REVIEW_LOG.md R49, R50).
+
+    THE RULE IT ENFORCES is not about escapes. It is that a check's verdict
+    must not depend on build state. This one compiles the source text itself
+    on every run and never consults the cache, so it cannot be warm. It
+    covers `tools/` and `tests/` as well as the generators, which `-W error`
+    on `make figures` does not reach.
+    """
+    sources = _tracked_python()
+    found = _compile_warnings(sources)
+    #  the same standard the other checks hold themselves to. The detector is
+    #  run against a source that DOES warn and one that does not, so a clean
+    #  sweep is a result rather than an absence.
+    bad = 'x = "\\d"\n'
+    good = 'x = r"\\d"\n'
+    probe_ok = (len(_compile_warnings({"p": bad}).get("p", [])) == 1
+                and not _compile_warnings({"g": good}))
+    print(f"  {len(sources)} tracked python file(s) compiled from source, "
+          f"{sum(len(v) for v in found.values())} warning(s) "
+          f"(self-test: {'PASS' if probe_ok else 'FAIL'})")
+    for path in sorted(found):
+        for line, cat, msg in found[path]:
+            print(f"    {path}:{line}: {cat}: {msg}")
+    return not found and probe_ok
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--working-tree", action="store_true",
@@ -861,6 +930,9 @@ def main():
     #  and the one mechanical case of the referent failure: two files
     #  defining one key, which \input order would settle in silence
     ok = check_key_collisions() and ok
+    #  and the class the cache hid: a check whose verdict depended on
+    #  whether `make clean` had run. This one compiles the source itself.
+    ok = check_source_warnings() and ok
     print("  ARTEFACTS MATCH THE CODE" if ok else "  ARTEFACTS HAVE DRIFTED")
     return 0 if ok else 1
 

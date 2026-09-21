@@ -225,6 +225,22 @@ def design_record(times, load_cv=None, seed=BASE_SEED):
     return lv, inc
 
 
+def delta_range(times):
+    """
+    The range of Delta/theta a schedule covers, which f4 found is what binds.
+
+    Here rather than in audit/g_design_common.py, which is where it used to
+    live, because that module imports `delta` from this one and so cannot be
+    imported back without a cycle. It was two identical spellings in two
+    modules, this one inline in table_designs() and that one a function, and
+    they fed two different keys: delta_range_monthly in design.tex and
+    range_monthly in phaseclock.tex, for the same 25 visits at 30.4 days.
+    One implementation now, imported there (REVIEW_LOG.md R51).
+    """
+    inc = np.asarray(delta(times), dtype=float)
+    return float((inc.max() - inc.min()) / P.theta)
+
+
 # ==========================================================================
 def fig_excitation():
     """
@@ -1320,7 +1336,7 @@ def table_designs(T=730.0):
         lv, inc = design_record(times, seed=BASE_SEED)
         if override is not None:
             lv = override
-        drng = float((inc.max() - inc.min()) / P.theta)
+        drng = delta_range(times)
         raw.append((name, len(times), lv.min(), lv.max(), drng, sd, rho,
                     dropped, sd_lo, sd_hi))
         rows.append([name, len(times), f"${lv.min():.2f}$--${lv.max():.2f}$",
@@ -1390,9 +1406,8 @@ def table_designs(T=730.0):
                                   f"sd_{key}_hi": shi})
     if "sd_straddle" in PAPER_NUMBERS:
         PAPER_NUMBERS["straddle_gain"] = dense[5] / PAPER_NUMBERS["sd_straddle"]
-    off = design_record(np.arange(0.0, T, DOSE_INTERVAL + 0.5),
-                        seed=BASE_SEED)[1]
-    PAPER_NUMBERS["delta_range_off"] = float((off.max() - off.min()) / P.theta)
+    PAPER_NUMBERS["delta_range_off"] = delta_range(
+        np.arange(0.0, T, DOSE_INTERVAL + 0.5))
     for nm, n, lo, hi, drng, sd, rho, drop, slo, shi in raw:
         print(f"    {nm[:40]:>40}: n={n:4d}  range(D/th)={drng:5.2f}  "
               f"sd={sd:.4f} [{slo:.4f}, {shi:.4f}]"

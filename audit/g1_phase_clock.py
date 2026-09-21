@@ -100,7 +100,9 @@ DRAWN = {
     "SHORT.get(name, name)": "text: the panel's own title, not a number",
     "N['reached_' + s]": "registered: phases the schedule reaches",
     "N['available_' + s]": "registered: phases its lattice offers",
-    "N['range_' + s]": "registered: the Delta/theta range it spans",
+    "N['range_' + s]": ("registered: the Delta/theta range it spans, and for "
+                        "monthly that is design.tex's delta_range_monthly "
+                        "read back rather than a second computation of it"),
 }
 
 #: the steady-state peak of the dose train, which is the top of the curve
@@ -191,15 +193,27 @@ def phaseclock_numbers():
     \num{} would typeset: a header rounding 1.9873 to 1.99 while the sentence
     beside it prints 1.987 is the same drift in miniature.
     """
-    from common.numbers import write_numbers
+    from common.numbers import write_numbers, num
     N = {}
     for name, fn in G.SCHEDULES.items():
         t = np.asarray(fn(N_VISITS), float)
         s = SLUG[name]
         N[f"reached_{s}"] = len(G.cycle_phases(t))
         N[f"available_{s}"] = G.lattice_phases(name)
-        N[f"range_{s}"] = f"{G.delta_range(t):.2f}"
         N[f"span_{s}"] = f"{t[-1] - t[0]:.0f}"
+        #  MONTHLY'S RANGE IS NOT COMPUTED HERE. Table D's monthly design is
+        #  np.arange(0, 730, 30.4), which is 25 points, and this panel is
+        #  fixed(25, 30.4): the same array, so the same number. It was
+        #  computed twice and keyed twice, delta_range_monthly there and
+        #  range_monthly here, and Section 7 read the pair as a contrast
+        #  between these draws and the two-year record. For monthly there is
+        #  no such contrast. For 14.5 d there is, because the two-year record
+        #  is 51 visits against these 25, and for the fortnightly schedule
+        #  the record differs but the number does not, since a schedule at
+        #  eps = 0 saturates. design.tex owns this one and it is read back
+        #  after the write below (REVIEW_LOG.md R51).
+        if s != "monthly":
+            N[f"range_{s}"] = f"{G.delta_range(t):.2f}"
     N["visits"] = N_VISITS
     #  HOW MUCH OF A LAP EACH FIXED STEP COMPLETES, which is what separates
     #  the two ways a panel can fall short of its lattice. A step h = T + eps
@@ -220,6 +234,11 @@ def phaseclock_numbers():
                   {"lap_pct_off": "{:.0f}", "lap_visits_off": "{:.0f}",
                    "laps_monthly": "{:.1f}", "eps_off_d": "{:.1f}",
                    "eps_monthly_d": "{:.1f}"})
+    #  AFTER the write, so phaseclock.tex carries no second key for a
+    #  quantity design.tex already owns. The panel header then draws, to the
+    #  character, what \num{delta_range_monthly} typesets in the sentence
+    #  beside it. `make figures` runs src/design/run.py before this module.
+    N["range_monthly"] = num("design", "delta_range_monthly")
     return N
 
 

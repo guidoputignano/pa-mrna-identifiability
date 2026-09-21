@@ -17,7 +17,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import numpy as np
 
-from design.run import P, delta, load, DOSE_INTERVAL, LOAD_FRAC, ASSAY_CV
+from design.run import (P, delta, delta_range, load, DOSE_INTERVAL,
+                        LOAD_FRAC, ASSAY_CV)
 import model_A.run as LOC
 
 TH, KM, KE = P.theta, P.Km, P.ke
@@ -256,10 +257,10 @@ def cycle_phases(times, period=T, tol=1e-6):
     return np.array(keep)
 
 
-def delta_range(times):
-    """The range of Delta/theta a schedule covers, which f4 found is what binds."""
-    inc = np.asarray(delta(times), dtype=float)
-    return float((inc.max() - inc.min()) / TH)
+#  delta_range is imported from design.run rather than spelled again here.
+#  It was written in both places, identically, and fed two keys for the same
+#  25 visits at 30.4 days: delta_range_monthly there and range_monthly here.
+#  Callers keep writing G.delta_range(t) (REVIEW_LOG.md R51).
 
 
 def settling_days(tol=0.01):
