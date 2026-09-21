@@ -9,6 +9,16 @@
 
 PY      ?= python
 LATEX   ?= pdflatex
+
+# The generators run with warnings as errors, which is what pytest.ini already
+# does for the suite. It is here as well because the suite does not reach the
+# slow generators: fig_margin, d13_decision_therapy, k4_admissibility and
+# t13_therapy_forward run only from this file. The setting is for numpy's
+# RuntimeWarnings, an invalid value in a divide or an overflow in an exp, which
+# is this repository's stated characteristic failure arriving as a printed line
+# nobody reads. Turning it on first cost fifteen unmarked LaTeX escape
+# sequences (REVIEW_LOG.md R49); it costs nothing now.
+PYW      = $(PY) -W error
 PAPER    = paper/main
 
 .PHONY: all figures refs paper paper-draft test audit check-artefacts clean distclean symbolic
@@ -20,34 +30,34 @@ all: figures paper
 # reduction, model_A is the local identification model, model_B is the
 # alternative hypothesis with a ceiling (one remark in the paper now).
 figures:
-	@echo ">> the dynamic model and its equilibrium reduction"; $(PY) src/model_C/run.py
-	@echo ">> the local identification model";                  $(PY) src/model_A/run.py
-	@echo ">> the ceiling hypothesis";                          $(PY) src/model_B/run.py
-	@echo ">> the design (slow: the decision characteristic is simulated)"; $(PY) src/design/run.py
-	@echo ">> the scope tables, whose convention lives in the audit script"; $(PY) audit/n4_theta_scope.py
-	@echo ">> the decision table (slow: 12 seeds x 400 replicates)";        $(PY) audit/d13_decision_therapy.py
-	@echo ">> the admissibility checks and the dose sensitivity";           $(PY) audit/h1_admissibility.py
-	@echo ">> the dose calibration table (slow)";                           $(PY) audit/k4_admissibility.py
+	@echo ">> the dynamic model and its equilibrium reduction"; $(PYW) src/model_C/run.py
+	@echo ">> the local identification model";                  $(PYW) src/model_A/run.py
+	@echo ">> the ceiling hypothesis";                          $(PYW) src/model_B/run.py
+	@echo ">> the design (slow: the decision characteristic is simulated)"; $(PYW) src/design/run.py
+	@echo ">> the scope tables, whose convention lives in the audit script"; $(PYW) audit/n4_theta_scope.py
+	@echo ">> the decision table (slow: 12 seeds x 400 replicates)";        $(PYW) audit/d13_decision_therapy.py
+	@echo ">> the admissibility checks and the dose sensitivity";           $(PYW) audit/h1_admissibility.py
+	@echo ">> the dose calibration table (slow)";                           $(PYW) audit/k4_admissibility.py
 	@echo ">> the K_m sweep and the profile interval, which the text quotes"
-	$(PY) audit/n1_km_cost.py
-	$(PY) audit/n6_profile_vs_crb.py
+	$(PYW) audit/n1_km_cost.py
+	$(PYW) audit/n6_profile_vs_crb.py
 	@echo ">> the transient's worth, which Sections 4.1 and 6.2 quote"
-	$(PY) audit/t1_transient_worth.py
+	$(PYW) audit/t1_transient_worth.py
 	@echo ">> the band against the VALUE of k_e, which Section 6.2 quotes"
-	$(PY) audit/t5_band_vs_ke.py
+	$(PYW) audit/t5_band_vs_ke.py
 	@echo ">> the cohort coverage with the increment CV drawn (Section 5.5)"
-	$(PY) audit/t6_cohort_with_kappa.py
+	$(PYW) audit/t6_cohort_with_kappa.py
 	@echo ">> what the structure test costs (Section 5.1)"
-	$(PY) audit/t7_structure_transient.py
+	$(PYW) audit/t7_structure_transient.py
 	@echo ">> the phase lattice and the lap condition (Remark 4)"
-	$(PY) audit/t11_phase_lattice.py
+	$(PYW) audit/t11_phase_lattice.py
 	@echo ">> the forward therapy simulation, whose run (b) Section 4.2 quotes"
-	$(PY) audit/t13_therapy_forward.py
+	$(PYW) audit/t13_therapy_forward.py
 	@echo ">> the design figures: phase clock, visits, calendar, conditioning"
-	$(PY) audit/g1_phase_clock.py
-	$(PY) audit/g2_visits_vs_sd.py
-	$(PY) audit/g3_calendar.py
-	$(PY) audit/g5_conditions.py
+	$(PYW) audit/g1_phase_clock.py
+	$(PYW) audit/g2_visits_vs_sd.py
+	$(PYW) audit/g3_calendar.py
+	$(PYW) audit/g5_conditions.py
 
 refs:
 	$(PY) tools/fetch_refs.py

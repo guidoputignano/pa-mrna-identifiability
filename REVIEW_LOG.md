@@ -2326,7 +2326,9 @@ then removed.
 
 The one thing it does not cover is a warning raised in a generator that the guard's fast
 path does not reach --- `fig_margin`, `d13_decision_therapy` and the other slow ones. Those
-run only under `make figures`, outside pytest. Noted rather than solved.
+run only under `make figures`, outside pytest. Noted rather than solved. **Closed in
+R49**, which also corrects the cost claim above: the suite's clean run had been
+measured on a warm `__pycache__`.
 
 ### R48. A second pattern, across the two misspecification results (item 39)
 
@@ -2355,3 +2357,53 @@ a theorem.
 what Section 7.2 finds "by the same mechanism". It does not --- same symptom, different
 mechanism, and the difference is the reason the directions differ. Corrected where it
 stands and the cross-reference now points at the new subsection.
+
+### R49. The warnings gap on the generator path, and what R47 had actually measured (item 41)
+
+**It could not go on as it stood, and what broke was not a generator.** `make figures
+PY="python3 -W error"` died in the fourth module, at `src/design/run.py` line 954, before
+computing anything:
+
+    ax["p2"].annotate("every draw at one phase,\nso one value of $\Delta$",
+    SyntaxError: invalid escape sequence '\D'
+
+`$\Delta$` in a string that is not marked raw. Python raises a `DeprecationWarning` for an
+unrecognised escape at *compile* time, and `-W error` turns that into a `SyntaxError`, so
+the module never imports. Swept across all 99 tracked Python files there are **15 of them
+in 4 files**: 12 in `src/common/params.py` (eleven `$\mu$M` unit cells in the parameter
+registry and one `\paramscaption` in a docstring), one in `src/design/run.py`, one in
+`tools/check_artefacts.py` and one in `tools/claims_to_tex.py`, the last two both `\input`
+and `\cite` inside docstrings.
+
+All fifteen are LaTeX and the fix is a raw-string prefix. It is output-neutral: nothing
+under `results/` changed, the annotation still concatenates to the same characters
+(`"...\n" r"so one value of $\Delta$"` keeps the real newline and the literal backslash),
+and a raw f-string still interpolates.
+
+**With that done the setting goes on, and it is inert.** The full build under `-W error`
+runs all twenty generators to exit 0, and the working tree comes back holding nothing but
+the `/CreationDate` bytes in the figure PDFs. So it is wired: `PYW = $(PY) -W error` in
+the Makefile, used by the `figures` recipe and by nothing else. `refs`, `paper` and `audit`
+keep plain `$(PY)`, because they do not compute a number the paper quotes. What this buys
+over `pytest.ini` alone is the four slow generators the guard's fast path never reaches,
+`fig_margin`, `d13_decision_therapy`, `k4_admissibility` and `t13_therapy_forward`, which
+is exactly the gap R47 left noted.
+
+**The part worth recording is what this says about R47.** That entry claimed
+`filterwarnings = error` "cost nothing: the suite passes under `-W error` today". It had
+been measured on a warm `__pycache__`. An escape-sequence warning fires when a module is
+*compiled*; once a `.pyc` is on disk the module is not recompiled and the warning is never
+raised again. Clear the caches and the same suite, on the same commit, fails:
+
+    find . -name __pycache__ -type d -prune -exec rm -rf {} +
+    python3 -m pytest -q     ->  38 failed, 54 passed in 7.29s
+
+every one of the 38 at `import design.run`, with the `SyntaxError` above as the reason. And
+`make clean` deletes `__pycache__`, so `make clean && make test` was red while `make test`
+on its own was green, on one tree, with nothing in either run saying why they differed.
+**The check added to catch a silent failure was itself silently conditional on a build
+artefact**, which is the shape of the thing it exists to prevent, one level up. After the
+fix, from a cold cache: `92 passed in 149.39s`.
+
+That is the honest cost accounting. The setting did not cost nothing. It cost fifteen
+missing `r` prefixes, and it was not paying until they were fixed.
