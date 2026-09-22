@@ -98,7 +98,7 @@ class ParamsC:
                             # half-saturations at the plasma level. Its cost is
                             # bounded rather than argued away: over Kc from 25
                             # to 800, a 32-fold range, theta_crit spans 186 to
-                            # 120, a factor of 1.56. Section 5.4 reports that.
+                            # 120, a factor of 1.56. Supplement S1.15 reports that.
     Mi: float = 300.0       # metabolite level at which acylcarnitine
                             # competition doubles the non-conjugative loss
                             # rate: delta(m) = delta_0 (1 + m/Mi)
@@ -192,7 +192,7 @@ def rhs_B(t, y, p: ParamsB, s):
 
 def rhs_C(t, y, p: ParamsC, s, k=1.0):
     """
-    The two-state system of the paper, Section 5.1.
+    The two-state system of the paper, Section 2.2.
 
     Kept in step with alt_flux_C, which is its quasi-steady reduction:
     setting dc/dt = 0 here returns alt_flux_C(m) for every m, with the same
