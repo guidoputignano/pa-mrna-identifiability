@@ -1,0 +1,38 @@
+\begin{longtable}{@{}p{0.075\linewidth} p{0.085\linewidth} p{0.22\linewidth} p{0.11\linewidth} p{0.31\linewidth}@{}}
+\caption{\paramscaption}\label{\paramslabel}\\
+\toprule
+\textbf{Symbol} & \textbf{Value} & \textbf{Meaning} & \textbf{Source} & \textbf{What the value rests on} \\
+\midrule
+\endfirsthead
+\multicolumn{5}{@{}l}{\emph{Table \thetable, continued from the previous page}}\\
+\toprule
+\textbf{Symbol} & \textbf{Value} & \textbf{Meaning} & \textbf{Source} & \textbf{What the value rests on} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{5}{r@{}}{\emph{continued on the next page}}\\
+\endfoot
+\bottomrule
+\endlastfoot
+\multicolumn{5}{@{}l}{\emph{The local identification model}} \\
+\addlinespace[2pt]
+$\bar m$ & $10$~$\mu$M & operating point: the level management holds the patient at & \textsc{assumed}\newline \emph{convention}\newline \emph{mouse} & chosen for illustration, and every design quantity is relative to it. The scale is murine~\cite{pkpd_translational}, within $1.6$ of the human newborn cut-off~\cite{dbs_3hp_cutoff} \\
+$\theta$ & $3000$~$\mu$M/d & capacity of the enzymatic channel, \textbf{at normal capacity} & \textsc{assumed}\newline \emph{convention} & chosen for illustration as \emph{normal} capacity on the parent model's scale, against residual activity under $5\%$~\cite{pcc_residual_activity} \\
+$\theta_{\mathrm{PA}}$ & $\le 150$~$\mu$M/d & capacity in the disease, on the scale of the row above & \textsc{literature}\newline \emph{derived}\newline \emph{human} & residual PCC activity in propionic acidemia is under $5\%$ of control~\cite{pcc_residual_activity}, which on the scale of the row above is $\theta \le 150$ \\
+$K_m$ & $100$~$\mu$M & half-saturation of the enzymatic channel, at the plasma level & \textsc{assumed}\newline \emph{effective} & chosen for illustration at $\bar m/K_m = 0.1$, and \emph{not} PCC's in vitro Michaelis constant, $0.29$~mM~\cite{pcc_liver_kinetics}, a different molecule in a different compartment \\
+$k_e$ & $5$~d$^{-1}$ & alternative clearance rate constant & \textsc{assumed}\newline \emph{lumped} & \textbf{no independent human measurement}: the translational model has no marker state and no elimination constant~\cite{pkpd_translational}, and the one structure with a first-order marker loss publishes no value~\cite{dose_selection_poster}. Bounded from above by the methylmalonic-acid analogue, $\num{ke_mma}$~d$^{-1}$~\cite{ke_mma_analogue} \\
+$\lambda$ & $\ln 2/3.5$~d$^{-1}$ & decay rate of the therapeutic increment & \textsc{literature}\newline \emph{measurable}\newline \emph{mouse, rat, monkey} & the translational model's PK, allometrically scaled from mouse, rat and monkey~\cite{pkpd_translational} \\
+$T_{\mathrm{dose}}$ & 14~d & interval between therapeutic doses & \textsc{literature}\newline \emph{measurable}\newline \emph{human} & the biweekly schedule of model-informed dose selection~\cite{dose_selection_poster}; the trial dosed every two or three weeks~\cite{trial_phase12} \\
+$D$ & $6000$~$\mu$M/d & size of one therapeutic increment & \textsc{assumed}\newline \emph{calibration}\newline \emph{mouse} & chosen for illustration so the marker falls by about two thirds at peak, against the trial's reported falls~\cite{trial_phase12} \\
+$\sigma$ & a family, $\mu$M/d & standard deviation of the ordinate of the fit & \textsc{assumed}\newline \emph{lumped} & deliberately not assigned: nothing here bounds how well the load is recorded, so it is carried as a family indexed by the row below \\
+$\mathrm{CV}$ & $5\%$ & analytical variability of the marker assay & \textsc{assumed}\newline \emph{measurable}\newline \emph{human (MMA); mouse} & chosen for illustration. The nearest published repeatability, the breath test's, is between-visit and in methylmalonic acidemia~\cite{breath_test_mma}, so it bounds this from above rather than measuring it \\
+$s_{\ln k_e}$ & $0.8$ & sd of the log-normal prior on $k_e$ & \textsc{assumed}\newline \emph{prior width} & chosen for illustration, tighter than the factor of $\num{ke_needed_factor}$ the gate needs, so the gate passes with it in place \\
+$\sigma_L/L$ & $5\%$ & relative error in the recorded substrate load & \textsc{assumed}\newline \emph{measurable} & chosen for illustration. Measurable by a weighed intake study; none exists in propionic acidemia, where records are prescriptions rather than intake as eaten \\
+\addlinespace
+\midrule
+\multicolumn{5}{@{}l}{\emph{The parent model and its equilibrium reduction}} \\
+\addlinespace[2pt]
+$k$ & $1$~d$^{-1}$ & conjugation rate constant, which cancels from the reduced curve & \textsc{assumed}\newline \emph{eliminated}\newline \emph{human} & cancels from the reduced clearance exactly, and nothing fixes it. Chosen for illustration; its cost off equilibrium is bounded in \S S2 \\
+\addlinespace
+\multicolumn{5}{@{}p{0.92\textwidth}}{\emph{The remaining 11 registered constants are in the supplement, \S S2, with the full provenance of every row in this table.}} \\
+\end{longtable}

@@ -63,6 +63,15 @@ MORNING, AFTERNOON = 0.0, 0.5
 
 
 # --------------------------------------------------------------------- utils
+#: every interpolated number this module draws, classified for
+#: tools/check_artefacts.py:check_figure_numbers. See that function for what
+#: the classifications mean and for what the check can and cannot verify.
+DRAWN = {
+    "n_cal": "input: figure()'s own n_cal argument, the visit count this "
+             "calendar was drawn at",
+}
+
+
 def day_index(t, dose_offset):
     """The calendar day a visit at cycle time t falls on, day 0 = DOSE_DAY."""
     return int(np.floor(t + dose_offset + 1e-9))

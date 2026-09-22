@@ -12,7 +12,6 @@ Produces
                              response of each to a selective perturbation
     fig_A4_population        deficiency of the population system against N
     fig_A5_load_error        amplification of misspecification in s
-    tab_A_rank               rank against number of distinct levels
 
 Run:  python src/model_A/run.py
 """
@@ -28,6 +27,7 @@ from scipy.optimize import brentq, least_squares
 from common.models import (ParamsA, g, clearance_A, steady_state,
                            sensitivity_A, condition_number)
 from common.style import save, write_table, figsize, GREEN, RED, BLUE, AMBER, GREY, MUTED, corner, over_x, at_point
+from common.numbers import NumberBook
 
 
 P = ParamsA()
@@ -50,6 +50,33 @@ ASSAY_CV = 5.0     # per cent, never flux units. A sigma comes from sigma_from_l
 #  Km, a known (a, b) leaves a one-parameter family, not a point. These are
 #  its parametrisation and its endpoints.
 # =====================================================================
+#: the two numbers this module's figures assert about the model, accumulated
+#: here and written by fibre_numbers() rather than recomputed at draw time.
+#: Two figure functions contribute, so it is a NumberBook: a second writer
+#: giving a key a different value fails at accumulation instead of
+#: last-write-wins, which is the bug that gave track_pct two values.
+FIBRE_NUMBERS = NumberBook()
+
+#: every interpolated number this module draws on a figure, classified for
+#: tools/check_artefacts.py:check_figure_numbers.
+DRAWN = {
+    "thB": "input: patient B's capacity, a setting of the comparison",
+    "keB": "input: patient B's k_e, likewise",
+    "theta": "input: the capacity this panel was drawn at",
+    "FIBRE_NUMBERS['load_error_factor']": "registered: the load-error "
+        "amplification factor, which Section 2.5 discusses",
+    "FIBRE_NUMBERS['fibre_theta_fold']": "registered: the fold of theta "
+        "consistent with (a, b) across the K_m band under noiseless data. "
+        "NOT scope.tex's band_fold, which is the working band in theta",
+    "WIN['mtol_window_pct']": "registered: the same object write_numbers "
+                              "takes as mtol_window_pct",
+    "M_TOL": "input: the tolerable-level convention this panel is drawn "
+             "against",
+    "100 * sf": "input: the load fraction this curve was drawn at",
+    "nn": "input: the visit count this curve was drawn at",
+}
+
+
 def fit_ab(p: ParamsA, m_bar=M_OP):
     """The tangent intercept and slope of total clearance at m_bar."""
     gm = g(m_bar, p.Km)
@@ -174,9 +201,16 @@ def fig_channels():
     ax[1].plot(m, clearance_A(m, P2), color=RED, ls="--",
                label=rf"B: $\theta={thB:.0f},\ K_m=50,\ k_e={keB:.1f}$")
     ax[1].plot([m_op], [clearance_A(m_op, P)], "o", ms=5, color=MUTED, zorder=4)
-    at_point(ax[1], (m_op, clearance_A(m_op, P)), "same value\nand slope",
-             dx=26, dy=-16, arrow=True, fontsize=7.5, color=MUTED,
-             ha="left", va="top")
+    #  the label went BELOW the point, where it landed on the x-axis label
+    #  and printed over it; a small offset above put it on the curves
+    #  instead. The clear air is the upper middle of the panel, so the label
+    #  goes there in axes coordinates and reaches the point with an arrow.
+    ax[1].annotate("same value\nand slope",
+                   xy=(m_op, clearance_A(m_op, P)), xycoords="data",
+                   xytext=(0.30, 0.78), textcoords="axes fraction",
+                   fontsize=7.5, color=MUTED, ha="left", va="center",
+                   arrowprops=dict(arrowstyle="-", color=MUTED, lw=0.7,
+                                   shrinkA=2, shrinkB=3))
     over_x(ax[1], op_hi * 1.4, "operating\nregime", frac=0.97, color=BLUE,
            fontsize=7.5)
     ax[1].set_xlim(0, 300)
@@ -367,9 +401,11 @@ def fig_load_error():
     ax[0].axhline(0, color=GREY, lw=0.6)
     ax[0].axvline(0, color=GREY, lw=0.6)
     slope = np.polyfit(eps * 100, rel, 1)[0]
+    FIBRE_NUMBERS["load_error_factor"] = float(slope)
     ax[0].set_xlabel(r"error in assumed load $s$  [%]")
     ax[0].set_ylabel(r"resulting error in $\theta$  [%]")
-    ax[0].set_title(f"at $\\theta = {theta:.0f}$: factor {slope:.2f}")
+    ax[0].set_title(f"at $\\theta = {theta:.0f}$: "
+                    f"factor {FIBRE_NUMBERS['load_error_factor']:.2f}")
     ax[0].legend()
 
     # The factor is not a property of the model. It is C(m)/(theta g(m)),
@@ -418,8 +454,9 @@ def fig_fibre():
              arrow=True, fontsize=7.5, color=MUTED, ha="right", va="top")
     ax[0].set_xlabel(r"$K_m$")
     ax[0].set_ylabel(r"$\theta$ consistent with $(a,b)$")
-    ax[0].set_title(f"one band, {th.max() / th.min():.0f}-fold in "
-                    r"$\theta$" "\nwith noiseless data")
+    FIBRE_NUMBERS["fibre_theta_fold"] = float(th.max() / th.min())
+    ax[0].set_title(f"one band, {FIBRE_NUMBERS['fibre_theta_fold']:.0f}-fold "
+                    "in " r"$\theta$" "\nwith noiseless data")
 
     ax[1].plot(Ks, kes, color=AMBER, lw=2.0)
     ax[1].plot([P.Km], [P.ke], "o", ms=6, color=MUTED, zorder=5)
@@ -503,13 +540,23 @@ def fig_margin_fibre():
     mts = np.linspace(12.0, 320.0, 400)
     wid = np.array([(lambda w: 100 * (w[1] - w[0]) / (0.5 * (w[0] + w[1])))
                     (margin_window(a0, b0, x)) for x in mts])
+    #  The three widths the registry's m_tol row quotes, computed HERE so the
+    #  number this panel draws and the number results/numbers/local.tex holds
+    #  are one object. They were two: the panel read its dot off the sweep
+    #  grid with np.interp while the registered value solved margin_window at
+    #  m_tol exactly, so the figure and the registry were two computations of
+    #  one quantity with nothing comparing them.
+    WIN = {x: 100 * (lambda w: (w[1] - w[0]) / (0.5 * (w[0] + w[1])))
+                 (margin_window(a0, b0, x)) for x in (15.0, M_TOL, 160.0)}
+    WIN = {"mtol_window_lo_pct": WIN[15.0], "mtol_window_pct": WIN[M_TOL],
+           "mtol_window_hi_pct": WIN[160.0]}
     ax[2].semilogx(mts, wid, color=BLUE, lw=2.0)
-    ax[2].plot([M_TOL], [np.interp(M_TOL, mts, wid)], "o", ms=6, color=MUTED,
+    ax[2].plot([M_TOL], [WIN["mtol_window_pct"]], "o", ms=6, color=MUTED,
                zorder=5)
     ax[2].axvline(M_OP, color=GREY, ls=":", lw=1.0)
     over_x(ax[2], M_OP, r"  $\bar m$", frac=0.94, color=MUTED, fontsize=7)
-    at_point(ax[2], (M_TOL, np.interp(M_TOL, mts, wid)),
-             f"{np.interp(M_TOL, mts, wid):.0f}% at "
+    at_point(ax[2], (M_TOL, WIN["mtol_window_pct"]),
+             f"{WIN['mtol_window_pct']:.0f}% at "
              f"$m_{{\\mathrm{{tol}}}} = {M_TOL:.0f}$",
              dx=10, dy=-4, arrow=True, fontsize=7, color=MUTED,
              ha="left", va="top")
@@ -553,10 +600,15 @@ def fig_margin_fibre():
     print(f"    undetermined window: s_peak in ({lo:.1f}, {hi:.1f}) = "
           f"({lo / base:.2f}x, {hi / base:.2f}x) baseline, "
           f"width {100 * (hi - lo) / (0.5 * (lo + hi)):.1f}% of centre")
-    for x in (15.0, 40.0, 160.0):
-        w = margin_window(a0, b0, x)
-        print(f"      m_tol = {x:5.1f}: width "
-              f"{100 * (w[1] - w[0]) / (0.5 * (w[0] + w[1])):6.2f}% of centre")
+    #  the width at the two ends of the m_tol sweep is what the registry's
+    #  m_tol row quotes as the cost of that convention, so it is generated
+    #  here rather than read off this function's stdout and typed in.
+    for k in ("mtol_window_lo_pct", "mtol_window_pct", "mtol_window_hi_pct"):
+        print(f"      {k}: width {WIN[k]:6.2f}% of centre")
+    from common.numbers import write_numbers
+    write_numbers("local", WIN,
+                  {"mtol_window_lo_pct": "{:.1f}", "mtol_window_pct": "{:.1f}",
+                   "mtol_window_hi_pct": "{:.0f}"})
 
 
 # =====================================================================
@@ -1052,17 +1104,12 @@ def fig_design():
 
 
 # =====================================================================
-def table_rank():
-    rows = []
-    for levels in ([10.0], [10.0, 12.0], [10.0, 12.0, 14.0],
-                   [10.0, 50.0, 200.0], [10.0, 12.0, 14.0, 16.0]):
-        S = np.array([sensitivity_A(m, P) for m in levels])
-        rows.append([len(levels), np.linalg.matrix_rank(S, tol=1e-10),
-                     "yes" if np.linalg.matrix_rank(S, tol=1e-10) == 3 else "no"])
-    write_table("tab_A_rank",
-                ["distinct levels of $m$", "rank of $S$", "all three identifiable"],
-                rows,
-                note="three distinct levels are necessary and generically sufficient")
+#  table_rank() used to write results/tables/tab_A_rank.tex here, on every
+#  build, and no document ever showed it. Its claim -- the sensitivity matrix
+#  reaches full rank at three distinct marker levels and not before -- is
+#  Proposition 1's, and it is now asserted in
+#  tests/test_three_distinct_levels_identify_the_local_model rather than
+#  printed into a table nobody reads.
 
 
 def table_design():
@@ -1121,6 +1168,59 @@ def table_design():
     return rows
 
 
+def fibre_bias_numbers():
+    """
+    What a bounded load bias leaves open in the capacity, computed exactly.
+
+    Matching the three invariants of Section 3.2 for a record generated at
+    load L+b and fitted with the load held at L gives
+
+        K_m_hat = K_m (1 + b/L),   theta_hat = theta - b (1 + K_m k_e / L)
+
+    with NO higher-order term: the fibre is curved in (theta, K_m) but the map
+    from a load bias to the fitted capacity is affine. So the interval a bound
+    on b leaves open is arithmetic rather than a linearisation, and the paper
+    can say so. audit/t12_triples.py R2b checks it three ways, one of which
+    shares no code with audit/f5_fibre.py.
+    """
+    from common.params import LOAD_FRAC
+    L = baseline_load()
+    slope = 1.0 + P.Km * P.ke / L
+    b = LOAD_FRAC * L
+    FIBRE_NUMBERS["bias_slope"] = float(slope)
+    FIBRE_NUMBERS["bias_theta_factor"] = float(
+        (P.theta + b * slope) / (P.theta - b * slope))
+    print(f"    the load-bias map is exactly affine, slope {slope:.4f}; "
+          f"a {100*LOAD_FRAC:.0f}% load record leaves theta open by "
+          f"{FIBRE_NUMBERS['bias_theta_factor']:.4f}")
+
+
+def fibre_numbers():
+    """
+    Write what the two fibre figures assert, once both have contributed.
+
+    The assert is not decoration. A partial write is the failure mode this
+    file has already had twice: a generator the build did not reach wrote a
+    file five keys short and nothing noticed, because a short file is a
+    valid file (REVIEW_LOG.md R23 and the reachability check that followed).
+    Here the keys come from two different figure functions, so the way to be
+    short is to call one and not the other, and that fails loudly.
+    """
+    from common.numbers import write_numbers
+    fibre_bias_numbers()
+    want = {"load_error_factor", "fibre_theta_fold", "bias_slope",
+            "bias_theta_factor"}
+    missing = want - set(FIBRE_NUMBERS)
+    assert not missing, (
+        f"fibre_numbers() called before {sorted(missing)} were computed; "
+        f"fig_load_error() and fig_fibre() must both run first")
+    write_numbers("fibre", FIBRE_NUMBERS,
+                  {"load_error_factor": "{:.2f}",
+                   "fibre_theta_fold": "{:.0f}",
+                   "bias_slope": "{:.3f}",
+                   "bias_theta_factor": "{:.3f}"})
+
+
 if __name__ == "__main__":
     print("MODEL A")
     fig_channels()
@@ -1129,10 +1229,11 @@ if __name__ == "__main__":
     fig_population()
     slope = fig_load_error()
     fig_fibre()
+    fibre_numbers()
     fig_margin_fibre()
     fig_design()
-    table_rank()
     table_design()
     from common.params import write_params_table
-    write_params_table()
+    write_params_table()                 # full, for the supplement
+    write_params_table(compact=True)     # main text, cost bounds only
     print(f"  load-error amplification factor: {slope:.3f}")

@@ -1070,3 +1070,1657 @@ narrow enough.
 rule requires and which in this case produced the answer before the data were read. Had the
 table been read first, `-26` and `-25` points on two of four markers would have looked like a
 finding.
+
+---
+
+### R19. "Removing the $k_e$ prior takes the same design from 0.1474 to 0.6451"
+
+**Retracted** (Phase 7, step 2). Stated in three places and computed in none:
+`paper/sections/07_design.tex:40`, `paper/sections/A1_supplementary.tex:524`, and
+`src/design/run.py`'s `_filter` docstring in rounded form, "from 0.15 to 0.65".
+
+`audit/n3_ke_prior_worth.py` searched for them. Over the five designs Section 7 lists, 24
+intake records each, and 60 combinations of horizon, sampling interval and phase offset at
+the seed the paper itself used, nothing returns `0.1474` and nothing returns `0.6451` with
+the prior removed. The nearest approach to the first is `0.1490`; the prior-off values run
+from `0.92` upward.
+
+On the densest design that section lists, sampling every two days for two years, the pair
+is **`0.1500` `[0.1498, 0.1501]` with the prior and `1.1096` `[1.0313, 1.1923]` without**,
+medians over 24 records. Taken record by record the prior is worth a factor of **`7.4`
+(`6.9` to `7.9`)**, not the `4.4` the printed pair implies.
+
+**The correction roughly doubles what the prior is carrying.** It makes the paper's own
+concern sharper: the one prior the design depends on is doing twice the work the paper
+said, and by the `k_e` row of Table 2 no published source supplies the constant it is a
+prior on.
+
+**How it was found.** Not by looking for it. Registering `s_{ln k_e}` as a table row, which
+the Phase 7 provenance audit required because the width lived as a default argument, meant
+carrying the sentence into the table, and the table's rule is that a number arrives with
+its footing. There was no footing to find.
+
+---
+
+### R20. Quoting Cramér–Rao curvatures where a reader reads an interval
+
+**Retracted** (Phase 7, step 2), and this one is a labelling failure rather than a wrong
+number, which is why it touches every precision in the paper rather than one.
+
+`sd(ln theta-hat)` as reported throughout is `sqrt([F^-1]_11)`: the curvature of the log
+likelihood at its optimum. It correctly describes the **sampling spread** of `theta-hat`
+over repeated records, and `audit/n6_profile_vs_crb.py` confirms that it does, with the
+MLE running `2715` to `3757` over 16 records against a truth of `3000`.
+
+What it does not describe is the interval one record supports, and the abstract invited
+exactly that reading: "identify theta to 17% over two years". Profiling `ln theta` and
+re-optimising `(ln K_m, b, ln k_e)` at each point with the paper's own priors, the 95%
+profile interval on the recommended monthly design is a factor of **`3.76`** wide (`2.86`
+to `5.08` across records) against the **`1.95`** the bound implies, a ratio of `1.93`.
+
+The interval is asymmetric, and the asymmetry is the paper's own degeneracy: lowering
+`theta` is compensated by raising `K_m`, so the profile has a long tail downward while its
+upper end sits about where the bound puts it. The paper already knew the surface is not
+quadratic. `rem:second_order` says so and says the profile is the diagnostic that works.
+It had never run that profile at the design it recommends.
+
+At a disease-range capacity the failure is not one of width. Six of six profile intervals
+run off the bottom of a grid spanning four log units: the record does not bound `theta`
+from below **at all**, and the MLE itself lands between `3` and `224` against a truth of
+`150`. What the record does supply there is an upper bound, ruling out capacity above about
+24% of nominal.
+
+**What changed in the paper.** The abstract no longer quotes `17%`; it quotes the interval.
+`rem:curvature` states the distinction where the precisions are introduced, and the
+specification table labels its entries as sampling spreads.
+
+**Re-check.** On a noiseless record the profile's curvature at the truth is the same second
+derivative as the bound, and they agree to `0.39%`. So the optimiser is not what is being
+measured.
+
+---
+
+### R21. Every design number in the paper was a single draw
+
+**Retracted** (Phase 7, step 2) as a class, not as a figure.
+
+`design_record(times, load_cv=None, seed=3)` draws the day-to-day intake from
+`default_rng(seed)`. No caller in `src/design/run.py` ever passed a seed, so every number
+`table_designs` and `spec_numbers` produced, and every design figure in the paper, was one
+intake record. The author's standing rule is that anything with a random draw carries its
+seed spread.
+
+Mostly it did not matter. The monthly headline moves 0.11% from seed 3 to the 24-record
+median. **On the weak designs it mattered, and on one of them it mattered in the paper's
+favour**: the aliased fortnightly row's seed-3 value of `3.51` is the *minimum* of its own
+24-record range `[3.51, 5.64]`, and the median is `4.58`. Requoted record by record, the
+aliasing cost is a factor of **`27` (`21` to `33`)** rather than the twenty-two the paper
+claimed. The sharpest rule in the paper is sharper than it said.
+
+Other requotings: two-monthly `0.187` to `0.188` `[0.184, 0.194]`; six-monthly `0.418` to
+`0.457` `[0.412, 0.510]`; the Tier 1 requirement on the increment from `11.7%` to `11.6%`
+`[11.4, 11.9]`; the `k_e` factor the gate needs from `2.95` to `2.67` `[2.65, 2.68]`.
+
+`design_record`'s seed is now `BASE_SEED`, with `SEEDS`, `median_spread` and `tex_spread`
+beside it, and both generated tables carry medians with ranges.
+
+**The sharpest part of this one.** Section 2.6 has said, since before this branch,
+that "every stochastic result uses `numpy.random.default_rng` with an explicit seed named
+at the call site, and each quoted precision is a median over 24 seeds unless stated
+otherwise". **Neither half was true.** The seed was a default argument named at no call
+site, and no design precision was a median over anything. The paper asserted a
+methodological standard it did not meet, in the section whose job is to state the standard,
+and the assertion is what makes the defect a retraction rather than an improvement. It is
+true now.
+
+---
+
+### R22. The carnitine reduction, reconciled with PR #3 rather than left in conflict
+
+**Retracted** (Phase 7, step 2), and the finding is not this branch's. `PR #3`
+(`claude/pensive-hamilton-1ga7l2`) established it; this branch was asserting the opposite in
+four places, and two branches must not go to review disagreeing about the same equations.
+
+**What PR #3 claims, and whether it holds.** Checked here from the equations rather than
+taken on trust, because adopting a reading on the strength of a PR description would be the
+same failure this log exists to record.
+
+`rhs_C` has `c-dot = R_0 - k c [u(m) + rho_0(1 + m/M_i)]`, so:
+
+1. **`k` cancels from the reduced curve.** Setting `c-dot = 0` gives
+   `c* = R_0 / (k[u + rho])`, and the conjugation flux `k c* u` is `R_0 u/(u + rho)`, with
+   `k` gone. Verified numerically over `m` from 1 to 1000 and `k` over four orders of
+   magnitude: worst relative spread `2.45e-16`, which is machine precision. **Holds.**
+2. **`k` alone sets the relaxation rate.** `d(c-dot)/dc = -k[u + rho]`, so
+   `tau_c = 1/(k[u+rho])`, exactly proportional to `1/k` at every `m`. **Holds.**
+3. **Therefore `k` sets the reduction's validity off equilibrium.** Starting the two-state
+   system with carnitine at a pre-perturbation value, the peak relative error in `m`
+   against the reduced system is **21.6% at the assumed `k = 1`**, `8.5%` at `k = 10`,
+   `1.3%` at `k = 100`, `0.14%` at `k = 1000`. Error times `k` settles to a constant, which
+   is the `1/k` scaling asymptotically; below `k = 1` it saturates (`26.9%` at `k = 0.1`)
+   because a relative error cannot exceed order one. **Holds, with that qualification**:
+   "scales as `1/k`" is asymptotic, not global, and PR #3's phrasing does not say so.
+4. **The timescale premise runs backwards.** At the model's own `k` the carnitine time
+   constant is `0.92` d against the marker's `0.81` h, slower by a factor of **27**. The
+   external half is Rebouche's whole-body turnover of 38 to 119 h with a fast compartment at
+   2 to 3 h, staged in `refs.sources` and named in prose rather than cited, because this
+   environment cannot resolve the DOI and the register checks citations against the
+   committed bibliography. **Holds.**
+
+**What this branch was asserting, now withdrawn.** `02_model.tex` said the carnitine state
+is fast relative to the metabolite, quoting `0.8` h against `3.5` d, which compares the
+marker against the *therapy* and not carnitine against the marker. It said `k` is a free
+scale and no conclusion depends on it. It called the reduction verified rather than
+asserted, on the strength of an integration that is the same identity and so cannot fail at
+any parameter value. And it stated the divergence above the separatrix without the
+qualification that the reduced separatrix is a lower bound on the basin rather than the
+basin. `alt_flux_C`'s docstring called this an adiabatic elimination of a fast state and
+`rhs_C`'s called `k` a free scale. All six are corrected here in the convention PR #3 uses.
+
+**What replaces the premise.** Nothing needs a separation of timescales. `alpha` is defined
+by solving `c-dot = 0`, and `c-dot = 0` holds exactly at any fixed point, so at equilibrium
+the two formulations are one equation rearranged. Every quantity this paper takes from the
+parent is computed at equilibrium, where the cost is zero. The bound above is what a
+*transient* would cost, and it is the third reason the discussion excludes the
+decompensation route.
+
+**Table 2's `k` row** is reclassified `derived -> assumed`, since nothing fixes `k`, and now
+carries that cost. `derived` meant "fixed by a constraint elsewhere in the model", and only
+"it cancels, so it does not matter" made it defensible.
+
+**Still to reconcile at merge.** PR #3 also rewrites Section 2.6's verification claim and
+the discussion's decompensation exclusion, and corrects the supplement's parallel passages.
+This branch has separately rewritten the discussion. Whichever merges second will need to
+take the other's wording in those three places; the equations and the `k` row now agree, so
+the conflict is textual only.
+
+---
+
+### R23. The design table was generated by a function no entry point called
+
+`table_designs()` writes `results/tables/tab_D_designs.tex`, which is Table 3 of the
+paper, and nothing called it. `make figures` runs `src/design/run.py`, whose `__main__`
+listed `fig_excitation`, `fig_collapse`, `fig_decision`, `fig_protocol`,
+`table_excursion` and `table_spec` -- not `table_designs`. So the committed table froze at
+whatever the code produced the last time someone ran the function by hand.
+
+By the time the seed work of R21 landed, the two had diverged. The committed table carried
+single-seed numbers with no ranges (six-monthly `0.4177`, fortnightly `3.5050`), while the
+text beside it quoted medians over 24 records (`0.457`, and `4.58` with a range of `3.51`
+to `5.64`). `3.5050` is the *minimum* of the fortnightly row's seed range, so the table
+was quoting the single most flattering draw of the design the paper calls a catastrophe.
+The paper therefore printed, side by side, a table and a sentence that disagreed, and the
+rule R21 adopted -- no single-seed numbers -- held in the text and not in the table.
+
+Fixed by adding `table_designs()` to the module's `__main__` and regenerating. Three text
+numbers keyed to the stale table are requoted: the one-dose-cycle row `0.219 -> 0.216`
+(`0.205` to `0.230`), the dense row `0.1499 -> 0.1500`, and the dropped-increment span
+`1.0`--`9.4` -> `1.05`--`10.6`.
+
+`audit/n7_increment_worth.py`'s R2 now reads the generated file and compares it against
+what the code produces, so a table that drifts from its generator fails a check rather
+than sitting in the paper.
+
+### R24. What carrying the increment is worth, measured rather than asserted
+
+Section 4 claimed that carrying the therapeutic increment is "worth between one and two
+orders of magnitude on every design in the table, prior-free". Measured record by record
+over 24 intake records (`audit/n7_increment_worth.py`), on the designs a protocol could
+adopt: a factor of **52 to 141** with no prior on `k_e` at all, and **7 to 16** with the
+`0.8` log-prior in place. The prior-free claim survives; stated without the "prior-free"
+qualifier it would not, so the paper now quotes both numbers and says which is which.
+
+Three re-checks: the sequential filter against one batch normal-equation solve (agrees to
+0.32 times the round-off floor `eps * kappa(F)`, the tolerance derived from the
+conditioning rather than guessed); the generated table against the code (R23); and, with
+the dose train switched off, carried and dropped must be bit-identical, which they are --
+so the measured factor is reporting the increment and nothing else.
+
+### R25. Two rendering faults in generated artefacts
+
+**Table 2's `theta` row carried a literal tab.** `src/common/params.py` wrote the meaning
+cell as a non-raw Python string, so `"\textbf{at normal capacity}"` became a TAB followed
+by `extbf{at normal capacity}`, and both the main-text and supplement tables printed
+`extbf{at normal capacity}` in the row that says what `theta` is. Fixed at source.
+
+**The main-text table kept five long notes where the text names three.** The compact table
+selects its notes by symbol, and the parent-model block carries rows with the same symbols
+as the local block, so the parent's `theta` and `K_m` kept their full provenance too. The
+selection is now made per block. With the two rendering faults fixed, Table 2 drops from
+about three and a half pages to two and a half.
+
+**Figure 6's axis read `sign error on mu [\%]`.** Matplotlib mathtext renders `\%` outside
+math mode literally, so the escape reached the page, in the axis label and in all three
+legend entries. Fixed and the figure regenerated.
+
+---
+
+## Standing policy: the adversarial pass runs before a measurement is reported, not after
+
+Until now the order was measure, report, then check. It is now measure, check, then
+report. **A first report of a new measurement is provisional until the adversarial pass
+has run**, and it is to be labelled as provisional if it is handed over before then.
+
+The two cases that set the rule, both from the Vandermonde round:
+
+**A weighting claim reported as fact, refuted by the check that should have preceded it.**
+`audit/t10_vandermonde.py`'s `sd_vandermonde` built `A = Vw' Vw / sigma^2 + pen` without
+normalising the weight to the exact weight's scale. With `w = 1` the transformed residual
+has standard deviation `sigma (K_m + m)`, about `106 sigma` on this record, so the data
+term came out roughly `1.1e4` too large and **both priors were silently discarded**. The
+number that reached the PI, a factor of 59 for going unweighted, was an artefact of that.
+Corrected, unweighted costs 0.06%, a factor of 1.00. The fix is one line,
+`w = w * (sigma / np.mean(s * w))`, and the check that found it was the one that ought to
+have run before the number was quoted, not after.
+
+**A hardcoded literal in a script whose job was to compute that literal.** The same file
+printed "2.3e4 times the second" for a column-norm ratio it never computed. The true
+ratios are 146 and 1.7e4, and they are now computed. A number typed into a measurement
+script is the same hazard as a number typed into a sentence, with the additional
+property that it looks measured.
+
+Both survived a green build and a read-through. Neither would have survived being asked
+to refute itself, which costs minutes. The cost of the old order is not the wrong number,
+it is that the wrong number arrives with the authority of a measurement and has to be
+walked back.
+
+This does not replace the rule from R14 that a retraction goes through adversarial lenses
+before it is written. It extends the same standard to the ordinary case.
+
+---
+
+## Standing rule: where two artefacts must agree, have them write the same key
+
+**An agreement that has to be checked is an agreement that can fail silently.** When two
+pieces of this repository compute the same quantity, do not add a check that they match.
+Make them write the same generated key, so that a disagreement raises `DuplicateKey` at
+accumulation and there is no path on which the build is green and the two differ.
+
+The instance that prompted it. The protocol figure drew a `range` bar per schedule and
+`tab_D_designs` published `delta_range_*` for the same three steps over the same two-year
+grid. Two computations of one quantity, in one document, with nothing comparing them. The
+fix was not a test. The figure now writes `PAPER_NUMBERS["delta_range_monthly"]` itself,
+so `NumberBook.__setitem__` is the comparison: if the figure ever drifted from the table,
+the build would stop at the second write rather than print two numbers and pass.
+
+It is the same shape that fixed `track_pct`, and that is the point. There the two values
+were the same key written twice with different meanings, and the repair was to make the
+key say which. Here they are one meaning computed twice, and the repair is to make the
+two writes land on one key. Both turn "someone has to notice" into "it cannot happen".
+
+Where to reach for it: a figure and a table that state the same number; a figure and a
+sentence; a fast generator and a slow one that must agree; a value computed in two modules
+because importing across them would be circular. Prefer it over an `assert`, over a unit
+test, and over a comment saying the two must be kept in step.
+
+**Its converse is a rule too, and it is the one that bites.** Shared keys are only correct
+for the same quantity at the same settings. Two computations that legitimately differ need
+different keys *and* a sentence saying how they differ, or the shared name becomes a
+false claim of agreement. Figure~E1's $14.5$-day panel and the $14.5$-day row of the text
+are the case: $25$ visits against $51$, $348$ days against $725$, a range of $1.80$
+against $1.99$. Same schedule, different records. They keep separate keys and Section 4.3
+now says so, because a reader who met only the numbers would have merged them.
+
+---
+
+## Standing rule: a generated number must be stable at the sample size it is generated at
+
+Not "no stochastic numbers": this repository is full of legitimate ones, medians over
+twenty-four intake records at fixed seeds, and they are the right way to report a
+simulated quantity. The rule is narrower and it is about **stability**, because a
+generated number is diffed against HEAD on every build and one that wanders with the seed
+turns the artefact guard into a coin flip.
+
+**If a candidate figure moves between sample sizes by more than its own reported
+precision, it does not get generated at that sample size.** Three ways out, in order of
+preference: raise `n` until it is stable; replace it with a closed form; or leave it in
+this log, where a measurement belongs and where nothing diffs it.
+
+The case that produced the rule. The fraction of this module's prior box in which the
+parent's clearance peak drops below the local model's ceiling reads `0.14%` at 600 draws
+and `0.23%` at 4000. That is sampling noise on about five events, and `{:.1f}` on it
+claims a precision the estimate does not have. It was replaced by the closed-form upper
+bound, `1.5%`, which is exact, seed-free and still says the thing the sentence needs.
+The swept figure is two paragraphs up in R39.
+
+The test is cheap and should be run before any new key is added: generate it at `n` and
+at `4n` and compare against the format string it will be written with.
+
+---
+
+## Standing rule: a section number in this log is resolved through the aux, not the filename
+
+The section files keep prefixes from structures the document no longer has. Two of the
+eight still match the section they produce and six do not:
+
+| file | built section |
+|---|---|
+| `01_question.tex` | 1 |
+| `02_model.tex` | 2 |
+| `06_excitation.tex` | **3** |
+| `07_design.tex` | **4**, the design |
+| `07b_decision.tex` | **5** |
+| `08_specification.tex` | **6**, the specification |
+| `11_scope.tex` | **7**, the scope |
+| `12_discussion.tex` | **8**, the discussion |
+
+**What went wrong.** Twelve references in the entries for items 20 to 47 were read off the
+filename and named the wrong section. Item 40's clause is in `sec:tierstruct`, which is
+**6.2**, and was recorded as §5. The vacuous comparison of the eighth instance is in
+`sec:schedule`, which is **4.3**, and was recorded as §7. All twelve are corrected in
+place, because an entry exists to say where a decision landed and one that sends a reader
+to the wrong section is worse than one that names no section at all. The paper itself was
+never affected: every cross-reference in it is a `\ref` and resolves through the same aux.
+
+**How to resolve one.** Find the passage, take the `\subsection` that encloses it, and read
+that subsection's `sec:` label out of `paper/main.aux` or `paper/supplement.aux`. The label
+is canonical. The filename is not, and neither is the nearest preceding `\label{sec:...}`,
+because several subsections label themselves some lines in: the paragraph that says
+"Figure E1 draws the same three" sits in **6.4** while the last label before it is
+`sec:tierincrement`, which is 6.3.
+
+**What has not been re-resolved, and why.** Thirty-three references in entries written
+before item 20 are left as written. They name the structure of their own time, and five of
+the numbers among them, nine references in all, are impossible under this one: §1.3, §3.6,
+§3.7, §5.5 and §5.6, since §1 and §5 have no subsections at all and §3 has five. Rewriting them would falsify a record of what an
+earlier document said. **Read a section number in an entry before item 20 as naming that
+entry's document and not this one.**
+
+## Standing rule: a page count is reported with its rerun count
+
+A page number off a short build is not wrong here, it is unverified. Both documents
+converge before the second pass today: `Rerun to get` is 0 at four passes at all seventeen
+heads measured in R53, which is why a two-pass count agreed with a four-pass one
+everywhere. That is a property of these documents at this size and structure, not of the
+method, and the next structural change is exactly when it stops being true.
+
+So a page count is quoted with `grep -c 'Rerun to get' paper/main.log` beside it, and
+undefined references are counted as `LaTeX Warning: Reference` and `LaTeX Warning:
+Citation` rather than as `grep -c undefined`, which also counts font-shape warnings and
+returns 1 on the supplement for `T1/lmr/bx/sc`.
+
+## This project's characteristic failure: a number that does not say what it is a number of
+
+Six instances of one shape, a seventh of another and an eighth of a third. That is past
+coincidence and worth naming so the next person looks for it by default rather than
+finding it a ninth time. The six below share a shape and a fix. The seventh and the
+eighth share neither, with each other or with the six, and are recorded after them,
+because a reader who applies the six's fix to either will not catch it. The eighth is
+not a wrong number at all.
+
+| | what was displayed | what it was actually a number of |
+|---|---|---|
+| `trans_angle` | an angle, in degrees | a quantity with no referent; deleted, not corrected |
+| `track_pct` | the marker's departure | the departure after a tolerance-dependent window, keyed as though tolerance-free |
+| `min(q, N)` | "25 phases" | the panel's own visit count, on three of five panels |
+| the two managed levels | "the managed level" | `10` in the local model and `81.93` in the parent, in one paragraph |
+| the three admissibility readings | one verdict | three checks that agree only at two coincidence points |
+| the `theta_hat = 151` ladder | a fitted capacity | a fit whose band, weighting and free parameters were never recorded |
+
+**The shape is always the same.** A quantity is computed correctly, reported accurately,
+and displayed without the qualifier that fixes its referent. Nothing is wrong with the
+arithmetic in any of the six. What is missing is the part of the label that would let a
+second person recompute it and get the same thing. That is why none of them failed a test
+and why all six survived a green build: **a check can compare two numbers but it cannot
+tell you what a number is of.**
+
+Where it comes from is worth naming too. Five of the six arose at a boundary --- between
+two models, between two readings of one check, between a figure and a table, between a
+tolerance and the quantity it conditions. Inside one module the referent is carried by
+context and never needs saying; the moment a number crosses a boundary the context does
+not cross with it.
+
+So the habit to acquire: **when a number crosses a boundary, carry its referent across
+with it explicitly**, in the label, in the key name, or in the sentence. The three rules
+above are all special cases. The adversarial pass catches it when the referent is wrong;
+the shared-key rule prevents it by making two computations one; this rule says the missing
+referent is the thing to look for first.
+
+---
+
+### The seventh instance, whose shape is not the same (item 42)
+
+**What happened.** `theta_crit` was one value, `150.7747475984808`, computed once and
+reported twice. `margin.tex` carried it at `{:.0f}` and the margin figure drew `151`;
+`boundary.tex` carried `fit_theta_crit` at `{:.1f}` and the discussion wrote `150.8`. In
+the one paragraph where the threshold sits beside a fitted `theta_hat` of `151.01`, the
+figure said the threshold was `151`, and a reader could not tell the threshold from the
+estimate. R45 has the repair.
+
+**Why it is not one of the six.** In all six the referent was missing or wrong: the label
+did not say what the number was a number of. Here both labels were right. `theta_crit`
+said threshold, `fit_theta_crit` said threshold, and both printed values were correct to
+every digit shown. What failed was the precision. Rounding a threshold of `150.77` to
+`151` did not misdescribe it, it made it collide with the one quantity the paragraph put
+it next to. The six's fix, carry the referent across the boundary, would have changed
+nothing here. That is why it is recorded apart from them.
+
+**So the shape is: one quantity, two renderings, and the coarser rendering collided with
+what the sentence was comparing it against.** The fault is not in the number and not in
+the label. It is in the distance between two printed numbers, which is a property of
+neither of them alone.
+
+**Is it enforceable? Half of it, and the half that is not is the half that bit.**
+
+The route of fixing precision where the quantity is computed, generators emitting
+formatted strings rather than raw numbers, is already this repository's practice and was
+already its practice when this happened. `results/numbers/*.tex` stores rendered strings
+and not floats, so a key has exactly one rendering in the document; `common.numbers.num`
+returns that same string so a figure draws what `\num{}` typesets; and
+`audit/g1_phase_clock.py` states the rule in its own docstring, "a header rounding 1.9873
+to 1.99 while the sentence beside it prints 1.987 is the same drift in miniature". So the
+other route, looking for one key that appears with two format specifiers, is already
+looking for something that cannot happen. It is also not what happened. This seam was two
+*keys*.
+
+**The checkable generalisation is indistinguishability, not equality.** Flag two keys
+quoted in one paragraph whose values agree once both are rounded to the coarser of their
+two displayed precisions. That rule catches this case exactly, because `151` and `151.01`
+agree at nought decimal places. Measured against the document as it stands: 326 of the 329
+generated keys are plain numbers, 57 paragraphs quote more than one key, and the rule
+flags **17 pairs**.
+
+Triaging the 17 is what decides whether it can be a gate, and it decides that it cannot.
+
+- Three are the `min(q, N)` instance already in the table above: `reached_monthly`,
+  `reached_off` and `visits`, all at 25.
+- Several are equal for a reason, and the reason is a small theorem. `available_off` (28
+  lattice phases) and `lap_visits_off` (28 visits to a full lap) agree because a lap
+  visits each lattice phase exactly once. `available_fortnightly` and
+  `reached_fortnightly` are both 1 because the dose-interval schedule has one phase and
+  reaches it.
+- Some are coincidences between unrelated quantities, such as `share_5pct` at 16.3 beside
+  `struct_sigma_3min` at 16.3 in the abstract.
+- And **one is this same shape, live.** This entry first said two, and one of the two was
+  not. `delta_range_monthly` (design.tex) and `range_monthly` (phaseclock.tex) were two
+  implementations of one quantity on one record: `np.arange(0, 730, 30.4)` is 25 points,
+  `fixed(25, 30.4)` is the same array, the arrays compare identical and both ranges are
+  `1.843777`. `src/design/run.py` computed `(inc.max() - inc.min()) / P.theta` inline
+  while `audit/g_design_common.py` computed `(inc.max() - inc.min()) / TH` as a function,
+  which is the hazard `g_design_common.level`'s own docstring names, "two spellings of
+  one equation is how they drift". The second pair, `delta_range_aliased` and
+  `range_fortnightly`, is **not** a duplication: 53 visits against 25, a genuinely
+  different record, agreeing because a schedule at `eps = 0` saturates, which Section 6.4
+  already states. Merged, and this bullet corrected, in R51.
+
+**So: a report, not a gate, and the argument for it is not its hit rate.** Seventeen flags
+of which most are correct and waivable would be switched off inside a week if they failed a
+build, and on hit rate alone that would be the right decision. What earns it is what it
+found on its first run, which was not a duplication. It was **a sentence that asserted
+nothing**, which the duplication had been making look like a claim (R51, and the eighth
+instance below). A pair of keys that render the same is a candidate vacuous comparison, and
+no other check here can see one: every number in it is correct. So the listing is worth
+keeping, with each pair waived by name or merged.
+
+**The residue is habit, and it is the part that bit.** The rule needs both numbers to be
+`\num{}` keys in one paragraph. The collision here was between a *figure label* and a
+*sentence*, and no paragraph-scoped rule sees a figure. Nor is "a threshold and an
+estimate must be distinguishable" a numerical fact; it is a claim about what the sentence
+is for. So the habit is: **when a number is printed in order to be compared with the one
+beside it, print both to the precision that separates them**, and read the figure against
+the paragraph, not only the paragraph against itself.
+
+---
+
+### The eighth instance, which is not a wrong number but an empty sentence (item 47)
+
+**What it was.** Section 4.3 read: *the ranges are over these 25 draws and not over the
+two-year record of Table D: monthly reads `range_monthly` here against
+`delta_range_monthly` there, and the 14.5-day schedule `range_off` against
+`delta_range_off`.* Both monthly numbers were `1.84`. Both were correct, both were
+correctly labelled, and for monthly the two-year record **is** those 25 visits, so the
+clause set one number against itself and called it a comparison.
+
+**Why it is worse than the six, and worse than the seventh.** In every one of those
+something was wrong: a referent missing, a precision colliding. Here nothing was wrong.
+There was nothing to check, because a check would have compared `1.84` against `1.84`,
+found them equal, and equality is what the sentence was presenting as the finding. **A
+wrong number can be caught by recomputing it. An empty sentence cannot be caught by
+recomputing anything**, because it makes no claim to recompute. What kept it invisible was
+the redundant name: with two keys it reads as a contrast between two quantities, and with
+one key it reads "monthly reads 1.84 here against 1.84 there" and is visibly nothing.
+
+**Where it came from, which is the portable part.** Item 20 asked for the figure's
+14.5-day design and the text's 14.5-day design to be told apart, and that distinction is
+real: 51 visits against 25, `1.99` against `1.80`. The clause written to carry it was then
+stated over the panels as a set. It is true of the one it was written for, empty for
+monthly, and empty-but-explained for the fortnightly pair, which Section 6.4 handles by
+saying outright that the number does not depend on how long one samples. **A clause written
+for one member of a set and then quantified over the set goes empty exactly on the members
+whose reason does not hold.** So what to look for is not the number, it is the quantifier:
+when a sentence says "these all differ", or "each reads X here against Y there", check the
+members rather than the values.
+
+**And it is what the indistinguishability report is actually for.** That check was argued
+above on its hit rate, seventeen flags mostly waivable, which is a weak argument and would
+have lost. The strong one is this instance: two keys rendering the same is the only visible
+trace a vacuous comparison leaves, because every number in it is right. Corrected in R51,
+where Section 4.3 now says it for the 14.5-day schedule alone and says of monthly that its
+two-year record is those visits.
+
+---
+
+### R26. Two conditioning claims about the Vandermonde form, neither of which holds
+
+Recorded because a negative that is not written down gets re-proposed. The reframing
+itself was adopted and is in Section 3.2; these two claims about it were not.
+
+The form is right, and it is the paper's own. Clearing the balance by `(K_m + m)`, not by
+`m`, gives `Delta_i m_i = A + B m_i + C m_i^2`, a Vandermonde system in `(A, B, C)` whose
+nodes are the marker levels. Checked symbolically: `A = K_m(L+b)`, `B = L+b-theta-k_e K_m`,
+`C = -k_e`, which are Section 3.2's three invariants exactly. Same three numbers, same
+fibre.
+
+**(a) `cond(V)` does not price the factor of 27.** It cannot: `Delta` lives in the
+response and `V` is built from the marker levels alone, so `V` cannot express aliasing at
+all. With a varying load the nodes stay distinct even at the dose interval, and `cond(V)`
+is finite there while the design is singular. This is also why the Vandermonde vocabulary
+went into Section 3.2 and not into Remark 4.
+
+**(b) `cond(V)` does not price the factor of 9.5 either**, and no choice of units prices
+both: in `m/K_m` units the ratio comes to 22.7 on (a) but 76 on (b). The column norms are
+19.1, 2.22e3 and 3.25e5, so the second column is 146 times the first and the third 1.7e4
+times it. That spread is the units of `m`, not a property of the design.
+
+**(c) The unweighted fit costs nothing worth naming.** 0.06%, a factor of 1.00. See the
+standing policy above for what the first answer to this was and why.
+
+### R27. The closed form for the triples estimator is the fibre of (7), by a third route
+
+`audit/t12_triples.py` R2b, and it came free. Section 3.2's invariants are
+`A = K_m(L+b)`, `B = L+b-theta-k_e K_m`, `C = -k_e`. A record generated at load `L+b` and
+fitted with the load held at `L` has to match all three, and `C` matches for nothing, so
+
+    K_m_hat = K_m (1 + b/L),    theta_hat = theta - b (1 + K_m k_e / L)
+
+which is the triples estimator's own bias formula, derived for a different purpose.
+Differentiated at `b = 0` it gives `d(theta)/db = 1 + K_m k_e / L = 2.5492957746`, and
+that is exactly the `theta`-to-`b` ratio of `prop:rank`'s null vector with the bias
+carried, `n = (L + b + k_e K_m, -K_m, 0, L + b)` (R14). The two agree to `0.00e+00`.
+
+Stronger than the tangent claim it was put as: the closed form is **exact in `b`**, not a
+first-order approximation. Refitting a record made at load `L+b` with the load held at `L`
+reproduces both `theta_hat` and `K_m_hat` to a relative `7e-15` to `4e-14` across
+`b` in `[-150, +300]`, with residuals at `9e-14`, a range far wider than any study would
+see.
+
+So the identity now has three verifications that share no code: `audit/f5_fibre.py`
+integrates the null field; this solves the invariants; and the estimator was built to
+answer a different question and landed on the same number.
+
+### R28. The parent channel is nearly quadratic over the working band, and the queue stays closed
+
+Recorded, not chased. Over the 3.4-fold band the record visits, `alpha(m) - k_e m` is
+nearly quadratic in `m`, so a misspecified parent channel is very nearly inside the span
+of the quadratic every triple fits. That is why the triple-averaging diagnostic of item 18
+cannot separate the two channels: a 55% bias in `theta` moves the statistic by a few per
+cent. A load bias does the same thing at degree one, and degree one is inside the same
+span. The observation says what the failure is rather than suggesting a fix, and no fix
+is being looked for.
+
+### R29. The number-provenance rule now reaches figure text, and the first thing it caught was a caption
+
+`tools/check_artefacts.py:check_figure_numbers`. The rule: a number a figure draws as a
+claim about the design must come from a registered generator, exactly as a table number
+does. A number that is an axis tick, a fact about the drawing, or a restatement of the
+setting the panel was drawn at, need not.
+
+**How much of it is enforceable, and which part is not.** Three parts, and only two of
+them are machine-checkable.
+
+1. *Finding the numbers: enforceable.* An AST pass finds every interpolation in text
+   built at a drawing call, across f-strings, `%` on a literal and `.format()`. It
+   resolves this repository's own text helpers (`corner`, `over_x`, `beside_y`,
+   `at_point`) out of `common/style.py` rather than listing them, which matters: the
+   first version listed matplotlib names only, saw 23 drawn numbers, and the four helpers
+   were hiding 8 more, among them `theta_crit` and the safety margin.
+2. *Checking that a number is registered: enforceable.* Three shapes pass, all verified
+   rather than declared: a call to `common.numbers.num(module, key)`, which reads the
+   committed file so the figure draws what `\num{}` typesets; an index into the dict the
+   module hands to `write_numbers`; and an expression the module registers verbatim
+   elsewhere, which is how the dose train's `trough` is also `train_trough_frac`.
+3. *Deciding whether a number is a claim: NOT enforceable, and nothing makes it so.*
+   `{v:.2f}` in a title is the same syntax whether it is a design claim or an axis
+   annotation. So the rule is enforced as a **declaration**: each figure module carries a
+   `DRAWN` dict classifying every interpolation it draws, a drawn number that is not
+   declared fails, a declaration for a number no longer drawn fails, and
+   `UNREGISTERED:` is debt the guard prints on every run. What the guard cannot check is
+   whether a declaration is honest. Writing `geometry:` over a claim passes. The
+   declaration is what gives a reviewer something to review, which is the most that is
+   available here.
+
+Also outside it, and counted rather than assumed: 28 interpolated strings in figure
+modules are built away from any drawing call, console output and table cells subtracted.
+The guard prints that number so the gap is a number and not a silence.
+
+**Standing: 29 drawn numbers, 5 registered, 8 unregistered claims.** The eight are named
+with their reasons in the modules' own `DRAWN` dicts and printed on every run.
+
+**What it found on day one.**
+
+*Section 6.4 said the figure draws three numbers it does not draw.* The sentence gave the
+two-year ranges as 1.84 monthly, 1.99 at 14.5 days and 0.13 fortnightly, then said
+"Figure 6 draws them". Figure 6 draws 25 visits, and 25 visits a fortnight apart cover
+348 days, so its 14.5-day panel reads **1.80**, not 1.99. Monthly and fortnightly happen
+to agree, the first because 25 monthly visits is already the two-year record and the
+second because the collapse does not depend on how long one samples. Corrected, and
+Figure 6 now registers its own fifteen numbers into `results/numbers/phaseclock.tex`, so
+the caption's five hand-typed figures (`25 of 35`, `25 of 28`, `1 of 1`, `1.84`, `0.13`)
+are `\num{}` keys the guard diffs against HEAD.
+
+*The margin panel and the registry were two computations of one number.* Panel (c) of the
+fibre-margin figure read its dot off a 400-point sweep grid with `np.interp`, while
+`results/numbers/local.tex` registered `mtol_window_pct` from an exact `margin_window`
+solve at the same abscissa. Nothing compared them.
+
+They are now one object: `fig_margin_fibre` builds the three widths into the dict it hands
+`write_numbers` and draws out of that dict, so `np.interp` no longer appears in any drawn
+string. **And the two agreed, which is worth saying plainly rather than leaving the entry
+to imply otherwise.** The grid was fine enough that the gap was `14.778341` against
+`14.778437`, a relative `1e-5`, and both round to the `15%` the panel drew and the `14.8`
+the registry held. Nothing in the paper was wrong. What was wrong was that two
+computations of one quantity sat in one document with nothing to make them agree, and the
+next person to coarsen that grid would have found out from a reader.
+
+*Two duplicated literal blocks.* `GENERATORS` in `src/common/numbers.py` listed five stems
+twice and `paper/preamble.tex` input five numbers files twice. Both harmless, both the
+same class as the duplicate-key bug `NumberBook` exists for, and both removed.
+
+### R30. The periodicity strip on Figure 6, tried and dropped
+
+The phase overlay gives up one thing the polar dial it replaced could show: that phase is
+circular, so a draw at 13.9 d is adjacent to one at 0.1 d rather than at the far end of
+the panel. The cheap fix is to repeat the first day or so of the cycle, faded, past the
+right edge. It was implemented and rejected on looking at it.
+
+It costs the two panels that carry the result. The fortnightly draws all sit at phase 0,
+so the repeat puts a second cluster at 14 d and the panel reads as **two** groups of
+draws, against a caption that says all twenty-five are on one point. The marker row is
+worse: the repeated points sit near `m = 3.5` beneath a curve that ends near `9`, which
+reads as stray data rather than as the next cycle beginning. At text width the faded
+curve segment is also too faint to be seen as a curve at all.
+
+One strip of ink is not worth weakening the aliasing panels. The adjacency stays a
+sentence in the caption, and the reasoning is in the module docstring so the next reader
+does not re-propose it.
+
+### R31. The eight unregistered figure claims, cleared before the preprint
+
+R29 left eight numbers that figures assert about the design with no generator behind them.
+That is the population that produced `trans_angle`, `track_pct` and the `min(q,N)` header,
+and a preprint is the point after which they stop being cheap to fix. All eight are now
+registered, and `check_figure_numbers` reports **29 drawn, 13 registered, 0 unregistered**.
+
+| was | is |
+|---|---|
+| `excitation(lo, hi, Km)`, drawn in the excitation legend for two bands | `E_held` and `E_info` in `design.tex`. Neither was `decomp_E`, which is a third band, the decompensation excursion of `tab_D_excursion` |
+| `rng`, the range bar of the protocol figure | keyed straight into `PAPER_NUMBERS` under the same `delta_range_*` names `tab_D_designs` writes |
+| `slope`, the load-error amplification factor | `load_error_factor` in the new `fibre.tex` |
+| `th.max()/th.min()` | `fibre_theta_fold`, `169`. Not `band_fold`, which is the working band in `theta` |
+| `thc`, `margin[i]`, `lo[i]`, `hi[i]` | `theta_crit`, `margin_nominal`, `margin_band_lo`, `margin_band_hi` in the new `margin.tex` |
+
+**The range bar is the one worth reading twice.** Rather than give it a key of its own, it
+writes the key `tab_D_designs` already owns. Both compute the range over
+`np.arange(0, 730, dt)` on the same three steps, so if they ever disagreed the
+`NumberBook` would raise `DuplicateKey` at accumulation. The comparison is no longer a
+check somebody has to remember to write; it is the data structure. `make figures` runs
+both and does not raise, so they agree to a relative `1e-12`.
+
+Two new stems, because a module's numbers file is written in one call and a second call
+would clobber it: `fibre` (`src/model_A/run.py`, accumulated across two figure functions
+into a `NumberBook` and written by `fibre_numbers()`, which asserts every expected key is
+present so a partial write fails loudly) and `margin` (`src/model_C/run.py`). `fibre` is
+cheap and joins the guard's fast path; `margin` costs 48 s and is covered by
+`--working-tree` after `make figures`, as `decision` and `profile` already are. The guard's
+fast path also gained `fig_excitation` and `fig_protocol`, without which the regenerated
+`design.tex` comes out two keys short.
+
+### R32. Figure 6's 14.5-day panel is the lap condition, drawn
+
+The caption said every panel shows "*the same* 25 visits". It shows the same *number* of
+visits. `n` is held at `\num{visits}` and the spans run from `\num{span_fortnightly}` days
+at the dose interval to `\num{span_spread}` phase-spread, so the ranges are not like for
+like in calendar time. The caption now says which is held fixed and why.
+
+**And the two shortfalls in "25 of 35" and "25 of 28" are not the same kind**, which the
+bare counts hide completely.
+
+* Monthly's step leaves `eps = 2.4` days, so 25 visits sweep **4.3 laps** of the dial. It
+  exhausted what its step can reach long ago and its `25 of 35` is `q > n`, nothing more.
+  Its range is the complete one, `1.84` here and `1.84` in `tab:designs`.
+* The 14.5-day step leaves `eps = 0.5` days, so 25 visits sweep **89% of one lap** and
+  stop. It needs **28** visits to satisfy `n eps >= T`, and the `1.80` it reads against the
+  `1.99` of a completed lap is exactly what that shortfall costs.
+
+So the figure was already illustrating `eq:lap` in the one panel where it binds, by
+accident. It says so now, out of `lap_pct_off`, `lap_visits_off`, `laps_monthly`,
+`eps_off_d` and `eps_monthly_d`, all generated.
+
+### R33. The load-bias map is exactly affine, and the paper now says so
+
+R27 established the closed form by three routes. The consequence belongs in the text, not
+only here. Section 3.1 said `prop:rank`'s null vector is the fibre's tangent at `b = 0`
+and left it there, which reads as though a bound on the load bias is priced by a
+linearisation. It is not:
+
+    K_m_hat = K_m (1 + b/L),    theta_hat = theta - b (1 + K_m k_e / L)
+
+exactly, at every `b`, with no higher-order term. The fibre is curved in `(theta, K_m)`
+and the map from a load bias to the **fitted capacity** is affine. So the factor of
+`1.028` that a 5% load record leaves open is that map evaluated **at** the bound rather
+than near it. The slope `2.549` and the factor `1.028` are now generated
+(`bias_slope`, `bias_theta_factor`), and the `1.028` that had been typed into the sentence
+is a `\num{}` like everything else.
+
+### R34. The two 14.5-day designs, and what the lap condition is actually shaped like
+
+**The check first, because it could have gone the other way.** `sd_aliased_off` = `0.1614`
+is computed on `np.arange(0, 730, 14.5)`: **51 visits across 725 days, 1.82 laps of the
+dial, 28 of 28 phases reached**. The lap completes with room to spare, so the figure is
+not quoting a number earned on a record short of a lap and the lap condition has no
+unpriced consequence hiding behind it.
+
+**But the figure and the text were two designs wearing one name**, which is what a reader
+would have merged:
+
+| | visits | span | laps | phases | range | sd |
+|---|---|---|---|---|---|---|
+| the text's $14.5$-day row | 51 | 725 d | 1.82 | 28/28 | 1.99 | 0.1614 |
+| Figure 6's $14.5$-day panel | 25 | 348 d | 0.89 | 25/28 | 1.80 | 0.1739 |
+
+Section 4.1 now gives the first its `n`, its span and its lap count, and says in one
+clause that the panel is not it. That is the converse of the standing rule above: the two
+keep separate keys *because* they are separate quantities.
+
+**And the shape of the rule came out of the check.** `n eps >= T` reads like a knife-edge
+and is not one. Sweeping the lap fraction at three fixed visit counts, so that `n` cannot
+be doing the work:
+
+| `n eps / T` | 0.02–0.04 | 0.19 | 0.38 | 0.50 | 0.75 | **1.00** | 1.50 | 3.00 |
+|---|---|---|---|---|---|---|---|---|
+| sd at n=25 | 4.044 | 0.924 | 0.456 | 0.207 | 0.180 | **0.171** | 0.172 | 0.171 |
+| sd at n=40 | 2.228 | 0.452 | 0.251 | 0.187 | 0.169 | **0.164** | 0.165 | 0.164 |
+| sd at n=53 | 1.455 | 0.309 | 0.196 | 0.177 | 0.164 | **0.160** | 0.161 | 0.161 |
+
+The cost falls steeply up to one lap and is flat afterwards, at **every** `n`, and the
+`Delta/theta` range saturates in the same place, which is the mechanism. So `n eps >= T`
+is not a threshold chosen for tidiness: it is exactly where the cost stops falling. Being
+half a lap short costs about 20%; being at 4% of a lap costs a factor of 9. The rule is
+earned. Recorded here and not put in the paper, which states the inequality correctly
+already.
+
+### R35. Item 22. Forward simulation of the therapy against capacity
+
+`audit/t13_therapy_forward.py`, 81 s, measurement only. No paper text, and nothing here is
+dosing guidance: Section 6.7 already says a protocol written from this work is not a rule
+for escalating a patient, and a forward simulation at an **assumed** capacity is weaker
+evidence than that, not stronger. What it can inform is a protocol's missed-dose
+contingency, which is a document-level decision.
+
+Needs no identifiability at all, which is the point. `theta` is swept as a percentage of
+the model's normal (100, 20, 10, 5, 2, 1) and never estimated or cited; the objective is
+marker exposure and not the sign of `theta - theta_crit`, whose threshold Section S1.20
+shows moving by a factor of 24 across its own constants; and every trajectory past the
+parent's clearance maximum is marked rather than reported beside the rest. The four
+constants the setup rests on are computed from the code and reproduce what the paper
+already commits to: clearance maximum `3.365` against 3.4 times managed, upper equilibrium
+`12.607` against 12.6, ceiling `6.455` against 6.45, largest admissible `D` at 5% of
+`2671.9` against 2672.
+
+> **RETRACTED IN PART, see R36.** The flag this section reports, "past the clearance
+> maximum", was computed against a threshold that misread the paper. **No row of (a), (b)
+> or (c) is outside what the parent supports.** Everything else below stands; the
+> retraction is confined to the flags and to the sentences that read them.
+
+**(a) The swing grows as capacity falls, and the disease-range column is flagged before
+anything is even perturbed.** A dose in mg/kg is fixed in absolute terms while `theta` is
+not, so `Delta_peak/theta` runs from 2.1 to 213 across the sweep.
+
+| theta | untreated | mean | peak | trough | fold | above managed |
+|---|---|---|---|---|---|---|
+| 100% | 10.00 | 6.50 | 8.91 | 3.40 | 2.62 | 0% |
+| 20% | 34.06 | 13.70 | 24.68 | 4.57 | 5.40 | 64% |
+| 10% | 45.72 | 16.02 | 31.00 | 4.78 | 6.49 | 69% |
+| 5% | 54.02 | 17.51 | **35.32** | 4.89 | 7.22 | 71% |
+| 2% | 60.04 | 18.55 | **38.41** | 4.96 | 7.74 | 72% |
+| 1% | 62.24 | 18.92 | **39.55** | 4.99 | 7.93 | 72% |
+
+The bolded peaks are past the clearance maximum at `3.4 x managed = 34`. **At 5% of
+nominal and below the BOOKED, UNDISTURBED schedule is already outside what the parent
+supports**, which is a stronger statement than the one the missed-dose run was expected to
+produce. Admissibility breaches at 10% and below, reproducing Section 7.1 row for row.
+
+**(b) The interval has no pharmacological optimum, and "7 days" would have been the edge
+of a sweep reported as a result.** At fixed delivered rate, exposure falls monotonically
+as the interval shortens, at every capacity, towards the continuous-delivery limit where
+`Delta -> R/lambda = 2164`:
+
+| theta | h=28 | h=14 | h=7 | h=3.5 | h=1 | continuous |
+|---|---|---|---|---|---|---|
+| 100% | 7.23 | 6.50 | 6.15 | 6.05 | 6.01 | 6.008 |
+| 5% | 26.59 | 17.51 | 13.91 | 12.95 | 12.66 | 12.634 |
+| 1% | 29.74 | 18.92 | 14.71 | 13.60 | 13.26 | 13.240 |
+
+So the answer to "does the best interval depend on theta" is that there is no best
+interval to depend on it: within this model more often is monotonically better and the
+question is practical, not pharmacological. What *does* move with capacity is the peak,
+and the peak is what the admissibility ceiling binds on, so the trade a protocol faces is
+peak against burden. (The convergence to the closed-form continuous limit is also a free
+check on the integrator: `13.264` at h=1 against `13.240`.)
+
+**(c) The missed dose: the effect is large, it grows sharply as capacity falls, and the
+obvious remedy is inadmissible exactly where it would help.** Excess exposure is in
+undisturbed-cycle equivalents.
+
+| scenario | 100%: peak / excess / rejoin | 5%: peak / excess / rejoin |
+|---|---|---|
+| 1 d late | 9.08 / 0.001x / 14 d | 37.79 / 0.008x / 20 d |
+| 3 d late | 9.36 / 0.012x / 24 d | 42.13 / 0.076x / 28 d |
+| 7 d late | 9.70 / 0.065x / 28 d | 48.09 / 0.393x / 30 d |
+| skipped | 9.92 / 0.500x / 26 d | 52.44 / 1.710x / 28 d |
+| skipped, double at next | 9.92 / 0.258x / 39 d | 52.44 / 1.275x / 42 d |
+
+A day late costs nothing. A skipped dose costs half a cycle's exposure at normal capacity
+and **1.7 to 1.9 cycles at 5% and below**, and its peak goes from `0.99 x managed` at
+normal to `6.03 x` at 1%, against a `theta -> 0` ceiling of `6.45 x`. So yes, a patient
+with more residual capacity tolerates a gap far better, and the size of that effect is a
+factor of about 3.8 in excess exposure and 6.1 in peak across the sweep.
+
+**The double dose was checked against the ceiling before being reported as an option, and
+it fails.** It does help: it cuts excess exposure roughly in half at normal capacity and
+by a quarter at 5%. But it drives `theta + Delta_peak` to `4.05 x normal` at 5% and
+`10.7 x` at 1%, so it is inadmissible at exactly the capacities where the gap hurts most,
+and it lengthens the return to the steady cycle rather than shortening it (26 to 39 days
+at normal). Reported as a negative.
+
+**The honest limit on all of (c).** Every disease-range row is past the clearance maximum,
+including the undisturbed baseline. The model can say a gap is bad and cannot say how bad.
+
+**Two bugs the adversarial pass caught before any of this was reported**, which is the
+standing policy earning its place again in the same session it was written down.
+
+* *The admissibility check was rewritten instead of imported, and got it wrong.* The first
+  version used a fixed `normal = 3000`; the check infers `normal = theta / 0.05`, so the
+  bound is `Delta_peak <= 19 theta` and it tightens as capacity falls. The two agree at 5%
+  of nominal, where `theta/0.05` is exactly 3000, and disagree everywhere else: the wrong
+  one reported the booked dose inadmissible at **normal** capacity and would have been
+  presented as a contradiction of Section 7.1 that did not exist. It now calls
+  `n4_theta_scope.d_ceiling` rather than carrying a second spelling.
+* *The doubled dose was silently merged into a single one.* `forward()` keyed its jump off
+  `np.isclose(doses, a)` after a `np.unique()` on the segment edges, so two doses at one
+  time delivered one dose. "Skipped, double at next" came out **bit-identical** to
+  "skipped" and read as a real null result. Doses now carry per-dose amplitudes, and R4 of
+  the recheck section is a regression for exactly this.
+
+Twelve checks in the adversarial pass, all passing: the cycle-map fixed point against a
+sixty-dose forward run by a route sharing no code (`4e-11`), the six constants against the
+paper's committed values, the increment channel against its closed-form geometric sum
+(`1.5e-15`, off the dose times where the output carries both sides of the jump), the
+doubled-dose regression, tolerance invariance at seven times the sampling, and the rejoin
+time against a doubled watch window.
+
+**Provisional, as item 22 asks.** CI cannot verify anything pushed at the moment, so every
+number above stands on the local run and the twelve checks, and on nothing else.
+
+### R36. The "past the clearance maximum" flag was mine and it was wrong
+
+R35 reported that at 5% of nominal and below the booked, undisturbed therapy schedule is
+already outside what the parent model supports, and called that a stronger statement than
+the missed-dose run was asked to produce. **It is withdrawn.** No trajectory in any of the
+three runs is outside what the parent supports, and at the constants this repository
+carries none can be.
+
+**The error.** Section 8 says the parent "has a clearance maximum at $3.4$ times the
+managed level". `audit/t13_therapy_forward.py` applied that $3.4$ to the LOCAL model's
+managed level of `10`, giving a fixed threshold of `33.6`. The $3.4$ is a ratio to the
+PARENT's own attractor, `81.93`, at the parent's own defaults. Two things are wrong with
+transferring it:
+
+* the two reference levels are not the same kind of thing. `11_scope.tex` says the
+  parent's `theta = 300` is "about a tenth of normal", so `81.93` is a **disease-range**
+  operating point, while the local `10` is the **100%** row of the same table;
+* and the ratio is not scale-free in the first place. Across capacity and load it runs
+  from about `2.9` to `275`, a spread of ninety-fold, so no fixed multiple stands in for
+  it. The companion figure `12.6` is worse: an upper equilibrium exists only when
+  `theta < s`, so at this load there is none at all at `100%` or `20%` of nominal.
+
+**The paper is not at fault, and that was tested rather than assumed.** The discussion's
+own arithmetic, that 42% of a band running to eight times the managed level lies beyond
+the clearance peak, is coherent only if every "managed level" in it is the parent's
+`81.93`: with the local `10` the whole band sits below the peak and the fraction is `0%`,
+not `42%`. The sentence is self-consistent and the misreading was entirely at this end.
+
+**What the bound actually is.** `dC/dm = 0` carries no load, verified symbolically, so the
+clearance maximum's LOCATION is a function of capacity alone and needs no cross-model load
+calibration to mean anything. In absolute marker units, and as a multiple of the local
+managed level:
+
+| theta | 100% | 20% | 10% | 5% | 2% | 1% |
+|---|---|---|---|---|---|---|
+| parent clearance maximum | 1768.3 | 388.8 | 275.7 | 222.6 | 192.4 | 182.7 |
+| as a multiple of managed | 176.8x | 38.9x | 27.6x | 22.3x | 19.2x | 18.3x |
+| run (a)'s peak, as a fraction of it | 0.5% | 6.3% | 11.2% | **15.9%** | 20.0% | **21.6%** |
+
+The withdrawn threshold of `33.6` was too low by `5.4x` to `52.6x`. The closest any run
+gets to the real bound is `21.6%` of it.
+
+**And it can never fire here, which is worth stating as structure rather than as a table.**
+`dm/dt = L - (theta+Delta) g(m) - k_e m <= L - k_e m`, so every trajectory at this load
+obeys `m <= L/k_e = 64.5`; and the parent's peak lies above `sqrt(K_c M_i) = 173.2` for
+every `theta > 0`, because that is where the alternative route's derivative changes sign.
+A margin of `2.68x`. This is a fact about the carried constants and not a theorem: over
+this repository's own prior box on `(K_c, M_i, rho_0)` the inequality reverses in about
+`0.3%` of corners, where `sqrt(K_c M_i)` falls near `50`.
+
+**What item 23 actually asked, and the answer.** The question was whether the local model
+places the disease-range patient on a branch the parent calls a separatrix. **It does
+not.** The local model's operating point is `0.5%` to `34%` of the way to the parent's
+clearance maximum at every capacity swept, always on the rising branch, and it cannot be
+otherwise given the `64.5 < 173.2` margin above. So `11_scope.tex`'s disease-range numbers
+are not computed at a point the parent refuses as a steady state, and nothing needs saying
+in Section 8 beside the existing misspecification result.
+
+**One thing the adversarial pass killed that had looked like a finding.** An intermediate
+route reported that the parent puts the same patient `2.28x` lower than the local model
+does, and that the parent would therefore clear the patient down to its own attractor.
+That is an artefact. `R0` is not a free parameter: `R0_for_peak` solves it against a named
+baseline load, and `tests/test_models.py` enforces the constraint. Holding `R0 = 1122` while
+moving the load to `322.727` breaks it. Re-derive `R0` at the new load and the parent puts
+the patient `1.61x` **higher** instead; under the repository's other cross-model convention
+(`t12_triples.py`'s `R0_STAR`, matched at the operating point) several capacities have no
+equilibrium at all. **The direction of the cross-model disagreement is whatever one
+chooses `R0` to be, so there is no finding there and none is reported.** The separatrix
+answer above survives because it needs only the load-free `173.2`, which is `R0`-free too.
+
+**Checks.** Four independent establishing routes and three adversarial lenses
+(calibration, numerics, semantics); the numerics lens re-derived the clearance curve
+symbolically with exact rationals and Sturm sequences, at 40-digit precision, and by
+integrating the unreduced two-state parent. None broke the retraction. `t13` now carries
+`R7`, a regression proving the withdrawn threshold fires at `5%`, `2%` and `1%` and the
+corrected bound at nothing; `R8`, the symbolic load-freeness; and `R9`, the margin.
+Fifteen checks, all passing.
+
+### R37. Which admissibility reading each verdict is on: three, not two, and t13 is on one
+
+Item 24 asked whether `t13` mixes readings. **It does not: every admissibility number and
+verdict in runs (a), (b) and (c) is on one reading, R2, including the double dose's
+`4.05x` and `10.7x`.** They are now labelled as such where they print.
+
+But the audit turned up a third reading and a trap worth recording.
+
+| | normal | D | verdict across 100/20/10/5/2/1% | breaches |
+|---|---|---|---|---|
+| **R1** | inferred, `theta/0.05` | scaled with capacity | `0.157` at every capacity | never |
+| **R2** | inferred, `theta/0.05` | booked | `0.157 / 0.583 / 1.117 / 2.183 / 5.383 / 10.717` | 10% and below |
+| **R3** | fixed at `3000` | booked | `3.133 / 2.333 / 2.233 / 2.183 / 2.153 / 2.143` | everywhere |
+
+R1 is what `ceiling_blind_pct` describes, the version that cannot bind. **R1 and R2
+coincide at `theta = 3000`; R2 and R3 coincide at `theta = 150`, where `theta/0.05` is
+exactly `3000`. Every anchor number the paper quotes, the `2.18` and the `2672`, sits on
+one of those two coincidence points**, so no number currently in the paper discriminates
+the readings, and a reader cannot tell from the text which is meant.
+
+`11_scope.tex`'s sentence is where that bites: it introduces the alternative as "read
+instead with `theta = 3000` as normal and `D` held at its booked value", which is R3, and
+then states R2's verdict, "breached at `10%` of nominal and below". R3 breaches at every
+capacity including normal. The sentence is not wrong at the disease point it is discussing,
+where the two coincide, and it is ambiguous everywhere else. Flagged, not edited: which
+reading the paper intends is the author's call and not a measurement.
+
+### R38. Found while checking R36: Section 8's "$12.6$ times" names the separatrix, not the loss
+
+Not part of item 23 and not edited, because which quantity the sentence means is the
+author's call. Section 8 says the parent "has a clearance maximum at $3.4$ times the
+managed level **and loses its stable equilibrium at $12.6$ times it**". Those are two
+different events and the second is at the first.
+
+Raise the load on the parent at its own defaults and watch the two roots:
+
+| load | roots |
+|---|---|
+| 600 (baseline) | 81.93 stable, **1033.0** unstable |
+| 650 | 115.2, 692.4 |
+| 700 | 205.9, 370.9 |
+| 706.0 | 256.5, 296.4 |
+| **706.388** (`Cmax`) | **275.67, 275.68** merged |
+| 710 | none |
+
+The stable equilibrium is lost by a saddle-node **at the clearance maximum**, `m = 275.67
+= 3.365x` the attractor. It is the same event as the clearance maximum, not a second one
+further out. The `12.6x` is the *unstable* root at the *baseline* load: the separatrix,
+which is how large a perturbation has to be to escape the basin, not where the stable
+state ceases to exist.
+
+Both are real and both are worth quoting. The sentence as written attaches the second
+number to the first event. Flagged for the author; a possible rewording is "has a
+clearance maximum at $3.4$ times the managed level, where the stable equilibrium is lost
+as the load rises, and a separatrix at $12.6$ times it at baseline load".
+
+### R39. Section 8's validity boundary, corrected and narrowed (items 27, 29, 30)
+
+R38 flagged the wrong-event sentence; it is now fixed rather than flagged, and two things
+that sat beside it turned out to need the same repair.
+
+**The sentence.** "Loses its stable equilibrium at `12.6` times it" named the separatrix.
+Section 2.3's own definition is that the attractor and separatrix collide at the fold, and
+the fold is at the clearance maximum: raising the load walks the two roots together and
+they merge at `m = 275.7` at a load of `706.4`, `1.177` times baseline. So the stable
+equilibrium is lost at **`3.4`** times the attractor, the same event as the clearance
+maximum, and `12.6` is how large a perturbation must be to escape the basin at baseline
+load. Both are worth quoting; the paragraph now quotes each for what it is.
+
+**The two derived numbers in the paragraph do NOT move, and that was checked rather than
+assumed.** `audit/a4_check.py` builds them, and neither touches the separatrix:
+
+* the `42%` is `(log 8 - log(m_peak/m_bar))/log 8`, a function of the `3.365` peak ratio
+  alone. Recomputed: `41.7%`.
+* the `4.6` is the local model's `5.37x` baseline to hold eight times its managed level,
+  divided by the parent's ceiling of `1.177x`. Recomputed: `4.56`. It uses the clearance
+  maximum's VALUE, not the separatrix's location.
+
+**And the paragraph contained the collision itself (item 29).** "Eight times the managed
+level" appeared twice in adjacent sentences meaning two different bands: `655` (eight
+times the parent's attractor, in the `42%`) and `80` (eight times the local `m_bar`, in
+the `4.6`). One phrase, two referents, which is exactly the trap that produced R36. The
+paragraph now states its referent once at the top and names both bands where they are
+used.
+
+**The boundary is also narrower than it read (item 30).** It said the model questions its
+own validity out there and left it general. It is bounded: `dot m <= L - k_e m` caps every
+local trajectory at `L/k_e = 64.5`, and the parent's clearance maximum cannot fall below
+`sqrt(K_c M_i) = 173.2` at any capacity because that is where the alternative route's
+derivative turns. A margin of `2.68`, so **no operating point of any design in this paper
+lies past the parent's peak at any capacity**; only the excursion band the paper declines
+to use goes beyond it. The exception is carried with a number rather than dropped: across
+this paper's own prior range for `K_c`, `M_i` and `rho_0`, fewer than `1.5%` of draws even
+place `sqrt(K_c M_i)` below `L/k_e`.
+
+**One number deliberately NOT generated.** A swept count of the prior-box corners that
+actually reverse reads `0.14%` at 600 draws and `0.23%` at 4000: sampling noise on about
+five events. A generated number the artefact guard diffs against HEAD must not wander with
+the seed, so the paper quotes the closed-form `1.5%` upper bound, which is exact, and the
+swept figure is recorded here, where a measurement belongs.
+
+**Sixteen literals became generated numbers** (`results/numbers/boundary.tex`,
+`src/model_C/run.py:boundary_numbers`). The paragraph had every one of its figures typed
+by hand, in the one place the paper states the limits of its own model.
+
+**Pre-existing debt, found and not fixed.** The `theta_hat = 151` / `theta = 300` /
+`150.8` / `+149` / `+0.2` ladder in the same paragraph has no generator anywhere in the
+repository: it appears only in `audit/PHASE2A.md`, and four plausible reconstructions of
+the fit did not reproduce `151`. It is left alone because reconstructing it is a
+measurement and not an edit, but it is the last block of hand-typed numbers in that
+paragraph and it should get a generator before the preprint.
+
+### R40. Admissibility: three readings named in the text, with numbers that tell them apart
+
+Item 28. R37 recorded that the check has three readings and that every anchor the paper
+quotes sits on a coincidence point. Flagging that was not enough, because a reader cannot
+tell which reading is in force and neither can a future editor, which is the same failure
+as `min(q, N)` and `trans_angle`: **a displayed number that does not identify what it is a
+number of.**
+
+Section 7.1 now names all three in a table, evaluated at `20%` and `10%` of nominal where
+all three disagree, and states which one the paper is on.
+
+| | normal | `D` | at `20%` | at `10%` |
+|---|---|---|---|---|
+| R1 | inferred, `theta/0.05` | scaled | `0.16` | `0.16` |
+| R2 | inferred, `theta/0.05` | booked | `0.58` | `1.12` |
+| R3 | fixed at `3000` | booked | `2.33` | `2.23` |
+
+The old sentence introduced R3's setup and then stated R2's verdict. It now says that R2
+is the reading under which the bound is breached at `10%` and below, that R3 breaches
+everywhere including at normal capacity where it reads `3.13`, and that the two anchors
+the paper carries, `2.18` and `2672`, hold on **either** R2 or R3 because `theta = 150` is
+where those two coincide.
+
+The discriminating pair is the largest admissible dose, and the two readings run in
+opposite directions in capacity: R2's allowance rises with `theta` (`19 theta` times the
+train factor) while R3's falls (`3000 - theta` times it). At `10%` of nominal R2 permits
+`5344` against R3's `2531`, both below the booked `6000`; at normal capacity R2 permits
+`53438` and R3 permits nothing at all. A reader meeting only the old text could not have
+told which was meant.
+
+*(My first draft of that sentence said `5344` was above the booked value. It is below it.
+Caught on re-reading the draft against the generator before the commit, which is the
+adversarial pass applied to prose.)*
+
+Eight new generated keys in `results/numbers/scope.tex`; `audit/t13_therapy_forward.py`
+labels every verdict `R2` where it prints.
+
+### R41. The R0 row now bounds what the parent can be asked (item 31)
+
+The row said `R_0` must be re-derived when `K_c`, `M_i` or `rho_0` move. It must be
+re-derived when the **load** moves too, because the constraint that defines it names a
+baseline load: evaluate the parent at the local model's `L = 322.7` while holding
+`R_0 = 1122` and a null genotype becomes maintainable, `theta_crit_intrinsic` returns
+`nan`, and the module's own sweep calls such points vacuous. `tests/test_models.py`
+already enforces the constraint for the three shape constants; the load was the case
+nobody had written down.
+
+The consequence is the part worth carrying. **Any comparison of the two models at
+disease-range capacity turns on the convention chosen**, and the direction reverses
+between them: holding `R_0` puts the parent's patient below the local model's level,
+re-deriving `R_0` at the new load puts it `1.61x` above, and matching the alternative
+route to the local one at the operating point leaves several capacities with no
+equilibrium at all. So the direction is a choice, not a result, and no such comparison is
+reported. What survives every convention is that the parent's clearance peak lies above
+`sqrt(K_c M_i)`, which is `R_0`-free, and that is what R39's margin rests on.
+
+### R42. The theta_hat ladder reproduces, and the missing ingredient was the load constant
+
+Item 32. It was a candidate for retraction and it survives: **all five rungs come out to
+every digit PHASE2A printed**, under a definition that is now written into the paper and
+generated in `results/numbers/boundary.tex`.
+
+| band top | 1.6 | 5 | **8** | 12.6 | 20 |
+|---|---|---|---|---|---|
+| `PHASE2A.md` | 557.8 | 277.0 | **151.01** | 27.3 | 0.00 |
+| regenerated | 557.797 | 277.020 | **151.012** | 27.281 | 0.000 |
+
+**The definition, which had never been recorded.** `m_bar` is the PARENT's own attractor
+at its own load, `81.9344`; nine levels run geometrically from `m_bar` to `top x m_bar`;
+the load at each level is the parent's own noiseless clearance there; and the local form
+`s = theta g(m,K_m) + k_e m + b` is fitted to those pairs with `K_m` fixed at `100`,
+`theta, k_e >= 0` and **`b` free**, by unweighted least squares in the load.
+
+**The free load constant is the whole thing, and it is why four reconstructions missed.**
+Every failed attempt fitted one clearance CURVE onto another. The estimator of Section 4.1
+does not do that: it fits a balance and carries a load constant it does not know. Without
+`b` the same nine levels give `1243 / 1032 / 953 / 883 / 818`, monotone but never
+approaching the threshold; with `b` free they give the ladder. A curve-to-curve reading is
+a different and much more favourable exercise, and the sentence in the paper had been
+describing the favourable one while quoting the number from the other.
+
+**And the archaeology says it never had a generator.** `git log -S` on `151.01`, `557.8`
+and `277.0` across every ref hits only `audit/PHASE2A.md`, which arrived in one bulk
+import and was never edited. One deleted `.py` in the entire history, unrelated; no orphan
+bytecode; no dropped stash; the neighbouring `a4_check.py` generates the rest of the
+paragraph and contains no fit at all. So this was a number computed once, in a session, and
+written down without its construction --- the sixth instance of this project's
+characteristic failure, and the one that took a nine-agent search to undo.
+
+**Two qualifications the first draft of this entry did not have, both of which change what
+the paper may claim.**
+
+*`k_e >= 0` is doing the entire job, and that is the result rather than a technicality.*
+`k_e_hat` is pinned at exactly zero on all five rungs. Released, it goes **negative** on
+every band (`-1.11` to `-0.18`) and `theta_hat` at the 8 rung rises from `151.01` to
+`604.06`. So the parent's clearance over this band is not merely badly approximated by the
+local form, it is approximated best by a local model that is physically inadmissible, and
+the best admissible fit sits on the boundary of admissibility. The paper now says so.
+
+*The residual margin's SIGN is not determined.* Three defensible readings of the same
+definition give, at the 8 rung: `159.46` (load-weighted residual), `146.72` (a dense grid
+rather than the design's nine levels), `128.96` (linear spacing). Against
+`theta_crit = 150.77` that is `mu_hat` from about `-4` to `+9`. So the `+0.24` is the
+design's own `n = 9` unweighted reading and nothing more general, and the vividness ---
+that the fit lands essentially exactly on the threshold --- is an artefact of that choice.
+**What survives every reading is that the margin is consumed**, which is what the
+paragraph needs and all it now claims.
+
+That is the `k` row's remedy applied here: state the perturbation, generate the number
+under it, report what a second reading gives --- and, this time, notice that the second
+reading moves a sign and say so.
+
+*(The first version of this entry said "all three land within a few per cent, so the
+conclusion is robust and the third digit is not." True but far too generous: a spread that
+takes `mu_hat` from `-4` to `+9` does not merely move a digit, it moves the sign of the
+conclusion a reader would draw. Corrected before the commit.)*
+
+Nine new generated keys. Nine agents across four reconstruction families --- estimand,
+tangent, archaeology and a 252-variant definition sweep --- with two arriving at the same
+definition independently, and the ladder reproduced a third time here before any of it was
+written.
+
+### R43. The boundary is the finding, and it says something the ladder did not (items 34, 35)
+
+**The unconstrained optimum is outside the admissible set.** `k_e_hat` sits exactly on zero
+on all five rungs; released it goes negative, `-0.36` at the 8 rung, and `theta_hat` rises
+from `151.01` to `604.06`.
+
+Two consequences, and the first disarms the number the entry before this one spent nine
+agents recovering.
+
+**A boundary solution is not a point estimate.** `151.01` is where the constraint stops the
+fit, not where the likelihood peaks, so `theta_hat - theta_crit` is not a margin whatever
+the spacing or the weighting. That is an independent and firmer reason for the correction
+in R42: the sign spread says the third digit is an artefact of `n = 9`; the boundary says
+the point estimate was never a point estimate.
+
+**And the positive statement is sharper than "biased".** The local form's best
+approximation to the parent over that band describes a patient who clears the metabolite by
+a route running backwards; the best admissible approximation describes one with no
+non-enzymatic clearance at all. Neither is a patient. Over that band the local family
+represents the parent only at its own edge.
+
+**The measurement that sets how strongly to say it.** The admissible fit's rms residual
+over the nine levels is `25.76`, which is `0.77` of a single `5%` error in the recorded
+load --- the accuracy Tier 3 asks for. So the misfit is *invisible* in the diagnostic a
+reader would use, which is the same mechanism Section 7.2 already reports for the published
+alternative and is why "cannot represent the parent" would have been too strong: it
+represents it to within the assumed noise, and still lands on the boundary with a capacity
+at the threshold. That is worse than a visible misfit, not better.
+
+**Item 35, the placement judgement.** Section 2.4 asserts that the local model is "kept
+because it is the most favourable case for identification rather than because it
+approximates anything", and offers the tangent's intercept, `374` against `61`, as
+evidence. That is a comparison at a POINT. The boundary result is the same claim over a
+BAND and is strictly stronger.
+
+My reading, having the two paragraphs side by side: **the fact belongs in 2.4, the
+consequence stays in 8, and a forward reference alone is not enough.** A claim needs its
+evidence where the claim is made, and this one is made immediately before the reader spends
+four sections working inside the favourable structure --- asking them to take "rather than
+because it approximates anything" on credit through all of it, and settle up thirty pages
+later, is the wrong order. But the consequence needs `theta_crit` as a decision quantity,
+the excursion band and the estimator, none of which Section 2 has; moving it there would
+make Section 2 argue a conclusion before the paper has a design. So one sentence of fact in
+2.4, with its two numbers, and the consequence where it already is.
+
+### R44. Is the referent failure enforceable? One case is; the rest is a declaration
+
+Asked of the class named two entries above. The honest answer has two parts and the small
+one is the true one.
+
+**Not enforceable, and nothing makes it so: the semantic case.** Whether "the managed
+level" names `10` or `81.93`, whether a verdict is on R1, R2 or R3, whether `theta_hat` is
+a point estimate or a boundary --- these are questions about what a phrase denotes. No
+static property separates a label that fixes its referent from one that does not, and
+unlike the figure guard there is not even a syntactic locus to hang a declaration on: a
+drawing call is enumerable, a sentence is not. There is no set of "numbers that cross a
+boundary" for a checker to walk. **This stays a habit and a review question, and it is
+recorded as one rather than dressed up as a check.**
+
+**Enforceable, and now checked: the mechanical case.** The crudest form of the same failure
+is two different quantities wearing one key. The preamble `\input`s every file in
+`results/numbers/`, so a key defined in two of them does not collide, error or warn --- the
+last `\input` silently wins and every `\num{}` of that key takes whichever file the preamble
+listed second. Two quantities, one macro, green build.
+
+`tools/check_artefacts.py:check_key_collisions` now walks all `330` keys across the `17`
+numbers files and fails on any name defined twice. There is no collision today. There
+nearly was: `margin.tex` owns `theta_crit` and `boundary.tex` was one key away from taking
+the same name for the same quantity computed a different way, which would have been the
+figure-versus-table drift of R29 with no diff to reveal it. Its self-test feeds the detector
+a synthetic colliding pair and a clean pair and requires it to separate them, because a
+check that cannot be shown to fail is not evidence.
+
+So: one mechanical case caught by a guard, and the semantic remainder left as a declared
+habit --- **when a number crosses a boundary, carry its referent across with it** --- with
+no pretence that anything enforces it.
+
+### R45. The two theta_crit values agreed, and now they cannot disagree (item 36)
+
+They were identical: both call sites ran `theta_crit_intrinsic(PC, S_BASE)` with the same
+arguments, so both held `150.7747475984808` exactly, gap `0.000e+00`. Unlike the
+`np.interp` case there was no drift to report.
+
+**But they printed at different precisions, and that was its own hazard.** `margin.tex`
+carried `theta_crit` at `{:.0f}` and rendered it **`151`**; `boundary.tex` carried
+`fit_theta_crit` at `{:.1f}` and rendered `150.8`. So the figure said the threshold was
+`151` while the text said `150.8`, in the one paragraph where the threshold sits beside a
+fitted `theta_hat` of `151.01`. A reader could not have told the threshold from the
+estimate.
+
+Fixed as one computation and one key. `model_C.theta_crit_ref()` is memoised and is now the
+only caller of `theta_crit_intrinsic(PC, S_BASE)` in the module; `margin.tex` owns the key
+and prints `150.8`; `fit_theta_crit` is gone from `boundary.tex` and the three places the
+discussion quoted it now read `\num{theta_crit}`; and the margin figure draws the threshold
+at one decimal too, so nothing in the document prints `151` for it any more.
+
+### R46. The two key mechanisms do not conflict, and the rule needed stating precisely
+
+Item 37, and the answer is the precise version of the user's first branch.
+
+**The shared-key trick is stem-local.** It works because `NumberBook` guards one
+accumulating dict, which is one module's numbers, which becomes one file. The protocol
+figure and `tab_D_designs` both write `delta_range_monthly` because both live in
+`design/run.py` and therefore in `design.tex`. A differing value raises at accumulation.
+
+**The collision guard is cross-stem.** It fails on a key defined in two *files*, because
+there the preamble's `\input` order decides in silence and nothing raises.
+
+So the rule is: **shared keys agree within a file; distinct names across files.** The two
+dispositions apply to disjoint cases and there is no conflict today.
+
+**But the user's second branch is the real point: the shared-key mechanism is then not
+available across stems, and item 36 was exactly that case.** Two stems, one quantity, no
+mechanism to make a drift raise. The answer is that there is a third mechanism and it
+already exists: **one stem owns the quantity and the other reads it**, either through
+`common.numbers.num(module, key)` or, within one module, through a shared helper. That is
+the third shape `check_figure_numbers` already accepts for drawn numbers, generalised.
+Item 36 is fixed that way: one memoised helper, one registered key, and no second copy for
+a guard to have to compare.
+
+Neither rule gives way. What was missing was the statement that they cover different
+scopes, plus the third mechanism for the case neither covers.
+
+### R47. Warnings are errors now (item 38)
+
+A warning appeared in one run of the suite and did not reproduce on the next. With CI down
+there are no repeated runs to catch a recurrence, so an intermittent warning arrives as a
+count in a summary line with no text and no traceback --- and would arrive the same way the
+second time.
+
+`pytest.ini` now sets `filterwarnings = error`.
+
+**CORRECTED IN PLACE.** What stood here said the setting cost nothing, because "the
+suite passes under `-W error` today". The suite did pass. It passed on a warm
+`__pycache__`, which for the one warning class already present in this repository is
+not a test: an invalid escape sequence is raised when a module is *compiled*, and a
+cached `.pyc` skips the compile. From a cold cache the same commit gave 38 failed of
+92. The setting cost fifteen missing raw-string prefixes, paid in R49, and only after
+that did it fire on nothing. The sentence is replaced rather than annotated because as
+written it recorded a verification that had not run, which is the `theta_hat = 151`
+ladder's defect in a different medium. R50 has the class and what now enforces it.
+
+It earns its place more here than in most repositories. This project's stated characteristic
+failure is a silent numerical error, and numpy reports exactly that as a `RuntimeWarning`
+--- an invalid value in a divide, an overflow in an exp, an all-NaN slice. Those are what
+the setting is for; the deprecation notices are a bonus. It also reaches the generators,
+because `tests/test_artefacts.py` regenerates every table and numbers file through the
+guard, so the code that produces the paper's numbers runs under it too.
+
+Shown to fire before being trusted, which is this repository's standard: a probe test
+raising a `RuntimeWarning` fails the suite with the warning's text and its line, and was
+then removed.
+
+The one thing it does not cover is a warning raised in a generator that the guard's fast
+path does not reach --- `fig_margin`, `d13_decision_therapy` and the other slow ones. Those
+run only under `make figures`, outside pytest. Noted rather than solved,
+and closed in R49.
+
+### R48. A second pattern, across the two misspecification results (item 39)
+
+It earns a paragraph, and it is now Section 8.3 beside the three-degeneracies one.
+
+**Two results, unrelated routes, opposite directions.** Section 7.2 fits the local form to
+records from a published alternative readout and recovers a capacity too **high**, `1.3` to
+`2.0`. The discussion's opening fits the same form to the parent's own noiseless clearance
+and recovers one too **low**, `151.01` against a true `300`. The mechanisms share nothing: a
+free marker offset carried alongside a free amplitude in the first, a curved alternative
+channel driving `k_e_hat` onto its bound in the second.
+
+**What they share is the symptom: the residual stays inside the noise the specification
+already asks for while the capacity is wrong.** Under a fifth of one sigma in the first,
+`0.77` of a single load error in the second. So on this model **residual size does not
+bound structural error**, and the diagnostic a reader would reach for to detect a wrong
+structure is the one that cannot see it. That is the argument for Tier 1 being a
+*structure* test rather than a goodness-of-fit threshold, and the paragraph says so.
+
+**And the opposite directions foreclose the repair.** A bias of known sign could be carried
+as a correction or a one-sided bound; these cannot, because nothing in a record says which
+structure is the wrong one. Hedged as the three-degeneracies paragraph is: two results, not
+a theorem.
+
+**One correction it forced.** The clause written last batch said the boundary result finds
+what Section 7.2 finds "by the same mechanism". It does not --- same symptom, different
+mechanism, and the difference is the reason the directions differ. Corrected where it
+stands and the cross-reference now points at the new subsection.
+
+### R49. The warnings gap on the generator path, and what R47 had actually measured (item 41)
+
+**It could not go on as it stood, and what broke was not a generator.** `make figures
+PY="python3 -W error"` died in the fourth module, at `src/design/run.py` line 954, before
+computing anything:
+
+    ax["p2"].annotate("every draw at one phase,\nso one value of $\Delta$",
+    SyntaxError: invalid escape sequence '\D'
+
+`$\Delta$` in a string that is not marked raw. Python raises a `DeprecationWarning` for an
+unrecognised escape at *compile* time, and `-W error` turns that into a `SyntaxError`, so
+the module never imports. Swept across all 99 tracked Python files there are **15 of them
+in 4 files**: 12 in `src/common/params.py` (eleven `$\mu$M` unit cells in the parameter
+registry and one `\paramscaption` in a docstring), one in `src/design/run.py`, one in
+`tools/check_artefacts.py` and one in `tools/claims_to_tex.py`, the last two both `\input`
+and `\cite` inside docstrings.
+
+All fifteen are LaTeX and the fix is a raw-string prefix. It is output-neutral: nothing
+under `results/` changed, the annotation still concatenates to the same characters
+(`"...\n" r"so one value of $\Delta$"` keeps the real newline and the literal backslash),
+and a raw f-string still interpolates.
+
+**With that done the setting goes on, and it is inert.** The full build under `-W error`
+runs all twenty generators to exit 0, and the working tree comes back holding nothing but
+the `/CreationDate` bytes in the figure PDFs. So it is wired: `PYW = $(PY) -W error` in
+the Makefile, used by the `figures` recipe and by nothing else. `refs`, `paper` and `audit`
+keep plain `$(PY)`, because they do not compute a number the paper quotes. What this buys
+over `pytest.ini` alone is the four slow generators the guard's fast path never reaches,
+`fig_margin`, `d13_decision_therapy`, `k4_admissibility` and `t13_therapy_forward`, which
+is exactly the gap R47 left noted.
+
+**The part worth recording is what this says about R47.** That entry claimed
+`filterwarnings = error` "cost nothing: the suite passes under `-W error` today". It had
+been measured on a warm `__pycache__`. An escape-sequence warning fires when a module is
+*compiled*; once a `.pyc` is on disk the module is not recompiled and the warning is never
+raised again. Clear the caches and the same suite, on the same commit, fails:
+
+    find . -name __pycache__ -type d -prune -exec rm -rf {} +
+    python3 -m pytest -q     ->  38 failed, 54 passed in 7.29s
+
+every one of the 38 at `import design.run`, with the `SyntaxError` above as the reason. And
+`make clean` deletes `__pycache__`, so `make clean && make test` was red while `make test`
+on its own was green, on one tree, with nothing in either run saying why they differed.
+**The check added to catch a silent failure was itself silently conditional on a build
+artefact**, which is the shape of the thing it exists to prevent, one level up. After the
+fix, from a cold cache: `92 passed in 149.39s`.
+
+That is the honest cost accounting. The setting did not cost nothing. It cost fifteen
+missing `r` prefixes, and it was not paying until they were fixed.
+
+### R50. A verification whose verdict depended on build state, and the audit it forced (item 43)
+
+**The class, kept separate because its fix is not the seven's.** `make test` green and
+`make clean && make test` red, 38 failed of 92, on one tree, with nothing in either run
+saying why they differed. Each of the seven referent instances produced a wrong or
+unlabelled *number*, which failed visibly the moment anyone looked at it. This produced a
+correct-looking report of a verification that had not happened. A number nobody can check
+is one problem; a check nobody can check is a worse one, because it is what you consult
+about the first.
+
+**It is not the first instance.** R10 is the same class from the other side: the em-dash
+sweep deleted `\input{sections/01_biology}`, took a 1,400-word section out of the document,
+and was followed by "no LaTeX error, no undefined reference, no failed test". The page
+count fell by four and the fall was put down to a shorter abstract. Two instances make it a
+class rather than an accident.
+
+**What enforces it now.** `check_source_warnings()` in the artefact guard compiles every
+tracked `.py` from its source text on every run and never consults `__pycache__`: 99 files,
+0 warnings, with the self-test this repository requires, a source that does warn and one
+that does not. It was preferred to putting `make clean` in front of `make test`, which was
+the other option offered, for two reasons. `make clean` makes the suite slower without
+making its verdict independent of anything except the cache, and the guard reaches `tools/`
+and `tests/`, which `-W error` on `make figures` does not.
+
+**The audit, by mechanism rather than by entry**, because "measured warm" is only one way a
+verdict can depend on state the verdict does not name.
+
+1. **Bytecode cache.** Reaches exactly one thing, a warning raised at compile time, and
+   nothing numerical. One recorded claim sat on it, R47's, corrected in place. Now
+   unreachable.
+
+2. **LaTeX auxiliary state.** Reaches every "N pages, no undefined references" claim.
+   `REVIEW_LOG.md` carries one, R10's, and R10 is the entry about its being worthless. The
+   rest were reported in batch summaries rather than recorded here, and every one of them
+   was taken after two `pdflatex` passes on a warm `.aux`, where `make paper` runs four
+   passes and `biber` for the paper and three and `biber` for the supplement. **Measured
+   from clean:** paper 43 pages, supplement 62, and in both logs 0 `LaTeX Warning:
+   Reference`, 0 `LaTeX Warning: Citation` and 0 `Rerun to get`. The claims were right.
+   The measure was not: `grep -c undefined main.log`, which is what had been reported,
+   also counts a font-shape warning, and on the supplement it returns 1 for
+   `T1/lmr/bx/sc`. Counted precisely from here.
+
+3. **Committed artefact state.** A figure drawing `num(module, key)` reads the committed
+   numbers file, and R51 has just made the first such reader. That dependence is by
+   construction, and `check_regenerated` compares the committed file against the code, so a
+   stale one fails rather than passing quietly.
+
+4. **Generator numerics, which is everything the paper quotes.** Not exposed, and this is
+   the part worth being able to say. The generators are seeded, the guard regenerates them
+   into a temporary directory and compares byte for byte, and two independent cold runs
+   this session left `results/**/*.tex` unchanged except for the one key R51 deliberately
+   removed. An environment that moved a number would show as drift rather than hide.
+
+5. **CI.** 44 commits on this branch and nothing has executed on any of them. "The suite
+   passes" has meant "the suite passes in this container" for the whole of it, which is why
+   the warm-cache distinction was load-bearing here and would not have been in a repository
+   whose CI ran. Stating it rather than implying it.
+
+**The list is short because the exposure is narrow, and that is the result.** The numbers
+were never at risk: regeneration guards them, and a clean rebuild confirms it. What was
+unguarded was the statement that a guard had run, and only two mechanisms could reach it,
+one now closed by a check and one now measured. The full clean sequence,
+`make clean && make figures && make paper && make test && check_artefacts`, returns 0 at
+every stage: 92 passed in 144 s from a cold cache, 328 generated keys, 99 files compiled
+with 0 warnings, artefacts match the code.
+
+### R51. Two implementations made one, and the false contrast underneath them (item 44)
+
+**The pair was real and the entry above overstated it, so both go here.** The
+indistinguishability sweep flagged two design.tex/phaseclock.tex pairs. Measured, they are
+not the same case:
+
+| | design.tex record | phaseclock.tex record | values |
+|---|---|---|---|
+| monthly | `np.arange(0, 730, 30.4)`, 25 pts | `fixed(25, 30.4)`, 25 pts | identical arrays, both `1.843777` |
+| fortnightly | `np.arange(0, 730, 14.0)`, 53 pts | `fixed(25, 14.0)`, 25 pts | different records, both `0.133333` |
+| 14.5 d | `np.arange(0, 730, 14.5)`, 51 pts | `fixed(25, 14.5)`, 25 pts | `1.986121` against `1.801867` |
+
+Only the first row is a duplication. The second is two different records agreeing because a
+schedule at `eps = 0` saturates, which Section 6.4 states in as many words, and the third is a
+difference the paper draws on purpose. The claim that both pairs agreed "by construction"
+was wrong for the fortnightly one and is corrected above.
+
+**What the duplication was hiding is worse than the duplication.** Section 4.3 read: *the
+ranges are over these 25 draws and not over the two-year record of Table D: monthly reads
+`range_monthly` here against `delta_range_monthly` there, and the 14.5-day schedule
+`range_off` against `delta_range_off`.* For the 14.5-day schedule that contrast is real,
+51 visits against 25. For monthly the two-year record **is** those 25 visits, so the
+sentence set one number against itself and called it a comparison. It read as a claim only
+because the quantity had two names; with one name it would have been visibly a tautology.
+Corrected in Section 4.3, and Section 6.4's version, which was already careful about the
+fortnightly case, now says the same about monthly.
+
+**Merged in two layers, because there were two duplications.**
+
+*One implementation.* `delta_range` now lives in `src/design/run.py`, which owns `delta`,
+and `audit/g_design_common.py` imports it. It could not go the other way: that module
+already imports `delta` from this one, so the dependency had a direction. Its
+nineteen call sites across ten modules keep writing `G.delta_range(t)`, and
+`G.delta_range is design.run.delta_range` is true.
+
+*One key.* `audit/g1_phase_clock.py` no longer computes monthly's range. It reads
+`num("design", "delta_range_monthly")` **after** `write_numbers`, so `phaseclock.tex`
+carries no second key for a quantity `design.tex` owns, and the panel header draws to the
+character what `\num{delta_range_monthly}` typesets beside it. `make figures` runs the
+design module before this one.
+
+**And this is the first call of `num()` in the repository.** R46 named "one stem owns the
+quantity and the other reads it" as the third mechanism, the one for the case neither the
+shared-key trick nor the collision guard covers. It had never been used: `num()` was
+written, self-tested through `check_figure_numbers`'s first accepted shape, and left
+without a caller for the want of a case. This was the case.
+
+### R52. Is `01_biology` in the document? Yes, and my first answer was wrong (item 45)
+
+**The answer is yes.** `paper/sections/A1_supplementary.tex:739` inputs it, and "Biological
+background" is S1.13 of the built supplement. The relocation was deliberate and is
+`deec483`, "Compress the main text to four claims, relocating rather than deleting", which
+moved the biological background, the full dynamic model and its reduction, the local
+derivation, the validation protocol, the figure section and the open questions into the
+appendix. R10's incident was real when it happened and was reconciled rather than explained
+away: the line is present and the text renders.
+
+**My first answer was wrong, and how it was wrong is the finding.** Asked whether the file
+is input, I grepped `paper/*.tex`, which reads `main.tex`, `preamble.tex` and
+`supplement.tex` and **not** `paper/sections/A1_supplementary.tex`, where seven of the
+inputs live. That returned seven "never input" files totalling 21,837 words, several of
+them edited within the last two days, and every one of them was a false alarm. `\input` is
+transitive; a one-level grep is not a reachability test, and the question cannot be answered
+without the closure. Recorded because the wrong answer was the alarming one, and an alarming
+wrong answer is the kind that gets acted on.
+
+**Measured properly.** Following every uncommented `\input` from `main.tex` and
+`supplement.tex`: 23 `.tex` files under `paper/`, 22 reached, one not. The one is
+`note_structural_identifiability.tex`, which carries its own `\documentclass` and is a
+standalone document that must not be input. Nothing any document inputs is missing from
+disk.
+
+**And it is guarded now.** `check_inputs_reachable()` is `check_generators_reachable()` for
+prose. That one asks whether every numbers file has a generator `make figures` actually
+runs; this asks whether every section file has a document that actually reads it. The
+standalone exemption is checked rather than declared, by looking for `\documentclass`, and
+the check is shown to fire on the real bug rather than only on a synthetic one: replaying
+R10's edit, commenting out `\input{sections/01_biology}` in a copy of the tree, returns
+exactly `sections/01_biology.tex` as an orphan.
+
+**It was the last member of the invisible-artefact family without a check.** A file present
+and never input defines no label that anything misses, so there is no undefined reference,
+no error and no failing test, which is precisely what R10 recorded and R50 named as a class.
+The numbers side has had reachability checked since the generators did. The prose side had
+not.
+
+### R53. The page drift is real, and the section numbers in the reports were not (item 46)
+
+**The drift holds.** Rebuilt cold at seventeen heads, `make clean`-equivalent then four
+`pdflatex` passes with `biber` for each document, the same instrument at every point:
+
+| head | batch | main | supplement |
+|---|---|---|---|
+| `fff74c4` … `bf78c16` (6 heads) | through the phase-lattice work | **39** | 61 |
+| `855e377` | the lap condition, items 1 to 6 | **41** | 61 |
+| `e0372bb`, `eddcf84` | figure numbers registered; items 20 to 22 | 41 | 61 |
+| `d811ea8` | items 23 to 26 | **42** | 61 |
+| `c778d08` | items 27 to 31 | 42 | **62** |
+| `1a8561d` | items 32 to 33 | **43** | 62 |
+| `c585d84` … `066a316` (5 heads) | items 34 to 44 | 43 | 62 |
+
+That is 39, 41, 42, 43, which is the reported series exactly. Nothing in it was an artefact
+of the instrument.
+
+**The instrument was loose and not wrong, and the reason is the document.** `Rerun to get`
+is 0 at four passes at every one of the seventeen heads, so these two documents converge
+before the second pass and a two-pass count was always going to agree. That is a property
+worth knowing and not one to rely on, so the cheap repair is to report `Rerun to get`
+beside the page number: a non-zero count is precisely the case where a short build lies.
+On the other loose measure, `grep -c undefined` matches the precise `LaTeX Warning:
+Reference` and `Citation` counts at 0 in the paper at every head, so it never hid anything
+there; on the supplement it returns 1, for the font shape `T1/lmr/bx/sc`.
+
+**The drift stopped five heads ago.** `1a8561d`, `c585d84`, `b1aebd7`, `aa0ecd4`, `87a762f`
+and `066a316` are all 43. Items 34 to 44 added no page between them. So did the step that
+added the most prose of any of them: `d811ea8` to `c778d08` put 66 net lines into the
+discussion and the scope section and stayed at 42.
+
+**And the section numbers the reports used were wrong, which matters more than the count.**
+The section files keep prefixes from a structure the paper no longer has, and the reports
+read the numbers off the filenames. Built:
+
+| file | built section |
+|---|---|
+| `07_design.tex` | **4**, the design |
+| `07b_decision.tex` | 5 |
+| `08_specification.tex` | **6**, the specification |
+| `11_scope.tex` | **7**, the scope |
+| `12_discussion.tex` | 8, the discussion |
+
+So `sec:tierstruct`, which the reports called "§5" and where item 40's clause went, is
+**§6.2**. `sec:pattern2` is §8.3, which was right. The paper itself is unaffected, because
+every cross-reference in it is a `\ref`; what was wrong was the name in the reports, which
+is where a decision about cuts would be taken.
+
+**Where the four pages went**, as net added lines from `bf78c16` to `1a8561d`:
+
+| section | file | net lines |
+|---|---|---|
+| §4, the design | `07_design.tex` | **+105** |
+| §8, the discussion | `12_discussion.tex` | +68 |
+| §7, the scope | `11_scope.tex` | +32 |
+| §6, the specification | `08_specification.tex` | +16 |
+| §3, the excitation condition | `06_excitation.tex` | +16 |
+
+The largest single share is §4 and not §7 or §8. A cut aimed at "§7 and §8" as the reports
+named them would reach the scope section and the discussion and leave the biggest addition
+where it is.

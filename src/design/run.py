@@ -30,12 +30,13 @@ from scipy.integrate import solve_ivp
 from scipy.optimize import least_squares
 
 from common.models import ParamsA, g, clearance_A
+from common.numbers import NumberBook
 from common.excitation import (phi, excitation, excitation_max, fold_range_for,
                                optimal_band, sd_log_theta, band_levels,
                                fold_range_for_precision,
                                top_of_excursion_for_precision)
 from common.style import (save, write_table, figsize, GREEN, RED, BLUE, AMBER,
-                          GREY, MUTED, INK, corner, over_x, at_point)
+                          GREY, MUTED, INK, corner, over_x, beside_y, at_point)
 
 P = ParamsA()
 M_BAR = 10.0
@@ -65,6 +66,31 @@ D_AMP = 6000.0           # ASSUMED. Chosen so the marker falls by about half at
                          # reported in the phase 1/2 interim analysis.
 
 
+#: every interpolated number this module draws on a figure, classified for
+#: tools/check_artefacts.py:check_figure_numbers. `registered:` is checked;
+#: the rest are declarations, and `UNREGISTERED:` is debt the guard prints on
+#: every run until a generator owns the number.
+DRAWN = {
+    "lab": "text: which of the two bands the marker sits on",
+    "PAPER_NUMBERS[key]": "registered: E for whichever of the two bands this "
+        "marker is on, as E_held and E_info",
+    "trough": "registered: the same object write_numbers takes as "
+              "train_trough_frac",
+    "DOSE_INTERVAL": "input: a model constant from common.params, which the "
+                     "constants table registers",
+    "np.log(2) / LAMBDA": "input: the dose half-life, likewise a constant of "
+                          "the parameter set this figure was drawn at",
+    "name": "text: the schedule's name",
+    "len(times)": "input: the schedule's own visit count",
+    "PAPER_NUMBERS[rkey]": "registered: the Delta/theta range this schedule "
+        "spans, under the same delta_range_* key tab_D_designs uses, so the "
+        "NumberBook itself is the comparison between figure and table",
+    "100 * cv": "input: the load CV this curve was drawn at",
+    "nn": "input: the visit count this curve was drawn at",
+    "top": "input: the band top this curve was drawn at",
+}
+
+
 def delta(t):
     """The therapeutic increment from a biweekly schedule of decaying doses."""
     t = np.atleast_1d(np.asarray(t, dtype=float))
@@ -88,14 +114,105 @@ def load(t, base=None):
 #: fibre, and a dietary record smoothed to a weekly mean destroys it.
 LOAD_CV = 0.10
 
+#: every quantity this module computes that the PAPER QUOTES IN PROSE, keyed
+#: by the name the text cites it under. Written to results/numbers/design.tex
+#: at the end of a run and quoted as \num{<key>}, so a literal in a sentence
+#: is checked the same way a table is.
+#: NumberBook, not a plain dict: this module's generators are called in
+#: different orders by `make figures` and by the artefact guard, and a key two
+#: of them disagree on then takes whichever value ran last. See NumberBook.
+PAPER_NUMBERS = NumberBook()
 
-def design_record(times, load_cv=None, seed=3):
+#: the precision each quoted number is printed at, chosen to match the
+#: sentence that quotes it. A key with no entry is printed to four decimals.
+PAPER_FORMATS = {
+    "alias_cost": "{:.0f}", "alias_cost_lo": "{:.0f}", "alias_cost_hi": "{:.0f}",
+    "excitation_ratio": "{:.0f}", "load_accuracy_gate": "{:.0f}",
+    "ke_needed_factor": "{:.2f}", "ke_needed_factor_lo": "{:.2f}",
+    "ke_needed_factor_hi": "{:.2f}",
+    #  four decimals throughout, because Table 3 prints four and the same
+    #  quantity must not reach the page as 0.1699 in a table and 0.170 in a
+    #  sentence about that table
+    "sd_monthly": "{:.4f}", "sd_monthly_lo": "{:.4f}", "sd_monthly_hi": "{:.4f}",
+    "sd_two_monthly": "{:.4f}", "sd_two_monthly_lo": "{:.4f}",
+    "sd_two_monthly_hi": "{:.4f}",
+    "sd_aliased": "{:.4f}", "sd_aliased_lo": "{:.4f}", "sd_aliased_hi": "{:.4f}",
+    "sd_aliased_off": "{:.4f}", "free_cv2": "{:.3f}",
+    "n_aliased_off": "{:.0f}", "laps_aliased_off": "{:.1f}",
+    "span_aliased_off": "{:.0f}",
+    "kappa_monthly_pct": "{:.1f}", "kappa_monthly_pct_lo": "{:.1f}",
+    "kappa_monthly_pct_hi": "{:.1f}",
+    "settle_hours": "{:.2f}", "settle_hours_1pct": "{:.2f}",
+    "track_pct": "{:.4f}", "track_pct_1pct": "{:.4f}",
+    "sigma": "{:.1f}",
+    "timescale_ratio": "{:.0f}",
+    "dropped_lo": "{:.2f}", "dropped_hi": "{:.1f}",
+    #  two decimals, matching the "range of Delta/theta" column of Table 3
+    "delta_range_monthly": "{:.2f}", "delta_range_two_monthly": "{:.2f}",
+    "delta_range_dense": "{:.2f}", "delta_range_aliased": "{:.2f}",
+    "delta_range_six_monthly": "{:.2f}", "delta_range_one_cycle": "{:.2f}",
+    "delta_range_off": "{:.2f}",
+    "sd_dense": "{:.4f}", "sd_dense_lo": "{:.4f}", "sd_dense_hi": "{:.4f}",
+    "sd_straddle": "{:.4f}", "sd_straddle_lo": "{:.4f}",
+    "sd_straddle_hi": "{:.4f}", "straddle_gain": "{:.1f}",
+    "sd_one_cycle": "{:.4f}", "sd_one_cycle_lo": "{:.4f}",
+    "sd_one_cycle_hi": "{:.4f}",
+    "sd_six_monthly": "{:.4f}", "sd_six_monthly_lo": "{:.4f}",
+    "sd_six_monthly_hi": "{:.4f}",
+    "sd_dense_flat": "{:.4f}", "sd_dense_flat_lo": "{:.4f}",
+    "sd_dense_flat_hi": "{:.4f}", "ke_prior_worth": "{:.1f}",
+    #  the dose train's own shape, quoted in four places from memory
+    "train_peak_frac": "{:.2f}", "train_trough_frac": "{:.3f}",
+    "train_ratio": "{:.2f}", "train_drop": "{:.2f}", "phi_drop": "{:.4f}",
+    #  the quasi-steady separation, quoted as 0.8 h and 0.81 h and 10^2 and 104
+    "tau_hours": "{:.2f}", "settle_hours_1pct": "{:.2f}",
+    #  the K_m sweep and the excursion table's decompensation row
+    "decomp_E": "{:.2f}", "decomp_frac_pct": "{:.0f}",
+    #  the two bands fig_excitation draws, at the precision its legend prints
+    "E_held": "{:.3f}", "E_info": "{:.3f}",
+}
+
+#: the seed `design_record` has always drawn its intake record from. Kept as
+#: the default so nothing computed before September 2026 changes silently.
+BASE_SEED = 3
+
+#: every design number this module reports is a MEDIAN over these records with
+#: its range quoted beside it. Until September 2026 each was a single draw at
+#: BASE_SEED, because no caller ever passed a seed. Mostly that did not matter
+#: -- the monthly headline moves 0.11% from seed 3 to the median -- but on the
+#: weak designs it does: six-monthly moves 8.6%, and 68.6% with the k_e prior
+#: removed. See audit/n3_ke_prior_worth.py, which found it.
+SEEDS = tuple(range(24))
+
+
+def median_spread(values):
+    """(median, min, max) over a seed sweep, infinities dropped."""
+    v = np.asarray([x for x in values], dtype=float)
+    v = v[np.isfinite(v)]
+    if not v.size:
+        return np.inf, np.inf, np.inf
+    return float(np.median(v)), float(v.min()), float(v.max())
+
+
+def tex_spread(med, lo, hi, gate=0.20, digits=4):
+    """A median with its seed range, bolded when it clears the gate."""
+    if not np.isfinite(med):
+        return r"$\infty$"
+    body = ("\\textbf{%.*f}" % (digits, med)) if med < gate else ("%.*f" % (digits, med))
+    return r"%s\,\scriptsize$[%.*f, %.*f]$" % (body, digits, lo, digits, hi)
+
+
+def design_record(times, load_cv=None, seed=BASE_SEED):
     """
     Levels and increments for a design, with intake varying day to day.
 
     Returns (levels, increments). The levels solve the balance at the
     per-sample recorded load, so a varying load moves the marker as it
     physically would rather than being added as measurement error.
+
+    `seed` selects the intake record. It has a default so that existing callers
+    keep their numbers, but a number that reaches the paper is swept over
+    `SEEDS` and reported as a median with its range; see `median_spread`.
     """
     load_cv = LOAD_CV if load_cv is None else load_cv
     times = np.asarray(times, dtype=float)
@@ -106,6 +223,22 @@ def design_record(times, load_cv=None, seed=3):
     B = P.ke * P.Km + P.theta + inc - Ls
     lv = (-B + np.sqrt(B ** 2 + 4.0 * P.ke * Ls * P.Km)) / (2.0 * P.ke)
     return lv, inc
+
+
+def delta_range(times):
+    """
+    The range of Delta/theta a schedule covers, which f4 found is what binds.
+
+    Here rather than in audit/g_design_common.py, which is where it used to
+    live, because that module imports `delta` from this one and so cannot be
+    imported back without a cycle. It was two identical spellings in two
+    modules, this one inline in table_designs() and that one a function, and
+    they fed two different keys: delta_range_monthly in design.tex and
+    range_monthly in phaseclock.tex, for the same 25 visits at 30.4 days.
+    One implementation now, imported there (REVIEW_LOG.md R51).
+    """
+    inc = np.asarray(delta(times), dtype=float)
+    return float((inc.max() - inc.min()) / P.theta)
 
 
 # ==========================================================================
@@ -122,13 +255,18 @@ def fig_excitation():
     # (left) phi(m) = K_m/(K_m+m), and the excitation as the drop across a band
     m = np.geomspace(0.1, 1e4, 800)
     ax[0].semilogx(m, phi(m, Km), color=BLUE, lw=2.0)
-    for lo, hi, col, lab in [(M_BAR / np.sqrt(2), M_BAR * np.sqrt(2), RED,
-                              "where the patient is held"),
-                             (Km / np.sqrt(2), Km * np.sqrt(2), GREEN,
-                              "where the information is")]:
+    #  E for the two bands the panel draws. decomp_E is a THIRD band, the
+    #  decompensation excursion of tab_D_excursion, so neither of these was
+    #  registered anywhere and the legend was asserting two numbers about the
+    #  design that nothing compared against anything.
+    for lo, hi, col, lab, key in [(M_BAR / np.sqrt(2), M_BAR * np.sqrt(2), RED,
+                                   "where the patient is held", "E_held"),
+                                  (Km / np.sqrt(2), Km * np.sqrt(2), GREEN,
+                                   "where the information is", "E_info")]:
+        PAPER_NUMBERS[key] = float(excitation(lo, hi, Km))
         ax[0].axvspan(lo, hi, color=col, alpha=0.14)
         ax[0].plot([lo, hi], [phi(lo, Km), phi(hi, Km)], "o-", color=col, ms=4,
-                   lw=1.4, label=f"{lab}: $E$ = {excitation(lo, hi, Km):.3f}")
+                   lw=1.4, label=f"{lab}: $E$ = {PAPER_NUMBERS[key]:.3f}")
     ax[0].axvline(Km, color=MUTED, ls=":", lw=1.0)
     over_x(ax[0], Km, r"$K_m$", frac=0.94, color=MUTED, fontsize=8, ha="left")
     ax[0].set_xlabel(r"metabolite $m$")
@@ -248,6 +386,21 @@ def quasi_steady_check(tol=0.05, cycles=3):
     worst = float(after.max()) if after.size else 0.0
     print(f"    marker time constant {tau*24:.2f} h against a dose half-life of "
           f"{np.log(2)/LAMBDA:.1f} d, a ratio of {np.log(2)/LAMBDA/tau:.0f}")
+    #  the window is a TOLERANCE, not a constant, and the paper quotes it at
+    #  two: 5% in Section 4.1 and 1% in Section 4.4 and Figure 6's caption.
+    #  `track_pct` is the departure AFTER that window, so it moves with the
+    #  tolerance too and needs the same treatment -- it was keyed as though it
+    #  did not, so whichever call ran last decided its value, and the guard's
+    #  fast path and `make figures` called this function a different number of
+    #  times in a different order and wrote 0.9861 and 4.9745 for the same
+    #  key. tau and the timescale ratio do not depend on the tolerance at all.
+    suffix = "" if abs(tol - 0.05) < 1e-12 else "_%dpct" % round(100 * tol)
+    PAPER_NUMBERS.update({
+        "settle_hours" + suffix: settle * 24.0,
+        "track_pct" + suffix: 100.0 * worst,
+        "tau_hours": tau * 24.0,
+        "timescale_ratio": np.log(2) / LAMBDA / tau,
+    })
     print(f"    after a dose the marker reaches {100*tol:.0f}% of quasi-steady in "
           f"{settle*24:.2f} h, and tracks to within {100*worst:.3f}% thereafter")
     return settle, worst
@@ -278,8 +431,18 @@ def _filter(levels, sigma, increments=None, prior_rel=(None, None),
     the ln K_m prior changes sd(ln theta) by nothing at all, and a K_m prior
     twenty times looser still changes nothing, so nothing here depends on
     knowing K_m -- which Remark rem:no_km forbids. Dropping the ln k_e prior
-    takes it from 0.15 to 0.65. The paper therefore claims one prior and lets
-    theta and K_m float.
+    takes it from 0.1500 to 1.1096, a factor of 7.4 taken record by record
+    (6.9 to 7.9 over the 24 records of SEEDS).
+
+    This docstring previously said "from 0.15 to 0.65", which was the rounded
+    form of a pair, 0.1474 and 0.6451, quoted in Section 7 and in the
+    supplement and REPRODUCIBLE FROM NOWHERE: audit/n3_ke_prior_worth.py
+    searched every design Section 7 lists at 24 records each, and 60
+    combinations of horizon, sampling interval and phase offset at the seed
+    the paper used, and found neither figure. It is withdrawn here too, so the
+    code does not assert what the paper has retracted (REVIEW_LOG.md R19).
+
+    The paper therefore claims one prior and lets theta and K_m float.
 
     `ke_prior` is the log-prior on ln k_e. The default 0.8 FITS k_e, which is
     the footing this paper claims: the non-enzymatic channel is not known, and
@@ -332,6 +495,273 @@ def _filter(levels, sigma, increments=None, prior_rel=(None, None),
     return np.array(out)
 
 
+def table_factors(T=730.0):
+    """
+    The two factors of the sensitivity ratio, on the same record.
+
+    Section 3 typed this table into the .tex. The numbers are computed on the
+    two-daily grid over two years, which is the densest design the paper
+    prices, and the point of the table is the asymmetry between the factors
+    rather than either one.
+    """
+    from common.excitation import phi
+    t = np.arange(0.0, T, 2.0)
+    lv = quasi_steady_level(t)
+    inc = np.asarray(delta(t), dtype=float)
+    ph = phi(lv, P.Km)
+    fac = 1.0 + inc / P.theta
+    pr = ph * fac
+    def row(name, v, ratio=True):
+        return [name, f"${v.min():.4f}$--${v.max():.4f}$",
+                (f"${v.max() / v.min():.2f}\\times$" if ratio else ""),
+                f"${v.max() - v.min():.4f}$"]
+    rows = [row(r"$\varphi(m)$, the marker band", ph),
+            row(r"$1 + \Delta/\theta$, the dose train", fac)]
+    rows.append([r"the product", f"${pr.min():.3f}$--${pr.max():.3f}$", "",
+                 r"$\mathbf{%.3f}$" % (pr.max() - pr.min())])
+    write_table("tab_D_factors",
+                ["factor", "range over the record", "as a ratio", "drop"],
+                rows,
+                colspec="lrrr",
+                note=("the dose train supplies %.1f times the drop the marker "
+                      "band does" % ((pr.max() - pr.min()) / (ph.max() - ph.min()))))
+    PAPER_NUMBERS.update({
+        "excitation_ratio": (pr.max() - pr.min()) / (ph.max() - ph.min()),
+        "phi_drop": ph.max() - ph.min(),
+        "train_drop": fac.max() - fac.min(),
+        "train_ratio": fac.max() / fac.min(),
+    })
+    print("  wrote tab_D_factors.tex")
+    print(f"    ratio of drops: {PAPER_NUMBERS['excitation_ratio']:.1f}")
+
+
+def table_load_precision(T=730.0):
+    """
+    What recording the substrate load more accurately is worth.
+
+    The accuracy enters twice and both have to move together: through
+    `sigma`, which is the ordinate noise of the fit, and through the
+    load-bias prior, which is the same fraction of the load. Holding either
+    one fixed while sweeping the other prices something the specification
+    does not ask for.
+    """
+    import model_A.run as LOC
+    monthly = np.arange(0.0, T, 30.4)
+    rows, raw = [], []
+    for frac in (0.01, 0.05, 0.10, 0.20, 0.40):
+        sig = LOC.sigma_total(frac, ASSAY_CV)
+        sds = []
+        for s in SEEDS:
+            lv, inc = design_record(monthly, seed=s)
+            sds.append(float(np.sqrt(
+                _filter(lv, sig, inc, load_frac=frac)[-1][0, 0])))
+        med, lo, hi = median_spread(sds)
+        raw.append((frac, sig, med, lo, hi))
+        rows.append([f"${100 * frac:.0f}\\%$", f"${sig:.1f}$",
+                     tex_spread(med, lo, hi)])
+    write_table("tab_D_loadprec",
+                ["substrate load recorded to", r"$\sigma$",
+                 r"$\operatorname{sd}(\ln\hat\theta)$"],
+                rows, colspec="lcc",
+                note=("medians over %d intake records at a %.0f%% day-to-day "
+                      "variability, range in brackets" % (len(SEEDS), 100 * LOAD_CV)))
+    print("  wrote tab_D_loadprec.tex")
+    for frac, sig, med, lo, hi in raw:
+        print(f"    load to {100 * frac:5.1f}%  sigma {sig:7.1f}  "
+              f"sd {med:.4f} [{lo:.4f}, {hi:.4f}]")
+    #  where the design crosses the gate, by interpolation in log-log, which
+    #  is what the text quotes as the recording accuracy the gate requires
+    import numpy as _np
+    xs = _np.log([r[0] for r in raw])
+    ys = _np.log([r[2] for r in raw])
+    cross = float(_np.exp(_np.interp(_np.log(0.20), ys, xs)))
+    #  the seed spreads as well as the medians, because the registry row for
+    #  sigma quotes both and a spread typed beside a generated median is the
+    #  same hazard one column over
+    PAPER_NUMBERS.update({
+        "load_accuracy_gate": 100 * cross,
+        "sd_load_acc_1pct": raw[0][2],
+        "sd_load_acc_1pct_lo": raw[0][3], "sd_load_acc_1pct_hi": raw[0][4],
+        "sd_load_acc_20pct": raw[3][2],
+        "sd_load_acc_20pct_lo": raw[3][3], "sd_load_acc_20pct_hi": raw[3][4],
+        "sd_load_acc_40pct": raw[4][2],
+        "sd_load_acc_40pct_lo": raw[4][3], "sd_load_acc_40pct_hi": raw[4][4],
+    })
+    print(f"    reaches 0.20 at a recording accuracy of {100 * cross:.1f}%")
+    return raw, cross
+
+
+def table_instruments(T=730.0):
+    """
+    Three sources of excitation on one metric.
+
+    Same footing throughout: theta and K_m free, a log-prior of 0.8 on ln k_e,
+    the load recorded to 5%, twenty-five monthly draws over two years. The
+    first two rows carry no therapy at all, so their levels solve the balance
+    without the increment; the carnitine row adds recorded steps in k_e.
+    """
+    import model_A.run as LOC
+    monthly = np.arange(0.0, T, 30.4)
+    sigma = LOC.sigma_total(LOAD_FRAC, ASSAY_CV)
+    Lb = load(0.0)
+
+    def med_of(fn):
+        return median_spread([fn(s) for s in SEEDS])
+
+    def sd_untreated(load_cv, ke_step=0.0):
+        """
+        No therapy at all, so the levels solve the balance without the
+        increment. A carnitine step is a RECORDED step in k_e on alternate
+        visits with its gain treated as known, which is the favourable case
+        for carnitine, and the level is re-solved at the stepped k_e: the
+        step moves the patient as well as the column, and moving the patient
+        is most of what it does (audit/e7_excitation_budget.py).
+        """
+        def one(s):
+            rng = np.random.default_rng(s)
+            Ls = Lb * (1.0 + load_cv * rng.standard_normal(monthly.size))
+            ke = P.ke * (1.0 + ke_step * (np.arange(monthly.size) % 2))
+            B = ke * P.Km + P.theta - Ls
+            lv = (-B + np.sqrt(B ** 2 + 4.0 * ke * Ls * P.Km)) / (2.0 * ke)
+            F = np.diag([0.0, 0.0, 1.0 / (LOAD_FRAC * Lb) ** 2, 1.0 / 0.8 ** 2])
+            for m, k in zip(lv, ke):
+                g = m / (P.Km + m)
+                q = np.array([P.theta * g,
+                              -P.theta * P.Km * m / (P.Km + m) ** 2, 1.0, k * m])
+                F = F + np.outer(q, q) / sigma ** 2
+            w = np.linalg.eigvalsh(F)
+            if w[0] <= 1e-14 * max(w[-1], 1e-300):
+                return np.inf
+            return float(np.sqrt(np.linalg.inv(F)[0, 0]))
+        return med_of(one)
+
+    def sd_dose(s):
+        lv, inc = design_record(monthly, seed=s)
+        return float(np.sqrt(_filter(lv, sigma, inc)[-1][0, 0]))
+
+    gate = 0.20
+    spont10 = sd_untreated(0.10)
+    spont40 = sd_untreated(0.40)
+    carn_lo = sd_untreated(0.10, ke_step=0.25)
+    carn_hi = sd_untreated(0.10, ke_step=1.00)
+    train = med_of(sd_dose)
+    rows = [
+        [r"spontaneous load variability alone, at $10\%$ day-to-day CV",
+         f"${spont10[0]:.2f}$", r"$%.1f\times$ worse" % (spont10[0] / gate)],
+        [r"\quad the same at an implausible $40\%$ CV",
+         f"${spont40[0]:.2f}$", r"$%.1f\times$ worse" % (spont40[0] / gate)],
+        [r"plus recorded carnitine steps of $25$--$100\%$ in $k_e$",
+         f"${min(carn_lo[0], carn_hi[0]):.2f}$--${max(carn_lo[0], carn_hi[0]):.2f}$",
+         r"\emph{worse still}"],
+        [r"\textbf{the dose train}", r"$\mathbf{%.4f}$" % train[0],
+         r"\textbf{passes}"],
+    ]
+    write_table("tab_D_instruments",
+                ["source of excitation",
+                 r"$\operatorname{sd}(\ln\hat\theta)$",
+                 r"against $0.20$"],
+                rows,
+                #  the first column holds sentences, so it has to wrap
+                colspec=(r">{\raggedright\arraybackslash}p{0.56\linewidth}cc"),
+                note=("medians over %d intake records, one footing throughout"
+                      % len(SEEDS)))
+    PAPER_NUMBERS.update({
+        "sd_spont_10": spont10[0], "sd_spont_40": spont40[0],
+        "sd_carn_lo": min(carn_lo[0], carn_hi[0]),
+        "sd_carn_hi": max(carn_lo[0], carn_hi[0]),
+    })
+    print("  wrote tab_D_instruments.tex")
+    for lab, v in (("load variability 10%", spont10), ("load variability 40%", spont40),
+                   ("carnitine 25%", carn_lo), ("carnitine 100%", carn_hi),
+                   ("the dose train", train)):
+        print(f"    {lab:>22}: {v[0]:.4f} [{v[1]:.4f}, {v[2]:.4f}]")
+
+
+def fig_dose_train(T=91.0):
+    """
+    The experiment, drawn: the dose train, what it does to the increment and
+    to the marker, and where two schedules land in it.
+
+    The paper's thesis is that the therapy is already the identification
+    experiment, and a reader has to be able to see the experiment. The top
+    panel is the increment the schedule delivers, the bottom is the marker
+    it drives, and the two schedules are marked on both: monthly across dose
+    cycles, which walks around the cycle, and fortnightly, which is the dose
+    interval itself and therefore lands at one phase for ever.
+    """
+    t = np.linspace(0.0, T, 4000)
+    inc = np.asarray(delta(t), dtype=float) / P.theta
+    lv = quasi_steady_level(t)
+
+    monthly = np.arange(0.0, T, 30.4)
+    fortnightly = np.arange(0.0, T, DOSE_INTERVAL)
+    doses = np.arange(0.0, T, DOSE_INTERVAL)
+
+    fig, ax = plt.subplots(2, 1, figsize=figsize(1.0, 0.58), sharex=True)
+
+    #  (top) the increment the schedule delivers
+    ax[0].plot(t, inc, color=GREEN, lw=1.8)
+    for d in doses:
+        ax[0].plot([d, d], [0, inc.max() * 1.04], color=GREY, lw=0.7, ls=":",
+                   zorder=0)
+    trough = float(inc[(t > doses[-2]) & (t < doses[-1])].min())
+    ax[0].axhline(trough, color=MUTED, ls="--", lw=0.9)
+    ax[0].annotate(r"trough  $%.2f\,\theta$" % trough,
+                   xy=(0.30 * T, trough), xytext=(0.30 * T, trough + 0.28),
+                   color=MUTED, fontsize=7, ha="left", va="bottom",
+                   arrowprops=dict(arrowstyle="-", color=MUTED, lw=0.7))
+    ax[0].set_ylabel(r"increment  $\Delta(t)/\theta$")
+    ax[0].set_ylim(0, inc.max() * 1.12)
+    corner(ax[0], "a dose every %.0f d, half-life %.1f d"
+           % (DOSE_INTERVAL, np.log(2) / LAMBDA), "upper right",
+           color=MUTED, fontsize=7)
+
+    #  (bottom) the marker the increment drives, and where each schedule lands
+    ax[1].plot(t, lv, color=BLUE, lw=1.8)
+    for times, col, mk, lab in ((monthly, GREEN, "o", "monthly, across cycles"),
+                                (fortnightly, RED, "s",
+                                 "fortnightly = the dose interval")):
+        y = quasi_steady_level(times)
+        ax[1].plot(times, y, mk, color=col, ms=5.5, mec="white", mew=0.8,
+                   label=lab, zorder=5)
+        for x, yy in zip(times, y):
+            ax[1].plot([x, x], [lv.min() * 0.97, yy], color=col, lw=0.8,
+                       alpha=0.55, zorder=1)
+    ax[1].set_xlabel("days")
+    ax[1].set_ylabel(r"marker  $m$  [$\mu$M]")
+    #  headroom above the peaks so the legend sits in clear air rather than
+    #  over the curve it is labelling
+    ax[1].set_ylim(lv.min() * 0.97, lv.max() * 1.30)
+    ax[1].legend(loc="upper center", ncol=2, fontsize=7, framealpha=0.0,
+                 borderpad=0.2, handletextpad=0.5, columnspacing=1.6)
+
+    #  the phase each schedule visits over the WHOLE record, which is the
+    #  point: three months is what fits on a page, two years is the design
+    full = np.arange(0.0, 730.0, 30.4)
+    ph_m = np.sort((full % DOSE_INTERVAL) / DOSE_INTERVAL)
+    ph_f = (np.arange(0.0, 730.0, DOSE_INTERVAL) % DOSE_INTERVAL) / DOSE_INTERVAL
+    PAPER_NUMBERS.update({
+        "phase_gap_monthly": float(np.max(np.diff(np.r_[ph_m, ph_m[0] + 1.0]))),
+        "phase_spread_fortnightly": float(ph_f.max() - ph_f.min()),
+    })
+    for a in ax:
+        a.set_xlim(0, T)
+    fig.align_ylabels(ax)
+    save(fig, "fig_D0_dosetrain")
+    PAPER_NUMBERS.update({
+        "train_trough_frac": trough,
+        "train_peak_frac": float(inc.max()),
+        "marker_low": float(lv.min()),
+        "marker_high": float(lv.max()),
+    })
+    print(f"    increment runs {inc.min():.3f} to {inc.max():.3f} of theta, "
+          f"trough {trough:.3f}; marker {lv.min():.2f} to {lv.max():.2f}")
+    print(f"    over two years the monthly schedule leaves no gap in cycle "
+          f"phase wider than {PAPER_NUMBERS['phase_gap_monthly']:.2f} of a "
+          f"cycle; the fortnightly one spans "
+          f"{PAPER_NUMBERS['phase_spread_fortnightly']:.2f}")
+
+
 def fig_collapse(T=730.0):
     """
     Sparse clinic sampling against sampling dense enough to catch the
@@ -364,12 +794,18 @@ def fig_collapse(T=730.0):
               f"  sd(ln theta) = {np.sqrt(Ps[-1][0,0]):8.4f}  corr = {rho:+.4f}"
               f"   [k_e held known: {kek:.4f};  Delta dropped too: {stale:.4f}]")
     ax[0].axhline(0.20, color=MUTED, ls="--", lw=1.0)
-    corner(ax[0], r"$20\%$ on $\theta$", "lower left", color=MUTED, fontsize=7)
+    #  the target label sat under its own line, where the dense design's
+    #  curve runs; above the line is clear
+    ax[0].annotate(r"$20\%$ on $\theta$", xy=(0.34, 0.21),
+                   xycoords=("axes fraction", "data"),
+                   color=MUTED, fontsize=7, ha="left", va="bottom")
     ax[0].set_xlabel("time  [days]")
     ax[0].set_ylabel(r"$\mathrm{sd}(\ln\hat\theta)$")
     ax[0].set_title(r"no process noise on $\theta$:" "\n"
                     "what does not collapse, stays", fontsize=8)
-    ax[0].legend(loc="upper right", fontsize=5.8)
+    #  both panels carry the same three series and the left panel's legend
+    #  sat on top of the six-monthly curve, so one legend goes under the
+    #  figure instead of two inside it
 
     th = np.linspace(0, 2 * np.pi, 240)
     for name, (times, lv, Ps) in finals.items():
@@ -382,7 +818,9 @@ def fig_collapse(T=730.0):
     ax[1].set_xlabel(r"$\ln\theta$ error")
     ax[1].set_ylabel(r"$\ln K_m$ error")
     ax[1].set_title("one-sigma ellipse, after two years", fontsize=8)
-    ax[1].legend(loc="upper left", fontsize=6)
+    handles, labels = ax[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=3, fontsize=7,
+               frameon=False, bbox_to_anchor=(0.5, -0.02))
     save(fig, "fig_D2_collapse")
 
     best = min(np.sqrt(f[2][-1][0, 0]) for f in finals.values())
@@ -422,10 +860,20 @@ def fig_protocol(T=112.0):
     Faceting the three schedules keeps that comparison a spatial one, so the
     reader never has to separate two hues to make it.
     """
+    #  no sd field: it was carried here as a hand-typed string, the aliased
+    #  entry still reading 3.51, which is that design's seed-3 MINIMUM and not
+    #  its median of 4.5845. Nothing drew it -- the panels compute their own
+    #  range -- but a stale number in a figure is invisible to the artefact
+    #  guard, which compares rendered bytes, so it does not get to live here.
+    #  the fifth field is the delta_range_* key each panel's range bar draws.
+    #  These three schedules are exactly three rows of tab_D_designs over the
+    #  same two-year grid, so the bar and the table are ONE number: writing it
+    #  into PAPER_NUMBERS under that key makes the NumberBook the comparison,
+    #  and a figure that drifted from the table would fail at accumulation.
     SCHEDULES = [
-        ("monthly, every 30.4 d", 30.4, GREEN, "o", "0.170"),
-        ("every 14.5 d, half a day off", 14.5, BLUE, "^", "0.161"),
-        ("fortnightly, on the dose", DOSE_INTERVAL, RED, "X", "3.51"),
+        ("monthly, every 30.4 d", 30.4, GREEN, "o", "monthly"),
+        ("every 14.5 d, half a day off", 14.5, BLUE, "^", "off"),
+        ("fortnightly, on the dose", DOSE_INTERVAL, RED, "X", "aliased"),
     ]
 
     # Nested gridspecs rather than one mosaic: the trajectory and its rails are
@@ -468,7 +916,7 @@ def fig_protocol(T=112.0):
     r.set_ylim(-0.7, len(SCHEDULES) - 0.3)
     r.set_yticks(range(len(SCHEDULES)))
     r.set_yticklabels([s[0].split(",")[0] for s in reversed(SCHEDULES)], fontsize=6.4)
-    for i, (lab, dt, col, mk, sd) in enumerate(SCHEDULES):
+    for i, (lab, dt, col, mk, _key) in enumerate(SCHEDULES):
         y = len(SCHEDULES) - 1 - i
         ts = np.arange(0.0, T + 1e-9, dt)
         r.axhline(y, color=GREY, lw=0.5, zorder=1)
@@ -483,12 +931,13 @@ def fig_protocol(T=112.0):
     curve = np.asarray(delta(20 * DOSE_INTERVAL + ph)) / P.theta
     ymax = float(curve.max()) * 1.18
 
-    for i, (lab, dt, col, mk, sd) in enumerate(SCHEDULES):
+    for i, (lab, dt, col, mk, key) in enumerate(SCHEDULES):
         b = ax[f"p{i}"]
         ts = np.arange(0.0, 730.0, dt)
         dph = np.mod(ts, DOSE_INTERVAL)
         dval = np.asarray(delta(ts)) / P.theta
-        rng = float(np.ptp(dval))
+        rkey = f"delta_range_{key}"
+        PAPER_NUMBERS[rkey] = float(np.ptp(dval))
 
         b.plot(ph, curve, color=GREY, lw=1.0, zorder=2)
         b.axvspan(0.0, 0.22, color=RED, alpha=0.18, lw=0, zorder=1)
@@ -502,8 +951,8 @@ def fig_protocol(T=112.0):
         b.plot([xr, xr], [dval.min(), dval.max()], color=col, lw=2.4,
                solid_capstyle="butt", zorder=6, clip_on=False)
         b.text(DOSE_INTERVAL * 1.10, (dval.min() + dval.max()) / 2.0,
-               f"range\n{rng:.2f}", fontsize=5.9, color=col, va="center",
-               ha="left")
+               f"range\n{PAPER_NUMBERS[rkey]:.2f}", fontsize=5.9, color=col,
+               va="center", ha="left")
 
         b.set_xlim(0, DOSE_INTERVAL)
         b.set_ylim(0, ymax)
@@ -518,7 +967,7 @@ def fig_protocol(T=112.0):
             b.set_ylabel(r"increment $\Delta/\theta$")
 
     ax["p0"].set_title("what each schedule sees of the increment", fontsize=7.4)
-    ax["p2"].annotate("every draw at one phase,\nso one value of $\Delta$",
+    ax["p2"].annotate("every draw at one phase,\n" r"so one value of $\Delta$",
                       xy=(0.35, curve.max() * 0.99), xytext=(2.4, ymax * 0.42),
                       fontsize=6.0, color=RED,
                       arrowprops=dict(arrowstyle="->", color=RED, lw=0.7))
@@ -756,8 +1205,8 @@ def fig_decision():
     lv_km = np.geomspace(P.Km / 3.0, P.Km * 3.0, 9)
     for cv, col, ls in [(0.02, GREY, ":"), (0.05, GREEN, "-"), (0.128, RED, "--")]:
         ax[0].plot(folds, curve(lv9, cv=cv), color=col, ls=ls, lw=1.7,
-                   label=rf"{100*cv:.0f}\%")
-    ax[0].set_ylabel(r"sign error on $\mu$  [\%]")
+                   label=f"{100*cv:.0f}%")
+    ax[0].set_ylabel(r"sign error on $\mu$  [%]")
     ax[0].set_title("against assay variability", fontsize=8)
     ax[0].legend(fontsize=6, title="assay CV", title_fontsize=6)
 
@@ -781,9 +1230,18 @@ def fig_decision():
     for a in ax:
         a.axvline(cross, color=MUTED, ls=":", lw=0.9)
         a.set_xlabel(r"illness amplitude  [$\times$ baseline]")
-        a.set_ylim(0, 60)
-    over_x(ax[0], cross, r"$\mu = 0$", frac=0.95, color=MUTED, fontsize=7,
-           ha="left")
+        #  headroom above the peaks so the per-panel legends sit in clear
+        #  air rather than on the curves they label. The same limit on all
+        #  three, because the panels are meant to be read against each other
+        a.set_ylim(0, 96)
+    #  the boundary label sat at the top of its own line, where all three
+    #  curves peak, and the mu was lost behind them. Low and to the left is
+    #  empty in every panel, because that is where the error rate is zero.
+    ax[0].annotate(r"$\mu = 0$", xy=(cross, 0.0), xycoords="data",
+                   xytext=(0.06, 0.14), textcoords="axes fraction",
+                   color=MUTED, fontsize=7, ha="left", va="center",
+                   arrowprops=dict(arrowstyle="-", color=MUTED, lw=0.6,
+                                   shrinkA=1, shrinkB=1))
     save(fig, "fig_D3_decision")
 
     print("    the decision, not a confidence interval "
@@ -861,29 +1319,98 @@ def table_designs(T=730.0):
     ]
     rows, raw = [], []
     for name, times, override in designs:
-        lv, inc = design_record(times)
+        # one intake record per seed; every number below is a median with its
+        # range, because a single draw is not a property of the design
+        sds, rhos, drops = [], [], []
+        for s in SEEDS:
+            lv, inc = design_record(times, seed=s)
+            if override is not None:
+                lv = override
+            Pc = _filter(lv, sigma, inc)[-1]
+            sds.append(float(np.sqrt(Pc[0, 0])))
+            rhos.append(float(Pc[0, 1] / np.sqrt(Pc[0, 0] * Pc[1, 1])))
+            drops.append(float(np.sqrt(_filter(lv, sigma)[-1][0, 0])))
+        sd, sd_lo, sd_hi = median_spread(sds)
+        rho, _, _ = median_spread(rhos)
+        dropped, _, _ = median_spread(drops)
+        lv, inc = design_record(times, seed=BASE_SEED)
         if override is not None:
             lv = override
-        Pc = _filter(lv, sigma, inc)[-1]
-        sd = float(np.sqrt(Pc[0, 0]))
-        rho = float(Pc[0, 1] / np.sqrt(Pc[0, 0] * Pc[1, 1]))
-        dropped = float(np.sqrt(_filter(lv, sigma)[-1][0, 0]))
-        drng = float((inc.max() - inc.min()) / P.theta)
-        raw.append((name, len(times), lv.min(), lv.max(), drng, sd, rho, dropped))
-        cell = (r"\textbf{%.4f}" % sd) if sd < 0.20 else ("%.4f" % sd)
+        drng = delta_range(times)
+        raw.append((name, len(times), lv.min(), lv.max(), drng, sd, rho,
+                    dropped, sd_lo, sd_hi))
         rows.append([name, len(times), f"${lv.min():.2f}$--${lv.max():.2f}$",
-                     f"${drng:.2f}$", cell, f"${rho:+.4f}$", f"${dropped:.3f}$"])
-    write_table("tab_D_designs",
-                ["design", "$n$", "levels visited",
-                 r"range of $\Delta/\theta$",
-                 r"$\operatorname{sd}(\ln\hat\theta)$",
-                 r"$\operatorname{corr}(\ln\hat\theta, \ln \hat K_m)$",
-                 r"\emph{$\Delta$ dropped}"],
-                rows,
-                note="theta and K_m free; priors only on ln k_e and the load record")
+                     f"${drng:.2f}$", tex_spread(sd, sd_lo, sd_hi),
+                     f"${rho:+.4f}$", f"${dropped:.3f}$"])
+    head = ["design", "$n$", "levels visited",
+            r"range of $\Delta/\theta$",
+            r"$\operatorname{sd}(\ln\hat\theta)$",
+            r"$\operatorname{corr}(\ln\hat\theta, \ln \hat K_m)$"]
+    note = ("theta and K_m free; priors only on ln k_e and the load record. "
+            "Medians over %d intake records, range in brackets." % len(SEEDS))
+    #  Seven columns do not fit the page: the last one ran off the right edge
+    #  and printed as a truncated word. The main text carries six, and the
+    #  column it drops -- the same design evaluated on a footing this paper
+    #  does not use -- goes to the supplement whole, where the validation
+    #  section reads it.
+    write_table("tab_D_designs", head, [r[:6] for r in rows], note=note)
     print("  wrote tab_D_designs.tex")
-    for nm, n, lo, hi, drng, sd, rho, drop in raw:
-        print(f"    {nm[:40]:>40}: n={n:4d}  range(D/th)={drng:5.2f}  sd={sd:.4f}"
+    write_table("tab_D_designs_full", head + [r"\emph{$\Delta$ dropped}"],
+                rows, note=note)
+    print("  wrote tab_D_designs_full.tex")
+    #  what the dropped-increment column spans over the designs a protocol
+    #  could adopt, which is what the text quotes now that the column itself
+    #  has moved to the supplement. `raw` is
+    #  (name, n, lv_min, lv_max, range, sd, corr, dropped, sd_lo, sd_hi).
+    acc = [r[7] for r in raw if "straddling" not in r[0]]
+    PAPER_NUMBERS.update({"dropped_lo": min(acc), "dropped_hi": max(acc)})
+    #  the range of Delta/theta each design sees, which the text quoted from
+    #  memory in nine different values. One key per design, and the half-day
+    #  offset added here because the text quotes it and the table does not.
+    by_name = {"monthly": r"\textbf{monthly, across dose cycles}",
+               "two_monthly": "two-monthly, across dose cycles",
+               "dense": "every two days for two years",
+               "aliased": r"\emph{fortnightly: the dose interval itself}",
+               "six_monthly": "six-monthly clinic visits",
+               "one_cycle": "one dose cycle, every two days"}
+    dense = next(r for r in raw if r[0] == "every two days for two years")
+    PAPER_NUMBERS.update({"sd_dense": dense[5], "sd_dense_lo": dense[8],
+                          "sd_dense_hi": dense[9]})
+    #  the same design with the k_e prior taken away, which is what that prior
+    #  is worth and what the registry's s_lnke row quotes. A width of 1e9 is
+    #  flat here and NOT the same as ke_prior=None, which holds k_e exactly
+    #  known and drops the column altogether.
+    flat = []
+    for s in SEEDS:
+        lv, inc = design_record(dense_t, seed=s)
+        flat.append(float(np.sqrt(
+            _filter(lv, sigma, inc, ke_prior=1e9)[-1][0, 0])))
+    flat = median_spread(flat)
+    PAPER_NUMBERS.update({"sd_dense_flat": flat[0], "sd_dense_flat_lo": flat[1],
+                          "sd_dense_flat_hi": flat[2],
+                          "ke_prior_worth": flat[0] / dense[5]})
+    lut = {r[0]: r[4] for r in raw}
+    PAPER_NUMBERS.update({f"delta_range_{k}": lut[v]
+                          for k, v in by_name.items() if v in lut})
+    #  the two rows the text quotes that spec_numbers() does not recompute:
+    #  the K_m-straddling design, which is the placement argument, and the
+    #  single dose cycle. Both were hand-typed in Section 4, one of them to
+    #  three decimals against the table's four.
+    sd_lut = {r[0]: (r[5], r[8], r[9]) for r in raw}
+    for key, nm in (("straddle", r"\emph{the same $365$ straddling $K_m$}"),
+                    ("one_cycle", "one dose cycle, every two days"),
+                    ("six_monthly", "six-monthly clinic visits")):
+        if nm in sd_lut:
+            med, slo, shi = sd_lut[nm]
+            PAPER_NUMBERS.update({f"sd_{key}": med, f"sd_{key}_lo": slo,
+                                  f"sd_{key}_hi": shi})
+    if "sd_straddle" in PAPER_NUMBERS:
+        PAPER_NUMBERS["straddle_gain"] = dense[5] / PAPER_NUMBERS["sd_straddle"]
+    PAPER_NUMBERS["delta_range_off"] = delta_range(
+        np.arange(0.0, T, DOSE_INTERVAL + 0.5))
+    for nm, n, lo, hi, drng, sd, rho, drop, slo, shi in raw:
+        print(f"    {nm[:40]:>40}: n={n:4d}  range(D/th)={drng:5.2f}  "
+              f"sd={sd:.4f} [{slo:.4f}, {shi:.4f}]"
               f"  corr={rho:+.4f}  [Delta dropped {drop:.3f}]")
     return raw
 
@@ -902,12 +1429,21 @@ def table_excursion():
                      f"{E:.4f}",
                      f"{excitation_max(r):.4f}",
                      f"{E / excitation_max(r):.2f}"])
+    for name, lo, hi, _d in excursion_sources():
+        if "decompensation" in name:
+            PAPER_NUMBERS.update({
+                "decomp_E": excitation(lo, hi, P.Km),
+                "decomp_frac_pct": 100.0 * excitation(lo, hi, P.Km)
+                / excitation_max(hi / lo)})
     write_table("tab_D_excursion",
                 ["source", "$m$ range", "fold", "direction",
                  "$\\sqrt{m_{\\min}m_{\\max}}/K_m$", "$E$", "$E_{\\max}(r)$",
                  "frac.\\ of $E_{\\max}$"],
                 rows,
-                colspec=r"p{0.29\textwidth}lllllll",
+                #  ragged rather than justified: at this width LaTeX was
+                #  hyphenating the source names mid-word to make the lines
+                #  meet, which is unreadable in a column of labels
+                colspec=r">{\raggedright\arraybackslash}p{0.27\textwidth}lllllll",
                 note="E is the excitation the band delivers; E_max(r) is the most "
                      "a band of that fold range could deliver if it straddled K_m")
     print("    excursion available from each source:")
@@ -927,8 +1463,9 @@ def spec_numbers():
     sigma = LOC.sigma_total(LOAD_FRAC, ASSAY_CV)
     Lb = load(0.0)
 
-    def sd_of(times, kap=None, load_cv=None, ke_prior=0.8, load_prior=True):
-        lv, inc = design_record(times, load_cv=load_cv)
+    def sd_of(times, kap=None, load_cv=None, ke_prior=0.8, load_prior=True,
+              seed=BASE_SEED):
+        lv, inc = design_record(times, load_cv=load_cv, seed=seed)
         pri = [np.inf, np.inf,
                (LOAD_FRAC * Lb) ** 2 if load_prior else np.inf,
                ke_prior ** 2]
@@ -949,95 +1486,206 @@ def spec_numbers():
         v = np.linalg.inv(F)[0, 0]
         return float(np.sqrt(v)) if v > 0 else np.inf
 
+    def over_seeds(**kw):
+        """
+        Median and range over SEEDS, because one intake record is not a
+        property of the design. Until September 2026 every number below was a
+        single draw at BASE_SEED, and on the weak designs that mattered: the
+        aliased row's seed-3 value is the MINIMUM of its own 24-seed range.
+        """
+        return median_spread([sd_of(seed=s, **kw) for s in SEEDS])
+
     monthly = np.arange(0.0, 730.0, 30.4)
     two_monthly = np.arange(0.0, 730.0, 60.0)
+    spread = {
+        "sd_monthly": over_seeds(times=monthly),
+        "sd_two_monthly": over_seeds(times=two_monthly),
+        "sd_aliased": over_seeds(times=np.arange(0.0, 730.0, DOSE_INTERVAL)),
+        "sd_aliased_off": over_seeds(
+            times=np.arange(0.0, 730.0, DOSE_INTERVAL + 0.5)),
+        "sd_load_1pct": over_seeds(times=monthly, load_cv=0.01),
+        "sd_load_20pct": over_seeds(times=monthly, load_cv=0.20),
+        "sd_load_steady": over_seeds(times=monthly, load_cv=0.0),
+        # the same, with NO prior on the load bias, which is where the rank
+        # deficiency of prop:rank actually shows: the prior fills that
+        # direction, and only real variation lets the DATA fill it instead
+        "free_steady": over_seeds(times=monthly, load_cv=0.0, load_prior=False),
+        "free_cv2": over_seeds(times=monthly, load_cv=0.02, load_prior=False),
+        "free_cv10": over_seeds(times=monthly, load_cv=0.10, load_prior=False),
+        "free_cv20": over_seeds(times=monthly, load_cv=0.20, load_prior=False),
+    }
+    #: the 14.5-day record's own visit count and how many laps of the dial it
+    #: sweeps. Both are quoted where sd_aliased_off is, because Figure E1
+    #: draws a DIFFERENT 14.5-day design -- 25 visits, 89% of one lap -- and
+    #: a reader who sees the figure's range and this sd will otherwise take
+    #: them for one schedule. They are not: 51 visits against 25, 725 days
+    #: against 348, a range of 1.99 against 1.80.
+    off_t = np.arange(0.0, 730.0, DOSE_INTERVAL + 0.5)
     N = {"sigma": sigma,
-         "sd_monthly": sd_of(monthly),
-         "sd_two_monthly": sd_of(two_monthly),
-         "sd_aliased": sd_of(np.arange(0.0, 730.0, DOSE_INTERVAL)),
-         "sd_aliased_off": sd_of(np.arange(0.0, 730.0, DOSE_INTERVAL + 0.5)),
-         "sd_load_1pct": sd_of(monthly, load_cv=0.01),
-         "sd_load_20pct": sd_of(monthly, load_cv=0.20),
-         "sd_load_steady": sd_of(monthly, load_cv=0.0),
-         # the same, with NO prior on the load bias, which is where the rank
-         # deficiency of prop:rank actually shows: the prior fills that
-         # direction, and only real variation lets the DATA fill it instead
-         "free_steady": sd_of(monthly, load_cv=0.0, load_prior=False),
-         "free_cv2": sd_of(monthly, load_cv=0.02, load_prior=False),
-         "free_cv10": sd_of(monthly, load_cv=0.10, load_prior=False),
-         "free_cv20": sd_of(monthly, load_cv=0.20, load_prior=False)}
+         "n_aliased_off": len(off_t),
+         "laps_aliased_off": len(off_t) * 0.5 / DOSE_INTERVAL,
+         "span_aliased_off": float(off_t[-1] - off_t[0])}
+    #: the headline keys keep their names and now carry the MEDIAN; the
+    #: <key>_lo / <key>_hi keys carry the range that median came from, and the
+    #: paper quotes both wherever it quotes the median.
+    for k, (med, lo, hi) in spread.items():
+        N[k], N[k + "_lo"], N[k + "_hi"] = med, lo, hi
+    #: the ratio the aliasing claim rests on, taken per record and then
+    #: summarised, rather than as a ratio of two separately-taken medians
+    ratios = [sd_of(times=np.arange(0.0, 730.0, DOSE_INTERVAL), seed=s)
+              / sd_of(times=monthly, seed=s) for s in SEEDS]
+    (N["alias_cost"], N["alias_cost_lo"],
+     N["alias_cost_hi"]) = median_spread(ratios)
+    def solve_over_seeds(f):
+        """
+        brentq per intake record, then the median and range of the answers.
+
+        These are the requirements Tier 2 is written against, so a single-draw
+        answer here is a single-draw REQUIREMENT, which is worse than a
+        single-draw precision.
+        """
+        out = []
+        for s in SEEDS:
+            try:
+                out.append(brentq(lambda x: f(x, s) - 0.20, 1e-3, 3.0,
+                                  xtol=1e-7))
+            except ValueError:
+                pass
+        return median_spread(out) if out else (None, None, None)
+
     for tag, tt in (("monthly", monthly), ("two_monthly", two_monthly)):
-        try:
-            N["kappa_" + tag] = brentq(lambda x: sd_of(tt, kap=x) - 0.20,
-                                       1e-3, 3.0, xtol=1e-5)
-        except ValueError:
-            N["kappa_" + tag] = None
-    try:
-        N["ke_needed"] = brentq(lambda x: sd_of(monthly, ke_prior=x) - 0.20,
-                                1e-3, 3.0, xtol=1e-5)
-    except ValueError:
-        N["ke_needed"] = None
+        med, lo, hi = solve_over_seeds(
+            lambda x, s, tt=tt: sd_of(tt, kap=x, seed=s))
+        N["kappa_" + tag] = med
+        N["kappa_" + tag + "_lo"], N["kappa_" + tag + "_hi"] = lo, hi
+    med, lo, hi = solve_over_seeds(
+        lambda x, s: sd_of(monthly, ke_prior=x, seed=s))
+    N["ke_needed"], N["ke_needed_lo"], N["ke_needed_hi"] = med, lo, hi
     return N
 
 
 def table_spec():
     """
-    The one-page data specification, in two tiers.
+    The one-page data specification, in three tiers.
 
-    The order is not cosmetic: Tier 1 measures the only quantity the method's
-    feasibility turns on, and until it reports there is no defensible number of
-    breath tests to ask for.
+    The order is not cosmetic and it is not cost: it is dependency. Tier 1 is
+    one blood draw and it rules out a family of structures under which theta
+    is not identifiable at all, so the tiers below it are calibrating a
+    parameter that may not exist until it reports. Tier 2 then measures the
+    only quantity the method's feasibility turns on, and until THAT reports
+    there is no defensible number of breath tests to ask for.
     """
     N = spec_numbers()
+    PAPER_NUMBERS.update(N)
+    if N.get("ke_needed"):
+        PAPER_NUMBERS["ke_needed_factor"] = float(np.exp(N["ke_needed"]))
+        PAPER_NUMBERS["ke_needed_factor_lo"] = float(np.exp(N["ke_needed_lo"]))
+        PAPER_NUMBERS["ke_needed_factor_hi"] = float(np.exp(N["ke_needed_hi"]))
+    for tag in ("", "_lo", "_hi"):
+        v = N.get("kappa_monthly" + tag)
+        if v is not None and np.isfinite(v):
+            PAPER_NUMBERS["kappa_monthly_pct" + tag] = 100.0 * v
     kap = N["kappa_monthly"]
     kefac = np.exp(N["ke_needed"]) if N["ke_needed"] else None
+
+    def rng(key, digits=3, scale=1.0, unit=""):
+        """
+        The seed range beside a median, in the units the median is quoted in.
+
+        `scale` and `unit` exist because some of these are percentages and a
+        range printed in the wrong units is worse than no range at all.
+        """
+        lo, hi = N.get(key + "_lo"), N.get(key + "_hi")
+        if lo is None or not np.isfinite(lo) or not np.isfinite(hi):
+            return ""
+        return (r", $%.*f$ to $%.*f$%s across %d records"
+                % (digits, scale * lo, digits, scale * hi, unit, len(SEEDS)))
     B = "\\textbf{"
     rows = [
-        [B + "TIER 1} --- run first", "", ""],
+        [B + "TIER 1} --- run first, and it is one draw", "", ""],
+        ["what to measure",
+         r"two or three plasma draws inside the first half hour after one "
+         r"scheduled infusion, at the assay precision assumed throughout",
+         "rules out the published alternative and any structure whose marker "
+         "has no relaxation of its own, under which $\\theta$ is not "
+         "identifiable at any design; see Section~\\ref{sec:tierstruct}"],
+        ["what it must reach",
+         r"a draw within fifteen minutes of the dose; the separation is "
+         r"$16.3\sigma$ at three minutes and $0.68\sigma$ at one hour",
+         "the two structures share the steady map exactly and differ only in "
+         "the travel between levels, so the whole of the test is in the "
+         "first hour"],
+        [B + "TIER 2} --- conditional on Tier 1", "", ""],
         ["what to measure",
          "same-day repeatability of $1$-$^{13}$C-propionate oxidation: two "
          "breath tests bracketing one dose, on one day",
          "the only quantity the design turns on, and no published value for "
          "it exists"],
         ["what it must reach",
-         ("a coefficient of variation on $\\Delta$ below $%.1f\\%%$" % (100 * kap)
+         ("a coefficient of variation on $\\Delta$ below $%.1f\\%%$%s"
+          % (100 * kap, rng("kappa_monthly", digits=1, scale=100.0,
+                            unit=r"\%"))
           if kap else "a CV on $\\Delta$ inside the gate"),
          "derived from the gate, not chosen: at that precision monthly "
-         "sampling reaches $20\\%$ on $\\theta$"],
+         "sampling reaches $20\\%$ on $\\theta$. This is a \\emph{requirement}, "
+         "so it is quoted as a median over intake records rather than as one "
+         "draw"],
         ["what is known now",
          "between-visit CV, mean $14.0\\%$, range $0.4$--$50.8\\%$, $n=15$, "
          "intervals $2$ months to $4$ years",
          "an upper bound on same-day error, already close to the requirement, "
          "but it does not establish it; and it is MMA, not PA"],
-        [B + "TIER 2} --- conditional on Tier 1", "", ""],
+        [B + "TIER 3} --- conditional on Tier 2", "", ""],
         ["marker", "plasma 3-hydroxypropionate",
          "endpoint association (RR $0.7$, $95\\%$ CI $0.6$--$0.9$) and "
          "immunity to the carnitine sign reversal that disqualifies C3"],
         ["sampling schedule",
          "monthly across dose cycles, $n \\approx 25$ over two years "
-         "($%.3f$); two-monthly also passes ($%.3f$)"
-         % (N["sd_monthly"], N["sd_two_monthly"]),
+         "($%.4f$%s); two-monthly also passes ($%.4f$%s). These are "
+         "\\emph{sampling spreads} of $\\ln\\hat\\theta$, not interval "
+         "half-widths; see Remark~\\ref{rem:curvature}"
+         % (N["sd_monthly"], rng("sd_monthly", digits=4),
+            N["sd_two_monthly"], rng("sd_two_monthly", digits=4)),
          "ordinary outpatient density; what matters is covering the phase of "
          "the dose cycle, not the sampling rate"],
         ["sampling, the hard constraint",
          B + "never at the dose interval or a multiple of it}: fortnightly "
-         "gives $%.2f$, $14.5$-daily gives $%.3f$"
-         % (N["sd_aliased"], N["sd_aliased_off"]),
+         "gives $%.4f$%s against the monthly design's $%.4f$, a cost of "
+         "$%.0f$-fold ($%.0f$ to $%.0f$ across records); $14.5$-daily gives "
+         "$%.4f$%s, which recovers it"
+         % (N["sd_aliased"], rng("sd_aliased", digits=4), N["sd_monthly"],
+            N["alias_cost"], N["alias_cost_lo"], N["alias_cost_hi"],
+            N["sd_aliased_off"], rng("sd_aliased_off", digits=4)),
          "every draw lands at the same phase, the increment stops varying, "
          "and the therapy channel closes"],
+        #  the exclusion is on the FIT, not on the draw. A first-hour sample
+        #  is good data; it is inadmissible in a steady-state fit and in no
+        #  other sense, and the row used to say "no sample within one hour",
+        #  which forecloses the only window any dynamic estimator could use.
         ["sampling, the other exclusion",
-         "no sample within one hour of a dose",
+         r"\textbf{do not put a draw taken within one hour of a dose into "
+         r"the steady-state fit}. Such a draw may be taken, and is the only "
+         r"window that distinguishes the two structures of "
+         r"Section~\ref{sec:structuredep}; it is excluded from THIS fit, not "
+         r"from the protocol",
          "the marker is not at quasi-steady state there and a steady-state "
-         "fit does not apply to it"],
+         "fit does not apply to it. That is a constraint on the estimator "
+         "and not on the patient"],
         ["dosing record",
          "date, dose and product lot for every infusion",
          "$\\Delta(t_i)$ is a regressor, not a nuisance: it carries the "
          "excitation"],
         ["load record, precision",
-         "ordinary outpatient precision suffices ($%.3f$ at a $1\\%%$ record "
-         "against $%.3f$ at $20\\%%$)" % (N["sd_load_1pct"], N["sd_load_20pct"]),
-         "the load-bias column is nearly orthogonal to $\\theta$ once the "
-         "increment is carried"],
+         "ordinary outpatient \\emph{variability} suffices ($%.4f$ at a $1\\%%$ "
+         "day-to-day CV against $%.4f$ at $20\\%%$); what binds is the "
+         "\\emph{per-visit recording error}, and it is the row below. It is "
+         "\\textbf{not} the mean offset: $98\\%%$ of the degradation at a $20\\%%$ "
+         "recording error is per-visit scatter and $2\\%%$ is offset, so a "
+         "weighed-intake calibration of the mean is not a substitute for a "
+         "repeated as-eaten record"
+         % (N["sd_load_1pct"], N["sd_load_20pct"]),
+         "the offset is the direction the fibre runs along, and a varying "
+         "recorded load closes it from the data, leaving its prior inert"],
         ["load record, variability",
          B + "record intake as eaten; do not smooth, average or impute}",
          "a steady load is the exactly singular case of "
@@ -1049,19 +1697,32 @@ def table_spec():
          % ("\\infty" if not np.isfinite(N["free_steady"])
             else "%.2f" % N["free_steady"], N["free_cv2"], N["free_cv20"])],
         ["$k_e$",
-         ("a literature prior within a factor of $%.1f$" % kefac if kefac
-          else "a literature prior"),
-         "the only prior the result depends on; no measurement programme is "
-         "proposed for it"],
+         ("a prior within a factor of $%.2f$ ($%.2f$ to $%.2f$ across records)"
+          % (kefac, np.exp(N["ke_needed_lo"]), np.exp(N["ke_needed_hi"]))
+          if kefac else "a prior of some width"),
+         B + "no published source supplies it}, so this is the one number the "
+         "design asks for and cannot cite. It is also the cheapest second "
+         "external measurement: tightening it is worth $2.1\\times$ at nominal "
+         "capacity and $6.9\\times$ in the disease range, though even an exact "
+         "$k_e$ leaves $0.388$  there"],
         ["$K_m$", "nothing at all",
          "every number here is unchanged by a $K_m$ prior twenty times "
          "looser, which is what Remark~\\ref{rem:no_km} demanded"],
     ]
     write_table("tab_D_spec", ["", "what the record must contain", "why"], rows,
-                note="two tiers; Tier 2 is conditional on Tier 1 clearing the gate",
-                colspec=(r"p{0.17\textwidth}@{\hskip 1em}"
-                         r"p{0.40\textwidth}@{\hskip 1em}"
-                         r"p{0.40\textwidth}"))
+                note="three tiers, ordered by dependency: Tier 2 is "
+                     "conditional on Tier 1 ruling out the alternative "
+                     "structure, and Tier 3 on Tier 2 clearing the gate",
+                #  every column ragged. Justified at these widths LaTeX
+                #  hyphenates the row labels mid-word ("preci-sion",
+                #  "vari-ability") and opens gaps inside the sentences, which
+                #  is what made this unreadable as a table rather than the
+                #  content being wrong for one.
+                colspec=(r">{\raggedright\arraybackslash}p{0.19\textwidth}"
+                         r"@{\hskip 0.8em}"
+                         r">{\raggedright\arraybackslash}p{0.39\textwidth}"
+                         r"@{\hskip 0.8em}"
+                         r">{\raggedright\arraybackslash}p{0.38\textwidth}"))
     print("  wrote tab_D_spec.tex")
     for k, v in N.items():
         print("    %18s = %s" % (k, v))
@@ -1071,8 +1732,21 @@ def table_spec():
 if __name__ == "__main__":
     print("DESIGN")
     fig_excitation()
+    #  the settling window and the two time constants are quoted in prose,
+    #  not drawn, so nothing else here would produce them and the numbers
+    #  file would come out five keys short of what the paper inputs. The
+    #  paper quotes the window at two tolerances, 5% and 1%, so both run.
+    quasi_steady_check()
+    quasi_steady_check(tol=0.01)
+    fig_dose_train()
     fig_collapse()
     fig_decision()
     fig_protocol()
+    table_designs()
     table_excursion()
+    table_factors()
+    table_load_precision()
+    table_instruments()
     table_spec()
+    from common.numbers import write_numbers
+    write_numbers("design", PAPER_NUMBERS, PAPER_FORMATS)

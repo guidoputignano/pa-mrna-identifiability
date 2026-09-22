@@ -1,0 +1,91 @@
+\section{The decision estimand}
+\label{sec:decision}
+%==========================================================================
+
+\emph{Section~\ref{sec:designsec} produces an identified $\theta$. This section asks what it
+decides, and the answer is the negative result the paper ends on.}
+
+
+Confidence intervals on $\theta$ are the wrong output. The clinical question is the
+\emph{sign} of $\mu = \theta - \thc$, and its two errors are not interchangeable: treating a
+patient who does not need it costs an infusion and a venous line, and failing to treat one
+who does costs a decompensation. Figure~\ref{fig:D3} is the operating characteristic of
+that decision, and it carries the negative result the paper ends on. Everything above says
+the therapy channel makes $\theta$ identifiable; it does not follow that it makes the sign
+of the margin decidable, and it does not.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig_D3_decision.pdf}
+\caption{The probability of getting the sign of $\mu$ wrong, by simulation, as a patient of
+fixed biology is swept across the decision boundary by the illness amplitude. Left of the
+dotted line the error is a patient treated who did not need it; right of it, a patient left
+untreated who did. Each panel varies one thing a protocol controls.}
+\label{fig:D3}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{\label{tab:decision}The decision characteristic, by simulation, on three designs. Twelve seeds at four hundred replicates each; the $\pm$ is the spread across seeds, which twelve seeds fix only to about a fifth of its own value, so it is a scale and not two significant figures. Both error columns are taken at $|\mu| = 339$ either side of the boundary.}
+\input{../results/tables/tab_D_decision}
+\end{table}
+
+Table~\ref{tab:decision} puts the same decision to three designs. Near the boundary the
+therapy-channel design errs on about two patients in five, against four in nine for a
+design fixed at the operating point. The cohort needed to place the fraction of
+patients with $\mu<0$ within ten points falls from about $\num{cohort_fixed}$ to about $\num{cohort_monthly}$: a
+real gain, and still a number no cohort of this disease reaches, since the trial that
+established the therapy enrolled sixteen~\cite{trial_phase12} and
+Section~\ref{sec:howmany} sets $\num{cohort_monthly}$ against the size of the diagnosed population
+rather than against trial logistics. % C16
+The dose-precision requirement does not bind on this estimand: degrading the increment
+from exact to the $\num{kappa_monthly_pct}\%$ ($\num{kappa_monthly_pct_lo}$ to $\num{kappa_monthly_pct_hi}$) the identifiability gate asks for moves the
+sign error by less than its seed-to-seed spread. And the reason the decision does not
+improve is not identifiability at all, but that the sign of a quantity near its own zero
+is hard for reasons independent of what the record contains. These numbers do not
+contradict Table~\ref{tab:designs}, which reports a posterior standard deviation under
+the $k_e$ prior where this table reports a prior-free nonlinear least squares; the gap
+between them is the shape of the result. The therapy channel identifies $\theta$ given a
+defensible prior on the alternative channel, and does not make the decision reliable under
+any reading.
+
+\paragraph{The asymmetry reverses under crisis protocol.} The estimator regresses the
+\emph{recorded} load on the marker. Write the recorded load as
+$L_{\mathrm{base}} + \rho\,(s_{\mathrm{true}} - L_{\mathrm{base}})$, so $\rho = 1$ is a
+record that tracks the load to its recording error and $\rho \le 0$ is crisis protocol,
+where prescribed intake is cut while catabolic muscle breakdown supplies the load. On the
+monthly design $\rho = 1$ errs at $17.5\%$ and $41.8\%$ with a median $\hat\theta/\theta$
+of $1.03$; at $\rho = 0.5$ the two errors become $99.0\%$ and $0.0\%$ at $0.90$; at
+$\rho = 0$, intake pinned at baseline, $100\%$ and $0.0\%$ at $0.086$; at $\rho = -0.25$,
+protein stopped, $100\%$ and $0.0\%$ at $0.009$. The mechanism is in the last of those
+numbers: when recorded intake falls while the marker climbs, least squares has nowhere to
+put the marker except lost capacity, and $\hat\theta$ collapses by two orders of
+magnitude. ``The estimator fails towards declaring patients safe'' holds only while the
+record tracks the load; under the protocol a decompensation actually triggers, the same
+estimator declares every patient unsafe. Neither half belongs in an abstract on its own
+and neither is a bug to be fixed by weighting: they are one estimator meeting two
+data-generating processes, and which one a record came from is a fact about the chart
+rather than about the patient. Nor does a regret-equalised threshold repair it. At equal
+costs the managed regime wants the boundary at $+0.07\,\theta$ and the crisis regime wants
+it at $-0.39\,\theta$; at a cost ratio of ten to one or worse every regime wants every
+patient escalated, which is the decision-theoretic way of saying the test has stopped
+contributing.
+
+These error rates are simulated rather than propagated, and the difference matters. The
+design's near-null direction is very nearly the direction along which $\mu$ is monotone
+and of one sign, so the sampling distribution of $\hat\mu$ is skewed and does not cross
+zero anything like as often as its standard deviation suggests: a delta-method calculation
+reporting $\Phi(-|\mu|/\operatorname{sd}(\hat\mu))$ would throw away the one favourable
+result this paper has. That is the margin theorem of the supplement's fibre calculation
+(\S S1) showing up in the estimator, and both numbers are reported by the code so the gap
+stays visible. A linearisation understates what the record contains here and overstates it
+in the design matrix of Section~\ref{sec:rank}, which is the lesson: a diagnostic is a
+model too.
+
+
+\vspace{0.5em}
+\hrule
+\vspace{1em}
+
+%==========================================================================

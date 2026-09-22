@@ -1,0 +1,27 @@
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.34\linewidth}l >{\raggedright\arraybackslash}p{0.44\linewidth}@{}}
+\toprule
+\textbf{constraint} & \textbf{verdict} & \textbf{evidence} \\
+\midrule
+$\theta$ $>$ 0 & \textbf{pass} & $\theta$ = 3000 \\
+$K_m$ $>$ 0 & \textbf{pass} & $K_m$ = 100 \\
+$k_e$ $>$ 0 & \textbf{pass} & $k_e$ = 5 \\
+D $>$ 0 & \textbf{pass} & D = 6000 \\
+$\lambda$ $>$ 0 & \textbf{pass} & $\lambda$ = 0.198042 \\
+L $>$ 0 & \textbf{pass} & L = 322.727 \\
+$\Delta(t)$ $\ge$ 0 on 60 cycles & \textbf{pass} & min 375.104, max 6400 \\
+$\Delta(t)$ $\le$ its steady-state peak & \textbf{pass} & max 6400.000000 against peak D/(1-e\^{}-$\lambda$ T) = 6400.000000 \\
+$\Delta$ returns to its steady trough each cycle & \textbf{pass} & at the end of cycle 50, $\Delta$ = 400.000000 against the trough 400.000\textbackslash{},\textbackslash{}ldots \\
+the balance has exactly one positive root & \textbf{pass} & product of roots = -L $K_m$/$k_e$ = -6454.5455 $<$ 0 at every $\Delta$, so the\textbackslash{},\textbackslash{}ldots \\
+the closed form solves the balance & \textbf{pass} & worst residual below 1e-13 of L $K_m$ = 32272.7 \\
+$m(t)$ $>$ 0 across the cycle & \textbf{pass} & m runs 3.3638 to 8.9715, $\bar m$ = 10 \\
+L + b $>$ 0 at b = 0 & \textbf{pass} & L = 322.7273 \\
+L + b $>$ 0 across the load prior's 95\% interval & \textbf{pass} & b in [-31.6273, 31.6273], so L + b in [291.1000, 354.3545] \\
+$\theta$ + $\Delta_{\mathrm{peak}}$ $\le$ normal, normal inferred as $\theta$/frac & \textbf{pass} & worst used fraction 0.3133 \\
+physics bounds b on both sides & \textbf{pass} & b in [-272.7, 20107.9] at 10\%, [-272.7, 50103.2] at 5\% \\
+the load prior is tighter than admissibility & \textbf{pass} & prior width 63.3 against admissible 20380.6 (10\%) and 50375.9 (5\%) \\
+the booked design is outside the window as constructed & \textbf{pass} & 0 of 12 inside \\
+every collision is removed by a half-day offset & \textbf{pass} & 6 of 6 schedules clean at t0 = 0 or t0 = 0.5 d \\
+the D row's stated fall matches the computed one & \textbf{pass} & row says \$62\$--\$66\textbackslash{}\%\$, computed 62.25\% to 66.36\%, names two thirds: True \\
+\bottomrule
+\end{tabular}
+% 20 checks, 20 pass, 0 fail

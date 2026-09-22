@@ -2,113 +2,221 @@
 \label{sec:discussion}
 %==========================================================================
 
-Everything above sits inside two boundaries.
+Everything above sits inside two boundaries. These are claims about identifiability, a
+property of a model and a design together, not about patients: every design number is
+computed from \eqref{eq:local} with the constants of Table~\ref{tab:params}, of which
+three are taken from the literature and the rest are assumed, so what the analysis establishes is
+what a record \emph{of the kind assumed} could yield \emph{under the model assumed}.
+Whether a real record behaves that way turns on the observation model of
+Remark~\ref{sec:marker}, that a marker which is not the enzyme's substrate tracks it
+monotonically, and that assumption is not testable from anything published.
 
-These are claims about identifiability, which is a property of a model and a design
-together: not about patients. Every number in this paper is computed from
-\eqref{eq:local} with the constants of Table~\ref{tab:params}, of which exactly one is
-taken from the literature. What the analysis establishes is what a record \emph{of the kind
-assumed} could yield \emph{under the model assumed}. Whether a real record behaves that way
-turns on the observation model of Remark~\ref{sec:marker} (that a marker which is not
-the enzyme's substrate tracks it monotonically) and that assumption is not testable from
-anything published.
+The second boundary is that the model questions its own validity in the regime the
+excursion argument points at --- and the boundary is narrower and better located than
+``the model may not hold out there''.
 
-And the model questions its own validity in the regime the excursion argument
-points at. The parent \eqref{eq:parent} has a clearance maximum at $3.4$ times the managed
-level and loses its stable equilibrium at $12.6$ times it. An earlier version of this paper
-recommended acquiring data through decompensations. Both estimators used here are
-steady-state fits, and over most of that band the parent says there is no steady state to
-fit: $42\%$ of a band running to eight times the managed level lies beyond the clearance
-peak. Fitting the local model to the parent's own noiseless clearance over that band
-recovers $\hat\theta = 151$ against an intrinsic threshold of $150.8$, misspecification
-alone, with no noise and no perturbation, consuming a true margin of $+149$. The two models
-also disagree by a factor of $4.6$ about the largest load a patient can clear. The
-decompensation route is therefore excluded twice over: the excursion it would supply is
-not observed at the magnitude required, and the model that would interpret it does not hold
-there.
+\emph{Every multiple in this paragraph is a multiple of the parent's own reference level,
+which is not the local model's.} The parent \eqref{eq:parent} sits at an attractor of
+$\num{parent_mbar}$ at its own capacity and load, where the local model's managed level
+is $\bar m = 10$; the two are different quantities and a ratio taken against one does not
+transfer to the other. Read against $\num{parent_mbar}$, the parent has a clearance
+maximum at $\num{peak_over_mbar}$ times it and a separatrix at $\num{sep_over_mbar}$ times
+it at baseline load. The \emph{stable equilibrium is lost at the first of those, not the
+second}: raising the load walks attractor and separatrix together until they collide at
+the fold of \S\ref{sec:model}, and they merge at $m = \num{fold_m}$, which is the
+clearance maximum, at a load of $\num{fold_load}$, or $\num{fold_load_ratio}$ times
+baseline. The separatrix at $\num{sep_over_mbar}$ times the attractor is how large a
+perturbation must be to escape the basin at baseline load, which is a different and also
+useful number.
 
-\subsection{Summary of the four claims}
+Both estimators here are steady-state fits, and $\num{band_beyond_pct}\%$ of a band
+running to eight times the parent's reference level, $\num{band_parent}$, lies beyond that
+clearance maximum, where the parent says there is no steady state to fit. Fitting the
+local model to the parent's own noiseless clearance over that band recovers
+$\hat\theta = \num{fit_theta_hat}$ for a patient whose true capacity is the parent
+model's $\theta = 300$, against an intrinsic threshold of $\num{theta_crit}$: so
+misspecification alone, with no noise and no perturbation, eats
+$\num{fit_margin_eaten_pct}\%$ of a true margin of $+\num{fit_margin_true}$ and leaves
+$+\num{fit_margin_est}$.
 
-The identification result is the positive one and it is actionable now: the excitation is
-already being administered, and a protocol can lose it by scheduling bloods on dosing days: a choice made for convenience that costs a factor of twenty-two. That finding does not
-depend on the estimand question at all, and it survives everything below it.
+\emph{That fit has to be specified, because the number moves with its definition.} The
+levels are $\num{fit_levels}$, spaced geometrically from the parent's reference level to
+$\num{fit_band_top}$ times it; the load at each is the parent's own noiseless clearance
+there; and what is fitted is the \emph{balance} this paper's estimator actually solves,
+$s = \theta\,g(m,K_m) + k_e m + b$ with $K_m$ at its population value, $\theta$ and $k_e$
+non-negative and the load constant $b$ \emph{free}, by unweighted least squares in the
+load. The free $b$ is the part that matters: the estimator of \S\ref{sec:collapse}
+carries a load constant it does not know, and a fit of one clearance curve onto another
+does not, which makes the curve-to-curve reading a different and much more favourable
+exercise.
 
-The second claim is the one that should change how the problem is posed. The
-decision was never blocked by identifiability. It is blocked because the boundary it is
-taken against is stipulated rather than measured: two chosen constants move it by a factor
-of $24$, and the paper's own choice sits a quarter of a per cent from its own sign-flip
-point. Improving the estimate of $\theta$ cannot repair that, and neither can a larger
-cohort.
+\textbf{The fit lands on the boundary of admissibility, and that, rather than the number
+it lands at, is the finding.} On every band $\hat k_e$ sits exactly on its lower bound of
+zero. Released, it goes \emph{negative} --- $\num{fit_ke_hat_free}$ at this band --- and
+$\hat\theta$ rises to $\num{fit_theta_hat_free_ke}$. So the local form's best
+approximation to the parent's clearance here describes a patient who clears the metabolite
+by a route running backwards, and the best \emph{admissible} approximation describes one
+with no non-enzymatic clearance at all. Neither is a patient. \emph{Over this band the
+local family represents the parent only at its own edge.}
 
-The third and fourth claims bound what should replace it. The only endpoint evidence
-available reports a smooth dose--response and no threshold, which argues against the
-dichotomy rather than for a better-placed one. An earlier draft of this paper
-adopted an expected event rate as the estimand on that basis, and withdrew it: at the
-patient's own operating point the model-based rate is thirteen times \emph{worse} than
-reading the same rate off the measured marker, the published exponent is known only to a
-factor of $4.8$, and the map has no published reference concentration to anchor it. The
-reasoning is in the audit record rather than here, because a rejected estimand is not a
-result. And by Section~\ref{sec:scope} the capacity a mechanistic estimand would report
-stops being recoverable in the patients it matters most for.
+Two things follow, and the first disarms the number. \textbf{A boundary solution is not a
+point estimate}: $\hat\theta = \num{fit_theta_hat}$ is where the constraint stops the fit,
+not where the likelihood peaks, so the gap between it and
+$\theta_{\mathrm{crit}} = \num{theta_crit}$ is not a margin and should not be read as
+one --- a conclusion that holds whatever the spacing and the weighting, and therefore more
+firmly than the spread below. \textbf{And nothing in the fit would reveal any of it.} The
+admissible fit's residual over these levels is $\num{fit_resid_sigma}$ of a single $5\%$
+error in the recorded load, which is the accuracy
+Section~\ref{sec:tierload} asks for: the misspecification is invisible in exactly the
+diagnostic that would be used to look for it, which is the same \emph{symptom}
+Section~\ref{sec:structuredep} finds for the published alternative by a different
+mechanism --- \S\ref{sec:pattern2} takes the two together.
 
-\subsection{A common pattern across the three results}
-\label{sec:pattern}
+\emph{What is robust here is that the margin is consumed, not what is left of it.} Three
+equally defensible readings move $\hat\theta$ at the same band: weighting the residual by
+the load, which is what a multiplicative load error implies, gives
+$\num{fit_theta_hat_rel}$; reading ``over the band'' as a dense grid rather than the
+design's own nine levels gives $\num{fit_theta_hat_dense}$; spacing the nine levels
+linearly gives $\num{fit_theta_hat_lin}$. Against
+$\theta_{\mathrm{crit}} = \num{theta_crit}$ those span an estimated margin from about
+$-4$ to $+9$, so \textbf{the sign of what survives is not determined by the data at all},
+and the $+\num{fit_margin_est}$ above is the design's own nine levels and nothing more
+general. The conclusion that carries is the one that holds across every reading: a
+noiseless, unperturbed fit of the admissible local form to the parent over this band
+consumes essentially the whole of a $+\num{fit_margin_true}$ margin. And the two models
+disagree by a factor of $\num{clear_ratio}$ about the largest load a patient can clear:
+the local model needs $\num{hold8_ratio}$ times baseline to hold eight times \emph{its}
+managed level, $\num{band_local}$, while the parent cannot clear more than
+$\num{fold_load_ratio}$ times baseline at all.
 
-Three degeneracies appear in this paper. They were reached by unrelated routes, they concern
-different parameters, and one of them was found by a general-purpose tool that knew nothing
-about the others. They have the same shape, and naming it is the most portable thing here.
+\textbf{What the boundary does \emph{not} reach is the design's own operating points, and
+that is a bound rather than a hope.} The local model's marker obeys
+$\dot m \le L - k_e m$, so every trajectory at the recorded load is capped at
+$L/k_e = \num{local_ceiling}$; and the parent's clearance maximum cannot fall below
+$\sqrt{K_c M_i} = \num{peak_floor}$ at any capacity, because that is where the alternative
+route's own derivative turns. A margin of $\num{peak_margin}$, so \emph{no} operating
+point of any design in this paper lies past the parent's clearance peak, at any capacity
+in Table~\ref{tab:scope}. Only the excursion band --- which the paper declines to use ---
+goes beyond it. That margin is a property of the constants carried here and not a theorem:
+across this paper's own prior range for $K_c$, $M_i$ and $\rho_0$, fewer than
+$\num{prior_floor_pct}\%$ of parameter draws even place $\sqrt{K_c M_i}$ below
+$L/k_e$, and fewer still actually reverse it.
 
-\begin{itemize}[leftmargin=*, itemsep=3pt]
-\item \textbf{The excitation.} The ratio of the two sensitivities is
-$-(1 + \Delta(t)/\theta)\,\varphi(m)$, a product of a therapy factor and a marker factor.
-Neither is large on its own; the literature had measured only the second. What the dose
-train contributes is not a bigger increment but a \emph{moving} one, and the factor
-$1 + \Delta/\theta$ ranging over $2.64$ is what supplies forty-two times the marker band.
-\item \textbf{The load.} Proposition~\ref{prop:rank} is exactly singular at a constant
-recorded load, and the identity names its own cure: it needs $-1/L$ to be one constant.
-So what closes it is the day-to-day \emph{variability} of ordinary eating. Recording the
-same intake twenty times more precisely is worth six per cent; half a per cent of variation
-restores full rank outright.
-\item \textbf{The channels.} the channel-exchange result (supplement \S S1) breaks an exchange only when
-the inputs on two channels differ \emph{non-constantly}. A constant increment is absorbed
-into the amplitude it rides on and separates nothing, however large it is.
-\end{itemize}
+The decompensation route is therefore excluded twice over: the excursion it would supply
+is not observed at the magnitude required, and the model that would interpret it does not
+hold there.
 
-In every case the separating quantity is a difference that moves, and in every case
-the intuitive alternative fails. A bigger increment does not substitute for a varying one;
-a more precise load record does not substitute for a varying one; a larger constant input
-does not substitute for a varying one. \emph{Magnitude, precision and presence are each the
-wrong axis, and each is the axis a study would naturally be designed to improve.}
+\subsection{What the five results amount to}
 
-That is the practical content, and two of the three failures are not merely neutral but
-actively harmful. A dietary record \emph{tightened} by averaging to a weekly mean or imputing
-from a prescription is more precise and destroys exactly the variability
-Proposition~\ref{prop:rank} needs, so the instruction Section~\ref{sec:spec} carries is to
-omit a data-cleaning step, not to add a measurement. A \emph{steadier} administration route
-removes the therapy's excitation entirely (Remark~\ref{rem:route}). A larger dose is the
-exception: it raises $\Delta/\theta$ and so does help, which is worth saying because it is
-the only one of the three obvious moves that does.
+\textbf{The contribution is the design rules, with a scope condition attached, and not the
+capacity estimate.} What transfers is a set of statements about identifying a saturable
+channel from a marker under a known periodic input: carry the input as a regressor, never
+sample at its period or a multiple of it, record the driving load as eaten and to a stated
+accuracy, and establish where in the parameter range the target is recoverable before
+quoting a precision anywhere in it.
 
-This is a pattern across three results and not a theorem, and it should be read as
-one. The three are not instances of a single proposition; they are three different
-calculations that happen to resolve the same way, and the paper makes no claim that they must.
-What can be said is narrower and still useful: in a saturating compartment model observed
-through one marker, a design's information sits in what varies across its samples rather
-than in the levels the samples sit at, and a reader carrying this to another system should
-check the three separately rather than assume the shape transfers.
+The first result is actionable now and survives the scope limit: the excitation is already
+being administered, and a protocol loses a factor of $\num{alias_cost}$ against monthly draws by scheduling bloods
+on dosing days, which is still a factor of $16$ at a disease-range capacity where the estimate itself
+is gone. The second should change how the problem is posed. Near normal capacity the
+decision is blocked not by identifiability but by its own boundary, which is stipulated
+rather than measured and which no better estimate of $\theta$ and no larger cohort can
+repair; in the disease range both block. The third and fourth bound what should replace it, and the fifth says what the whole of it
+is relative to.
+The only endpoint evidence reports a smooth dose--response and no threshold, which argues
+against the dichotomy rather than for a better-placed one, and an expected event rate does
+not serve either: at the operating point the model-based rate is thirteen times
+\emph{worse} than reading the same rate off the measured marker, the published exponent is
+known only to a factor of $4.8$, and the map has no published reference concentration to
+anchor it.
+
+What is left where capacity is not recoverable is not nothing: $K_m$ is determined at every
+capacity, the record still supplies an upper bound on $\theta$, and every design rule
+holds. What is gone is the point estimate, and that argues for an external measurement
+rather than a larger study.
+
+\subsection{A common pattern across three of them}
+
+Three degeneracies appear in this paper, reached by unrelated routes and concerning
+different parameters. They have the same shape, and naming it is the most portable thing
+here. The excitation is a product of a therapy factor and a marker factor,
+$-(1 + \Delta(t)/\theta)\,\varphi(m)$, of which the literature had measured only the
+second, so what the dose train contributes is not a bigger increment but a \emph{moving}
+one. Proposition~\ref{prop:rank} is exactly singular at a constant recorded load and names
+its own cure, so what closes it is the day-to-day \emph{variability} of ordinary eating,
+while the record's \emph{accuracy} is a separate requirement entering through $\sigma$. And
+the channel-exchange result (supplement, \S S1) breaks an exchange only when the inputs on
+two channels differ \emph{non-constantly}, a constant increment being absorbed into the
+amplitude it rides on however large it is.
+
+In every case the separating quantity is a difference that moves, and in every case the
+intuitive alternative fails: a bigger increment does not substitute for a varying one, nor
+a more precise load record, nor a larger constant input. \emph{Magnitude, precision and
+presence are each the wrong axis, and each is the axis a study would naturally be designed
+to improve.} Two of the three are worse than neutral. A dietary record \emph{tightened} by
+averaging to a weekly mean is more precise and destroys the variability
+Proposition~\ref{prop:rank} needs, so Section~\ref{sec:spec} asks for a data-cleaning step
+to be omitted rather than a measurement added; a \emph{steadier} administration route
+removes the therapy's excitation entirely (Section~\ref{sec:route}). A larger dose is the
+exception, since it raises $\Delta/\theta$ and does help, which is worth saying because it
+is the only one of the three obvious moves that does.
+
+This is a pattern across three results and not a theorem: they are three calculations that
+happen to resolve the same way, and nothing here says they must. What can be said is
+narrower and still useful. In a saturating compartment model observed through one marker, a
+design's information sits in what varies across its samples rather than in the levels the
+samples sit at, and a reader carrying that to another system should check the three
+separately rather than assume the shape transfers.
+
+\subsection{A second pattern, across the two misspecification results}
+\label{sec:pattern2}
+
+Two results here are about a \emph{wrong structure} rather than a degenerate one, and they
+were reached by routes with nothing in common. Section~\ref{sec:structuredep} fits
+\eqref{eq:local} to records generated by a published alternative readout and recovers a
+capacity too \emph{high}, by a factor of $1.3$ to $2.0$ at this paper's own dose. The
+opening of this section fits the same form to the parent's own noiseless clearance across
+the excursion band and recovers one too \emph{low}, $\num{fit_theta_hat}$ against a true
+$300$. The mechanisms are unrelated: the first is a free marker offset carried alongside a
+free amplitude, the second a curved alternative channel that a linear $k_e m$ cannot
+follow, which drives $\hat k_e$ onto its bound.
+
+What they share is the symptom, and that is the portable part. \textbf{In both, the fit's
+residual stays inside the noise the specification already asks for} --- under a fifth of
+one $\sigma$ in the first, $\num{fit_resid_sigma}$ of a single load error in the second
+--- \textbf{while the capacity it returns is wrong.} So on this model \emph{residual size
+does not bound structural error}: the diagnostic a reader would naturally reach for to
+detect a wrong structure is the one diagnostic that cannot see it. That is why
+Section~\ref{sec:tierstruct}'s single blood draw is a \emph{structure} test and not a
+goodness-of-fit threshold --- it separates the two structures where they disagree, in the
+minutes after an infusion, instead of asking how well either fits.
+
+And the two err in \emph{opposite} directions, which forecloses the obvious repair. A bias
+of known sign could be carried as a correction or as a one-sided bound; these cannot,
+because nothing in a record says which structure is the wrong one. As above this is a
+pattern across two results and not a theorem. What can be said is narrower and still
+useful: a small residual is evidence about noise and not about structure, and a study that
+means to establish a structure has to do it with a designed discriminant rather than with a
+fit.
 
 \subsection{What would change the answer}
 
-\begin{itemize}[leftmargin=*, itemsep=3pt]
-\item \textbf{A same-day paired repeatability figure for the breath test.} It does not exist; Tier~1 of Section~\ref{sec:spec} asks for it. Everything the therapy
-channel buys is conditional on the delivered increment being characterisable, and only a
-between-visit upper bound is published.
-\item \textbf{An endpoint model that does not require a threshold.} The natural history
-study's own hazard formulation is the shape to build on. Doing so properly needs the
-reference concentration and the model specification that publication does not report.
-\item \textbf{A marker that is the substrate, or an assay of the substrate.} That would
-remove the observation-model assumption on which the whole construction rests, and is the single change that would most enlarge what a record can support.
-\end{itemize}
+A same-day paired repeatability figure for the breath test, which does not exist and which
+Tier~2 of Section~\ref{sec:spec} asks for, since everything the therapy channel buys is
+conditional on the delivered increment being characterisable. An endpoint model that does
+not require a threshold, built on the natural history study's own hazard formulation, which
+needs the reference concentration and the model specification that publication does not
+report. A marker that is the substrate, or an assay of it, which would remove the
+observation-model assumption the whole construction rests on and is the single change that
+would most enlarge what a record can support. And an external anchor on $\theta$: capacity
+is identified relative to the model structure, and Section~\ref{sec:structuredep} exhibits
+a published alternative under which it is not identifiable at all, fitted at a residual too
+small to notice, while Section~\ref{sec:scopeprec} reaches the same place from the flux
+identity and adds that in
+the disease range the record does not bound $\theta$ from below whatever the structure.
+Tier~2 is the only anchor here outside the longitudinal record, and a second one
+independent of it would turn every statement about the value of $\theta$ from conditional
+into checkable.
 
 \vspace{0.5em}
 \hrule

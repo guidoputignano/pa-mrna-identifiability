@@ -425,19 +425,8 @@ def figure(KAPS):
 
     handles = [plt.Line2D([], [], color=COLOUR[k], lw=1.6) for k in LIVE]
     fig.legend(handles, list(LIVE), loc="lower center", ncol=3, fontsize=7.5,
-               bbox_to_anchor=(0.5, 0.150), frameon=False)
-    fig.text(0.5, 0.010,
-             "fig_E2 holds the load prior on, the dose scale exact and therapy "
-             "starting at t = 0. Each panel here releases one of those, at "
-             r"$k_e$ prior 0.8." "\n"
-             "(a) solid load CV 10%, dashed CV 2%; CV 0% is exactly singular "
-             "at every n and is not drawn.   (b) load CV 10%; solid exact, "
-             "dashed the required CV, dotted 20%.\n"
-             "(c) load CV 10%; the grey schedule has a "
-             r"$\Delta/\theta$ range of exactly zero and is singular at a "
-             "constant load, so what is plotted for it is load variation alone.",
-             ha="center", va="bottom", fontsize=6.3, color=MUTED,
-             linespacing=1.6)
+               bbox_to_anchor=(0.5, 0.020), frameon=False)
+    #  what each panel releases is stated in the caption.
     save(fig, "fig_E4_conditioning")
 
 
