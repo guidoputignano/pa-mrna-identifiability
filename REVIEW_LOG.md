@@ -1388,6 +1388,57 @@ at `4n` and compare against the format string it will be written with.
 
 ---
 
+## Standing rule: a section number in this log is resolved through the aux, not the filename
+
+The section files keep prefixes from structures the document no longer has. Two of the
+eight still match the section they produce and six do not:
+
+| file | built section |
+|---|---|
+| `01_question.tex` | 1 |
+| `02_model.tex` | 2 |
+| `06_excitation.tex` | **3** |
+| `07_design.tex` | **4**, the design |
+| `07b_decision.tex` | **5** |
+| `08_specification.tex` | **6**, the specification |
+| `11_scope.tex` | **7**, the scope |
+| `12_discussion.tex` | **8**, the discussion |
+
+**What went wrong.** Twelve references in the entries for items 20 to 47 were read off the
+filename and named the wrong section. Item 40's clause is in `sec:tierstruct`, which is
+**6.2**, and was recorded as §5. The vacuous comparison of the eighth instance is in
+`sec:schedule`, which is **4.3**, and was recorded as §7. All twelve are corrected in
+place, because an entry exists to say where a decision landed and one that sends a reader
+to the wrong section is worse than one that names no section at all. The paper itself was
+never affected: every cross-reference in it is a `\ref` and resolves through the same aux.
+
+**How to resolve one.** Find the passage, take the `\subsection` that encloses it, and read
+that subsection's `sec:` label out of `paper/main.aux` or `paper/supplement.aux`. The label
+is canonical. The filename is not, and neither is the nearest preceding `\label{sec:...}`,
+because several subsections label themselves some lines in: the paragraph that says
+"Figure E1 draws the same three" sits in **6.4** while the last label before it is
+`sec:tierincrement`, which is 6.3.
+
+**What has not been re-resolved, and why.** Thirty-three references in entries written
+before item 20 are left as written. They name the structure of their own time, and five of
+the numbers among them, nine references in all, are impossible under this one: §1.3, §3.6,
+§3.7, §5.5 and §5.6, since §1 and §5 have no subsections at all and §3 has five. Rewriting them would falsify a record of what an
+earlier document said. **Read a section number in an entry before item 20 as naming that
+entry's document and not this one.**
+
+## Standing rule: a page count is reported with its rerun count
+
+A page number off a short build is not wrong here, it is unverified. Both documents
+converge before the second pass today: `Rerun to get` is 0 at four passes at all seventeen
+heads measured in R53, which is why a two-pass count agreed with a four-pass one
+everywhere. That is a property of these documents at this size and structure, not of the
+method, and the next structural change is exactly when it stops being true.
+
+So a page count is quoted with `grep -c 'Rerun to get' paper/main.log` beside it, and
+undefined references are counted as `LaTeX Warning: Reference` and `LaTeX Warning:
+Citation` rather than as `grep -c undefined`, which also counts font-shape warnings and
+returns 1 on the supplement for `T1/lmr/bx/sc`.
+
 ## This project's characteristic failure: a number that does not say what it is a number of
 
 Six instances of one shape, a seventh of another and an eighth of a third. That is past
@@ -1489,7 +1540,7 @@ Triaging the 17 is what decides whether it can be a gate, and it decides that it
   which is the hazard `g_design_common.level`'s own docstring names, "two spellings of
   one equation is how they drift". The second pair, `delta_range_aliased` and
   `range_fortnightly`, is **not** a duplication: 53 visits against 25, a genuinely
-  different record, agreeing because a schedule at `eps = 0` saturates, which Section 8
+  different record, agreeing because a schedule at `eps = 0` saturates, which Section 6.4
   already states. Merged, and this bullet corrected, in R51.
 
 **So: a report, not a gate, and the argument for it is not its hit rate.** Seventeen flags
@@ -1513,7 +1564,7 @@ the paragraph, not only the paragraph against itself.
 
 ### The eighth instance, which is not a wrong number but an empty sentence (item 47)
 
-**What it was.** Section 7 read: *the ranges are over these 25 draws and not over the
+**What it was.** Section 4.3 read: *the ranges are over these 25 draws and not over the
 two-year record of Table D: monthly reads `range_monthly` here against
 `delta_range_monthly` there, and the 14.5-day schedule `range_off` against
 `delta_range_off`.* Both monthly numbers were `1.84`. Both were correct, both were
@@ -1533,7 +1584,7 @@ one key it reads "monthly reads 1.84 here against 1.84 there" and is visibly not
 14.5-day design and the text's 14.5-day design to be told apart, and that distinction is
 real: 51 visits against 25, `1.99` against `1.80`. The clause written to carry it was then
 stated over the panels as a set. It is true of the one it was written for, empty for
-monthly, and empty-but-explained for the fortnightly pair, which Section 8 handles by
+monthly, and empty-but-explained for the fortnightly pair, which Section 6.4 handles by
 saying outright that the number does not depend on how long one samples. **A clause written
 for one member of a set and then quantified over the set goes empty exactly on the members
 whose reason does not hold.** So what to look for is not the number, it is the quantifier:
@@ -1544,7 +1595,7 @@ members rather than the values.
 above on its hit rate, seventeen flags mostly waivable, which is a weak argument and would
 have lost. The strong one is this instance: two keys rendering the same is the only visible
 trace a vacuous comparison leaves, because every number in it is right. Corrected in R51,
-where Section 7 now says it for the 14.5-day schedule alone and says of monthly that its
+where Section 4.3 now says it for the 14.5-day schedule alone and says of monthly that its
 two-year record is those visits.
 
 ---
@@ -1647,7 +1698,7 @@ with their reasons in the modules' own `DRAWN` dicts and printed on every run.
 
 **What it found on day one.**
 
-*Section 5.3 said the figure draws three numbers it does not draw.* The sentence gave the
+*Section 6.4 said the figure draws three numbers it does not draw.* The sentence gave the
 two-year ranges as 1.84 monthly, 1.99 at 14.5 days and 0.13 fortnightly, then said
 "Figure 6 draws them". Figure 6 draws 25 visits, and 25 visits a fortnight apart cover
 348 days, so its 14.5-day panel reads **1.80**, not 1.99. Monthly and fortnightly happen
@@ -1748,7 +1799,7 @@ accident. It says so now, out of `lap_pct_off`, `lap_visits_off`, `laps_monthly`
 ### R33. The load-bias map is exactly affine, and the paper now says so
 
 R27 established the closed form by three routes. The consequence belongs in the text, not
-only here. Section 3.2 said `prop:rank`'s null vector is the fibre's tangent at `b = 0`
+only here. Section 3.1 said `prop:rank`'s null vector is the fibre's tangent at `b = 0`
 and left it there, which reads as though a bound on the load bias is priced by a
 linearisation. It is not:
 
@@ -1777,7 +1828,7 @@ would have merged:
 | the text's $14.5$-day row | 51 | 725 d | 1.82 | 28/28 | 1.99 | 0.1614 |
 | Figure 6's $14.5$-day panel | 25 | 348 d | 0.89 | 25/28 | 1.80 | 0.1739 |
 
-Section 4.3 now gives the first its `n`, its span and its lap count, and says in one
+Section 4.1 now gives the first its `n`, its span and its lap count, and says in one
 clause that the panel is not it. That is the converse of the standing rule above: the two
 keep separate keys *because* they are separate quantities.
 
@@ -1801,14 +1852,14 @@ already.
 ### R35. Item 22. Forward simulation of the therapy against capacity
 
 `audit/t13_therapy_forward.py`, 81 s, measurement only. No paper text, and nothing here is
-dosing guidance: Section 5.6 already says a protocol written from this work is not a rule
+dosing guidance: Section 6.7 already says a protocol written from this work is not a rule
 for escalating a patient, and a forward simulation at an **assumed** capacity is weaker
 evidence than that, not stronger. What it can inform is a protocol's missed-dose
 contingency, which is a document-level decision.
 
 Needs no identifiability at all, which is the point. `theta` is swept as a percentage of
 the model's normal (100, 20, 10, 5, 2, 1) and never estimated or cited; the objective is
-marker exposure and not the sign of `theta - theta_crit`, whose threshold Section 4.6
+marker exposure and not the sign of `theta - theta_crit`, whose threshold Section S1.20
 shows moving by a factor of 24 across its own constants; and every trajectory past the
 parent's clearance maximum is marked rather than reported beside the rest. The four
 constants the setup rests on are computed from the code and reproduce what the paper
@@ -2538,18 +2589,18 @@ not the same case:
 | 14.5 d | `np.arange(0, 730, 14.5)`, 51 pts | `fixed(25, 14.5)`, 25 pts | `1.986121` against `1.801867` |
 
 Only the first row is a duplication. The second is two different records agreeing because a
-schedule at `eps = 0` saturates, which Section 8 states in as many words, and the third is a
+schedule at `eps = 0` saturates, which Section 6.4 states in as many words, and the third is a
 difference the paper draws on purpose. The claim that both pairs agreed "by construction"
 was wrong for the fortnightly one and is corrected above.
 
-**What the duplication was hiding is worse than the duplication.** Section 7 read: *the
+**What the duplication was hiding is worse than the duplication.** Section 4.3 read: *the
 ranges are over these 25 draws and not over the two-year record of Table D: monthly reads
 `range_monthly` here against `delta_range_monthly` there, and the 14.5-day schedule
 `range_off` against `delta_range_off`.* For the 14.5-day schedule that contrast is real,
 51 visits against 25. For monthly the two-year record **is** those 25 visits, so the
 sentence set one number against itself and called it a comparison. It read as a claim only
 because the quantity had two names; with one name it would have been visibly a tautology.
-Corrected in Section 7, and Section 8's version, which was already careful about the
+Corrected in Section 4.3, and Section 6.4's version, which was already careful about the
 fortnightly case, now says the same about monthly.
 
 **Merged in two layers, because there were two duplications.**
