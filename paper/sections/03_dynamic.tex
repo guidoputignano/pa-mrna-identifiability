@@ -22,8 +22,8 @@ The rest of this section is about $\alpha$, the alternative clearance channel, b
 is the only term the three candidate structures ever disagreed about. Two facts about
 \eqref{eq:parent} are settled first and are not revisited: $\theta$ absorbs the maximal
 velocity, so it \emph{is} the residual $V_{\max}$ and not a fraction of a population one
-(Section~\ref{sec:pinned}); and $L_0$, the unrecorded part of the load, is carried as an
-unknown rather than assumed away, which Remark~\ref{rem:load_bearing} shows is what makes
+(Section~\ref{sec:parent}); and $L_0$, the unrecorded part of the load, is carried as an
+unknown rather than assumed away, which Section~\ref{sec:excitation} shows is what makes
 the identification problem well posed at all.
 
 \paragraph{Why $\alpha$ is not a rate constant.} Elimination proceeds by
@@ -89,12 +89,12 @@ conditions are one equation and the reduction is exact there whatever the timesc
 Away from equilibrium the premise is needed and does not hold, carnitine being the slower
 state both in the published human kinetics and in this model's own $\tau_c/\tau_m$. What
 that costs, and why $k$ cancelling from \eqref{eq:alpha} does not make $k$ a free scale, is
-in Table~\ref{tab:params_orig} and in Section~\ref{sec:reduction} of the paper.
+in Table~\ref{tab:paramsfull} and in Section~\ref{sec:reduction} of the paper.
 
-\paragraph{The constants.} Every one of them is in Table~\ref{tab:params_orig} with its value and
-its source, which is a correction and not a formality: $M_i$ was previously stated nowhere
-in this paper, so Figure~\ref{fig:C5} could not be reproduced from the paper, and its value
-had to be recovered from the arithmetic of the paragraph after next. It is $M_i = 300$.
+\paragraph{The constants.} Every one of them is in Table~\ref{tab:paramsfull} with its
+value and its source, $M_i = 300$ among them. A constant a figure depends on and the text
+never states leaves that figure unreproducible, which is why the register is generated from
+the model code rather than typed beside it.
 
 One constraint fixes $R_0$ outright. It is set so the alternative route alone peaks at $500$
 against a baseline load of $600$, so that a patient with $\theta = 0$ cannot be maintained,
@@ -122,17 +122,69 @@ measured~\cite{carnitine_excretion_pa}. % C41
 The prediction fails once $1 + m/M_i$ exceeds $37/5.7$, that is above
 $m \approx 5.5\,M_i = 1650$, some $1.6$ times the separatrix. This paragraph is the
 arithmetic $M_i$ had to be recovered from, and it is now reproducible from
-Table~\ref{tab:params_orig} instead.
+Table~\ref{tab:paramsfull} instead.
 
 The model satisfies the constraint; it does not derive it. What the constraint excludes is
-$\rho_0$ below $0.20$, where the separatrix moves far enough out to reverse the sign. An
-earlier version of this sentence put that bound at $0.35$, which is the answer obtained by
-holding $R_0$ while moving $\rho_0$: that sweep breaks the calibration above, and is the
-same conflation Remark~\ref{rem:shape} separates. The constraint does not bound $M_i$ at
+$\rho_0$ below $0.20$, where the separatrix moves far enough out to reverse the sign. Holding
+$R_0$ while moving $\rho_0$ gives $0.35$ instead, but that sweep breaks the calibration
+above and is the same conflation Remark~\ref{rem:shape} separates. The constraint does not bound $M_i$ at
 all, in either direction, over any range worth sweeping.
 
-The block diagram of this system is Figure~\ref{fig:blockC} of the paper, where the
-two-state structure and the widening carnitine exit are drawn.
+\begin{figure}[!htbp]
+\centering
+\resizebox{0.90\linewidth}{!}{%
+\begin{tikzpicture}
+\node[mpool] (m) at (0,0) {$m$\\[1pt]\scriptsize\mdseries accumulated\\metabolite};
+\node[mlabel] (in) at (-3.6,0) {$s(t)$};
+\draw[mar] (in) -- (m);
+\node[msmall] at (-2.4,0.42) {load};
+
+\node[mpool] (c) at (5.6,0) {$c$\\[1pt]\scriptsize\mdseries available\\carnitine};
+\node[mlabel] (rep) at (9.6,0) {$R_0$};
+\draw[mar] (rep) -- (c);
+\node[msmall] at (8.0,0.42) {replenishment};
+
+\node[menzy] (enz) at (-2.3,-2.7) {$\theta\, g(m)$\\{\scriptsize saturating}};
+\channelglyph{(-3.55,-4.15)}{green!45!black}{s}
+\draw[mar] (m.south) -- ++(0,-0.85) -| (enz.north);
+\node[msmall] (o1) at (-2.3,-5.0) {eliminated};
+\draw[mar] (enz) -- (o1);
+
+\node[malt] (kcm) at (2.5,-2.7) {$k\, c\, m/(K_c+m)$\\[1pt]\scriptsize\mdseries consumes one $c$\\per $m$ removed};
+\channelglyph{(1.15,-4.15)}{blue!55!black}{n}
+\draw[mar, blue!55!black] (m.south east).. controls +(0.7,-0.9).. (kcm.north west);
+\draw[mar, blue!55!black] (c.south west).. controls +(-0.7,-0.9).. (kcm.north east);
+\node[msmall] (o2) at (2.5,-5.1) {eliminated together,\\as propionylcarnitine};
+\draw[mar] (kcm) -- (o2);
+
+\node[malt] (dc) at (6.9,-2.7) {$\delta(m)\, c$\\[1pt]\scriptsize\mdseries not recovered\\from the filtrate};
+\draw[mar, blue!55!black] (c.south east).. controls +(0.6,-0.9).. (dc.north);
+\node[msmall] (o3) at (6.9,-5.1) {lost in urine};
+\draw[mar] (dc) -- (o3);
+
+\draw[red!60!black, thick, -{Bar[width=2.4mm]}]
+      (m.north) -- ++(0,1.45) coordinate (fbtop) -| (10.35,-2.7) -- (dc.east);
+\node[msmall, red!60!black, fill=white, inner sep=3pt]
+     at ([shift={(5.0,0)}]fbtop)
+     {rising $m$ means more acylcarnitine competing for the renal\\
+      transporter, so less filtered carnitine is recovered};
+\end{tikzpicture}}
+\caption{The dynamic model \eqref{eq:twostate} as a block diagram. The pool $m$, the load $s(t)$
+and the enzymatic channel are placed and coloured as in Figure~\ref{fig:blockA} of the
+paper, and
+everything else differs. Carnitine is a second state $c$, and the conjugation term is drawn
+as a single node draining both pools, because the one-to-one stoichiometry is the
+mechanism: each molecule of propionate that leaves takes a molecule of carnitine with it.
+Replenishment $R_0$ is constant. The exit on the right is the one carnitine has and
+propionate does not, and the blunt-ended arrow is the whole content of the model:
+acylcarnitine rising with $m$ competes for the renal transporter, so less filtered carnitine
+is recovered and that exit widens. Having a second exit at all is what makes the flux vanish
+with the metabolite; the exit widening is what makes it decline rather than saturate. The
+glyph under each channel is its shape.}
+\label{fig:blockC}
+\end{figure}
+
+Figure~\ref{fig:blockC} draws the two-state structure and the widening carnitine exit.
 
 \subsubsection{Consequence: positive feedback}
 
@@ -205,10 +257,9 @@ new statistical apparatus.
 the dosing schedule \emph{excites} the parameter it is estimating. Both are fitted to a
 cohort in which the schedule is fixed by protocol and the parameters are population
 quantities, which is a well-posed estimation problem with or without excitation. This paper
-asks the individual question, and Section~\ref{sec:excitation} is the answer. The answer
-has since reversed, and the sentence that stood here, that a fixed schedule supplies almost
-no excitation of the direction separating capacity from half-saturation and that no amount
-of it accumulates into any, is superseded in that generality. A fixed schedule of
+asks the individual question, and Section~\ref{sec:excitation} is the answer. A fixed
+schedule supplies almost no excitation of the direction separating capacity from
+half-saturation \emph{when the schedule is not therapeutic}. A fixed schedule of
 \emph{therapeutic} doses excites that direction directly: the sensitivity ratio
 $-(1 + \Delta(t)/\theta)\,\varphi(m)$ is modulated by $\Delta(t)$, and the dose train
 supplies forty-two times what the marker band does on the same record
@@ -281,8 +332,8 @@ that window the recovered $\theta$ moves by a factor of $1.41$.
 
 \begin{remark}[The hypothesis with a ceiling instead of a fold]
 \label{rem:ceiling}
-A third structure was carried through earlier drafts as a separate model and is now a
-single hypothesis about $\alpha$, because that is all it ever was. Let the alternative
+A third structure is a single hypothesis about $\alpha$ rather than a separate model. Let
+the alternative
 channel saturate rather than decline: $\alpha(m) = k_e h(m)$ with $h(m) = m/(K_e+m)$. Then
 total clearance is bounded by $\theta + k_e$, loads below that ceiling admit one stable
 equilibrium and loads above it admit none.
@@ -406,9 +457,8 @@ is large; the excursion that consumes it is measured in load and is not.
 falls]
 \label{rem:shape}
 $K_c$, $M_i$ and $\rho_0$ have the same status: chosen, with no measurement behind any of
-them. An earlier version of this remark bounded $K_c$ and stopped, which left the impression
-that $K_c$ was the expensive one. It is not, and the ordering is not the interesting part
-of the answer.
+them. Bounding $K_c$ alone would leave the impression that it is the expensive one. It is
+not, and the ordering is not the interesting part of the answer.
 
 \begin{center}
 \scriptsize

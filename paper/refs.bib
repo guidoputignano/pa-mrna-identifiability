@@ -164,7 +164,9 @@
 % ---- hand-written entries, from paper/refs.manual.bib ----
 
 % =====================================================================
-%  Hand-written entries, for sources with no resolvable DOI.
+%  Hand-written entries, for sources this project cannot fetch: either no
+%  resolvable DOI, or a DOI no build environment available to the project
+%  can reach.
 %
 %  Everything here was typed rather than fetched, so everything here is
 %  suspect. Each entry carries a `note` saying which fields have NOT
@@ -194,3 +196,65 @@
 %   acute encephalopathy or metabolic instability; plasma amino acids, urine
 %   organic acids, acylcarnitine profile and fibroblast enzymatic analyses are
 %   unreliable for the detection of heterozygotes.
+
+@article{carnitine_turnover,
+  author  = {Rebouche, Charles J.},
+  title   = {Kinetics, Pharmacokinetics, and Regulation of
+             L-Carnitine and Acetyl-L-carnitine Metabolism},
+  journal = {Annals of the New York Academy of Sciences},
+  year    = {2004},
+  volume  = {1033},
+  number  = {1},
+  pages   = {30--41},
+  doi     = {10.1196/annals.1320.003},
+  pmid    = {15591001}
+}
+% Verification status of the entry above, as a comment for the reason given
+% at the top of this file.
+%   This one HAS a resolvable DOI and belongs in paper/refs.sources, where its
+%   line is kept commented out. It is here because every environment this
+%   project has been built in denies doi.org, CrossRef and PubMed at the proxy
+%   (403 on CONNECT), and a tracked refs.bib exists so that the paper builds
+%   without network access. fetch_refs.py never writes a refs.bib with fewer
+%   keys than the one on disk, so the entry could not otherwise reach it.
+%   CHECKED against two independent index records, which agree: author,
+%   title, journal, 2004, volume 1033, pages 30-41, DOI, PMID 15591001.
+%   NOT CHECKED: the issue number, which is inferred from the series and is
+%   not load-bearing for the citation.
+%   Cited for: whole-body carnitine turnover of 38 to 119 h with a rapidly
+%   equilibrating compartment at 2 to 3 h. Those two figures are the claim
+%   registered as C59 and are recorded there as drift, not as a match: the
+%   abstract was not reachable from the build environment either, so the
+%   values carried over from the branch of PR #3 that found them could not
+%   be re-read against the record here. Anyone with registrar access should
+%   restore the refs.sources line, delete this entry, and confirm C59.
+
+@article{ke_mma_analogue,
+  author  = {Vernon, Hilary J. and Bagnasco, Serena and Hamosh, Ada and
+             Sperati, C. John},
+  title   = {A detailed analysis of methylmalonic acid kinetics during
+             hemodialysis and after combined liver/kidney transplantation in a
+             patient with mut(0) methylmalonic acidemia},
+  journal = {Journal of Inherited Metabolic Disease},
+  year    = {2014},
+  volume  = {37},
+  number  = {6},
+  pages   = {899--907},
+  doi     = {10.1007/s10545-014-9730-7},
+  pmid    = {24961826}
+}
+% Verification status of the entry above.
+%   PROVISIONAL, and it is meant to be deleted. Its key has a LIVE line in
+%   paper/refs.sources, so the next run of fetch_refs.py with registrar access
+%   fetches the real record, drops this entry from the output automatically and
+%   says so. It is here only because every publisher host is denied at this
+%   project's build proxy and a source line alone would leave the document with
+%   an undefined citation and the claim register unable to run its forward
+%   check.
+%   CHECKED against the PubMed record for PMID 24961826: title, journal, 2014,
+%   volume 37, pages 899-907, DOI, and the two figures the paper quotes, a
+%   plasma clearance of 103 mL/min and a volume of distribution of 0.48 L/kg.
+%   NOT CHECKED: the full author list beyond the first author and the issue
+%   number, neither of which is load-bearing.
+%   Cited for: the nearest measured analogue for k_e. See the k_e row of the
+%   constants registry for the caveats, which are load-bearing.

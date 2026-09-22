@@ -15,30 +15,230 @@ m \;\longrightarrow\; \frac{L_0 + L}{k_e} \qquad \text{as } \theta \to 0,
 which at the illustrative values is $6.45$ times the managed level. The elasticity of the
 marker to capacity dies with it.
 
-\begin{center}
-\footnotesize
-\begin{tabular}{@{}rrr@{}}
-\toprule
-$\theta$, as \% of nominal & marker, $\times$ managed & $\lvert\partial \ln m / \partial \ln\theta\rvert$ \\
-\midrule
-$100\%$ & $1.00$ & $0.915$ \\
-$50\%$  & $1.82$ & $0.807$ \\
-$20\%$  & $3.41$ & $0.537$ \\
-$10\%$  & $4.57$ & $0.321$ \\
-$5\%$   & $5.40$ & $0.173$ \\
-$2\%$   & $6.00$ & $0.072$ \\
-$1\%$   & $6.22$ & $0.036$ \\
-\bottomrule
-\end{tabular}
-\end{center}
 
 Stated in the units a clinic reads: once a patient's managed marker sits above
 about three to four times the reference level, residual capacity is no longer recoverable
 from it. The elasticity falls below $0.5$ at $3.6$ times managed, below $0.25$ at $5.0$,
-and below $0.1$ at $5.8$. At the bottom of that table two patients differing tenfold in
-capacity, $10\%$ of nominal against $1\%$, are separated by less than a third in
-marker level, which no assay resolves against the day-to-day variability of the quantity.
+and below $0.1$ at $5.8$. At the bottom of Table~\ref{tab:scope} two patients differing
+tenfold in capacity, $10\%$ of nominal against $1\%$, are separated by less than a third
+in marker level, which no assay resolves against the day-to-day variability of the quantity.
 
+\subsection{What the estimate's own precision does across that range}
+\label{sec:scopeprec}
+
+The first three columns of Table~\ref{tab:scope} are about the \emph{marker}. The same
+question can be put to the \emph{estimate}, and until now it had not been: every precision
+this paper reports is computed at $\theta = 3000$, which is that table's $100\%$ row.
+
+That is worth stating plainly. The model carries $\theta = 3000$ as the \emph{maximal}
+enzymatic velocity and the parent model's $\theta = 300$ as about a tenth of normal, which
+together put normal at $3000$ and the illustrative block at $100\%$ of it: it is a
+normal-capacity illustration, and Table~\ref{tab:params} labels it as one. Residual PCC
+activity in propionic acidemia is under $5\%$ of control~\cite{pcc_residual_activity}, so
+the patient sits at $\theta \le 150$, which the table carries as its own row. Nothing
+about the model changes; what changes is that the illustration cannot be read as a
+description of the patient.
+
+\paragraph{The reason, before the measurement.} None of what follows needs a sweep to
+anticipate. Write the untreated balance, $\theta\,g(m) + k_e m = L$. The column the
+information matrix carries for $\ln\theta$ is $\partial s/\partial \ln\theta = \theta\,g(m)$,
+and the balance says what that equals:
+\begin{equation}
+\frac{\partial s}{\partial \ln\theta} \;=\; \theta\,g(m) \;=\; L - k_e m .
+\label{eq:thetacolumn}
+\end{equation}
+\textbf{The information the record carries about capacity is the flux through the enzyme.}
+The record's sensitivity to $\theta$ is $\theta$'s own share of the load, and in this
+disease the alternative channel carries almost all of it. The enzymatic share is
+$\num{share_nominal_pct}\%$ at nominal, $\num{share_10pct}\%$ at $10\%$ of nominal and
+$\num{share_5pct}\%$ at $5\%$. Against the $k_e$ column,
+$k_e m$, the ratio is exactly enzymatic flux over alternative flux and runs $5.455$ to
+$0.195$ across the same range, so at a disease-range capacity $\theta$ is recovered as a
+small difference of two large numbers, one of which is known only through a prior. That is
+the whole mechanism, and \eqref{eq:thetacolumn} is an identity rather than an
+approximation. Everything below confirms it and puts numbers on it.
+
+Holding the recorded load fixed and letting the marker rise, which is the convention
+Table~\ref{tab:scope} uses throughout, and re-solving the operating level, $\sigma$, the
+load-bias prior and the excitation at each capacity:
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\caption{\label{tab:scope}What the marker and the estimate do as capacity falls. The
+first three columns are the closed form at the untreated balance; the last two are the
+recommended monthly design, as medians over $24$ simulated intake records at the
+specification's own $10\%$ day-to-day variability, with the seed ranges in the accompanying
+code. A dash means the target is not reached at any number of monthly visits up to $600$,
+which is fifty years of follow-up.}
+\input{../results/tables/tab_S_scope}
+\end{table}
+
+\noindent
+The precisions in that table are sampling spreads and not interval half-widths
+(Remark~\ref{rem:curvature}); at a disease-range capacity the distinction stops mattering,
+because the profile interval does not close below at all and the point estimate lands
+anywhere between $3$ and $224$ against a truth of $150$.
+
+The specification's own requirements follow the same line. Tightening the delivered
+increment from a $30\%$ coefficient of variation to an exact one is worth $88\%$ of the
+precision at nominal capacity and $0.3\%$ at $5\%$ of nominal: \textbf{Tier~2 is
+load-bearing for the design as published and very nearly irrelevant where the clinical
+question is.} It is worth running because the normal-capacity design is what this paper
+offers, not because it opens the disease range.
+
+Two things survive in that range and both are worth stating, because a limit is more
+useful with its complement attached. The record still determines $K_m$, to $7\%$ at normal
+capacity and $6\%$ in the disease range (Remark~\ref{rem:kmrecovered}), and it still supplies an \emph{upper} bound
+on $\theta$, ruling out capacity above about a quarter of nominal even where it rules out
+nothing from below. A clinician asking ``does this patient have usable residual capacity''
+can be answered; one asking ``how much'' cannot.
+
+$\operatorname{sd}(\ln\hat\theta)$ is not monotone in $\theta$, so the gate is crossed twice.
+It holds for $\theta$ between $\num{band_lo}$ and $\num{band_hi}$, which is
+$\num{band_lo_pct}\%$ to $\num{band_hi_pct}\%$ of nominal, a band of
+$\num{band_fold}$ fold, with the best precision $\num{band_best}$ at about twice nominal. Below the band
+the marker has stopped responding to capacity, which is the statement above. Above it the
+$\theta$ column saturates at $L$ while the assay term keeps growing, so information per draw
+stops improving. \textbf{The disease sits a factor of $\num{disease_factor}$ below the lower edge of the
+band the design works in.} Sampling every two days for two years instead of monthly,
+fifteen times the draws, moves that edge only from $\num{band_lo_pct}\%$ to
+$\num{band_lo_dense_pct}\%$ of nominal. That $\num{band_dense_gain_pct}\%$ is the
+quantitative form of the sentence below: it is not a statement about sampling effort.
+
+\textbf{That band's location depends on the \emph{value} of $k_e$ and not only on how well
+it is known, which is worth separating because $k_e$ is the constant this paper states
+nothing supplies.} The enzymatic share is $1 - k_e m/L$, so quartering $k_e$ moves the band
+to $\num{band_lo_qtr_pct}\%$--$\num{band_hi_qtr_pct}\%$ of nominal and doubling it to
+$\num{band_lo_dbl_pct}\%$--$\num{band_hi_dbl_pct}\%$, and at four times the assumed value
+the gate is never met at any capacity. The requirement elsewhere in this paper, a factor of
+$\num{ke_needed_factor}$ on the prior, prices how well $k_e$ must be \emph{known}; this is
+the different question of where the band sits if the assumed value is wrong. The scope
+limit survives it, and not narrowly: \textbf{the disease would need
+$k_e = \num{ke_for_disease}$, fifty times smaller than the value carried here, for
+$\theta = 150$ to meet the gate at all}. So the limit is robust in direction and soft in
+location.
+
+One consequence follows for the dose and it is independent of the precision. The
+admissibility bound is $\theta + \Delta_{\mathrm{peak}} \le \text{normal}$, and
+\textbf{it has three readings that disagree, so every verdict below names which one it
+is on.} They differ in where ``normal'' comes from and in whether the dose is held at its
+booked value or scaled with capacity:
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+ & normal & dose $D$ & verdict at $20\%$ / $10\%$ of nominal \\
+\midrule
+\textbf{R1} & inferred, $\theta/0.05$ & scaled with $\theta$ &
+ $\num{adm_r1}$ / $\num{adm_r1}$ \\
+\textbf{R2} & inferred, $\theta/0.05$ & booked &
+ $\num{adm_r2_20}$ / $\num{adm_r2_10}$ \\
+\textbf{R3} & fixed at $3000$ & booked &
+ $\num{adm_r3_20}$ / $\num{adm_r3_10}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Under \textbf{R1} the check reads $\theta$ as the \emph{residual} and scales the
+dose with it, so written out its verdict is
+$\operatorname{frac} \times (1 + \Delta_{\mathrm{peak}}/\theta)$ with $\theta$ cancelled:
+a constant $\num{adm_r1}$ at every capacity, which cannot report a breach below a residual
+activity of $\num{ceiling_blind_pct}\%$ and so cannot bind on this disease at all.
+\textbf{R2} keeps the inferred normal but holds $D$ at its booked value, which is what a
+dose in mg/kg is, and \emph{that} is the reading under which the bound is breached at
+$10\%$ of nominal and below. \textbf{R3} instead fixes normal at $3000$ and breaches at
+every capacity in the table, $100\%$ included, where it reads $\num{adm_r3_100}$.
+
+\emph{The three coincide at exactly two points, and both of this paper's anchor numbers
+sit on one of them}, which is why the readings have to be named rather than inferred: R1
+and R2 agree at $\theta = 3000$, where the booked dose \emph{is} the scaled dose, and R2
+and R3 agree at $\theta = 150$, where $\theta/0.05$ is exactly $3000$. So at $5\%$ of
+nominal the booked increment drives the enzyme to $2.18$ times normal \emph{on either R2
+or R3}, and the largest admissible increment there is $D = 2672$ rather than $6000$ on
+either. Away from those points the readings separate, and they run in opposite
+directions: R2's allowance \emph{rises} with capacity and R3's \emph{falls}, so at
+$10\%$ of nominal R2 permits $D = \num{dceil_r2_10}$ against R3's
+$\num{dceil_r3_10}$, and at normal capacity R2 reads $\num{adm_r1}$ while R3 reads
+$\num{adm_r3_100}$ and permits no positive dose at all. \textbf{Everything this paper reports about
+admissibility is on R2.}
+That does not rescue the precision, since at $D = 2672$ and $\theta = 150$ the monthly design
+returns $2.96$, but it is a second and independent reason to think the increment is set too
+high, alongside the trial's own reported falls, recorded against the $D$ row in the
+supplement, \S S2.
+
+\paragraph{Two questions about the dose that point opposite ways, and should not be
+merged.} Sweeping $D$ from $10$ to $30000$ at a disease-range capacity, the best the
+monthly design achieves is $2.75$ at $D \approx 100$ against $3.07$ at the booked $6000$,
+so no dose opens a window: below $D \sim \theta$ there is no excitation, above it the
+increment swamps the capacity, and ten per cent separates the two failures. At nominal
+capacity the same sweep says something else. The booked $D = 6000$ returns $\num{sd_monthly}$ against
+a sweep best of $0.165$, so \textbf{the trial's dose is within three per cent of optimal
+for identification}. Whether it is the right dose \emph{as a therapy} is a different
+question, and on the evidence of the trial's own reported falls and of the ceiling above
+the answer is probably not. A design argument for keeping the dose and a pharmacological
+argument for lowering it are not in conflict; they are answers to different questions, and
+this paper makes only the first.
+
+\paragraph{Six routes in, all of them tested and all of them closed.} None of what
+follows touches the design rules of Section~\ref{sec:designsec}, which hold at every
+capacity and under every structure tested; each is a bound on how far \emph{the estimate}
+reaches, which is the narrower claim this section is about. It matters that they were
+measured rather than dismissed, because each is the first thing a reader proposes.
+
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+\item \textbf{Sample harder.} Every two days for two years instead of monthly, fifteen
+times the draws, moves the band's lower edge from $\num{band_lo_pct}\%$ to
+$\num{band_lo_dense_pct}\%$ of nominal. The disease is a factor of
+$\num{disease_factor}$ below it either way.
+\item \textbf{Sample the transient.} Eight post-dose draws, placed where the information
+is, move $\operatorname{sd}(\ln\hat\theta)$ by $\num{trans_gain_disease}\%$ here and
+$\num{trans_gain_nominal}\%$ at nominal. The transient does carry what the steady record
+lacks, but it measures the load bias to $\pm\num{trans_b_disease}$ here against the
+diary's $\pm\num{trans_b_prior}$, and that channel was not the binding one
+(Section~\ref{sec:collapse}).
+\item \textbf{Measure the increment better.} Going from a $30\%$ coefficient of variation
+on the delivered increment to an exact one is worth $0.3\%$ at this capacity, against
+$88\%$ at nominal.
+\item \textbf{Modulate the diet on purpose.} A prescribed $\pm15\%$ swing in natural
+protein is worth $7\%$, and an implausible $\pm50\%$ swing $32\%$, leaving $2.32$ against
+a target of $0.20$ (Section~\ref{sec:whoto}).
+\item \textbf{Record the diet better.} Tightening the load record from $20\%$ to $1\%$ is
+worth a factor of $1.81$ at nominal capacity and $1.22$ to $1.46$ across the disease range
+--- \emph{less} where the question is, not more, although the flux identity makes a $5\%$
+error on $L$ six times larger a fraction of $\theta\,g(m)$ there. A perfect record in both
+channels leaves $2.659$ at $5\%$ of nominal.
+\item \textbf{Measure the diet instead of recording it.} Whole-body propionate turnover is
+measurable by isotope dilution, which removes $b$ from the parameter vector rather than
+bounding it. At nominal that is a real efficiency: thirteen measured-load visits match
+twenty-five recorded ones and six reach the target. Below nominal it opens nothing --- an
+\emph{exactly} known load leaves $2.659$ at $5\%$ of nominal --- and the advantage shrinks
+rather than reverses as capacity falls, from thirteen visits to eighteen.
+\end{enumerate}
+
+\noindent
+All six are routes to \emph{precision on $\theta$}, and that is the only question they
+are closed on. \textbf{They also fail in the same way, which is worth saying once because
+a reader who doubts one will propose the others.} Every one of them attacks the parameter
+count: each closes, tightens or removes the load-bias direction the fibre runs along. But
+what binds is not the parameter count. It is $\sigma$ at nominal capacity and the marker's
+sensitivity to $\theta$ below it, and the fibre has been worth a couple of per cent
+wherever this paper has priced it --- $2\%$ of the load-record requirement
+(Section~\ref{sec:tierload}), under one per cent of what measuring the load instead of
+recording it would buy, and the difference between $\num{trans_base_nominal}$ and
+$\num{trans_noprior_nominal}$ when the prior on it is removed outright. That is an
+observation across six results rather than a theorem, and it does not say no route exists.
+It says where one would have to act: on $\sigma$, or on an observable that still responds
+to $\theta$ where the marker has stopped. The transient has a second job, and on that one it is not closed but
+recommended: it is the measurement that would say which structure a record came from
+(Section~\ref{sec:structuredep}), because the published alternative's marker is algebraic
+in the enzyme while a marker that is a state pins its own rate constant separately from
+the steady map. The two questions want the same blood draw and give opposite answers, and
+a reader who takes ``tested and closed'' to cover both will discard the one measurement
+this paper does ask for.
+
+\medskip
+\noindent
 This is the severely affected patient. The population in which the dosing question
 is most urgent is the population in which the record cannot answer it. This is not a statement about sampling effort: no schedule, no excursion and no precision on the dose
 recovers a quantity the observable has stopped responding to. The therapy channel of
@@ -50,6 +250,60 @@ limit. What dies here is the estimate of \emph{capacity}. A prediction read dire
 the marker does not die, because the marker is what is measured. So the failure is
 asymmetric: it falls on the mechanistic quantity and not on the observable, which is an
 argument for keeping claims close to the observable in exactly this population.
+
+\subsection{What the estimate is relative to}
+%  not sec:structure: the supplement already owns that label for the
+%  published PK/PD models' structural obstruction, and the supplement
+%  imports the paper's labels with xr, so the two collided
+\label{sec:structuredep}
+
+The limit above is a limit on where in the parameter range capacity is recoverable. There
+is a second limit, of a different kind, and it is the one a reader should carry furthest:
+\textbf{$\theta$ is identified relative to an assumed structure, and a published
+alternative fits the same record.}
+
+The alternative is the translational model's readout, in which the marker is an algebraic
+$I_{\max}$ function of enzyme rather than a flux balance~\cite{pkpd_translational}. Under
+it the marker is a M\"obius function of the increment, so a record carries three numbers
+about that map while the structure has four free parameters at a fixed $I_{\max}$.
+Eliminating the other three leaves \emph{no} relation on $\theta$: for any $\theta$ in the
+admissible interval there are values of the remaining parameters that reproduce the record
+exactly. Under that structure $\theta$ is not imprecise. It is \emph{not identifiable}, at
+any design and at any number of visits, and an estimator fitted to such a record is
+reporting a point on a fibre along which the data are silent.
+
+Fitting \eqref{eq:local} to records generated from that structure returns $\hat\theta$ high
+by a factor of $1.3$ to $2.0$ at this paper's own dose, and by a factor of $4$ to $20$ at a
+dose calibrated to the falls the phase 1/2 interim analysis reports~\cite{trial_phase12}.
+\textbf{The residual of that fit can be under a fifth of one $\sigma$}, so nothing in the
+fit signals the error: the misspecification is invisible in exactly the diagnostic a reader
+would use to detect it.
+
+Three things qualify that, and none of them removes it. The obstruction and the design
+advice survive the substitution: a record locked to one dose-cycle phase leaves $K_m$
+unbounded under every structure tested, the ranking of schedules is unchanged, and the two
+recommended designs agree across structures to about $3\%$. Whether $\theta$ is
+identifiable under the alternative is itself an assumption, because that structure was
+fitted to a fixed-diet animal colony and carries no substrate load at all; of four
+plausible ways to introduce one, three leave $\theta$ unidentifiable and one restores it.
+And it is not generic: the other published structure, a turnover marker whose production
+the therapy inhibits~\cite{dose_selection_poster,mrna_moa}, \emph{is} identifiable in
+$\theta$ with no external information. What creates the deficit is carrying a free marker
+offset alongside a free marker amplitude, which is what a phenomenological readout has and
+a flux balance does not.
+
+The practical consequence is short, and it is not that the structure is undecidable. A
+capacity estimate from a marker record is a statement about a model as much as about a
+patient, so \textbf{the structure belongs beside the estimate} --- but the alternative
+above is ruled out by one blood draw. Its marker is algebraic in the enzyme and this
+paper's is a state, so the two agree on the whole steady map and disagree only in the
+minutes after an infusion, by $\num{struct_sigma_3min}$ standard deviations at three
+minutes and $\num{struct_sigma_15min}$ at fifteen. That measurement is Tier~1 of
+Section~\ref{sec:tierstruct}, it is the cheapest item in the specification, and it is the
+one thing in this paper that opens a question rather than closing one. What it does
+\emph{not} do is identify the structure: it rules out a family, the one whose marker
+carries no relaxation, and a third structure with a marker state and a different steady
+map would survive it. The supplement, \S S1, works both structures through.
 
 \vspace{0.5em}
 \hrule

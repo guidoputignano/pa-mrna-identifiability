@@ -42,9 +42,10 @@ import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 from scipy.optimize import brentq, minimize_scalar
 
+from common.numbers import NumberBook
 from common.models import (ParamsB, ParamsC, g, alt_flux_C, clearance_B,
                            clearance_C_quasistatic, equilibria_nonmonotone,
-                           steady_state)
+                           rhs_C, steady_state)
 from common.style import (save, figsize, GREEN, RED, BLUE, AMBER, GREY, MUTED,
                           corner, over_x, at_point)
 
@@ -52,6 +53,11 @@ from common.style import (save, figsize, GREEN, RED, BLUE, AMBER, GREY, MUTED,
 PC = ParamsC()
 PB = ParamsB()
 S_BASE = 600.0          # baseline substrate load, illustrative
+#: the registered illness amplitude, as a fold of baseline load. It is
+#: the `s_pk/s_base` row of the constants registry, and it is what the
+#: reduction-cost bound below perturbs with, so the bound names a
+#: perturbation the model already carries rather than one chosen for it.
+from common.params import ILLNESS_FOLD  # noqa: E402
 Y_MAX = 2600.0          # top of the basin panel, named once
 
 # Model B matched to Model C at the same operating point, for a fair
@@ -68,6 +74,20 @@ PB2 = ParamsB(theta=PC.theta, Km=PC.Km, ke=_KE_B, Ke=50.0)
 
 
 # =====================================================================
+#: every interpolated number this module draws on a figure, classified for
+#: tools/check_artefacts.py:check_figure_numbers. All four are claims about the
+#: model, and fig_margin() is their generator: it writes them into
+#: results/numbers/margin.tex and both panels draw out of that same dict.
+DRAWN = {
+    "MARG['theta_crit']": "registered: theta_crit, where attractor and "
+                          "separatrix merge",
+    "MARG['margin_nominal']": "registered: the nominal patient's safety margin",
+    "MARG['margin_band_lo']": "registered: the low end of that margin over the "
+                              "M_i range",
+    "MARG['margin_band_hi']": "registered: the high end of it",
+}
+
+
 def clearance_peak(p: ParamsC, theta=None):
     """
     The maximum of the Model C clearance curve, and where it occurs.
@@ -358,6 +378,25 @@ def fig_basin():
 
 
 # =====================================================================
+_THETA_CRIT = {}
+
+
+def theta_crit_ref():
+    """
+    The intrinsic critical capacity, computed ONCE for the whole module.
+
+    Two call sites had it -- the margin figure and the boundary numbers --
+    and they agreed exactly, because both called theta_crit_intrinsic with
+    the same arguments. Agreeing by coincidence of argument lists is what
+    REVIEW_LOG.md calls an agreement that has to be checked. One memoised
+    helper makes it an agreement that cannot fail, and the quantity is
+    registered exactly once, as margin.tex's `theta_crit`.
+    """
+    if "v" not in _THETA_CRIT:
+        _THETA_CRIT["v"] = float(theta_crit_intrinsic(PC, S_BASE))
+    return _THETA_CRIT["v"]
+
+
 def fig_margin():
     """
     The safety margin against theta, at baseline load.
@@ -374,7 +413,14 @@ def fig_margin():
     unconditionally safe at that load: total clearance tends to theta from
     above, so it never falls back through s.
     """
-    thc = theta_crit_intrinsic(PC, S_BASE)
+    thc = theta_crit_ref()
+    #  The four numbers this figure ASSERTS about the model, registered so they
+    #  are diffed against HEAD like a table cell and can be quoted with \num{}
+    #  rather than retyped. Both panels draw out of this dict, so the drawn
+    #  value and the registered value are one object and cannot drift apart.
+    #  It is a NumberBook, so a second writer giving a key a different value
+    #  fails at accumulation instead of last-write-wins.
+    MARG = NumberBook({"theta_crit": theta_crit_ref()})
     thetas = np.linspace(thc * 1.002, 0.86 * S_BASE, 260)
     grid = np.linspace(1e-3, 30000.0, 90000)
 
@@ -396,7 +442,8 @@ def fig_margin():
     # Anchored to the merge point and offset in POINTS, so it keeps its
     # clearance whatever theta_crit turns out to be.
     at_point(ax[0], (th_ok[0], 0.5 * (attr[0] + sep[0])),
-             r"$\theta_{\mathrm{crit}}$" + f" = {thc:.0f}:" "\nthe curves merge",
+             r"$\theta_{\mathrm{crit}}$"
+             + f" = {MARG['theta_crit']:.1f}:" "\nthe curves merge",
              dx=16, dy=0, arrow=True, fontsize=7.5, color=MUTED,
              ha="left", va="center")
     ax[0].plot([PC.theta], [attr[np.argmin(abs(th_ok - PC.theta))]], "o", ms=5,
@@ -442,10 +489,19 @@ def fig_margin():
     ax[1].plot(th_ok, margin, color=BLUE, lw=2.0, label="nominal $M_i = 300$")
     ax[1].axvline(thc, color=MUTED, ls=":", lw=1.2)
     i = np.argmin(abs(th_ok - PC.theta))
-    ax[1].plot([PC.theta], [margin[i]], "o", ms=5.5, color=MUTED, zorder=5)
-    at_point(ax[1], (PC.theta, margin[i]),
-             f"nominal patient\nmargin = {margin[i]:.0f}\n"
-             f"band {lo[i]:.0f}--{hi[i]:.0f}",
+    #  The four numbers this figure ASSERTS about the model, registered so
+    #  they are diffed against HEAD like a table cell and can be quoted with
+    #  \num{} rather than retyped. Both panels draw out of this dict, so the
+    #  drawn value and the registered value are one object.
+    MARG.update({"margin_nominal": float(margin[i]),
+                 "margin_band_lo": float(lo[i]),
+                 "margin_band_hi": float(hi[i])})
+    ax[1].plot([PC.theta], [MARG["margin_nominal"]], "o", ms=5.5, color=MUTED,
+               zorder=5)
+    at_point(ax[1], (PC.theta, MARG["margin_nominal"]),
+             "nominal patient\n"
+             f"margin = {MARG['margin_nominal']:.0f}\n"
+             f"band {MARG['margin_band_lo']:.0f}--{MARG['margin_band_hi']:.0f}",
              dx=10, dy=34, arrow=True, fontsize=7.5, color=MUTED,
              ha="left", va="bottom")
     over_x(ax[1], thc, "margin vanishes:\nsaddle-node", frac=0.97,
@@ -469,6 +525,10 @@ def fig_margin():
           f"{lo[i]:.0f} to {hi[i]:.0f}, a factor of {hi[i]/lo[i]:.1f}. "
           f"Quote it as an order of magnitude.")
     print("    m_bar does NOT appear anywhere in this construction. s does.")
+    from common.numbers import write_numbers
+    write_numbers("margin", MARG,
+                  {"theta_crit": "{:.1f}", "margin_nominal": "{:.0f}",
+                   "margin_band_lo": "{:.0f}", "margin_band_hi": "{:.0f}"})
     return thc
 
 
@@ -643,6 +703,268 @@ def identification_cost_of_Kc(values=(25, 50, 100, 150, 200, 300, 400, 800),
     return out
 
 
+#: the perturbations the reduction's cost is quoted against, as a fold of the
+#: baseline load. The cost is a FUNCTION of the perturbation and not a
+#: constant, which is the whole reason the row names one: a 1.10x step returns
+#: 9.9% where a 1.50x step returns 31.8%, and an earlier version of the row
+#: gave four percentages and named neither.
+#:
+#: The third entry is the one item 11 of the September review needs. An
+#: isotope-dilution measurement of whole-body propionate turnover is itself a
+#: load perturbation, and a tracer is administered in tracer quantities by
+#: construction, so it is a SMALL one: the reduction has to be re-read for
+#: that step rather than for either of the two the registry already carries.
+#: If measuring the load opens anything, this is the number that says whether
+#: the measurement is readable off the reduced model at all.
+PERTURBATIONS = {"": None,               # filled from ILLNESS_FOLD below
+                 "_step10": 1.10,
+                 "_tracer": 1.01}
+
+
+def boundary_numbers():
+    """
+    Section 8's validity boundary, generated rather than typed.
+
+    Every number in that paragraph was a literal, in the one paragraph where
+    the paper states the limits of its own model, and one of them described
+    the wrong event: "loses its stable equilibrium at 12.6 times it" names the
+    SEPARATRIX at baseline load, while the stable equilibrium is lost at the
+    FOLD, where attractor and separatrix collide, which Section 2.3 defines
+    and which sits at the clearance maximum. Raising the load walks the two
+    roots together and they merge at m = 275.7 at a load of 706.4, i.e. at
+    3.4 times the attractor and not 12.6.
+
+    THE TWO MANAGED LEVELS, which is the trap underneath it. The parent's
+    reference level is its OWN attractor, 81.93 at its own theta and load; the
+    local model's is m_bar = 10. The paragraph used one phrase for both and
+    therefore meant two different bands by "eight times the managed level":
+    655 in the 42% figure and 80 in the factor of 4.6. Both are computed here
+    so the referents are visible.
+    """
+    from common.numbers import write_numbers
+    from design.run import P as PA, M_BAR, load
+    from scipy.optimize import brentq
+    from common.models import clearance_A
+    L = float(load(0))
+    peak, m_peak = clearance_peak(PC)
+    eq = equilibria_nonmonotone(clearance_C_quasistatic, PC, S_BASE,
+                                np.linspace(1e-3, 3000.0, 120000))[0]
+    mbar, sep = float(eq[0]), float(eq[1])
+    #  the fold: raise the load until the two roots merge, which is exactly
+    #  the clearance maximum. Reported as the load and the level.
+    N = {
+        "parent_mbar": mbar,
+        "peak_over_mbar": m_peak / mbar,
+        "sep_over_mbar": sep / mbar,
+        "fold_m": m_peak,
+        "fold_load": peak,
+        "fold_load_ratio": peak / S_BASE,
+        "band_parent": 8.0 * mbar,
+        "band_local": 8.0 * M_BAR,
+        "band_beyond_pct": 100.0 * max(
+            0.0, (np.log(8.0) - np.log(m_peak / mbar)) / np.log(8.0)),
+        "hold8_ratio": clearance_A(8 * M_BAR, PA) / clearance_A(M_BAR, PA),
+        "clear_ratio": (clearance_A(8 * M_BAR, PA) / clearance_A(M_BAR, PA))
+        / (peak / S_BASE),
+        #  the structural margin: no local operating point can lie past the
+        #  parent's peak, because the local marker is capped and the peak has
+        #  a floor that no capacity can lower
+        "local_ceiling": L / PA.ke,
+        "peak_floor": float(np.sqrt(PC.Kc * PC.Mi)),
+        "peak_margin": float(np.sqrt(PC.Kc * PC.Mi)) / (L / PA.ke),
+    }
+    #  and how often the margin reverses over this module's own prior box.
+    #  Analytic first, because sqrt(Kc Mi) = 10^((u+v)/2) with u, v uniform
+    #  makes P(floor < ceiling) a triangle, and a closed form is not a seed.
+    a = np.log10(L / PA.ke)
+    slack = 2 * a - (1.4 + 2.0)
+    N["prior_floor_pct"] = 100.0 * (0.5 * max(0.0, slack) ** 2) / (1.5 * 1.1)
+    #  A Monte-Carlo count of the cells that actually reverse is NOT written
+    #  here, deliberately. The event is rare: at 600 draws it reads 0.14% and
+    #  at 4000 it reads 0.23%, which is sampling noise on five or so events,
+    #  and a generated number the artefact guard diffs against HEAD must not
+    #  wander with the seed. The closed form above is an upper bound on it
+    #  (the floor being below the ceiling is necessary for the peak to be),
+    #  it is exact, and it is the one the paper quotes. The swept figure is
+    #  recorded in REVIEW_LOG.md instead, where a measurement belongs.
+    #  THE theta_hat LADDER, generated at last. It carried Section 8's
+    #  sharpest sentence and lived only in audit/PHASE2A.md: git log -S finds
+    #  its digits nowhere else in the history, no deleted script produced it,
+    #  and four plausible reconstructions missed it. What they all missed is
+    #  the FREE LOAD-BIAS INTERCEPT. The estimator of Section 4.1 carries one
+    #  and a curve fit does not, so fitting clearance-to-clearance is the
+    #  wrong object: the design fits a BALANCE, with a constant it does not
+    #  know. With b free the ladder comes out to every digit.
+    #
+    #  The definition, stated so it can be rerun: m_bar is the PARENT's own
+    #  attractor at its own load; nine geometrically spaced levels run from
+    #  m_bar to top*m_bar; the load at each level is the parent's own
+    #  noiseless clearance there; and the local form
+    #      s = theta g(m, K_m) + k_e m + b,    K_m = 100,  theta, k_e >= 0
+    #  is fitted to those pairs by unweighted least squares IN LOAD.
+    from scipy.optimize import lsq_linear
+    mbar_p = float(brentq(lambda m: clearance_C_quasistatic(m, PC) - S_BASE,
+                          10.0, 200.0))
+
+    def _ladder(top, n=9, logsp=True, weight=None, free_ke=False):
+        lv = (np.geomspace(mbar_p, top * mbar_p, n) if logsp
+              else np.linspace(mbar_p, top * mbar_p, n))
+        s = clearance_C_quasistatic(lv, PC)
+        w = np.ones_like(s) if weight is None else 1.0 / s
+        A = np.column_stack([g(lv, PA.Km), lv, np.ones_like(lv)])
+        lo = [0.0, -np.inf if free_ke else 0.0, -np.inf]
+        r = lsq_linear(A * w[:, None], s * w,
+                       bounds=(lo, [np.inf, np.inf, np.inf]))
+        return float(r.x[0])
+
+    def _fit(top, n=9, free_ke=False):
+        lv = np.geomspace(mbar_p, top * mbar_p, n)
+        s = clearance_C_quasistatic(lv, PC)
+        A = np.column_stack([g(lv, PA.Km), lv, np.ones_like(lv)])
+        lo = [0.0, -np.inf if free_ke else 0.0, -np.inf]
+        r = lsq_linear(A, s, bounds=(lo, [np.inf] * 3))
+        return r.x, A @ r.x - s, s
+
+    def _ke_hat(top, **kw):
+        return float(_fit(top, **kw)[0][1])
+
+    def _resid_sigma(top, **kw):
+        """rms residual of the fit, in units of a 5% error in the load."""
+        from common.params import LOAD_FRAC
+        _, res, s = _fit(top, **kw)
+        return float(np.sqrt(np.mean(res ** 2))
+                     / (LOAD_FRAC * float(np.mean(s))))
+
+    N.update({
+        "fit_levels": 9,
+        "fit_band_top": 8,
+        "fit_theta_hat": _ladder(8),
+        #  the two nearest equally defensible readings, so the sentence can
+        #  say what the choice is worth: weighting the residual by the load
+        #  (which is what the estimator's multiplicative load error implies)
+        #  and spacing the nine levels linearly instead of geometrically
+        "fit_theta_hat_rel": _ladder(8, weight="rel"),
+        "fit_theta_hat_lin": _ladder(8, logsp=False),
+        #  the dense-grid reading: a reader told only "fit to the clearance
+        #  over the band" would not choose nine points. It matters, because
+        #  it moves mu_hat across zero.
+        "fit_theta_hat_dense": _ladder(8, n=200),
+        #  and what the admissibility bound is worth. k_e_hat is pinned at
+        #  zero on every band; released it goes NEGATIVE and theta_hat rises
+        #  fourfold. The bound is not a technicality, it is the whole result:
+        #  the best ADMISSIBLE fit sits on the boundary of admissibility.
+        "fit_theta_hat_free_ke": _ladder(8, free_ke=True),
+        #  and how visible the misfit is. The admissible fit's residual is
+        #  reported against a 5% load error, the specification's own figure,
+        #  because the question a reader has is whether anything in the fit
+        #  would reveal the problem. It would not.
+        "fit_resid_sigma": _resid_sigma(8),
+        "fit_ke_hat": _ke_hat(8),
+        "fit_ke_hat_free": _ke_hat(8, free_ke=True),
+        #  theta_crit is NOT registered again here. margin.tex owns it, and
+        #  a second copy under a second name is the np.interp situation with
+        #  the collision guard blind to it: two values of one quantity in one
+        #  document, agreeing today by coincidence of argument lists. The
+        #  arithmetic below reads the shared helper instead.
+        "fit_margin_true": PC.theta - theta_crit_ref(),
+        "fit_margin_est": _ladder(8) - theta_crit_ref(),
+        "fit_margin_eaten_pct": 100.0 * (1.0 - (_ladder(8) - theta_crit_ref())
+                                         / (PC.theta - theta_crit_ref())),
+    })
+    write_numbers("boundary", N,
+                  {"parent_mbar": "{:.1f}", "peak_over_mbar": "{:.2f}",
+                   "sep_over_mbar": "{:.1f}", "fold_m": "{:.0f}",
+                   "fold_load": "{:.1f}", "fold_load_ratio": "{:.3f}",
+                   "band_parent": "{:.0f}", "band_local": "{:.0f}",
+                   "band_beyond_pct": "{:.0f}", "hold8_ratio": "{:.2f}",
+                   "clear_ratio": "{:.1f}", "local_ceiling": "{:.1f}",
+                   "peak_floor": "{:.0f}", "peak_margin": "{:.2f}",
+                   "prior_floor_pct": "{:.1f}", "fit_levels": "{:.0f}",
+                   "fit_band_top": "{:.0f}", "fit_theta_hat": "{:.1f}",
+                   "fit_theta_hat_rel": "{:.0f}",
+                   "fit_theta_hat_lin": "{:.0f}",
+                   "fit_theta_hat_dense": "{:.0f}",
+                   "fit_theta_hat_free_ke": "{:.0f}",
+                   "fit_resid_sigma": "{:.2f}", "fit_ke_hat": "{:.2f}",
+                   "fit_ke_hat_free": "{:.2f}",
+                   "fit_margin_true": "{:.1f}",
+                   "fit_margin_est": "{:.2f}",
+                   "fit_margin_eaten_pct": "{:.1f}"})
+    for k in sorted(N):
+        print(f"    {k:22} {N[k]}")
+    return N
+
+
+def reduction_cost_numbers(ks=(0.1, 1.0, 10.0, 100.0)):
+    """
+    What the quasi-steady reduction costs OFF equilibrium, at four k.
+
+    WHY THIS IS NOW LOAD-BEARING. Section 2.3 justifies eliminating the
+    carnitine state algebraically: `c-dot = 0` holds exactly at any fixed
+    point, so at equilibrium the two formulations are one equation rearranged
+    and the cost is zero. Every steady-state number in the paper is computed
+    at equilibrium, and while that was the whole of the paper the k row could
+    bound the off-equilibrium cost loosely. It cannot now: the moment a
+    transient enters the specification, the reduction's validity OFF
+    equilibrium is what the transient rests on, and this row is the only thing
+    bounding it.
+
+    THE PERTURBATION, STATED, which is the point of this function. The row
+    used to quote 21.6% at k = 1 without saying what produced it, and the
+    figure was not reproducible: a 10% load step gives 9.91% and the model's
+    own illness gives 31.79%, a factor of three apart, both with the same
+    asymptotic 1/k. A bound whose two readings differ by three is not a bound.
+
+    So the perturbation is the one the model already carries: a step in the
+    substrate load to `ILLNESS_FOLD` times baseline, which is the registered
+    illness amplitude, with carnitine starting at its pre-perturbation value.
+    That is the largest defensible reading, and a cost bound should be the
+    largest defensible reading rather than the median of several.
+    """
+    from common.numbers import write_numbers
+    roots, st = equilibria_nonmonotone(clearance_C_quasistatic, PC, S_BASE)
+    m0 = float(roots[st][0])
+    folds = dict(PERTURBATIONS)
+    folds[""] = ILLNESS_FOLD
+
+    def cost(fold, k):
+        s_new = S_BASE * fold
+        c0 = PC.R0 / (k * (m0 / (PC.Kc + m0)
+                           + PC.rho0 * (1.0 + m0 / PC.Mi)))
+        red = solve_ivp(
+            lambda t, y: [s_new - clearance_C_quasistatic(y[0], PC)],
+            (0.0, 160.0), [m0], rtol=1e-10, atol=1e-12,
+            dense_output=True, method="Radau", max_step=0.5)
+        two = solve_ivp(
+            lambda t, y: rhs_C(t, y, PC, lambda _: s_new, k=k),
+            (0.0, 160.0), [m0, c0], rtol=1e-10, atol=1e-12,
+            dense_output=True, method="Radau", max_step=0.5)
+        tt = np.linspace(0.0, 160.0, 8000)
+        a, b = two.sol(tt)[0], red.sol(tt)[0]
+        return 100.0 * float(np.max(np.abs(a - b) / b))
+
+    N = {"illness_fold": ILLNESS_FOLD,
+         "tracer_fold": PERTURBATIONS["_tracer"],
+         "step10_fold": PERTURBATIONS["_step10"]}
+    suffix_k = {1.0: "", 10.0: "_k10", 100.0: "_k100", 0.1: "_k0p1"}
+    for tag, fold in folds.items():
+        for k in ks:
+            N[f"reduction_cost{tag}{suffix_k[k]}"] = cost(fold, k)
+        print(f"    a step to {fold:.2f}x baseline:")
+        for k in ks:
+            print(f"      k = {k:6.1f}: peak relative error in m "
+                  f"{N[f'reduction_cost{tag}{suffix_k[k]}']:6.2f}%")
+    fmt = {k: "{:.1f}" for k in N}
+    fmt.update({"illness_fold": "{:.2f}", "tracer_fold": "{:.2f}",
+                "step10_fold": "{:.2f}",
+                "reduction_cost_tracer": "{:.2f}",
+                "reduction_cost_tracer_k10": "{:.2f}",
+                "reduction_cost_tracer_k100": "{:.3f}",
+                "reduction_cost_tracer_k0p1": "{:.2f}"})
+    write_numbers("reduction", N, fmt)
+    return N
+
+
 def collapse_check(n=12, seed=0):
     """
     Is theta_crit a function of the peak of alpha alone?
@@ -679,3 +1001,5 @@ if __name__ == "__main__":
     table_shape()
     collapse_check()
     identification_cost_of_Kc()
+    reduction_cost_numbers()
+    boundary_numbers()

@@ -89,19 +89,26 @@ octn2_renal_transport   doi:10.1016/j.bbamem.2003.12.001
 # 119 h. The rapidly equilibrating ("fast") compartment has a tissue
 # distribution half-life of 2 to 3 h.
 # Cited for: the carnitine state is NOT fast relative to the marker, whose time
-# constant is 0.81 h at the illustrative values. Carnitine is slower by a factor
-# of about 3 at best and over 100 typically, so the separation the quasi-steady
-# reduction of Section 2.3 would need runs the wrong way. This is the external
-# half of that finding; the internal half is the model's own tau_c/tau_m, which
-# spans 0.52 to 55 across the sampled region at k = 1 (audit/e10_qss_corners.py).
-# NOT FETCHED: the build environment's egress policy denies doi.org, CrossRef
-# and PubMed (403 on CONNECT), so this entry has never been resolved from here
-# and paper/refs.bib does not yet carry it. CI re-fetches every source, so the
-# audit job is the first real check that this identifier resolves. Until it has
-# resolved once, the paper names this source in prose rather than \cite-ing it:
-# a \cite would need a claims.csv row, and that row would fail the register's
-# forward check against the committed refs.bib.
-carnitine_turnover      doi:10.1196/annals.1320.003
+# constant is 0.81 h at the illustrative values. So the separation the
+# quasi-steady reduction of Section 2.3 would need runs the wrong way. This is
+# the external half of that finding; the internal half is the model's own
+# tau_c = 1/(k[u + rho]), which is 0.92 d at k = 1 and m = 82 against the
+# marker's 0.81 h, a factor of 27 the wrong way.
+# CARRIED OVER from the branch of PR #3, which found it, so that the two
+# branches do not assert opposite things about the reduction. See REVIEW_LOG.md
+# R22 for the reconciliation.
+# NOT FETCHABLE HERE: every environment this project has been built in denies
+# doi.org, CrossRef and PubMed at the proxy (403 on CONNECT), and fetch_refs.py
+# never writes a refs.bib carrying fewer keys than the one on disk, so no run
+# from here can put this entry into the committed bibliography. Section 2.3
+# named the source in prose for that reason, which left a load-bearing external
+# figure outside both the bibliography and the claim register. It is now cited
+# as \cite{carnitine_turnover} and registered as C59, and the entry it resolves
+# to is hand-written in paper/refs.manual.bib with its verification status
+# recorded there. THIS LINE STAYS COMMENTED OUT while that entry exists, or the
+# two would collide on the same key. Anyone with registrar access should
+# uncomment it, delete the manual entry, and re-check C59 against the abstract.
+# carnitine_turnover      doi:10.1196/annals.1320.003
 
 # --- the reference standard for capacity ----------------------------
 # Modified 1-13C-propionate breath test in 57 MMA subjects (19 transplant
@@ -139,20 +146,47 @@ trial_phase12           doi:10.1038/s41586-024-07266-7
 trial_phase12_corr_a    doi:10.1038/s41586-024-07413-0
 # Publisher Correction to the above, Nature 630(8017):E13.
 trial_phase12_corr_b    doi:10.1038/s41586-024-07646-z
-# Semi-mechanistic translational PK/PD model for mRNA-3927, fitted largely to
-# preclinical data and allometrically scaled to human.
-#   PCC-protein degradation rate kdeg = 0.0075 /h  ->  half-life 3.85 d.
-#     This is the footing for lambda, whose 3.5 d sits within 10% of it.
-#   plasma 3-HP disease baseline 60.1 umol/L (14.4% RSE), between-subject
-#     variability 51.1%; fully corrected floor E0 ~ 0.0987 umol/L.
-#   IC50 for 3-HP 37.5 ug/g PCC; slope 55.6.
-#   An indirect-response structure, so a first-order 3-HP elimination is
-#     implicit in it: that is the extraction route for k_e, the parameter the
-#     design is most sensitive to.
-# PROVENANCE: these figures are transcribed from the author's parameter-
-# grounding review of September 2026, not read off the paper in this
-# repository's own pass. The citekey is confirmed to be the right article;
-# the numbers await a check against the primary source.
+# Semi-mechanistic translational PK/PD model for mRNA-3927. The PK half is
+# fitted across mouse, rat and monkey and scaled allometrically to human
+# (exponents 0.63 on CL12/CL32, 1.1 on CL23/CL20, 1 on the volumes). THE PD
+# HALF IS FITTED IN Pcca-/- (A138T) MICE, N=111, AND IS NOT SCALED: every PD
+# figure below is a murine estimate. The paper's own scaling sentence covers
+# PK only, and the companion paper says the same in one clause.
+#   PCC-protein degradation rate kdeg = 0.0075 /h. This is ONE rate constant
+#     in a TWO-COMPARTMENT protein model, not the protein's half-life; the
+#     paper states the latter as ~7 d. The 3.85 d once quoted here is
+#     ln2/kdeg, which is not a half-life of the protein. The protein declines
+#     biexponentially, so its local half-life passes 3.5 d at about five days
+#     after a dose, reaches 9.0 d by the end of a fortnightly interval, and
+#     tends to 11.8 d. lambda therefore tracks the published decline over the
+#     first week and decays FASTER than it thereafter, which is the direction
+#     that makes the inter-dose excursion look larger than it is.
+#     kq = 0.00474 /h, ke0 = 0.242 /h.
+#   plasma 3-HP disease baseline 60.1 umol/L (14.4% RSE), IIV 51.1% BETWEEN
+#     MICE OF ONE INBRED STRAIN, which bounds between-PATIENT variability from
+#     below rather than above; floor E0 = 0.0987 umol/L.
+#   IC50 for 3-HP 37.5 ug/g PCC (12.2% RSE), IIV 73.8%.
+#   Slope 55.6 (1.93% RSE), printed as (mg/g/h)/(mg/mL). It is the LINEAR
+#     coefficient from effect-compartment mRNA to PCC synthesis rate,
+#     Ksyn = Ce*Slope, NOT a Hill exponent.
+#   Imax FIXED at 0.999, not estimated (Table 1, footnote m).
+#   THE MARKER EQUATION IS ALGEBRAIC IN THE ENZYME (Suppl Table S1(C)):
+#     3-HP = E0 + base(1 - Imax*PCC/(IC50+PCC)). There is no marker state and
+#     no first-order 3-HP elimination anywhere in this model, so k_e CANNOT be
+#     extracted from it. An earlier version of this annotation said the
+#     opposite and named it as the extraction route for k_e; that is withdrawn.
+#     claims.csv C46 already recorded the structural fact.
+#   TWO UNIT MISPRINTS, on the paper's own internal evidence. 'mg/g' in the
+#     IC50 rows is ug/g: Fig. 2B's axis is labelled 'PCC protein, ug/g' and
+#     runs to ~700, so mg/g would put the IC50 a thousandfold above every
+#     fitted point. 'mM/L' in the marker rows is umol/L: the same text gives
+#     the 3-HP LOQ as 25 'mM/L', and Baek et al. Fig. 2e plots 3-HP in uM,
+#     0 to 200, in the same mouse strain. ('mM/L' is not a unit in any case.)
+# PROVENANCE: read off the primary source (full text, Supplementary Table S1
+# and Supplementary Figures S1-S3) in this repository's own pass, September
+# 2026. The earlier warning that these figures were transcribed rather than
+# read is lifted: all of them are confirmed against Table 1. What the warning
+# did not catch was the species and the model structure.
 pkpd_translational      doi:10.1089/nat.2022.0036
 
 # 0.6 mg/kg biweekly selected from simulation in 1000 virtual
@@ -181,6 +215,29 @@ nbs_saudi_national      doi:10.1111/jpc.13469
 # Propionic aciduria the most common metabolic disorder, 1:14,158.
 nbs_psmmc               doi:10.15537/smj.2020.7.25147
 
+# =====================================================================
+#  ON AUTOMATED LITERATURE SEARCHES. REPO FIRST, NETWORK SECOND.
+# =====================================================================
+# A seven-reference batch from an automated search, September 2026, was
+# checked against this file before anything was fetched. Four of the seven
+# were ALREADY CITED here under different names, and three carried errors:
+#
+#   * "Thompson et al., Pediatr Res 1991;30:135" is breath_test_original,
+#     already in this file. Wrong first author (Barshop) and wrong pages
+#     (30(1):15-22). The PMID it gave, 1909779, was correct and is what
+#     identified the duplicate.
+#   * "Attarwala et al., Nat Commun 2024" is mrna_moa, already in this file.
+#     Attarwala is not among its eighteen authors; the first author is Baek.
+#   * The Nucleic Acid Therapeutics 2023 paper it offered as new is
+#     pkpd_translational, already in this file and already cited for exactly
+#     the figures the batch reported as a finding.
+#
+# The lesson is the ordering, not the tool: every identifier in a batch
+# should be matched against this file and against refs.bib BEFORE any
+# fetch, because a duplicate under a wrong author name is invisible to a
+# check that only asks whether an identifier resolves. A PMID is the only
+# field in these batches that proved reliable.
+#
 # =====================================================================
 #  NOT YET RESOLVED. Do not cite until an identifier is confirmed.
 # =====================================================================
@@ -240,7 +297,30 @@ muscle_catabolism       doi:10.1016/0026-0495(81)90022-6
 # Mechanism of action across mRNA-3927 (PA), mRNA-3705 (MMA), mRNA-3210
 # (PKU), with allometric human scaling. PD responses sustained 3-4 weeks
 # after dosing in Pcca-/- mice. Companion to the translational PK/PD model.
+#
+# ONE FILE REMAINS UNOPENED, and the k_e row is written so that it does not
+# matter which way it goes. This paper's SUPPLEMENT has not been read: every
+# publisher host is denied at this project's build proxy, and the September
+# 2026 pass that read pkpd_translational's Supplementary Table S1 could not
+# reach this one. If it carries a fitted kout for 3-HP, that would be a third
+# weak anchor alongside the methylmalonic-acid band and the paper is better
+# for it; it would NOT overturn the k_e row, which claims the absence of an
+# INDEPENDENT MEASUREMENT IN HUMANS, and a constant fitted to murine data
+# inside a PK/PD model is model-derived whatever its value. Anyone with
+# journal access should open it and record what is there.
 mrna_moa                doi:10.1038/s41467-024-47460-9
+
+# The nearest MEASURED analogue for k_e, and it is not 3-HP. Detailed
+# kinetics of methylmalonic acid in a 28-year-old mut0 patient: one
+# haemodialysis session cut plasma MMA by 54%, giving a plasma clearance of
+# 103 mL/min and a volume of distribution of 0.48 L/kg, which approximates
+# total body water; MMA then reaccumulated to the pre-dialysis concentration
+# within 24 h. CAVEATS, and they are load-bearing: the clearance is DIALYTIC
+# and not endogenous, so it bounds the endogenous route from above rather
+# than measuring it; and MMA is dicarboxylic with strong tubular handling
+# where 3-HP is monocarboxylic (pKa 4.9, MW 90), so this is a plausibility
+# band for k_e and not a substitute for measuring it.
+ke_mma_analogue         pmid:24961826
 
 # Guidelines for management of PA. Metabolic control judged clinically and
 # by ammonia, acid-base and trends in C3, C3/C2 and 2-MC. NOTE: specifies

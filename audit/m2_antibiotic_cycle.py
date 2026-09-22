@@ -35,7 +35,7 @@ import design.run as D, model_A.run as LOC
 P = D.P
 L0 = D.load(0.0)
 SIG = LOC.sigma_total(D.LOAD_FRAC, D.ASSAY_CV)
-T = np.arange(0.0, 730.0, 30.4)          # the paper's monthly schedule, n = 24
+T = np.arange(0.0, 730.0, 30.4)          # the paper's monthly schedule, n = 25
 AMP = 0.41                                # Thompson 1990, Eur J Pediatr
 
 
@@ -57,7 +57,18 @@ def columns(lv, dd):
 
 
 def sd_from(Q, sigma):
-    F = np.linalg.inv(np.diag([0.8 ** 2, 0.8 ** 2, (D.LOAD_FRAC * L0) ** 2, 0.8 ** 2]))
+    """
+    The paper's own footing: theta and K_m FREE, priors only on the load bias
+    and on ln k_e.
+
+    This used to place a 0.8 log-prior on ln theta and ln K_m as well, which
+    Section 4.1's footing list forbids in as many words ("theta and K_m are
+    free. No prior is placed on either"). It moved the baseline from 0.1699 to
+    0.1660, and Section 5.3 quoted the 0.1660 beside numbers computed the
+    other way.
+    """
+    pri = [np.inf, np.inf, (D.LOAD_FRAC * L0) ** 2, 0.8 ** 2]
+    F = np.diag([0.0 if np.isinf(x) else 1.0 / x for x in pri])
     F = F + Q.T @ Q / sigma ** 2
     return float(np.sqrt(np.linalg.inv(F)[0, 0]))
 

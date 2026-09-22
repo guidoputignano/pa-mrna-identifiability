@@ -5,7 +5,7 @@
 \centering
 \footnotesize
 \caption{\label{tab:notation_orig}Notation, once, in one place. Values and sources are in
-Table~\ref{tab:params_orig}; epistemic status is in Table~\ref{tab:epistemic}.}
+Table~\ref{tab:paramsfull}; epistemic status is in Table~\ref{tab:epistemic}.}
 \begin{tabular}{@{}ll@{\hskip 2em}ll@{}}
 \toprule
 $m$ & the plasma marker, 3-HP & $\bar m$ & the operating point, and the sample mean \\
@@ -93,7 +93,6 @@ not reachable from the top box was moved to Appendix~\ref{sec:supp} in the restr
 \end{figure}
 
 
-\begin{adjustwidth}{-1.4cm}{-1.4cm}
 \begin{table}[htbp]
 \centering
 \footnotesize
@@ -164,24 +163,21 @@ $u_c(t)$ & carnitine dose &
 input on $k_e$, selective but \emph{endogenous}; \emph{no longer} the working perturbation
 of this paper &
 recorded in charts, present in every patient &
-adjusted in response to patient state, hence confounded by indication. This row previously
-named $u_c$ the working perturbation and left the instrument question open; both are
-superseded. Quasi-exogenous variation is present in the records, in weight-based
-recalculation after growth, supply interruptions and changes of formulation, but the
-question it was raised to answer is closed in the negative in Section~\ref{sec:whoto}, on a
-ground exogeneity cannot reach: carnitine acts on $k_e$, so it cannot move the first factor
-of the sensitivity ratio at all, and adding recorded carnitine steps makes the precision
-worse \\
+adjusted in response to patient state, hence confounded by indication. Quasi-exogenous
+variation is present in the records, in weight-based recalculation after growth, supply
+interruptions and changes of formulation, but it buys nothing here, for a reason
+exogeneity cannot reach: carnitine acts on $k_e$, so it cannot move the first factor of
+the sensitivity ratio at all, and adding recorded carnitine steps makes the precision
+worse (Section~\ref{sec:whoto}) \\
 \addlinespace
 $\Delta(t)$ & therapeutic increment to capacity &
 \textbf{input on $\theta$}, selective and exogenous &
 \textbf{known from the dosing record} &
 biweekly, on the published phase 1/2 schedule, and the input the paper's identification
-rests on. This row previously read ``not administered in the accessible cohort'' and
-treated $\Delta$ as interchangeable with $u_c$; both are superseded. The interchange holds
-only at fixed $K_m$ and fixed carnitine gain, and with $K_m$ free the two channels differ
-by a factor of $46$ to $807$ in $\operatorname{sd}(\ln\hat\theta)$. Decay rate $\lambda$
-possibly patient-specific \\
+rests on. It is not interchangeable with $u_c$: the interchange holds only at fixed $K_m$
+and fixed carnitine gain, and with $K_m$ free the two channels differ by a factor of $46$
+to $807$ in $\operatorname{sd}(\ln\hat\theta)$. Decay rate $\lambda$ possibly
+patient-specific \\
 \addlinespace
 $\mtol$ & tolerable metabolite level &
 constant in the definition of $\thc$ &
@@ -200,9 +196,7 @@ admissions reliably coded; only a minority of all events lead to admission \\
 \bottomrule
 \end{tabular}
 \end{table}
-\end{adjustwidth}
 
-\begin{adjustwidth}{-1.4cm}{-1.4cm}
 \begin{table}[htbp]
 \centering
 \footnotesize
@@ -212,6 +206,10 @@ below which a tolerable steady state cannot be held, is used here ahead of its d
 the local reduction and the ceiling hypothesis define it by convention at
 \eqref{eq:thcrit}, and the equilibrium reduction intrinsically at \eqref{eq:thcrit_int}.}
 \label{tab:models}
+%  six columns of prose come to 0.905\textwidth plus five column gaps, which
+%  is 14.6pt past the measure. The widening goes here, inside the float,
+%  because a float sets its contents at \textwidth whatever wraps it.
+\begin{adjustwidth}{-1.0cm}{-1.0cm}
 \begin{tabular}{@{}p{0.035\textwidth} p{0.235\textwidth} p{0.175\textwidth} p{0.185\textwidth} p{0.145\textwidth} p{0.13\textwidth}@{}}
 \toprule
 & \textbf{Clearance structure} & \textbf{Equilibria} & \textbf{Question answered}
@@ -242,15 +240,13 @@ hypothesis; a discriminating observable exists and is tested at group level only
 one of the three in which $\thc$ is well posed \\
 \bottomrule
 \end{tabular}
+\end{adjustwidth}
 \end{table}
-\end{adjustwidth}
 
-\begin{adjustwidth}{-1.4cm}{-1.4cm}
-\scriptsize
-\def\paramslabel{tab:params_orig}
-\def\paramscaption{Every constant this paper quotes, and where it came from. \textsc{literature} is read off a cited source, \textsc{derived} is fixed by a constraint elsewhere in the model and is not free, \textsc{assumed} was chosen and has no measurement behind it. An assumed row is not a defect on its own; an assumed row with no bound on what it costs is, and the last column carries that bound. The table is generated from the model code rather than typed beside it, because the constant that caused the most trouble here, $M_i$, was one the text never wrote down at all: Figure~\ref{fig:C5} could not be reproduced from the paper as it stood.}
-\input{../results/tables/tab_params}
-\end{adjustwidth}
+Every constant these three models use is registered, with its value, its source and
+what assuming it costs, in Table~\ref{tab:paramsfull} of \S S2. The register is generated
+from the model code rather than typed beside it, so a constant the text never writes down,
+as $M_i$ once was, cannot stay invisible.
 
 \begin{remark}[The role of each model]
 The three rows above are one model at two resolutions plus one alternative hypothesis about

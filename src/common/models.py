@@ -106,10 +106,12 @@ class ParamsC:
                             # relative to the conjugation rate constant.
                             # Bounded above by Di Donato: the drain in PA is
                             # dominated by propionylcarnitine, so rho0 < 1.
-                            # Bounded below at about 0.35 by the same source,
-                            # since smaller values push the separatrix far
-                            # enough out that the model predicts free-carnitine
-                            # excretion RISING, which is measured falling.
+                            # Bounded below only by a DIRECTION, not a number:
+                            # free-carnitine excretion is measured falling while
+                            # short-chain acylcarnitine excretion rises. A figure
+                            # of "about 0.35" was quoted here and is RETRACTED;
+                            # re-derived it is 0.195 (REVIEW_LOG.md 0.1). See the
+                            # rho_0 row of common/params.py.
     R0: float = 1122.0085   # carnitine replenishment, CONSTANT. Not free: set
                             # so the alternative route alone peaks at 500
                             # against a baseline load of 600, so a patient with
@@ -131,18 +133,23 @@ def clearance_B(m, p: ParamsB):
 
 def alt_flux_C(m, p: ParamsC):
     """
-    Carnitine-mediated elimination after eliminating the carnitine state by
-    setting dc/dt = 0. This is alpha(m) of the paper, Section 2.3.
+    Carnitine-mediated elimination after eliminating the carnitine state at
+    its quasi-steady value. This is alpha(m) of the paper, the subsection
+    labelled sec:reduction. Named by label rather than by number, because the
+    number this docstring used to give was a stale one.
 
-    NOT an adiabatic elimination, and this docstring used to call it one. The
-    carnitine state is not the fast one: at k = 1 the ratio tau_c/tau_m runs
-    0.52 to 55 across the sampled parameter region, and the published human
-    kinetics put whole-body carnitine turnover at 38-119 h against the
-    marker's 0.81 h. What licenses the substitution is an identity rather
-    than a separation of timescales. alpha is DEFINED by solving dc/dt = 0,
-    and dc/dt = 0 holds exactly at any fixed point, so at equilibrium this
-    and rhs_C are one equation and agree exactly whatever the timescales do.
-    Away from equilibrium they do not: see audit/e10_qss_corners.py.
+    NOT an adiabatic elimination of a FAST state, which is what this docstring
+    used to call it: at the model's own k the carnitine time constant is 0.92 d
+    against the marker's 0.81 h, so the separation runs the wrong way by a
+    factor of about 27. Measured inside the model rather than against the
+    marker, the same verdict holds across the cohort: tau_c/tau_m spans 0.52 to
+    55 over the sampled parameter region at k = 1, so carnitine is comparable
+    to or slower than the metabolite throughout. What licenses the elimination
+    is that alpha is DEFINED by solving dc/dt = 0 and dc/dt = 0 holds exactly
+    at any fixed point, so at equilibrium the two formulations are one equation
+    rearranged. Everything this repository computes from the parent is computed
+    at equilibrium. See REVIEW_LOG.md R22, the k row of common/params.py, and
+    audit/e10_qss_corners.py for the sweep.
 
     One mechanism supplies both features the curve needs.
 
@@ -192,11 +199,15 @@ def rhs_C(t, y, p: ParamsC, s, k=1.0):
     R0 and the same Kc. tests/test_models.py checks that directly.
 
     k is the conjugation rate constant. It cancels out of the reduction, so
-    the reduced CURVE does not depend on it. That is not the same as being a
-    free scale, which this docstring used to claim: k sets the carnitine
-    relaxation rate, so it alone decides how far the reduction can be carried
-    away from equilibrium. The error there scales as 1/k. Nothing measures k,
-    and audit/e10_qss_corners.py prices the choice.
+    the reduced CURVE does not depend on it.
+
+    It is NOT therefore a free scale, which is what this docstring used to say.
+    k alone sets the carnitine relaxation rate, tau_c = 1/(k[u + rho]), so it
+    sets how far off equilibrium the reduction remains usable: the peak
+    relative error in m on a transient is 21.6% at k = 1 and falls as 1/k.
+    The 1/k is asymptotic and not global: below k = 1 it saturates, because a
+    relative error cannot exceed order one.
+    See REVIEW_LOG.md R22 and the k row of common/params.py.
     """
     m, c = y
     conj = k * c * m / (p.Kc + m)

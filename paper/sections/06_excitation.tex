@@ -2,539 +2,336 @@
 \label{sec:excitation}
 %==========================================================================
 
-\emph{Everything so far says what a record confined to a band cannot deliver. This
-section says what a record would have to do instead, linking the obstruction to the data specification.}
+\emph{What a clinical record has to do for $\theta$ to be recoverable, and which of the two
+available ways of doing it is actually available.}
 
-\subsection{Parametrisation}
-\label{sec:pinned}
-
-Nothing below can be proved until one choice is made explicit, because the two natural
-parametrisations give different statements. The enzymatic flux is written
-\begin{equation}
-\theta\, g(m), \qquad g(m) = \frac{m}{K_m+m},
-\label{eq:pin}
-\end{equation}
-with $\theta$ \emph{absorbing} the maximal velocity: $\theta$ \emph{is} the patient's
-residual $V_{\max}$, not a fraction of a population $V_{\max}$. Carrying the two
-separately, as $V_{\max}\theta\, g(m)$ with $\theta \in [0,1]$, adds a parameter that no
-excursion separates, since only the product multiplies $g$. Splitting them requires an
-anchor outside the marker, and the $1$-$^{13}$C-propionate breath test is what such an
-anchor looks like~\cite{breath_test_mma}. % C48
-The dynamic model is then
-\begin{equation}
-\dot m \;=\; L(t) + L_0 \;-\; \bigl(\theta + \Delta(t)\bigr) g(m) \;-\; k_e\, m,
-\label{eq:dyn}
-\end{equation}
-with $L$ the recorded component of the propiogenic load, $L_0$ its unrecorded component
-carried as an unknown constant, and $\Delta$ the therapeutic increment, known from the
-dosing schedule.
-
-\subsection{The nature of the obstruction}
+\subsection{What the sampling regime destroys}
 \label{sec:regime}
 
-Everything below is a statement about a \emph{design}. None of it says the model is
-structurally deficient, and the distinction has to be made before the propositions, because
-the propositions read as though it did.
+Everything below is a statement about a \emph{design}, not about the model. Under a generic
+trajectory \eqref{eq:local} is globally structurally identifiable: $\dot m$ is known, only
+the therapy carries a term in $\Delta$ so $K_m$ follows from that coefficient alone, and
+the remaining three follow at three distinct levels.
+\texttt{StructuralIdentifiability.jl} returns globally identifiable for eight
+configurations, the one exception being the variant in which both clearance channels
+saturate (Remark~\ref{rem:modelB}).
 
-Under a generic trajectory the model is globally structurally identifiable.
-Since $y = m$ is measured, $\dot m$ is known, and the balance supplies one exact equation
-$\bigl(\theta+\Delta\bigr)g(m) + k_e m + L_0 = L - \dot m$ at every level the trajectory
-visits. Clearing denominators, only the therapy carries a term proportional to $\Delta$, so
-$K_m$ follows from that coefficient alone; with $K_m$ pinned the remaining three enter as a
-combination of $g(m)$, $m$ and $1$, whose determinant at three distinct levels is non-zero.
-All four parameters follow, for any parameter values, provided the increment takes two
-distinct values and the marker takes three. This has been checked mechanically as well as
-by hand: \texttt{StructuralIdentifiability.jl} returns \emph{globally identifiable} for
-eight configurations of this model, time-varying load, constant load, two patients
-sharing population constants, a null-genotype anchor, carnitine as a known input, therapy
-as a known input, and a two-state carnitine model in which the second state is never
-observed. The single exception is the variant in which both clearance channels saturate,
-which Remark~\ref{rem:modelB} states and the supplement, \S S1, proves.
+That information lives in the transient, and the clinic does not sample the transient. The
+marker's time constant is shorter than the therapeutic half-life by a factor of
+$\num{timescale_ratio}$ (Section~\ref{sec:collapse}), which is what licenses treating each
+visit as a point on an algebraic balance. A record of monthly draws therefore contains points on the
+\emph{quasi-steady locus}, where $\dot m$ has vanished and the derivatives carrying the
+structural result are absent. What remains at each visit is one algebraic balance, and the
+degeneracy below is a property of that.
 
-So the information is present in the system, and the sampling regime is what
-destroys it. Structural identifiability is a statement about the exact, noiseless,
-continuous trajectory, from which every time-derivative of the output is available: the
-information lives in the transient. The clinic does not sample the transient. The marker's
-own time constant is about $0.8$~h, $99\%$ of a displacement closes in $4.2$~h, against
-a therapeutic half-life of $3.5$~days, a separation of roughly $10^2$, which is what licenses treating each visit as a point on an algebraic balance rather
-than as a state of an ODE that has to be integrated. A record built
-from monthly clinic draws therefore contains points on the \emph{quasi-steady locus}, where
-$\dot m$ is zero to within the width of the assay and the derivatives that carry the
-structural result are simply not present. What remains at each visit is one algebraic
-balance, and the degeneracies below are properties of that.
+\paragraph{The degeneracy is a curve, and it is exact.} Solving the balance for the
+increment that produces a level $m$ gives, with no remainder,
+\begin{equation}
+\Delta(m) \;=\; \frac{A}{m} \;+\; B \;+\; C\,m,
+\qquad A = K_m(L+b), \quad B = L + b - \theta - k_e K_m, \quad C = -k_e,
+\label{eq:invariants}
+\end{equation}
+so the increment depends on the parameters only through $(A,B,C)$. Since $A>0$ and $C<0$
+the map is a bijection from $(0,\infty)$ onto $\mathbb{R}$, and three distinct levels
+determine $(A,B,C)$. Cleared of its denominator the relation is
+$\Delta_i m_i = A + B m_i + C m_i^2$, a Vandermonde system in $(A,B,C)$ whose nodes are
+the marker levels themselves, so ``three distinct levels'' is exactly the distinctness
+those nodes must satisfy and three visits at three different levels suffice. At a constant recorded load, $(A,B,C)$ is therefore exactly what the
+data contain: four unknowns against three invariants, leaving a one-parameter family of
+exact observational twins,
+\begin{equation}
+K_m(b) = \frac{K_m^{0}\,L}{L+b},
+\qquad \theta(b) = \theta^{0} + b + k_e\bigl(K_m^{0} - K_m(b)\bigr),
+\qquad k_e \text{ unchanged},
+\label{eq:fibrecl}
+\end{equation}
+along which the marker itself is unchanged. Proposition~\ref{prop:rank}'s null vector is
+its tangent at $b=0$. For the capacity the tangent is the whole story. Matching the three
+invariants of \eqref{eq:invariants} for a record generated at load $L+b$ and fitted with
+the load held at $L$ gives
+\[
+  \hat K_m = K_m\Bigl(1 + \frac{b}{L}\Bigr),
+  \qquad
+  \hat\theta = \theta - b\Bigl(1 + \frac{K_m k_e}{L}\Bigr)
+      = \theta - \num{bias_slope}\,b ,
+\]
+exactly and at every $b$, with no higher-order term: the fibre is curved in
+$(\theta,K_m)$, but the map from a load bias to the \emph{fitted capacity} is affine. So
+what a bound on $b$ leaves open in $\theta$ below is arithmetic and not a linearisation.
 
-On that locus the information matrix is singular at the truth, and flat only to
-first order. Proposition~\ref{prop:rank} gives the null direction in closed form. Moving
-along it, the noiseless misfit grows as the \emph{square} of the displacement rather than
-linearly: root-mean-square residual $\propto \varepsilon^2$, checked to three figures over
-a decade in $\varepsilon$. Squaring it, $\chi^2 \propto \varepsilon^4$, which is the same
-statement Remark~\ref{rem:second_order} reports over four decades from the other direction. The combination is therefore recovered through curvature rather than through
-slope, and the consequence is a price rather than a prohibition: the recoverable
-displacement scales as the square root of the noise level, where a first-order
-direction would scale linearly. Halving the assay CV buys a factor of $\sqrt2$ along this
-direction and a factor of $2$ along every other.
+\textbf{On this locus the combination is not recovered at any order, and halving the assay
+CV buys nothing along it.}
 
-A singular Fisher matrix at a point does not contradict global injectivity of the
-map; it sets the price. That sentence is the whole reconciliation between the structural
-result and everything that follows, and is not stated again.
-
-\begin{remark}[A word used in two senses, disambiguated once]
-\label{rem:twosenses}
-This paper uses \emph{structural} in two ways and they should not be confused.
-\emph{Structural identifiability} is the technical sense above: a property of the model and
-observation map alone, in which noise, sampling and cohort size do not appear. Elsewhere the word is used loosely, to mean that a claim follows from the form of the model rather
-than from any constant in it. No claim in this paper asserts structural non-identifiability
-in the technical sense, of this model or of any reduction of it.
-\end{remark}
+Two things close the fibre from outside, and the paper uses both. A bound on the load bias
+closes it directly: \eqref{eq:fibrecl} is admissible for every $b > -272.7$, and at the
+$5\%$ load record of Section~\ref{sec:spec} it leaves $\theta$ open by a factor of
+$\num{bias_theta_factor}$, which is that affine map evaluated at the bound rather than
+near it.
+A recorded load that \emph{varies} closes it from the data, which is the last clause of
+Proposition~\ref{prop:rank}; there the price is ordinary, the half-width scaling as
+$\sigma^{0.98}$ rather than as $\sqrt\sigma$. A singular Fisher matrix here does not
+contradict the structural-identifiability verdict above, because the two read different
+records: one a transient, the other a locus on which $\dot m$ has already vanished.
 
 \subsection{Degeneracy at both ends of the band}
 
 \begin{proposition}[Two degeneracies]
 \label{prop:excitation}
-In \eqref{eq:dyn} with $(\theta, K_m, k_e, L_0)$ unknown:
+In \eqref{eq:local} with $(\theta, K_m, k_e, L_0)$ unknown:
 \begin{enumerate}[leftmargin=*, itemsep=2pt]
-\item \textbf{Below the half-saturation level.} As $m/K_m \to 0$, $g(m) \to m/K_m$ and
-total clearance collapses to $\left(\theta/K_m + k_e\right) m$. Three of the four
-sensitivity directions become proportional to $m$, so only the lumped ratio
-$\theta/K_m + k_e$ is identifiable and $\theta$, $K_m$ and $k_e$ are not separable.
-\item \textbf{Above it.} As $m/K_m \to \infty$, $g(m) \to 1$ and \eqref{eq:dyn} becomes
-$\dot m = L(t) + L_0 - \theta - k_e m$. $\theta$ enters only through
-$L_0 - \theta$, so with $L_0$ unknown the residual capacity and the unrecorded load are
-confounded and cannot be separated from the marker trajectory at all.
+\item \textbf{Below the half-saturation level.} As $m/K_m \to 0$, total clearance collapses
+to $(\theta/K_m + k_e)\,m$: only the lumped ratio is identifiable, and $\theta$, $K_m$ and
+$k_e$ are not separable.
+\item \textbf{Above it.} As $m/K_m \to \infty$, $g \to 1$ and $\theta$ enters only through
+$L_0 - \theta$, so residual capacity and the unrecorded load are confounded and cannot be
+separated from the marker trajectory at all.
 \end{enumerate}
 \end{proposition}
 
-\begin{proof}[Argument]
-Both are limits of the sensitivity matrix. Writing the four columns as derivatives of the
-ordinate with respect to $(\ln\theta, \ln K_m, \ln k_e, L_0)$,
+Both are limits of the sensitivity columns, which in
+$(\ln\theta, \ln K_m, \ln k_e, L_0)$ are
 \begin{equation}
 \Bigl(\theta g(m),\;\; -\bigl(\theta + \Delta\bigr) K_m \tfrac{m}{(K_m+m)^2},\;\;
-k_e m, \;\; 1 \Bigr),
+k_e m, \;\; 1 \Bigr);
 \label{eq:columns}
 \end{equation}
-the first three tend to
-$\bigl(\theta m/K_m,\, -(\theta+\Delta) m/K_m,\, k_e m\bigr)$ as $m/K_m \to 0$ and to
-$(\theta,\, 0,\, k_e m)$ as $m/K_m \to \infty$.
+the argument is in the supplement, \S S1. Its one asymmetry is the whole of
+Section~\ref{sec:therapychannel}: a varying $\Delta$ lifts the low end to rank three,
+improving the conditioning by about five orders of magnitude at $m/K_m = 10^{-6}$, and
+leaves the high end untouched, because $\Delta$ multiplies a $g$ that is no longer moving.
+What the low end gives back is $K_m$ and not $\theta$: at $m/K_m = 0.01$,
+$\operatorname{sd}(\ln\hat K_m)$ falls from $0.587$ to $0.209$ while
+$\operatorname{sd}(\ln\hat\theta)$ does not improve at all.
 
-\emph{At a fixed regimen}, where $\Delta$ is constant over the record, all three of the
-first columns are proportional to $m$ at the low end, giving rank one together with the
-constant fourth; and at the high end the first is constant and coincides with the fourth.
-Rank two at both ends, which is the statement above.
+Note that the $K_m$ column carries the increment. Writing it as
+$-\theta K_m m/(K_m+m)^2$, dropping $\Delta$ while evaluating at levels $\Delta$ produced,
+gives the wrong tangent rather than a duplicated term, and it changes the central design
+conclusion.
 
-A varying $\Delta$ changes the low end and not the high end, and the asymmetry is
-the whole of Section~\ref{sec:therapychannel}. At the low end the second column is
-proportional to $(\theta + \Delta_i)\,m_i$ rather than to $m_i$, so it leaves the span of
-the other two as soon as $\Delta$ takes more than one value: the limit is rank three, and
-numerically the conditioning of the four columns improves by about five orders of
-magnitude at $m/K_m = 10^{-6}$. At the high end $g \to 1$ makes the first column constant
-and therefore parallel to the fourth \emph{whatever $\Delta$ does}, because $\Delta$
-multiplies $g$ and $g$ is no longer moving. So part~(2) is untouched by any dosing
-schedule, and what part~(1) gives back is $K_m$ rather than $\theta$:
-$\operatorname{sd}(\ln \hat K_m)$ falls from $0.587$ to $0.209$ on a band at
-$m/K_m = 0.01$, while $\operatorname{sd}(\ln\hat\theta)$ does not improve there at all.
-\end{proof}
+The two failures are not equally survivable. At the low end a decomposition is lost while
+total clearance stays constrained: the data still say what the patient eliminates, not
+through which channel. At the high end the target parameter is lost against a quantity
+nobody records.
 
-Note the column that is not $\theta g$. Writing the $K_m$ column as $-\theta K_m m/(K_m+m)^2$, dropping the increment while evaluating at levels the increment produced, gives the wrong tangent rather than a duplicated term, and the difference changes the central design conclusion; the arithmetic is in
-the supplement, \S S2, and the correction is checked against a finite difference of the
-integrated dynamics to $0.15\%$.
+Part~(2) is conditional on $L_0$ being unknown, and that is what makes the load record
+load-bearing rather than a detail to be tidied up at the end. With the load recorded
+exactly, saturation would be the \emph{best} place to measure: $C(m) \to \theta + k_e m$,
+whose intercept is $\theta$ outright, with no extrapolation and no $K_m$.
+Figure~\ref{fig:D1}~(right) draws both cases and they differ qualitatively, the optimum
+being interior only when the load is partly unrecorded. Which property of the record
+matters is settled in Section~\ref{sec:rank}.
 
-The two failures are not equally survivable. At the low end a decomposition is
-lost while the clearance itself stays constrained: the data still say what the patient
-eliminates, they do not say through which channel. At the high end the target parameter is
-lost against a quantity nobody records. The earlier phrasing of this paper (``below $K_m$
-only the lumped ratio, above $K_m$ only the product'') was wrong in the second clause,
-and wrong in the direction that matters.
+\subsection{Curvature, and the two factors}
 
-\begin{remark}[Which makes the load record load-bearing]
-\label{rem:load_bearing}
-Proposition~\ref{prop:excitation}(2) is conditional on $L_0$ being unknown. If the load
-were recorded exactly, saturation would be the \emph{best} place to measure, not the worst:
-$C(m) \to \theta + k_e m$ and the intercept of that line is $\theta$ outright, with no
-extrapolation and no $K_m$. Figure~\ref{fig:D1}~(right) draws both cases, and they differ
-qualitatively: with the load known, $\operatorname{sd}(\ln\hat\theta)$ falls monotonically
-as the patient is carried up the curve; with it partly unrecorded, the optimum is
-\emph{interior}.
-
-So the load record is not a mechanical detail to be tidied up at the end: it is what
-creates the upper obstruction. But \emph{what} about the record matters is not what this
-remark originally claimed. Section~\ref{sec:rank} shows that its \emph{precision} is
-nearly irrelevant once the increment is carried, and that its \emph{variability} is what
-makes the problem identifiable at all.
-\end{remark}
-
-\subsection{Curvature as the source of identifiability}
-
-Since both ends are flat, what separates the parameters is the \emph{change} in the
-saturation across the record. From \eqref{eq:columns}, the ratio of the $K_m$ sensitivity
-to the $\theta$ sensitivity is
-\begin{equation}
-\frac{\partial C/\partial \ln K_m}{\partial C/\partial \ln \theta}
-\;=\; -\Bigl(1 + \frac{\Delta(t)}{\theta}\Bigr)\,\varphi(m),
-\qquad \varphi(m) = \frac{K_m}{K_m + m},
-\label{eq:phi}
-\end{equation}
-and the ratio of the $k_e$ sensitivity to it is $(k_e/\theta)(K_m + m)$, which is affine in
-$m$ and which any excursion excites. Equation \eqref{eq:phi} is the pivot of this
-note. The quantity a design has to move is the \emph{product}, and it has two factors:
-\begin{equation}
-\mathcal{E} \;=\; \operatorname{range}_{\,t}\Bigl[\Bigl(1 + \tfrac{\Delta(t)}{\theta}\Bigr)
-\varphi\bigl(m(t)\bigr)\Bigr].
-\label{eq:Egen}
-\end{equation}
-Holding $\Delta$ fixed and moving $m$ recovers the functional the rest of this section is
-built on,
+Since both ends are flat, what separates the parameters is the \emph{change} in saturation
+across the record. From \eqref{eq:columns} the ratio of the $K_m$ sensitivity to the
+$\theta$ sensitivity is $-\bigl(1 + \Delta(t)/\theta\bigr)\varphi(m)$ with
+$\varphi(m) = K_m/(K_m+m)$, so the quantity a design must move is a \emph{product} of two
+factors, and the excitation available is the range of that product over the record. Holding
+$\Delta$ fixed and moving $m$ gives the marker factor alone,
 \begin{equation}
 E \;=\; \varphi(m_{\min}) - \varphi(m_{\max})
-\;=\; \frac{K_m\,(m_{\max} - m_{\min})}{(K_m + m_{\min})(K_m + m_{\max})},
+\;=\; \frac{K_m\,(m_{\max} - m_{\min})}{(K_m + m_{\min})(K_m + m_{\max})}.
 \label{eq:E}
 \end{equation}
-and everything proved about $E$ below is correct \emph{as a statement about that factor}.
-What follows from \eqref{eq:phi} and does not follow from \eqref{eq:E} is that the marker
-band is not the only factor, and on the accessible record it is much the smaller one.
 
 \begin{proposition}[The excitation is maximised straddling $K_m$]
 \label{prop:straddle}
-Fix the fold range $r = m_{\max}/m_{\min} > 1$. Then $E$ is maximised at
-\begin{equation}
-m_{\min} = \frac{K_m}{\sqrt r}, \qquad m_{\max} = K_m \sqrt r,
-\qquad\text{that is}\qquad \sqrt{m_{\min} m_{\max}} = K_m,
-\label{eq:straddle}
-\end{equation}
-and there
-\begin{equation}
-E_{\max}(r) \;=\; \frac{\sqrt r - 1}{\sqrt r + 1},
-\qquad\text{so a required $E$ needs}\qquad
-r \;\ge\; \left(\frac{1+E}{1-E}\right)^{\!2}.
-\label{eq:Emax}
-\end{equation}
+At fixed fold range $r = m_{\max}/m_{\min} > 1$, $E$ is maximised at
+$\sqrt{m_{\min} m_{\max}} = K_m$, where $E_{\max}(r) = (\sqrt r - 1)/(\sqrt r + 1)$, so a
+required $E$ needs $r \ge \bigl((1+E)/(1-E)\bigr)^2$.
 \end{proposition}
 
-\begin{proof}
-Put $x = m_{\min}/K_m$, so $E = (1+x)^{-1} - (1+rx)^{-1}$. Then
-$\partial E/\partial x = -(1+x)^{-2} + r(1+rx)^{-2}$, which vanishes when
-$\sqrt r\,(1+x) = 1 + rx$, that is at $x = 1/\sqrt r$. Substituting gives
-$E_{\max} = \sqrt r/(\sqrt r + 1) - 1/(1 + \sqrt r)$, which is \eqref{eq:Emax}, and
-inverting it gives the requirement on $r$.
-\end{proof}
-
-The requirement is a band around $K_m$, not a threshold above it. That correction changes what a protocol should ask for. A
-band of a given fold range placed a decade below $K_m$ delivers a fraction of what the same
-fold range delivers straddling it: at $r = 2$, the band the illustrative patient is held in
-gives $E = 0.058$ against a possible $0.172$, a factor of three thrown away by placement
-alone. Across four decades of operating point the penalty is far larger than that, because
-$\operatorname{sd}(\ln\hat\theta)$ depends on placement more steeply than $E$ does:
-at the operating point this paper's patient is managed to, it is about $2\,100$ times
-its best (Figure~\ref{fig:D1}).
+\noindent
+The one-line proof is in the supplement, \S S1. The requirement is therefore a band
+\emph{around} $K_m$ and not a threshold above it, which changes what a protocol should ask
+for: at $r = 2$ the band the illustrative patient is held in gives $E = 0.058$ against a
+possible $0.172$, a factor of three thrown away by placement alone. Precision depends on
+placement more steeply than $E$ does, and at the managed operating point
+$\operatorname{sd}(\ln\hat\theta)$ is about $2\,100$ times its best.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{fig_D1_excitation.pdf}
 \caption{The excitation condition. \textbf{Left:} $\varphi(m) = K_m/(K_m+m)$, the direction
-that separates $\theta$ from $K_m$. It is flat at both ends of the saturation curve, so the
-information a band carries is the \emph{drop} in $\varphi$ across it,
-\eqref{eq:E}. The two shaded bands have the same fold range and differ only in where they
-sit. Right: the price of sitting in the wrong place, as
-$\operatorname{sd}(\ln\hat\theta)$ against the geometric centre of the band. With the load
-known exactly the curve is monotone and saturation is the best place to measure; with the
-load partly unrecorded the optimum is interior, because
-Proposition~\ref{prop:excitation}(2) then bites. The dotted line is where clinical
-management holds the patient.}
+separating $\theta$ from $K_m$, flat at both ends, so what a band carries is the
+\emph{drop} in $\varphi$ across it. The two shaded bands have the same fold range and
+differ only in placement. \textbf{Right:} the price of placement, as
+$\operatorname{sd}(\ln\hat\theta)$ against the band's geometric centre. With the load known
+the curve is monotone and saturation is the best place to measure; with it partly
+unrecorded the optimum is interior. The dotted line is where management holds the patient.}
 \label{fig:D1}
 \end{figure}
 
 \subsection{The therapeutic increment as the second factor}
 \label{sec:therapychannel}
 
-$\Delta(t)$ is not a nuisance. It is a \emph{known input}, read off the dosing record and
-the product's pharmacokinetics, and it multiplies exactly the term whose curvature the
-identification needs. On the record the phase 1/2 schedule already
-produces~\cite{trial_phase12} (biweekly dosing, marker sampled across the cycle, the
-patient held where management holds them) the two factors of \eqref{eq:Egen} are of
-completely different sizes:
+$\Delta(t)$ is a \emph{known input}, read off the dosing record, and it multiplies exactly
+the term whose curvature the identification needs. On the phase 1/2
+schedule~\cite{trial_phase12}, with the patient held where management holds them, the two
+factors are of completely different sizes, and Table~\ref{tab:factors} sets them side by
+side over the same record.
 
-\begin{center}
+\begin{table}[htbp]
+\centering
 \footnotesize
-\begin{tabular}{@{}lrrr@{}}
-\toprule
-\textbf{factor} & \textbf{range over the record} & \textbf{as a ratio} & \textbf{drop} \\
-\midrule
-$\varphi(m)$, the marker band        & $0.9213$--$0.9675$ & $1.05\times$ & $0.046$ \\
-$1 + \Delta/\theta$, the dose train  & $1.186$--$3.133$   & $2.64\times$ & $1.948$ \\
-\addlinespace
-the product, $\mathcal{E}$           & $1.092$--$3.031$   &, & $\mathbf{1.939}$ \\
-\bottomrule
-\end{tabular}
-\end{center}
+\caption{\label{tab:factors}The two factors of the excitation, over the phase 1/2 record. The marker band moves $\varphi$ by a twentieth; the dose train moves $1+\Delta/\theta$ by nearly two. Their product is what a design has to move.}
+\input{../results/tables/tab_D_factors}
+\end{table}
 
-The dose train supplies forty-two times the excitation the marker band does, on the
-same record. Against the $E \approx 0.50$ the decision was said to require, the marker
-band delivers $0.046$ and the schedule delivers $1.94$, which is nearly four times the
-requirement. An increment reaching only $\Delta/\theta = 0.55$ would meet it on its own.
+\textbf{The dose train supplies $\num{excitation_ratio}$ times the excitation the marker
+band does, on the same record.} Against the $E \approx 0.50$ this paper adopts as its target, the band
+delivers $\num{phi_drop}$ and the schedule $\num{train_drop}$. \textbf{That target is a criterion adopted here
+and not a consequence of the decision problem.} By Proposition~\ref{prop:straddle} it is
+what a ninefold marker range placed about $K_m$ delivers, which is the round figure the
+excitation calculations below are measured against; no endpoint analysis supplies a
+required excitation, and if one did it would replace this. The comparison against the marker's \emph{band} is
+the one that holds on a single record, because both factors are read off the same two years
+of chart. Against an \emph{excursion} the ratio is smaller and the footing is different: the
+largest any accessible source supplies is a decompensation reaching $E = \num{decomp_E}$
+(Section~\ref{sec:excursion_table}), against which the train is worth $5.5$ times, and that
+source is the event the therapy exists to prevent.
 
 \begin{proposition}[Two routes to the same excitation]
 \label{prop:tworoutes}
-A record meets a required $\mathcal{E}$ either by moving $m$ at fixed $\Delta$, which needs
-a fold range $r \ge \bigl((1+\mathcal{E})/(1-\mathcal{E})\bigr)^2$ about $K_m$ by
-Proposition~\ref{prop:straddle}, or by moving $\Delta$ at fixed $m$, which needs
+A record meets a required excitation either by moving $m$ at fixed $\Delta$, which needs a
+fold range $r \ge \bigl((1+\mathcal{E})/(1-\mathcal{E})\bigr)^2$ about $K_m$, or by moving
+$\Delta$ at fixed $m$, which needs
 \begin{equation}
 \frac{\Delta_{\max} - \Delta_{\min}}{\theta} \;\ge\; \frac{\mathcal{E}}{\varphi(\bar m)},
 \label{eq:dosereq}
 \end{equation}
-and at $\bar m \ll K_m$, where $\varphi \to 1$, that is simply
-$\Delta_{\max} - \Delta_{\min} \ge \mathcal{E}\,\theta$.
+which at $\bar m \ll K_m$ is simply $\Delta_{\max} - \Delta_{\min} \ge \mathcal{E}\,\theta$.
 \end{proposition}
 
-\begin{proof}
-Immediate from \eqref{eq:Egen}: at fixed $\Delta$ the range of the product is
-$(1+\Delta/\theta)$ times the range of $\varphi$, and at fixed $m$ it is $\varphi(\bar m)$
-times the range of $\Delta/\theta$.
-\end{proof}
+\noindent
+The two are not equally available. The excursion route needs the marker carried to roughly
+twenty times its managed level, or a fold range of order ten from below; the safety
+constraint is on the level, both violate it, and no published series records any propionate
+marker at either. The dose route needs a varying enzymatic increment, which the therapy
+supplies by construction on a schedule the protocol already fixes. Equation~\eqref{eq:dosereq}
+asks for a \emph{range}, and the biweekly schedule moves $\Delta/\theta$ over
+$\num{train_drop}$ against the $0.55$ that would suffice. \textbf{The excitation was
+being administered on every dosing day of the trial and read as a nuisance.}
 
-The two routes are not equally available, and the asymmetry is the reverse of what this
-note argued for six sections. The excursion route requires carrying the marker towards
-$K_m$, and Section~\ref{sec:designsec} shows no observed decompensation goes that far. The
-dose route requires varying the delivered enzymatic increment, which the therapy
-does by construction, on a schedule the protocol already fixes. The excitation was being
-administered on every dosing day of the trial and read as a nuisance.
-
-What the dose route needs instead, and it is a real requirement. Nothing is free
-here: \eqref{eq:dosereq} is stated in units of $\theta$, and the ratio $\Delta/\theta$ is
-only as well known as $\Delta$ is. Section~\ref{sec:spec} turns that into the single number
-the design now turns on: how precisely the delivered increment has to be characterised. It is the one requirement this paper cannot discharge from published data.
+It is not free. Equation~\eqref{eq:dosereq} is in units of $\theta$, so $\Delta/\theta$ is
+only as well known as $\Delta$ is, and Section~\ref{sec:spec} turns that into the one
+requirement this paper cannot discharge from published data.
 
 \begin{remark}[The linear alternative channel is a modelling choice, and not an innocuous one]
 \label{rem:modelB}
-The alternative clearance has been linear since \eqref{eq:local}. If it saturated instead,
-so that both routes carried the same functional form, capacity and alternative clearance
-would be exchangeable: the configuration is the only one in this paper's set that
+The alternative clearance has been linear throughout. If it saturated instead, capacity and
+alternative clearance would be exchangeable: that configuration is the one
 \texttt{StructuralIdentifiability.jl} does not return as globally identifiable, and its
-fibre is an exact two-point set that no quantity of noiseless data separates. A known input
-on one channel removes that exchange only if the input \emph{varies}; a constant increment
-is absorbed into the amplitude it rides on and separates nothing.
-
-This paper's own model escapes the exchange because its two channels are not two members of
-one parameterised family, so no permutation of $(\theta, K_m, k_e)$ exchanges them. But the
-saturating model contains this one only as a boundary case, and at any finite $K_e \neq K_m$
-the exchange is exact, so the freedom is a property of the linearisation rather than
-evidence that the linearisation was harmless. The general statement, its proof, and what it
-costs this paper are in the supplement, \S S1.
+fibre is an exact two-point set no quantity of noiseless data separates. A known input on
+one channel removes the exchange only if it \emph{varies}. This paper's model escapes
+because its two channels are not members of one parameterised family, but the saturating
+model contains it only as a boundary case and at any finite $K_e \neq K_m$ the exchange is
+exact, so the freedom is a property of the linearisation rather than evidence that the
+linearisation was harmless. Proof and cost in the supplement, \S S1.
 \end{remark}
 
 \subsection{A closed form for the obstruction}
 \label{sec:rank}
 
-What survives all of this is one exact statement, sharper than the determinant conditions earlier drafts used.
-
 \begin{proposition}[The load-bias identity]
 \label{prop:rank}
-Let a record consist of pairs $(m_i, s_i)$ satisfying the balance
-$s_i = (\theta + \Delta_i) g(m_i) + k_e m_i$ at a \emph{constant} recorded load $L$. Then
-the three design columns of \eqref{eq:columns} in $(\ln\theta, \ln K_m, L_0)$ satisfy
+Let a record consist of pairs $(m_i, s_i)$ satisfying
+$s_i = (\theta + \Delta_i) g(m_i) + k_e m_i$ at a \emph{constant} recorded load $L$, with
+$b$ a bias on that record. Then the design columns of \eqref{eq:columns} satisfy, in the
+normalisation $\beta = -K_m$,
 \begin{equation}
-c_\theta \, q_\theta \;+\; c_{K_m} q_{K_m} \;=\; q_{L_0},
-\qquad
-c_\theta = \frac{1 + K_m k_e/L}{\theta}, \qquad c_{K_m} = -\frac{1}{L},
-\label{eq:rank}
-\end{equation}
-identically in $m$ and in $\Delta$. The design matrix is therefore rank deficient by
-exactly one, and the deficient direction is the load bias. If instead the recorded load
-varies, $L \to L_i$, the same construction requires $c_{K_m} = -1/L_i$ for every $i$, which
-no constant satisfies, and the deficiency closes.
-\end{proposition}
-
-\begin{proof}
-The derivation is short enough to check on paper, and it is written forwards (solving
-for the dependence rather than verifying a stated one) so that the reader sees why
-$k_e$ drops out.
-
-Write $u = m/(K_m+m)$, so that $1-u = K_m/(K_m+m)$ and, usefully,
-\begin{equation}
-m\,(1-u) \;=\; K_m\, u, \qquad m \;=\; \frac{K_m\,u}{1-u}.
-\label{eq:usubs}
-\end{equation}
-Work with the balance itself, $G:= (\theta+\Delta)\,u + k_e m - L - b$, where $b$ is a
-bias on the recorded load. Because the marker enters every sensitivity through the same
-factor $\partial G/\partial m$, which cancels from any linear dependence among the columns,
-it is enough to find a dependence among the four partial derivatives of $G$:
-\begin{equation}
-\pd{G}{\theta} = u, \qquad
-\pd{G}{K_m} = -(\theta+\Delta)\,\frac{u(1-u)}{K_m}, \qquad
-\pd{G}{k_e} = m, \qquad
-\pd{G}{b} = -1.
-\label{eq:Gsens}
-\end{equation}
-Ask for constants $(a, \beta, \gamma, e)$, \emph{not} depending on the sample, with
-\[
-a\,\pd{G}{\theta} + \beta\,\pd{G}{K_m} + \gamma\,\pd{G}{k_e} + e\,\pd{G}{b} \;=\; 0
-\qquad\text{for every }\Delta.
-\]
-The increment is eliminated by the balance itself: $(\theta+\Delta)\,u = L - k_e m$, so the
-second term is $-(\beta/K_m)(L - k_e m)(1-u)$, and by \eqref{eq:usubs} this is
-$-(\beta/K_m)\bigl[L(1-u) - k_e K_m u\bigr]$. Substituting, and using
-$m = K_m u/(1-u)$ in the third term, the condition becomes
-\begin{equation}
-\underbrace{\gamma\,\frac{K_m u}{1-u}}_{\text{pole at }u=1}
-\;+\; \Bigl(a + \frac{\beta L}{K_m} + \beta k_e\Bigr) u
-\;-\; \Bigl(e + \frac{\beta L}{K_m}\Bigr) \;=\; 0.
-\label{eq:inu}
-\end{equation}
-The three groups are linearly independent as functions of $u$, so each vanishes. The first
-forces $\gamma = 0$: the alternative clearance is the one direction that cannot
-enter a dependence, because $m$ is the only sensitivity that is not a polynomial in $u$.
-The remaining two give $a = -\beta(L/K_m + k_e)$ and $e = -\beta L/K_m$, a one-dimensional
-family. Taking $\beta = -K_m$,
-\begin{equation}
-n \;=\; \bigl(\,L + k_e K_m,\;\; -K_m,\;\; 0,\;\; L\,\bigr)
+n \;=\; \bigl(\,L + b + k_e K_m,\;\; -K_m,\;\; 0,\;\; L + b\,\bigr)
+\qquad\text{in } (\theta, K_m, k_e, b),
 \label{eq:nullvec}
 \end{equation}
-in $(\theta, K_m, k_e, b)$. Dividing through by $\theta L$ and rescaling the first two
-components to logarithmic parameters gives $c_\theta = (1 + K_m k_e/L)/\theta$ and
-$c_{K_m} = -1/L$, which is \eqref{eq:rank}.
+identically in $m$ and in $\Delta$. The design matrix is rank deficient by exactly one and
+the deficient direction is the load bias. If the recorded load varies, $L \to L_i$, no
+sample-independent $n$ exists and the deficiency closes.
+\end{proposition}
 
-Every step used $L$ as a constant. If the recorded load varies, $L \to L_i$, then $e$ and
-$a$ acquire an index and no sample-independent $n$ exists, which is the last sentence of
-the proposition.
-\end{proof}
+\noindent
+The derivation is in the supplement, \S S1. Three things read off \eqref{eq:nullvec} that
+are not obvious. The deficiency is exactly one, so there is one identity and no second.
+$k_e$ does not appear, because $m$ is the only sensitivity that is not a polynomial in
+$u = m/(K_m+m)$, so no sample-independent constant can bring it into a dependence; that is
+a statement about the \emph{exact} identity and says nothing about conditioning, and the
+two must not be run together. And the identity holds for \emph{every} $\Delta$, so the dose
+train does not close it. Only a varying load does.
 
-Three things to read off \eqref{eq:nullvec}, because they are not obvious from
-\eqref{eq:rank}. First, the deficiency is exactly one: the family is one-dimensional, so
-there is one identity and no second. Second, $k_e$ does not appear: the degenerate
-direction lies entirely in capacity, affinity and the load bias, and the reason is visible
-in \eqref{eq:inu}, $m$ is the only sensitivity that is not a polynomial in $u$, so no
-sample-independent constant can bring it into a dependence. Third, the identity holds
-\emph{for every} $\Delta$, so the dose train does not close it; only a varying load does.
+The bias has to be carried through the derivation for \eqref{eq:nullvec} to be the tangent
+to \eqref{eq:fibrecl}. Evaluated at $b = 0$ the vector annihilates the Jacobian only at the
+truth, failing to at $b = 31.6$, and its integral curve is $K_m = K_m^{0}e^{-b/L}$, which
+leaves the fibre at second order.
 
-The second of those is about the \emph{exact} identity and says nothing about conditioning.
-The two must not be run together, and keeping them apart is what accounts for the pattern
-of priors the next section adopts; the supplement, \S S1, states it there, where the
-priors are chosen.
+The identity is checked by two routes with no shared code: on the two-year record
+$\lVert Qc\rVert/\lVert Q\rVert = 2.7\times10^{-17}$ with $c$ matching the smallest right
+singular vector to $\lvert\cos\rvert = 1.000000000$; and \eqref{eq:nullvec} reproduces the
+smallest right singular vector of a separately constructed quasi-steady design to a maximum
+component difference of $1.79\times10^{-7}$.
 
-The identity is checked two ways, deliberately by routes with no shared code. Numerically
-on the two-year record, $\lVert Q c\rVert / \lVert Q\rVert = 2.7\times 10^{-17}$, the
-vector $c$ coincides with the smallest right singular vector of $Q$ to
-$\lvert\cos\rvert = 1.000000000$, and the deficiency is exactly one in the four-column form
-as well as the three-column one. Independently, \eqref{eq:nullvec} evaluated at the
-note's constants reproduces the smallest right singular vector of a separately constructed
-quasi-steady design (built from a bisection on the balance rather than from the design
-module) to a maximum component difference of $1.79\times10^{-7}$, with
-$\lVert Jn\rVert/(\lVert J\rVert\lVert n\rVert) = 1.5\times10^{-11}$. The second route
-shares no code with the first and was written to check \eqref{eq:nullvec} specifically.
+\paragraph{Two things the load record decides, and they are not the same thing.}
+Its \emph{variability} is what makes the problem identifiable at all. At a perfectly steady
+intake the design matrix is exactly singular, so its smallest singular value is not a
+measurable quantity: what a computation returns there is arithmetic noise, $2\times10^{-15}$
+with the dose train and $5\times10^{-32}$ without it, both at the floor of the
+decomposition. Measured from the first record that is not exactly singular, a $0.1\%$
+coefficient of variation, to $40\%$, the ratio $s_{\min}/s_{\max}$ of the column-normalised
+matrix rises from $4.7\times10^{-8}$ to $7.2\times10^{-3}$ without the dose train and from
+$3.8\times10^{-4}$ to $1.1\times10^{-1}$ with it: about five orders of magnitude in the
+first case and two and a half in the second, medians over twenty-four records.
 
+Its \emph{accuracy} is what decides whether the design reaches its target, \textbf{and the
+mechanism is not the fibre}. Swept properly, $\operatorname{sd}(\ln\hat\theta)$ runs
+$0.159$ at a $1\%$ recording error to $0.288$ at $20\%$, so the target holds only below
+about $10\%$ (Section~\ref{sec:spec}). Decomposed, $98\%$ of that is the per-visit scatter
+entering through $\sigma$ and $2\%$ is the systematic offset the fibre runs along: once the
+recorded load varies, the data fill the deficient direction themselves and the prior on
+$b$ is inert, so that with the scatter at $5\%$ the target is met at every bias from $1\%$
+to $500\%$. A weighed-intake calibration of the mean offset, which is the cheap study,
+therefore buys almost nothing. What the requirement asks for is a better diary at every
+visit.
 
-Two consequences, and the second is the one to keep.
+\textbf{Restoring rank is not achieving precision, and the two must not be run together.}
+Without the dose train, prior-free $\operatorname{sd}(\ln\hat\theta)$ is still $28.1$ at
+half a per cent of variation and $1.30$ at ten, while the rank has long since been restored.
+With the dose train at a perfectly constant load the matrix is still rank deficient and the
+filter nonetheless reports $\num{sd_load_steady}$, because the load-record prior fills the deficient
+direction. At the variability the specification asks for the data fill it instead, though
+not at once: the $0.5\%$ and $2\%$ records return $0.86$ and $\num{free_cv2}$ prior-free, so what the
+prior holds is given back gradually and is not fully given back until the record carries
+several per cent.
 
-\begin{enumerate}[leftmargin=*, itemsep=3pt]
-\item \textbf{Load-record \emph{precision} is nearly irrelevant.} Once the increment is
-carried, $\operatorname{sd}(\ln\hat\theta)$ on the accessible design runs from $0.1469$ at
-a load record good to $1\%$ to $0.1557$ at a record good to $20\%$. Tightening the record
-twentyfold buys six per cent. An earlier draft of this paper made load-record precision the
-binding design variable; it is not, and the claim is retired here rather than quietly dropped.
-\item \textbf{Load \emph{variation} is what makes the problem identifiable at all.} By
-Proposition~\ref{prop:rank} a perfectly steady intake is exactly the singular case. Half a
-per cent of day-to-day variation restores rank: on the accessible design the smallest
-singular value of the column-normalised matrix moves from $1.8\times10^{-15}$, numerically
-zero, to $1.2\times10^{-3}$, after which the \emph{data} rather than the load prior fills the deficient direction.
-\end{enumerate}
+\textbf{Those two readings are the same statement at two variabilities, and which one
+applies is a fact about a real record rather than about the model.} At the $10\%$
+day-to-day variability the specification assumes, the degenerate direction is filled by the
+data and the prior on $b$ is very nearly inert, which is the $98\%$--$2\%$ split above and
+why measuring the load instead of recording it is worth under one per cent
+(Section~\ref{sec:tierload}). Below a few per cent of variability it is not filled, the
+prior carries it, and the fibre is a live constraint on what the record can be read to say.
+A reader with their own data should ask which regime it is in before deciding whether
+Proposition~\ref{prop:rank} binds on them: a tightly managed cohort eating close to a fixed
+prescription is the case where it does.
 
-\begin{remark}[Restoring rank is not achieving precision, and the two must not be run together]
-\label{rem:rankvsprec}
-An earlier version of this passage continued that prior-free
-$\operatorname{sd}(\ln\hat\theta)$ falls to $0.054$ at a $2\%$ coefficient of variation and
-$0.023$ at $10\%$. Those two numbers are withdrawn. They reproduce only on the
-two-daily design of $365$ samples \emph{with $k_e$ held exactly known}: a footing this
-note disowns in the supplement, \S S1, and which the design module's own documentation
-reserves for the audit rather than for a headline. On the footing this paper claims: the accessible monthly design, a log-prior of $0.8$ on $\ln k_e$: the same quantities
-are $0.234$ and $0.172$.
+That is why the information filter cannot be read on its own here. It is a first-order
+object, so against a rank-deficient design it fills the deficient direction from the prior
+and reports the result as though the data had supplied it, and at a constant recorded load
+the prior's $95\%$ half-width of $\pm31.6$ in $b$ is the whole of what the number contains.
+A diagnostic reading the power of the noiseless $\chi^2$ along the smallest eigendirection
+will not show this: moving along the straight eigendirection departs from the curved fibre
+at second order, so $\chi^2 \propto \varepsilon^4$ whether or not the data constrain
+anything. That measurement is parametrisation dependent, changing by a factor of three
+between $(\theta, K_m)$ and $(\ln\theta, \ln K_m)$, and design dependent, its half-width
+running $36$, $49$, $69$ across two-daily, weekly and monthly sampling.
+\textbf{The diagnostic that works is the profile}: re-optimise the remaining parameters at
+each fixed value of the suspect coordinate. That profile is flat and its optimum traces
+\eqref{eq:fibrecl}; Remark~\ref{rem:curvature} runs it on the recommended design and reports
+what an interval there actually costs.
 
-They were also computed with the dose train present, which is the substantive
-point and not a bookkeeping one. The passage reads as though load variation alone were
-buying the precision. It is not. Separating the two sources on one footing
-(Section~\ref{sec:whoto}):
-
-\begin{center}
-\small
-\begin{tabular}{@{}rcccc@{}}
-\toprule
-& \multicolumn{2}{c}{\textbf{no dose train}} & \multicolumn{2}{c}{\textbf{with the dose train}} \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}
-\textbf{load CV} & $s_{\min}/s_{\max}$ & $\operatorname{sd}(\ln\hat\theta)$
-                 & $s_{\min}/s_{\max}$ & $\operatorname{sd}(\ln\hat\theta)$ \\
-\midrule
-$0\%$    & $5\times10^{-48}$ & $\infty$  & $1.8\times10^{-15}$ & $0.1696$ \\
-$0.5\%$  & $9.7\times10^{-10}$ & $28.1$  & $1.2\times10^{-3}$  & $0.1696$ \\
-$2\%$    & $6.4\times10^{-8}$  & $6.92$  & $1.2\times10^{-3}$  & $0.1696$ \\
-$10\%$   & $8.9\times10^{-6}$  & $1.30$  & $1.6\times10^{-3}$  & $0.1697$ \\
-$40\%$   & $7.7\times10^{-4}$  & $0.38$  & $1.6\times10^{-2}$  & $0.1690$ \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-Read the left half. Variation lifts the smallest singular value off zero exactly as
-Proposition~\ref{prop:rank} says, by forty-four orders of magnitude between the first and
-last rows, and the precision is still $28$ at half a per cent and $1.3$ at ten.
-\emph{Restoring rank and achieving usable precision are different things, and
-Proposition~\ref{prop:rank} delivers only the first.} A reader who takes the proposition as
-a design result will otherwise expect the left half to look like the right half, and it does
-not.
-
-One entry deserves naming because it cuts the other way. With the dose train at a
-perfectly constant load the matrix is \emph{still} rank deficient, yet the table reports
-$0.1696$. That is the load-record prior filling the deficient direction and the filter
-reporting the result as though the data had supplied it: the failure
-Remark~\ref{rem:second_order} exists to diagnose. At any real day-to-day variation the data
-fill it instead and the same $0.1696$ is earned rather than assumed. So the headline
-number does not depend on that prior, but it does depend on intake actually varying, which
-is the specification's row and not an idealisation.
-\end{remark}
-
-So the specification must ask for the ordinary variability of ordinary eating to be
-recorded and not smoothed. A dietary record averaged to a weekly mean, or imputed from a
-prescription, destroys the very quantity that closes the fibre. This is the opposite of the
-instinct a data-management plan usually follows, and Section~\ref{sec:spec} states it as a
-row.
-
-\begin{remark}[When a prior is doing work the data could do, and how to tell]
-\label{rem:second_order}
-Proposition~\ref{prop:rank} is a statement about the \emph{linearised} design. The
-information filter of \eqref{eq:infofilter} is a first-order object, so when it meets a
-rank-deficient design it fills the deficient direction from the prior and reports the
-result as though the data had supplied it. Here the load-record prior gives a $95\%$
-half-width of $\pm 31.6$ along that direction; profiling the exact likelihood along the
-same direction gives $\pm 36.9$. The two agree to within a fifth, so every covariance this
-note reports survives, but it survives for a reason the filter does not contain, and on
-another problem the two would not agree.
-
-The diagnostic is cheap and should be run whenever a covariance is quoted on a
-saturating model. Take the smallest eigendirection of the information matrix, profile the
-noiseless $\chi^2$ along it, and look at the power: $\chi^2 \propto \varepsilon^2$ means
-the direction is genuinely first-order flat and the prior is load-bearing;
-$\chi^2 \propto \varepsilon^4$ means the data do pin it, at second order, and the filter is
-understating what the record contains. On this design the profile is $\varepsilon^4$ to
-four decades, with $\chi^2/\varepsilon^4$ constant at $2.08\times10^{-6}$.
-
-This is the second time in this paper that a linearisation has misrepresented an estimand
-whose true behaviour was one order higher; the first is Remark~\ref{rem:no_delta}, where a
-Gaussian tail on $\mu$ reported a coin toss for a quantity whose sampling distribution does
-not cross zero. Both failures point the same way: propagate a covariance only after
-checking that the thing you are propagating it through is locally linear.
-\end{remark}
-
-\begin{remark}[Three ways to buy the same information, and the third is the one available]
-\label{rem:two_buys}
-Equation \eqref{eq:Emax} says the \emph{marker} factor of \eqref{eq:Egen} can be moved
-either by a wide band wherever the patient is, or by a narrow band placed correctly.
-Neither is clinically available. Reaching the neighbourhood of $K_m$ means carrying the
-marker to roughly twenty times its managed level; buying the same information from the
-operating point instead needs a fold range of order ten, reached from below.
-The safety constraint is on the level, and both routes violate it. Worse, as Section~\ref{sec:designsec} shows: no published series records any propionate marker at either
-of those levels, so the requirement is not merely unsafe, it is unobserved.
-
-The third route moves the \emph{other} factor. By Proposition~\ref{prop:tworoutes} an
-increment reaching $\Delta/\theta = 0.55$ meets the same requirement at the patient's own
-operating level, with no excursion at all, and the trial schedule already reaches $2.13$.
-The route that was never considered is the only one that is both safe and observed: the therapy already being administered. What it costs is not an excursion but a characterisation of the delivered
-increment, and Section~\ref{sec:spec} says how good that has to be.
-\end{remark}
+So the specification asks for the ordinary variability of ordinary eating to be recorded and
+not smoothed. A dietary record averaged to a weekly mean, or imputed from a prescription,
+destroys the quantity that closes the fibre, which is the opposite of the instinct a
+data-management plan follows.
 
 \vspace{0.5em}
 \hrule

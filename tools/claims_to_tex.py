@@ -80,7 +80,7 @@ def check_claim_comments():
 
 
 def cross_check(rows):
-    """
+    r"""
     Both directions between the register and the paper.
 
     Forwards: every citekey the register names has an entry in refs.bib, so a

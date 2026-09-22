@@ -17,13 +17,20 @@ be tested against, and reports which hold.
                                        load record assumes
     7  the settling exclusion          no sample inside the post-dose window
     8  the D calibration               params.py says D was chosen so the
-                                       marker "falls by about half at peak
-                                       effect". CHECKED, NOT EDITED.
+                                       marker falls by about two thirds at
+                                       peak effect. The row was reworded in
+                                       September 2026; this is now a drift
+                                       check on the stated range.
 
-On (5) the repository states the residual capacity two ways four lines apart,
+On (5) the repository stated the residual capacity two ways four lines apart,
 "about 10% of normal" and "under 5% of control". The two differ by a factor of
-two and they are the denominator of this constraint. Both are reported and
-NEITHER IS CHOSEN; that is the PI's to settle.
+two and they are the denominator of this constraint. THE AUTHOR HAS SETTLED
+THIS AT 5%, September 2026, and 5% is the reference throughout this script and
+in the text. The 10% reading is still computed and printed, as a check that the
+verdict does not turn on the choice: it cannot, because theta cancels out of
+the used fraction. The supporting source is fibroblast enzymology rather than
+in vivo hepatic capacity, so the choice is a judgement informed by it and not a
+measurement of the quantity the model carries.
 
 Footing. Local model parameters as src/common/params.py carries them, theta =
 3000, K_m = 100, k_e = 5, L = load(0.0) = 322.7273, D = 6000, T = 14 d,
@@ -51,6 +58,9 @@ import g_design_common as G
 import g3_calendar as g3
 
 LB = load(0.0)
+#: the residual-activity reference, settled by the author at 5% in
+#: September 2026. See the module docstring.
+REFERENCE_FRAC = 0.05
 PEAK = D_AMP / (1.0 - np.exp(-LAMBDA * DOSE_INTERVAL))
 TROUGH = PEAK * np.exp(-LAMBDA * DOSE_INTERVAL)
 RESULTS = []
@@ -96,9 +106,17 @@ def rates_and_increment():
     m = np.asarray(quasi_steady_level(t), float)
     res = (P.ke * m ** 2
            + (P.ke * P.Km + P.theta + d - LB) * m - LB * P.Km)
+    # The residual is at the level of double-precision rounding, and its
+    # leading digits are not reproducible: np.exp takes a different SIMD path
+    # on a different CPU, so the fourth significant figure of a 1e-9 residual
+    # is the machine, not the arithmetic. Report the decade it falls below,
+    # relative to the scale it is a residual OF, against the tolerance the
+    # check actually applies.
+    rel = float(np.max(np.abs(res))) / (LB * P.Km)
+    decade = 10.0 ** np.ceil(np.log10(rel)) if rel > 0 else 0.0
     record("the closed form solves the balance",
-           bool(np.max(np.abs(res)) < 1e-6 * LB * P.Km),
-           f"worst residual {np.max(np.abs(res)):.3e} against L K_m = {LB*P.Km:.1f}")
+           bool(rel < 1e-6),
+           f"worst residual below {decade:.0e} of L K_m = {LB*P.Km:.1f}")
     record("m(t) > 0 across the cycle", bool(m.min() > 0),
            f"m runs {m.min():.4f} to {m.max():.4f}, m_bar = {M_BAR:g}")
 
@@ -127,9 +145,10 @@ def ceiling():
     print("  is not a parameter of this repository; it is implied by a stated")
     print("  FRACTION, and src/common/params.py states two, four lines apart,")
     print("  on the parent theta row:")
+    print("      `under 5% of control` in PA  -> normal = theta / 0.05  <-- ADOPTED")
     print("      `about 10% of normal`        -> normal = theta / 0.10")
-    print("      `under 5% of control` in PA  -> normal = theta / 0.05")
-    print("  Both are reported below. NEITHER IS CHOSEN.\n")
+    print("  5% IS THE REFERENCE (author, September 2026). The 10% reading is")
+    print("  kept below as a check that the verdict does not turn on it.\n")
     print("  A second ambiguity has to be named before the arithmetic. The")
     print("  fraction is stated on the PARENT row (theta = "
           f"{_C.theta:.0f}); D and Delta are")
@@ -142,14 +161,14 @@ def ceiling():
     rows = []
     for mod, th, dpk in (("local", _A.theta, PEAK),
                          ("parent", _C.theta, PEAK * _C.theta / _A.theta)):
-        for frac in (0.10, 0.05):
+        for frac in (REFERENCE_FRAC, 0.10):
             nrm = th / frac
             used = (th + dpk) / nrm
             rows.append((mod, frac, used))
             print(f"    {mod:>8} {th:8.0f} {dpk:11.2f} {th+dpk:11.2f} "
                   f"{frac:9.0%} {nrm:10.0f} {used:8.4f} {1-used:9.4f}")
     ok = all(u <= 1.0 for _, _, u in rows)
-    record("theta + Delta_peak <= normal, at BOTH references", ok,
+    record("theta + Delta_peak <= normal, normal inferred as theta/frac", ok,
            f"worst used fraction {max(u for _, _, u in rows):.4f}")
     print("\n    The two readings give the same used fraction within a model,")
     print("    0.3133 at 10% and 0.1567 at 5%, because theta cancels: the ratio")
@@ -293,11 +312,11 @@ def settling_exclusion():
 
 # ---------------------------------------------------------------------- 8
 def d_calibration():
-    head("8. THE D CALIBRATION: `chosen so the marker falls by about half`")
+    head("8. THE D CALIBRATION: `chosen so the marker falls by about two thirds`")
     print("  src/common/params.py's D row states D = 6000 was chosen so the")
-    print("  marker `falls by about half at peak effect`. CHECKED HERE, NOT")
-    print("  EDITED. The claim needs two things named that the row does not")
-    print("  name: fall FROM what, and which peak.\n")
+    print("  marker falls by about two thirds at peak effect, and prints the")
+    print("  computed range. The claim needs two things named, and the row now")
+    print("  names both: fall FROM what, and which peak.\n")
     # the untreated level: the balance at Delta = 0
     B0 = P.ke * P.Km + P.theta - LB
     m_untreated = (-B0 + np.sqrt(B0 ** 2 + 4.0 * P.ke * LB * P.Km)) / (2.0 * P.ke)
@@ -318,20 +337,126 @@ def d_calibration():
         fall = 1.0 - b / a
         print(f"    {lab:>44} {a:9.4f} {b:9.4f} {fall:9.2%} "
               f"{'yes' if 0.4 <= fall <= 0.6 else 'no':>7}")
-    ok = any(0.4 <= 1.0 - b / a <= 0.6 for _, a, b in readings)
-    record("the marker falls by about half at peak effect", ok,
-           "on " + ("at least one" if ok else "NO") +
-           " reading of `from` and `peak`")
-    print("\n    On every reading the fall is larger than half: 61% to 66%.")
-    print("    The row is an order-of-magnitude statement and the order is")
-    print("    right, but `about half` understates what D = 6000 actually does")
-    print("    by a factor of about 1.3. This is reported, not fixed: the row is")
-    print("    an existing printed justification and is the PI's to keep or")
-    print("    reword.")
-    print("\n    The row's own escape clause is the honest reading: `Only the")
-    print("    excursion it produces is used`. Nothing in the design depends on")
-    print("    the fall being exactly half, and the excursion IS what f4 and")
-    print("    Phase 3 measure, as Delta/theta = 2.1333 peak to 0.1333 trough.")
+    falls = [1.0 - b / a for _, a, b in readings]
+    lo, hi = min(falls), max(falls)
+    # The row was reworded in September 2026, from "about half" to "about two
+    # thirds" with the computed range beside it. This check is now a DRIFT
+    # check on that wording rather than a verdict on the old one: every reading
+    # must sit inside the range the row prints, and the row must still name the
+    # fraction. Two thirds is 66.7%, and the readings run 62.25% to 66.36%.
+    import re as _re
+    from common.params import LOCAL as _LOCAL
+    row = next(r for r in _LOCAL if r.symbol == r"$D$")
+    claimed = _re.search(r"\$(\d+)\$--\$(\d+)\\%\$", row.note)
+    band_ok = claimed is not None and (
+        int(claimed.group(1)) <= round(100 * lo) and
+        round(100 * hi) <= int(claimed.group(2)))
+    named_ok = "two thirds" in row.note
+    ok = band_ok and named_ok and all(0.60 <= f <= 0.70 for f in falls)
+    record("the D row's stated fall matches the computed one", ok,
+           f"row says {claimed.group(0) if claimed else 'NO RANGE FOUND'}, "
+           f"computed {100*lo:.2f}% to {100*hi:.2f}%, "
+           f"names two thirds: {named_ok}")
+    print(f"\n    Every reading is larger than half and close to two thirds:")
+    print(f"    {100*lo:.2f}% to {100*hi:.2f}%. The row now says `about two thirds`")
+    print("    and prints the range, with the two conventions that make it vary:")
+    print("    which baseline the fall is read from, and which peak.")
+    print("\n    What the row no longer says is that only the excursion is used.")
+    print("    That was true and read as reassurance; PHASE5_ROBUSTNESS shows a")
+    print("    defensible range of D moving the headline design from 10 monthly")
+    print("    visits to more than 60, so the value matters and not just the")
+    print("    order. The trial's own falls are smaller than this calibration.")
+
+
+def write_paper_table():
+    """
+    The twenty checks and their verdicts, for the paper.
+
+    Physical admissibility is a property of the design a reader cannot see
+    from a precision, and a fit that balances the data while describing no
+    patient is the failure the paper is about. So the checks go in, as a
+    table, rather than being asserted in a sentence.
+    """
+    import sys
+    from pathlib import Path as _P
+    sys.path.insert(0, str(_P(__file__).resolve().parents[1] / "src"))
+    from common.style import write_table
+    import re as _re
+
+    #: plain-text token -> what the paper prints for it. Order matters only
+    #: in that the regex below prefers the longest alternative, so
+    #: "Delta_peak" cannot be eaten by "Delta".
+    _SYMBOLS = {
+        "theta_crit": r"$\thc$", "Delta_peak": r"$\Delta_{\mathrm{peak}}$",
+        "Delta(t)": r"$\Delta(t)$", "Delta": r"$\Delta$",
+        "theta": r"$\theta$", "K_m": r"$K_m$", "k_e": r"$k_e$",
+        "lambda": r"$\lambda$", "m_bar": r"$\bar m$", "m(t)": r"$m(t)$",
+        "sd(ln theta)": r"$\operatorname{sd}(\ln\hat\theta)$",
+        "<=": r"$\le$", ">=": r"$\ge$", ">": r"$>$", "<": r"$<$",
+    }
+    _TOKEN = _re.compile("|".join(_re.escape(k) for k in
+                                  sorted(_SYMBOLS, key=len, reverse=True)))
+
+    def tex(t):
+        """
+        The checks are written for a terminal; the paper is not a terminal.
+
+        Symbols become symbols and LaTeX's reserved characters are escaped,
+        and the two passes cannot interfere: the escaping runs only on the
+        text BETWEEN symbol matches, so an underscore this function inserts
+        as part of $K_m$ is never escaped back out again.
+        """
+        def esc(x):
+            for a, b in (("\\", r"\textbackslash{}"), ("%", r"\%"),
+                         ("&", r"\&"), ("_", r"\_"), ("#", r"\#"),
+                         ("$", r"\$"), ("^", r"\^{}"), ("~", r"\~{}")):
+                x = x.replace(a, b)
+            return x
+        out, last = [], 0
+        for m in _TOKEN.finditer(t):
+            out.append(esc(t[last:m.start()]))
+            out.append(_SYMBOLS[m.group(0)])
+            last = m.end()
+        out.append(esc(t[last:]))
+        return "".join(out)
+
+    rows = []
+    for tag, ok, detail in RESULTS:
+        verdict = (r"\textbf{pass}" if ok is True
+                   else (r"\textbf{FAIL}" if ok is False else "---"))
+        #  the detail column is evidence, not prose: keep it short enough to
+        #  read across a page and let the audit record carry the rest
+        d = detail if len(detail) <= 72 else detail[:69].rstrip() + r"\,\ldots"
+        rows.append([tex(tag), verdict, tex(d)])
+    #  the main text wants the verdicts at a glance and the supplement wants
+    #  the evidence, so both are written rather than one being cut down by
+    #  hand in the .tex
+    half = (len(RESULTS) + 1) // 2
+    pair = []
+    for k in range(half):
+        left = rows[k][:2]
+        right = rows[k + half][:2] if k + half < len(rows) else ["", ""]
+        pair.append(left + right)
+    write_table("tab_S_admissible_compact",
+                ["constraint", "verdict", "constraint", "verdict"],
+                pair, colspec=(r">{\raggedright\arraybackslash}p{0.38\linewidth}l "
+                         r">{\raggedright\arraybackslash}p{0.38\linewidth}l"),
+                note=("%d checks, %d pass, %d fail; the evidence for each is "
+                      "in the supplement"
+                      % (len(RESULTS),
+                         sum(1 for _, ok, _ in RESULTS if ok is True),
+                         sum(1 for _, ok, _ in RESULTS if ok is False))))
+    print(f"  wrote tab_S_admissible_compact.tex")
+    write_table("tab_S_admissible",
+                ["constraint", "verdict", "evidence"],
+                rows,
+                colspec=(r">{\raggedright\arraybackslash}p{0.34\linewidth}l "
+                         r">{\raggedright\arraybackslash}p{0.44\linewidth}"),
+                note=("%d checks, %d pass, %d fail"
+                      % (len(RESULTS),
+                         sum(1 for _, ok, _ in RESULTS if ok is True),
+                         sum(1 for _, ok, _ in RESULTS if ok is False))))
+    print(f"  wrote tab_S_admissible.tex ({len(RESULTS)} checks)")
 
 
 # ------------------------------------------------------------------- table
@@ -343,13 +468,13 @@ def table():
     for t, ok, d in RESULTS:
         print(f"    {'PASS' if ok else 'FAIL':>4}  {t:<{w}}  {d}")
     print(f"\n    {npass} pass, {nfail} fail, {len(RESULTS)} checks.")
-    print("\n    Every admissibility constraint proper holds, at both readings")
-    print("    of the capacity reference, and the recommended design satisfies")
-    print("    all of them as constructed.")
-    print("\n    The single failure is not a constraint the model violates. It")
-    print("    is a CALIBRATION CLAIM in a params.py justification, that D was")
-    print("    chosen so the marker `falls by about half`, where the fall is 61%")
-    print("    to 66% on every reading. Reported, not edited.")
+    print("\n    Every admissibility constraint proper holds, at the adopted 5%")
+    print("    reference and at the 10% reading kept as a check, and the")
+    print("    recommended design satisfies all of them as constructed.")
+    print("\n    Check 8 was the one failure in the September 2026 run, when the")
+    print("    D row said the marker `falls by about half`. The row now says")
+    print("    `about two thirds` and prints the computed range, so check 8 is a")
+    print("    drift check on that range rather than a verdict on the old claim.")
     print("\n    Two things the checks corrected in this audit's own earlier")
     print("    work rather than in the repository: the settling window costs")
     print("    10.1% of the Delta/theta range and not `almost nothing` (check")
@@ -367,3 +492,4 @@ if __name__ == "__main__":
     settling_exclusion()
     d_calibration()
     table()
+    write_paper_table()

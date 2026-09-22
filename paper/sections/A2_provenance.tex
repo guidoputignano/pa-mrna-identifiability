@@ -1,0 +1,46 @@
+\section{Provenance of every constant}
+\label{sec:provenance}
+%==========================================================================
+
+Table~\ref{tab:params} in the paper carries every registered constant with its source
+class, its \emph{kind} and the species its supporting evidence comes from, and it carries
+a cost bound for the three rows where that bound decides a result. This section carries
+the rest: for each row, what fixes it or what assuming it costs, with the sources.
+
+\emph{The rule the registry enforces} is stated in \texttt{src/common/params.py} and is
+worth repeating here, because it is what makes a table of assumed constants defensible at
+all: an \textsc{assumed} row is not a defect on its own; an \textsc{assumed} row with no
+bound on what it costs is. Nineteen of the twenty-four rows are \textsc{assumed}. The
+column below is what discharges that.
+
+\emph{Three tags, and they answer different questions.} The source class says where a
+number came from (\textsc{literature}, \textsc{derived}, \textsc{assumed}). The kind says
+what sort of object it is (\emph{measurable}, \emph{effective}, \emph{lumped},
+\emph{convention}, \emph{calibration}, \emph{derived}, \emph{eliminated}, \emph{prior
+width}), which matters because an effective or lumped constant cannot be checked against a
+direct measurement even in principle, so ``no measurement exists'' means something
+different for those rows than for a measurable one. The species tag names where the
+supporting evidence comes from: four rows lean on estimates fitted in mice and two on a
+rat \emph{in vitro} preparation.
+
+\emph{Units.} The local model is a flux balance at the plasma level,
+$(\theta + \Delta)\,m/(K_m + m) + k_e m = L + b$, so the unit system is fixed once the
+marker's unit is: $m$, $K_m$, $M_i$, $K_c$ and $m_{\mathrm{tol}}$ are concentrations in
+$\mu$mol/L; $\theta$, $\Delta$, $D$, $L$, $s_{\mathrm{base}}$, $R_0$ and $\sigma$ are
+fluxes in $\mu$mol/L/day; $k_e$, $\lambda$ and $k$ are rates in /day; $T_{\mathrm{dose}}$
+is in days; and the assay CV, the illness fold, $\rho_0$ and $\kappa$ are dimensionless.
+One consequence is worth stating because it is nowhere else: $k_e = 5$/day is a marker
+half-life of $\ln 2/5 = 0.139$~d, about $3.3$ hours.
+
+\begin{adjustwidth}{-1.4cm}{-1.4cm}
+\footnotesize
+\def\paramslabel{tab:paramsfull}
+\def\paramscaption{Every registered constant with its full provenance, and the
+authority for Table~\ref{tab:params} of the paper, which is a selection from it with the
+last column abridged. \textsc{literature} is read off a cited source, \textsc{derived} is
+fixed by a constraint elsewhere in the model and is not free, \textsc{assumed} was chosen
+and has no measurement behind it. An assumed row is not a defect on its own; an assumed row
+with no bound on what it costs is, and the last column carries that bound. Where a
+published value exists for a constant, or bounds it, that column gives it and cites it.}
+\input{../results/tables/tab_params}
+\end{adjustwidth}
