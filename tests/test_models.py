@@ -1467,6 +1467,121 @@ def test_only_a_decompensation_approaches_the_required_excitation():
         assert frac < 0.5, (name, frac)
 
 
+# ------------------------------- the reduction away from the illustrative centre
+#
+#  audit/e10_qss_corners.py runs the full sweep across the corners of the
+#  cohort's sampled region.  These three lock in what it found, because the
+#  finding is easy to lose: the equilibrium agreement above looks like a check
+#  on the quasi-steady assumption and is not one.
+
+def _c_star(m, p, k):
+    """The slow manifold: the carnitine level the reduction assumes."""
+    u = m / (p.Kc + m)
+    return p.R0 / (k * (u + p.rho0 * (1.0 + m / p.Mi)))
+
+
+@pytest.mark.parametrize("ft,fk,fl", [(1.0, 1.0, 1.0), (1 / 3, 1 / 3, 0.5),
+                                      (3.0, 3.0, 0.5), (3.0, 1 / 3, 2.0),
+                                      (1.0, 3.0, 1.0)])
+def test_the_reduction_is_exact_at_equilibrium_across_the_cohort_corners(ft, fk, fl):
+    """
+    The cohort of audit/e8_cohort_unblocked.py spans theta and K_m nine-fold and
+    the load four-fold, and the reduction had only ever been checked at the
+    centre.  At the corners it is not merely within tolerance, it is exact:
+    alpha is defined by solving dc/dt = 0, and dc/dt = 0 holds at any fixed
+    point, so the parent's equilibrium condition and s = theta g + alpha are one
+    equation.  Asserted here far tighter than the 1e-6 used elsewhere, because
+    1e-6 would pass on an answer that had genuinely drifted.
+    """
+    from scipy.integrate import solve_ivp
+    from model_C.run import PC, S_BASE
+    p, s = replace(PC, theta=PC.theta * ft, Km=PC.Km * fk), S_BASE * fl
+    roots, st = equilibria_nonmonotone(clearance_C_quasistatic, p, s,
+                                       np.linspace(1e-3, 3e4, 120000))
+    st = np.asarray(st, dtype=bool)
+    if not st.any():
+        pytest.skip("no equilibrium at this corner: the patient decompensates")
+    attr = float(roots[st][0])
+    sol = solve_ivp(lambda t, y: rhs_C(t, y, p, lambda _: s),
+                    (0, 20000.0), [0.5 * attr, _c_star(0.5 * attr, p, 1.0)],
+                    rtol=1e-10, atol=1e-12, method="LSODA")
+    assert float(sol.y[0, -1]) == pytest.approx(attr, rel=1e-12)
+
+
+@pytest.mark.parametrize("k", [0.1, 1.0, 100.0])
+def test_equilibrium_agreement_does_not_depend_on_the_timescale_separation(k):
+    """
+    Why the equilibrium checks cannot report degradation, stated as a test.
+
+    k is the conjugation constant.  It cancels out of alpha, so the reduced
+    curve is the same for every k -- but it alone sets how fast the carnitine
+    state is, so the reduction's PREMISE is false at small k and true at large
+    k.  The equilibrium agreement is unmoved either way, which is exactly why it
+    is not evidence that carnitine is fast.
+    """
+    from scipy.integrate import solve_ivp
+    from model_C.run import PC, S_BASE
+    roots, st = equilibria_nonmonotone(clearance_C_quasistatic, PC, S_BASE,
+                                       np.linspace(1e-3, 3e4, 120000))
+    attr = float(roots[np.asarray(st, dtype=bool)][0])
+    sol = solve_ivp(lambda t, y: rhs_C(t, y, PC, lambda _: S_BASE, k),
+                    (0, 40000.0 / k), [0.5 * attr, _c_star(0.5 * attr, PC, k)],
+                    rtol=1e-10, atol=1e-12, method="LSODA")
+    assert float(sol.y[0, -1]) == pytest.approx(attr, rel=1e-12)
+
+
+def test_the_reduction_is_not_exact_off_equilibrium_and_improves_with_k():
+    """
+    Where the quasi-steady assumption actually costs something.  Along the
+    transient the reduced and parent trajectories differ by a large fraction at
+    the k = 1.0 rhs_C defaults to, and the error falls roughly in proportion to
+    1/k.  If someone later makes this agree at k = 1 they have changed the
+    model, not fixed a tolerance, and this should fail.
+    """
+    from scipy.integrate import solve_ivp
+    from model_C.run import PC, S_BASE
+    roots, st = equilibria_nonmonotone(clearance_C_quasistatic, PC, S_BASE,
+                                       np.linspace(1e-3, 3e4, 120000))
+    attr = float(roots[np.asarray(st, dtype=bool)][0])
+    m0, T = 0.5 * attr, 30.0
+    tt = np.linspace(0.0, T, 2001)
+    red = solve_ivp(lambda t, y: [S_BASE - clearance_C_quasistatic(y[0], PC)],
+                    (0, T), [m0], dense_output=True, rtol=1e-10, atol=1e-12,
+                    method="LSODA").sol(tt)[0]
+    errs = []
+    for k in (1.0, 10.0, 100.0):
+        par = solve_ivp(lambda t, y: rhs_C(t, y, PC, lambda _: S_BASE, k),
+                        (0, T), [m0, _c_star(m0, PC, k)], dense_output=True,
+                        rtol=1e-10, atol=1e-12, method="LSODA").sol(tt)[0]
+        errs.append(float(np.max(np.abs(par - red) / red)))
+    assert errs[0] > 0.05, errs          # not a rounding-level disagreement
+    assert errs[0] > errs[1] > errs[2]   # and it is the timescale ratio that drives it
+    assert errs[2] < 0.02, errs          # separation bought by k restores it
+
+
+def test_the_params_table_asks_for_no_font_shape_latin_modern_lacks():
+    """
+    CI fails the paper build if paper/main.log contains the string "undefined",
+    and that grep catches font warnings as well as references. Latin Modern has
+    no bold small-caps, so a \\textsc nested inside a \\textbf emits
+
+        LaTeX Font Warning: Font shape `T1/lmr/bx/sc' undefined
+
+    which builds a correct PDF and fails the build anyway. The retraction note
+    on the row for k did exactly that, having set the withdrawn source class in
+    small caps inside the bold lead-in. Checked on the rendered row rather than
+    on the source string, because the note is assembled from several literals
+    and only the rendered form is what LaTeX sees.
+    """
+    import re
+    from common.params import LOCAL, PARENT, _tex
+
+    for line in _tex(LOCAL + PARENT):
+        for bold in re.findall(r"\\textbf\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}", line):
+            assert "\\textsc" not in bold, (
+                f"bold small-caps asks for a font shape Latin Modern lacks: {bold}")
+
+
 # ------------------------------------------------------- physical admissibility
 #
 # A fit can balance the data and describe no patient. These assert the

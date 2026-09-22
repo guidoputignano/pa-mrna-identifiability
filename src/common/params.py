@@ -508,8 +508,9 @@ PARENT = [
         "conjugation rate constant, which cancels from the reduced curve",
         ASSUMED, r"drops out of the quasi-steady reduction of supplement \S S1 exactly, so the "
                  r"reduced clearance does not depend on it. \textbf{It is not therefore a "
-                 r"this row concluded from that it is a free scale and reclassified it "
-                 r"\textsc{derived}}: $k$ alone sets the carnitine "
+                 r"free scale, which is what this row concluded from that, and which is "
+                 r"why it was previously classed as derived rather than assumed}: $k$ "
+                 r"alone sets the carnitine "
                  r"relaxation rate, $\tau_c = 1/(k[u(m)+\rho(m)])$, so it fixes the "
                  r"reduction's validity \emph{off} equilibrium even though it cancels from "
                  r"the curve, and nothing in this model fixes $k$ itself. \textbf{Cost}: "

@@ -98,7 +98,7 @@ class ParamsC:
                             # half-saturations at the plasma level. Its cost is
                             # bounded rather than argued away: over Kc from 25
                             # to 800, a 32-fold range, theta_crit spans 186 to
-                            # 120, a factor of 1.56. Section 5.4 reports that.
+                            # 120, a factor of 1.56. Supplement S1.15 reports that.
     Mi: float = 300.0       # metabolite level at which acylcarnitine
                             # competition doubles the non-conjugative loss
                             # rate: delta(m) = delta_0 (1 + m/Mi)
@@ -134,16 +134,22 @@ def clearance_B(m, p: ParamsB):
 def alt_flux_C(m, p: ParamsC):
     """
     Carnitine-mediated elimination after eliminating the carnitine state at
-    its quasi-steady value. This is alpha(m) of the paper, Section 5.1.
+    its quasi-steady value. This is alpha(m) of the paper, the subsection
+    labelled sec:reduction. Named by label rather than by number, because the
+    number this docstring used to give was a stale one.
 
     NOT an adiabatic elimination of a FAST state, which is what this docstring
     used to call it: at the model's own k the carnitine time constant is 0.92 d
     against the marker's 0.81 h, so the separation runs the wrong way by a
-    factor of about 27. What licenses the elimination is that alpha is DEFINED
-    by solving dc/dt = 0 and dc/dt = 0 holds exactly at any fixed point, so at
-    equilibrium the two formulations are one equation rearranged. Everything
-    this repository computes from the parent is computed at equilibrium. See
-    REVIEW_LOG.md R22 and the k row of common/params.py.
+    factor of about 27. Measured inside the model rather than against the
+    marker, the same verdict holds across the cohort: tau_c/tau_m spans 0.52 to
+    55 over the sampled parameter region at k = 1, so carnitine is comparable
+    to or slower than the metabolite throughout. What licenses the elimination
+    is that alpha is DEFINED by solving dc/dt = 0 and dc/dt = 0 holds exactly
+    at any fixed point, so at equilibrium the two formulations are one equation
+    rearranged. Everything this repository computes from the parent is computed
+    at equilibrium. See REVIEW_LOG.md R22, the k row of common/params.py, and
+    audit/e10_qss_corners.py for the sweep.
 
     One mechanism supplies both features the curve needs.
 
@@ -186,7 +192,7 @@ def rhs_B(t, y, p: ParamsB, s):
 
 def rhs_C(t, y, p: ParamsC, s, k=1.0):
     """
-    The two-state system of the paper, Section 5.1.
+    The two-state system of the paper, Section 2.2.
 
     Kept in step with alt_flux_C, which is its quasi-steady reduction:
     setting dc/dt = 0 here returns alt_flux_C(m) for every m, with the same
@@ -199,6 +205,8 @@ def rhs_C(t, y, p: ParamsC, s, k=1.0):
     k alone sets the carnitine relaxation rate, tau_c = 1/(k[u + rho]), so it
     sets how far off equilibrium the reduction remains usable: the peak
     relative error in m on a transient is 21.6% at k = 1 and falls as 1/k.
+    The 1/k is asymptotic and not global: below k = 1 it saturates, because a
+    relative error cannot exceed order one.
     See REVIEW_LOG.md R22 and the k row of common/params.py.
     """
     m, c = y

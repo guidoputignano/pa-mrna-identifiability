@@ -1213,8 +1213,20 @@ marker against the *therapy* and not carnitine against the marker. It said `k` i
 scale and no conclusion depends on it. It called the reduction verified rather than
 asserted, on the strength of an integration that is the same identity and so cannot fail at
 any parameter value. And it stated the divergence above the separatrix without the
-qualification that the reduced separatrix is a lower bound on the basin rather than the
-basin. `alt_flux_C`'s docstring called this an adiabatic elimination of a fast state and
+qualification that the reduced separatrix is not the basin.
+
+**Corrected at the merge of PR #3.** The clause above originally read "a lower bound on
+the basin rather than the basin", taken from the revision of PR #3 that was current when
+this entry was written. PR #3 then measured the other side and withdrew it, and this entry
+is corrected to match rather than left carrying it. The displacement is *signed*: started
+fuller than the slow manifold the parent tolerates `+2.9%` to `+49.6%` more than the
+reduced model predicts, and started depleted to half of `c*(m)` it tolerates `-0.5%` to
+`-31.9%` less, so the reduced separatrix is a bound in neither direction. The depleted side
+is the unsafe one and it is the side secondary carnitine depletion produces, which is the
+mechanism the two-state model exists to represent. `audit/e10_qss_corners.py` measures both
+directions; Section 2.3 of the paper states the signed result.
+
+`alt_flux_C`'s docstring called this an adiabatic elimination of a fast state and
 `rhs_C`'s called `k` a free scale. All six are corrected here in the convention PR #3 uses.
 
 **What replaces the premise.** Nothing needs a separation of timescales. `alpha` is defined
