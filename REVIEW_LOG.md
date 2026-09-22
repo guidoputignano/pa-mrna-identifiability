@@ -732,3 +732,341 @@ is a record of what it found, and where it found nothing it says so.**
   whole-document pass is therefore done by reading, or it is not done; and where one has
   already run, the question is not whether it builds but what the diff changed, site by
   site.
+
+### R14. "the degenerate combination is recovered through curvature, at a square-root-of-noise price"
+
+**Retracted** (Phase 4, P5), and this one is in the paper's own prose in three places plus a
+cross-reference in a fourth, and in the two audit records that produced it.
+
+Section 6 states that on the quasi-steady locus the information matrix is singular at the
+truth and "flat only to first order", that the noiseless misfit along
+Proposition~`prop:rank`'s null direction grows as `eps^2` so `chi^2` grows as `eps^4`, and
+that the combination is therefore "recovered through curvature rather than through slope"
+at a price: "the recoverable displacement scales as the square root of the noise level".
+`rem:second_order` supports it with a diagnostic and with two numbers, `±31.6` against
+`±36.9`. `rem:no_delta` refers back to it.
+
+**On this locus the direction is not recovered at all.** Solving the balance for the increment that
+produces a level `m` gives, with no remainder,
+
+    Delta(m) = A/m + B + C m ,   A = K_m(L+b),  B = L+b-theta-k_e K_m,  C = -k_e ,
+
+and the increment that produces a given level depends on the parameters only through
+`(A, B, C)`. Since `A > 0` and `C < 0` that map is a strictly decreasing bijection, so the
+level a known `Delta` produces is a function of `(A, B, C)` alone; and three distinct levels
+determine `(A, B, C)`. So on the quasi-steady locus, at a constant recorded load, `(A, B, C)`
+is everything a record of `(m_k, Delta_k)` pairs contains. Four unknowns against three
+invariants leave a one-parameter family of exact observational twins,
+
+    K_m(b) = K_0 L/(L+b) ,   theta(b) = theta_0 + b + k_e (K_0 - K_m(b)) ,   k_e unchanged,
+
+whose noiseless misfit is zero at every displacement out to `b = 200`, which is 62% of the
+recorded load, and whose true profile, re-optimising `(theta, K_m, k_e)` at each fixed `b`,
+is flat to `1e-25` and traces the closed form to seven figures.
+
+**The `eps^4` is the fibre's own curvature relative to its tangent line.**
+Proposition~`prop:rank`'s null vector is that tangent at `b = 0`, verified symbolically
+(the difference is identically zero in all four components). Moving along a straight line
+through a curved exact fibre departs from it at second order, so the residual is `O(eps^2)`
+and `chi^2` is `O(eps^4)` whether or not the record constrains anything. The measured local slope is `4.00` over four decades, drifting by about
+two per cent across them, which is the signature of the geometry and not of the data.
+
+**So the diagnostic `rem:second_order` recommends returns the wrong answer on the problem it
+was written for.** It says `chi^2 ~ eps^4` means "the data do pin it, at second order, and
+the filter is understating what the record contains". Here the data pin nothing and the
+filter is reporting the prior exactly, which is the reading `rem:rankvsprec` gives the same
+configuration two pages earlier. The two remarks contradict each other and the paper did not
+notice, because each is locally consistent.
+
+**One supporting number is the load prior itself.** The `±31.6` is
+`1.96 × 0.05 × 322.7273`, the load prior's own 95% half-width, and is design-independent.
+
+**The `±36.9` is a ray, and the printed pair says so.** `(3.84/2.08e-6)^(1/4) = 36.86`
+against a printed `36.9`: the two numbers are tied by a quartic, which is what a straight
+line through a curved fibre gives and what a profile does not, because a profile does not
+produce a constant `chi²/ε⁴` to read a half-width off. A sweep of 88 designs by 7 noise
+conventions by 3 residual scales, plus restricted profiles, profiles with each prior inside
+`chi²`, profiles at a varying load, profiles on the ODE record and profiles with the assay
+error on the abscissa, reproduces it nowhere as a profile.
+
+**A first version of this entry made a footing charge that does not hold, and it is
+withdrawn here rather than quietly dropped.** It said the pair was computed on a design of
+roughly weekly size while the covariance it defends is monthly. `chi²/ε⁴` is second order and
+therefore parametrisation dependent; `prop:rank` is stated in log parameters
+(`06_excitation.tex:332`) and the filter's columns are derivatives in those coordinates,
+while the audit drew its line in natural `(θ, K_m)` coordinates. Redrawn in the paper's own,
+the two-daily × 2 y design gives `2.0900e-6` and `36.82` against the printed `2.08e-6` and
+`36.9`, and the provenance is documented: `audit/c2b_degeneracy.py:95` runs
+`arange(0, 730, 2.0)`, `PHASE2C.md:92-94` attaches the constant to `sd = 0.0251`, and
+`PHASE2A.md:35` shows `0.0251` is the two-daily row. On that design "the two agree to within
+a fifth" is right as computed.
+
+What survives of the footing charge is weaker and still worth recording: `rem:second_order`
+claims "every covariance this note reports survives", and the paper points the remark at the
+`0.1696` entry of `rem:rankvsprec` (`06_excitation.tex:482-485`), which is monthly. On
+monthly the same log construction gives `69.4` against the prior's `31.6`. The half-width
+runs `36.2 / 49.3 / 69.4` across two-daily, weekly and monthly, so one number cannot defend
+every covariance the note reports.
+
+**A defect in the proof, found while checking this.** `06_excitation.tex:371` eliminates the
+increment as `(θ+Δ)u = L − k_e m`, dropping the bias; the balance gives `L + b − k_e m`. So
+`eq:nullvec` as printed is the `b = 0` value of a field that depends on `b`. Carrying `b`
+through gives `n = (L + b + k_e K_m, −K_m, 0, L + b)`, whose integral curve is the fibre
+exactly; integrating the printed vector instead gives `K_m = K_0 exp(−b/L)`, which leaves the
+fibre at second order. That is why the exact fibre is not derivable from the paper as
+written.
+
+**What is unaffected, and this was attacked directly rather than assumed.** `0.1697` on the
+monthly design is earned at a load coefficient of variation of 10%, where the fibre is
+closed. Dropping the load-bias prior there costs **1.4%**: `0.1697` with it against `0.1721`
+without, and across seven seeds `0.1688`-`0.1709` with against `0.1710`-`0.1810` without. On
+every other design in `tab:designs` the prior is worth 0.6% to 3.5%. The 42x excitation
+(`1.9390` against `0.0462`), the factor-of-22 sampling rule (`21.7x`, and `25.3x`
+prior-free), the 11.7% dose-precision requirement and the cohort numbers all reproduce. No
+printed number in the paper changes: the retraction is a mechanism and a diagnostic, not a
+design number.
+
+**A new failure class, and it is the reason this took three passes to find: a diagnostic
+that answers a question the model cannot pose.** R7 was a mechanism asserted without
+derivation. R8 was a number right about its own computation and wrong about what it computed.
+This is neither. `audit/e5_structural.py` `q3` computes `eps^2` correctly, from committed
+code, and reports it accurately; the paper quotes it accurately; the power law is real to
+four decades. What is wrong is the *inference*, and it is wrong because the test profiles
+along a straight line in a space whose relevant object is curved. No numerical check in this
+repository could have caught it, because there is no number in it to disagree with. The rule
+that follows: **a diagnostic is a model too.** Before reading a power law as evidence, state
+what the alternative hypothesis is and check that the construction can distinguish them.
+Here `chi^2 ~ eps^4` is equally consistent with "the data pin it at second order" and with
+"an exact fibre is curved", and nothing in the construction separates the two. The separating
+test is a profile with the nuisance parameters re-optimised, which costs more and which the
+repository now runs.
+
+**How it was found, and how the retraction was itself checked.** Not by a test and not by
+re-reading. A second reader, working outside the repository, proposed a different
+parametrisation, multiply the balance by `(K_m + m)` and it becomes linear in
+`beta = (K_m, K_m b, b − θ − k_e K_m, −k_e)`, in which the degeneracy is a plain rank
+condition on a design matrix and the fibre is visible immediately. That is the same detector
+that caught `R8`: two descriptions of one object that do not agree. The route ran through a
+proposed estimator that this audit otherwise rejected on three other counts.
+
+The retraction was then put through eight adversarial lenses before it was written
+(`audit/PHASE4_STRESS.md`), each prompted to refute it and each re-run by a second agent.
+The finding survived all eight. **The audit did not**: its own forensic claim about the
+`±36.9` was refuted, along with a bug in `audit/f5_fibre.py`, a single-seed number quoted
+without its spread, and a retraction scoped both too wide (`"flat only to first order"` is
+true of `prop:rank`'s null vector) and too narrow (`rem:rankvsprec` contains a sentence that
+is false at two of the four rows it prints). All are recorded as C1 to C8 in
+`audit/PHASE4_PI.md`. Given `R5` and `R7`, a retraction issued without that check would have
+been the third of its kind here.
+
+---
+
+### R15. "the published inhibition shape cannot reproduce the repository's calibrated fall"
+
+**Retracted** (Phase 5, the admissibility follow-up). It is mine, it is one report round old,
+and it never reached `paper/`.
+
+`audit/PHASE5_ROBUSTNESS.md` reported, in the Step 1 section and again in the
+proven/measured table, that the two published inhibition shapes have a ceiling on the marker
+fall they can produce over a `3.13`-fold enzyme rise, `65.65%` for the turnover structure and
+`64.13%` for Attarwala's algebraic one, and that the repository's committed calibration of
+`66.36%` lies above both. It was offered as "an independent argument, from the published
+shape rather than from the trial, that `D_AMP` is set too high".
+
+**The argument does not survive `Imax`.** Attarwala **fixed** `Imax` at `0.999` rather than
+estimating it (Table 1, footnote m), so it is a modelling convenience. Recomputing each
+ceiling at `Imax = 1` separates the structure's limit from that constant's:
+
+- The turnover structure's ceiling at `Imax = 1` is exactly `Delta/(theta + Delta)`, the
+  `IC50 -> 0` limit of the inhibition ratio, verified symbolically. It **clears** the
+  repository's fall at every dose from `Delta_peak = 100` to `40000`, by 1.2 to 2.0
+  percentage points. The `0.999` cap costs it 1.0 to 2.4 points, and that cap is the entire
+  reason it appeared to fail.
+- Attarwala's algebraic structure does fall short at every tabulated dose at both values of
+  `Imax`, but by `0.09` to `1.74` percentage points, which is a knife edge and not an
+  exclusion. That shortfall is structural, being the published floor `E0/base = 0.0987/60.1`
+  blunting every fall, and it is worth stating on its own terms. It is not worth stating as a
+  bound on `D`.
+
+**What replaces it** is a better statement, and one the numbers support: on every dose in the
+sensitivity table the repository's fall lies strictly **between** the two published shapes'
+ceilings, the algebraic one a little too shallow and the turnover one with headroom. The
+dose-response is bracketed by the published structures rather than outside them.
+
+**And even that has a scope limit**, found by `audit/k6_recheck.py` check 9 and not by the
+script it checks. Sweeping 61 doses instead of tabulating 10 shows the algebraic structure's
+ceiling **crosses** the repository's fall at `Delta_peak = 443.6`, that is
+`Delta_peak/theta = 0.148`; below that dose it can do *more*, not less, and the bracket
+reverses. Every tabulated dose sits above the crossover, so the bracket holds where it is
+claimed, and the first draft's phrase "a property of the three forms" did not.
+
+**The argument from the trial is untouched.** `D_AMP = 6000` still implies a `62` to `66%`
+fall against reported per-cohort falls of `-29%` to `+5%`. That remains the reason to
+question the calibration; there is now one such reason rather than two.
+
+**How it was caught.** The margins were suspiciously small and uniformly signed, which is the
+signature of a comparison between two forms of the same saturating shape rather than of a
+real physical bound. The sensitivity that settled it (`Imax` at `1` against `0.999`) was run
+before the claim was reported a second time, not after. The failure mode is the one `R5` and
+`R7` are also instances of: a verdict that turns on a constant nobody measured.
+
+---
+
+### R16. Four statements from Phase 5 that were true of the configuration measured and were reported as unconditional
+
+**Scoped, not retracted.** All four are mine, all are one report round old, and none reached
+`paper/`. Each stands where it was measured; each was written as though it held generally. They
+are grouped because they are one failure mode, not four.
+
+**(a) "Under PUB_B, theta is not identifiable, at any design, with or without load variation."**
+True of the load insertion `audit/k2_structures.py` happens to use, and **false of another
+plausible one**. Attarwala's marker equation was fitted in a fixed-diet colony and carries no
+substrate load at all, so every load in our version is our insertion. Of four plausible
+insertions, three leave theta unidentifiable at any design and one restores it: a load lifting
+only the suppressible pool `base`, which separates it from the unaffected floor `E0`. Setting
+`E0 = 0`, or knowing `IC50` externally, restores it too. The scoped statement is that **whether
+theta is identifiable under that structure turns on an assumption the source does not make**,
+and the deficit traces to carrying a free marker offset alongside a free marker amplitude.
+
+**(b) "The bias is 1.29 to 2.03 with a residual under a fifth of one sigma."** The direction of
+the bias is robust: theta_hat/theta is above 1 under every insertion and every estimator tried.
+The **size** is not. With this repository's own priors it is 1.3 to 1.7; with them removed, on
+the same records, it is 5 to 9. The priors shrink the bias, they do not prevent it, which is
+consistent with Phase 1's finding that the `k_e` prior does most of the identification. And the
+**invisibility** is insertion-dependent: 0.18 to 0.24 sigma when the load scales the whole
+marker or the suppressible pool, 0.93 to 1.27 when it moves the unsuppressible part, against an
+expected 0.816 for a well-specified fit at n = 12 and 4 parameters.
+
+**(c) "The recommended schedules detect a wrong structure."** True against a **turnover** truth,
+where monthly and phase-spread leave 2.0 to 2.6 sigma of residual. **False against the algebraic
+one**, where no schedule tested raises a signal at all: 0.000 to 0.19 sigma structural, 0.78 to
+0.88 with noise. Detection is a property of the alternative, not of the design.
+
+**(d) "The three-number bound."** Stated without a class, which reads as a general theorem. It
+is proved for structures whose fixed-load `(Delta, m)` graph is the zero set of a polynomial
+with at most four monomials, where it is elementary, and membership is verified for the three
+structures examined and claimed for no others. `PUB_A`'s full model leaves the class as soon as
+its transient is used, which is where its fourth number comes from.
+
+**How these were caught.** Not by re-running anything. By the questions being asked of the
+report: where does the load enter, is the intuition right, does the detection claim hold for
+both structures, and can the bound be proved for a stated class. Each answer was already
+computable from code that existed; none of it had been computed, because the configuration that
+was measured was the only one that had been considered. **The failure mode is reporting the
+scope of a measurement as the scope of a claim**, and it is the same one as `R5`, `R7` and
+`R15`. The correction in each case made the finding more useful rather than less: (a) is a
+sharper criticism of the paper than the unconditional version, and (b) says the reported
+estimate looks reasonable partly because the priors are pulling it back.
+
+**One statement that was checked and did NOT need scoping.** The registry claim from the same
+round, that "one registry fetch would settle" the sampling time, was wrong in the other
+direction and is withdrawn outright rather than scoped: the record has been read and its 3-HP
+time frame is "Baseline (predose levels) to postdose levels ... up to Week 40", a window and
+not a visit. The timing cannot be settled from public sources and must come from the sponsor.
+
+### R17. "Recording intake twenty times more precisely buys about six per cent, so precision is not the binding variable"
+
+**In the paper**, `08_specification.tex`, the load-record paragraph, and in the spec table's
+"How to read this table" as "the load record gives `0.170` whether it is kept to `1\%` or to
+`20\%`". Both are **true of the quantity that was swept and false of the quantity a reader will
+think was swept.**
+
+`src/design/run.py`, `spec_numbers()`, computes
+
+    sigma = LOC.sigma_total(LOAD_FRAC, ASSAY_CV)
+
+**once, at `LOAD_FRAC = 0.05`, and reuses that one `sigma` on every row of the table.** The rows
+labelled `sd_load_1pct` and `sd_load_20pct` pass `load_cv` to `design_record`, which is the
+**day-to-day variation in the record**. The **recording error** never moves. It cannot, because
+it enters only through `sigma`, and `sigma` was fixed before the sweep began.
+
+Swept on the quantity that was meant (`audit/m1_loadbias_prior.py`, 24 seeds, two independent
+code paths agreeing to `1e-14`):
+
+| recording error | `sigma` | `sd(ln theta)` median | over 24 seeds |
+|---|---|---|---|
+| `1%` | `15.24` | `0.1566` | `[0.1563, 0.1571]` |
+| `5%` | `21.96` | `0.1660` | `[0.1649, 0.1666]` |
+| `10%` | `35.54` | `0.1916` | `[0.1884, 0.1936]` |
+| `20%` | `66.24` | **`0.2637`** | `[0.2563, 0.2690]` |
+| `40%` | `129.95` | **`0.4023`** | `[0.3916, 0.4107]` |
+
+**The design meets the `0.20` target only if the substrate load is recorded to better than
+roughly `12\%`.** Precision is not merely binding, it is the tightest requirement in the
+specification after the increment itself, and at `20\%` the design fails.
+
+**Why this matters more than an arithmetic slip.** Daly et al. 2017 (PMID 29021961, verified:
+a cross-sectional survey reporting what patients were *prescribed*) and the absence of any PA
+study reporting repeated as-eaten intake mean the realistic PA record is a prescription. The
+only study anywhere in a protein-restricted inborn error that measures prescription against
+actual intake is *Nutrients* 2023;15(23):4903 (Pinto et al., verified; 16 children with PKU,
+three one-day diaries a month for six months): actual natural protein ran at **167% of
+prescribed, a median `+40%`**. At `40\%` the headline is `0.40`, twice the target.
+
+**A second correction inside the same paragraph, in the opposite direction.** The paragraph also
+says that at a perfectly steady load the null direction "is filled by the `5\%` prior on the load
+bias, and only real day-to-day variation lets the *data* fill it instead", so that recording
+intake as eaten "is the difference between a result the data support and one a prior supports".
+Measured, that overstates it. At a **constant** recorded load with the load-bias prior **removed
+entirely**, `sd(ln theta)` is `0.2659`, not infinity. The dose train breaks
+Proposition `prop:rank`'s singularity, because the increment varies even when the load does not.
+The correct statement is that the prior is worth a factor of `1.6` there, not that it is holding
+the result up.
+
+**How it was caught.** By asking what a verified `+40%` prescription-to-intake divergence would
+do to the specification, and finding that the table had no row for it. The two claims had been
+checked against each other and never against the thing they were about. This is a new failure
+mode for the list: **a sensitivity swept on the wrong one of two quantities that share a name.**
+`LOAD_FRAC` is the recording error in `sigma_total` and the load-bias prior in the information
+matrix, and `load_cv` is the record's variation. Three quantities, one word, "the load record".
+
+Proposed replacement text is passage 11 of `audit/PHASE4_PROPOSED_TEXT.md`, and the softening
+above is passage 15. **Neither is applied. No constant is moved.**
+
+### R18. "A systematic Q2W-versus-Q3W offset in the tabulated falls ... does not need the sponsor"
+
+**Mine, from `audit/PHASE6_REVIEWS_SEP2026.md` section 9, and withdrawn on the first test.**
+
+Having found that Extended Data Table 3 of the Nature 2024 trial reports cohort 1 (0.30 mg/kg
+Q3W) separately from cohorts 2 to 5 (Q2W), I proposed that the two candidate sampling
+conventions could be told apart from the table alone: a fixed clock time after dose 3 puts both
+arms at the same phase, whereas a next-predose reading puts Q3W at 21 days and Q2W at 14 days,
+which on a 3.5-day half-life is `2^-6` against `2^-4` of one dose.
+
+**The power was computed before the table was looked at** (`audit/m3_edt3_discriminator.py`,
+Part A prints before Part B by construction), and it kills the test:
+
+- The only contrast free of the dose confound is cohort 1 against cohort 2, both at 0.30 mg/kg,
+  `n = 4` against `n = 3`, with standard deviations of 22 to 31 points. The **smallest difference
+  detectable at 80% power is 59.5 to 74.2 percentage points** across the four markers.
+- The two conventions differ by at most **22.5 points**, and that is at `D_AMP = 24000`, four
+  times the repository's assumed value. At the assumed `D_AMP = 6000` they differ by
+  **8.1 against 1.2 points**.
+
+So the test is underpowered by a factor of between three and thirty, and no reading of the table
+can separate the conventions. The data agree: `p` is `0.215` to `0.964` on the four markers, and
+the two that move at all (3-HP `-26`, C3 `-25` points) move in the **direction opposite** to the
+trough hypothesis, which predicts a *smaller* fall in the Q3W arm.
+
+There is also no dose trend to lean on. Over the four Q2W dose levels the unweighted correlation
+between dose and fall is `-0.37` (3-HP), `-0.50` (2-MC), `-0.16` (C3) and **`+0.67`** (n-PG), on
+four points. Cohort-to-cohort differences are not reading dose, so they cannot be read as
+reading interval either.
+
+**Part D of the same script adds nothing new.** All twenty cohort-by-marker means sit above the
+fall a one-day-post-dose reading predicts (`-61.8%` at `D_AMP = 6000`), but only three of twenty
+reach `p < 0.05` individually, the cohorts within a marker are not independent, and the whole
+comparison is conditional on an assumed `D_AMP`: a smaller `D_AMP` moves the prediction up to
+meet the data. That is `PHASE5_ROBUSTNESS.md`'s existing observation that `D_AMP = 6000` implies
+a `62` to `66%` fall against reported falls of `-29%` to `+5%`, with the arithmetic done. It is a
+joint statement about the phase and the amplitude and cannot be split.
+
+**`OPEN_QUESTIONS.md` section 2 stands unchanged: the sampling time must come from the sponsor.**
+What is now pinned, and was not, is that the table is a change from a **predose** baseline
+measured **after the third dose**, which is narrower than "a window up to Week 40" but not
+narrow enough.
+
+**How it was caught.** By stating the power before running the test, which the author's standing
+rule requires and which in this case produced the answer before the data were read. Had the
+table been read first, `-26` and `-25` points on two of four markers would have looked like a
+finding.

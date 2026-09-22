@@ -113,11 +113,32 @@ carnitine_turnover      doi:10.1196/annals.1320.003
 # mut0 and cblB; near normal in cblA and mut-; complete restoration to
 # control levels after liver transplant. NOTE: the cohort is MMA, NOT PA.
 breath_test_mma         doi:10.1038/s41436-021-01143-8
+# The published correction to the above, Genet Med 23(11):2233. Read in
+# full: "Due to a processing error, the online graphical abstract was not
+# given." It does NOT touch the coefficient of variation, so the abstract's
+# 12.8% (the Results' 12.86 SD misreported as a mean) stands uncorrected in
+# the record. REVIEW_LOG R4 is not superseded.
+breath_test_mma_corr    doi:10.1038/s41436-021-01188-9
 
 # --- the therapy ----------------------------------------------------
-# 16 participants, 346 doses / 15.69 person-years. 70% risk reduction
-# among the 8 who reported MDEs pretreatment. Single-arm.
+# 16 participants, 346 doses / 15.69 person-years. Single-arm.
+# MDE relative risk, treatment vs pretreatment: 0.30 (95% CI 0.066-1.315,
+#   P = 0.0927) overall; 0.18 (95% CI 0.011-2.907, P = 0.1832) among the
+#   biweekly cohorts. The abstract's "70% reduction" is 1 - 0.30 and is
+#   NOT significant; do not quote it without the interval.
+# The dose train is NOT uniform: cohort 1 is 0.30 mg/kg Q3W (n=4), cohorts
+#   2-5 are Q2W at 0.30/0.45/0.60/0.90 (n=3 each). 5 of 16 changed regimen;
+#   one skipped dose 3; one predose-3 sample is recorded at 52 days after
+#   dose 1 against a nominal 42. DOSE_INTERVAL = 14 is one of two schedules.
+# Extended Data Table 3 is "% change from baseline after the third dose",
+#   baseline defined in Methods as predose. The PHASE of the post-dose
+#   reading is still unstated; see REVIEW_LOG R18 for why the Q2W/Q3W split
+#   cannot recover it.
 trial_phase12           doi:10.1038/s41586-024-07266-7
+# Author Correction to the above, Nature 629(8011):E10.
+trial_phase12_corr_a    doi:10.1038/s41586-024-07413-0
+# Publisher Correction to the above, Nature 630(8017):E13.
+trial_phase12_corr_b    doi:10.1038/s41586-024-07646-z
 # Semi-mechanistic translational PK/PD model for mRNA-3927, fitted largely to
 # preclinical data and allometrically scaled to human.
 #   PCC-protein degradation rate kdeg = 0.0075 /h  ->  half-life 3.85 d.
@@ -224,6 +245,13 @@ mrna_moa                doi:10.1038/s41467-024-47460-9
 # Guidelines for management of PA. Metabolic control judged clinically and
 # by ammonia, acid-base and trends in C3, C3/C2 and 2-MC. NOTE: specifies
 # NO numeric plasma 3-HP target, which is why m_tol is a convention.
+# Metronidazole regimen, verbatim: "10-20 mg/kg/day divided in 2-3 times...
+#   1-2 weeks of therapy alternating with 2-3 weeks off or alternating every
+#   month is advisable." With metronidazole_pa's 41% this makes the
+#   non-enzymatic load a ~40% square wave on a 21-35 day period.
+# Dialysis: rebound after intermittent HD is the stated reason for
+#   preferring continuous therapy. The one human observation bearing on
+#   whether a slow compartment sits behind the plasma pool.
 pa_guidelines           doi:10.1186/s13023-014-0130-8
 
 # Newborn dried-blood-spot LC-MS/MS. 99.9th-percentile 3-HP cutoff
@@ -264,3 +292,99 @@ dbs_3hp_cutoff          doi:10.1371/journal.pone.0184897
 #    - identifiability in pharmacokinetic and pharmacodynamic models,
 #      the nearest applied literature to this design
 # =====================================================================
+
+# =====================================================================
+#  Registered September 2026, after network egress became available in
+#  the working container. Every identifier below was resolved against
+#  CrossRef or NCBI and the returned author, journal, volume and pages
+#  were checked against the citation. refs/literature_pending.md is
+#  discharged by this block; see audit/PHASE6_REVIEWS_SEP2026.md.
+#
+#  NOT registered, deliberately: van Noort et al. 2024,
+#  doi:10.1002/psp4.13148. Resolved and read; it is a workflow review of
+#  parameter-identifiability methods and uses "aliasing" for parameters
+#  with similar sensitivity profiles, NOT for sampling synchronous with
+#  dosing. It is not support for the dose-phase result. It is kept out of
+#  refs.bib so that it cannot be cited here by accident.
+# =====================================================================
+
+# --- clinical, from the September 2026 reviews -----------------------
+# European survey, 186 PA patients / 47 centres / 14 countries. 74% were
+# PRESCRIBED natural protein below WHO/FAO/UNU safe levels; PFAA supplied a
+# median 44% (14-83%) of total protein; 63% tube fed. NOTE: this is what
+# patients were prescribed, not what they ate. No PA study reports repeated
+# as-eaten intake, which is why the recording error in R17 is unbounded.
+pa_diet_survey          pmid:29021961
+
+# 16 children with PKU, 12-18 one-day diaries and ~22 blood spots each over
+# 6 months. Median prescribed natural protein 6 g/day against an actual
+# 10 g/day: actual = 167% of prescribed, a median +40% (P < 0.001), range
+# -2.5 to +11.5 g/day. The only prescription-vs-actual measurement in any
+# protein-restricted inborn error, and the footing for R17's 40%.
+pku_prescribed_actual   doi:10.3390/nu15234903
+
+# PCC partially purified from cultured fibroblasts. "Each of seven lines
+# from patients with propionic acidemia had clearly detectable PCC activity
+# which was less than 5% of that in control lines." NOTE: fibroblast
+# enzymology, not in vivo hepatic residual capacity. Bears on open question
+# (b), 5% vs 10%, without settling it.
+pcc_residual_activity   pmid:481943
+
+# The original 1-13C-propionate breath test: 5 PA, 8 MMA, 1 MCD, 1 TC-II,
+# 5 controls; IV or oral bolus, 3 h collection. Recovery and half-time in
+# PA significantly below normal, and "well correlated with clinical severity
+# in PA, but did not correlate in MMA". Reports NO repeatability CV, which
+# is the gap Tier 1 fills. Also: "differences between MMA and PA may
+# indicate different distribution of propionate pools".
+breath_test_original    pmid:1909779
+
+# --- methods: identifiability and estimation -------------------------
+# Profile likelihood for partially observed dynamical models, and the
+# structural-vs-practical distinction the flat K_m profile turns on.
+profile_likelihood      doi:10.1093/bioinformatics/btp358
+
+# Relative curvature measures of nonlinearity. The classical statement of
+# what R14 retracted: the eps^4 is the curvature of an exact fibre against
+# its own tangent.
+curvature_measures      doi:10.1111/j.2517-6161.1980.tb01094.x
+
+# The boundary LRT mixture. Cited for why the correction must NOT be applied
+# here: the mixture is for a parameter being TESTED on a boundary, and here
+# that parameter is a nuisance.
+boundary_lrt            doi:10.1080/01621459.1987.10478472
+
+# Bootstrap inconsistency on a boundary. Explains the measured bootstrap
+# failures: percentile 0.77-0.82, parametric at fitted nuisances 0.683.
+boundary_bootstrap      doi:10.1111/1468-0262.00114
+
+# Population vs individual identifiability in mixed-effects models.
+# Supports "describes the prior's population, not one patient".
+nlme_identifiability    doi:10.1007/s10928-015-9459-4
+
+# Structural identifiability of the standard PD model families. The nearest
+# prior art to Phase 5 steps 3 and 4.
+pd_identifiability      doi:10.3389/fphys.2016.00590
+
+# Variable projection, which is exactly i1_estimator.py's estimator.
+varpro_review           doi:10.1088/0266-5611/19/2/201
+varpro_founding         doi:10.1137/0710036
+
+# --- methods: experiment and input design ----------------------------
+# Joint optimal design on dose AND sample times: the design counterpart of
+# the phase-spread schedule. Nyberg, Karlsson and Hooker, JPKPD 36(2):125.
+# NOTE: often miscited to Duffull; the registrar settles it.
+design_dose_and_times   doi:10.1007/s10928-009-9114-z
+
+# The qualitative design step: choosing an input/output configuration so
+# that parameters are identifiable at all. The general form of the
+# dose-phase result.
+qualitative_design      doi:10.1016/0005-1098(90)90116-Y
+
+# Optimal input signals for parameter estimation. IEEE TAC 19(6):753-768,
+# confirmed against the registrar: often miscited as "Vol. 29" or
+# "AC-21, 55-64".
+optimal_input           doi:10.1109/TAC.1974.1100701
+
+# The validity condition for the quasi-steady-state assumption the whole
+# balance rests on, and the open question Section 7 asks the reader.
+qssa_validity           doi:10.1137/1031091
