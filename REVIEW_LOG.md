@@ -1390,10 +1390,12 @@ at `4n` and compare against the format string it will be written with.
 
 ## This project's characteristic failure: a number that does not say what it is a number of
 
-Six instances of one shape, and a seventh of another. That is past coincidence and
-worth naming so the next person looks for it by default instead of finding it an
-eighth time. The six below share a shape and a fix. The seventh shares neither and is
-recorded after them, because a reader who applies the six's fix to it will not catch it.
+Six instances of one shape, a seventh of another and an eighth of a third. That is past
+coincidence and worth naming so the next person looks for it by default rather than
+finding it a ninth time. The six below share a shape and a fix. The seventh and the
+eighth share neither, with each other or with the six, and are recorded after them,
+because a reader who applies the six's fix to either will not catch it. The eighth is
+not a wrong number at all.
 
 | | what was displayed | what it was actually a number of |
 |---|---|---|
@@ -1490,11 +1492,14 @@ Triaging the 17 is what decides whether it can be a gate, and it decides that it
   different record, agreeing because a schedule at `eps = 0` saturates, which Section 8
   already states. Merged, and this bullet corrected, in R51.
 
-So: a report, not a gate. Seventeen flags of which most are correct and waivable is a
-check that gets switched off within a week if it fails a build. What it is worth is a
-listing that requires each pair to be waived by name or merged, and the argument for it is
-what it found on its first run: one true duplication, and through it a sentence in
-Section 7 asserting a contrast that does not exist (R51).
+**So: a report, not a gate, and the argument for it is not its hit rate.** Seventeen flags
+of which most are correct and waivable would be switched off inside a week if they failed a
+build, and on hit rate alone that would be the right decision. What earns it is what it
+found on its first run, which was not a duplication. It was **a sentence that asserted
+nothing**, which the duplication had been making look like a claim (R51, and the eighth
+instance below). A pair of keys that render the same is a candidate vacuous comparison, and
+no other check here can see one: every number in it is correct. So the listing is worth
+keeping, with each pair waived by name or merged.
 
 **The residue is habit, and it is the part that bit.** The rule needs both numbers to be
 `\num{}` keys in one paragraph. The collision here was between a *figure label* and a
@@ -1503,6 +1508,44 @@ estimate must be distinguishable" a numerical fact; it is a claim about what the
 is for. So the habit is: **when a number is printed in order to be compared with the one
 beside it, print both to the precision that separates them**, and read the figure against
 the paragraph, not only the paragraph against itself.
+
+---
+
+### The eighth instance, which is not a wrong number but an empty sentence (item 47)
+
+**What it was.** Section 7 read: *the ranges are over these 25 draws and not over the
+two-year record of Table D: monthly reads `range_monthly` here against
+`delta_range_monthly` there, and the 14.5-day schedule `range_off` against
+`delta_range_off`.* Both monthly numbers were `1.84`. Both were correct, both were
+correctly labelled, and for monthly the two-year record **is** those 25 visits, so the
+clause set one number against itself and called it a comparison.
+
+**Why it is worse than the six, and worse than the seventh.** In every one of those
+something was wrong: a referent missing, a precision colliding. Here nothing was wrong.
+There was nothing to check, because a check would have compared `1.84` against `1.84`,
+found them equal, and equality is what the sentence was presenting as the finding. **A
+wrong number can be caught by recomputing it. An empty sentence cannot be caught by
+recomputing anything**, because it makes no claim to recompute. What kept it invisible was
+the redundant name: with two keys it reads as a contrast between two quantities, and with
+one key it reads "monthly reads 1.84 here against 1.84 there" and is visibly nothing.
+
+**Where it came from, which is the portable part.** Item 20 asked for the figure's
+14.5-day design and the text's 14.5-day design to be told apart, and that distinction is
+real: 51 visits against 25, `1.99` against `1.80`. The clause written to carry it was then
+stated over the panels as a set. It is true of the one it was written for, empty for
+monthly, and empty-but-explained for the fortnightly pair, which Section 8 handles by
+saying outright that the number does not depend on how long one samples. **A clause written
+for one member of a set and then quantified over the set goes empty exactly on the members
+whose reason does not hold.** So what to look for is not the number, it is the quantifier:
+when a sentence says "these all differ", or "each reads X here against Y there", check the
+members rather than the values.
+
+**And it is what the indistinguishability report is actually for.** That check was argued
+above on its hit rate, seventeen flags mostly waivable, which is a weak argument and would
+have lost. The strong one is this instance: two keys rendering the same is the only visible
+trace a vacuous comparison leaves, because every number in it is right. Corrected in R51,
+where Section 7 now says it for the 14.5-day schedule alone and says of monthly that its
+two-year record is those visits.
 
 ---
 
@@ -2528,3 +2571,105 @@ quantity and the other reads it" as the third mechanism, the one for the case ne
 shared-key trick nor the collision guard covers. It had never been used: `num()` was
 written, self-tested through `check_figure_numbers`'s first accepted shape, and left
 without a caller for the want of a case. This was the case.
+
+### R52. Is `01_biology` in the document? Yes, and my first answer was wrong (item 45)
+
+**The answer is yes.** `paper/sections/A1_supplementary.tex:739` inputs it, and "Biological
+background" is S1.13 of the built supplement. The relocation was deliberate and is
+`deec483`, "Compress the main text to four claims, relocating rather than deleting", which
+moved the biological background, the full dynamic model and its reduction, the local
+derivation, the validation protocol, the figure section and the open questions into the
+appendix. R10's incident was real when it happened and was reconciled rather than explained
+away: the line is present and the text renders.
+
+**My first answer was wrong, and how it was wrong is the finding.** Asked whether the file
+is input, I grepped `paper/*.tex`, which reads `main.tex`, `preamble.tex` and
+`supplement.tex` and **not** `paper/sections/A1_supplementary.tex`, where seven of the
+inputs live. That returned seven "never input" files totalling 21,837 words, several of
+them edited within the last two days, and every one of them was a false alarm. `\input` is
+transitive; a one-level grep is not a reachability test, and the question cannot be answered
+without the closure. Recorded because the wrong answer was the alarming one, and an alarming
+wrong answer is the kind that gets acted on.
+
+**Measured properly.** Following every uncommented `\input` from `main.tex` and
+`supplement.tex`: 23 `.tex` files under `paper/`, 22 reached, one not. The one is
+`note_structural_identifiability.tex`, which carries its own `\documentclass` and is a
+standalone document that must not be input. Nothing any document inputs is missing from
+disk.
+
+**And it is guarded now.** `check_inputs_reachable()` is `check_generators_reachable()` for
+prose. That one asks whether every numbers file has a generator `make figures` actually
+runs; this asks whether every section file has a document that actually reads it. The
+standalone exemption is checked rather than declared, by looking for `\documentclass`, and
+the check is shown to fire on the real bug rather than only on a synthetic one: replaying
+R10's edit, commenting out `\input{sections/01_biology}` in a copy of the tree, returns
+exactly `sections/01_biology.tex` as an orphan.
+
+**It was the last member of the invisible-artefact family without a check.** A file present
+and never input defines no label that anything misses, so there is no undefined reference,
+no error and no failing test, which is precisely what R10 recorded and R50 named as a class.
+The numbers side has had reachability checked since the generators did. The prose side had
+not.
+
+### R53. The page drift is real, and the section numbers in the reports were not (item 46)
+
+**The drift holds.** Rebuilt cold at seventeen heads, `make clean`-equivalent then four
+`pdflatex` passes with `biber` for each document, the same instrument at every point:
+
+| head | batch | main | supplement |
+|---|---|---|---|
+| `fff74c4` … `bf78c16` (6 heads) | through the phase-lattice work | **39** | 61 |
+| `855e377` | the lap condition, items 1 to 6 | **41** | 61 |
+| `e0372bb`, `eddcf84` | figure numbers registered; items 20 to 22 | 41 | 61 |
+| `d811ea8` | items 23 to 26 | **42** | 61 |
+| `c778d08` | items 27 to 31 | 42 | **62** |
+| `1a8561d` | items 32 to 33 | **43** | 62 |
+| `c585d84` … `066a316` (5 heads) | items 34 to 44 | 43 | 62 |
+
+That is 39, 41, 42, 43, which is the reported series exactly. Nothing in it was an artefact
+of the instrument.
+
+**The instrument was loose and not wrong, and the reason is the document.** `Rerun to get`
+is 0 at four passes at every one of the seventeen heads, so these two documents converge
+before the second pass and a two-pass count was always going to agree. That is a property
+worth knowing and not one to rely on, so the cheap repair is to report `Rerun to get`
+beside the page number: a non-zero count is precisely the case where a short build lies.
+On the other loose measure, `grep -c undefined` matches the precise `LaTeX Warning:
+Reference` and `Citation` counts at 0 in the paper at every head, so it never hid anything
+there; on the supplement it returns 1, for the font shape `T1/lmr/bx/sc`.
+
+**The drift stopped five heads ago.** `1a8561d`, `c585d84`, `b1aebd7`, `aa0ecd4`, `87a762f`
+and `066a316` are all 43. Items 34 to 44 added no page between them. So did the step that
+added the most prose of any of them: `d811ea8` to `c778d08` put 66 net lines into the
+discussion and the scope section and stayed at 42.
+
+**And the section numbers the reports used were wrong, which matters more than the count.**
+The section files keep prefixes from a structure the paper no longer has, and the reports
+read the numbers off the filenames. Built:
+
+| file | built section |
+|---|---|
+| `07_design.tex` | **4**, the design |
+| `07b_decision.tex` | 5 |
+| `08_specification.tex` | **6**, the specification |
+| `11_scope.tex` | **7**, the scope |
+| `12_discussion.tex` | 8, the discussion |
+
+So `sec:tierstruct`, which the reports called "§5" and where item 40's clause went, is
+**§6.2**. `sec:pattern2` is §8.3, which was right. The paper itself is unaffected, because
+every cross-reference in it is a `\ref`; what was wrong was the name in the reports, which
+is where a decision about cuts would be taken.
+
+**Where the four pages went**, as net added lines from `bf78c16` to `1a8561d`:
+
+| section | file | net lines |
+|---|---|---|
+| §4, the design | `07_design.tex` | **+105** |
+| §8, the discussion | `12_discussion.tex` | +68 |
+| §7, the scope | `11_scope.tex` | +32 |
+| §6, the specification | `08_specification.tex` | +16 |
+| §3, the excitation condition | `06_excitation.tex` | +16 |
+
+The largest single share is §4 and not §7 or §8. A cut aimed at "§7 and §8" as the reports
+named them would reach the scope section and the discussion and leave the biggest addition
+where it is.

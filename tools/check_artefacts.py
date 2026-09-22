@@ -844,6 +844,125 @@ def check_figure_numbers():
         print(f"    {why}")
     return not problems
 
+_INPUT_RE = re.compile(r"\\(?:input|include)\{([^}]*)\}")
+
+
+def _uncommented(text):
+    """`text` with LaTeX comments removed, respecting \\%."""
+    out = []
+    for line in text.splitlines():
+        i, cut = 0, len(line)
+        while i < len(line):
+            if line[i] == "\\":
+                i += 2
+                continue
+            if line[i] == "%":
+                cut = i
+                break
+            i += 1
+        out.append(line[:cut])
+    return "\n".join(out)
+
+
+def _tex_name(target):
+    """An \\input target as a key: path from the compile directory, with .tex."""
+    return target if target.endswith(".tex") else target + ".tex"
+
+
+def _input_closure(sources, roots):
+    """
+    Every file the documents actually read, and every target that resolves to
+    nothing.
+
+    `sources` maps a name to its text, keyed the way LaTeX resolves an
+    \\input: against the directory pdflatex runs in, which is paper/, and NOT
+    against the including file. sections/A1_supplementary.tex says
+    `\\input{sections/01_biology}` and means paper/sections/01_biology.tex.
+    """
+    seen, stack, missing = set(), list(roots), []
+    while stack:
+        name = stack.pop()
+        if name in seen:
+            continue
+        if name not in sources:
+            missing.append(name)
+            continue
+        seen.add(name)
+        for m in _INPUT_RE.finditer(_uncommented(sources[name])):
+            stack.append(_tex_name(m.group(1)))
+    return seen, missing
+
+
+def check_inputs_reachable():
+    r"""
+    Every .tex in paper/ is read by a document, or is a document itself.
+
+    THE BUG THIS EXISTS FOR, and it is the one check in this file whose
+    absence is recorded in the log before the check. The em-dash sweep
+    swallowed the line `\input{sections/01_biology}` and took a 1,400-word
+    section out of the build. Nothing failed: no LaTeX error, no undefined
+    reference, no failed test, because a section that is not input defines no
+    label that anything misses. The page count fell by four and the fall was
+    put down to a shorter abstract (REVIEW_LOG.md R10, R50).
+
+    It is check_generators_reachable() for prose. That one asks whether every
+    numbers file has a generator `make figures` actually runs; this asks
+    whether every section file has a document that actually reads it. A file
+    present and never input is as invisible as a number never generated.
+
+    The exemption is standalone documents, and it is CHECKED rather than
+    declared: a file nothing inputs passes only if it carries its own
+    \documentclass, which is what note_structural_identifiability.tex is.
+
+    THE LIMIT, stated rather than assumed. This follows \input and \include
+    and nothing else, so it sees a file that left the build and not a passage
+    that did. Prose commented out inside a file the documents DO read, or put
+    behind a conditional that is never true, is invisible to it exactly as
+    01_biology was before. R10's other two defects were of that kind: two
+    sentences pushed behind a comment marker, which no check here catches and
+    which is why R10's rule is that a sweep is read or it is not done.
+    """
+    paper = ROOT / "paper"
+    sources = {str(p.relative_to(paper)): p.read_text()
+               for p in sorted(paper.rglob("*.tex"))}
+    roots = ["main.tex", "supplement.tex"]
+    seen, missing = _input_closure(sources, roots)
+    #  targets outside paper/ are the generated numbers and tables, which
+    #  check_regenerated already owns; they are required to exist, not to be
+    #  reachable from anywhere else.
+    outside = [n for n in missing if n.startswith("..")]
+    missing = [n for n in missing if not n.startswith("..")]
+    for n in outside:
+        if not (paper / n).exists():
+            missing.append(n)
+    orphans = []
+    for name in sorted(set(sources) - seen):
+        if r"\documentclass" not in sources[name]:
+            orphans.append(name)
+    #  the same standard as the other checks: the detector is run against a
+    #  tree with an orphan and a tree without one, and against a dangling
+    #  \input, so a clean sweep is a result and not an absence.
+    probe = {"main.tex": r"\input{a}" + "\n% \\input{c}\n", "a.tex": "", "b.tex": ""}
+    p_seen, p_missing = _input_closure(probe, ["main.tex"])
+    clean_seen, _ = _input_closure({"main.tex": r"\input{a}", "a.tex": ""},
+                                   ["main.tex"])
+    _, dangling = _input_closure({"main.tex": r"\input{gone}"}, ["main.tex"])
+    probe_ok = (set(probe) - p_seen == {"b.tex"} and not p_missing
+                and not set({"main.tex", "a.tex"}) - clean_seen
+                and dangling == ["gone.tex"])
+    standalone = len(set(sources) - seen) - len(orphans)
+    print(f"  {len(sources)} .tex file(s) in paper/ checked for reachability "
+          f"from main.tex and supplement.tex: {len(seen)} read, "
+          f"{standalone} standalone document(s), {len(orphans)} orphan(s), "
+          f"{len(missing)} dangling input(s) (self-test: "
+          f"{'PASS' if probe_ok else 'FAIL'})")
+    for name in orphans:
+        print(f"    paper/{name} is never input and is not a document")
+    for name in missing:
+        print(f"    \\input{{{name[:-4]}}} resolves to no file")
+    return not orphans and not missing and probe_ok
+
+
 def _compile_warnings(sources):
     """{path: [(line, category, message)]} from {path: source text}."""
     import warnings
@@ -933,6 +1052,9 @@ def main():
     #  and the class the cache hid: a check whose verdict depended on
     #  whether `make clean` had run. This one compiles the source itself.
     ok = check_source_warnings() and ok
+    #  and the prose half of the reachability question: a section file that
+    #  no document inputs is as invisible as a number no generator writes
+    ok = check_inputs_reachable() and ok
     print("  ARTEFACTS MATCH THE CODE" if ok else "  ARTEFACTS HAVE DRIFTED")
     return 0 if ok else 1
 
