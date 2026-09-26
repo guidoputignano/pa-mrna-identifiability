@@ -9,8 +9,12 @@ explicit dose train, and the committed shape is reproduced as one member of that
 
 Scripts: `audit/q1_increment_shape.py` (S1), `audit/q1b_reconcile.py` (S1 against the
 25 September probes), `audit/q1c_baseline_footings.py` (Gap B on two baseline footings, and
-the provenance of `ke0`), `audit/q2_requirement_map.py` (S2). Independent re-check:
-`audit/q9_recheck.py`. The probes themselves: `audit/probes_2026-09-25/`.
+the provenance of `ke0`), `audit/q2_requirement_map.py` (S2),
+`audit/q2b_ke_measurement.py` (S2b), `audit/q3_marker_cv_load.py` (S3),
+`audit/q4_joint_stress.py` (S4), `audit/q5_exvivo_prior.py` (S5). Independent re-check:
+`audit/q9_recheck.py`, 16 checks in 39 parts, all passing. The probes themselves:
+`audit/probes_2026-09-25/`. Questions for the literature that this phase raised:
+`refs/brief_questions.md`.
 
 **This file was revised twice on 26 September 2026.** The first S1 report (commit `043a3ec`)
 carried numbers and conclusions that the reconciliation against the probes withdrew. The
@@ -19,6 +23,69 @@ design change the first revision had run together with them: an untreated baseli
 What changed, sorted by kind, is section S1.R; `REVIEW_LOG.md` R54 records it. The author has
 independently reproduced the corrected numbers with the probe, the `t = 0` draw read
 pre-dose.
+
+---
+
+## The answer, in one page
+
+**The question.** Can residual enzyme capacity θ be identified from plasma 3-HP under mRNA-3927,
+with the dose train as a known input?
+
+**Yes at normal capacity, and in the disease range only under conditions that are not yet met.**
+Everything below is the short form of S1 to S5; each claim carries its section.
+
+**What the phase confirmed.**
+
+1. **A wrong increment shape does not break the estimate.** Peak-matched with an untreated
+   baseline draw, the committed analyst reads capacity 7% low against a 2.5 d truth, 16% high
+   against 5 d, 36% high against 7 d and 13% high against the published two-compartment kernel,
+   monotonic in the truth's half-life. The review's 1.3 to 2.0 for 5 to 7 d becomes 1.16 to 1.36,
+   and the residual rises with the bias, so a real record would announce the misspecification
+   (S1.1, S1.4).
+2. **The stresses do not compound.** With the wrong shape, a 15% marker CV, the irregular trial
+   train and `k_e` drift all present at once, the bias is 2 to 13% at normal capacity, and two of
+   the stresses partly cancel (S4.1).
+3. **One untreated pre-treatment draw is worth about a third of the RMSE**, is worth more as the
+   marker gets noisier, and two or three are not worth more than one (S4.4, S4.5).
+
+**What the phase found that changes the specification.**
+
+4. **In the disease range `k_e` must be measured in the patient**: to about 2% at 5% of normal, 5%
+   at 10%, 10% at 20%. A population prior of any plausible width fails below 20% (S2.1 to S2.3).
+5. **The micro-dose tracer study can deliver 2 to 5%, but only with a 24 h window and 8 or more
+   draws**, designed as if the tracer were two-compartment. A clinic-day window destroys rather
+   than degrades the estimate, and the human half-life that would set the window is unknown by a
+   factor of 70 (S2b.1, S2b.2).
+6. **Within-patient drift in `k_e` binds harder than the study below 10% of normal** and does not
+   bind at all at normal capacity. It is a disease-range requirement (S2b.5, S4.3).
+7. **"Record intake to better than about 10%" holds at a 5% marker CV and takes 2.4 years.** Inside
+   the booked two years the requirement is better than 5%. The marker CV and the load error are
+   interchangeable percent for percent, so the rule is to spend on whichever is larger; above a 25%
+   marker CV nothing on the load axis rescues the design (S3.1 to S3.3).
+8. **The working band is a property of the measurement, not of the system.** It spans a factor of
+   10.3 at CV 5% and load 1%, and is empty at CV 15% and above (S3.4).
+9. **The trough dose calibration should not be adopted.** It doubles θ̂ and multiplies RMSE by five
+   under a wrong shape. `k4_admissibility.py`'s finding that it is admissible and this are
+   compatible, and both belong in the specification (S4.2).
+10. **The 95% profile interval is optimistic under joint stress**, 83% at worst (S4.1).
+
+**What the phase priced that had not been priced.**
+
+11. **The weakest assumption in the observation model, that the marker is not itself cleared
+    enzymatically, is worth a factor of 5.8 on `sd(ln θ̂)`.** Under the literal reading no schedule
+    at any capacity reaches the gate. The same tracer study can settle it, by measuring the
+    fraction of label recovered unchanged against the fraction in downstream products (S2b.4).
+12. **An ex vivo enzyme assay is not an alternative to measuring `k_e`.** Without a per-patient
+    `k_e` no prior width reaches the gate, and the combined estimate is the assay's own number. With
+    `k_e` measured it rescues three cells of the requirement map, all at a prior of 0.3, of which
+    the one of practical interest is monthly sampling at 10% of normal. Its risk sits exactly where
+    its benefit does: a tight prior transmits 54 to 60% of any centring error at 5% of normal, and
+    at 10% a prior wrong by a factor of two is worth precisely nothing (S5.1 to S5.3).
+
+**The four unknowns the answer now rests on**, all filed against briefs and none resolvable by
+simulation: the human 3-HP half-life and whether the marker is a substrate (**R1**), the increment
+shape and which reading of the published kernel is right (**R2**), the marker's within-subject
+biological variation (**R3**), and whether the ex vivo mapping is centred (**R4**).
 
 ---
 
