@@ -8,6 +8,29 @@ they live in `paper/claims.csv`, against the source and with the verdict, and
 the exact Poisson intervals in `894ae04` are recorded there as computed rather
 than quoted.
 
+## Standing conventions, so two independent scripts agree
+
+These are not findings. They are definitions that have cost reconciliation time and will cost it
+again every time two scripts compute the same quantity by different routes.
+
+- **A spread is reported with its divisor.** `numpy.std` defaults to the POPULATION standard
+  deviation, `ddof = 0`; the sample standard deviation is `ddof = 1`. The two differ by
+  `sqrt((n-1)/n)`, which is 2.0% at n = 25 and 0.1% at n = 365, so a gap of that size between two
+  routes is a definition and not a disagreement. It has already been mistaken for one once, on the
+  within-patient marker CV of Phase 9 item 7, where 28.63 against 28.05 was entirely this. **Report
+  which, and prefer the sample sd where the figure feeds a requirement**, since it is the larger.
+- **A marker level is reported with its dose-day draw convention.** A draw falling exactly at a dose
+  instant is read PRE-DOSE in the Phase 8 and 9 audit scripts and POST-DOSE by `design/run.py`'s
+  `delta`. On the monthly record that is the t = 0 draw alone, and it moves the level from 10.000 to
+  3.510. `REVIEW_LOG.md` R54 and `audit/PHASE8_SIMULATIONS.md` S1.R 3a record what it cost the first
+  time.
+- **A noise figure is reported with what is inside it.** `sigma` carries both the load-recording
+  error and the marker's scatter; the load-bias prior `s_b` carries the load-recording error a second
+  time and is not inside `sigma`. A tolerance quoted for one axis is meaningless without the other
+  axis and `s_b` both named. Phase 9 step 3(a) shows the design depends on the two only through
+  `sigma` once `s_b` is fixed, exactly, so the honest statement of the requirement is a budget on
+  `sigma` with `s_b` stated beside it.
+
 ## What each commit closed
 
 | commit | closed |
@@ -3110,4 +3133,50 @@ defeat panel averaging.
 
 **Re-check record.** `audit/q10_phase9_recheck.py` is new: the model-explained CV by an independent
 route, and the item 6 arithmetic with both readings tested rather than one asserted. 7 of 7 pass.
+
+---
+
+## R61. The marker and load requirements are one budget on sigma
+
+`audit/q6_sigma_budget.py`, `audit/PHASE9_LITERATURE.md` step 3(a). The author's reading, that S3's
+two-axis surface is one budget spent two ways, is confirmed and is exact rather than approximate.
+
+**Exact.** Five `(load record, marker CV)` pairs constructed to give sigma = 60, from marker-only to
+almost load-only, give `sd(ln theta)` identical to 3.3e-16 with `s_b` held. The reason is
+structural: the noise enters the information matrix only as `Q'Q/sigma^2`, and `load_frac`'s second
+entrance is the load-bias prior `s_b`, which sits outside every block the Schur complement
+subtracts. The author's residual 4% across load records of 2 to 15% is that second entrance and
+nothing else: with `s_b` held, sigma* has **zero** spread at every schedule.
+
+**The budgets at normal capacity**, with `s_b` at 0.10 L: monthly 36.72, fortnightly off-period
+45.99, weekly phase-spread 69.69, every 2 days 130.96. Both working-band edges roughly halve them,
+and by almost the same factor at each, which the band's own width does not do. Three of the four
+overlap the author's independent ranges; fortnightly does not, and the likely cause is the t = 0
+convention, since the 14.5 d schedule has a dose-instant draw at t = 392.
+
+**What that says against the evidence bound.** The committed sigma reproduces at 21.96 and clears
+every schedule, monthly included. The analytical floor at a 10% load record is 35.5 at CV 5% and
+40.1 at CV 8%, against monthly's 36.72, so **monthly does not merely require the residual scatter to
+sit at its analytical floor, it requires the floor itself to be at the optimistic end of its own
+range.** The surrogates' 81.2 to 109.2 clears only every-2-days. And the load record alone can close
+the gate: at a 15% record neither monthly nor fortnightly reaches 0.20 at any marker scatter
+including zero, confirming the author, and **at both band edges that happens at a 10% record, which
+is the accuracy the specification already asks for.**
+
+**One correction to the budget's standing, found by the Monte Carlo.** At sigma* the MAP estimator
+gives RMSE 0.33 to 0.42 against the Fisher bound's 0.200, which would make the budget worthless. It
+is not the budget's miss. Re-running the identical cells with the `k_e` prior at S2b's realistic
+0.054 and changing nothing else gives RMSE 0.110 to 0.150 with no collapses, so **the budget is
+honoured and conservative once `k_e` is measured per patient, and optimistic by about 1.8 when quoted
+against the paper's population prior.** The robust spread shows the mechanism: 0.200 at monthly,
+exactly the Fisher figure, against an RMSE of 0.351, so the gap is the wide prior's collapse tail
+that S2 identified.
+
+**Filed, not run.** sigma* was solved at the 0.8 prior throughout, so the budget for a
+measured-`k_e` patient is larger than these numbers and every verdict above is conservative.
+Re-solving at 0.054 would raise all four budgets and could move monthly's verdict.
+
+**Re-check record.** `q10` gains check 3: sigma* bracketed by a numerical Hessian of the posterior
+scanned on a log grid with no root-finder, at all four schedules, and the exactness claim re-tested
+on that route at two schedules. 12 of 12 pass.
 

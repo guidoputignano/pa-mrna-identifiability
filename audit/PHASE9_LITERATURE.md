@@ -209,6 +209,172 @@ average it away. R3's evidence bears on this and does not settle it.
 
 ---
 
+## Step 3(a). The requirement as a budget on sigma
+
+`audit/q6_sigma_budget.py`. The two-axis surface S3 measured, and the tolerances reproduced above,
+both dissolve into one number per schedule. Re-check: `q10` checks 3, by a numerical Hessian and a
+direct scan with no root-finder. 12 of 12 overall.
+
+### 3a.0 The budget is exact, not tight **[proven]**, **[measured]**
+
+The design sees the marker's scatter and the load record's error **only** through the combined
+ordinate noise, once the load-bias prior `s_b` is named. The reason is structural: `load_frac`
+enters the information matrix twice, through `sigma = hypot(load_frac·L, b·CV·m_bar)` and through
+`s_b = load_frac·L`, and the second entrance is not part of sigma. Holding `s_b` therefore leaves
+`load_frac` nowhere else to act.
+
+Five `(load_frac, marker CV)` pairs constructed to give exactly sigma = 60, `s_b` held at 0.10 L,
+monthly, θ = 3000, from a marker-only budget (CV 20.14%, load 0) to an almost load-only one (CV
+0.71%, load 18.58%):
+
+| load record | marker CV | sigma | sd(ln θ̂) |
+|---|---|---|---|
+| 0.00% | 20.14% | 60.000000 | 0.2610866262 |
+| 5.00% | 19.40% | 60.000000 | 0.2610866262 |
+| 10.00% | 16.98% | 60.000000 | 0.2610866262 |
+| 15.00% | 11.90% | 60.000000 | 0.2610866262 |
+| 18.58% | 0.71% | 60.000000 | 0.2610866262 |
+
+**Spread 3.3e-16, machine precision.** **[measured]**, and **[proven]** in the sense that the
+Schur-complement argument makes it an identity rather than a coincidence: the noise enters only as
+`QᵗQ/sigma²`.
+
+**And the author's residual 4% is exactly the `s_b` channel, with nothing else in it.** With `s_b`
+moving as `load_frac` does, sigma* spreads 2.57% (monthly) to 3.86% (every 2 days) across load
+records of 2 to 15%. With `s_b` held at 0.10 L, the spread is **0.00e+00 at every schedule**.
+**[measured]**
+
+So the budget is exact once `s_b` is stated, and the only reason it looked tight is that a load
+record does two jobs at once.
+
+### 3a.1 The budgets **[measured]**
+
+sigma*, the ordinate noise at which each schedule reaches `sd(ln θ) = 0.20`, `s_b` at 0.10 L:
+
+| schedule | n | band low, 2472 | normal, 3000 | band high, 18814 |
+|---|---|---|---|---|
+| monthly | 25 | 20.80 | **36.72** | 21.75 |
+| fortnightly, off-period | 51 | 26.75 | **45.99** | 27.97 |
+| weekly, phase-spread | 100 | 40.25 | **69.69** | 43.14 |
+| every 2 days | 365 | 74.68 | **130.96** | 79.57 |
+
+The author's own figures at normal capacity are 35.5 to 37.0, 47.4 to 48.3, 68.7 to 71.3 and 129.3
+to 133.9, against this session's `s_b`-moving ranges of 36.4 to 37.3, 45.3 to 46.9, 68.5 to 71.0 and
+128.4 to 133.4. **Three of four overlap; fortnightly does not**, and the likely cause is the t = 0
+convention, since this session reads dose-day draws pre-dose and the 14.5 d schedule has a
+dose-instant draw at t = 392. The ordering and every conclusion below are unaffected. **[measured]**
+
+**The budget roughly halves at both band edges**, and by almost the same factor at each, which is
+worth noting because S3 found the band closing from the top: the budget does not distinguish the two
+edges the way the band's width does. **[measured]**
+
+### 3a.2 Where the committed footing and the evidence bound sit **[measured]**
+
+At θ = 3000, converting each reading to sigma. The committed footing reproduces from
+`design/run.py`'s own constants at **21.96**, against its stated 22.0.
+
+| reading | load 5% | load 10% | load 15% |
+|---|---|---|---|
+| analytical floor, CV 5% | 22.0 | 35.5 | 50.6 |
+| analytical floor, CV 8% | 28.8 | 40.1 | 54.0 |
+| surrogate lower, CV 25% | 76.2 | 81.2 | 88.8 |
+| surrogate upper, CV 35% | 105.5 | 109.2 | 115.0 |
+
+**The whole finding in one line, at a 10% load record:**
+
+| schedule | sigma* | committed 22 | analytical floor, 5% then 8% | surrogates, 25% then 35% |
+|---|---|---|---|---|
+| monthly | 36.72 | meets | **meets / fails** | fails / fails |
+| fortnightly | 45.99 | meets | meets / meets | fails / fails |
+| weekly | 69.69 | meets | meets / meets | fails / fails |
+| every 2 days | 130.96 | meets | meets / meets | **meets / meets** |
+
+1. **The committed sigma of 22 clears every schedule's budget, monthly included.** The design as
+   booked is not in difficulty; the question is entirely whether 22 is the right sigma. **[measured]**
+2. **Monthly is viable only at the optimistic end of the analytical floor.** At CV 5% the floor is
+   35.5 against monthly's 36.72, a margin of 3%. At CV 8%, Thompson's own analytical figure for a
+   comparable assay, the floor is 40.1 and monthly fails. **So monthly does not merely require the
+   residual scatter to sit at its analytical floor, it requires the floor itself to be at the
+   optimistic end of its range.** **[measured]**
+3. **The surrogates' upper bound clears only the densest schedule**, as the author read it: 81.2 to
+   109.2 against 130.96 for every-2-days and 69.69 for weekly. Weekly fails even at the surrogates'
+   lower end. **[measured]**
+4. **Nothing in the evidence distinguishes the three middle schedules**, because the bound is wide
+   enough to contain all of them. That is the bound's fault, not the design's. **[judgement]**
+
+### 3a.3 The load record alone can close the gate **[measured]**
+
+sigma has a floor the marker cannot get below: at marker CV zero it is still `load_frac·L`. Where
+that floor exceeds a schedule's budget, **no assay however good reaches the gate**.
+
+| capacity | load 2% (6.5) | load 5% (16.1) | load 10% (32.3) | load 15% (48.4) |
+|---|---|---|---|---|
+| normal, 3000 | all ok | all ok | all ok | **monthly and fortnightly OVER** |
+| band low, 2472 | all ok | all ok | **monthly and fortnightly OVER** | weekly also OVER |
+| band high, 18814 | all ok | all ok | **monthly and fortnightly OVER** | weekly also OVER |
+
+1. **The author's 15% claim is confirmed at normal capacity**: the floor is 48.4 against monthly's
+   36.72 and fortnightly's 45.99, so neither reaches 0.20 at any marker scatter including zero.
+   **[measured]**
+2. **At both band edges it happens at a 10% load record, not 15%.** The floor of 32.3 exceeds
+   monthly's 20.80 and fortnightly's 26.75 there. **So at the edges of the working band the paper's
+   own stated load requirement already closes the gate for both sparse schedules, whatever the
+   assay does.** That is a stronger statement than the 15% one and it applies at the load accuracy
+   the specification actually asks for. **[measured]**
+
+### 3a.4 The Monte Carlo, and whose miss it is **[measured]**
+
+A budget the estimator does not honour is not a budget, so each schedule was re-run through the MAP
+estimator at its own sigma*, 96 records, `s_b` at 0.10 L. **At the paper's own 0.8 population prior
+on `ln k_e` the estimator misses badly**: RMSE 0.33 to 0.42 where the Fisher bound reads exactly
+0.200, with one or two collapses per cell.
+
+**That miss is the `k_e` prior's, not the budget's.** Re-running the identical cells with the `k_e`
+prior at 0.054, the realistic per-patient precision S2b says the micro-dose study delivers, and
+changing nothing else, sigma* left where the 0.8 prior put it:
+
+| schedule | sigma* | Fisher | RMSE at k_e 0.8 | robust | RMSE at k_e 0.054 | robust | collapses |
+|---|---|---|---|---|---|---|---|
+| monthly | 36.72 | 0.200 | 0.351 | 0.200 | **0.110** | 0.104 | 0 |
+| fortnightly | 45.99 | 0.200 | 0.382 | 0.268 | **0.150** | 0.144 | 0 |
+| weekly | 69.69 | 0.200 | 0.327 | 0.241 | **0.142** | 0.159 | 0 |
+| every 2 days | 130.96 | 0.200 | 0.419 | 0.251 | **0.132** | 0.125 | 0 |
+
+1. **Once `k_e` is measured per patient, the budget is honoured and is conservative.** RMSE 0.110 to
+   0.150 against a gate of 0.20, no collapses anywhere. **[measured]**
+2. **At the population prior the estimator misses sigma*'s gate by a factor of about 1.8, and the
+   robust spread shows why:** it is 0.200 at monthly, exactly the Fisher figure, while the RMSE is
+   0.351. The difference is a collapse tail, which is the wide `k_e` prior's signature that S2
+   identified, not a property of the noise budget. **[measured]**
+3. **So the budget is conditional on the same thing everything else in Phase 8 was conditional on.**
+   sigma* is a valid requirement to state provided `k_e` is measured; quoted against a population
+   prior it is optimistic by about 1.8 and the specification should not quote it that way.
+   **[judgement]**
+4. A direction not pursued, and filed: sigma* was solved at the 0.8 prior throughout, so **the
+   budget for a measured-`k_e` patient is larger than the numbers above**, and every verdict in
+   3a.2 is therefore conservative. Re-solving sigma* at 0.054 would raise all four budgets and could
+   move monthly's verdict against the analytical floor. That is a new computation and is filed, not
+   run. **[judgement]**
+
+### 3a.5 The practical form, for a protocol writer
+
+A protocol writer spends on diet records and assays, not on sigma, so the budget's practical form is
+the marker CV each budget allows at each load record. At θ = 3000, `s_b` at 0.10 L:
+
+| schedule | sigma* | load 2% | load 5% | load 10% | load 15% |
+|---|---|---|---|---|---|
+| monthly | 36.72 | 12.13% | 11.07% | 5.88% | none |
+| fortnightly | 45.99 | 15.28% | 14.45% | 11.00% | none |
+| weekly | 69.69 | 23.29% | 22.75% | 20.73% | 16.83% |
+| every 2 days | 130.96 | 43.90% | 43.62% | 42.60% | 40.84% |
+
+The pairing the author noticed is now arithmetic rather than coincidence: monthly's 11.07% at a 5%
+load record and fortnightly's 11.00% at a 10% one are the same budget spent differently, and
+monthly's 5.88% at a 10% load record is the same budget again. **[measured]**
+
+
+---
+
 ## What Phase 9 has and has not done
 
 **Done.** The reports are recorded with their mapping and process warnings. Item 6 is adjudicated
@@ -216,10 +382,10 @@ and the repository's standing retraction is confirmed, conditionally on two quot
 decomposition is attempted and its central result is that the decomposition is not possible from the
 published record, which converts the specification's sigma from a number into a bound.
 
-**Not done, and not to be inferred.** Items 1 to 5 of step 2 are not started, for want of egress.
-No constant has moved. The two reruns are not begun: item 7 was to supply the central case for the
-marker-variability rerun and instead establishes that there is no central case, so what the rerun
-should hold sigma at is now a decision for the author and not a reading from the literature.
+**Not done, and not to be inferred.** Items 1 to 5 of step 2 are not started, for want of egress:
+the nine approved hosts were re-tested on 26 September and all nine still return a 403 on CONNECT.
+No constant has moved. Step 3(b), identifiability with the marker offset fixed at 5, 10 and 20% of
+baseline, is not begun.
 
 **Reproduced, and it raises one question before step 3.** The author's four schedule tolerances at
 normal capacity over two years, the largest total residual scatter at which `sd(ln theta)` reaches

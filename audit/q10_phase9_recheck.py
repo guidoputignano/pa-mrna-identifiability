@@ -155,11 +155,85 @@ def check_2_item6_arithmetic():
     return ok
 
 
+def check_3_sigma_budget():
+    banner("3. THE sigma BUDGET, BY A NUMERICAL HESSIAN AND A DIRECT SCAN")
+    print("""  (a) sigma* is found by Brent root-finding on the Fisher median. The route here
+  computes the same median from a FINITE-DIFFERENCE HESSIAN of the negative log
+  posterior, then brackets the crossing by a direct scan on a log grid with no
+  root-finder at all.
+  (b) The exactness claim: sd(ln theta) depends on the two error sources only
+  through sigma at fixed s_b. Checked here on the HESSIAN route, which never sees
+  a decomposition of sigma, and on a second schedule.""")
+    import q2_requirement_map as S2
+    import q6_sigma_budget as S6
+
+    def hess_sd(theta, times, sigma, s_b, seed):
+        L, _, _ = S6.anchor(theta)
+        Ls = S2.loads_for(times.size, seed, L)
+        inc = S2.increment(times)
+        m = S2.level(theta, inc, Ls)
+
+        def J(q):
+            th, km, b, ke = np.exp(q[0]), np.exp(q[1]), q[2], np.exp(q[3])
+            pred = (th + inc) * m / (km + m) + ke * m + b
+            return (float(np.sum(((pred - Ls) / sigma) ** 2)) + (b / s_b) ** 2
+                    + ((q[3] - np.log(S2.KE)) / S6.KE_PRIOR) ** 2)
+        q0 = np.array([np.log(theta), np.log(S2.KM), 0.0, np.log(S2.KE)])
+        h = 1e-5
+        H = np.empty((4, 4))
+        for i in range(4):
+            for j in range(4):
+                ei, ej = np.zeros(4), np.zeros(4)
+                ei[i] = ej[j] = h
+                H[i, j] = (J(q0 + ei + ej) - J(q0 + ei - ej)
+                           - J(q0 - ei + ej) + J(q0 - ei - ej)) / (4 * h * h)
+        return float(np.sqrt(np.linalg.inv(H / 2.0)[0, 0]))
+
+    def hess_med(theta, times, sigma, s_b):
+        return float(np.median([hess_sd(theta, times, sigma, s_b, s)
+                               for s in S2.SEEDS]))
+
+    theta = 3000.0
+    L = S6.anchor(theta)[0]
+    s_b = 0.10 * L
+    ok = True
+    for name, times in S6.SCHED.items():
+        mine = S6.sigma_star(theta, times, s_b)
+        grid = np.geomspace(mine * 0.9, mine * 1.1, 41)
+        vals = np.array([hess_med(theta, times, g, s_b) for g in grid])
+        i = int(np.searchsorted(vals, S6.GATE))
+        lo, hi = grid[i - 1], grid[i]
+        inside = lo <= mine <= hi
+        print(f"    {name:16s} q6 sigma* {mine:9.4f}  scan brackets "
+              f"[{lo:9.4f}, {hi:9.4f}]  {'inside' if inside else 'OUTSIDE'}")
+        ok &= report(f"sigma* bracketed by the Hessian scan, {name}",
+                     0.0 if inside else 1.0, 0.0, 0.0)
+    print()
+    worst = 0.0
+    for name in ("monthly 25", "weekly 100"):
+        times = S6.SCHED[name]
+        _, m_bar, b = S6.anchor(theta)
+        target = 60.0
+        got = []
+        for lf in (0.0, 0.05, 0.10, 0.15):
+            rem = target ** 2 - (lf * L) ** 2
+            cv = float(np.sqrt(rem) / (b * m_bar))
+            got.append(hess_med(theta, times, S6.sigma_of(theta, lf, cv), s_b))
+        spread = max(got) - min(got)
+        worst = max(worst, spread)
+        print(f"    {name:16s} four (load, CV) pairs at sigma = 60: spread "
+              f"{spread:.3e}")
+    ok &= report("dependence is exactly through sigma, Hessian route", worst,
+                 0.0, 1e-12)
+    return ok
+
+
 def main():
     print("=" * 92)
     print("  PHASE 9 RE-CHECKS")
     print("=" * 92)
-    for fn in (check_1_model_explained_cv, check_2_item6_arithmetic):
+    for fn in (check_1_model_explained_cv, check_2_item6_arithmetic,
+               check_3_sigma_budget):
         try:
             fn()
         except Exception as exc:
