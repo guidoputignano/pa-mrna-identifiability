@@ -46,6 +46,15 @@ Set by the author and held throughout. They are not negotiable defaults.
   three times been the error here.
 - **One independent re-check before each report**, sharing no code path with the thing it checks.
 - **Stop at gates.** Report and wait rather than proceeding.
+- **Before using `git` history as evidence, check that the clone is complete.**
+  `git rev-parse --is-shallow-repository` and `cat .git/shallow`, one command each. **A shallow clone
+  does not fail on a history question, it answers confidently and wrongly**: graft points have no
+  parent locally, so `git rev-list --max-parents=0` reports them as ROOTS and `git show --stat`
+  diffs them against the empty tree and reports every file as a full insertion. Nothing in the output
+  is malformed, so re-reading it cannot catch the error. **This cost four wrong claims from one
+  cause, twice, in two differently truncated clones of the same repository, each checked by its
+  author** (R93).
+
 - **Find the owner before recomputing.** A paper number is either generated and owned by a named
   script, or it is a prose literal. Locate the owner and read what it computes before concluding the
   number is wrong. **Four disagreements in Phase 10 were a reconstruction losing to the paper**, and
@@ -115,6 +124,12 @@ load-record requirement and the `k_e` study, both of which are conditional on it
   declaration mechanism is the model to extend, not a second system to build.
 - **249 category-1 literals restate a value a generator already owns.** Pure upside: the macro
   exists, the prose does not use it.
+- **History dates nothing before 3 September 2026, and the ordering argument is available for all
+  of it.** `origin/main` has exactly one root, `a69f64d`, 3 September 2026, "Initial commit", and the
+  history is one continuous lineage of 236 commits. **So "when did this number enter, and did its
+  generator change after it" is answerable for every claim**, which is how R91 settled the first two
+  paper errors: the owning scripts had one substantive commit and the sentences arrived in the next.
+  That route is open for all 109 claims still to wire (R94).
 - **A prose guard has to read English numerals.** 1000 of the 2472 unguarded literals are spelled
   out, and the one error this whole sweep was provoked by was "thirteen" and "eighteen".
 

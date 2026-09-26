@@ -4192,3 +4192,61 @@ on both a changed value and a rotted declaration.
 at.** Declaration rather than inference, because no static analysis can tell a claim from an
 annotation; failure on an undeclared or stale row, so the table cannot become a blanket exemption.
 The difference is that this one reads English.
+
+---
+
+### R93. A shallow clone answers history questions confidently and wrongly
+
+The instruction was to rewrite two commit references in a published entry, on the premise that
+`075aca8` created `t3_diet_modulation.py` and `t4_bias_vs_scatter.py`, that it was one of five roots
+on `origin/main`, and that `ed59b79` and `7c04c10` were dangling. Checked before acting, and on the
+**full** history none of it holds:
+
+| claim | check | result |
+|:--|:--|:--|
+| `075aca8` created `t3` and `t4` | `git show --stat 075aca8 -- <both>` | **empty.** It touches `t10`, `t11`, `t12`, `g1`, `g_design_common` and two `.tex` files |
+| `075aca8` is a root | `git rev-list --parents -n1 075aca8` | **has a parent**, `293816b` |
+| `ed59b79`, `7c04c10` dangling | `merge-base --is-ancestor`, `for-each-ref --contains` | **both ancestors of `origin/main`**, reachable from five refs |
+
+**R91 stands as written**, and its zero diff across `t3`'s and `t4`'s whole history is reconfirmed on
+the unshallowed repository.
+
+**THE CAUSE, AND IT IS THE POINT OF THIS ENTRY. The clone was shallow.** `.git/shallow` holds the
+graft points, which have no parent locally, so `git rev-list --max-parents=0` reports them as ROOTS
+and `git show --stat` diffs them against the EMPTY TREE and reports every file in the tree as a full
+insertion.
+
+That is where "242 and 217 insertions" came from. They are not a real stat misattributed: they are
+the **file lengths**, `git show 075aca8:audit/t3_diet_modulation.py | wc -l` = 242 and `t4` = 217.
+The command genuinely printed that stat against that commit. Nothing in the output says so.
+
+**AND THE SAME ERROR WAS MADE HERE, IN THE ENTRY THAT CORRECTED IT.** This container's clone was also
+shallow, truncated at a different point: `.git/shallow` held `85f3257`, 222 of 236 commits. So R94
+reported "two roots, a graft joining on 14 September" with the same confidence and from the same
+defect. After `git fetch --unshallow` there is **one** root, `a69f64d`, 3 September 2026, and
+`85f3257` has parent `adccf5c`.
+
+**A truncated repository does not fail loudly on a history question. It answers, and the answer is
+wrong, and re-reading the output cannot catch it** because the output is not malformed. Two people
+reached two different wrong answers from two different truncations of one repository, and each
+checked their work.
+
+### R94. One root, one lineage, and a dating bound with no caveat
+
+Corrected before merge, on the unshallowed repository. **There is no graft.** `origin/main` has
+exactly one root, `a69f64d`, 3 September 2026, "Initial commit", and the history is one continuous
+lineage of 236 commits. The earlier claim of two roots and a join at `b2923a9` was an artefact of the
+shallow clone (R93).
+
+**What survives is the bound, and it is clean:**
+
+> **No number in this repository can be dated earlier than 3 September 2026**, because nothing
+> precedes the initial commit. "When did this number enter, and did its generator change after it"
+> is answerable for everything inside that window, which is everything.
+
+**What is withdrawn is the caveat derived from the graft.** The earlier text said that where a
+literal and its generator both predate the join, R91's ordering argument is unavailable and a
+disagreement must be settled on footing evidence instead. **There is no join, so the ordering
+argument is available for all 109 claims still to wire**, not only for those after a date. That
+correction matters more than the fact it corrects, because the caveat would otherwise have been
+applied 109 times.
