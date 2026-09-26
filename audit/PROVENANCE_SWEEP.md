@@ -229,6 +229,42 @@ calibrated against.
 5. **A guard built from this would have to read English numerals**, which the current one does not
    and no digit-based check ever would.
 
+---
+
+## 7. The repository has already solved this once, for figures
+
+**This is the most useful thing the sweep found, and it is not a number.** `check_artefacts.py`
+already carries a provenance mechanism for numbers **drawn on figures**, built after the phase
+overlay printed "25 phases" on three panels whose lattices are 35, 28 and 28: the header was
+`min(q, N)` with `N` the visit count, so three panels printed their own sample size back at the
+reader as a property of the schedule, and nothing caught it because the number was computed inside
+the figure module at draw time.
+
+Its design is exactly what prose needs, and it already states why:
+
+> The machine can find every number drawn at a call site and it can verify that an expression reads
+> the register. It CANNOT tell a claim from an axis annotation ... So the rule is enforced as a
+> DECLARATION.
+
+Each figure module carries a `DRAWN` dict mapping every interpolation to one of `registered:`,
+`own:`, `input:`, `geometry:`, `text:` or `UNREGISTERED:`. A number drawn and not declared fails; a
+declaration for a number no longer drawn fails, so the list cannot rot into a blanket exemption; and
+**`UNREGISTERED:` is a claim with no generator yet, counted and printed on every run, so the debt is
+a number that can be driven to zero rather than a silence.** The current run reports 29 drawn
+numbers, 13 registered, **0 unregistered**.
+
+**So the answer to "what should own the 130 claims" already exists in this repository, applied to a
+different surface.** The four categories in this document map onto that vocabulary directly:
+category 1 is `registered:` waiting to be wired, category 2 is `geometry:` and `text:`, category 3 is
+`UNREGISTERED:`, and category 4 needs no declaration. **The 130-claim list is this project's prose
+debt stated in the form its own figure guard already uses**, and the 51 in the queue are what
+`UNREGISTERED:` would print on the first run.
+
+The one thing prose needs that figures did not: **the declaration has to cover English numerals**,
+because `thirteen` and `eighteen` carried route 6's claim and no interpolation-based scan sees them.
+
+---
+
 **The limit of this sweep, stated so it is not over-read.** The category 3 / 4 boundary is
 heuristic and tuned to be strict, so the list is a floor. Multi-line sentences are split across
 claims. And "REPRODUCES" means a generator printed the value, which is weaker than recomputing the

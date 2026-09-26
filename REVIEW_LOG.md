@@ -3764,3 +3764,23 @@ and is owned by nothing in any of them, one value hand-copied three times under 
 route 6. `07_design.tex:113`, the gate claim itself, asserts `0.457, 0.412, 0.510` with no generator
 printing them. And the 218 category-1 literals are pure upside: the macro exists, the prose simply
 does not use it.
+
+### R77a. And the repository has already solved this once, for figures
+
+`audit/PROVENANCE_SWEEP.md` section 7. The most useful thing the sweep found is not a number.
+
+`check_artefacts.py` already carries a provenance mechanism for numbers **drawn on figures**, built
+after the phase overlay printed "25 phases" on three panels whose lattices are 35, 28 and 28. Each
+figure module declares every interpolation as `registered:`, `own:`, `input:`, `geometry:`, `text:`
+or `UNREGISTERED:`; an undeclared number fails, a declaration for a number no longer drawn fails, and
+**`UNREGISTERED:` is counted and printed on every run, so the debt is a number that can be driven to
+zero rather than a silence.** The current run reports 29 drawn numbers, 13 registered, 0
+unregistered.
+
+**The four categories of this sweep map onto that vocabulary directly**: category 1 is `registered:`
+waiting to be wired, category 2 is `geometry:` and `text:`, category 3 is `UNREGISTERED:`, category 4
+needs no declaration. So the 130-claim list is this project's PROSE debt stated in the form its own
+figure guard already uses, and the 51-claim queue is what `UNREGISTERED:` would print on day one.
+
+**The one thing prose needs that figures did not: the declaration has to cover English numerals**,
+since `thirteen` and `eighteen` carried route 6's claim and no interpolation-based scan sees them.
