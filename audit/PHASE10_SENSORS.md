@@ -586,7 +586,177 @@ there is. That is a cheap decision-relevant measurement standing in front of an 
 
 ---
 
-## Steps 2 to 4, and the hierarchical family
+## Steps 2 to 5: the five survivors, priced
 
-The hierarchical strand is done, above. Steps 2 to 4 on the five candidates that survive step 1 are
-next, with candidate 9, propionate turnover, the row no phase has priced.
+`audit/q15_sensors.py`. The hierarchical strand is done, above.
+
+### S.0 The framing that makes them comparable
+
+The record's information about `(ln theta, ln K_m, b, ln k_e)` is a fixed 4x4 block, and every
+surviving sensor does the same kind of thing to it: it supplies an independent measurement of ONE of
+those four parameters. So the phase is not "which sensor is best" but **which parameter is worth
+buying precision in, and at what price**, and the four sensors buy three different parameters.
+
+| candidate | what it measures | the parameter it buys |
+|---|---|---|
+| 2, ex vivo PCC activity | the enzyme | `ln theta`, directly |
+| 8, IV 13C3-3-HP | the marker's disposal | `ln k_e`, which is `k_e/alpha` (R.2) |
+| 9, propionate turnover | `L + b` | `b`, the offset |
+| 10, timed urine | `f_renal * k_e` | `ln k_e`, partially |
+
+**And the framing shows why candidate 9 was never priced.** S2's requirement map has a `recorded`
+load column and a `measured` load column and treats them as two different studies. **They are the two
+endpoints of candidate 9**: `recorded` is a turnover measurement of infinite width, `measured` one of
+zero width. Everything between was never computed, and the sensor lives there.
+
+### S.1 Candidate 9 buys nothing, and that is the phase's clearest result **[measured]**
+
+`sd(ln theta)`, monthly, median over 24 load seeds:
+
+| capacity | no turnover study | at 10% | at 2% | **exact** |
+|---:|---:|---:|---:|---:|
+| 5% | 3.068 | 3.060 | 3.029 | **3.022** |
+| 10% | 1.581 | 1.577 | 1.563 | **1.560** |
+| 20% | 0.812 | 0.811 | 0.804 | **0.804** |
+
+**Knowing `L + b` EXACTLY improves `sd(ln theta)` by 1 to 2%.** Not at a plausible precision, at
+perfect precision, on every schedule and at every capacity. There is no precision at which this
+sensor is worth buying, because there is no precision at which it does anything.
+
+**Why, and it is worth stating because it also reprices S2's own two columns.** The offset is already
+pinned by its own prior `s_b = 0.10 L`, and what limits `theta` is `k_e`, not the load. The load
+channel was never the binding constraint. **So S2's `recorded` and `measured` load columns differ by
+1 to 2% and are not two designs at all**, which no phase had noticed.
+
+**The row the brief most wanted priced comes back flat, and that is an answer.** It removes a study
+from the candidate set rather than adding one. **[measured]**
+
+### S.2 The k_e sensor has a floor, and the monthly record sits under it **[measured]**
+
+Candidates 8 and 10 both buy `ln k_e`. Sweeping the precision they deliver:
+
+| capacity | schedule | 0.80 prior | 10% | 5% | 2% | **exact** |
+|---:|:--|---:|---:|---:|---:|---:|
+| 5% | monthly | 3.068 | 0.597 | 0.454 | 0.405 | **0.395** |
+| 5% | every 2 d | 1.424 | 0.483 | 0.299 | 0.214 | **0.193** |
+| 10% | monthly | 1.581 | 0.305 | 0.239 | 0.217 | **0.213** |
+| 10% | every 2 d | 0.842 | 0.240 | 0.148 | 0.107 | **0.097** |
+| 20% | monthly | 0.812 | 0.164 | 0.136 | 0.127 | **0.126** |
+
+**At 5% and 10% capacity the monthly record misses the 0.20 gate even with `k_e` known exactly**,
+0.395 and 0.213. No tracer study of any quality rescues it, because the limit is the record, not the
+sensor. The 2-daily record passes at both, barely at 5% (0.193).
+
+**So the tracer route's value is schedule-dependent in a way P.8's pricing did not show.** Four
+micro-dose studies at 5.4% buy the 2-daily record a pass at 10% capacity and buy the monthly record
+nothing at all below 20%. **The schedule decision comes before the sensor decision.** **[measured]**
+
+**And candidate 10 cannot reach even that**, because `f_renal` is inside it:
+
+| `f_renal` known to | floor on `ln k_e` | 10% cap, monthly | 20% cap, monthly |
+|:--|---:|---:|---:|
+| a factor of 3 (95% interval) | 0.275 | 0.631 | 0.315 |
+| a factor of 2 (95% interval) | 0.174 | 0.435 | 0.223 |
+| +/- 5% | 0.054 | 0.243 | 0.138 |
+
+R1 gives no `f_renal` for 3-HP at all. To match candidate 8's 5.4%, the renal fraction would have to
+be known to about 5%, which is a harder measurement than the clearance it is standing in for.
+**Candidate 10 is dominated by candidate 8 on its own terms** and survives only as the bound step 1
+called it. **[measured]**
+
+### S.3 The result the project should be most uncomfortable with **[measured]**
+
+An ex vivo assay measures `ln theta` directly, so it ALONE gives `sd(ln theta)` equal to its own
+precision, with no record at all. What does the two-year marker record add on top of it?
+
+| capacity | assay alone | + monthly record | + weekly | + 2-daily |
+|---:|---:|---:|---:|---:|
+| 5%, 20% assay | 0.2000 | 0.1996 (**0.2%**) | 0.1992 (0.4%) | 0.1981 (1.0%) |
+| 10%, 20% assay | 0.2000 | 0.1984 (**0.8%**) | 0.1974 (1.3%) | 0.1946 (2.7%) |
+| 20%, 20% assay | 0.2000 | 0.1942 (**2.9%**) | 0.1924 (3.8%) | 0.1879 (6.0%) |
+| 20%, 30% assay | 0.3000 | 0.2814 (6.2%) | 0.2762 (7.9%) | 0.2632 (**12.3%**) |
+
+**Two years of monthly plasma 3-HP, added to a single ex vivo assay of ordinary quality, improves the
+estimate of residual capacity by between 0.2 and 2.9 per cent.** The best cell anywhere in the sweep
+is 12.3%, and it needs a poor assay, the densest schedule and the top of the disease range together.
+
+**This is not an argument for the assay and it is not a refutation of the record.** The ex vivo route
+was priced in q5 and carries its own problem, that a fibroblast's activity is not the patient's in
+vivo capacity, and nothing here measures that transfer. **What it is, is the marker record's
+information content stated on an absolute scale instead of a relative one.** Every earlier phase
+compared schedules against schedules and sensors against sensors. This compares the whole record
+against one blood draw sent to a reference laboratory, and the record is worth a few per cent.
+
+**Where that leaves the project's question.** "Can residual capacity be identified from plasma 3-HP
+under mRNA-3927" now has a sharper form: **it can, to within the ex vivo assay's own precision, and
+almost entirely because of the assay.** If no assay is available the record cannot do it alone at 5
+or 10% capacity under any sensor (S.2). If an assay is available the record is nearly redundant. The
+band where the record is the decisive instrument is narrow and this phase has not found it.
+**[measured]**, **[judgement]** on the reading.
+
+### S.4 The combinations, and which are redundant **[measured]**
+
+Candidate 2 at 20%, candidate 8 at 5.4%, candidate 9 at 10%:
+
+| combination | 5%, monthly | 5%, 2-daily | 10%, monthly | 10%, 2-daily |
+|:--|---:|---:|---:|---:|
+| record alone | 3.068 | 1.424 | 1.581 | 0.842 |
+| c2 only | 0.200 | 0.198 | 0.198 | 0.195 |
+| c8 only | 0.463 | 0.313 | 0.243 | 0.155 |
+| c9 only | 3.060 | 1.414 | 1.577 | 0.836 |
+| **c2 + c8** | **0.184** | **0.168** | **0.154** | **0.122** |
+| c2 + c9 | 0.200 | 0.198 | 0.198 | 0.195 |
+| c8 + c9 | 0.449 | 0.307 | 0.237 | 0.152 |
+| c2 + c8 + c9 | 0.183 | 0.168 | 0.153 | 0.121 |
+
+**Only one pair is worth anything, `c2 + c8`**, and even it improves on `c2` alone by 8 to 22%.
+**Every combination containing c9 equals the same combination without it to three figures.** Adding
+candidate 9 to candidate 2 changes nothing at all, 0.200 to 0.200.
+
+### S.5 Both verdicts confirmed by fitting **[measured]**
+
+Per the standing house rule, since both decide a verdict. Robust spread (1.4826 x MAD) with the
+collapse count, 96 records per cell, `centre` nuisance convention, monthly.
+
+| capacity | configuration | Fisher | fitted | fitted/Fisher | collapses |
+|---:|:--|---:|---:|---:|---:|
+| 10% | record alone | 1.581 | 1.340 | 0.847 | 29/96 |
+| 10% | + c9 exact turnover | 1.560 | 1.196 | 0.767 | 28/96 |
+| 10% | + c2 at 20% | 0.198 | 0.203 | 1.022 | 0/96 |
+| 10% | + c2 at 20% + c9 exact | 0.198 | 0.209 | 1.056 | 0/96 |
+| 20% | record alone | 0.812 | 0.713 | 0.878 | 20/96 |
+| 20% | + c9 exact turnover | 0.804 | 0.736 | 0.915 | 21/96 |
+| 20% | + c2 at 20% | 0.194 | 0.188 | 0.967 | 0/96 |
+| 20% | + c2 at 20% + c9 exact | 0.194 | 0.193 | 0.993 | 0/96 |
+
+**fitted/Fisher runs 0.767 to 1.056, so both verdicts stand on the fitted footing.**
+
+**On candidate 9, the fitted rows do not match the Fisher rows as tidily as the Fisher rows match each
+other, and that is worth stating rather than smoothing.** At 10% the c9 row is 11% better fitted where
+Fisher said 1.3%; at 20% it is 3% WORSE fitted, which cannot be a real improvement. At 96 reps with
+20 to 29 collapses the robust spread carries its own noise of about that size. **So the honest reading
+is that the c9 rows are indistinguishable from the rows above them on both footings**, which is the
+verdict, just not by the clean margin the Fisher table suggested.
+
+**On candidate 2 the two footings agree closely**, 0.203 against 0.198 and 0.188 against 0.194, with
+**zero collapses in every c2 row against 20 to 29 without it**. That is a second thing the assay buys
+which the spread alone does not show: it removes the collapse mode entirely. **[measured]**
+
+### S.6 What steps 2 to 5 return
+
+1. **Candidate 9, propionate turnover, is dropped on measurement.** Exact knowledge of `L + b` is
+   worth 1 to 2%, and S2's two load columns collapse into one.
+2. **Candidate 10, timed urine, is dominated by candidate 8** unless `f_renal` is known to about 5%,
+   which R1 does not supply and which is harder than the measurement it substitutes for.
+3. **Candidate 8's value is schedule-dependent**: it buys the 2-daily record a pass at 10% capacity
+   and buys the monthly record nothing below 20% capacity, because at 5 and 10% the monthly record
+   misses the gate with `k_e` known exactly.
+4. **Candidate 2, ex vivo activity, dominates everything**, and the uncomfortable corollary is that
+   the two-year marker record adds 0.2 to 2.9% on top of it. The record's remaining distinct value is
+   removing nothing the assay does not already remove, except that the assay removes the collapse
+   mode the record alone has at 20 to 30%.
+5. **Only `c2 + c8` is a combination worth buying**, and the phase's practical recommendation is
+   therefore an ex vivo assay plus the densest affordable record, with the tracer study bought only
+   if the record is dense.
+
+**[measured]** on 1 to 4, **[judgement]** on 5.

@@ -3600,3 +3600,41 @@ assumption a wider panel could test, while the cohort route meets a floor no mon
 **And the item it raises, filed.** If the between-patient CV is what kills the route, the CV is the
 thing to measure first, and P.6's repeatability design, 10 patients at 12 draws, is already scoped to
 estimate it. A cheap decision-relevant measurement now stands in front of an expensive one.
+
+---
+
+### R73. Phase 10 steps 2 to 5: the record is worth a few per cent on top of one ex vivo assay
+
+`audit/PHASE10_SENSORS.md` S.0 to S.6, `audit/q15_sensors.py`.
+
+Every surviving sensor supplies an independent measurement of ONE of the four parameters, so the
+phase is which parameter is worth buying precision in. Four findings, the first two negative.
+
+**Candidate 9, propionate turnover, is dropped on measurement.** Knowing `L + b` EXACTLY improves
+`sd(ln theta)` by 1 to 2% at every capacity and schedule. There is no precision at which it is worth
+buying because there is no precision at which it does anything. The offset is already pinned by its
+own prior and the binding constraint is `k_e`, not the load. **A corollary no phase had noticed: S2's
+`recorded` and `measured` load columns differ by 1 to 2% and are not two designs.**
+
+**Candidate 10, timed urine, is dominated by candidate 8**, because `f_renal` sits inside it and R1
+gives no value for 3-HP. To match candidate 8's 5.4% the renal fraction would have to be known to
+about 5%, which is harder than the clearance it substitutes for.
+
+**Candidate 8's value is schedule-dependent.** At 5% and 10% capacity the monthly record misses the
+0.20 gate with `k_e` known EXACTLY, 0.395 and 0.213, so no tracer study rescues it. The 2-daily
+record passes at both. **The schedule decision comes before the sensor decision.**
+
+**And the result the project should be most uncomfortable with.** An ex vivo assay alone gives
+`sd(ln theta)` equal to its own precision. **Two years of monthly plasma 3-HP added on top improves
+it by 0.2 to 2.9 per cent**; the best cell in the whole sweep is 12.3%, needing a poor assay, the
+densest schedule and the top of the disease range together. That is not an argument for the assay,
+whose ex vivo to in vivo transfer is unmeasured, and not a refutation of the record. It is **the
+record's information content on an absolute scale instead of a relative one**, and every earlier
+phase compared schedules against schedules. The project's question takes a sharper form: capacity can
+be identified to within the assay's own precision, and almost entirely because of the assay.
+
+Both verdicts confirmed by fitting, fitted/Fisher 0.767 to 1.056. **On candidate 9 the two footings
+agree only to within the Monte Carlo noise**, 11% better fitted at one capacity and 3% worse at
+another against a Fisher figure of 1 to 2%, so the honest reading is indistinguishable rather than
+matched. **On candidate 2 they agree closely, and the assay removes the collapse mode outright**,
+0/96 against 20 to 29 out of 96 without it, which the spread alone does not show.
