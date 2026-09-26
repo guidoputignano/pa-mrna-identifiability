@@ -2879,3 +2879,32 @@ information the other reading never created. The prior is a property of the lite
 the study, and is now kept at 0.8; the reading-(i) figures fell from 2.84 to 2.33 at 5% of
 normal, monthly.
 
+**Reframed after the author's review, with both findings confirmed by the probe** (the one
+passing 5% cell at RMSE 0.125 against the probe's 0.134 without the baseline draw; the drift
+column reproduced at θ = 150, 2-daily, 12 records: 0.117, 0.249, 0.439 for study 2% at drift 0,
+5 and 10%, and 0.475 for study 5% at drift 10%).
+
+Two things changed in how S2b is reported, not in its numbers.
+
+1. **The two readings of what the tracer measures are not a premise and a sensitivity.** The
+   end-product reading is primary, since the enzyme acts on propionyl-CoA and not on the marker.
+   But the literal reading is the observation-model assumption the discussion already names as
+   the paper's weakest, so the gap between them, a factor of 5.8 on `sd(ln θ̂)`, **is the first
+   quantification of what that assumption is worth**. It is reported that way rather than as a
+   premise to be asserted. And the same study can settle it, by measuring where the label ends
+   up: the fraction recovered unchanged against the fraction appearing in downstream products.
+2. **Drift is an unknown, not a finding.** The 0, 5 and 10% range is a sweep; the range is
+   **[judgement]** and only its consequence is **[measured]**. Before a repeated study is
+   proposed as the answer, the question is whether the drift is predictable: if it tracks kidney
+   function, which is measured routinely and declines in this disease, a covariate replaces a
+   repeat. S4 also carries drift at normal capacity, since the same prior carries the headline
+   precision.
+
+`refs/brief_questions.md` is new, and holds the R1 questions these raise: whether the marker is a
+substrate of any step or only an end product (with an unverified lead, PMID 28634175, recorded as
+a lead and not a citation), within-patient stability of the clearance, and its covariates.
+
+**A boundary, set by the author.** S2b crossed from checking the paper into designing a study.
+S3, S4 and S5 are finished as the brief writes them, then this phase is written up and stops.
+There is no S2c; a new sub-question is recorded rather than run.
+

@@ -768,17 +768,23 @@ And **R1 does not establish that `k_e` is entirely renal**, so the urine arm is 
 on `k_e`, not a measurement of it. Its role is the renal fraction, which is a different
 quantity from the one S2 needs. **[measured]**, **[judgement]** on the second point.
 
-### S2b.4 What the study measures is a biological question the paper does not settle **[judgement]**
+### S2b.4 The two readings price the observation-model assumption **[measured]**, **[judgement]** on which is primary
 
 At trace level the paper's own balance removes the tracer by both routes, at
-`CL = k_e + θ/(K_m + m₀)`. Two readings follow, and they are not a fine distinction:
+`CL = k_e + θ/(K_m + m₀)`. Two readings follow:
 
-- **(ii), biological.** 3-HP is an end product and not a PCC substrate, so the tracer measures
-  `k_e` itself and the study's sd becomes the prior on `ln k_e`. Brief **R1** argues this, and
-  S2's whole pricing assumes it.
-- **(i), model-literal.** The tracer measures `k_e + θ/(K_m + m₀)`, one joint observation on θ
-  and `k_e`, entering the information matrix as a row rather than a prior. The population prior
-  0.8 is kept, since it is a property of the literature and not of the study.
+- **(ii), end product. PRIMARY.** The enzyme acts on propionyl-CoA, not on the marker, so 3-HP
+  is not a PCC substrate, the tracer measures `k_e` itself, and the study's sd becomes the prior
+  on `ln k_e`. This is the reading S2's pricing assumes and the one to carry. **[judgement]**
+- **(i), model-literal.** The model *writes* the enzymatic term as a clearance of the marker, so
+  taken literally the tracer measures `k_e + θ/(K_m + m₀)`: one joint observation on θ and
+  `k_e`, entering as a row rather than a prior. The population prior 0.8 is kept, since it
+  belongs to the literature and not to the study.
+
+Reading (i) is not an arbitrary alternative. It is the observation-model assumption that the
+paper's own discussion already names as its weakest, written out and priced. So the gap between
+the two readings is not a choice between a premise and a sensitivity: **it is the first
+quantification of what that assumption is worth.**
 
 The enzyme's share of total clearance at the untreated level is 16% at 5% of normal, 29% at 10%
 and 47% at 20%, so under (i) the study is mostly measuring `k_e` anyway, but it never separates
@@ -792,19 +798,26 @@ no drift:
 | 10%, monthly | 0.217 | 1.35 | 1.58 |
 | 20%, monthly | 0.127 | 0.78 | 0.81 |
 
-**Under reading (i) the study is very nearly worthless**: it buys a factor of about 1.3 where
-reading (ii) buys 7.6, and no schedule at any capacity reaches the 0.20 gate. **[measured]**
-**The identifiability of θ therefore rests on a biochemical claim, that 3-HP is not a PCC
-substrate, which this repository has not verified and which no sweep can substitute for.**
-That claim should be stated in the specification as a premise, with its evidence, not left
-implicit. **[judgement]**
+**The assumption is worth a factor of 5.8 on `sd(ln θ̂)`**: reading (ii) buys 7.6 against no
+study, reading (i) buys 1.3, and under (i) no schedule at any capacity reaches the 0.20 gate.
+**[measured]** That is the price of the weakest assumption in the observation model, and it is
+the largest single number S1 or S2 has produced.
 
-### S2b.5 Within-patient drift in `k_e`, not the study, is the binding constraint **[measured]**
+**And the same study can settle the reading, rather than asserting it.** A labelled bolus goes
+somewhere: measuring **the fraction of label recovered unchanged against the fraction appearing
+in downstream products** distinguishes a marker that is only excreted from one that re-enters
+the pathway. The specification should say so, which turns a stated premise into a measured one
+at no extra study. **[judgement]**
 
-What the record needs is `k_e` over two years, not on the day of the study. Renal decline is
-the obvious mechanism, and **R1** reports eGFR under 60 in about half of adults with PA, so
-drift is swept at 0, 5 and 10% and added in quadrature. Reading (ii), Fisher, load measured,
-no baseline draw:
+### S2b.5 Within-patient drift in `k_e` is an unknown, and it binds harder than the study
+
+**Drift is a sweep, not a finding.** Nothing measures the within-patient stability of this
+clearance over months to a year: **R1** reports no such study, and the 0, 5 and 10% range here
+is chosen because renal decline is the obvious mechanism and **R1** reports eGFR under 60 in
+about half of adults with PA. **[judgement]** on the range. What follows from a given drift is
+arithmetic. **[measured]**
+
+Reading (ii), Fisher, load measured, no baseline draw, study and drift in quadrature:
 
 | capacity | schedule | study 2%, drift 0 | 2%, 5% | 2%, 10% | 5%, 10% | 10%, 10% |
 |---|---|---|---|---|---|---|
@@ -840,10 +853,15 @@ gate is met monthly across the study and drift sweep except the 10%/10% corner, 
 3. **Reading (i) versus (ii) decides whether the study is worth running at all.** It is a
    biochemical question, not a design one. **[measured]** on the sizes, **[judgement]** on the
    premise.
-4. **Within-patient drift in `k_e` is the binding constraint below 10% of normal**, and the
-   micro-dose study does not address it. Repeating it, say annually, is the only design answer
-   in view; that is not in the specification. **[judgement]**
-5. **S2's requirement at 5% of normal survives only in its most favourable corner** and only if
+4. **Within-patient drift in `k_e` binds harder than the study below 10% of normal**, on the
+   swept range. The design question is not yet "how often to repeat the study": it is **whether
+   the drift is predictable**. If it tracks kidney function, which is measured routinely in this
+   disease and declines in it, a covariate replaces a repeat, and the covariate is already in
+   every clinic record. Only if it does not track anything measured does repetition become the
+   answer. Neither is in the specification. **[judgement]**
+5. **Drift must be carried at normal capacity too**, not only in the disease range: the same
+   `k_e` prior carries the headline precision, so S4 sweeps it there. **[judgement]**
+6. **S2's requirement at 5% of normal survives only in its most favourable corner** and only if
    `k_e` is stable to better than 5% over two years. S2's "about 2%" was the right number; what
    S2b adds is that it is not sufficient on its own. **[measured]**
 
@@ -859,12 +877,22 @@ gate is met monthly across the study and drift sweep except the 10%/10% corner, 
 - **Whether to carry the two-compartment family as the analyst.** S1.3 says it buys bias
   under 14% on every truth for about twice the RMSE. That is S2's to price against the
   gate.
-- **Whether 3-HP is a PCC substrate at trace level.** S2b.4 makes this the question that
-  decides whether the micro-dose study is worth running: reading (ii) buys a factor of 7.6 on
-  `sd(ln θ̂)`, reading (i) a factor of 1.3. Brief **R1** asserts the first and does not
-  establish it.
+- **Whether the marker is itself cleared enzymatically**, the observation-model assumption the
+  discussion calls weakest. S2b.4 prices it at a factor of 5.8 on `sd(ln θ̂)`. The label-fate
+  measurement in S2b.4 would settle it inside the study already proposed.
+- **Within-patient stability of marker clearance**, and **whether its drift has a covariate**,
+  kidney function the obvious candidate. Both are in `refs/brief_questions.md` for **R1**.
 - **The human 3-HP half-life**, unknown by a factor of 70, which is what the tracer study's
   sampling window must be chosen against (S2b.1, S2b.2).
 - **Within-patient stability of `k_e` over two years.** S2b.5 makes it the binding constraint
   below 10% of normal, and nothing in the specification addresses it.
 - **S3 to S5** have not been run.
+
+### A boundary on this phase
+
+S2b crossed from checking the paper's robustness into designing a new study, which is where
+scope creep starts. **S3, S4 and S5 are finished as the brief writes them**, with the two
+additions S2b earned (the label-fate measurement, and drift carried at normal capacity in S4),
+and then this phase is written up and stops. **There is no S2c.** A new sub-question that
+appears on the way is recorded here, or in `refs/brief_questions.md` if it is a question for the
+literature, and is not run.
