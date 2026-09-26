@@ -24,12 +24,24 @@ Set by the author and held throughout. They are not negotiable defaults.
   conversions were made (`REVIEW_LOG.md` R87). The test is mechanical: the macro must render exactly
   the characters it replaces, and `audit/q22_wire_macros.py` refuses otherwise.
 - **No constant moves** without an explicit decision. `src/common/params.py` is the register.
-- **No agent swarms and no scheduled check-ins. Work solo and in the foreground.**
-  **This rule was broken once, in Phase 10, and the breach is recorded rather than tidied away**: a
-  138-agent workflow was run to read 12 scripts against the paper. The reason was good and the
-  result was load-bearing, but the gate was the author's and was not asked for. **An amendment is
-  proposed in section 6 and is NOT in force.** Until the author adopts it, this rule stands as
-  written.
+- **No scheduled check-ins, ever.** Forbidden outright.
+- **No agent swarms, with one bounded exception adopted by the author at the end of Phase 10.**
+  **Fan-out is permitted for SEMANTIC SEARCH ONLY, and never for judgement.** A subagent may be used
+  to locate candidates a mechanical search cannot express: which script computes this quantity, which
+  passage states this claim, where in the corpus this idea appears. It may not be used to decide
+  whether a finding is true, to compute a number that enters a report, or to write anything reaching
+  `paper/` or `REVIEW_LOG.md`.
+  **Every candidate a subagent returns is verified against a primary source before acceptance**, by
+  the main session, against captured output or the file itself. A claim that cannot be verified that
+  way is discarded, not reported with a confidence level.
+  **The author is told before the fan-out runs, not after**, with what it will read and what it will
+  be asked to return.
+  **Everywhere else the prohibition stands.**
+  **This rule was broken once before it existed, and the breach stays recorded rather than tidied
+  away**: in Phase 10 a 138-agent workflow was run without asking. It met the verification clause
+  already, three of its claims being rejected against captured output, and it violated the telling
+  clause. That is precisely why the telling is written down rather than left to the reason being
+  good.
 - **Footing and seed spread with every number.** A single-seed figure quoted without its range has
   three times been the error here.
 - **One independent re-check before each report**, sharing no code path with the thing it checks.
@@ -68,9 +80,7 @@ reports claim branches and pull requests that do not exist.
 
 | # | question | what turns on it |
 |---|---|---|
-| **(a)** | **Do the two unreconciled numbers stand or move?** | `11_scope.tex:204` and `08_specification.tex:372` say a prescribed swing is worth "7%" and "32%"; the generator says 6.3% and 24.1% on a footing its own 2.32 confirms. `06_excitation.tex:286` says "0.288"; the generator says 0.286. **Neither value was adopted** (R88). Either the scripts drifted or the sentences were always wrong, and that is not decidable from here. |
-| **(b)** | **May seven spelled-out numerals be reworded?** | "thirteen", "six", "eighteen", "eleven", "nearly ten years", "under one per cent" cannot become `\num{}` macros without becoming digits, which is a prose edit. **Their macros already exist and are generated.** Approving the reword is the only step left (R89). |
-| **(c)** | **Does the two-state reduction enter the paper?** | It is proven exact and it renames two of the paper's three constants: `k_e` is the overflow coefficient divided by the measured fraction, `K_m` is not a Michaelis constant. `audit/PHASE10_PROPOSED_TEXT.md`'s closing block depends on this answer. |
+| ~~(a), (b), (c)~~ | **settled, see section 7** | the two unreconciled numbers, the spelled numerals, and the reduction's status |
 | **(d)** | **5% or 10% of normal capacity?** | Carried from Phase 5 and still open. `params.py` states it two ways four lines apart. Changes no pass or fail; changes the admissible range by `2.5x`. Hsia et al. 1979 (PMID 481943) favours 5% and is **unverified**. |
 | **(e)** | Does the exact constant-load curve go into the paper, and where? | Carried from Phase 5. Passages 1, 2 and 5 of `PHASE4_PROPOSED_TEXT.md` are drafted for it. This is `R14` reaching the paper. |
 | **(f)** | **Where does dietary load enter a direct-response model?** | Carried from Phase 5 and unchanged. It decides both whether `theta` is identifiable at all and whether a misfit would be noticed. Full working in `audit/k7_insertions.py`. Nothing in either source states the coupling. |
@@ -124,16 +134,14 @@ Unchanged from Phase 5 and still open. Full detail in `git show` of this file's 
 
 ---
 
-## 6. PROPOSED amendment to the agent-swarm rule. NOT IN FORCE
+## 6. The agent-swarm amendment, adopted
 
-The author asked for this after a 138-agent workflow was run in Phase 10 without asking. **The rule
-in section 0 stands as written until the author adopts what follows.**
+**It is now in section 0 and in force.** This section records why it exists, because the reasoning
+is worth keeping where the rule is not.
 
-### Why an amendment rather than an exception
-
-The rule exists because a swarm produces volume that reads as evidence. Everything this project has
-learned says the hazard is real: in that workflow, **three of the agents' claims did not survive
-checking** and would have entered the record as findings had they been believed.
+The rule existed because a swarm produces volume that reads as evidence, and the hazard is real: in
+the instance that prompted the amendment, **three of the agents' claims did not survive checking**
+and would have entered the record as findings had they been believed.
 
 But the task it was used for is one solo work cannot do. Ownership of a paper number by a script is
 **semantic**: a digit match on round constants like 100, 365 and 14.5 is worthless, and deciding it
@@ -141,27 +149,22 @@ requires reading each script against the sections its docstring names. Twelve sc
 sections is a fan-out, and it found what value-matching had missed, including the fifth unreachable
 generator the solo method had cleared as scoping work.
 
-### The proposed rule
+**What the amendment would have changed about the breach is only the telling.** The verification
+clause was already met. That asymmetry is the argument for writing the rule down: the clause that was
+honoured was the one with an obvious payoff, and the clause that was skipped was the one whose payoff
+is someone else's judgement.
 
-> **Fan-out is permitted for SEMANTIC SEARCH ONLY, and never for judgement.** A subagent may be used
-> to locate candidates that a mechanical search cannot express: which script computes this quantity,
-> which passage states this claim, where in the corpus does this idea appear. It may not be used to
-> decide whether a finding is true, to compute a number that enters a report, or to write anything
-> that reaches `paper/` or `REVIEW_LOG.md`.
->
-> **Every candidate a subagent returns is verified against a primary source before acceptance**, by
-> the main session, against captured output or the file itself. A claim that cannot be verified that
-> way is discarded, not reported with a confidence level.
->
-> **The author is told before the fan-out runs, not after**, with what it will read and what it will
-> be asked to return.
->
-> **Everywhere else the prohibition stands**, including scheduled check-ins, which remain forbidden
-> outright.
+---
 
-### What it would have changed about the Phase 10 breach
+## 7. Decisions settled at the end of Phase 10
 
-Nothing about the method, which already met the second and fourth clauses: every claim was checked
-against captured stdout and three were rejected. It would have changed the first clause, which is the
-one that was violated, and that is the point of writing it down rather than relying on the reason
-being good.
+- **(a) The two unreconciled numbers were transcription errors and are corrected** (R91). Settled by
+  `git`: the scripts have one substantive commit and the sentences arrived in the next one, so
+  nothing drifted. Three sites corrected, all now macros.
+- **(b) The seven spelled-out numerals are NOT reworded.** The paper's register is not something to
+  spend on machinery, so the checker learned to read English instead:
+  `tools/check_artefacts.py check_spelled_numbers()` compares a declared English word against the
+  macro it states, under an `exact`, `rounds` or `below` relation (R92).
+- **(c) The two-state reduction goes in, in the consolidation pass and not as a passage.** It is
+  exact and every existing result survives as its reduction, so it is a reorganisation rather than a
+  rewrite, but it changes the spine.

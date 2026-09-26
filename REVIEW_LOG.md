@@ -4161,3 +4161,34 @@ paper error by recomputing it produced five false positives, every one of them t
 The method that worked was asking which script owns the sentence and running it. **These three are
 the first numbers in the paper this effort has shown to be wrong, and they were found by connecting
 the document to its own generators rather than by checking it against anything.**
+
+### R92. The checker learns to read English, rather than the paper learning to write digits
+
+`tools/check_artefacts.py`, `check_spelled_numbers()`. Author's decision on (b), and it is the right
+way round: turning "thirteen" into "13" is a prose edit made to serve a tool, and **the paper's
+register is not something to spend on machinery**.
+
+Seven sites state a generated value as an English word and no guard in the repository could see them,
+because every check compares digits. **That is not hypothetical: the one error this whole sweep was
+provoked by was the clause "from thirteen visits to eighteen"** (R75, withdrawn by R82), and a
+thousand of the paper's 2472 unguarded literals are spelled out.
+
+**The mechanism.** A declaration table maps a word in a section file to the macro it states, under
+one of three relations, because English numerals in prose are not always exact:
+
+| relation | meaning | instance |
+|:--|:--|:--|
+| `exact` | the word spells the value | "thirteen" against `meas_match_nominal` = 13 |
+| `rounds` | the word spells `round(value)` | "nearly ten years" against `tier1_years_at_pub` = 9.8 |
+| `below` | the value is under the word | "under one per cent" against `meas_b_only_gain_pct` = 0.33 |
+
+Six rows are declared and pass. **Both failure arms were tested rather than assumed**: perturbing
+`meas_match_nominal` from 13 to 14 produces "'thirteen' states meas_match_nominal, which is 14,
+spelled 'fourteen'", and declaring a word that is not in the file produces "the word 'seventeen' is
+no longer there, so the row is stale". A guard that cannot fail is worth nothing, and this one fails
+on both a changed value and a rotted declaration.
+
+**It is the figure-provenance mechanism's design, applied to the one surface it was never pointed
+at.** Declaration rather than inference, because no static analysis can tell a claim from an
+annotation; failure on an undeclared or stale row, so the table cannot become a blanket exemption.
+The difference is that this one reads English.

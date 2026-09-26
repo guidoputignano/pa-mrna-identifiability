@@ -1032,6 +1032,114 @@ def check_source_warnings():
     return not found and probe_ok
 
 
+# ==========================================================================
+#  SPELLED-OUT NUMERALS
+# ==========================================================================
+#: A paper number written as an English word is invisible to every guard in
+#: this file, because all of them compare digits. That is not hypothetical: the
+#: one error this repository's provenance sweep was provoked by was the clause
+#: "from thirteen visits to eighteen" (REVIEW_LOG.md R75, withdrawn by R82),
+#: and a thousand of the paper's 2472 unguarded literals are spelled out.
+#:
+#: The alternative was to reword those sentences into digits so the existing
+#: machinery could see them. The author declined, and rightly: the paper's
+#: register is not something to spend on a tool's convenience. So the tool
+#: learns to read English instead.
+#:
+#: Each row declares that a WORD in a section file states a GENERATED value,
+#: under one of three relations, because English numerals in prose are not
+#: always exact:
+#:
+#:    exact      the word spells the value        "thirteen" <- 13
+#:    rounds     the word spells round(value)     "ten" <- 9.8, "nearly ten years"
+#:    below      the value is under the word      "one" <- 0.33, "under one per cent"
+#:
+#: A row whose word is no longer in the file FAILS, so the table cannot rot
+#: into a blanket exemption, and a row whose relation stops holding FAILS,
+#: which is the whole point.
+SPELLED = (
+    ("11_scope.tex", "thirteen", "meas_match_nominal", "exact"),
+    ("11_scope.tex", "eighteen", "meas_match_2pct", "exact"),
+    ("11_scope.tex", "six", "meas_gate_nominal", "exact"),
+    ("08_specification.tex", "eleven", "tier1_visits_exact", "exact"),
+    ("08_specification.tex", "ten", "tier1_years_at_pub", "rounds"),
+    ("06_excitation.tex", "one", "meas_b_only_gain_pct", "below"),
+)
+
+_ONES = ("zero one two three four five six seven eight nine ten eleven twelve "
+         "thirteen fourteen fifteen sixteen seventeen eighteen nineteen").split()
+_TENS = {20: "twenty", 30: "thirty", 40: "forty", 50: "fifty", 60: "sixty",
+         70: "seventy", 80: "eighty", 90: "ninety"}
+
+
+def _spell(n):
+    """An integer in English, over the range a design quantity occupies."""
+    n = int(n)
+    if n < 0 or n > 999:
+        return None
+    if n < 20:
+        return _ONES[n]
+    if n < 100:
+        t, r = divmod(n, 10)
+        return _TENS[t * 10] + ("-" + _ONES[r] if r else "")
+    h, r = divmod(n, 100)
+    return _ONES[h] + " hundred" + (" " + _spell(r) if r else "")
+
+
+def check_spelled_numbers(numdir=None):
+    """
+    Every declared English numeral against the macro it states.
+
+    This is the guard's one check that does not compare digits, and it exists
+    because the paper is allowed to write "thirteen".
+    """
+    numdir = (ROOT / "results" / "numbers") if numdir is None else Path(numdir)
+    vals = {}
+    for f in sorted(Path(numdir).glob("*.tex")):
+        for m in re.finditer(
+                r"csname paper@num@([A-Za-z0-9_]+)\\endcsname\{([^}]*)\}",
+                f.read_text()):
+            vals[m.group(1)] = m.group(2)
+    bad = []
+    for fn, word, key, rel in SPELLED:
+        src = ROOT / "paper" / "sections" / fn
+        text = _uncommented(src.read_text()) if src.exists() else ""
+        if not re.search(r"(?<![-\w])" + re.escape(word) + r"(?![-\w])",
+                         text, re.I):
+            bad.append(f"{fn}: the word '{word}' is no longer there, so the "
+                       f"row for {key} is stale")
+            continue
+        if key not in vals:
+            bad.append(f"{fn}: '{word}' declares {key}, which no generator "
+                       f"writes")
+            continue
+        try:
+            v = float(vals[key])
+        except ValueError:
+            bad.append(f"{key} is not numeric: {vals[key]!r}")
+            continue
+        if rel == "exact":
+            want = _spell(round(v))
+            if want != word.lower():
+                bad.append(f"{fn}: '{word}' states {key}, which is {vals[key]}, "
+                           f"spelled '{want}'")
+        elif rel == "rounds":
+            want = _spell(round(v))
+            if want != word.lower():
+                bad.append(f"{fn}: '{word}' rounds {key} = {vals[key]}, which "
+                           f"rounds to '{want}'")
+        elif rel == "below":
+            bound = _ONES.index(word.lower()) if word.lower() in _ONES else None
+            if bound is None or not v < bound:
+                bad.append(f"{fn}: '{word}' claims {key} = {vals[key]} is "
+                           f"below {bound}, and it is not")
+    for b in bad:
+        print("  SPELLED: " + b)
+    print(f"  {len(SPELLED)} spelled-out numeral(s) checked against the macros "
+          f"they state (self-test: {'PASS' if _spell(13) == 'thirteen' and _spell(18) == 'eighteen' and _spell(25) == 'twenty-five' else 'FAIL'})")
+    return not bad
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--working-tree", action="store_true",
@@ -1055,6 +1163,10 @@ def main():
     #  and the prose half of the reachability question: a section file that
     #  no document inputs is as invisible as a number no generator writes
     ok = check_inputs_reachable() and ok
+    #  and the half no digit-based check can see: a number the paper spells
+    #  out in English. The one error this repository's sweep was provoked by
+    #  was exactly that (REVIEW_LOG.md R92)
+    ok = check_spelled_numbers() and ok
     print("  ARTEFACTS MATCH THE CODE" if ok else "  ARTEFACTS HAVE DRIFTED")
     return 0 if ok else 1
 
