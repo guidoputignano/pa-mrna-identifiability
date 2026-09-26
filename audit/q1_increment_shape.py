@@ -136,6 +136,26 @@ DROP = 2.0 * DROP_NLL
 #: how far the profile thins the outer shape grid. 1 is no thinning.
 PROFILE_STRIDE = 5
 
+#: WHICH SIDE OF AN INFUSION A DRAW AT THE SAME INSTANT IS READ ON, for the
+#: truth and the analyst alike. The paper's monthly record puts one draw at a
+#: dose instant, t = 0, and `design.run.delta` reads it on the POST-dose side
+#: (`t >= t_k`). That draw is inside the marker's own settling window, 0.054 d
+#: by `g_design_common.settling_days`, so the quasi-steady model does not hold
+#: there; and what an increment kernel says at that instant is exactly where
+#: kernels differ most, a jump against a rise. The first run of this script
+#: read it post-dose and it alone carried the Attarwala cell from about 1.1 to
+#: 5.6 (`q1b_reconcile.py`, R2 and R4). "pre-dose" reads it before the
+#: infusion, as a clinic draws on a dose day. "post-dose" reproduces the
+#: first run.
+DOSE_DAY_DRAW = "pre-dose"
+_PRE = 1e-9
+
+
+def at_draw(times):
+    """The instants the increment is evaluated at, per DOSE_DAY_DRAW."""
+    times = np.asarray(times, float)
+    return times - _PRE if DOSE_DAY_DRAW == "pre-dose" else times
+
 #: burn-in before the increment train is read as steady. The slowest kernel
 #: here has a terminal half-life near 12 d, so 200 d is 12 interval-lengths;
 #: Part 0 prints the convergence actually achieved rather than assuming it.
@@ -660,7 +680,16 @@ def exact_obj(theta, Km, ke, b, kappa, m, s, phi, F=None,
     J = float(np.sum(((pred - s) / sigma) ** 2))
     J += b ** 2 / sb ** 2 + (np.log(ke) - np.log(ke_ref)) ** 2 / 0.8 ** 2
     if kappa_prior is not None:
-        J += (kappa - 1.0) ** 2 / kappa_prior ** 2
+        #  on LN kappa, which is the repository's convention: the dose-scale
+        #  column in g_design_common.sd_ln_theta is `inc g`, the derivative in
+        #  ln kappa, and its prior is stated on that coordinate. An earlier
+        #  draft carried (kappa - 1)^2 here, the delta-method form, which
+        #  charges 68 for kappa = 0.01 where the log prior charges 1470, and
+        #  let the fit switch the increment off. q1b_reconcile.py R2 found it
+        #  against the probe's fitter on identical records.
+        if kappa <= 0:
+            return np.inf
+        J += np.log(kappa) ** 2 / kappa_prior ** 2
     return J
 
 
@@ -691,10 +720,21 @@ def polish(theta, Km, ke, b, kappa, m, s, phi, free_kappa, theta_fixed=None,
     if theta_fixed is None:
         free.append(("theta", np.log(max(theta, 1e-12))))
     free.append(("Km", np.log(max(Km, 1e-12))))
-    free.append(("ke", np.log(max(ke, 1e-12))))
+    #  The linear inner solve carries the k_e prior in its delta-method form,
+    #  which does not keep k_e positive, and with theta held high on a profile
+    #  it can return k_e <= 0. Starting the polish from ln(1e-12) there leaves
+    #  it stranded where exp(ln k_e) has no gradient, and it was accepted
+    #  because the start's own objective is infinite: the profile jumped from
+    #  1.5 to 553 between two adjacent theta, and upper interval edges came
+    #  out short. q9_recheck.py check 5 found it against n6. So a non-positive
+    #  or negligible k_e restarts from the prior's own centre instead.
+    ke_start = ke if ke > 1e-3 * ke_ref else ke_ref
+    free.append(("ke", np.log(ke_start)))
     free.append(("b", b))
     if free_kappa:
-        free.append(("kappa", kappa))
+        #  ln kappa, so the exact polish can carry the log prior and kappa
+        #  stays positive whether or not it has a prior
+        free.append(("kappa", np.log(max(kappa, 1e-6))))
     names = [n for n, _ in free]
     q0 = np.array([v for _, v in free])
 
@@ -703,14 +743,15 @@ def polish(theta, Km, ke, b, kappa, m, s, phi, free_kappa, theta_fixed=None,
         th = np.exp(np.clip(d["theta"], -25, 25)) if "theta" in d else theta_fixed
         return (th, np.exp(np.clip(d["Km"], -25, 25)),
                 np.exp(np.clip(d["ke"], -25, 25)), d["b"],
-                d.get("kappa", 1.0))
+                float(np.exp(np.clip(d["kappa"], -25, 25)))
+                if "kappa" in d else 1.0)
 
     def res(q):
         th, K, k, bb, kap = unpack_q(q)
         r = ((th + kap * phi) * m / (K + m) + k * m + bb - s) / sigma
         extra = [bb / sb, (np.log(k) - np.log(ke_ref)) / 0.8]
         if kappa_prior is not None:
-            extra.append((kap - 1.0) / kappa_prior)
+            extra.append(np.log(kap) / kappa_prior)
         return np.concatenate([r, extra])
 
     lb = np.array([lo_km if n == "Km" else -np.inf for n in names])
@@ -778,7 +819,7 @@ class Analyst:
         k = self.kernel(q)
         key = (self.shape_kind, tuple(np.round(np.asarray(q, float), 12)))
         A = amplitude(k, self._ref[1], self._ref[0], key=key)
-        return A * assemble(k, self.train[0], self.train[1], times)
+        return A * assemble(k, self.train[0], self.train[1], at_draw(times))
 
     def q0(self):
         if self.shape_kind == "exp":
@@ -948,7 +989,7 @@ def committed_ref():
 def truth_increment(kernel_name, train, convention, ref, times):
     k = KERNELS[kernel_name]
     A = amplitude(k, convention, ref, key=("truth", kernel_name))
-    return A * assemble(k, train[0], train[1], times)
+    return A * assemble(k, train[0], train[1], at_draw(times))
 
 
 def make_analysts(train, ref, convention, which=None):

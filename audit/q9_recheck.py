@@ -31,6 +31,13 @@ Covers, for `audit/q1_increment_shape.py` (S1):
      sd(ln t_half) = sqrt(2) / (lambda |tau_1 - tau_2|), which follows because
      the free amplitude removes the phase-independent part of the sensitivity
      and leaves lambda*tau.
+  8  The residual reference: penalised against unpenalised on the same records.
+  9  The free-amplitude fit against the probe's fitter
+     (`probes_2026-09-25/fit.py`), on the record where the delta-method and log
+     forms of the kappa prior part company. Added when q1b_reconcile.py found
+     the first run's kappa prior in the wrong coordinate.
+ 10  The dose-day draw: pre-dose, every kernel is zero at t = 0; post-dose, the
+     committed analyst is design.run.delta there.
 
 Run:  python audit/q9_recheck.py
 """
@@ -386,13 +393,95 @@ def check_8_residual_reference():
     return ok and ordered
 
 
+def check_9_kappa_prior():
+    banner("9. THE FREE-AMPLITUDE FIT AGAINST THE PROBE'S FITTER")
+    print("""  q1's first run put the 12% prior on kappa itself, the delta-method
+  form, while the repository states it on ln kappa (the design column is
+  `inc g`, the derivative in ln kappa). On the one record family where the two
+  forms part company, the probe's fitter, which shares no code with q1 and
+  carries the prior on ln kappa, is the independent route. The record is the
+  q1 two-compartment kernel read post-dose at t = 0, which is where the first
+  run found the increment "switched off".""")
+    sys.path.insert(0, str(Path(__file__).resolve().parent / "probes_2026-09-25"))
+    import core as C
+    import fit as PF
+    ref = Q.committed_ref()
+    tn, wn = Q.nominal_train()
+    k = Q.kernel_attarwala()
+    amp = Q.amplitude(k, "peak", ref)
+    times = np.arange(0.0, 730.0, 30.4)
+    inc_t = amp * Q.assemble(k, tn, wn, times)
+    print("""
+  The probe's fitter is unbounded in K_m and q1's is bounded to its scan's
+  box, [1, 1000] (check 4 prints what leaving it does). This record family is
+  the one where K_m runs to the box, so the comparison is made on the seeds
+  where neither fit touches it, and the seeds where one does are PRINTED, not
+  dropped. The first version of this check compared every seed, failed at
+  0.223 on two box seeds, and is recorded as failed in PHASE8_SIMULATIONS.md.""")
+    lo, hi = Q.KM_GRID[0], Q.KM_GRID[-1]
+    worst, n_in, boxed = 0.0, 0, []
+    with Q.rebind(Q, DOSE_DAY_DRAW="post-dose"):
+        A = Q.make_analysts((tn, wn), ref, "peak",
+                            which=("fixed + free amp",))["fixed + free amp"]
+        for s in range(8):
+            m, y, sig, _ = PF.record(C.TH_NOM, times, s, inc_true=inc_t,
+                                     noisy=False)
+            f = A.fit(m, y, times=times)
+            r = PF.fit(m, C.train(times), y, sig, C.L_A, kappa_cv=0.12)
+            on_box = (f["Km"] >= hi * (1 - 1e-9) or f["Km"] <= lo * (1 + 1e-9)
+                      or not lo <= r["Km"] <= hi)
+            gap = abs(f["theta"] / r["theta"] - 1.0)
+            if on_box:
+                boxed.append((s, f["Km"], r["Km"], gap))
+                continue
+            n_in += 1
+            worst = max(worst, gap)
+    for s, k1, k2, g in boxed:
+        print(f"    seed {s}: q1 K_m {k1:.1f} on its bound, probe K_m {k2:.1f}; "
+              f"theta gap {g:.3f}, the box and not the prior")
+    print(f"    interior seeds compared: {n_in} of 8")
+    return report("free amplitude, q1 vs probe, interior seeds", worst, 0.0,
+                  1e-5, rel=False)
+
+
+def check_10_dose_day_draw():
+    banner("10. THE DOSE-DAY DRAW IS READ ON ONE SIDE, FOR TRUTH AND ANALYST")
+    print("""  q1 now reads a draw at a dose instant BEFORE the infusion. Two
+  things must hold and neither is a property of the fit. Pre-dose, every
+  kernel's increment at t = 0 is exactly zero, the analyst's included, so the
+  truth and the analyst agree at that draw by construction rather than differ
+  by the whole dose. Post-dose, the committed analyst reproduces
+  design.run.delta at that draw, so the switch changes nothing else. Checked
+  by evaluating the kernels directly, not through q1's truth or analyst
+  helpers.""")
+    ref = Q.committed_ref()
+    tn, wn = Q.nominal_train()
+    ok = True
+    with Q.rebind(Q, DOSE_DAY_DRAW="pre-dose"):
+        vals = [Q.assemble(kk, tn, wn, Q.at_draw(np.array([0.0, 14.0])))
+                for kk in Q.KERNELS.values()]
+        worst = max(float(np.abs(v[0])) for v in vals)
+        ok &= report("pre-dose increment at t = 0, every kernel", worst, 0.0,
+                     1e-9, rel=False)
+    with Q.rebind(Q, DOSE_DAY_DRAW="post-dose"):
+        k = Q.kernel_exp(Q.TH_HALF0)
+        mine = (Q.D_AMP / k.single_peak()) * Q.assemble(
+            k, tn, wn, Q.at_draw(np.arange(0.0, 730.0, 30.4)))
+        theirs = np.asarray(Q.DR.delta(np.arange(0.0, 730.0, 30.4)), float)
+        ok &= report("post-dose analyst vs design.run.delta",
+                     float(np.max(np.abs(mine - theirs)) / theirs.max()), 0.0,
+                     1e-12, rel=False)
+    return ok
+
+
 def main():
     print("=" * 92)
     print("  PHASE 8 RE-CHECKS. Independent routes to every reported result.")
     print("=" * 92)
     for fn in (check_1_kernel, check_2_steady_identity, check_3_bias_direction,
                check_4_fit, check_5_interval, check_6_dose_arithmetic,
-               check_7_two_phase, check_8_residual_reference):
+               check_7_two_phase, check_8_residual_reference,
+               check_9_kappa_prior, check_10_dose_day_draw):
         try:
             fn()
         except Exception as exc:          # a check that cannot run is a failure
