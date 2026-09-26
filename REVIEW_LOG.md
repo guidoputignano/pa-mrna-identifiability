@@ -4114,3 +4114,50 @@ every candidate verified against a primary source by the main session before acc
 author told before rather than after. **What it would have changed about the breach is only the
 telling**, since the verification clause was already met and three agent claims were rejected under
 it, and that is exactly why it is worth writing down instead of relying on the reason being good.
+
+---
+
+### R91. The first wrong numbers in the paper, corrected. Three of them
+
+`11_scope.tex:204`, `08_specification.tex:370-372`, `06_excitation.tex:286`. Author-directed, and
+settled by the repository's history rather than by judgement.
+
+**The evidence, which is decisive.** `audit/t3_diet_modulation.py` and `audit/t4_bias_vs_scatter.py`
+each have exactly two commits: `ed59b79`, which created them, and `db4a135`, which added a numbers
+function and changed no computation (`git diff ed59b79 db4a135^` over both files is empty). The
+sentences quoting them were written in **`7c04c10`, the commit immediately after `ed59b79`**. So the
+scripts have never changed, and the prose was written one commit after the code it quotes.
+**Nothing drifted. The two entered a commit apart and disagreed on arrival.**
+
+**The footing is independently confirmed**, which is what rules out the alternative that the scripts
+are wrong: `t3`'s 2.3198 rounds to the paper's own 2.32 exactly, so the capacity and the 21 d period
+are the ones the paper used, and `t4`'s 0.159 end agrees exactly. **A generator that is right at one
+end of a sweep and at the third number of a sentence is not wrong at the other two.** The prose
+figures are transcription errors.
+
+| where | was | is | macro |
+|:--|:--|:--|:--|
+| `11_scope.tex:204` | 7% | **6.3%** | `diet_gain15_pct` |
+| `11_scope.tex:204` | 32% | **24.1%** | `diet_gain50_pct` |
+| `08_specification.tex:370` | 7% | **6.3%** | `diet_gain15_pct` |
+| `08_specification.tex:371` | 32% | **24.1%** | `diet_gain50_pct` |
+| `06_excitation.tex:286` | 0.288 | **0.286** | `bias_both20` |
+
+**Two departures from the instruction, both reported rather than taken silently.**
+
+**First, the commit named in the instruction was `075aca8`. That commit is
+"The phase lattice, the Vandermonde check, and the header they corrected", and it created `t10`,
+`t11` and `t12`, not `t3` and `t4`.** The argument is unaffected and is arguably stronger on the real
+commits, since the zero diff over `t3` and `t4`'s whole history is a stronger statement than
+same-commit creation would be, but the entry records the commits that exist.
+
+**Second, the instruction named `11_scope`'s two percentages. `08_specification.tex:370-371` restates
+the same two**, and correcting one and not the other would leave the paper contradicting itself, so
+both were corrected and both now cite the same macro. `08_specification.tex:372`'s "2.32" was wired
+at the same time for the same reason.
+
+**The shape of this finding is the whole argument of the provenance sweep.** Five attempts to catch a
+paper error by recomputing it produced five false positives, every one of them the checker's fault.
+The method that worked was asking which script owns the sentence and running it. **These three are
+the first numbers in the paper this effort has shown to be wrong, and they were found by connecting
+the document to its own generators rather than by checking it against anything.**

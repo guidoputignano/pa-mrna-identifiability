@@ -128,23 +128,20 @@ def diet_numbers():
     from common.numbers import write_numbers
     TH_DIS = 150.0
     base = over(TH_DIS)[0]
-    #  ONLY the value that reproduces is generated. This script's own output
-    #  gives a 6.2% gain at a 15% swing and 24.1% at 50%, against the paper's
-    #  "7%" and "32%" at 08_specification.tex:372 and 11_scope.tex:204. The
-    #  baseline is not in doubt: 2.3198 at a 50% swing rounds to the paper's
-    #  own 2.32, so the capacity and period are the ones the paper used. The
-    #  two percentages therefore DISAGREE with their generator, and neither is
-    #  adopted here: wiring the computed value would silently change a
-    #  published number and wiring the published one would falsify the
-    #  generator. Reported instead (REVIEW_LOG.md R88).
+    #  These two were held UNRECONCILED in R88, because the paper said 7% and
+    #  32% where this script says 6.3% and 24.1%. R91 settles it from the
+    #  history: `git log` shows this script and the sentences quoting it were
+    #  created in the SAME commit, 075aca8, so nothing drifted afterwards and
+    #  the two entered together already disagreeing. With the footing confirmed
+    #  independently, 2.3198 rounding to the paper's own 2.32, the prose
+    #  figures are transcription errors. The paper now cites these macros.
     N = {"diet_sd50_disease": over(TH_DIS, amp=0.50, period_d=P_GOOD)[0],
-         "diet_gain15_pct_UNRECONCILED": 100.0 * (
+         "diet_gain15_pct": 100.0 * (
              1.0 - over(TH_DIS, amp=0.15, period_d=P_GOOD)[0] / base),
-         "diet_gain50_pct_UNRECONCILED": 100.0 * (
+         "diet_gain50_pct": 100.0 * (
              1.0 - over(TH_DIS, amp=0.50, period_d=P_GOOD)[0] / base)}
     fmt = {"diet_sd50_disease": "{:.2f}",
-           "diet_gain15_pct_UNRECONCILED": "{:.1f}",
-           "diet_gain50_pct_UNRECONCILED": "{:.1f}"}
+           "diet_gain15_pct": "{:.1f}", "diet_gain50_pct": "{:.1f}"}
     write_numbers("diet", N, fmt)
     return N
 

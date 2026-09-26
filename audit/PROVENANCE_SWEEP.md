@@ -19,6 +19,19 @@ found nothing wrong with it five times over, and connecting it to its own genera
 wrong immediately.** That is the argument for the machinery, not against the paper, and it is why
 wiring came before rewording.
 
+**And those two are now corrected in the paper, which makes them the first numbers this entire effort
+has shown to be wrong** (R91). Both were settled by `git`, not by judgement: `t3_diet_modulation.py`
+and `t4_bias_vs_scatter.py` have exactly one substantive commit each, `ed59b79`, and the sentences
+quoting them arrived in `7c04c10`, the commit immediately after. The scripts have not changed since.
+**Nothing drifted: the script and the sentence entered one commit apart and disagreed on arrival**, so
+the prose figures were transcription errors. `11_scope.tex`'s "7%" and "32%" become 6.3% and 24.1%,
+`06_excitation.tex`'s "0.288" becomes 0.286, and all three are now macros so they cannot diverge
+again.
+
+**They were found by connecting the document to its own generators, not by recomputing anything.**
+Every attempt to catch an error by recomputation produced a false positive, five times. The one
+method that worked was asking which script owns each sentence and running it.
+
 ---
 
 **What this is.** Every numeric literal in `paper/` that is not inside a `\num{}` macro, classified,
