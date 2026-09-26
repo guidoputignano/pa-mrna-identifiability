@@ -3784,3 +3784,69 @@ figure guard already uses, and the 51-claim queue is what `UNREGISTERED:` would 
 
 **The one thing prose needs that figures did not: the declaration has to cover English numerals**,
 since `thirteen` and `eighteen` carried route 6's claim and no interpolation-based scan sees them.
+
+---
+
+### R78. The Section 8 convention settled: it is the t = 0 draw, and the decomposition reproduces
+
+`audit/PROVENANCE_SWEEP.md` section 9, `audit/q18_section8.py`. **Upgrade of R77's verdict.**
+
+R77 reported the load decomposition as reproducing "within a few per cent, consistent with a seed
+convention", with the stated requirement threshold 7% apart. By this project's own standards that is
+not a verdict, it is the shape of the disagreements that have already cost three rounds.
+
+**The convention is the t = 0 draw, again.** `n4.MONTHLY` is `arange(0.0, 730.0, 30.4)`: 25 draws
+**starting at t = 0**, one before the first infusion. R77's check used `arange(30.4, 30.4*26, 30.4)`,
+dropping it and running 30 days past the window. On the paper's grid `n4.over_seeds(theta=3000)`
+returns **0.1699**, the paper's 0.170 exactly.
+
+Redone on that grid: baseline **0.170** (was 0.172), scatter alone **0.284** against 0.283, offset
+alone **0.172** against 0.172, shares **97.3/1.9** against 98/2, capacity shares **1.9/9.9/25.1**
+against 1.8/9.9/26.2, and the threshold **10.27% against 10.4%**, closing from 7% apart to 1.3%. The
+companion claim, that the target is met at every offset from 1% to 500%, holds.
+
+**So the verdict is REPRODUCES, not "consistent".** And the finding it supports is now properly
+earned: Section 8's decomposition is owned by no generator and correct.
+
+### R79. The classifier had a rounding hole, and it hid the sweep's own headline
+
+`audit/PROVENANCE_SWEEP.md` section 8, `audit/q20_rounding.py`. **Correction of R77.**
+
+R77 named `07_design.tex:113`, the gate claim, as "the one to look at first", its
+`0.457 (0.412 to 0.510)` being "a median and an interval that no generator printed". **Wrong.**
+`results/tables/tab_D_designs.tex` carries `six-monthly clinic visits & 4 & ... & 0.4570 [0.4121,
+0.5097]` and `numbers/design.tex` the same three values. The prose ROUNDS them, and q17 matched
+literal strings, so every rounded restatement fell into category 3.
+
+Redone with rounding tolerance, claiming a match only at three or more significant digits:
+**category 1 goes 218 to 249 and category 3 goes 206 to 175.** Among the 31 that move:
+`09_validation:103`'s `0.170`, which `\num{sd_monthly}` already holds; two of the three numbers in
+Section 8's decomposition; `11_scope:172`'s `3.07` and `:207`'s `1.46`.
+
+**The unowned pile is 15% smaller than reported and the cheap-to-fix pile larger**, and the sweep
+overstated the danger of the very claim it led with.
+
+### R80. The load-bearing subset: eight of nine reproduce, and a generator that never runs
+
+`audit/PROVENANCE_SWEEP.md` section 10, `audit/q19_loadbearing.py`. Verification only, no wiring.
+
+**`2.659` is asserted at three sites across two sections and every one is right**, 2.668 against
+2.659 as the load accuracy goes to zero. Route 5's factor at nominal reproduces at 1.809 against
+1.81, and its band 1.22 to 1.46 spans about a quarter of nominal down to 2%. `07_design:113` and
+`09_validation:103` reproduce and are category 1. The two visit counts are structural and exact.
+
+**Route 6's third clause remains the only thing in the whole sweep that does not reproduce**, now
+confirmed on the paper's own grid: the matching visit count runs 12, 8, 8, 10, 10 from nominal to 5%
+of nominal, flat and never approaching 18.
+
+**And the finding worth more than any of those values: `audit/t3_diet_modulation.py` appears nowhere
+in `make figures`.** The guard checks 14 numbers-file generators for reachability, so a generator
+writing no numbers file is not reachable, not checked, and its results enter the paper only as
+literals. That is what blocks recomputing `11_scope:204` and `08_spec:372`. **A generator existing is
+not the same as a generator running**, and the reachability check already here is what would say
+which.
+
+**Twice in this exercise a "does not reproduce" was mine and not the paper's**: the six-monthly
+schedule, built by hand instead of taken from the table, and route 5's band, swept over 5% to 20%
+when the paper's upper endpoint sits at 2%. Both were caught by asking where the paper's own value
+comes from before concluding it is wrong.

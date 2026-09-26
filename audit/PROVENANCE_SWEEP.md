@@ -8,7 +8,12 @@ them with anything and one of them had been wrong since it was written.
 Nothing in `paper/` was touched. The output is the list.
 
 Scripts: `audit/q17_numeric_provenance.py` (scan), `audit/q17_classify.py` (classify),
-`audit/q17_owners.py` (does a generator exist), `audit/q17_reproduce.py` (does it reproduce).
+`audit/q17_owners.py` (does a generator exist), `audit/q17_reproduce.py` (does it reproduce),
+`audit/q18_section8.py` (the convention, settled), `audit/q19_loadbearing.py` (the load-bearing
+subset, verified), `audit/q20_rounding.py` (the rounding hole in the classifier).
+
+**Sections 8 to 10 are later than sections 0 to 7 and correct two things in them.** They are appended
+rather than merged, because what the first pass got wrong is part of the result.
 Data: `audit/q17_literals.txt`, `audit/q17_category1.txt`, `audit/q17_category3.txt`,
 `audit/q17_claims.tsv`, `audit/q17_verdicts.tsv`.
 
@@ -269,3 +274,124 @@ because `thirteen` and `eighteen` carried route 6's claim and no interpolation-b
 heuristic and tuned to be strict, so the list is a floor. Multi-line sentences are split across
 claims. And "REPRODUCES" means a generator printed the value, which is weaker than recomputing the
 quantity the prose asserts; only the two clusters in section 5 were checked that way.
+
+---
+
+## 8. The rounding hole, and the claim this sweep named wrongly
+
+**`07_design.tex:113` was named in section 3 as "the one to look at first", on the ground that its
+`0.457 (0.412 to 0.510)` was "a median and an interval that no generator printed". That was wrong.**
+The committed table carries
+
+    six-monthly clinic visits & 4 & ... & 0.4570 [0.4121, 0.5097]
+
+and `results/numbers/design.tex` carries the same three values. The prose rounds them, `0.4570` to
+`0.457` and `0.5097` to `0.510`, and the classifier matched literal **strings**, so every rounded
+restatement of a generated value fell through into category 3.
+
+`audit/q20_rounding.py` redoes the match with rounding tolerance, claiming a match only at **three or
+more significant digits**, below which `0.45` meeting `0.5` is a coincidence and not a restatement.
+
+| | before | after |
+|:--|---:|---:|
+| category 1, generated and retyped | 218 | **249** |
+| category 3, asserting-computed | 206 | **175** |
+
+**31 literals move.** Among them `09_validation.tex:103`'s `0.170`, which `\num{sd_monthly}` already
+holds at `0.1699`; two of the three numbers in Section 8's decomposition, `0.170` and `0.172`; and
+`11_scope.tex:172`'s `3.07` and `:207`'s `1.46`.
+
+**The correction matters in both directions.** It shrinks the unowned pile by 15% and it grows the
+cheap-to-fix pile, and it means the sweep's own headline overstated the danger of the claim it chose
+to lead with. That claim reproduces, is guarded, and its defect is duplication.
+
+---
+
+## 9. The convention on Section 8, settled rather than described
+
+Section 5 reported the load decomposition as reproducing "within a few per cent, consistent with a
+seed convention", with the requirement threshold 7% apart. **That is not a verdict.** The convention
+is identified here.
+
+**It is the t = 0 convention, again.** `n4_theta_scope.MONTHLY` is `arange(0.0, 730.0, 30.4)`: 25
+draws **starting at t = 0**, one before the first infusion. The first check used
+`arange(30.4, 30.4 * 26, 30.4)`, dropping that draw and running 30 days past the window. On the
+paper's own grid `n4.over_seeds(theta=3000)` returns **0.1699**, the paper's 0.170 exactly.
+
+Redone on the paper's grid, seeds and median convention (`audit/q18_section8.py`):
+
+| quantity | paper | first check | on the paper's convention |
+|:--|---:|---:|---:|
+| baseline, both channels at 5% | 0.170 | 0.172 | **0.170** (−0.0%) |
+| per-visit scatter alone, 20% | 0.283 | 0.293 | **0.284** (+0.5%) |
+| systematic offset alone, 20% | 0.172 | 0.174 | **0.172** (+0.1%) |
+| scatter / offset share | 98 / 2% | 96.8 / 1.6% | **97.3 / 1.9%** |
+| offset share, nominal / half / a fifth | 1.8 / 9.9 / 26.2% | 1.6 / 10.1 / 27.9% | **1.9 / 9.9 / 25.1%** |
+| **scatter threshold, the stated requirement** | **10.4%** | 9.73% (−7%) | **10.27% (−1.3%)** |
+| target met at every offset 1% to 500% | yes | not tested | **yes** |
+
+**The verdict is REPRODUCES, not "consistent".** The threshold closed from 7% apart to 1.3%, which is
+the residual of a bisection on a median over 24 seeds. The one cell still moving is the offset's
+share at a fifth of nominal, 25.1 against 26.2.
+
+**So the finding stands and is now properly earned: Section 8's decomposition is unowned by any
+generator and correct.** Unguarded means unchecked, not wrong, and a sweep that only reported its
+failures would misdescribe the repository.
+
+---
+
+## 10. The load-bearing subset, verified
+
+`audit/q19_loadbearing.py`. Scope set by the author: any queued claim stating **a precision, a visit
+count, a requirement threshold, or a pass-or-fail verdict**, since those are what the consolidation
+pass will restate and lean on. No wiring, because wiring prose immediately before a pass that will
+rewrite that prose is work thrown away. Everything on the convention pinned in section 9.
+
+| claim | paper | here | verdict |
+|:--|:--|:--|:--|
+| `07_design:113` six-monthly median and interval | 0.457 (0.412, 0.510) | generated, all three | **REPRODUCES**, and is category 1 |
+| two-monthly / fortnightly visit counts | 13 / 53 | 13 / 53 | **REPRODUCES** |
+| `2.659`, the perfect-record limit at 5% of nominal | 2.659 | 2.668 (+0.4%) | **REPRODUCES** |
+| route 6: thirteen measured visits match 25, nominal | 13 | 12 | **REPRODUCES** |
+| route 6: six reach the target, nominal | 6 | 5 | **REPRODUCES** |
+| **route 6: the advantage shrinks to eighteen visits** | **18** | **8 to 12, flat** | **DOES NOT REPRODUCE** |
+| route 5: factor at nominal | 1.81 | 1.809 | **REPRODUCES** |
+| route 5: disease-range band | 1.22 to 1.46 | 1.22 at ~25%, 1.457 at 2% | **REPRODUCES** |
+| `09_validation:103` | 0.170 | 0.1699 | **REPRODUCES**, and is category 1 |
+
+**`2.659` is asserted at three sites across two sections and every one of them is right.** The limit
+is approached from above, 3.067 at a 5% record, 2.695 at 1%, 2.668 at 0.01%. The defect is that one
+value is hand-copied three times with nothing owning it.
+
+**Route 6's third clause remains the only thing in this entire sweep that does not reproduce**, and
+it is now confirmed on the paper's own grid rather than a hand-rolled one: the matching visit count
+runs 12, 8, 8, 10, 10 from nominal to 5% of nominal, flat and never approaching 18.
+
+### What cannot be recomputed here, and why
+
+| location | claim | why |
+|:--|:--|:--|
+| `11_scope:201` | 0.3% / 88%, increment CV 30% to exact | `t6_cohort_with_kappa.py` has the machinery and runs, but prints no such pair; the paper's sweep is not the script's |
+| `11_scope:204`, `08_spec:372` | 7% / 32% / 2.32, prescribed diet swing | `t3_diet_modulation.py` exists and is **not in `make figures` at all** |
+| `08_spec:126` | 0.212 at a 14.0% CV, 118 draws against 11 | same increment-CV machinery |
+| `08_spec:308` | 41 / 12 / four / five, antibiotic weeks | descriptive, so outside this subset by the author's rule |
+
+**The finding under those four is worth more than any of their values.** `t3_diet_modulation.py`
+appears nowhere in `make figures`. The guard reports "14 numbers-file generator(s) checked for
+reachability from `make figures`", so **a generator that writes no numbers file is not reachable, not
+checked, and its results enter the paper only as literals.** A generator existing is not the same as
+a generator running, and the reachability check already in this repository is the thing that would
+say which.
+
+### The tally
+
+**Ten verdicts recorded: nine reproduce, one does not, and five further claims cannot be recomputed
+with a stated reason.** The one that does not is route 6's third clause, already retracted in R75.
+(The table above groups `07_design:113`'s three values and the two visit counts into single rows;
+`audit/q19_loadbearing.py` records them separately, which is where the count of ten comes from.)
+
+**And twice in this exercise a "does not reproduce" was mine and not the paper's**: the six-monthly
+schedule, where I built the grid by hand instead of using the table's, and route 5's band, where I
+swept 5% to 20% and the paper's upper endpoint sits at 2%. Both were caught by asking where the
+paper's own value comes from before concluding it is wrong. That is the habit this list should be
+read with.
