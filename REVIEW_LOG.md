@@ -3239,3 +3239,58 @@ edge by the calibration itself against the ceiling, and the profile minima with 
 too high. **Both parts of check 4 failed on first run and both failures were in the results, not the
 checks**, which is what produced the two corrections above. 16 of 16 now pass.
 
+---
+
+## R63. Three corrections: the collapse tail is the finding, and the offset anchor does not recover θ
+
+`audit/PHASE9_LITERATURE.md` 3a.4, 3b.0, 3b.2. All three came from the author's challenges and two of
+them remove claims this session had made.
+
+**1. The nuisance-convention disagreement was seed count, not convention, and my relabelling was
+wrong.** The author's code fixes the truth at `k_e` and draws the prior centre, which is S2's **centre**
+convention, so calling their 0.220 a truth-convention figure was incorrect and is withdrawn. Their own
+code gives 0.220 at 80 draws, 0.307 at 96 with one collapse, 4.125 at 160 with three and 3.372 at 240,
+while the robust spread holds between 0.186 and 0.213 throughout. Their collapsing records are the ones
+handed a prior centre 3.7 to 9.8 times the truth, which confirms this session's mechanism by an
+independent route, and their 1 in 96 and 3 in 160 agree with its 2 in 96.
+
+**The consequence is larger than the budget.** RMSE is not a usable summary at the population prior: it
+moves from 0.220 to 4.125 on seed count alone while the robust spread does not move. So the result is
+**two facts**: at sigma* the budget is honoured in the bulk, robust spread 0.200 against the Fisher
+0.200, **and** about 2% of records collapse by orders of magnitude with no warning in the fit, 2.1% with
+a 95% Clopper-Pearson interval of [0.25%, 7.3%] at 2 in 96 and 1.9% [0.39%, 5.4%] at the author's 3 in
+160. The rate is not pinned at any of these seed counts. **This is a second and independent reason to
+measure `k_e`, and a different kind of reason: measuring it removes the tail rather than only narrowing
+the spread**, the collapse count being zero on every schedule at 0.054.
+
+**2. The φ window redone at `Imax = 1`, as R15's own correction requires.** `Imax = 0.999` is a constant
+the source fixed rather than estimated, and R15 retracted a verdict over it. At `Imax = 1` the window is
+0% to 11.875% against 0.343% to 11.660%. **The substantive conclusion survives**: R5's 5% and 10%
+calibrate on both readings and its 20% cannot, its best achievable fall being 54.4 to 54.5%. The lower
+edge exists only because `q > 0`, so it is an artefact of the fixed `Imax` and not a constraint on
+biology.
+
+**3. The claim that fixing the offset puts θ inside the gate is withdrawn.** The author asked for the
+factor of 36 to be confirmed by the profile route that had caught the previous artefact. It is not
+confirmed, and neither is the 0.135. With records simulated and the load bias drawn and fitted, the
+robust spread at φ = 10% and the committed 5% marker CV is **6.1 in ln θ against a Fisher bound of
+0.135**, a factor of 45. It is not an optimiser failure: starting at the truth gives 5.47. The
+mechanism is a needle, the noiseless profile being 1.6e-16 at the truth and 1.3e-03 at a quarter of it,
+so the information matrix measures an infinitesimal basin while a record at 5% CV sees noise forty
+times the floor's depth. **The gate is met only near a 0.1% marker CV, two orders of magnitude below
+the 5 to 8% analytical floor.** So Phase 5's "fixing E0 restores identifiability" is true in the rank
+sense, which 3b.1 still proves, and does not license a claim that θ can be recovered.
+
+**The pattern, now named rather than recorded twice.** At φ = 5% the anchor is safe and useless; at
+φ = 10% it is unsafe and, as of this correction, useless too. **There is no value in R5's span at which
+it is both safe and useful, which is exactly the shape S5 found for the ex vivo prior on θ.** Two
+external anchors, two parameters, two structures, one trade: an anchor borrowed through an unverified
+mapping buys precision only in proportion to how much of its own error it injects, so **the mapping's
+verification is not a refinement of the anchor, it is the anchor.** Step 2 item 2 therefore stops being
+a check that R5's range is roughly right and becomes a requirement to pin a value.
+
+**Method note, since this is the third artefact in one section.** All three came from reading an
+information matrix as if it described a likelihood. The matrix was right each time and the inference
+from it was not. The rule this phase adopts: **a Fisher figure that decides a verdict is confirmed by
+fitting before it is reported**, and a needle-shaped profile is the case that makes the two diverge.
+

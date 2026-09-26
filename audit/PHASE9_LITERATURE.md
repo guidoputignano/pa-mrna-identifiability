@@ -330,7 +330,9 @@ that floor exceeds a schedule's budget, **no assay however good reaches the gate
 An earlier draft of this section reported RMSE 0.33 to 0.42 at sigma* and attributed the miss to the
 `k_e` prior's collapse tail as a disease-range mechanism. **Both halves needed correcting, and the
 author caught both.** S2 established that the two honest ways of drawing the `k_e` nuisance answer
-different questions and carried both; this section now does the same, and every figure is labelled.
+different questions and carried both; this section now does the same, and every figure is labelled
+with its convention AND its seed count, because the second turned out to matter as much as the
+first.
 
 - **truth**: the patient's true `k_e` is drawn from the prior and the prior's centre stays at the
   reference. A population prior, with the patient a draw from the population.
@@ -341,37 +343,54 @@ At sigma*, where the Fisher bound reads exactly 0.200, `s_b` at 0.10 L, 96 recor
 
 | schedule | convention | Fisher | RMSE | robust sd | collapses |
 |---|---|---|---|---|---|
-| monthly | truth | 0.200 | **0.220** | 0.200 | 0 |
+| monthly | truth | 0.200 | 0.220 | 0.200 | 0 |
 | monthly | centre | 0.200 | 0.351 | 0.200 | 2 |
-| fortnightly | truth | 0.200 | **0.224** | 0.223 | 0 |
+| fortnightly | truth | 0.200 | 0.224 | 0.223 | 0 |
 | fortnightly | centre | 0.200 | 0.382 | 0.268 | 1 |
-| weekly | truth | 0.200 | **0.241** | 0.229 | 0 |
+| weekly | truth | 0.200 | 0.241 | 0.229 | 0 |
 | weekly | centre | 0.200 | 0.327 | 0.241 | 1 |
-| every 2 days | truth | 0.200 | **0.214** | 0.201 | 0 |
+| every 2 days | truth | 0.200 | 0.214 | 0.201 | 0 |
 | every 2 days | centre | 0.200 | 0.419 | 0.251 | 1 |
 
 1. **On the population convention the budget is honoured to within 7 to 21%**, with zero collapses on
-   every schedule. The author's independently computed 0.220 and robust 0.197 at monthly reproduce
-   this session's 0.220 and 0.200 exactly. **[measured]**
-2. **On the per-patient convention the robust spread also honours it**, 0.200 to 0.268, and only the
-   RMSE misses, because 1 or 2 records in 96 collapse. **So the earlier "missed by 1.7x" was an
-   unlabelled RMSE on the convention with a tail, quoted against a bound that has none.**
-   **[measured]**
-3. **The earlier claim that the collapses are the disease-range mechanism was wrong, and so is the
-   expectation that there are none at normal capacity.** They occur at normal capacity, and the two
+   every schedule. **[measured]**
+2. **The disagreement with the author's independent figure was seed count, not convention.** The
+   author's code fixes the truth at `k_e` and draws the prior centre, which is the **centre**
+   convention, so this file's earlier relabelling of their 0.220 as the truth convention was wrong
+   and is withdrawn. Their own code gives RMSE 0.220 at 80 draws, 0.307 at 96 with one collapse,
+   4.125 at 160 with three, and 3.372 at 240, while the robust spread stays between 0.186 and 0.213
+   throughout. The 0.220 was 80 draws that happened to miss the tail. Their 1 in 96 and 3 in 160
+   agree with this session's 2 in 96, and their collapsing records are the ones handed a centre 3.7 to
+   9.8 times the truth, which confirms the mechanism below by an independent route. **[measured]**
+3. **RMSE is not a usable summary at the population prior, and that is the finding rather than a
+   caveat.** It moves from 0.220 to 4.125 on seed count alone while the robust spread does not move at
+   all. So the result is **two facts, not one**:
+   - **at sigma* the budget is honoured in the bulk**, robust spread 0.200 against the Fisher 0.200 at
+     monthly, and 0.24 to 0.27 on the denser schedules; and
+   - **about 2% of records collapse by orders of magnitude, with no warning in the fit.** At this
+     session's 2 in 96 that is 2.1%, 95% Clopper-Pearson [0.25%, 7.3%]; at the author's 3 in 160,
+     1.9% [0.39%, 5.4%]. **The interval is wide and the rate is not pinned by any of these seed
+     counts.** **[measured]**
+4. **The earlier claim that the collapses are the disease-range mechanism was wrong, and so is the
+   expectation that there are none at normal capacity.** They occur at normal capacity, and the
    records are identifiable: on the centre convention, monthly, the collapsing records are exactly
-   those where the drawn `k_e` prior centre sits 3.7 and 5.0 times **above** the truth. The prior
-   then pulls `k_e·m` up until it absorbs load that θ should carry, and θ̂ falls, by 1.5 and 1.9 in
-   ln units. At the band's lower edge, θ = 2472, the same two records collapse to the floor, 52 and
-   36 in ln units. At the band's **upper** edge, θ = 18814, and at θ = 300, there are none.
-   **[measured]**
-4. **So the mechanism is the opposite of a disease-range one.** It bites where sigma* is large
+   those where the drawn `k_e` prior centre sits several times **above** the truth, 3.7 and 5.0 in this
+   session's seed set. The prior then pulls `k_e·m` up until it absorbs load that θ should carry, and
+   θ̂ falls, by 1.5 and 1.9 in ln units. At the band's lower edge, θ = 2472, the same two records
+   collapse to the floor, 52 and 36 in ln units. At the band's **upper** edge, θ = 18814, and at
+   θ = 300, there are none. **[measured]**
+5. **So the mechanism is the opposite of a disease-range one.** It bites where sigma* is large
    relative to the enzymatic share of the balance, which is normal capacity and the lower band edge,
    and not where capacity is lowest: at θ = 300 sigma* is only 2.01, so the data pin θ whatever the
    prior does. **[judgement]** on the mechanism, **[measured]** on where it occurs.
-5. **Quoting rule that follows.** No RMSE in this phase is reportable without its nuisance
-   convention, and a budget derived from a Fisher bound should be read against the **robust** spread
-   rather than the RMSE, since the bound has no tail to match. **[judgement]**
+6. **This is a second and independent reason to measure `k_e`, and a different kind of reason.**
+   Measuring it does not merely narrow the spread, **it removes the tail**: at the realistic 0.054 the
+   collapse count is zero on every schedule. A population prior leaves a per-patient failure mode
+   whose cause is now named and which no goodness-of-fit check would catch. **[measured]**
+7. **Quoting rule that follows, and it is S2's own.** Lead with the robust spread and the collapse
+   count with its binomial interval. No RMSE in this phase is reportable without its nuisance
+   convention AND its seed count, and a budget derived from a Fisher bound should be read against the
+   robust spread, since the bound has no tail to match. **[judgement]**
 
 ### 3a.6 Two budget tables, not one conservative table **[measured]**
 
@@ -512,13 +531,34 @@ monotonically in IC50 above that floor, the ceiling on the fall is attained exac
    it is worth stating because it means the published calibration is close to being unable to produce
    its own headline fall. **[measured]**
 
+**And the window redone at `Imax = 1`, as R15's own correction requires.** The edges rest on
+`Imax = 0.999`, a constant the source fixed rather than estimated, and R15 retracted a verdict over
+exactly that. At `Imax = 1` the residual `q` vanishes, so the unreachable ratio is `E0/m(untreated)`
+with no incomplete-inhibition term inside it, and `IC50_min` falls to zero because `E0` can no longer
+be driven negative:
+
+| | φ window for a 60% fall | φ = 5% | φ = 10% | φ = 20% |
+|---|---|---|---|---|
+| `Imax = 0.999` | 0.343% to **11.660%** | ceiling 64.28%, calibrates | 61.10%, calibrates | 54.40%, **inadmissible** |
+| `Imax = 1` | 0% to **11.875%** | 64.68%, calibrates | 61.28%, calibrates | 54.47%, **inadmissible** |
+
+**The substantive conclusion survives R15's correction**: 5% and 10% calibrate on both readings and
+20% does not, its best achievable fall being 54.4 to 54.5%. What moves is the lower edge, which
+**exists only because `q > 0`** and is therefore an artefact of the fixed `Imax` rather than a
+constraint on biology. A coincidence worth flagging so nobody reconciles the two wrongly: the figure
+11.875% appeared in conversation as a wrong `Imax = 0.999` edge, from the admissibility bug below, and
+is separately the correct `Imax = 1` edge. **[measured]**
+
 **An error of mine, corrected before any of this was reported.** The first version of the ceiling
 maximised the fall over all IC50 and returned 64.7% at φ = 5% and 54.5% at φ = 20%, attained at
 `IC50 = 0.001` where `E0` is about −28,500. A negative unreachable term is not a structure. The
 admissible ceilings above are lower, the conclusion about 20% survives, and the non-monotone lower
 edge only appeared once admissibility was enforced.
 
-### 3b.1 Fixing the offset restores identifiability **[proven]**, **[measured]**
+### 3b.1 Fixing the offset restores STRUCTURAL identifiability **[proven]**, **[measured]**
+
+What this section establishes is a rank condition and an exact fibre argument. **It does not establish
+that θ can be recovered from a record**, which is 3b.2's question and comes out differently.
 
 A constant-load record fixes only `P = E0 + base·q`, `U = P·θ + (E0 + base)·IC50` and
 `V = IC50 + θ`. Symbolically, `rank ∂(P,U,V)/∂(E0, base, IC50, θ) = 3` against 4 unknowns, a
@@ -537,28 +577,76 @@ Walking that fibre at φ = 10%, with θ re-solved from the invariants at each `I
 **With the offset free, θ slides from 160 to 3040, a factor of 19, at a bit-identical record. With it
 held, the same walk moves the record by a factor of 3.8e13 more.** **[measured]**
 
-### 3b.2 What the anchor buys, and it depends sharply on which value **[measured]**
+### 3b.2 What the anchor buys: locally identifiable is not identified **[measured]**
 
-`sd(ln θ)` from the information matrix, relative marker noise as stated, load recorded to 10%:
+**This section replaces a second wrong one, and the correction removes its headline.** The earlier
+draft read the information matrix and reported that fixing the offset at φ = 10% takes `sd(ln θ)` from
+infinite to 0.135, inside the gate, calling it the strongest consequence R5 has for this repository.
+The author asked for the factor of 36 between the two admissible anchors to be confirmed by the
+profile route that had already caught one artefact here. **It does not survive, and neither does the
+0.135.**
 
-| φ | marker CV | E0 free | E0 fixed | gate met |
+The information matrix, as before:
+
+| φ | marker CV | E0 free | E0 fixed, Fisher |
+|---|---|---|---|
+| 5% | 5% | infinite | 4.817 |
+| 10% | 5% | infinite | 0.1347 |
+
+And the same cells fitted, records simulated with the load bias drawn from its prior and fitted with
+it, the offset held at its own correct value, 80 records:
+
+| φ | marker CV | Fisher | fitted robust spread | gate met |
 |---|---|---|---|---|
-| 5% | 5% | infinite | 4.817 | no |
-| 5% | 15% | infinite | 14.44 | no |
-| 10% | 5% | infinite | **0.1347** | **yes** |
-| 10% | 15% | infinite | 0.3882 | no |
-| 20% | any | inadmissible at a 60% fall | | |
+| 5% | 5% | 4.817 | 6.34 | no |
+| 5% | 1.5% | 1.461 | 5.75 | no |
+| 5% | 0.5% | 0.532 | 4.94 | no |
+| 5% | 0.05% | 0.233 | 3.44 | no |
+| 10% | 5% | **0.135** | **6.12** | **no** |
+| 10% | 1.5% | 0.055 | 5.40 | no |
+| 10% | 0.5% | 0.042 | 3.15 | no |
+| 10% | 0.1% | 0.040 | 0.121 | **yes** |
 
-1. **At φ = 10% and the committed 5% marker CV, fixing the offset takes θ from unidentifiable to
-   `sd(ln θ) = 0.135`, inside the gate.** That is the strongest single consequence R5 has for this
-   repository, and it is exactly the claim Phase 5 said an external anchor would license.
+1. **The Fisher bound at φ = 10% is not achievable at any marker CV the literature supports.** At the
+   committed 5% the estimator's robust spread is 6.1 in ln θ, a factor of 45 above the bound, so θ is
+   unknown to within orders of magnitude. **[measured]**
+2. **It is not an optimiser failure.** Starting the fit exactly at the truth gives the same answer,
+   robust spread 5.47 at φ = 10% and a 5% marker CV. The likelihood genuinely has no useful curvature
+   there: the optimiser starts on the truth and walks away because a better fit exists far from it.
    **[measured]**
-2. **At φ = 5% the same fix leaves `sd(ln θ) = 4.8`, a factor of 36 worse.** Identifiable is not the
-   same as identified: the two admissible anchors differ by a factor of 36 in what they deliver,
-   because the calibrated IC50 moves from 200 to 733 and θ's leverage on the Möbius map moves with
-   it. **So the anchor's VALUE matters as much as the fact of fixing it.** **[measured]**
-3. At a 15% marker CV neither anchor meets the gate, which is S3's bound arriving in a second
-   structure. **[measured]**
+3. **The mechanism is a needle.** The noiseless profile with the correct offset is 1.6e-16 at the
+   truth and only 1.3e-03 at a quarter of it. So fixing the offset produces a minimum that is sharp
+   in an infinitesimal neighbourhood and sits on a nearly flat floor, and the information matrix
+   measures the needle while a real record sees the floor. A 5% marker CV produces noise of 5e-02,
+   forty times the floor's depth. **[measured]**
+4. **So the gate is met only at a marker CV near 0.1%**, which is **two orders of magnitude below the
+   5 to 8% analytical floor** item 7 established. There is no assay in prospect at that level.
+   **[measured]**
+5. **And the factor of 36 between the anchors is not real at realistic noise: both fail.** It appears
+   only below about a 0.5% marker CV, where φ = 10% works and φ = 5% still does not. **[measured]**
+6. **Phase 5's "fixing E0 restores identifiability" is true in the rank sense and misleading in the
+   practical one.** Rank 3 of 3 is what 3b.1 proves and it is correct. **What it licenses is a claim
+   about structure, not a claim that θ can be recovered**, and this file's earlier draft made the
+   second claim from the first. **[judgement]**
+
+### 3b.2b The pattern this makes, and it is the second instance **[judgement]**
+
+The author's observation on the recommendation is decisive and it generalises. At φ = 5%, the safe end
+of R5's range, the anchor is safe against the bias of 3b.3 and useless for precision. At φ = 10% it
+was thought usable and is unsafe, and 3b.2 now shows it is not usable either. **There is no value in
+R5's stated span at which the anchor is both safe and useful.**
+
+**That is exactly the shape S5 found for the ex vivo prior on θ**: a wide prior is safe and useless, a
+tight one useful and unsafe, with no width at which it is both. Two independent external anchors, on
+two different parameters, in two different structures, have produced the same trade. **It is worth
+naming as a pattern rather than recorded twice as a coincidence: an anchor borrowed through an
+unverified mapping buys precision only in proportion to how much of its own error it injects, so the
+mapping's verification is not a refinement of the anchor, it is the anchor.** **[judgement]**
+
+**And it changes what step 2 item 2 is for.** Verifying R5's transplant ratios stops being a check
+that a range is roughly right and becomes **a requirement to pin a value**, because a 5-to-10 span
+spans useless to unsafe. The specification should say that: the anchor is admissible only if the
+mapping is pinned, not merely bounded. **[judgement]**
 
 ### 3b.3 Getting the anchor wrong does not bias θ, it un-identifies it **[measured]**
 
@@ -591,9 +679,10 @@ exactly at every node. Truth is φ = 5%, `E0 = 0.45159`, θ = 3000:
 4. **And none of it is visible in the fit.** The too-high row's residual is 3.2e-03 against the
    correct row's 1.6e-16, but a 5% marker CV produces noise of 5e-02, more than ten times larger, so
    no goodness-of-fit test on a real record would separate them. **[measured]**
-5. **So the specification should fix the offset at or below the bottom of R5's range, never at its
-   middle or top**, and the reason is not that a high anchor is biased but that it is not an anchor at
-   all. **[judgement]**, on **[measured]** sizes.
+5. **So a high anchor is not an anchor at all**, and the reason is not bias but the loss of the very
+   identifiability the anchor was meant to supply. This was drafted as a recommendation to fix at or
+   below the bottom of R5's range; 3b.2 removes that recommendation, because the bottom of the range
+   does not deliver a usable θ either. **[judgement]**, on **[measured]** sizes.
 6. **That sharpens what step 2 item 2 is for.** It is not asking whether R5's transplant ratios are
    roughly right. **It is asking for a defensible LOWER bound on the unreachable fraction**, because
    any value above the truth returns the problem the anchor was meant to solve. **[judgement]**

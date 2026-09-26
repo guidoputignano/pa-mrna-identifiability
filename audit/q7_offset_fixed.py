@@ -41,6 +41,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from contextlib import contextmanager
+
 import numpy as np
 import sympy as sp
 from scipy.optimize import brentq
@@ -61,6 +63,25 @@ LOAD_FRAC = 0.10
 SEEDS = tuple(range(24))
 GATE = S2.GATE
 RESULTS = []
+
+
+@contextmanager
+def imax(value):
+    """
+    Rebind Imax and the residual q together, and restore both.
+
+    `REVIEW_LOG.md` R15 retracted a verdict that rested on Imax = 0.999, a
+    constant the source FIXED rather than estimated, and its correction was to
+    redo the verdict at Imax = 1. Any conclusion here that depends on the phi
+    window has to be reported both ways for the same reason.
+    """
+    global IMAX, Q_RES
+    old = (IMAX, Q_RES)
+    IMAX, Q_RES = float(value), 1.0 - float(value)
+    try:
+        yield
+    finally:
+        IMAX, Q_RES = old
 
 
 def banner(t):
@@ -145,6 +166,18 @@ class Offset:
         assuming it.
         """
         lo = self.ic50_min() * (1.0 + 1e-12)
+        if lo <= 0.0:
+            #  q = 0 removes the floor on IC50 entirely, so the ceiling is the
+            #  IC50 -> 0+ LIMIT rather than a value attained at a finite IC50.
+            #  Taken by shrinking until the fall stops moving, so the limit is
+            #  measured and not assumed.
+            prev, c = None, self.theta * 1e-6
+            for _ in range(60):
+                val = self._fall(c)
+                if prev is not None and abs(val - prev) < 1e-14:
+                    break
+                prev, c = val, c * 0.5
+            return float(1.0 - val), float(c)
         if verify:
             grid = np.geomspace(lo, lo * 1e6, 120)
             v = np.array([self._fall(c) for c in grid])
@@ -483,6 +516,126 @@ def part_d(times, loads):
   the fit reveals it.""")
 
 
+def phi_window(target_fall=TARGET_FALL):
+    """The phi interval whose admissible ceiling reaches `target_fall`."""
+    f = lambda x: _bare(x).ceiling()[0] - target_fall
+    lo_end = max(1.2 * Q_RES, 1e-6)
+    grid = np.geomspace(lo_end, 0.60, 500)
+    v = np.array([f(x) for x in grid])
+    cross = np.nonzero(np.sign(v[:-1]) * np.sign(v[1:]) < 0)[0]
+    edges = [float(brentq(f, grid[j], grid[j + 1], xtol=1e-11))
+             for j in cross]
+    if not edges:
+        return (None, None) if v.max() < 0 else (float(lo_end), 0.60)
+    if len(edges) == 1:
+        return (float(lo_end) if v[0] > 0 else edges[0],
+                edges[0] if v[0] > 0 else None)
+    return edges[0], edges[-1]
+
+
+def part_e():
+    banner("E. THE phi WINDOW AT Imax = 1, AS R15's CORRECTION REQUIRES")
+    print("""  The window's edges rest on Imax = 0.999, which Attarwala FIXED rather than
+  estimated and which `REVIEW_LOG.md` R15 already retracted one verdict over. R15's
+  own remedy was to redo the verdict at Imax = 1, so that is done here and both
+  are reported. At Imax = 1 the residual q vanishes, so the unreachable ratio IS
+  E0/m(untreated) with no incomplete-inhibition term inside it, and `IC50_min`
+  falls to zero because E0 can no longer be driven negative.""")
+    for val in (K2.IMAX, 1.0):
+        with imax(val):
+            lo, hi = phi_window()
+            o_pub = None
+            try:
+                ic = float(K2._solve_shape(K2.PubB.shape, TARGET_FALL)[0])
+                ob = K2.PubB(ic)
+                o_pub = (ob.e0 + ob.base * Q_RES) / M_BAR
+            except Exception:
+                pass
+            lo_s = "none" if lo is None else f"{100 * lo:.3f}%"
+            hi_s = "none" if hi is None else f"{100 * hi:.3f}%"
+            print(f"\n    Imax = {val:.3f}:  q = {Q_RES:.4f},  "
+                  f"phi window {lo_s} to {hi_s}")
+            print(f"      IC50_min at phi = 10%: {_bare(0.10).ic50_min():.4f}")
+            for phi in (0.05, 0.10, 0.20, 0.30):
+                c, _ = _bare(phi).ceiling()
+                print(f"      phi {100 * phi:5.1f}%: ceiling "
+                      f"{100 * c:6.2f}%   "
+                      f"{'calibrates' if c >= TARGET_FALL else 'INADMISSIBLE'}")
+    print("""
+  Both readings have to be quoted wherever the window is, and the lower edge is
+  the part that moves: it exists only because q > 0.""")
+
+
+def mc_theta(o, times, loads, cv, reps=200, s_b=None):
+    """
+    The estimator's own spread in ln theta with the offset held CORRECTLY.
+
+    The load bias b is drawn from its prior and FITTED with that prior, exactly
+    as the information matrix in `fisher_theta` carries it. An earlier version
+    held b at zero and did not fit it, which made the two routes answer different
+    questions and made the Fisher column look conservative at low noise.
+    """
+    from scipy.optimize import least_squares
+    s_b = LOAD_FRAC * LB if s_b is None else s_b
+    inc = np.asarray(delta(times), float)
+    rng = np.random.default_rng(20_260_926)
+    out = []
+    for _ in range(reps):
+        b_t = rng.normal(0.0, s_b)
+        truth = o.marker(o.theta + inc, loads, b=b_t)
+        y = truth * (1.0 + cv * rng.standard_normal(truth.size))
+        scale = cv * np.abs(truth)
+
+        def res(q):
+            th, bs, c, bb = np.exp(q[0]), np.exp(q[1]), np.exp(q[2]), q[3]
+            pred = ((o.e0 + bs * inhib(th + inc, c))
+                    * (np.asarray(loads, float) + bb) / LB)
+            return np.concatenate([(pred - y) / scale, [bb / s_b]])
+        best = None
+        for t0 in (o.theta / 3.0, o.theta, o.theta * 3.0):
+            try:
+                r = least_squares(res,
+                                  np.array([np.log(t0), np.log(o.base),
+                                            np.log(o.ic50), 0.0]),
+                                  method="lm", xtol=1e-14, ftol=1e-14,
+                                  max_nfev=20000)
+            except Exception:
+                continue
+            if best is None or r.cost < best.cost:
+                best = r
+        if best is not None and np.isfinite(best.x[0]):
+            out.append(best.x[0] - np.log(o.theta))
+    e = np.array(out)
+    return dict(n=e.size, rmse=float(np.sqrt(np.mean(e ** 2))),
+                robust=float((np.percentile(e, 84)
+                              - np.percentile(e, 16)) / 2),
+                med=float(np.median(e)))
+
+
+def part_f(times, loads):
+    banner("F. THE FACTOR OF 36, CONFIRMED BY FITTING")
+    print("""  Part C's factor of 36 between the two admissible anchors is a Fisher figure, and
+  this section produced two artefacts already, so it is confirmed by simulating
+  records and fitting them. The offset is held at its OWN correct value in each
+  case, so this measures what the anchor delivers and not what getting it wrong
+  costs.""")
+    print(f"\n    {'phi':>6s} {'marker CV':>10s} {'Fisher':>10s} "
+          f"{'MC robust':>11s} {'MC RMSE':>10s} {'n':>5s}")
+    s_b = LOAD_FRAC * LB
+    for phi in (0.05, 0.10):
+        o = Offset(phi)
+        for cv in (0.05,):
+            f = fisher_theta(o, times, loads, cv, False, s_b)
+            r = mc_theta(o, times, loads, cv)
+            print(f"    {100 * phi:5.0f}% {100 * cv:9.0f}% {f:10.4f} "
+                  f"{r['robust']:11.4f} {r['rmse']:10.4f} {r['n']:5d}")
+    print("""
+  A Fisher bound and a fitted spread that agree in order of magnitude settle the
+  factor. They will not agree closely at phi = 5%, because a bound of 4.8 in ln
+  theta describes a posterior with no useful location at all and the fitted
+  spread is then set by wherever the optimiser stops.""")
+
+
 def main():
     print("=" * 100)
     print("  STEP 3(b). IDENTIFIABILITY WITH THE MARKER OFFSET FIXED")
@@ -495,6 +648,8 @@ def main():
     part_b(times, loads)
     part_c(times, loads)
     part_d(times, loads)
+    part_e()
+    part_f(times, loads)
     banner("SUMMARY")
     bad = [n for n, ok in RESULTS if not ok]
     for n, ok in RESULTS:
