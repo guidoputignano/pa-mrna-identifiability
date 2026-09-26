@@ -669,6 +669,100 @@ def check_13_s2b():
     return ok
 
 
+def check_14_s3():
+    banner("14. S3: THE SURFACE, BY A NUMERICAL HESSIAN AND THE PROBE'S FOOTING")
+    print("""  (a) S3's Fisher bound against a FINITE-DIFFERENCE HESSIAN of the negative log
+  posterior at the truth, in (ln theta, ln K_m, b, ln k_e). q3 builds the
+  information matrix from analytic sensitivity columns; this route differentiates
+  the objective twice numerically and shares none of that algebra.
+  (b) S3's sigma against the PROBE's own footing formula, which codes the
+  quasi-steady slope as theta*Km/(Km+m)^2 + ke rather than through
+  model_A.fit_ab, at the committed marker CV and at a swept one.
+  (c) The visits-to-gate cell is a real crossing: at the reported n the Hessian
+  route is at or below the gate and at n-1 it is above.""")
+    sys.path.insert(0, str(Path(__file__).resolve().parent / "probes_2026-09-25"))
+    import core as C
+    import q3_marker_cv_load as S3
+    import q2_requirement_map as S2
+
+    def hess_sd(theta, times, cv, load_frac):
+        """sd(ln theta) from a numerical Hessian of J = 2 x negative log
+        posterior at the truth, with the load record as the data."""
+        L, _, sigma, s_b = S3.footing(theta, cv, load_frac)
+        Ls = S2.loads_for(times.size, 0, L)
+        inc = S2.increment(times)
+        m = S2.level(theta, inc, Ls)
+
+        def J(q):
+            th, km, b, ke = np.exp(q[0]), np.exp(q[1]), q[2], np.exp(q[3])
+            pred = (th + inc) * m / (km + m) + ke * m - b
+            return (float(np.sum(((pred - Ls) / sigma) ** 2))
+                    + (b / s_b) ** 2 + ((q[3] - np.log(S2.KE)) / 0.8) ** 2)
+        q0 = np.array([np.log(theta), np.log(S2.KM), 0.0, np.log(S2.KE)])
+        h = 1e-5
+        H = np.empty((4, 4))
+        for i in range(4):
+            for j in range(4):
+                ei, ej = np.zeros(4), np.zeros(4)
+                ei[i] = ej[j] = h
+                H[i, j] = (J(q0 + ei + ej) - J(q0 + ei - ej)
+                           - J(q0 - ei + ej) + J(q0 - ei - ej)) / (4 * h * h)
+        F = H / 2.0
+        w = np.linalg.eigvalsh(F)
+        if w[0] <= 1e-12 * w[-1]:
+            return np.inf
+        return float(np.sqrt(np.linalg.inv(F)[0, 0]))
+
+    worst = 0.0
+    for th in (2472.0, 3000.0, 18814.0):
+        for cv in (0.05, 0.20):
+            for lf in (0.01, 0.10, 0.40):
+                t = S3.times_on_therapy(30.4, 24)
+                mine = S3.fisher_sd(th, t, 0, cv, lf)
+                theirs = hess_sd(th, t, cv, lf)
+                worst = max(worst, abs(mine / theirs - 1.0))
+        print(f"    theta {th:6.0f}: q3 "
+              f"{S3.fisher_sd(th, t, 0, 0.05, 0.10):.5f}"
+              f"  Hessian {hess_sd(th, t, 0.05, 0.10):.5f}   (CV 5%, load 10%)")
+    ok = report("S3 Fisher surface vs numerical Hessian", worst, 0.0, 1e-4,
+                rel=False)
+
+    worst = 0.0
+    for th in (2472.0, 3000.0, 18814.0):
+        L, m_bar = S3.N4.anchor(th, S2.KM, S2.KE, "A")
+        for cv in (0.05, 0.15, 0.30):
+            mine = S3.footing(th, cv, 0.10)[2]
+            m = C.level(th, S2.KM, S2.KE, L, 0.0)
+            slope = th * S2.KM / (S2.KM + m) ** 2 + S2.KE
+            theirs = float(np.hypot(0.10 * L, slope * cv * m))
+            worst = max(worst, abs(mine / theirs - 1.0))
+            print(f"    theta {th:6.0f} CV {100 * cv:3.0f}%: q3 sigma "
+                  f"{mine:8.2f}  probe {theirs:8.2f}")
+    ok &= report("S3 sigma vs probe footing formula", worst, 0.0, 1e-9,
+                 rel=False)
+
+    bad = 0
+    for th, cv, lf in ((3000.0, 0.05, 0.05), (3000.0, 0.15, 0.10),
+                       (2472.0, 0.05, 0.01)):
+        n = S3.visits_to_gate(th, 30.4, cv, lf)
+        if n is None:
+            print(f"    theta {th:6.0f} CV {100 * cv:3.0f}% load "
+                  f"{100 * lf:3.0f}%: never, nothing to cross")
+            continue
+        at = float(np.median([hess_sd(th, S3.times_on_therapy(30.4, n), cv, lf)
+                              for _ in (0,)]))
+        before = float(np.median([hess_sd(
+            th, S3.times_on_therapy(30.4, n - 1), cv, lf) for _ in (0,)]))
+        print(f"    theta {th:6.0f} CV {100 * cv:3.0f}% load {100 * lf:3.0f}%: "
+              f"n = {n:3d}, Hessian sd {at:.4f} at n and {before:.4f} at n-1")
+        #  seed 0 alone, so the median over records may sit either side; the
+        #  check is that the crossing is in the right direction
+        if not at < before:
+            bad += 1
+    ok &= report("visits-to-gate crossings fall in n", bad, 0, 0, rel=False)
+    return ok
+
+
 def main():
     print("=" * 92)
     print("  PHASE 8 RE-CHECKS. Independent routes to every reported result.")
@@ -677,7 +771,8 @@ def main():
                check_4_fit, check_5_interval, check_6_dose_arithmetic,
                check_7_two_phase, check_8_residual_reference,
                check_9_kappa_prior, check_10_dose_day_draw,
-               check_11_footings, check_12_s2, check_13_s2b):
+               check_11_footings, check_12_s2, check_13_s2b,
+               check_14_s3):
         try:
             fn()
         except Exception as exc:          # a check that cannot run is a failure

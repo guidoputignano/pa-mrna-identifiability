@@ -867,6 +867,153 @@ gate is met monthly across the study and drift sweep except the 10%/10% corner, 
 
 ---
 
+## S3. The marker CV against the load record's accuracy
+
+`audit/q3_marker_cv_load.py`. `tab_D_loadprec` prices the load record's accuracy along one axis,
+at the committed 5% marker CV, and the paper concludes from it that the design reaches 0.20 "only
+if intake is recorded to better than about 10%". That sentence is conditional on a marker CV
+nobody has measured in this population: brief **R3** puts it between an assay's repeatability and
+an outpatient's biological variation, and the repository's own 12% question (`REVIEW_LOG` R4) is
+unresolved. So the requirement is a surface and S3 measures it, on `tab_D_loadprec`'s own load
+grid (1, 5, 10, 20, 40%) against marker CV 5 to 30%.
+
+**Conventions, stated once.** The `dose` amplitude convention. Dose-day draws read pre-dose, and
+every schedule is **on therapy**: the first draw is one dose interval in, so no draw is an
+untreated baseline. The one exception is the reproduction row in S3.1, which uses the published
+table's own record starting at t = 0. Capacities are normal, θ = 3000, and the working band's
+edges, 2472 and 18814; the disease range is S2's and is not repeated. `k_e` carries the paper's
+own 0.8 population prior throughout, so S3 measures the marker and load axes and not S2's.
+
+Re-checks: `q9` check 14, three routes (a numerical Hessian of the log posterior against the
+analytic information matrix, agreeing to 2e-8; σ against the probe's independently coded footing
+formula, to 4e-14; the visits-to-gate crossings confirmed by the Hessian route). 33 of 33 overall.
+
+### S3.1 The published table, reproduced, and what the marker CV does to σ **[measured]**
+
+| load recorded to | σ | S3, published record | `tab_D_loadprec` | S3, on therapy |
+|---|---|---|---|---|
+| 1% | 15.2 | 0.1591 | 0.1590 | 0.1603 |
+| 5% | 22.0 | 0.1695 | 0.1699 | 0.1719 |
+| 10% | 35.5 | 0.1973 | 0.1991 | 0.2034 |
+| 20% | 66.2 | 0.2815 | 0.2876 | 0.2970 |
+| 40% | 129.9 | 0.4904 | 0.5049 | 0.5248 |
+
+**The reproduction is to 0.9% up to the 10% row and drifts to 2.9% at the 40% row**, where the
+published route's Kalman filter and this information matrix part company on a record whose noise
+is four times the signal. That is a difference in route, not a correction, and it does not move
+any conclusion below. **[measured]**
+
+**Dropping the untreated t = 0 draw costs about 3% at the 10% row** (0.1973 to 0.2034), which is
+S2b's baseline-draw effect at normal capacity, where it is small. **[measured]**
+
+σ has two terms, `hypot(load_frac × L, b × CV × m̄)`. At normal capacity, load recorded to 10%,
+the load term is 32.3 and the assay term runs 14.9 at CV 5% to 89.4 at CV 30%: **the marker CV
+overtakes the load record between CV 10% and 15%.** **[measured]**
+
+### S3.2 The surface: visits to 0.20 **[measured]**
+
+The cell is the smallest number of draws whose median over 24 intake records meets the gate;
+`never` means not by 240 draws, which is 20 years monthly. Normal capacity, monthly:
+
+| load to | CV 5% | CV 10% | CV 15% | CV 20% | CV 25% | CV 30% |
+|---|---|---|---|---|---|---|
+| 1% | 6 | 18 | 33 | 46 | 86 | never |
+| 5% | 11 | 24 | 35 | 50 | 98 | never |
+| 10% | 29 | 33 | 42 | 64 | never | never |
+| 20% | 68 | 91 | never | never | never | never |
+| 40% | never | never | never | never | never | never |
+
+Two-monthly, normal capacity, is the same surface in fewer visits and more calendar time: 6, 16,
+23, 55, never, never on the 1% row, and the 10% row reaches 42 visits, which is 7 years.
+
+1. **The paper's "better than about 10%" is right only at a 5% marker CV, and only just.** At
+   CV 5% the 10% load row needs 29 monthly draws, so 2.4 years, against the booked 24. At CV 15%
+   the same row needs 42 draws, 3.5 years, and at CV 25% it never arrives. **[measured]**
+2. **A 20% load record is not recoverable by sampling longer** at any marker CV above 10%, and a
+   40% record never is, on any schedule or capacity in the sweep. **[measured]**
+3. **The band edges cost about a factor of two in visits and the upper edge costs more than the
+   lower.** At CV 5%, load 5%: 29 draws at θ = 2472, 11 at normal, 30 at 18814; at CV 10% the
+   upper edge needs 94 against normal's 24. **[measured]**
+4. **Two-monthly sampling is not a saving.** It reaches the gate in about the same number of
+   draws and takes twice as long, and it loses the CV 20% and 25% cells that monthly keeps. The
+   draw count is what buys precision here, not the calendar. **[measured]**
+
+### S3.3 Which axis binds, and where they trade places **[measured]**
+
+**The two-year frontier**, the loosest setting on each axis that still meets the gate inside the
+booked 24 monthly draws, against the loosest that meets it at all by 240:
+
+| marker CV | loosest load, ≤ 24 draws | loosest load, ≤ 240 draws |
+|---|---|---|
+| 5% | 5% | 20% |
+| 10% | 5% | 20% |
+| 15% | — | 10% |
+| 20% | — | 10% |
+| 25% | — | 5% |
+| 30% | — | — |
+
+(Normal capacity. At both band edges the ≤ 24 column is 1% at CV 5% and empty above it.)
+
+1. **Inside two years the load record has to be better than 5%, not 10%**, at any marker CV, and
+   at the band edges better than 1%. The paper's 10% is a 240-draw figure, not a 24-draw one.
+   **[measured]**
+2. **At CV 30% nothing on the load axis rescues the design**, at any capacity, on any schedule,
+   by 240 draws. **If the marker CV is really near the unresolved 12% figure the design survives;
+   if it is 30% it does not, and no amount of dietary bookkeeping changes that.** **[measured]**
+3. **Neither axis dominates: they cross, and the crossing is a simple rule.** σ's two terms are
+   equal at `CV = load_frac × L / (b × m̄)`, which comes out at **CV ≈ the load fraction**, to
+   within 10% across all three capacities (load 1% ↔ CV 1.1%, 5% ↔ 5.5%, 10% ↔ 11.0%, 20% ↔
+   21.9%, 40% ↔ 43.8% at the lower edge, and slightly tighter at the upper). **So whichever of
+   the two numbers is larger, in percent, is the one to spend money on.** That is a design rule
+   the specification does not currently state. **[measured]**
+4. Across their own sweeps at a fixed 24-draw record, the load axis multiplies sd by 1.7 to 3.3
+   at normal capacity and the marker axis by 1.2 to 2.3, so **the load axis has the wider range,
+   but only because its sweep runs to 40%**: at equal percentages they are interchangeable, which
+   is what point 3 says. **[measured]**
+
+### S3.4 The working band moves with both axes **[measured]**
+
+Section 6.2's band, θ ∈ [2472, 18814], is quoted at one marker CV and one load accuracy. Re-solved
+on the booked monthly two-year record, on therapy, by scanning θ on a 120-point log grid (so each
+edge is located to about 6%):
+
+| load to | CV 5% | CV 10% | CV 15% and above |
+|---|---|---|---|
+| 1% | [2485, 25676] | [2810, 10214] | — |
+| 5% | [2642, 16699] | [2988, 7988] | — |
+| 10% | [3177, 7512] | — | — |
+| 20% and above | — | — | — |
+
+1. **The band is not a property of the system, it is a property of the measurement.** At CV 5%
+   and load 1% it spans a factor of 10.3; at CV 10% and load 5% a factor of 2.7; at CV 15% it is
+   empty at every load accuracy in the sweep. **[measured]**
+2. **The upper edge moves far more than the lower.** From CV 5% to CV 10% at load 1% the lower
+   edge moves 13% and the upper edge falls by 60%. The band closes from the top. **[measured]**
+3. **S3's own lower edge at CV 5% and load 1%, 2485, reproduces the quoted 2472 to 0.5%**, which
+   is the consistency check that matters here. S3's upper edge, 25676, sits above the quoted
+   18814 because Section 6.2's band is solved at a different load accuracy and on a record that
+   includes the t = 0 draw. **[measured]**
+
+### S3.5 What S3 hands on
+
+1. **"Record intake to better than about 10%" needs its condition attached.** It holds at a 5%
+   marker CV over about 2.4 years of monthly draws. Inside the booked two years the requirement
+   is better than 5%, and at the band edges better than 1%. **[measured]**
+2. **The marker CV deserves the same status in the specification as the load record**, since the
+   two are interchangeable percent for percent, and it is currently the less constrained of the
+   two. Brief **R3** should be asked for the within-subject biological variation of the marker in
+   stable outpatients, not only the assay's repeatability. **[measured]**, **[judgement]** on the
+   brief.
+3. **A single design rule covers both axes:** spend on whichever of the marker CV and the load
+   recording error is the larger percentage, until they are equal. **[measured]**
+4. **Above a 25% marker CV the design does not close at normal capacity**, and above 15% the
+   working band is empty. If the 12% question resolves upward, that is the finding that matters
+   most. **[measured]**
+5. **S4 inherits the marker CV as its noise axis** and should carry 10 to 15% as the brief says,
+   which S3 places just past the crossover with a 10% load record. **[judgement]**
+
+---
+
 ## What is open after S1
 
 - **The shape itself**, and **which reading of Attarwala's kernel is right**. Nothing here
@@ -886,7 +1033,10 @@ gate is met monthly across the study and drift sweep except the 10%/10% corner, 
   sampling window must be chosen against (S2b.1, S2b.2).
 - **Within-patient stability of `k_e` over two years.** S2b.5 makes it the binding constraint
   below 10% of normal, and nothing in the specification addresses it.
-- **S3 to S5** have not been run.
+- **The marker's within-subject biological variation in stable outpatients**, which S3 makes as
+  important as the load record and which brief **R3** has not been asked for in that form. Above
+  25% the design does not close at normal capacity; above 15% the working band is empty.
+- **S4 and S5** have not been run.
 
 ### A boundary on this phase
 

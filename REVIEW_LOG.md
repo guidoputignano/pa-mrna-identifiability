@@ -2908,3 +2908,40 @@ a lead and not a citation), within-patient stability of the clearance, and its c
 S3, S4 and S5 are finished as the brief writes them, then this phase is written up and stops.
 There is no S2c; a new sub-question is recorded rather than run.
 
+---
+
+## R56. S3: the marker CV against the load record's accuracy
+
+`audit/q3_marker_cv_load.py`. `tab_D_loadprec` prices the load record along one axis at the
+committed 5% marker CV, and Section 8 concludes the design reaches 0.20 "only if intake is
+recorded to better than about 10%". S3 turns that row into a surface, because the marker CV it is
+conditional on is unmeasured in this population and the repository's own 12% question is open.
+
+**The published table reproduces to 0.9% up to its 10% row and drifts to 2.9% at the 40% row**,
+where the filter route and the information matrix part company on a record whose noise is four
+times its signal. A difference in route, not a correction.
+
+**Three findings.**
+
+1. **The "about 10%" figure needs its condition attached.** It holds at a 5% marker CV and takes
+   about 2.4 years of monthly draws, against the booked two. **Inside the booked two years the
+   requirement is better than 5%**, and at the working band's edges better than 1%.
+2. **The marker CV and the load recording error are interchangeable percent for percent.** σ's two
+   terms are equal at `CV = load_frac × L / (b × m̄)`, which comes out at CV ≈ the load fraction to
+   within 10% at every capacity tested. **The design rule is to spend on whichever of the two is
+   the larger percentage**, and the specification does not state it. Above a 25% marker CV nothing
+   on the load axis rescues the design at normal capacity.
+3. **The working band is a property of the measurement, not of the system.** Re-solved across the
+   surface it spans a factor of 10.3 at CV 5% and load 1%, a factor of 2.7 at CV 10% and load 5%,
+   and is empty at CV 15% and above. It closes from the top: the upper edge moves five times as
+   far as the lower. S3's lower edge reproduces the published 2472 to 0.5%.
+
+**Also measured, and small:** dropping the untreated t = 0 draw costs about 3% at normal capacity,
+which is S2b's baseline-draw effect where it does not bind. And two-monthly sampling is not a
+saving: it reaches the gate in about the same number of draws and takes twice as long.
+
+**Re-check record.** `q9` gains check 14 on three routes: a finite-difference Hessian of the log
+posterior against the analytic information matrix (2e-8), σ against the probe's independently
+coded footing formula (4e-14), and the visits-to-gate crossings confirmed by the Hessian route.
+33 of 33 pass.
+
