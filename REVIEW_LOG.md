@@ -2736,3 +2736,69 @@ is where a decision about cuts would be taken.
 The largest single share is §4 and not §7 or §8. A cut aimed at "§7 and §8" as the reports
 named them would reach the scope section and the discussion and leave the biggest addition
 where it is.
+
+### R54. Phase 8 S1: a result carried by one draw, and two errors in the script that reported it
+
+**Mine, and a retraction.** The first S1 report (`043a3ec`, `audit/PHASE8_SIMULATIONS.md`)
+said the Attarwala two-compartment truth, read by the committed 3.5 d analyst, returns
+`theta_hat/theta = 5.637` [2.440, 8.609] at `2.35 sigma`, that it is therefore unlike the 5 to
+7 d exponentials and audible where they are not, and three further things about wrong-family
+analysts. The author's robustness probe `p3_shape.py` gave `1.37` to `1.40` at `0.33` to
+`0.37 sigma`. `audit/q1b_reconcile.py` put both scripts on identical noiseless records and
+fitted each record with both estimators.
+
+**The fitters were not the cause.** They agree to `5e-7` on every fixed-amplitude row. The two
+scripts had modelled different objects: both run Attarwala's protein block in days with
+half-lives `1.99 d` and `11.81 d`, but `q1` drives it through the effect compartment
+(`ke0 = 0.242 /h`, so the protein **rises** after an infusion) where the probe's impulse makes
+it **jump**. That difference is negligible everywhere except at the one draw the monthly record
+places at a dose instant, `t = 0`, which `q1` read on the post-dose side as `design.run.delta`
+does. There the rising kernel is zero and the analyst is `6000`, and that single draw carried
+the cell from `1.14` to `5.81`. The draw is inside the marker's own settling window (1.3 h), so
+the quasi-steady model does not describe it on either side; `q1` now reads a dose-instant draw
+**pre-dose**, for truth and analyst alike.
+
+**Two errors in `q1`, found on the way.**
+
+1. **The dose-scale prior was on `kappa`, not `ln kappa`.** The repository states it on
+   `ln kappa` (`g_design_common.sd_ln_theta`, column `inc g`). The linear form charges 68 at
+   `kappa = 0.01` where the log form charges 1470, and that is what let the first run "switch
+   the increment off" and report capacity nine times low. The probe's fitter returned `5.74`
+   on the same records where `q1` returned `0.11`. Same class as the `k_e` prior defect caught
+   before the first report.
+2. **A stranded `k_e` start in the profile.** With `theta` held high the linear inner solve can
+   return `k_e <= 0`; the polish then started from `ln(1e-12)`, had no gradient, and was
+   accepted because the start's objective was infinite. The profile jumped from `1.53` to `553`
+   between adjacent `theta` and upper interval edges came out short. `q9` check 5 found it
+   against `n6`.
+
+**What changes, 24 seeds, peak-matched, pre-dose:**
+
+| cell | first report | corrected |
+|---|---|---|
+| Attarwala, fixed 3.5 d | 5.637 [2.440, 8.609], 2.35 sigma | **1.131** [1.036, 1.366], 1.08 sigma (null 0.98) |
+| Attarwala, + free amplitude | 0.111, "increment switched off" | **1.126** |
+| Attarwala, half-life free | 0 on 24 of 24 seeds | **1.129** [0.886, 1.286] |
+| exponentials, two-comp analyst | 1.18 to 2.25 | **1.05 to 1.14** |
+| exp 7.0 d, fixed 3.5 d | 1.934 | **1.358** |
+| exp 5.0 d, fixed 3.5 d | 1.310 | **1.161** |
+
+**Conclusions withdrawn:** that the two-compartment truth differs in kind from a slower
+exponential; that it is audible; that the paper's "under a fifth of one sigma" sentence needs
+qualifying on its account; that freeing the amplitude relocates the bias; that no analyst family
+is safe (the two-compartment family is now within 14% on every truth tested, at about twice
+the RMSE). **Qualified:** S1.8's "the family question wants the hours after an infusion" holds
+under the effect-compartment reading only. **Standing:** the direction of gap B, that freeing
+the amplitude does not help, and that an unrecorded dose train costs more than a wrong shape and
+announces itself (Q3W read as Q2W, `6.52` at `2.20 sigma`).
+
+**New, from the correction itself:** a pre-dose baseline draw at `t = 0` roughly halves the 7 d
+shape bias (`2.02` post-dose, `1.78` dropped, `1.38` pre-dose, noiseless). And a flag, not a
+finding: the paper's own `0.1699` is computed with the same draw read post-dose, and does
+not depend on it (`0.1695` pre-dose).
+
+**Re-check record.** `q9` gains checks 9 and 10. **The first version of check 9 failed** at
+`0.223`; the two failing seeds are where `q1`'s `K_m` sits on its box bound and the probe's
+runs past it, which check 4 already measures. It now compares interior seeds and prints the
+box seeds. 24 of 24 pass. S2 was not started, per the author's rule that a changed conclusion
+stops the programme for a report.
