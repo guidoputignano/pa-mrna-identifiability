@@ -520,44 +520,73 @@ crossing is now found by scanning a log grid from 0.02x to 2x the Fisher value a
 crossing, and a cell with no crossing is reported as such rather than given a number. All 24 cells
 have a crossing.
 
-| capacity | schedule | k_e 0.8: Fisher → fitted | ratio | k_e 0.054: Fisher → fitted | ratio |
-|---|---|---|---|---|---|
-| band low, 2472 | monthly | 20.80 → 6.77 | 0.325 | 57.73 → 74.81 | 1.296 |
-| band low, 2472 | fortnightly | 26.75 → 2.55 | **0.095** | 71.23 → 66.87 | 0.939 |
-| band low, 2472 | weekly | 40.25 → 5.05 | 0.125 | 108.07 → 89.85 | 0.831 |
-| band low, 2472 | every 2 days | 74.68 → 5.58 | 0.075 | 203.87 → 211.30 | 1.036 |
-| normal, 3000 | monthly | 36.72 → 42.14 | 1.148 | 56.10 → 68.88 | 1.228 |
-| normal, 3000 | fortnightly | 45.99 → 3.48 | **0.076** | 69.83 → 66.35 | 0.950 |
-| normal, 3000 | weekly | 69.69 → 24.69 | 0.354 | 105.95 → 88.63 | 0.836 |
-| normal, 3000 | every 2 days | 130.96 → 5.24 | **0.040** | 199.36 → 215.16 | 1.079 |
-| band high, 18814 | monthly | 21.75 → 25.30 | 1.163 | 21.88 → 25.38 | 1.160 |
-| band high, 18814 | fortnightly | 27.97 → 28.01 | 1.001 | 28.14 → 25.99 | 0.923 |
-| band high, 18814 | weekly | 43.14 → 37.35 | 0.866 | 43.40 → 37.41 | 0.862 |
-| band high, 18814 | every 2 days | 79.57 → 81.60 | 1.026 | 80.05 → 87.04 | 1.087 |
+**BOTH NUISANCE CONVENTIONS ARE REPORTED**, because the author is right that it matters more than
+usual here: on `truth` the `k_e` prior is honest about its own width and a Cramer-Rao bound has a fair
+chance of describing the spread, while on `centre` the estimator carries a bias from a mis-centred
+prior, and a bias is not a variance, so the bound cannot represent it at all.
 
-1. **At the measured `k_e` prior the Fisher budget is sound.** fitted/Fisher runs **0.831 to 1.296**
-   across all 12 cells, so it is accurate to about 20% either way and is **not systematically
-   optimistic**. The tables in 3a.1 and 3a.6 can be read as budgets at that prior. **[measured]**
-2. **At the population prior the Fisher budget must not be quoted at all.** fitted/Fisher runs
-   **0.040 to 1.163**, a factor of 29 across cells that differ only in schedule. The worst case,
-   normal capacity every 2 days, has a Fisher budget of 130.96 and a fitted budget of 5.24.
-   **[measured]**
-3. **And it is not solver noise; it is a floor.** Traced at normal capacity, fortnightly, the fitted
-   robust spread is 0.114 at sigma/F = 0.02, 0.182 at 0.06, 0.204 at 0.08 and then **rises slowly and
-   never returns below the gate**, 0.223 at 0.20 and 0.268 at 1.0. So the `k_e` prior contributes a
-   schedule-dependent floor to the spread that reducing the marker noise does not remove, and the
+fitted/Fisher, all 24 cells, both conventions:
+
+| capacity | schedule | k_e 0.8, centre | k_e 0.8, truth | k_e 0.054, centre | k_e 0.054, truth |
+|---|---|---|---|---|---|
+| band low, 2472 | monthly | 0.325 | **0.082** | 1.296 | 1.202 |
+| band low, 2472 | fortnightly | 0.095 | 0.071 | 0.939 | 0.922 |
+| band low, 2472 | weekly | 0.125 | 0.140 | 0.831 | 0.811 |
+| band low, 2472 | every 2 days | **0.075** | 0.829 | 1.036 | 1.052 |
+| normal, 3000 | monthly | 1.148 | 1.170 | 1.228 | 1.200 |
+| normal, 3000 | fortnightly | **0.076** | 0.706 | 0.950 | 0.949 |
+| normal, 3000 | weekly | 0.354 | 0.642 | 0.836 | 0.836 |
+| normal, 3000 | every 2 days | **0.040** | 1.107 | 1.079 | 1.043 |
+| band high, 18814 | monthly | 1.163 | 1.102 | 1.160 | 1.155 |
+| band high, 18814 | fortnightly | 1.001 | 0.906 | 0.923 | 0.928 |
+| band high, 18814 | weekly | 0.866 | 0.879 | 0.862 | 0.861 |
+| band high, 18814 | every 2 days | 1.026 | 1.047 | 1.087 | 1.083 |
+
+| | k_e 0.8 | k_e 0.054 |
+|---|---|---|
+| `centre` | **0.040 to 1.163** | 0.831 to 1.296 |
+| `truth` | **0.071 to 1.170** | 0.811 to 1.202 |
+
+1. **At the measured `k_e` prior the Fisher budget is sound on both conventions**, 0.811 to 1.296
+   across 24 cells, so it is accurate to about 20% either way and is not systematically optimistic.
+   The tables in 3a.1 and 3a.6 can be read as budgets at that prior. **[measured]**
+2. **At the population prior it must not be quoted on EITHER convention.** The author's hypothesis was
+   that the 29-fold gap is a `centre`-convention artefact, a bias the bound cannot represent. **That is
+   only half right**: on `truth` the range is 0.071 to 1.170, still a factor of 16. So the failure is
+   not mainly the mis-centred prior. **[measured]**
+3. **And neither convention dominates the other, cell by cell.** At the band's lower edge, monthly,
+   `truth` is the worse of the two, 0.082 against 0.325; at normal capacity, every 2 days, `centre` is
+   far worse, 0.040 against 1.107. **So there is no "pessimistic convention" to adopt**, and the
+   defensible envelope is the worse of the two per cell, which runs **0.040 to 1.148**. **[measured]**
+4. **It is not solver noise; it is a floor.** Traced at normal capacity, fortnightly, `centre`: the
+   fitted robust spread is 0.114 at sigma/F = 0.02, 0.182 at 0.06, 0.204 at 0.08 and then **rises
+   slowly and never returns below the gate**, 0.223 at 0.20 and 0.268 at 1.0. The `k_e` prior
+   contributes a schedule-dependent floor that reducing the marker noise does not remove, and the
    crossing sits wherever that floor happens to cut 0.20. **[measured]**
-4. **The floor's height is what makes the ratios erratic.** At normal capacity monthly's spread at its
+5. **The floor's height is what makes the ratios erratic.** At normal capacity monthly's spread at its
    own sigma* is 0.200, exactly the gate, so its crossing sits near sigma* and the ratio is 1.148;
-   fortnightly's is 0.268 there, so its crossing is 13 times lower. Two schedules, one prior, ratios
-   of 1.148 and 0.076. **[measured]**
-5. **So this is a third and independent reason to measure `k_e`, and the strongest of the three.**
-   Without it there is no usable noise budget at all: not a budget that is optimistic by a stated
-   factor, but a quantity that cannot be stated. With it the budget is well defined and accurate to
-   20%. **[judgement]**
-6. **The band's upper edge is the exception and behaves well on both priors**, ratios 0.862 to 1.163,
-   which is the same pattern 3a.9 and P.1 found: at theta = 18814 the enzymatic term dominates the
-   balance and `k_e`'s precision stops mattering. **[measured]**
+   fortnightly's is 0.268 there, so its crossing is 13 times lower. **[measured]**
+
+### Which convention governs the requirement table **[judgement]**
+
+The author's argument, and it is the uncomfortable one. A specification normally uses `truth`: the
+patient's `k_e` is a draw from a population whose centre is known. **Here R1 establishes that no human
+value for `k_e` exists in any population**, so the prior's centre is not anchored to anything. That is
+precisely the `centre` convention, and it makes the pessimistic reading the defensible one.
+
+**The conventions bear that out, and strengthen it.** Not because `centre` is uniformly worse, which
+point 3 shows it is not, but because **both conventions fail at the population prior**, so the
+conclusion does not rest on choosing between them:
+
+> **At the population prior there is no statable budget, on either honest convention. Measuring `k_e`
+> is not one improvement among several: it is the precondition for the requirement framework existing
+> at all.**
+
+That is the strongest form, and it is what Phase 9 should be read as concluding. **[judgement]**
+
+6. **The band's upper edge is the exception on both conventions and both priors**, 0.861 to 1.163,
+   which is the pattern 3a.9 and P.1 found: at theta = 18814 the enzymatic term dominates the balance
+   and `k_e`'s precision stops mattering. **[measured]**
 
 **What to quote.** At a measured `k_e`, the 3a.6 table's right-hand column, corrected by at most 20%.
 At a population prior, nothing: say that the design has no budget until `k_e` is measured.

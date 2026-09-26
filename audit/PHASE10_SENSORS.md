@@ -250,6 +250,125 @@ reviewer asks. It is worth running whatever is decided about route (b).
 
 ---
 
+## The reduction verdict
+
+`audit/q13_two_state_reduction.py`, 5 of 5 checks passing. Authorised as a reduction check rather
+than a rebuild, and scoped to that: **no sensor is priced below.**
+
+### R.0 The two-state model
+
+    dp/dt = L + b - (theta + Delta) p/(K_p + p) - v_o(p)
+    dm/dt = alpha * v_o(p) - k_e m
+
+`p` is intracellular propionyl-CoA, `m` the plasma marker, `v_o(p)` the overflow routes that drain
+`p`, and `alpha` the fraction of overflow flux appearing as the **measured** marker. **The enzyme now
+acts on its own substrate**, which is the point: the paper's discussion names the `p`-to-`m` map as
+its deepest assumption, and carrying `p` explicitly removes that assumption rather than adding one.
+
+**New parameters:** `K_p`, `c` (the overflow rate constant, where `v_o = c p`), `alpha`. **What is now
+assumed that was not before:** that both states are quasi-steady on the sampling timescale, and that
+the overflow is linear in `p`. The first is a timescale claim and checkable; the second is what R3
+describes for 3-HP, "a near-linear overflow of propionyl-CoA", and is exactly the condition R.3 tests.
+
+### R.1 The reduction holds, exactly **[proven]**
+
+`dm/dt = 0` gives `p = k_e m / (alpha c)`. Substituting into `dp/dt = 0`:
+
+    (theta + Delta) * m/(K_m + m) + (k_e/alpha) * m = L + b
+
+**which is the paper's balance exactly**, sympy residual **0**, provided
+
+    K_m       = K_p * alpha * c / k_e   =   K_p * c / k_e_paper
+    k_e_paper = k_e / alpha
+
+Numerically the two models agree on `m` to **6.7e-15** across 54 combinations of capacity (100% down
+to 2%), load (0.5x to 2x) and increment (0, 400, 6000), and under four independent `(alpha, c)`
+parametrisations holding the same reduced constants. **[proven]**, **[measured]**
+
+**So every existing result in this project survives as the reduction of a better-founded model.** That
+is a strictly better position than the paper is in today, and it is the outcome the author's scoping
+hoped for.
+
+### R.2 But neither of the paper's two nuisance constants means what its name says **[proven]**
+
+This is the finding, and it was not visible before the state was made explicit.
+
+| the paper's constant | what it actually is |
+|---|---|
+| `theta` | **unchanged.** The enzyme's maximal velocity on its own substrate. |
+| `K_m` | **not** the enzyme's Michaelis constant. It is `K_p * c / k_e_paper`, that constant scaled by the overflow-to-clearance ratio. |
+| `k_e` | **not** the marker's clearance. It is `k_e / alpha`, the clearance divided by the fraction of overflow flux that becomes the measured marker. |
+
+1. **Only `theta` survives with its meaning intact**, which is fortunate, since it is the estimand.
+   Every statement this project has made about `K_m` or `k_e` is a statement about a composite.
+   **[proven]**
+2. **`K_p`, `c` and `alpha` enter through only two combinations**, rank 2 of 3, so one direction in
+   them is invisible to the marker record however long it runs. Adding the state adds no parameter
+   the marker can estimate. **[proven]**
+3. **And this lands directly on Phase 9's precondition.** Phase 9 concluded that measuring `k_e` is
+   not one improvement among several but the precondition for a statable requirement. **The
+   micro-dose tracer study of S2b measures the marker's own clearance, `k_e`. The model's parameter is
+   `k_e / alpha`.** So the study delivers the numerator and `alpha` is a new unmeasured nuisance
+   sitting on exactly the quantity Phase 9 wanted to 2%. If `alpha` were 0.3, the model's constant is
+   3.3 times the measured one. **[proven]** on the algebra; the size of `alpha` is unmeasured.
+4. **`alpha` is measurable, and what measures it is the marker panel.** Each overflow marker's
+   formation flux is its clearance times its level, so
+   `alpha = k_e,3HP * m_3HP / sum_j (k_e,j * m_j)`: measuring the panel's levels **and** each
+   marker's clearance closes the overflow budget and returns `alpha`. **[proven]**
+5. **Which answers Phase 10's original question from an unexpected direction.** The panel's value is
+   not noise averaging, which is what the paper priced, and not the different functional forms, which
+   is what R3 recommended it for. **It is that the sum of the overflow routes is what converts a
+   measurable tracer clearance into the model's parameter.** That is structural information, it is the
+   thing that was never priced, and it is now the panel's strongest justification. **[judgement]**
+
+### R.3 What breaks the reduction, and it is the other markers **[measured]**
+
+The reduction used `v_o = c p`. With a saturable overflow `v_o = c p/(1 + p/K_o)`, no single `K_m`
+reproduces the two-state marker. The best-fitting `K_m` across capacity, and its residual:
+
+| K_o | best-fitting K_m | worst relative misfit | reduces |
+|---|---|---|---|
+| 1e9, the linear limit | 100.00 | 7.5e-07 | **yes** |
+| 1000 | 97.05 | 1.1e-02 | no |
+| 100 | 69.48 | 1.6e-01 | no |
+| 30 | 19.22 | 6.7e-01 | no |
+| 10 | 1.58 | 9.5e-01 | no |
+
+1. **The linear limit recovers `K_m = 100` exactly**, which is the reduction reappearing as a limit
+   and is the check on this test rather than a result of it. **[measured]**
+2. **As the overflow saturates, the one-state model absorbs the misfit into `K_m`** and does so
+   badly: at `K_o = 100` the best `K_m` is 69 instead of 100, a 31% error in a constant, and the
+   residual is still 16%. **A reader would see that as a calibration problem rather than as a missing
+   state.** **[measured]**
+3. **So the reduction holds for the marker the paper uses and fails for the ones R3 describes
+   differently**, which is the convergence that makes the whole picture consistent: the other markers
+   are informative precisely because they are not reductions of the same one-state form.
+   **[judgement]**
+
+### R.4 What the verdict licenses, and what it does not
+
+**Licensed.** The five dropped candidates are now expressible, because `p` exists: the breath test
+attaches to `theta p/(K_p + p)`, and 2-MC, C3, C3/C2 and propionylglycine attach to `p` through R3's
+functional forms. Steps 2 to 4 can be written against the two-state model.
+
+**Not licensed, and this is the qualification the author should see before authorising more.** Adding
+the state does not add identifiability by itself: R.2 point 2 shows the marker record sees no new
+parameter. **The gain is entirely that new SENSORS become attachable**, and each of them brings its
+own new nuisance, `alpha` being the first and the one that now sits on Phase 9's precondition.
+
+**And one thing that must be re-examined rather than assumed to carry over.** Phase 9's entire σ
+budget, and the S2b factor of 5.8, were derived with `k_e` meaning the marker's clearance. Under the
+reduction that parameter is `k_e/alpha`. **The numbers do not change, since the reduction is exact and
+the parameter is whatever the fits estimated, but their INTERPRETATION does**: "measure `k_e` to 2%"
+becomes "know `k_e/alpha` to 2%", which is a harder requirement than the micro-dose study alone
+satisfies. That re-reading is the first thing steps 2 to 4 should carry. **[judgement]**
+
+
+---
+
 ## Steps 2 to 4, and the hierarchical family
 
-Not started. Step 1 is a gate and this file is the report at it.
+Not started, by instruction: no sensor is priced until the reduction verdict has been read. Two
+strands are queued and depend on nothing above: the hierarchical cohort fit, and steps 2 to 4 on the
+five candidates that survive step 1 in the one-state model, where candidate 9, propionate turnover,
+is the row no phase has priced.

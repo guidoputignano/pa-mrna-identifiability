@@ -36,7 +36,11 @@ import numpy as np
 import q6_sigma_budget as S6
 
 GATE = S6.GATE
-NUISANCE = "centre"          #: the per-patient measurement, the conservative one
+#: which way the k_e nuisance is drawn. `centre` is the per-patient measurement,
+#: `truth` the population draw. They answer different questions and BOTH are
+#: reported, because a bias from a mis-centred prior is not a variance and a
+#: Cramer-Rao bound cannot represent it at all. Pass one as argv[1].
+NUISANCE = sys.argv[1] if len(sys.argv) > 1 else "centre"
 KE_CASES = (0.8, 0.054)
 SCAN = np.geomspace(0.02, 2.0, 25)
 
@@ -83,7 +87,7 @@ def main():
     print("=" * 104)
     print("  THE sigma BUDGET SOLVED BY FITTING")
     print("=" * 104)
-    print(f"\n  gate {GATE}, nuisance convention `{NUISANCE}`, 96 records per "
+    print(f"\n  gate {GATE}, NUISANCE CONVENTION `{NUISANCE}`, 96 records per "
           f"evaluation, scan {SCAN[0]:.2f}x to {SCAN[-1]:.2f}x the Fisher value")
     banner("THE FITTED BUDGET AGAINST THE FISHER ONE")
     print(f"    {'capacity':18s} {'schedule':16s} {'k_e':>6s} {'Fisher':>9s} "

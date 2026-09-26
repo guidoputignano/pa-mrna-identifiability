@@ -3446,3 +3446,78 @@ recommendation stands on its power argument alone. **One structural point the ar
 `r = 12` the study spans 21% of the record, and no feasible repeatability study captures the record's
 own drift, so if drift matters it must be carried by the model as a time-varying capacity. Filed.
 
+---
+
+## R67. The one-state model IS a reduction, and neither of its nuisance constants means what it says
+
+`audit/q13_two_state_reduction.py`, `audit/PHASE10_SENSORS.md` section R, 5 of 5 checks. Authorised as
+a reduction check rather than a rebuild, and scoped to that: no sensor is priced.
+
+**The reduction holds, exactly.** With `p` intracellular propionyl-CoA fed by the load, drained by the
+enzyme as `theta p/(K_p+p)` and by a linear overflow `c p`, and the marker fed from that overflow at
+yield `alpha` and cleared at `k_e`, eliminating `p` at quasi-steady state reproduces the paper's
+balance with a sympy residual of **0**, and numerically to **6.7e-15** across 54 combinations of
+capacity, load and increment and four independent `(alpha, c)` parametrisations. **So every existing
+result survives as the reduction of a better-founded model**, which is a strictly better position than
+the paper is in today.
+
+**But the reduction names what the paper's constants actually are, and two of the three are
+composites.**
+
+    K_m       = K_p * alpha * c / k_e   =   K_p * c / k_e_paper
+    k_e_paper = k_e / alpha
+
+`theta` is unchanged, which is fortunate since it is the estimand. **`K_m` is not the enzyme's
+Michaelis constant**, it is that constant scaled by the overflow-to-clearance ratio. **`k_e` in the
+paper is not the marker's clearance**, it is that clearance divided by `alpha`, the fraction of
+overflow flux that becomes the measured marker. `K_p`, `c` and `alpha` enter through only two
+combinations, rank 2 of 3, so adding the state adds no parameter the marker record can estimate.
+
+**And this lands on Phase 9's precondition.** Phase 9 concluded that measuring `k_e` is the
+precondition for a statable requirement. **S2b's micro-dose study measures the marker's clearance,
+`k_e`; the model's parameter is `k_e/alpha`.** So the study delivers the numerator and `alpha` is a new
+unmeasured nuisance on exactly the quantity wanted to 2%. At `alpha = 0.3` the model's constant is 3.3
+times the measured one. **The numbers in Phases 8 and 9 do not change, since the reduction is exact and
+the fits estimated whatever the parameter is, but their reading does**: "measure `k_e` to 2%" becomes
+"know `k_e/alpha` to 2%".
+
+**`alpha` is measurable, and what measures it is the marker panel.** Each overflow marker's formation
+flux is its clearance times its level, so `alpha = k_e,3HP m_3HP / sum_j k_e,j m_j`. **That answers
+Phase 10's original question from an unexpected direction: the panel's value is not noise averaging,
+which the paper priced, nor the different functional forms, which R3 recommended it for, but that the
+sum of the overflow routes converts a measurable tracer clearance into the model's parameter.**
+
+**What breaks the reduction is the other markers.** With a saturable overflow no single `K_m`
+reproduces the two-state marker: at `K_o = 100` the best-fitting `K_m` is 69 instead of 100 and the
+residual is still 16%, which a reader would see as a calibration problem rather than a missing state.
+The linear limit recovers `K_m = 100` to 7.5e-07, which is the check on the test. So **the reduction
+holds for the marker the paper uses and fails for the ones R3 describes differently**, which is why
+those markers carry information.
+
+**One error of mine, caught by the check.** The first version assumed `k_e` carried through the
+reduction unchanged, and the symbolic residual was not zero. The second term of the reduction is
+`(k_e/alpha) m`, not `k_e m`, and the whole `alpha` finding above followed from chasing that.
+
+---
+
+## R68. The fitted budget on both nuisance conventions
+
+`audit/PHASE9_LITERATURE.md` 3a.10, extended at the author's request.
+
+**At the measured `k_e` prior the Fisher budget is sound on both conventions**, fitted/Fisher 0.811 to
+1.296 over 24 cells. **At the population prior it must not be quoted on either**: `centre` gives 0.040
+to 1.163 and `truth` 0.071 to 1.170. **The author's hypothesis, that the gap is a `centre`-convention
+artefact because a bias is not a variance, is only half right**: on `truth` it is still a factor of 16.
+
+**And neither convention dominates cell by cell.** At the band's lower edge, monthly, `truth` is worse
+(0.082 against 0.325); at normal capacity, every 2 days, `centre` is worse (0.040 against 1.107). So
+there is no pessimistic convention to adopt and the defensible envelope is the worse of the two per
+cell, 0.040 to 1.148.
+
+**The author's argument about which governs still holds and comes out stronger.** A specification
+normally uses `truth`, a draw from a population whose centre is known; R1 establishes that no human
+`k_e` exists in any population, so the centre is unanchored, which is the `centre` convention. But the
+conclusion does not need that choice, because both conventions fail: **at the population prior there is
+no statable budget on either honest convention, so measuring `k_e` is the precondition for the
+requirement framework existing at all.** That is the form Phase 9 should be read as concluding.
+
