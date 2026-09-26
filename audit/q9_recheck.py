@@ -763,6 +763,73 @@ def check_14_s3():
     return ok
 
 
+def check_15_s4():
+    banner("15. S4: THE TROUGH READING, THE DRIFT CONVENTION, AND ONE CELL")
+    print("""  (a) The trough amplitude by BRUTE SUMMATION of the dose train rather than
+  q4's closed-form steady state: sum the kernel over 4000 past doses and read the
+  value just before the next one. Shares no algebra with ExpSum.steady.
+  (b) S4 applies the k_e drift on S2's `truth` convention and claims the two
+  honest conventions coincide at these widths. Measured, not assumed, with S2's
+  own Monte Carlo at drift 0.05, 0.10 and 0.15, against 0.8 where S2b found them
+  half apart.
+  (c) One joint-scenario cell rebuilt through the PROBE's fitter on identical
+  records, which shares no estimator code with q1's Analyst.""")
+    sys.path.insert(0, str(Path(__file__).resolve().parent / "probes_2026-09-25"))
+    import fit as PF
+    import q1_increment_shape as Q1
+    import q2_requirement_map as S2
+    import q4_joint_stress as S4
+
+    worst = 0.0
+    for name in ("exp 3.5 d", "2-comp, rising", "2-comp, jump"):
+        k = S4.Q1C.TRUTHS[name]
+        mine = S4.steady_trough(k, S4.T)
+        u = S4.T * np.arange(1, 4001)          # time since each past dose
+        theirs = float(np.sum(k(u)))
+        worst = max(worst, abs(mine / theirs - 1.0))
+        print(f"    {name:16s} closed form {mine:12.6f}  summed {theirs:12.6f}")
+    ok = report("trough amplitude, closed form vs brute sum", worst, 0.0,
+                1e-10, rel=False)
+
+    print()
+    worst = 0.0
+    for ks in (0.05, 0.10, 0.15, 0.8):
+        t = S2.times_for("monthly", "no baseline")
+        a = S2.mc_cell(S2.TH_NOM, t, ks, "recorded", "truth")["rmse"]
+        b = S2.mc_cell(S2.TH_NOM, t, ks, "recorded", "centre")["rmse"]
+        gap = abs(a / b - 1.0)
+        if ks < 0.8:
+            worst = max(worst, gap)
+        print(f"    k_e width {ks:4.2f}: truth {a:.4f}  centre {b:.4f}  "
+              f"gap {100 * gap:5.1f}%" + ("   (reference, not checked)"
+                                          if ks == 0.8 else ""))
+    ok &= report("drift conventions coincide below 0.2", worst, 0.0, 0.05,
+                 rel=False)
+
+    print()
+    ref, rt = Q1.committed_ref(), S4.committed_trough()
+    times = S4.footing_times("baseline")
+    worst_e = 0.0
+    for kname in ("2-comp, rising", "2-comp, jump"):
+        k = S4.Q1C.TRUTHS[kname]
+        with Q1.rebind(Q1, CV=0.15):
+            A = S4.analyst_for(S4.TRAINS["irregular C5"], ref, "dose", rt)
+            F = Q1.Footing()
+            inc = S4.truth_inc(k, "dose", S4.TRAINS["irregular C5"], times,
+                               ref, rt)
+            for sd in range(8):
+                m, s, _ = Q1.make_record(inc, sd, F=F, times=times)
+                mine = A.fit(m, s, times=times, F=F)["theta"]
+                phi = A.phi(np.zeros(0), times)
+                theirs = PF.fit(m, phi, s, F.sigma, F.L, ke_prior=0.8,
+                                b_sd=F.s_b, theta0=Q1.TH, ke0=F.ke)["theta"]
+                worst_e = max(worst_e, abs(np.log(mine) - np.log(theirs)))
+        print(f"    {kname:16s} worst |ln theta| gap so far {worst_e:.2e}")
+    ok &= report("S4 joint cell, q1 analyst vs probe fitter", worst_e, 0.0,
+                 1e-3, rel=False)
+    return ok
+
+
 def main():
     print("=" * 92)
     print("  PHASE 8 RE-CHECKS. Independent routes to every reported result.")
@@ -772,7 +839,7 @@ def main():
                check_7_two_phase, check_8_residual_reference,
                check_9_kappa_prior, check_10_dose_day_draw,
                check_11_footings, check_12_s2, check_13_s2b,
-               check_14_s3):
+               check_14_s3, check_15_s4):
         try:
             fn()
         except Exception as exc:          # a check that cannot run is a failure

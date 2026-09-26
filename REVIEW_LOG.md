@@ -2945,3 +2945,51 @@ posterior against the analytic information matrix (2e-8), σ against the probe's
 coded footing formula (4e-14), and the visits-to-gate crossings confirmed by the Hessian route.
 33 of 33 pass.
 
+---
+
+## R57. S4: one joint stress scenario at normal capacity
+
+`audit/q4_joint_stress.py`. Every stress the audit found, present at once at normal capacity: the
+two-compartment increment under both readings against the committed 3.5 d analyst, a 15% marker
+CV, the k4 trough dose calibration, the 7 d train, the trial's irregular C5 train, and `k_e`
+drifting within the patient. Both baseline footings, `dose` primary with `peak`, `mean` and
+`trough` as the sensitivity column, 24 seeds, bias, RMSE, coverage and residual reported.
+
+**The design survives the joint scenario.** With one untreated baseline draw and the `dose`
+calibration the median bias is 2% low on the rising kernel and 13% high on the jump kernel, inside
+the band S1 reported for a wrong shape alone. The stresses do not compound multiplicatively, and
+the 7 d train and the irregular train partly cancel. The residual rises from 0.98σ to 2.2σ, so
+S1.4's warning survives: a real record carrying these stresses would not look well fitted.
+
+**One thing does break it, and it is a choice rather than an unknown.** The trough dose
+calibration roughly doubles θ̂ (2.29 rising, 2.29 jump, 2.63 on therapy) and multiplies RMSE by
+five, with coverage at 67 to 75%. The mechanism is arithmetic: the committed trough is 400 against
+a peak of 6400, so matching a trough fixes the amplitude through a small number and divides any
+shape error by it, setting an amplitude 2.8 times smaller than the dose reading does.
+**`k4_admissibility.py`'s finding that the trough reading is admissible, and this, are compatible
+and both belong in the specification;** the trough reading should not be adopted on k4's evidence
+alone. The author's choice of `dose` as primary, made before these numbers existed, is also the
+best of the four.
+
+**The two questions the author added.**
+
+1. **The baseline draw's advantage survives the noise and grows with it**, on the monthly schedule:
+   the median moves from +0.033 closer to the truth at CV 5% to +0.065 at CV 15% on the rising
+   kernel, and +0.041 to +0.121 on the jump kernel, and it takes a third off RMSE. On the 14.5 d
+   schedule, whose 51 treated draws walk in phase against the train, the advantage is real but
+   roughly halved and stops growing with the noise. The one cost is coverage, 83% against 92%: the
+   draw moves the point estimate onto the truth without widening the interval to match.
+2. **One pre-treatment draw is the specification item, and two or three are not better.** On every
+   monthly row the 2 and 3 columns are worse than the 1 column by 5 to 23%. The untreated level is
+   one number, so a second draw re-measures it while adding another load record with its own error.
+
+**And a negative result worth having.** Carrying drift at normal capacity, as the author asked,
+shows **it does not bind there**: 0.5% on the median and under 1% on RMSE across its whole swept
+range, against S2b.5 where a 10% drift put every schedule beyond the gate at 5% of normal. Drift
+is a disease-range requirement, not a general one.
+
+**Re-check record.** `q9` gains check 15 on three routes: the trough amplitude by brute summation
+over 4000 past doses against the closed form (2e-16), the drift conventions measured rather than
+assumed to coincide (0.8% at width 0.05, 2.5% at 0.15, against 41% at the paper's 0.8), and one
+joint-scenario cell rebuilt through the probe's fitter (1e-7). 36 of 36 pass.
+

@@ -1014,6 +1014,183 @@ edge is located to about 6%):
 
 ---
 
+## S4. One joint stress scenario at normal capacity
+
+`audit/q4_joint_stress.py`. S1 to S3 varied one thing at a time, and the obvious objection is
+that the design survives each insult alone and would not survive them together. S4 builds one
+scenario in which every stress the audit has found is present at once, at normal capacity,
+θ = 3000, 24 seeds, and reports bias, RMSE, coverage of the 95% profile interval, and the
+residual.
+
+**The scenario.** The two-compartment protein increment under both readings of where the dose
+enters, `rising` and `jump`, against the committed 3.5 d exponential analyst with a fixed
+amplitude, so the shape is misspecified as S1 measured it. A 15% marker CV, which S3 places just
+past the crossover with a 10% load record. The trough dose calibration, which
+`k4_admissibility.py` finds most internally coherent with a 7 d interval. The 7 d train variant
+and the trial's real irregular C5 train with its delayed dose, skipped dose and de-escalation.
+`k_e` drifting within the patient at S2b.5's 0, 5 and 10%.
+
+**Conventions.** `dose` primary, with `peak`, `mean` and the scenario's own `trough` as the
+sensitivity column. Both baseline footings carried throughout. Dose-day draws pre-dose, so the
+`baseline` footing's t = 0 draw is untreated and the two footings differ in that draw alone. The
+drift is applied on S2's `truth` convention; `q9` check 15 measures rather than assumes that the
+two honest conventions coincide at these widths (0.8% at 0.05, 2.5% at 0.15, against 41% at the
+paper's 0.8).
+
+Re-checks: `q9` check 15, three routes (the trough amplitude by brute summation over 4000 past
+doses against the closed form, 2e-16; the drift conventions; the joint cell through the probe's
+fitter, 1e-7). 36 of 36 overall.
+
+### S4.1 The stress ladder: the design survives the joint scenario **[measured]**
+
+Each row adds one stress to the row above, so the last row is the joint scenario. Median
+θ̂/θ [min, max], RMSE in ln θ, residual in σ, coverage. Baseline footing, `dose` convention:
+
+| row | rising | jump |
+|---|---|---|
+| committed truth, CV 5% | 0.986 [0.900, 1.183] 0.070 0.98σ 100% | same |
+| + 2-comp truth | 1.046 [0.960, 1.255] 0.090 1.09σ 100% | 1.211 [1.105, 1.471] 0.219 1.09σ 100% |
+| + CV 10% | 1.025 [0.879, 1.290] 0.113 1.58σ 100% | 1.188 [1.008, 1.516] 0.222 1.57σ 100% |
+| + CV 15% | 1.015 [0.788, 1.343] 0.147 2.21σ 96% | 1.170 [0.899, 1.581] 0.236 2.21σ 100% |
+| + 7 d train | 0.911 [0.495, 1.448] 0.241 2.19σ 75% | 1.004 [0.527, 1.672] 0.234 2.17σ 92% |
+| + irregular C5 | 0.972 [0.746, 1.456] 0.183 2.20σ 83% | 1.122 [0.848, 1.761] 0.224 2.22σ 100% |
+| + k_e drift 10% | 0.977 [0.752, 1.460] 0.182 2.20σ 83% | 1.129 [0.855, 1.766] 0.226 2.21σ 100% |
+
+On therapy the same ladder ends at 1.088 [0.635, 1.775] RMSE 0.280 coverage 92% for `rising`, and
+1.251 [0.714, 2.197] RMSE 0.385 coverage 96% for `jump`.
+
+1. **The joint scenario does not break the estimator.** With a baseline draw the median bias is
+   2% low on the rising kernel and 13% high on the jump kernel, inside the 1.3 to 2.0 band S1
+   reported for a wrong shape alone. **The stresses do not compound multiplicatively**, and two
+   of them partly cancel: the 7 d train pulls the rising cell to 0.911 and the irregular train
+   pulls it back to 0.972. **[measured]**
+2. **The residual is a loud and honest warning throughout.** It rises from 0.98σ on the committed
+   truth to 2.2σ in the joint scenario, so a real record carrying these stresses would not look
+   well fitted. S1.4's warning survives the joint scenario. **[measured]**
+3. **Coverage degrades but does not collapse**: 100% down to 83% on the worst cell (rising,
+   baseline), 75% on the 7 d row. **The interval is optimistic under joint stress and by a margin
+   worth stating, not by a margin that makes it useless.** **[measured]**
+4. **The 7 d train is the single largest insult in the ladder**, wider in spread than the marker
+   CV, the irregular train or the drift: it takes the spread from [0.788, 1.343] to
+   [0.495, 1.448] and coverage from 96% to 75%. **[measured]**
+
+### S4.2 The trough dose calibration is the one thing that does break it **[measured]**
+
+The joint scenario across all four amplitude conventions, baseline footing:
+
+| kernel | dose | peak | mean | trough |
+|---|---|---|---|---|
+| rising | 0.977 [0.75, 1.46] 0.182 83% | 1.057 [0.81, 1.62] 0.193 100% | 1.199 [0.90, 1.92] 0.270 100% | **2.287 [1.52, 5.72] 0.919 75%** |
+| jump | 1.129 [0.86, 1.77] 0.226 100% | 1.205 [0.90, 1.93] 0.272 100% | 1.221 [0.91, 1.97] 0.283 100% | **2.290 [1.52, 5.77] 0.923 75%** |
+
+On therapy the trough column is worse again, 2.63 [1.23, 8.03] with RMSE 1.19 and coverage 67%.
+
+1. **Calibrating the dose on the trough roughly doubles θ̂ and multiplies RMSE by five**, on both
+   kernels and both footings. This is the largest single effect S4 found, and it is a choice the
+   specification makes, not an unknown it inherits. **[measured]**
+2. **The mechanism is arithmetic.** The committed trough is 400 against a peak of 6400, 6.25%, so
+   matching a trough fixes the amplitude through a small number and any shape error is divided by
+   it. The amplitudes the four conventions assign to the rising kernel are 30.6, 27.7, 23.7 and
+   11.1: **the trough reading sets an amplitude 2.8 times smaller than the dose reading does**,
+   and that gap is the bias. **[measured]**
+3. **So `k4_admissibility.py`'s finding needs S4's qualification beside it.** The trough reading
+   is admissible against the capacity and shape ceilings, which is what k4 asked. It is the worst
+   of the four for identifying θ when the increment shape is wrong, which is what S4 asked. Those
+   are compatible, and the specification should not adopt the trough reading on k4's evidence
+   alone. **[measured]**, **[judgement]** on the recommendation.
+4. **The author's choice of `dose` as primary is also the best of the four here**, on both
+   kernels and both footings. That was decided on what a per-dose calibration pins, before these
+   numbers existed. **[measured]**
+
+### S4.3 Drift in `k_e` does not bind at normal capacity **[measured]**
+
+The joint scenario at drift 0, 5 and 10%, carried here because the same prior carries the
+headline precision:
+
+| footing | kernel | CV | drift 0 | drift 5% | drift 10% |
+|---|---|---|---|---|---|
+| baseline | rising | 15% | 0.972, RMSE 0.183 | 0.976, 0.182 | 0.977, 0.182 |
+| baseline | jump | 15% | 1.122, 0.224 | 1.126, 0.225 | 1.129, 0.226 |
+| on therapy | rising | 15% | 1.072, 0.277 | 1.081, 0.279 | 1.088, 0.280 |
+
+**Drift moves nothing at normal capacity: 0.5% on the median and under 1% on RMSE across its
+whole swept range, and coverage does not move at all.** That is the opposite of S2b.5, where at
+5% of normal a 10% drift put every schedule beyond the gate. **The reason is the elasticity: at
+normal capacity the marker carries θ and `k_e`'s share of the balance is small, and in the
+disease range it is the other way round.** So drift is a disease-range requirement and not a
+general one, which is worth stating precisely because it would be natural to assume otherwise.
+**[measured]**
+
+### S4.4 Question 1: the baseline draw survives the noise, and the 14.5 d schedule weakens it **[measured]**
+
+`gain` is how much closer to 1 the baseline footing's median sits than the on-therapy one:
+
+| schedule | kernel | CV 5% | CV 10% | CV 15% |
+|---|---|---|---|---|
+| monthly | rising | +0.033 | +0.041 | +0.065 |
+| monthly | jump | +0.041 | +0.089 | +0.121 |
+| 14.5 d | rising | +0.024 | +0.049 | +0.024 |
+| 14.5 d | jump | +0.023 | +0.050 | +0.020 |
+
+1. **The baseline draw's advantage not only survives the noise, it grows with it**, on the monthly
+   schedule: +0.033 at CV 5% to +0.065 at CV 15% on the rising kernel, and +0.041 to +0.121 on the
+   jump kernel. **One untreated draw is worth more in a noisy record, not less.** **[measured]**
+2. **On the 14.5 d schedule the advantage is real but roughly halved**, and it stops growing with
+   the noise. That schedule has 51 treated draws walking in phase against the 14 d train, so the
+   record already identifies the increment and the untreated draw has less to add. **[measured]**
+3. **The baseline draw also buys RMSE, not only bias**: on the joint scenario, monthly, CV 15%,
+   0.182 against 0.280 on the rising kernel and 0.226 against 0.385 on the jump. That is a third
+   off the error for one blood draw. **[measured]**
+4. The interval is the one place the baseline draw costs something: coverage 83% with it against
+   92% without, on the rising kernel at CV 15%. **The draw moves the point estimate onto the truth
+   and the interval does not widen to match**, which is a property of the profile under a
+   misspecified shape and not an argument against the draw. **[measured]**, **[judgement]** on the
+   reading.
+
+### S4.5 Question 2: one pre-treatment draw is what matters **[measured]**
+
+The extra untreated draws sit one dose interval apart before t = 0, so the treated record is
+identical across the columns and what is measured is the run-in itself. RMSE, joint scenario:
+
+| schedule | kernel | CV | none | 1 pre-draw | 2 | 3 |
+|---|---|---|---|---|---|---|
+| monthly | rising | 10% | 0.202 | 0.129 | 0.129 | 0.143 |
+| monthly | rising | 15% | 0.280 | 0.182 | 0.189 | 0.203 |
+| monthly | jump | 10% | 0.303 | 0.194 | 0.218 | 0.207 |
+| monthly | jump | 15% | 0.385 | 0.226 | 0.269 | 0.271 |
+| 14.5 d | rising | 15% | 0.188 | 0.168 | 0.162 | 0.183 |
+| 14.5 d | jump | 15% | 0.301 | 0.280 | 0.273 | 0.293 |
+
+1. **One pre-treatment draw takes a third off the RMSE. The second and third take nothing, and on
+   the monthly schedule they cost.** On every monthly row the 2 and 3 columns are worse than the
+   1 column, by 5 to 23%. **[measured]**
+2. **The mechanism is that the extra draws are not new information about the same quantity.**
+   The untreated level is one number; a second untreated draw re-measures it, while the first one
+   established it, and each added draw also adds a load record with its own error. **[measured]**
+   on the sizes, **[judgement]** on the mechanism.
+3. **On the 14.5 d schedule two pre-draws are marginally best** (0.162 against 0.168), by less
+   than the seed spread, so the same conclusion holds: **one is the specification item, and asking
+   for three is not supported.** **[measured]**
+
+### S4.6 What S4 hands on
+
+1. **The joint scenario does not break the design.** With one untreated baseline draw and the
+   `dose` calibration the median bias is 2 to 13% at normal capacity with every stress present,
+   and the residual at 2.2σ announces the misspecification. **[measured]**
+2. **The trough dose calibration should not be adopted.** It doubles θ̂ and multiplies RMSE by
+   five under a wrong shape. k4's admissibility finding and this are compatible and both belong
+   in the specification. **[measured]**, **[judgement]** on the recommendation.
+3. **One untreated pre-treatment draw is a specification item.** It is worth a third of the RMSE,
+   it is worth more as the marker gets noisier, and two or three are not worth more than one.
+   **[measured]**
+4. **Drift in `k_e` is a disease-range requirement, not a general one.** **[measured]**
+5. **The 95% profile interval is optimistic under joint stress**, 83% at worst on these cells, and
+   the specification should say so rather than quote nominal coverage. **[measured]**
+6. **The 7 d dose interval is the largest design risk in the ladder**, which matters because the
+   trough reading's coherence argument in k4 rests on pairing it with 7 d. **[measured]**
+
+---
+
 ## What is open after S1
 
 - **The shape itself**, and **which reading of Attarwala's kernel is right**. Nothing here
@@ -1036,7 +1213,7 @@ edge is located to about 6%):
 - **The marker's within-subject biological variation in stable outpatients**, which S3 makes as
   important as the load record and which brief **R3** has not been asked for in that form. Above
   25% the design does not close at normal capacity; above 15% the working band is empty.
-- **S4 and S5** have not been run.
+- **S5** has not been run.
 
 ### A boundary on this phase
 
