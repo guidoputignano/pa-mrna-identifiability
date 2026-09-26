@@ -484,6 +484,16 @@ misses it by a factor of five with an infinite cohort.** Even a CV of 10%, well 
 for, floors at 0.1027 and still misses. Only the exactly-shared row, which R1 gives reasons to
 disbelieve, ever reaches a target, and then only the looser one.
 
+**The 33% is applied to a quantity it was not measured on, and the floor is therefore optimistic.**
+R1's between-patient CV of about a third is for the MARKER'S CLEARANCE. The model's parameter is
+`k_e/alpha`, and `alpha` varies between patients too, through carnitine status and the relative sizes
+of the overflow routes. **Applying 33% to the composite assumes `alpha` is either constant across
+patients or perfectly anticorrelated with `k_e`**, and neither has been measured. Any other
+relationship makes the composite's spread larger than its numerator's, so **the true floor could be
+worse than the table shows and cannot be better unless the anticorrelation is near perfect.** Stated,
+not re-run: the direction is what matters and the magnitude needs a measurement nobody has.
+**[judgement]**
+
 **What the floor is made of, and why more patients cannot remove it.** Once the cohort is large the
 population value is known essentially exactly, and the patient's own constant is known only to what
 their own record says about it against a prior of the between-patient width. The cohort contributes
@@ -575,14 +585,13 @@ Phase 9 concluded that measuring the second constant is the precondition for the
 framework existing at all. The obvious cheap alternative to measuring it, borrowing it from a cohort,
 has now been priced and does not work. **[judgement]**
 
-### C.6 The item this raises, filed rather than run
+### C.6 The item this raises, since settled
 
 If the between-patient CV is what kills the cohort route, then the CV is the quantity worth measuring
 first, and P.6's repeatability design, 10 patients at 12 draws, is already scoped to estimate exactly
-that. **The order is now: measure the between-patient spread before committing to either route**,
-since a CV near zero makes a 723-patient cohort merely infeasible rather than pointless, and a CV
-near a third rules the cohort route out permanently and makes the four tracer studies the only route
-there is. That is a cheap decision-relevant measurement standing in front of an expensive one.
+that: a CV near zero makes a 723-patient cohort merely infeasible rather than pointless, and a CV
+near a third rules the cohort route out permanently. **Filed here, and promoted to settled in S.7,
+where it turns out to decide the tracer route and the sensor pricing as well.**
 
 ---
 
@@ -609,27 +618,75 @@ load column and a `measured` load column and treats them as two different studie
 endpoints of candidate 9**: `recorded` is a turnover measurement of infinite width, `measured` one of
 zero width. Everything between was never computed, and the sensor lives there.
 
-### S.1 Candidate 9 buys nothing, and that is the phase's clearest result **[measured]**
+### S.1 Candidate 9 buys 7 to 15%, not 1 to 2%, and the corollary is withdrawn **[measured]**
 
-`sd(ln theta)`, monthly, median over 24 load seeds:
+`audit/q16_corrections.py` parts B to E. **This section first priced only half of what measuring the
+load does, and the corollary drawn from it was wrong.**
 
-| capacity | no turnover study | at 10% | at 2% | **exact** |
-|---:|---:|---:|---:|---:|
-| 5% | 3.068 | 3.060 | 3.029 | **3.022** |
-| 10% | 1.581 | 1.577 | 1.563 | **1.560** |
-| 20% | 0.812 | 0.811 | 0.804 | **0.804** |
+**The two channels, and why they are one knob.** Measuring the load removes the offset from the
+parameter vector AND removes the load-recording error from `sigma`. On the project's own
+parametrisation these are not two knobs but one: the load record's ACCURACY, `LOAD_FRAC`, committed
+at 5%, sets both the offset prior `s_b = LOAD_FRAC * L` and one of `sigma`'s two terms,
+`sigma = hypot(LOAD_FRAC * L, b * assay_cv * m_bar)`. Measuring the load exactly sends it to zero,
+which leaves `sigma` at its assay term, not at zero.
 
-**Knowing `L + b` EXACTLY improves `sd(ln theta)` by 1 to 2%.** Not at a plausible precision, at
-perfect precision, on every schedule and at every capacity. There is no precision at which this
-sensor is worth buying, because there is no precision at which it does anything.
+Improvement against the committed design, 25 monthly draws:
 
-**Why, and it is worth stating because it also reprices S2's own two columns.** The offset is already
-pinned by its own prior `s_b = 0.10 L`, and what limits `theta` is `k_e`, not the load. The load
-channel was never the binding constraint. **So S2's `recorded` and `measured` load columns differ by
-1 to 2% and are not two designs at all**, which no phase had noticed.
+| capacity | committed | b dropped only (what S.1 first reported) | accuracy 2% | accuracy 1% | **accuracy 0%** |
+|---:|---:|---:|---:|---:|---:|
+| nominal | 0.172 | +0.3% | +5.9% | +6.7% | **+7.0%** |
+| 20% | 0.812 | +1.0% | +5.5% | +7.0% | **+7.5%** |
+| 10% | 1.581 | +1.4% | +8.8% | +11.1% | **+11.9%** |
+| 5% | 3.068 | +1.5% | +10.8% | +13.5% | **+14.5%** |
 
-**The row the brief most wanted priced comes back flat, and that is an answer.** It removes a study
-from the candidate set rather than adding one. **[measured]**
+**The verdict on candidate 9 survives but its reason changes.** It is not that the sensor does
+nothing; it is that it does something real and far too small. 7 to 15% against candidate 2's factor
+of 4 to 15 and candidate 8's factor of 6, and at 5% capacity it moves 3.068 to 2.62, nowhere near the
+0.20 gate. **Dropped on size, not on absence.**
+
+**The corollary is withdrawn.** S.1 first concluded that S2's `recorded` and `measured` load columns
+"differ by 1 to 2% and are not two designs at all". They do differ by 1 to 2%, but that does not make
+the conclusion right, because **S2's `measured` column is not what the paper means by measuring the
+load**. S2's two columns move only the offset parameter; the paper's route moves `LOAD_FRAC`, which
+is worth 7 to 15%. **It is a naming collision, and the correct statement is the reverse of the one
+withdrawn: S2's `measured` column understates the study it appears to price by a factor of five to
+ten, and should be relabelled rather than merged.** **[measured]**
+
+**The paper's Section 7 already had this right** and I did not read it before drawing the corollary:
+"what the load record has to deliver is per-visit precision entering through `sigma` and not a
+calibrated mean offset".
+
+### S.1b The paper's route 6, reconciled, with one clause that does not survive **[measured]**
+
+Section 11's route 6 claims "thirteen measured-load visits match twenty-five recorded ones and six
+reach the target" at nominal, and that the advantage "shrinks rather than reverses as capacity falls,
+from thirteen visits to eighteen". Three numbers existed for one route. Checked against both readings
+of what "measuring the load" means:
+
+| claim | route 6 | this audit | verdict |
+|:--|:--|:--|:--|
+| visits matching 25, nominal | 13 | **12** | reproduces, off by one |
+| visits reaching the 0.20 gate, nominal | 6 | **6** | reproduces exactly |
+| `2.659` at 5% of nominal | 2.659 | **2.655** at 1% accuracy, 2.625 exact | reproduces |
+| visits matching 25, below nominal | **18** | **12, and flat** | **does not reproduce** |
+
+**Route 6's headline is sound and its third clause is not.** Swept across the range, the number of
+exactly-measured visits matching 25 committed ones runs 12, 11, 10, 12, 12, 12 from nominal down to
+2% of nominal. **The advantage does not shrink below nominal; it is flat, and is strongest at 20% of
+nominal.** Route 6 uses the shrinkage to argue the route opens nothing below nominal. **That
+conclusion is separately true**, since 12 visits at 5% capacity still leave 2.62 against a 0.20 gate,
+so the error is in a supporting number and not in the finding it supports.
+
+**And route 6's prose describes a different computation from the one that produced its numbers.** It
+says measuring the load "removes `b` from the parameter vector rather than bounding it", which is the
+b-only reading, and that reading gives 24 visits against 25, not 13. The numbers come from moving
+`LOAD_FRAC`. So Section 11's route 6 and Section 7's load paragraph contradict each other on the
+mechanism, and **Section 7 is the correct one**.
+
+**How this survived the artefacts check.** `2.659`, `thirteen`, `twenty-five`, `six` and `eighteen`
+are hardcoded in the prose of `paper/sections/11_scope.tex`, not `\num{}` macros, so nothing ever
+compared them with a generator. That is exactly R23's failure mode, recurring in the one section that
+enumerates the paper's own negative results. **[measured]**
 
 ### S.2 The k_e sensor has a floor, and the monthly record sits under it **[measured]**
 
@@ -664,35 +721,56 @@ be known to about 5%, which is a harder measurement than the clearance it is sta
 **Candidate 10 is dominated by candidate 8 on its own terms** and survives only as the bound step 1
 called it. **[measured]**
 
-### S.3 The result the project should be most uncomfortable with **[measured]**
+### S.3 The record against the ex vivo assay, at the width R4 supports **[measured]**
+
+`audit/q16_corrections.py` part A. **This section was first written at an assay width of 0.20 and
+the conclusion inverts at the width the literature actually supports.** The corrected form is below;
+what was withdrawn is stated at the end, because the error is this project's own recurring one.
 
 An ex vivo assay measures `ln theta` directly, so it ALONE gives `sd(ln theta)` equal to its own
-precision, with no record at all. What does the two-year marker record add on top of it?
+log-sd `a`, with no record at all. The joint precision is the quadrature sum, and the record's
+marginal value is the gap.
 
-| capacity | assay alone | + monthly record | + weekly | + 2-daily |
-|---:|---:|---:|---:|---:|
-| 5%, 20% assay | 0.2000 | 0.1996 (**0.2%**) | 0.1992 (0.4%) | 0.1981 (1.0%) |
-| 10%, 20% assay | 0.2000 | 0.1984 (**0.8%**) | 0.1974 (1.3%) | 0.1946 (2.7%) |
-| 20%, 20% assay | 0.2000 | 0.1942 (**2.9%**) | 0.1924 (3.8%) | 0.1879 (6.0%) |
-| 20%, 30% assay | 0.3000 | 0.2814 (6.2%) | 0.2762 (7.9%) | 0.2632 (**12.3%**) |
+**The width is the whole question, and R4 settles it.** The ex vivo to in vivo mapping **has never
+been measured in any human**. The only quantitative link is Manoli's Spearman `r = 0.682` in MMA,
+`R^2 = 0.327`, so a third of the variance. The defensible width is therefore a natural-log sd **of
+order 1**, roughly threefold per standard deviation. **`a = 0.20` is five times tighter than that and
+tighter than the tightest value S5 swept.**
 
-**Two years of monthly plasma 3-HP, added to a single ex vivo assay of ordinary quality, improves the
-estimate of residual capacity by between 0.2 and 2.9 per cent.** The best cell anywhere in the sweep
-is 12.3%, and it needs a poor assay, the densest schedule and the top of the disease range together.
+What the two-year monthly record adds on top of the assay, `a = 1.0` primary:
 
-**This is not an argument for the assay and it is not a refutation of the record.** The ex vivo route
-was priced in q5 and carries its own problem, that a fibroblast's activity is not the patient's in
-vivo capacity, and nothing here measures that transfer. **What it is, is the marker record's
-information content stated on an absolute scale instead of a relative one.** Every earlier phase
-compared schedules against schedules and sensors against sensors. This compares the whole record
-against one blood draw sent to a reference laboratory, and the record is worth a few per cent.
+| capacity | record alone | **record adds, a = 1.0** | a = 0.50 | a = 0.30 | a = 0.20 (optimistic) |
+|---:|---:|---:|---:|---:|---:|
+| nominal | 0.172 | **83.1%** | 67.5% | 50.3% | 34.8% |
+| 20% | 0.812 | **37.0%** | 14.8% | 6.2% | 2.9% |
+| 10% | 1.581 | **15.5%** | 4.7% | 1.8% | 0.8% |
+| 5% | 3.068 | **4.9%** | 1.3% | 0.5% | 0.2% |
 
-**Where that leaves the project's question.** "Can residual capacity be identified from plasma 3-HP
-under mRNA-3927" now has a sharper form: **it can, to within the ex vivo assay's own precision, and
-almost entirely because of the assay.** If no assay is available the record cannot do it alone at 5
-or 10% capacity under any sensor (S.2). If an assay is available the record is nearly redundant. The
-band where the record is the decisive instrument is narrow and this phase has not found it.
-**[measured]**, **[judgement]** on the reading.
+**At the supported width the record does most of the work and the assay is the weak partner**, which
+is the reverse of what this section first said. At nominal the record supplies 83% of the joint
+precision; even at 20% capacity it supplies 37%.
+
+**And neither partner reaches the gate anywhere in the disease range.** The joint figure against the
+0.20 gate:
+
+| capacity | assay alone, a = 1.0 | joint, a = 1.0 | joint, a = 0.20 |
+|---:|---:|---:|---:|
+| nominal | 1.000 | 0.169 | 0.130 |
+| 20% | 1.000 | 0.630 | 0.194 |
+| 10% | 1.000 | 0.845 | 0.198 |
+| 5% | 1.000 | 0.951 | 0.200 |
+
+At `a = 1.0` the pair misses the gate at every disease-range capacity, 0.630 to 0.951. The optimistic
+column only ever grazes it, 0.194 to 0.200, and that is an assay nobody can currently deliver.
+
+**What was withdrawn, and why it is worth recording.** This section first read: "two years of monthly
+plasma 3-HP, added to a single ex vivo assay of ordinary quality, improves the estimate of residual
+capacity by between 0.2 and 2.9 per cent", and drew from it that the record is nearly redundant. That
+is the `a = 0.20` column. **The surrounding prose flagged the ex vivo to in vivo transfer as
+unmeasured and the headline was then quoted from the column that assumes it away.** Naming a
+precondition and then reporting a number that violates it is the failure this project has named more
+often than any other, and this is its first instance in my own output rather than in the paper's.
+**[measured]**, **[judgement]** on the withdrawal.
 
 ### S.4 The combinations, and which are redundant **[measured]**
 
@@ -744,19 +822,56 @@ which the spread alone does not show: it removes the collapse mode entirely. **[
 
 ### S.6 What steps 2 to 5 return
 
-1. **Candidate 9, propionate turnover, is dropped on measurement.** Exact knowledge of `L + b` is
-   worth 1 to 2%, and S2's two load columns collapse into one.
+1. **Candidate 9, propionate turnover, is dropped on size, not on absence.** An exactly measured
+   load is worth 7 to 15%, not the 1 to 2% first reported, which priced only the offset channel and
+   not `sigma`. That is real and far too small against candidate 2's factor of 4 to 15. The corollary
+   about S2's two load columns is withdrawn (S.1), and the paper's own route 6 is reconciled with one
+   clause that does not survive (S.1b).
 2. **Candidate 10, timed urine, is dominated by candidate 8** unless `f_renal` is known to about 5%,
    which R1 does not supply and which is harder than the measurement it substitutes for.
 3. **Candidate 8's value is schedule-dependent**: it buys the 2-daily record a pass at 10% capacity
    and buys the monthly record nothing below 20% capacity, because at 5 and 10% the monthly record
    misses the gate with `k_e` known exactly.
-4. **Candidate 2, ex vivo activity, dominates everything**, and the uncomfortable corollary is that
-   the two-year marker record adds 0.2 to 2.9% on top of it. The record's remaining distinct value is
-   removing nothing the assay does not already remove, except that the assay removes the collapse
-   mode the record alone has at 20 to 30%.
+4. **Candidate 2, ex vivo activity, dominates only at a precision R4 rules out.** At the supported
+   width of about 1.0 the record supplies 83% of the joint precision at nominal and 37% at 20%
+   capacity, so the record is the strong partner and the assay the weak one, and **the pair still
+   misses the gate everywhere in the disease range**, 0.630 to 0.951. The assay's one distinct
+   contribution that survives is removing the collapse mode, 0/96 against 20 to 29 of 96.
 5. **Only `c2 + c8` is a combination worth buying**, and the phase's practical recommendation is
    therefore an ex vivo assay plus the densest affordable record, with the tracer study bought only
-   if the record is dense.
+   if the record is dense. **S.4's combination table is computed at `a = 0.20` and inherits S.3's
+   error**: at `a = 1.0` every c2 entry in it moves toward the record-alone column, so the table
+   ranks the combinations correctly and overstates all of them.
 
 **[measured]** on 1 to 4, **[judgement]** on 5.
+
+---
+
+## S.7 The one measurement that decides everything above **[judgement]**
+
+Filed three times and promoted here as settled. **The between-patient spread of the residual scatter
+is now what decides both routes to the model's second constant**, and it is the cheapest
+decision-relevant measurement anywhere in the specification.
+
+**Why it decides the cohort route.** C.2: at a between-patient CV of a third the patient's own
+constant floors at 0.3166 with an infinite cohort, five times the looser target, and the floor is
+optimistic because 33% was measured on `k_e` and applied to `k_e/alpha`. At a CV near zero the cohort
+route is merely infeasible; at a CV near a third it is impossible. **Nothing else in the cohort
+pricing changes the verdict and this changes it completely.**
+
+**Why it decides the tracer route.** If the spread is large, the four micro-dose studies of P.8 must
+be run per patient rather than once, because a population value of `k_e/alpha` is not what any
+patient's `theta` consumes. That multiplies P.8's already repriced cost by the cohort size.
+
+**Why it decides the sensor pricing.** Every `k_e` figure in S.2 is a per-patient precision. Whether
+any route can deliver one depends on whether the quantity is shared.
+
+**What it costs, and it is already scoped.** P.6's repeatability design, **10 patients at 12 draws
+each, 120 draws**, at one fixed dose-cycle phase, about twelve dose intervals or five and a half
+months on the 14 d train, inside the two-year record the design already assumes. It gives pooled
+`df = 110` and 73% power on a `tau` of 0.30 at a correctly sized 5% test.
+
+**So the ordering is now forced.** Measure the between-patient spread before committing to either
+route, because a cheap measurement stands in front of two expensive ones and determines whether
+either is worth making. **It should be the top line of whatever the specification becomes**, ahead of
+the load-record requirement and ahead of the `k_e` study, both of which are conditional on it.

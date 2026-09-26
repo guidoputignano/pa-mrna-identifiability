@@ -3638,3 +3638,87 @@ agree only to within the Monte Carlo noise**, 11% better fitted at one capacity 
 another against a Fisher figure of 1 to 2%, so the honest reading is indistinguishable rather than
 matched. **On candidate 2 they agree closely, and the assay removes the collapse mode outright**,
 0/96 against 20 to 29 out of 96 without it, which the spread alone does not show.
+
+---
+
+### R74. The ex vivo comparison was quoted from a column R4 rules out, and the conclusion inverts
+
+`audit/PHASE10_SENSORS.md` S.3, `audit/q16_corrections.py` part A. **Withdrawal of R73's headline.**
+
+R73 reported that "two years of monthly plasma 3-HP, added to a single ex vivo assay of ordinary
+quality, improves the estimate of residual capacity by between 0.2 and 2.9 per cent". That is
+computed at an assay log-sd of 0.20. **R4's finding is that the ex vivo to in vivo mapping has never
+been measured in any human**, that the only quantitative link is Manoli's Spearman `r = 0.682` in MMA
+with `R^2 = 0.327`, and that the defensible width is a natural-log sd **of order 1**. A prior of 0.20
+is five times tighter than that and tighter than the tightest value S5 swept.
+
+At `a = 1.0` the record adds **83.1%** at nominal, **37.0%** at 20% capacity, 15.5% at 10% and 4.9%
+at 5%. **So the record does most of the work and the assay is the weak partner, which is the reverse
+of what R73 concluded.** And neither partner is usable: the joint figure misses the 0.20 gate at
+every disease-range capacity, 0.630 to 0.951.
+
+**The failure mode is this project's own most-named one.** The surrounding prose flagged the ex vivo
+to in vivo transfer as unmeasured, and the headline was then quoted from the column that assumes it
+away. It is the first instance in this audit's own output rather than in the paper's.
+
+### R75. Candidate 9 was priced on half its effect, and the paper's route 6 is partly retracted
+
+`audit/PHASE10_SENSORS.md` S.1 and S.1b, `audit/q16_corrections.py` parts B to E.
+
+**R73's 1 to 2% was the offset channel alone.** Measuring the load also removes the load-recording
+error from `sigma`, and on the project's own parametrisation the two are ONE knob: the load record's
+accuracy `LOAD_FRAC`, committed at 5%, sets both `s_b = LOAD_FRAC * L` and one of `sigma`'s two
+terms. An exactly measured load is worth **+7.0% at nominal, +7.5% at 20%, +11.9% at 10% and +14.5%
+at 5%**, against the 0.3 to 1.5% first reported.
+
+**The candidate 9 verdict survives with a different reason**: dropped on size, not on absence.
+
+**The corollary is withdrawn, and its reverse is the correct statement.** R73 concluded that S2's
+`recorded` and `measured` load columns "are not two designs at all". They differ by 1 to 2%, but S2's
+`measured` column is not what the paper means by measuring the load: S2 moves only the offset
+parameter while the paper's route moves `LOAD_FRAC`. **It is a naming collision, and S2's `measured`
+column understates the study it appears to price by a factor of five to ten.** The paper's Section 7
+already had this right: "what the load record has to deliver is per-visit precision entering through
+`sigma` and not a calibrated mean offset".
+
+**RETRACTION, `paper/sections/11_scope.tex`, route 6.** Its headline reproduces: 6 visits reach the
+gate at nominal (exactly), 13 visits match 25 (12 here, off by one), and `2.659` at 5% of nominal
+(2.655 at 1% accuracy). **Its third clause does not.** Route 6 states the advantage "shrinks rather
+than reverses as capacity falls, from thirteen visits to eighteen". Swept from nominal to 2% of
+nominal the matching visit count runs **12, 11, 10, 12, 12, 12**: the advantage does not shrink, it
+is flat, and it is strongest at 20% of nominal. The conclusion route 6 draws from it is separately
+true, since 12 visits at 5% capacity still leave 2.62 against a 0.20 gate, so **a supporting number
+is wrong and the finding it supports is not.**
+
+**And route 6's prose describes a different computation from the one that produced its numbers**,
+saying measuring the load "removes `b` from the parameter vector rather than bounding it", which is
+the b-only reading and gives 24 visits against 25, not 13. Sections 7 and 11 contradict each other on
+the mechanism and Section 7 is correct.
+
+**How it survived the artefacts check**: `2.659`, `thirteen`, `twenty-five`, `six` and `eighteen` are
+hardcoded prose, not `\num{}` macros, so nothing compared them with a generator. R23's failure mode,
+recurring in the one section that enumerates the paper's own negative results.
+
+### R76. The between-patient spread is promoted to the specification's top line
+
+`audit/PHASE10_SENSORS.md` S.7. Filed three times, now settled.
+
+**It decides both routes and the sensor pricing.** The cohort route floors at 0.3166 with an infinite
+cohort if the CV is a third and is merely infeasible if it is near zero (C.2). The tracer route's
+four micro-dose studies must be run per patient rather than once if the spread is large, multiplying
+P.8's cost by the cohort size. And every `k_e` figure in S.2 is a per-patient precision, so whether
+any route can deliver one depends on whether the quantity is shared at all.
+
+**It is already scoped and it is cheap**: P.6's 10 patients at 12 draws, 120 draws at one fixed
+dose-cycle phase, about five and a half months on the 14 d train, giving pooled `df = 110` and 73%
+power on a `tau` of 0.30.
+
+**One qualification carried into it.** R1's CV of about a third is for the marker's clearance, while
+the model's parameter is `k_e/alpha` and `alpha` varies between patients too, through carnitine
+status and the relative sizes of the overflow routes. Applying 33% to the composite assumes `alpha`
+is constant or perfectly anticorrelated with `k_e`; **the true floor could be worse and cannot be
+better unless that anticorrelation is near perfect.**
+
+**So the ordering is forced**: measure the between-patient spread before committing to either route.
+It should be the top line of whatever the specification becomes, ahead of the load-record requirement
+and ahead of the `k_e` study, both of which are conditional on it.
