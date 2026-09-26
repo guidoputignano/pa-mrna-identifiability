@@ -2736,3 +2736,307 @@ is where a decision about cuts would be taken.
 The largest single share is §4 and not §7 or §8. A cut aimed at "§7 and §8" as the reports
 named them would reach the scope section and the discussion and leave the biggest addition
 where it is.
+
+### R54. Phase 8 S1: a result carried by one draw, and two errors in the script that reported it
+
+**Mine, and a retraction.** The first S1 report (`043a3ec`, `audit/PHASE8_SIMULATIONS.md`)
+said the Attarwala two-compartment truth, read by the committed 3.5 d analyst, returns
+`theta_hat/theta = 5.637` [2.440, 8.609] at `2.35 sigma`, that it is therefore unlike the 5 to
+7 d exponentials and audible where they are not, and three further things about wrong-family
+analysts. The author's robustness probe `p3_shape.py` gave `1.37` to `1.40` at `0.33` to
+`0.37 sigma`. `audit/q1b_reconcile.py` put both scripts on identical noiseless records and
+fitted each record with both estimators.
+
+**The fitters were not the cause.** They agree to `5e-7` on every fixed-amplitude row. The two
+scripts had modelled different objects: both run Attarwala's protein block in days with
+half-lives `1.99 d` and `11.81 d`, but `q1` drives it through the effect compartment
+(`ke0 = 0.242 /h`, so the protein **rises** after an infusion) where the probe's impulse makes
+it **jump**. That difference is negligible everywhere except at the one draw the monthly record
+places at a dose instant, `t = 0`, which `q1` read on the post-dose side as `design.run.delta`
+does. There the rising kernel is zero and the analyst is `6000`, and that single draw carried
+the cell to `5.81`. The draw is inside the marker's own settling window (1.3 h), where the
+quasi-steady model does not describe the marker, **which is wrong for any kernel**; it was only
+catastrophic for the rising one. Removing it gives `1.23`.
+
+**What the first revision of this entry ran together, now separated at the author's request.**
+Reading that draw pre-dose, rather than dropping it, is **not** a further correction. It turns
+it into an **untreated baseline draw**, which pins `theta` through the untreated balance and
+roughly halves the bias for a slow truth. That is a change of **design**: a patient already on
+therapy when the record starts has no such draw. So:
+
+- **Error corrections** (three): not reading a draw at an infusion instant post-dose; the
+  dose-scale prior on `ln kappa`; the profile stranded near `k_e = 0` (both below).
+- **Design change** (one): an untreated baseline draw at `t = 0`.
+
+The first report's `1.934` (7 d) and `1.310` (5 d) were **not wrong arithmetic**. They belong to
+a record with no valid baseline and one invalid draw; with the invalid draw removed and no
+baseline added they read `1.744` and `1.267` (noisy, 24 seeds, peak). The first report's
+`5.637` for the rising two-compartment truth **was** the invalid draw: `1.196` without it.
+
+**Two errors in `q1`, found on the way.**
+
+1. **The dose-scale prior was on `kappa`, not `ln kappa`.** The repository states it on
+   `ln kappa` (`g_design_common.sd_ln_theta`, column `inc g`). The linear form charges 68 at
+   `kappa = 0.01` where the log form charges 1470, and that is what let the first run "switch
+   the increment off" and report capacity nine times low. The probe's fitter returned `5.74`
+   on the same records where `q1` returned `0.11`. Same class as the `k_e` prior defect caught
+   before the first report.
+2. **A stranded `k_e` start in the profile.** With `theta` held high the linear inner solve can
+   return `k_e <= 0`; the polish then started from `ln(1e-12)`, had no gradient, and was
+   accepted because the start's objective was infinite. The profile jumped from `1.53` to `553`
+   between adjacent `theta` and upper interval edges came out short. `q9` check 5 found it
+   against `n6`.
+
+**Gap B on the two footings**, fixed 3.5 d analyst, 24 seeds, `dose / peak / mean`
+(`audit/q1c_baseline_footings.py`; reproduced by the author with the probe):
+
+| truth | with a pre-dose baseline draw | already on therapy, no untreated draw |
+|---|---|---|
+| exp 5.0 d | 1.080 / 1.161 / 1.442 | 1.185 / 1.267 / 1.555 |
+| exp 7.0 d | 1.145 / 1.358 / 2.000 | 1.529 / 1.744 / 2.384 |
+| 2-comp, rising (`q1`) | 1.046 / 1.131 / 1.282 | 1.113 / 1.196 / 1.345 |
+| 2-comp, jump (probe) | 1.211 / 1.292 / 1.309 | 1.273 / 1.353 / 1.370 |
+
+**Cells the corrections changed** (baseline footing, peak):
+
+| cell | first report | corrected |
+|---|---|---|
+| rising 2-comp, fixed 3.5 d | 5.637 [2.440, 8.609], 2.35 sigma | **1.131** [1.036, 1.366], 1.08 sigma (null 0.98) |
+| rising 2-comp, + free amplitude | 0.111, "increment switched off" | **1.126** |
+| rising 2-comp, half-life free | 0 on 24 of 24 seeds | **1.129** [0.886, 1.286] |
+| exponentials, two-comp analyst | 1.18 to 2.25 | **1.05 to 1.14** |
+
+**Conclusions withdrawn:** that the two-compartment truth differs in kind from a slower
+exponential; that it is audible; that the paper's "under a fifth of one sigma" sentence needs
+qualifying on its account; that freeing the amplitude relocates the bias; that no analyst family
+is safe (the two-compartment family is now within 14% on every truth tested, at about twice
+the RMSE). **Qualified:** S1.8's "the family question wants the hours after an infusion" holds
+under the effect-compartment reading only. **Standing:** the direction of gap B, that freeing
+the amplitude does not help, and that an unrecorded dose train costs more than a wrong shape and
+announces itself (Q3W read as Q2W, `6.52` at `2.20 sigma`).
+
+**New, from the design change:** a pre-treatment baseline draw roughly halves the slow-truth
+shape bias (7 d, dose: `1.529` without, `1.145` with). It matters in the correctly specified
+model too, at a disease-range capacity: the review's monthly `3.07` at 5% of normal is the
+figure with **no** baseline, and `2.38` with one (S2 Part A0). At normal capacity the paper's
+`0.1699` does not depend on it (`0.1695` with a baseline). S4 tests whether the effect
+survives noise and the 14.5 d schedule and whether two or three pre-treatment draws do
+better.
+
+**And a provenance correction to S1.8.** `ke0 = 0.242 /h` is a **mouse** estimate (Attarwala
+Table 1), and in the published structure it is the equilibration of an effect compartment with
+**plasma mRNA**, which has its own PK. `q1`'s rising kernel drops that PK stage; restoring it at
+brief R2's human popPK half-life (36 h, unverified here) moves the protein's single-dose peak
+from 13 h to 72 h, and the "hours after an infusion" timing conclusion holds only for the fast
+reading.
+
+**Re-check record.** `q9` gains checks 9 and 10. **The first version of check 9 failed** at
+`0.223`; the two failing seeds are where `q1`'s `K_m` sits on its box bound and the probe's
+runs past it, which check 4 already measures. It now compares interior seeds and prints the
+box seeds. Check 11 rebuilds both footings from the probe's own truths and fitter. 25 of 25
+pass. S2 was held for the author's review, as the rule requires when a conclusion changes, and
+released after it.
+
+---
+
+## R55. S2b: the `k_e` measurement itself
+
+`audit/q2b_ke_measurement.py`, written against the micro-dose IV ¹³C₃-3-HP study that
+`paper/sections/08_specification.tex` proposes. S2 priced the requirement on a per-patient
+`k_e` to about 2% at 5% of normal; S2b asks whether that study delivers it, sweeping everything
+brief **R1** leaves unknown (half-life 5 min to 6 h, window, draw count, assay CV, C0/LOQ).
+
+**The study can reach 2 to 5% on `ln k_e`, but the sampling window has to cover the half-life,
+and the half-life is unknown by a factor of 70.** A 24 h collection with 8 or more draws is the
+only design that works across the sweep. Under a two-compartment tracer a truncated window does
+not degrade the estimate, it destroys it: `sd(ln CL)` of 20 and over at a 6 h half-life in a 2 h
+window, against 0.03 at 24 h.
+
+**Two findings change what S2 concluded rather than confirming it.**
+
+1. **What the tracer measures is a biochemical question the paper does not settle.** Taking the
+   balance literally, a trace-level tracer is cleared enzymatically too, so the study observes
+   `k_e + θ/(K_m + m₀)` and enters as a row, not a prior. That reading buys a factor of 1.3
+   where the end-product reading buys 7.6, and no schedule at any capacity then reaches 0.20.
+   The specification should carry the premise explicitly, with its evidence.
+2. **Within-patient drift in `k_e` is the binding constraint below 10% of normal.** At 10%
+   drift no schedule reaches the gate at 5% of normal however good the study, and once drift is
+   at 10% tightening the study from 5% to 2% buys about 8%. Repeating the study is the only
+   design answer in view and is not in the specification.
+
+In the Monte Carlo, **exactly one cell at 5% of normal meets the gate**: baseline draw, load
+measured, study 2%, no drift, every 2 days, RMSE 0.125 [0.109, 0.142]. S2's "about 2%" stands
+as a number and does not stand as a sufficient condition.
+
+**Re-check record.** `q9` gains check 13 on three routes that share no code with `q2b`: the
+plasma arm's `sd(ln CL)` against ordinary least squares with the delta method, the
+two-compartment bolus against a matrix exponential, and the tracer row collapsing into S2's own
+0.8-prior bound as the study's error grows. 30 of 30 pass.
+
+**One correction made before any number was reported.** The first version of the reading-(i)
+matrix dropped the population prior on `ln k_e` altogether, charging that reading for
+information the other reading never created. The prior is a property of the literature, not of
+the study, and is now kept at 0.8; the reading-(i) figures fell from 2.84 to 2.33 at 5% of
+normal, monthly.
+
+**Reframed after the author's review, with both findings confirmed by the probe** (the one
+passing 5% cell at RMSE 0.125 against the probe's 0.134 without the baseline draw; the drift
+column reproduced at θ = 150, 2-daily, 12 records: 0.117, 0.249, 0.439 for study 2% at drift 0,
+5 and 10%, and 0.475 for study 5% at drift 10%).
+
+Two things changed in how S2b is reported, not in its numbers.
+
+1. **The two readings of what the tracer measures are not a premise and a sensitivity.** The
+   end-product reading is primary, since the enzyme acts on propionyl-CoA and not on the marker.
+   But the literal reading is the observation-model assumption the discussion already names as
+   the paper's weakest, so the gap between them, a factor of 5.8 on `sd(ln θ̂)`, **is the first
+   quantification of what that assumption is worth**. It is reported that way rather than as a
+   premise to be asserted. And the same study can settle it, by measuring where the label ends
+   up: the fraction recovered unchanged against the fraction appearing in downstream products.
+2. **Drift is an unknown, not a finding.** The 0, 5 and 10% range is a sweep; the range is
+   **[judgement]** and only its consequence is **[measured]**. Before a repeated study is
+   proposed as the answer, the question is whether the drift is predictable: if it tracks kidney
+   function, which is measured routinely and declines in this disease, a covariate replaces a
+   repeat. S4 also carries drift at normal capacity, since the same prior carries the headline
+   precision.
+
+`refs/brief_questions.md` is new, and holds the R1 questions these raise: whether the marker is a
+substrate of any step or only an end product (with an unverified lead, PMID 28634175, recorded as
+a lead and not a citation), within-patient stability of the clearance, and its covariates.
+
+**A boundary, set by the author.** S2b crossed from checking the paper into designing a study.
+S3, S4 and S5 are finished as the brief writes them, then this phase is written up and stops.
+There is no S2c; a new sub-question is recorded rather than run.
+
+---
+
+## R56. S3: the marker CV against the load record's accuracy
+
+`audit/q3_marker_cv_load.py`. `tab_D_loadprec` prices the load record along one axis at the
+committed 5% marker CV, and Section 8 concludes the design reaches 0.20 "only if intake is
+recorded to better than about 10%". S3 turns that row into a surface, because the marker CV it is
+conditional on is unmeasured in this population and the repository's own 12% question is open.
+
+**The published table reproduces to 0.9% up to its 10% row and drifts to 2.9% at the 40% row**,
+where the filter route and the information matrix part company on a record whose noise is four
+times its signal. A difference in route, not a correction.
+
+**Three findings.**
+
+1. **The "about 10%" figure needs its condition attached.** It holds at a 5% marker CV and takes
+   about 2.4 years of monthly draws, against the booked two. **Inside the booked two years the
+   requirement is better than 5%**, and at the working band's edges better than 1%.
+2. **The marker CV and the load recording error are interchangeable percent for percent.** σ's two
+   terms are equal at `CV = load_frac × L / (b × m̄)`, which comes out at CV ≈ the load fraction to
+   within 10% at every capacity tested. **The design rule is to spend on whichever of the two is
+   the larger percentage**, and the specification does not state it. Above a 25% marker CV nothing
+   on the load axis rescues the design at normal capacity.
+3. **The working band is a property of the measurement, not of the system.** Re-solved across the
+   surface it spans a factor of 10.3 at CV 5% and load 1%, a factor of 2.7 at CV 10% and load 5%,
+   and is empty at CV 15% and above. It closes from the top: the upper edge moves five times as
+   far as the lower. S3's lower edge reproduces the published 2472 to 0.5%.
+
+**Also measured, and small:** dropping the untreated t = 0 draw costs about 3% at normal capacity,
+which is S2b's baseline-draw effect where it does not bind. And two-monthly sampling is not a
+saving: it reaches the gate in about the same number of draws and takes twice as long.
+
+**Re-check record.** `q9` gains check 14 on three routes: a finite-difference Hessian of the log
+posterior against the analytic information matrix (2e-8), σ against the probe's independently
+coded footing formula (4e-14), and the visits-to-gate crossings confirmed by the Hessian route.
+33 of 33 pass.
+
+---
+
+## R57. S4: one joint stress scenario at normal capacity
+
+`audit/q4_joint_stress.py`. Every stress the audit found, present at once at normal capacity: the
+two-compartment increment under both readings against the committed 3.5 d analyst, a 15% marker
+CV, the k4 trough dose calibration, the 7 d train, the trial's irregular C5 train, and `k_e`
+drifting within the patient. Both baseline footings, `dose` primary with `peak`, `mean` and
+`trough` as the sensitivity column, 24 seeds, bias, RMSE, coverage and residual reported.
+
+**The design survives the joint scenario.** With one untreated baseline draw and the `dose`
+calibration the median bias is 2% low on the rising kernel and 13% high on the jump kernel, inside
+the band S1 reported for a wrong shape alone. The stresses do not compound multiplicatively, and
+the 7 d train and the irregular train partly cancel. The residual rises from 0.98σ to 2.2σ, so
+S1.4's warning survives: a real record carrying these stresses would not look well fitted.
+
+**One thing does break it, and it is a choice rather than an unknown.** The trough dose
+calibration roughly doubles θ̂ (2.29 rising, 2.29 jump, 2.63 on therapy) and multiplies RMSE by
+five, with coverage at 67 to 75%. The mechanism is arithmetic: the committed trough is 400 against
+a peak of 6400, so matching a trough fixes the amplitude through a small number and divides any
+shape error by it, setting an amplitude 2.8 times smaller than the dose reading does.
+**`k4_admissibility.py`'s finding that the trough reading is admissible, and this, are compatible
+and both belong in the specification;** the trough reading should not be adopted on k4's evidence
+alone. The author's choice of `dose` as primary, made before these numbers existed, is also the
+best of the four.
+
+**The two questions the author added.**
+
+1. **The baseline draw's advantage survives the noise and grows with it**, on the monthly schedule:
+   the median moves from +0.033 closer to the truth at CV 5% to +0.065 at CV 15% on the rising
+   kernel, and +0.041 to +0.121 on the jump kernel, and it takes a third off RMSE. On the 14.5 d
+   schedule, whose 51 treated draws walk in phase against the train, the advantage is real but
+   roughly halved and stops growing with the noise. The one cost is coverage, 83% against 92%: the
+   draw moves the point estimate onto the truth without widening the interval to match.
+2. **One pre-treatment draw is the specification item, and two or three are not better.** On every
+   monthly row the 2 and 3 columns are worse than the 1 column by 5 to 23%. The untreated level is
+   one number, so a second draw re-measures it while adding another load record with its own error.
+
+**And a negative result worth having.** Carrying drift at normal capacity, as the author asked,
+shows **it does not bind there**: 0.5% on the median and under 1% on RMSE across its whole swept
+range, against S2b.5 where a 10% drift put every schedule beyond the gate at 5% of normal. Drift
+is a disease-range requirement, not a general one.
+
+**Re-check record.** `q9` gains check 15 on three routes: the trough amplitude by brute summation
+over 4000 past doses against the closed form (2e-16), the drift conventions measured rather than
+assumed to coincide (0.8% at width 0.05, 2.5% at 0.15, against 41% at the paper's 0.8), and one
+joint-scenario cell rebuilt through the probe's fitter (1e-7). 36 of 36 pass.
+
+---
+
+## R58. S5: the ex vivo prior on θ
+
+`audit/q5_exvivo_prior.py`. A direct enzyme assay on the patient's own cells, carried as a
+log-normal prior on θ of swept width 0.3 to 1.0, at 5, 10, 20 and 100% of normal, alone and with
+the `k_e` precision S2b says the micro-dose study can deliver.
+
+**One thing is proven rather than measured.** The prior enters the information matrix only in its
+(ln θ, ln θ) element and therefore survives the Schur complement untouched, so the prior and the
+record add in exact quadrature, confirmed at 1.000 in all 48 cells. Under this model an ex vivo
+assay and a marker record carry independent information about θ, so neither can spoil the other.
+
+**Three findings.**
+
+1. **The assay is not an alternative to measuring `k_e`.** With the paper's 0.8 population prior on
+   `k_e`, every combined figure in the disease range sits barely below the assay's own width (0.299
+   against 0.300 at 5% of normal), so the record contributes under 1% and the answer is the assay's
+   answer wearing an in vivo estimate's clothes. And it still misses the gate: no width in the
+   sweep reaches 0.20 anywhere below normal capacity.
+2. **With `k_e` measured it changes exactly three verdicts, all at a prior of 0.3.** The practical
+   contribution is to turn monthly sampling at 10% of normal from 0.243 into 0.189, an edge pass in
+   the Monte Carlo. A prior of 0.5 or wider rescues nothing anywhere in the grid, so the assay's
+   value rests entirely on brief **R4** establishing a mapping good to about a third.
+3. **The risk is concentrated exactly where the benefit is.** At 5% of normal with a 0.3 prior, 54
+   to 60% of a mapping centring error passes into θ̂; at normal capacity, 3 to 6%. At 10% of normal
+   **a prior wrong by a factor of two is worth precisely nothing**: RMSE 0.249 with it and 0.249
+   without, the variance it buys and the bias it injects cancelling to three decimals. At 20% and
+   above a wrong prior is worse than none. A wide prior is safe and useless, a tight one useful and
+   unsafe, with no width at which it is both.
+
+**So the recommendation is that the assay enters as a cross-check and not as a prior in the
+estimator**, unless R4 establishes the mapping to about a third AND establishes it as unbiased;
+and if it does enter, the resulting interval must not be quoted as an in vivo measurement of
+capacity, since in the disease range it is dominated by the prior. `refs/brief_questions.md` now
+carries R4's two questions, with the centring named as the more important.
+
+**Re-check record.** `q9` gains check 16 on three routes: the Fisher bound with the prior against a
+numerical Hessian of the whole posterior (5e-8), the MAP against a from-scratch Nelder-Mead fit
+(3e-7), and an uninformative-record limit that must and does return the prior's own centre exactly.
+39 of 39 pass.
+
+**One presentation error, caught before reporting.** The first run printed a `prior alone` column
+that was empty in every row, since the prior's own width varies by column and not by row, and
+described the quadrature identity as a measured shortfall. Both are corrected: the column is gone
+and the identity is stated and proved as S5.0.
+
