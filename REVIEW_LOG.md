@@ -3294,3 +3294,53 @@ information matrix as if it described a likelihood. The matrix was right each ti
 from it was not. The rule this phase adopts: **a Fisher figure that decides a verdict is confirmed by
 fitting before it is reported**, and a needle-shaped profile is the case that makes the two diverge.
 
+---
+
+## R64. The pricing: the cheapest study measures the quantity nothing measures
+
+`audit/q8_pricing.py`, `audit/PHASE9_LITERATURE.md` section P. The last item in the Phase 9 brief.
+
+**The three sigma axes are priced as one identity, not three sweeps**, because step 3(a) proved the
+design sees them only through sigma once `s_b` is named. `k_e` picks the budget, the load record and
+the marker CV spend it, and the whole table is `sigma = hypot(load_frac·L, b·CV·m̄)` inverted. One
+consequence worth having: **the drift term stops mattering at normal capacity**, 56.10 against 56.16
+for a study with and without 5% drift, so a repeated `k_e` measurement is a disease-range requirement
+only, which is S4.3 arriving in the pricing.
+
+**Measuring `k_e` buys two things and only one of them is a variance.** It widens the budget by a
+factor of 1.5, nearly tripling the admissible marker CV at a 10% load record from 5.9% to 15.4% at
+monthly. And it **removes the collapse tail**: zero in 96 on every schedule at 0.054 against 1 or 2 in
+96 at the population prior, with the robust spread halving as well. The intervals are quoted honestly:
+zero in 96 bounds the rate at 3.8%, not at zero, so demonstrating the tail is gone would need several
+hundred records.
+
+**The repeatability study is the cheapest item in the whole specification, by a wide margin.** Repeat
+draws in treated patients at one fixed dose-cycle phase with the diet recorded measure the residual
+scatter directly, which is what sigma needs and what item 7 found undecomposable from the published
+surrogates. The pooled within-patient variance carries `df = n(r−1)`; **ten patients with three draws
+each, thirty draws in total, resolves the CV to ×0.77 to ×1.44**, and the trigamma precision is
+confirmed by simulation, matching to 2% with 94.5 to 95.6% coverage.
+
+What it can decide depends on where the truth sits against the schedule boundaries, monthly 5.88%,
+fortnightly 11.00%, weekly 20.73%, every 2 days 42.60% at a 10% load record. **Eight patients at three
+draws settle a true CV of 8% or 15%; a true CV within about 10% of a boundary needs hundreds.** That is
+not a reason to defer it: the same thirty draws tell you which case you are in, and a df-20 interval
+straddling a boundary is itself the finding that the schedule cannot be chosen on this evidence. **No
+other item in the specification returns either a decision or the knowledge that no decision is
+available.**
+
+**The floor anchor is priced on the terms step 3(b) left it.** Not what precision it delivers, since
+3b.2 found it delivers none at any realistic marker CV, but the marker CV at which it would begin to
+be worth having: **about 0.1%, which is 50 to 80 times better than the analytical floor and 250 to 350
+times better than the surrogates suggest. The price is not payable.** Verifying R5's transplant ratios
+is still worth doing for the structural claim the paper's identifiability rests on, which is the
+difference between a claim that is false and one that is true but not yet operational.
+
+**The order of cost, which is the deliverable.** The repeatability study, about thirty draws, first.
+Then the `k_e` micro-dose study with its 24 h window. Then the load record to better than 5%. The
+label-fate measurement rides inside the `k_e` study at no extra cost. The transplant-ratio
+verification last, for the structural claim.
+
+**Re-check record.** `q10` gains check 5: `sd(ln σ̂)` from the trigamma function against chi-square
+draws, and the budget inversion checked by going forward. 18 of 18 pass.
+

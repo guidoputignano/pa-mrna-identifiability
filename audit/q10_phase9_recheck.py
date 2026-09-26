@@ -299,12 +299,53 @@ def check_4_offset_fixed():
     return ok
 
 
+def check_5_pricing():
+    banner("5. THE PRICING: THE SIZING FORMULA AND THE BUDGET INVERSION")
+    print("""  (a) `sd(ln sigma)` on df degrees of freedom is computed in q8 from the trigamma
+  function. Checked here by drawing chi-square variates directly and taking the sd
+  of half their log, which shares no code with the trigamma recurrence.
+  (b) `cv_allowed` inverts sigma = hypot(load*L, b*cv*m_bar). Checked by going
+  FORWARD: the returned CV must reproduce the budget it was inverted from.""")
+    import q8_pricing as S8
+    import q6_sigma_budget as S6
+
+    rng = np.random.default_rng(31_415)
+    worst = 0.0
+    for df in (5, 20, 50, 150):
+        mine = S8.sd_ln_sigma(df)
+        draws = rng.chisquare(df, 400_000) / df
+        theirs = float(np.std(0.5 * np.log(draws)))
+        worst = max(worst, abs(mine / theirs - 1.0))
+        print(f"    df {df:4d}: trigamma {mine:.5f}  chi-square draws "
+              f"{theirs:.5f}")
+    ok = report("sd(ln sigma) trigamma vs chi-square draws", worst, 0.0, 0.02,
+                rel=False)
+
+    print()
+    worst = 0.0
+    theta = 3000.0
+    L, m_bar, b = S6.anchor(theta)
+    for st in (36.72, 56.10, 130.96):
+        for lf in (0.02, 0.10):
+            cv = S8.cv_allowed(st, lf, theta)
+            if cv is None:
+                continue
+            fwd = float(np.hypot(lf * L, b * cv * m_bar))
+            worst = max(worst, abs(fwd / st - 1.0))
+            print(f"    sigma* {st:7.2f} load {100 * lf:4.1f}%: CV "
+                  f"{100 * cv:6.2f}%  forward sigma {fwd:7.2f}")
+    ok &= report("cv_allowed inverts the budget exactly", worst, 0.0, 1e-12,
+                 rel=False)
+    return ok
+
+
 def main():
     print("=" * 92)
     print("  PHASE 9 RE-CHECKS")
     print("=" * 92)
     for fn in (check_1_model_explained_cv, check_2_item6_arithmetic,
-               check_3_sigma_budget, check_4_offset_fixed):
+               check_3_sigma_budget, check_4_offset_fixed,
+               check_5_pricing):
         try:
             fn()
         except Exception as exc:

@@ -716,6 +716,136 @@ unreachable floor, would make them comparable; that is a new model and it is fil
 
 ---
 
+## The pricing: what each measurement buys, and what the repeatability study costs
+
+`audit/q8_pricing.py`. Three of the four quantities a specification would have to ask for move the
+same sigma budget, and step 3(a) proved the design sees them only through sigma once `s_b` is named,
+so they are priced as one arithmetic constraint rather than three sweeps. The fourth, the marker's
+unreachable floor, acts on identifiability and is priced apart.
+
+### P.1 The three sigma axes, jointly **[measured]**
+
+`k_e` picks the budget; the load record and the marker CV spend it. Each cell is the largest marker
+residual scatter admissible, θ = 3000, `s_b` at 0.10 L:
+
+| k_e | schedule | sigma* | load 2% | load 5% | load 10% | load 15% |
+|---|---|---|---|---|---|---|
+| population, 0.8 | monthly | 36.72 | 12.13% | 11.07% | 5.88% | none |
+| population, 0.8 | fortnightly | 45.99 | 15.28% | 14.45% | 11.00% | none |
+| population, 0.8 | weekly | 69.69 | 23.29% | 22.75% | 20.73% | 16.83% |
+| population, 0.8 | every 2 days | 130.96 | 43.90% | 43.62% | 42.60% | 40.84% |
+| measured, 0.054 | monthly | 56.10 | 18.70% | 18.03% | 15.40% | 9.52% |
+| measured, 0.054 | fortnightly | 69.83 | 23.34% | 22.80% | 20.79% | 16.89% |
+| measured, 0.054 | weekly | 105.95 | 35.50% | 35.15% | 33.87% | 31.63% |
+| measured, 0.054 | every 2 days | 199.36 | 66.88% | 66.70% | 66.03% | 64.91% |
+
+1. **The whole table is one identity**, `sigma = hypot(load_frac·L, b·CV·m̄)` inverted, so it needs no
+   simulation and can be checked by hand. **[measured]**
+2. **The drift term stops mattering at normal capacity.** A study at 2% with 5% drift gives 56.10 and
+   one with no drift 56.16, a difference of 0.1%, which is S4.3's negative result arriving in the
+   pricing. So **the specification does not need to ask for a repeated `k_e` measurement at normal
+   capacity**; S2b.5's requirement for one is disease-range only. **[measured]**
+
+### P.2 What the `k_e` measurement buys, both things **[measured]**
+
+| schedule | sigma* at 0.8 | at 0.054 | budget gain | marker CV at load 10% | collapses at 0.8 | at 0.054 |
+|---|---|---|---|---|---|---|
+| monthly | 36.72 | 56.10 | 1.53x | 5.9% to 15.4% | 2 in 96, 2.1% [0.25, 7.3] | **0** [0, 3.8] |
+| fortnightly | 45.99 | 69.83 | 1.52x | 11.0% to 20.8% | 1 in 96, 1.0% [0.03, 5.7] | **0** [0, 3.8] |
+| weekly | 69.69 | 105.95 | 1.52x | 20.7% to 33.9% | 1 in 96 | **0** |
+| every 2 days | 130.96 | 199.36 | 1.52x | 42.6% to 66.0% | 1 in 96 | **0** |
+
+1. **Measuring `k_e` buys a factor of 1.5 on the budget, which nearly triples the admissible marker
+   CV at a 10% load record**, from 5.9% to 15.4% at monthly. **[measured]**
+2. **And it removes the tail, which is the part a variance figure does not show.** Zero collapses on
+   every schedule at 0.054 against 1 or 2 in 96 at the population prior. The robust spread also
+   halves, 0.200 to 0.104 at monthly. **[measured]**
+3. **The intervals are wide and honest**: zero in 96 bounds the rate at 3.8%, not at zero. **A study
+   that wanted to demonstrate the tail is gone would need several hundred records.** **[measured]**
+
+### P.3 The repeatability study, sized **[measured]**
+
+The design: `n` treated patients, `r` repeat marker draws each, **every draw at the same dose-cycle
+phase**, with the diet recorded. Holding the phase removes the dose cycle, which item 7 measured at 27
+to 30% and which is a regressor rather than error; recording the diet removes the load term. What is
+left is the residual plus the analytical component, which is what sigma needs and what no published
+study reports. The pooled within-patient variance carries `df = n(r−1)`.
+
+| n | r | df | sd(ln σ̂) | 95% factor on σ |
+|---|---|---|---|---|
+| 10 | 2 | 10 | 0.235 | ×0.70 to ×1.75 |
+| 10 | 3 | 20 | 0.162 | ×0.77 to ×1.44 |
+| 25 | 3 | 50 | 0.101 | ×0.84 to ×1.24 |
+| 10 | 6 | 50 | 0.101 | ×0.84 to ×1.24 |
+| 50 | 3 | 100 | 0.071 | ×0.88 to ×1.16 |
+
+Confirmed by simulating log-normal residuals: at df 20 and 50 the empirical `sd(ln σ̂)` matches the
+trigamma value to 2% and the nominal 95% interval covers at 94.5 to 95.6%. **[measured]**
+
+**What precision is enough is set by the decision.** The schedule boundaries at a 10% load record and
+the population prior are monthly 5.88%, fortnightly 11.00%, weekly 20.73%, every 2 days 42.60%. A
+study resolves a boundary when its interval excludes it:
+
+| if the true CV is | nearest boundary | relative gap | df needed | n at r=3 | n at r=6 |
+|---|---|---|---|---|---|
+| 6% | monthly, 5.88% | 2.0% | 4429 | 2215 | 886 |
+| 8% | monthly, 5.88% | 26.5% | 15 | **8** | **3** |
+| 12% | fortnightly, 11.00% | 8.4% | 230 | 115 | 46 |
+| 15% | fortnightly, 11.00% | 26.7% | 15 | **8** | **3** |
+| 25% | weekly, 20.73% | 17.1% | 45 | 23 | 9 |
+| 30% | weekly, 20.73% | 30.9% | 10 | **5** | **2** |
+
+1. **The study is cheap unless the truth sits near a boundary.** Ten patients with three draws each,
+   thirty blood draws in total, resolves the CV to ×0.77 to ×1.44 and settles every case above that
+   is more than about 25% clear of a boundary. **This is by far the cheapest item in the
+   specification.** **[measured]**
+2. **It is unboundedly expensive when the truth sits on a boundary**, 2215 patients at a true CV of
+   6% against monthly's 5.88%. That is not a reason to skip it: **the same study tells you which case
+   you are in**, since a df-20 interval that straddles a boundary is itself the answer that the
+   schedule cannot be chosen on this evidence. **[judgement]**
+3. **Run it at df 20 first and decide then.** Thirty draws buys either a decision or the knowledge
+   that a decision needs more, and no other item in the specification has that property.
+   **[judgement]**
+
+### P.4 The floor anchor, priced on its own terms **[measured]**, **[judgement]**
+
+Step 3(b) removed the question this was going to answer. Fixing the floor restores structural
+identifiability and does not deliver a usable θ, so what is priced is **the marker CV at which the
+anchor would begin to be worth having**:
+
+| requirement | value | source |
+|---|---|---|
+| marker CV at which the floor anchor pays | about **0.1%** | 3b.2, fitted |
+| analytical floor on the marker CV | 5 to 8% | item 7, Thompson 2012 |
+| ratio | **50 to 80x** | arithmetic |
+| marker CV the surrogates suggest | 25 to 35% | item 7 |
+| ratio | **250 to 350x** | arithmetic |
+
+**The price is not payable.** The floor anchor needs an assay two orders of magnitude better than the
+best the literature supports, so verifying R5's transplant ratios cannot on its own make θ
+recoverable under the published algebraic structure. What the anchor is still worth is the structural
+statement the paper's identifiability claim rests on, and that is not nothing: **it is the difference
+between a claim that is false and one that is true but not yet operational.** **[judgement]**
+
+### P.5 What the pricing says, in order of cost
+
+1. **The repeatability study, about 30 blood draws.** It measures the one quantity sigma needs, it is
+   the cheapest item by a wide margin, and it returns either a schedule decision or the knowledge
+   that none is available. **Run it first.** **[judgement]**
+2. **The `k_e` micro-dose study**, one bolus with a 24 h window and 8 or more draws per patient
+   (S2b.1). It buys a factor of 1.5 on the budget and removes a 2% per-patient failure mode. At
+   normal capacity it need not be repeated. **[measured]**
+3. **The load record to better than 5%**, which inside the booked two years is the binding
+   requirement S3 found, and which at 15% closes the gate for the two sparse schedules whatever the
+   assay does (3a.3). **[measured]**
+4. **The label-fate measurement** inside the `k_e` study, which settles the observation-model
+   assumption S2b priced at a factor of 5.8 and costs no extra study (S2b.4). **[judgement]**
+5. **The transplant-ratio verification**, which is worth doing for the structural claim and will not
+   on its own recover θ. **[judgement]**
+
+
+---
+
 ## What Phase 9 has and has not done
 
 **Done.** The reports are recorded with their mapping and process warnings. Item 6 is adjudicated
@@ -755,6 +885,14 @@ has to fix one axis to state the other, and which value it fixes changes the mon
 "demanding" to "impossible".** That is a decision for the author and step 3 waits on it.
 **[judgement]**
 
-**Filed rather than pursued.** Whether a standardised sampling protocol, fasting state and time of
-day fixed, would narrow the upper bound enough to matter. It bears on both the sigma bound and the
-panel question, and it is a new sub-question.
+**Filed rather than pursued.**
+
+- Whether a standardised sampling protocol, fasting state and time of day fixed, would narrow item
+  7's upper bound enough to matter. It bears on both the sigma bound and the panel question.
+- **A PAPER-structure balance carrying an unreachable floor**, which would make the offset anchor and
+  the `k_e` observation-model assumption commensurable (3b.4). It is a new model.
+- **Re-solving sigma\* at the measured `k_e` prior throughout**, rather than carrying two tables. P.1
+  shows the two differ by a factor of 1.5, so the choice of which to quote is a specification
+  decision and not an audit one.
+- **The between-patient spread of the marker's residual scatter**, which P.3's pooled design does not
+  estimate and which decides whether one requirement can be written for every patient.
