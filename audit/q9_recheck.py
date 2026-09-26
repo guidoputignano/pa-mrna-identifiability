@@ -40,6 +40,8 @@ Covers, for `audit/q1_increment_shape.py` (S1):
      committed analyst is design.run.delta there.
  11  Gap B on both baseline footings (q1c), rebuilt from the probe's own
      truths and fitter.
+ 12  S2: the requirement map's Fisher bound against the probe's fisher_sd,
+     and q2's MAP estimator against the probe's fitter on identical records.
 
 Run:  python audit/q9_recheck.py
 """
@@ -543,6 +545,65 @@ def check_11_footings():
                   rel=False)
 
 
+def check_12_s2():
+    banner("12. S2: THE FISHER MAP AND THE MONTE CARLO ESTIMATOR, BY THE PROBE")
+    print("""  (a) The requirement map's Fisher bound against the probe's own
+  core.fisher_sd, which builds the footing, the load records and the matrix
+  itself. Its load records are seeded differently, so the check is on the
+  24-record medians, to 3%, on cells with no dose-instant draw (the probe reads
+  a dose-instant draw post-dose).
+  (b) q2's MAP estimator against the probe's fitter, fit.fit (15 starts, no
+  grid), on IDENTICAL records with the nuisances drawn both ways. Asked to
+  agree to 1e-4 in ln theta_hat on every record.""")
+    sys.path.insert(0, str(Path(__file__).resolve().parent / "probes_2026-09-25"))
+    import core as C
+    import fit as PF
+    import q2_requirement_map as S2
+    cells = [(150.0, "weekly 7.3 d", 0.02, "measured"),
+             (300.0, "monthly", 0.0, "measured"),
+             (600.0, "two-monthly", 0.10, "recorded"),
+             (3000.0, "monthly", 0.8, "recorded"),
+             (150.0, "every 2 d", 0.8, "recorded")]
+    worst = 0.0
+    for th, sn, ks, ld in cells:
+        t = S2.times_for(sn, "no baseline")
+        mine = S2.fisher_cell(th, t, ks, ld)[0]
+        theirs = C.med_sd(th, t, seeds=range(24),
+                          ke_prior=(0 if ks == 0 else ks),
+                          b_prior=(np.inf if ld == "measured" else None))[0]
+        worst = max(worst, abs(mine / theirs - 1.0))
+        print(f"    theta {th:6.0f} {sn:13s} k_e {ks:4.2f} {ld:9s} q2 {mine:.4f}"
+              f"  probe {theirs:.4f}")
+    ok = report("S2 Fisher map vs probe fisher_sd (medians)", worst, 0.0,
+                0.03, rel=False)
+    worst_e = 0.0
+    for th, sn, ks, ld in ((3000.0, "monthly", 0.8, "measured"),
+                           (300.0, "weekly 7.3 d", 0.05, "recorded")):
+        t = S2.times_for(sn, "no baseline")
+        L, _, sigma, s_b = S2.footing(th)
+        inc = S2.increment(t)
+        for nu in ("truth", "centre"):
+            for r in range(24):
+                rng = np.random.default_rng(10_007 * r + 3)
+                Ls = S2.loads_for(t.size, r, L)
+                z = rng.normal(0.0, ks)
+                ke_t, ke_c = ((S2.KE * np.exp(z), S2.KE) if nu == "truth"
+                              else (S2.KE, S2.KE * np.exp(z)))
+                b_t = rng.normal(0.0, s_b) if ld == "recorded" else 0.0
+                m = S2.level(th, inc, Ls + b_t, ke=ke_t)
+                s = Ls + rng.normal(0.0, sigma, t.size)
+                a = np.log(S2.mc_fit(m, inc, s, sigma, s_b, ks, ke_c, ld))
+                b = np.log(PF.fit(m, inc, s, sigma, L, ke_prior=ks,
+                                  b_sd=(0.0 if ld == "measured" else s_b),
+                                  theta0=th, ke0=ke_c)["theta"])
+                if a < np.log(th) - 8 and b < np.log(th) - 8:
+                    continue             # both collapsed to the floor
+                worst_e = max(worst_e, abs(a - b))
+    ok &= report("S2 MAP estimator vs probe fitter, per record", worst_e, 0.0,
+                 1e-4, rel=False)
+    return ok
+
+
 def main():
     print("=" * 92)
     print("  PHASE 8 RE-CHECKS. Independent routes to every reported result.")
@@ -551,7 +612,7 @@ def main():
                check_4_fit, check_5_interval, check_6_dose_arithmetic,
                check_7_two_phase, check_8_residual_reference,
                check_9_kappa_prior, check_10_dose_day_draw,
-               check_11_footings):
+               check_11_footings, check_12_s2):
         try:
             fn()
         except Exception as exc:          # a check that cannot run is a failure

@@ -561,6 +561,130 @@ untreated baseline draw. No text proposed; `paper/` is untouched.
 
 ---
 
+## S2. The disease-range requirement map
+
+`audit/q2_requirement_map.py`. Re-checked by `q9` check 12: the Fisher map against the probe's
+own `core.fisher_sd` to 2.3% on the medians, and the Monte Carlo estimator against the probe's
+fitter to `1.5e-7` in `ln theta_hat` on every record.
+
+### S2.0 Footing **[measured]**
+
+**The model is correctly specified**: generator and analyst share the committed 3.5 d
+increment, so the amplitude convention does not arise. **The `t = 0` convention**: a draw at a
+dose instant is read pre-dose; no schedule here meets a dose instant except the optional
+baseline draw at `t = 0`. The review's own footing otherwise: convention A (the recorded load
+stays put and the marker rises), the booked `D = 6000` at every capacity (not admissible at 20%
+of normal and below on Section 7's R2 and R3, kept so the map isolates identification from
+dosing), load CV 10%, 24 load records per cell.
+
+| schedule | draws | first draw |
+|---|---|---|
+| monthly | 30.4 d, n = 24 | 30.4 d |
+| two-monthly | 60.8 d, n = 12 | 60.8 d |
+| weekly | 7.3 d from 0.5 d, n = 100 | 0.5 d |
+| every 2 d | odd days, n = 365 | 1 d |
+
+**Every schedule is on two footings**: `no baseline`, as listed, and `baseline`, the same
+draws plus one untreated draw at `t = 0`. That had to be done for the comparison to be fair,
+and it is itself a finding: the review's monthly record carried a `t = 0` draw and its weekly
+and 2-daily records did not, so its schedule comparison at 5% of normal was partly a baseline
+comparison. Its footing reproduces: `0.170` at the paper's headline cell, **`3.07` at 5% of
+normal monthly with no baseline** (the review's `3.08`), `0.171` weekly and `0.117` every 2 d
+with `k_e` to 2% and the load measured. **With a baseline draw the monthly 5% figure is
+`2.38`.**
+
+### S2.1 The k_e precision each design needs, Fisher **[measured]**
+
+The log-sd of the `k_e` prior at which the median Fisher bound reaches 0.20. `never`: not even
+with `k_e` exactly known. `any`: the paper's 0.8 suffices.
+
+| capacity | load | monthly | two-monthly | weekly | every 2 d |
+|---|---|---|---|---|---|
+| 5% | recorded | never | never | never | 1.1% (1.2%) |
+| 5% | measured | never | never | 3.1% (3.2%) | 4.2% |
+| 10% | recorded | never (**2.5%**) | never | 6.4% | 7.9% |
+| 10% | measured | 4.7% (6.2%) | never (**2.7%**) | 8.4% | 9.2% |
+| 20% | recorded | 14.8% (15.3%) | 7.8% (13.1%) | 17.6% | 18.6% |
+| 20% | measured | 16.0% (16.5%) | 9.7% (14.5%) | 18.6% | 19.9% |
+| 50% | either | 46% | 40% (44%) | 50% | 52 to 53% |
+| 100% | either | any | any | any | any |
+
+No baseline, with the baseline figure in brackets where it differs. **The baseline draw
+matters at 10% of normal on the sparse schedules** and hardly at all on the dense ones, which
+already have hundreds of draws.
+
+### S2.2 The Fisher bound near the gate is not the estimator: the Monte Carlo **[measured]**
+
+Every cell of the map whose Fisher median lies in `[0.10, 0.40]`, 214 of them, re-estimated
+by the MAP estimator on 96 records each. **The nuisances have to be drawn, and there are two
+honest ways to draw them, which part company at a wide prior** (`q2` `mc_cell`):
+
+- **truth-drawn**: the patient's true `k_e` is a draw about a fixed prior centre, a
+  **population** prior. `i1_estimator`'s convention; primary for the paper's 0.8.
+- **centre-drawn**: the true `k_e` is fixed and the prior's centre is a noisy **measurement** of
+  it. Primary for every tighter prior, which is what S2b's measurement supplies.
+
+At the paper's headline cell (normal capacity, monthly, `k_e` 0.8, load measured, 96
+records) the two give RMSE **`0.192`** and **`0.295`** against a Fisher bound of `0.169`,
+identically by both fitters; the first reproduces `i1`'s `0.1796`. The second carries a lower
+tail: when the prior's centre is drawn well above the truth, the prior hands the load to `k_e`
+and `theta_hat` collapses towards zero. **That tail is the MAP, not a search failure**: the
+probe's fitter finds the same collapse. RMSE is therefore reported beside a robust spread
+(half the 16 to 84 percentile range) and a count of fits off by more than 4.5x.
+
+**What the Monte Carlo says, verdict on the upper end of the RMSE's bootstrap 90% interval:**
+
+| capacity | what reaches 0.20 in the Monte Carlo | what the Fisher map promised that the Monte Carlo does not deliver |
+|---|---|---|
+| **5%** | **only a dense record with `k_e` to about 2% and the load measured**: every 2 d, RMSE `0.121` to `0.125`; weekly with `k_e` exact, `0.150` to `0.173` | weekly at `k_e` 2% with the load measured, Fisher `0.167` to `0.171`, is **edge**, `0.186` to `0.198`. Every 2 d with the load recorded, Fisher `0.19` to `0.21`, is edge at `0.22` to `0.23`. Monthly never, even with `k_e` exact and the load measured (`0.25` to `0.33`) |
+| **10%** | every 2 d with `k_e` to 5%, either load; weekly with `k_e` to 5% and the load measured (`0.14` to `0.15`); monthly with `k_e` to 2% and a baseline draw (`0.17`) | weekly with the load recorded at `k_e` 5% is edge (`0.19` to `0.20`); monthly at `k_e` 2% without a baseline is edge (`0.18` to `0.21`); two-monthly is edge at best, with a baseline, and fails without |
+| **20%** | every schedule with `k_e` to 10%; two-monthly edge without a baseline | `k_e` to 20% is edge on every 2 d and fails elsewhere, `0.19` to `0.28` |
+| **50%** | `k_e` to 20% on monthly and two-monthly | the paper's 0.8 fails, with collapses on several cells |
+| **100%** | every tighter prior on every schedule | the paper's 0.8 is **edge** everywhere, truth-drawn `0.18` to `0.22` against Fisher `0.15` to `0.19`; with no baseline draw the dense schedules show an occasional collapse even truth-drawn (1 in 96 on weekly and every 2 d) |
+
+**The Fisher bound is optimistic by up to about 30% at 5 and 10% of normal** on the cells that
+meet or nearly meet, and close to honest from 20% up, where the ratios straddle 1. The median bias of `ln theta_hat` is negative at low
+capacity, `-0.02` to `-0.08`: the estimator reads capacity slightly low.
+
+### S2.3 k_e known only as a population value **[measured]**
+
+If `k_e` is carried as a population value, a patient's deviation from it is the prior: a
+between-patient CV of 10, 20 and 40% is a per-patient log-sd of `0.100`, `0.198` and `0.385`,
+and uncertainty in the population mean adds in quadrature (`0.141` for 10% CV with the mean to
+10%). Brief **R1** puts the between-patient CV of the nearest comparable disposal rate at about a
+third in healthy adults and gives reasons to expect more in patients (renal OAT1 secretion;
+eGFR under 60 in half of adults with PA); it has no 3-HP figure. Monte Carlo, truth-drawn, load
+measured:
+
+| capacity | between-patient CV that still reaches 0.20 |
+|---|---|
+| 5% | **none**, not even 10% (Fisher `0.43` to `0.54`) |
+| 10% | **none reliably**: 10% CV is edge on every 2 d (`0.207` to `0.209`) and fails elsewhere |
+| 20% | **10%** on every schedule but two-monthly without a baseline (edge); 20% is edge on weekly and every 2 d and edge or failing on monthly |
+| 50% | **40%** on every schedule but two-monthly without a baseline (edge) |
+| 100% | **40%** on every schedule |
+
+**So below about 20% of normal a population value for `k_e` does not identify capacity at any
+CV brief R1 would call plausible, and `k_e` has to be measured in the patient.** The per-patient
+measurement has to reach about 2% at 5% of normal and about 5% at 10% (S2.1, S2.2). That is
+S2b's question.
+
+### S2.4 What S2 hands on
+
+1. **The requirement at 5% of normal is `k_e` measured in the patient to about 2%, the
+   substrate load measured, and a dense record**, every 2 days, over two years. Weekly draws are
+   at the edge with `k_e` exact. **[measured]**
+2. **At 10% the requirement relaxes to `k_e` to about 5% and weekly draws**, either load; at 20%
+   to `k_e` to 10% and monthly draws. **[measured]**
+3. **A population prior on `k_e` is not enough below 20% of normal.** **[measured]**
+4. **An untreated baseline draw is worth having on sparse schedules** at 10% of normal: it moves
+   the monthly requirement from never to `k_e` 2.5% with the load recorded. **[measured]**
+5. **The Fisher bound should not be quoted near the gate below 20% without the Monte Carlo
+   beside it**, and the nuisance convention has to be named, because at the paper's own 0.8 the
+   two honest ones differ by half. **[measured]**
+
+---
+
 ## What is open after S1
 
 - **The shape itself**, and **which reading of Attarwala's kernel is right**. Nothing here
