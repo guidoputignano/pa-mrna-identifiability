@@ -505,11 +505,71 @@ The band edges specifically, monthly and fortnightly, the two the claim rests on
    runs 0.153 to 0.241 against 0.200, so several cells beat their own budget. **[measured]**
 
 
+### 3a.10 The budget solved by fitting, which restates it **[measured]**
+
+`audit/q12_fitted_budget.py`. 3a.9 asked whether there was a needle and found none, which settles that
+question. It also showed the Fisher budget is optimistic: a reader takes sigma* as the noise at which
+the design delivers 0.20, and at sigma* the fitted spread runs to 0.302. **So the budget is solved
+here by fitting rather than reported with a caveat**, which is the house rule taken one step on, from
+confirming a Fisher figure that decides a verdict to solving for one that IS the verdict. The Fisher
+values are kept beside, since the ratio is what a reader of 3a.1 and 3a.6 needs to correct them.
+
+**Method, because an earlier solver got this wrong.** The robust spread is not guaranteed monotone in
+sigma, and a bisection on an assumed bracket returned the bracket's own endpoint on three cells. The
+crossing is now found by scanning a log grid from 0.02x to 2x the Fisher value and bracketing the last
+crossing, and a cell with no crossing is reported as such rather than given a number. All 24 cells
+have a crossing.
+
+| capacity | schedule | k_e 0.8: Fisher → fitted | ratio | k_e 0.054: Fisher → fitted | ratio |
+|---|---|---|---|---|---|
+| band low, 2472 | monthly | 20.80 → 6.77 | 0.325 | 57.73 → 74.81 | 1.296 |
+| band low, 2472 | fortnightly | 26.75 → 2.55 | **0.095** | 71.23 → 66.87 | 0.939 |
+| band low, 2472 | weekly | 40.25 → 5.05 | 0.125 | 108.07 → 89.85 | 0.831 |
+| band low, 2472 | every 2 days | 74.68 → 5.58 | 0.075 | 203.87 → 211.30 | 1.036 |
+| normal, 3000 | monthly | 36.72 → 42.14 | 1.148 | 56.10 → 68.88 | 1.228 |
+| normal, 3000 | fortnightly | 45.99 → 3.48 | **0.076** | 69.83 → 66.35 | 0.950 |
+| normal, 3000 | weekly | 69.69 → 24.69 | 0.354 | 105.95 → 88.63 | 0.836 |
+| normal, 3000 | every 2 days | 130.96 → 5.24 | **0.040** | 199.36 → 215.16 | 1.079 |
+| band high, 18814 | monthly | 21.75 → 25.30 | 1.163 | 21.88 → 25.38 | 1.160 |
+| band high, 18814 | fortnightly | 27.97 → 28.01 | 1.001 | 28.14 → 25.99 | 0.923 |
+| band high, 18814 | weekly | 43.14 → 37.35 | 0.866 | 43.40 → 37.41 | 0.862 |
+| band high, 18814 | every 2 days | 79.57 → 81.60 | 1.026 | 80.05 → 87.04 | 1.087 |
+
+1. **At the measured `k_e` prior the Fisher budget is sound.** fitted/Fisher runs **0.831 to 1.296**
+   across all 12 cells, so it is accurate to about 20% either way and is **not systematically
+   optimistic**. The tables in 3a.1 and 3a.6 can be read as budgets at that prior. **[measured]**
+2. **At the population prior the Fisher budget must not be quoted at all.** fitted/Fisher runs
+   **0.040 to 1.163**, a factor of 29 across cells that differ only in schedule. The worst case,
+   normal capacity every 2 days, has a Fisher budget of 130.96 and a fitted budget of 5.24.
+   **[measured]**
+3. **And it is not solver noise; it is a floor.** Traced at normal capacity, fortnightly, the fitted
+   robust spread is 0.114 at sigma/F = 0.02, 0.182 at 0.06, 0.204 at 0.08 and then **rises slowly and
+   never returns below the gate**, 0.223 at 0.20 and 0.268 at 1.0. So the `k_e` prior contributes a
+   schedule-dependent floor to the spread that reducing the marker noise does not remove, and the
+   crossing sits wherever that floor happens to cut 0.20. **[measured]**
+4. **The floor's height is what makes the ratios erratic.** At normal capacity monthly's spread at its
+   own sigma* is 0.200, exactly the gate, so its crossing sits near sigma* and the ratio is 1.148;
+   fortnightly's is 0.268 there, so its crossing is 13 times lower. Two schedules, one prior, ratios
+   of 1.148 and 0.076. **[measured]**
+5. **So this is a third and independent reason to measure `k_e`, and the strongest of the three.**
+   Without it there is no usable noise budget at all: not a budget that is optimistic by a stated
+   factor, but a quantity that cannot be stated. With it the budget is well defined and accurate to
+   20%. **[judgement]**
+6. **The band's upper edge is the exception and behaves well on both priors**, ratios 0.862 to 1.163,
+   which is the same pattern 3a.9 and P.1 found: at theta = 18814 the enzymatic term dominates the
+   balance and `k_e`'s precision stops mattering. **[measured]**
+
+**What to quote.** At a measured `k_e`, the 3a.6 table's right-hand column, corrected by at most 20%.
+At a population prior, nothing: say that the design has no budget until `k_e` is measured.
+
+
 ### 3a.8 The practical form, for a protocol writer
 
 A protocol writer spends on diet records and assays, not on sigma, so the budget's practical form is
 the marker CV each budget allows at each load record. At θ = 3000, `s_b` at 0.10 L, **sigma* solved
-at the 0.8 population prior**, no baseline draw; 3a.6 gives the measured-`k_e` column.
+at the 0.8 population prior**, no baseline draw; 3a.6 gives the measured-`k_e` column. **3a.10 finds
+that the population-prior column of this table is not quotable**, its fitted budget being a factor of
+up to 25 lower, so read only the measured-`k_e` figures from 3a.6.
 
 | schedule | sigma* | load 2% | load 5% | load 10% | load 15% |
 |---|---|---|---|---|---|
@@ -923,6 +983,51 @@ a marker CV of 15%:
    pooled df falls from 20 to 25, so the pooled answer is unharmed, and the per-patient sampling
    noise halves, which leaves the between-patient question answerable later by adding patients
    rather than unanswerable. **[judgement]**
+
+
+### P.7 What the 12-draw design measures, which is not the same quantity **[measured]**
+
+Twelve draws at one fixed dose-cycle phase is twelve dose intervals, about 5.1 months on the 14 d
+train; three draws is two intervals, about four weeks. **Over the longer window any slow drift in
+capacity or in the patient's baseline load enters the within-patient variance and is
+indistinguishable from residual scatter.** So the two designs do not measure the same quantity, and
+`r` does not only trade against precision. That has to be said rather than left for a reader to
+assume.
+
+**For a two-year identification record the longer window is measuring the right thing**, because that
+drift is noise to the design too: the record spans two years and a capacity or load that moves inside
+it degrades the fit exactly as scatter does.
+
+**And the size, derived here rather than imported.** A two-year drift expressed in units of the
+residual sd at a 15% marker CV:
+
+| two-year drift | change in the marker | in residual sd |
+|---|---|---|
+| `k_e` +10% | −1.65% of level | −0.110 |
+| `theta` −10% | +10.06% of level | **+0.671** |
+| load +10% | +10.92% of level | **+0.728** |
+
+So the author's 0.3 to 0.7 corresponds to roughly a 5 to 10% two-year drift in capacity or in load,
+and S2b.5's 10% `k_e` drift is far smaller in marker terms, 0.11. A linear drift of total size `D`
+over a window contributes `D_window² / 12` to the variance:
+
+| two-year drift D | r = 3, 28 d | r = 6, 70 d | r = 12, 154 d |
+|---|---|---|---|
+| 0.3 sd | ×1.00001 | ×1.00003 | ×1.00017 |
+| 0.7 sd | ×1.00003 | ×1.00019 | **×1.00091** |
+
+1. **The effect is real and negligible at these sizes.** At the largest drift and the longest window
+   it inflates the estimated scatter by 0.09%, three orders of magnitude below the ×0.88 to ×1.16
+   interval the 120-draw study returns. **So the two designs measure the same quantity to well within
+   their own precision**, and P.6's recommendation stands on its power argument alone. **[measured]**
+2. **The threshold is worth recording because it is where the concern would bite.** A 5% inflation
+   needs a window drift of 1.11 sd, which at `r = 12` is a two-year drift of about 5.3 sd, roughly a
+   75% change in capacity over two years. **[measured]**
+3. **A structural point the arithmetic exposes, and it is not a repeatability question.** At `r = 12`
+   the study spans 5.1 months of a 24-month record, 21% of it. **No feasible repeatability study
+   captures the record's own drift**, because one that ran two years would not be a repeatability
+   study. So if drift matters at all it has to be carried by the model, as a time-varying capacity,
+   and not measured away by this design. Filed, not run. **[judgement]**
 
 
 ### P.5 What the pricing says, in order of cost

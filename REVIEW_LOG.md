@@ -3403,3 +3403,46 @@ sampling at one fixed dose-cycle phase, inside the record the design already ass
 are available, **5 patients at 6 draws beats 10 at 3**: the pooled answer is unharmed and the
 between-patient question stays answerable by adding patients later.
 
+---
+
+## R66. The budget solved by fitting, and there is no budget without a measured k_e
+
+`audit/q12_fitted_budget.py`, `audit/PHASE9_LITERATURE.md` 3a.10, plus P.7. The author asked for the
+budget to be solved by fitting rather than reported as a Fisher figure with a caveat, which is the new
+house rule taken one step on.
+
+**At the measured `k_e` prior the Fisher budget is sound.** fitted/Fisher runs **0.831 to 1.296**
+across all 12 cells, so it is accurate to about 20% either way and is not systematically optimistic.
+
+**At the population prior it must not be quoted at all.** fitted/Fisher runs **0.040 to 1.163**, a
+factor of 29 across cells differing only in schedule. At normal capacity, every 2 days, the Fisher
+budget is 130.96 and the fitted budget is 5.24.
+
+**It is not solver noise, it is a floor.** Traced at normal capacity, fortnightly: the fitted robust
+spread is 0.114 at 2% of the Fisher sigma, 0.204 at 8%, and then **rises and never returns below the
+gate**, 0.268 at the Fisher value itself. The `k_e` prior contributes a schedule-dependent floor that
+reducing the marker noise does not remove, and the crossing sits wherever that floor cuts 0.20. That
+is what makes the ratios erratic: monthly's spread at its own sigma* is exactly 0.200 so its ratio is
+1.148, fortnightly's is 0.268 so its ratio is 0.076.
+
+**So this is a third and independent reason to measure `k_e`, and the strongest.** Without it there is
+no usable noise budget: not one that is optimistic by a stated factor, but a quantity that cannot be
+stated. The band's upper edge is the exception on both priors, 0.862 to 1.163, for the same reason it
+has been throughout.
+
+**A solver fault found and fixed on the way.** The first version bisected on an assumed bracket and
+returned the bracket's own endpoint on three cells, reporting 0.150 where the true crossing was near
+0.25. It now scans a log grid and brackets the last crossing, and reports a cell with no crossing
+rather than inventing one.
+
+**And P.7, what the 12-draw repeatability design measures.** Over 5.1 months a slow drift in capacity
+or load enters the within-patient variance and is indistinguishable from residual scatter, so the two
+designs do not measure the same quantity. Derived rather than imported: a 10% two-year drift in
+capacity moves the marker 0.671 residual sd and in load 0.728, so the author's 0.3 to 0.7 is a 5 to
+10% drift, while S2b.5's 10% `k_e` drift is only 0.11. **The effect is real and negligible**: at the
+largest drift and the longest window it inflates the estimate by 0.09%, three orders of magnitude
+below the study's own interval, and a 5% inflation would need a two-year drift of about 5.3 sd. P.6's
+recommendation stands on its power argument alone. **One structural point the arithmetic exposes**: at
+`r = 12` the study spans 21% of the record, and no feasible repeatability study captures the record's
+own drift, so if drift matters it must be carried by the model as a time-varying capacity. Filed.
+
