@@ -4192,3 +4192,58 @@ on both a changed value and a rotted declaration.
 at.** Declaration rather than inference, because no static analysis can tell a claim from an
 annotation; failure on an undeclared or stale row, so the table cannot become a blanket exemption.
 The difference is that this one reads English.
+
+---
+
+### R93. The root-commit premise does not hold, and R91's citations stand
+
+Checked before acting, because the instruction was to rewrite two commit references in a published
+entry. **All four of the premise's claims come out the other way**, and R91 needs no change.
+
+| claim | check | result |
+|:--|:--|:--|
+| `075aca8` created `t3` and `t4`, 242 and 217 insertions | `git show --stat 075aca8 -- audit/t3_diet_modulation.py audit/t4_bias_vs_scatter.py` | **empty.** That commit touches `t10`, `t11`, `t12`, `g1`, `g_design_common` and two `.tex` files |
+| `075aca8` is a root commit | `git rev-list --parents -n1 075aca8` | **has a parent**, `293816b` |
+| `origin/main` has five roots: `075aca8, d48e988, 16ee1a2, bfe058d, a69f64d` | `git rev-list --max-parents=0 origin/main` | **two**: `a69f64d` (3 Sep, "Initial commit") and `85f3257` (13 Sep). The other three named exist but are ordinary commits, not roots |
+| `ed59b79` and `7c04c10` are dangling and unreachable | `git merge-base --is-ancestor` and `git for-each-ref --contains` | **both are ancestors of `origin/main`** and reachable from `refs/heads/main` among five refs. They resolve on a fresh clone |
+
+**Where 242 and 217 came from, because they are too specific to be invented and they are correct.**
+They are exactly `t3`'s and `t4`'s insertion counts, in **`ed59b79`**:
+
+```
+ audit/t3_diet_modulation.py | 242 +++++...
+ audit/t4_bias_vs_scatter.py | 217 +++++...
+ 2 files changed, 459 insertions(+)
+```
+
+So the figures came from a real `git show --stat` and were attributed to the wrong commit. **The
+transposition is the same kind of error R91 is about**, which is worth noticing: a number read off a
+correct source and written down against the wrong referent.
+
+**R91 stands as written.** `ed59b79` created the two scripts, `7c04c10` introduced the sentences one
+commit later, both resolve, and the zero diff across the scripts' whole history is what rules out
+drift.
+
+### R94. There ARE two roots, and the real dating limit is smaller than proposed but worth recording
+
+The premise's general point survives its particulars. `origin/main` does have **two** root commits,
+so the history is not a single lineage:
+
+- **`a69f64d`**, 3 September 2026, "Initial commit". The main line.
+- **`85f3257`**, 13 September 2026. A second root with no shared ancestry with the first, joining the
+  main line at **`b2923a9`** on 14 September ("Merge pull request #2").
+
+83 commits predate 13 September, so the grafted side is small and the repository is mostly one
+lineage from 3 September.
+
+**The limit this places on the provenance project**, stated now rather than rediscovered per claim:
+
+> **No number in this repository can be dated earlier than 3 September 2026**, and for anything whose
+> file first appears on the `85f3257` side, no earlier than 13 September. **So "when did this number
+> enter, and did its generator change after it" is answerable only within that window.**
+
+**It does not weaken R91**, whose whole argument sits well inside the window: both scripts and both
+sentences were created in the second half of September, and the scripts' entire history is two
+commits. **It does bound the 109 claims still to wire**: where a literal and its generator both
+predate the graft, the ordering argument that settled R91 is unavailable, and the disagreement would
+have to be settled on the footing evidence alone, as `t3`'s 2.32 and `t4`'s 0.159 end were.

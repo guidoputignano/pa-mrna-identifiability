@@ -115,6 +115,14 @@ load-record requirement and the `k_e` study, both of which are conditional on it
   declaration mechanism is the model to extend, not a second system to build.
 - **249 category-1 literals restate a value a generator already owns.** Pure upside: the macro
   exists, the prose does not use it.
+- **History cannot date a number before 3 September 2026, and this bounds the wiring work.**
+  `origin/main` has **two** root commits, `a69f64d` (3 September, "Initial commit") and `85f3257`
+  (13 September), the second joining the first at `b2923a9` on 14 September. 83 commits predate the
+  graft. **So "when did this number enter, and did its generator change after it" is answerable only
+  inside that window** (R94). R91 settled the first two paper errors by exactly that argument, the
+  scripts having one substantive commit and the sentences arriving in the next, and that argument is
+  unavailable for any claim whose literal and generator both predate the graft. Those have to be
+  settled on footing evidence instead, as `t3`'s 2.32 and `t4`'s 0.159 end were.
 - **A prose guard has to read English numerals.** 1000 of the 2472 unguarded literals are spelled
   out, and the one error this whole sweep was provoked by was "thirteen" and "eighteen".
 
