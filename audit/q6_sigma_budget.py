@@ -83,9 +83,12 @@ def sigma_of(theta, load_frac, cv):
     return float(np.hypot(load_frac * L, b * cv * m_bar))
 
 
-def sd_at_sigma(theta, times, seed, sigma, s_b):
+def sd_at_sigma(theta, times, seed, sigma, s_b, ke_prior=None):
     """sd(ln theta_hat) as a function of sigma and s_b DIRECTLY, so that no
-    decomposition of sigma into its two terms can enter."""
+    decomposition of sigma into its two terms can enter. `ke_prior` defaults to
+    the paper's own population width; S2b's measured 0.054 is the alternative
+    and the two give DIFFERENT budgets, not a conservative version of one."""
+    ke_prior = KE_PRIOR if ke_prior is None else ke_prior
     L, _, _ = anchor(theta)
     Ls = S2.loads_for(times.size, seed, L)
     inc = S2.increment(times)
@@ -93,7 +96,7 @@ def sd_at_sigma(theta, times, seed, sigma, s_b):
     g = m / (S2.KM + m)
     Qm = np.stack([theta * g, -(theta + inc) * S2.KM * m / (S2.KM + m) ** 2,
                    np.ones_like(m), S2.KE * m], axis=1)
-    F = (np.diag([0.0, 0.0, 1.0 / s_b ** 2, 1.0 / KE_PRIOR ** 2])
+    F = (np.diag([0.0, 0.0, 1.0 / s_b ** 2, 1.0 / ke_prior ** 2])
          + Qm.T @ Qm / sigma ** 2)
     w = np.linalg.eigvalsh(F)
     if w[0] <= 1e-14 * w[-1]:
@@ -102,15 +105,16 @@ def sd_at_sigma(theta, times, seed, sigma, s_b):
     return float(np.sqrt(v)) if v > 0 else np.inf
 
 
-def med_sd(theta, times, sigma, s_b, seeds=SEEDS):
-    v = np.array([sd_at_sigma(theta, times, s, sigma, s_b) for s in seeds])
+def med_sd(theta, times, sigma, s_b, seeds=SEEDS, ke_prior=None):
+    v = np.array([sd_at_sigma(theta, times, s, sigma, s_b, ke_prior)
+                  for s in seeds])
     v = v[np.isfinite(v)]
     return float(np.median(v)) if v.size else np.inf
 
 
-def sigma_star(theta, times, s_b, gate=GATE, hi=4000.0):
+def sigma_star(theta, times, s_b, gate=GATE, hi=4000.0, ke_prior=None):
     """The sigma at which the median over the seed set reaches the gate."""
-    f = lambda sg: med_sd(theta, times, sg, s_b) - gate
+    f = lambda sg: med_sd(theta, times, sg, s_b, ke_prior=ke_prior) - gate
     if f(1e-3) > 0:
         return None                      # gate unreachable at any noise
     if f(hi) < 0:
@@ -260,7 +264,7 @@ def part_d():
 
 
 def mc_at_sigma(theta, times, sigma, s_b, reps=96, seed0=0,
-                ke_sd=None):
+                ke_sd=None, nuisance="centre"):
     """S2's MAP estimator with sigma and s_b supplied rather than derived."""
     ke_sd = KE_PRIOR if ke_sd is None else ke_sd
     L, _, _ = anchor(theta)
@@ -271,11 +275,13 @@ def mc_at_sigma(theta, times, sigma, s_b, reps=96, seed0=0,
         rng = np.random.default_rng(10_007 * sd_ + 3)
         Ls = S2.loads_for(times.size, sd_, L)
         z = rng.normal(0.0, ke_sd)
+        ke_t, ke_c = ((S2.KE * np.exp(z), S2.KE) if nuisance == "truth"
+                      else (S2.KE, S2.KE * np.exp(z)))
         b_t = rng.normal(0.0, s_b)
-        m = S2.level(theta, inc, Ls + b_t)
+        m = S2.level(theta, inc, Ls + b_t, ke=ke_t)
         obs = Ls + rng.normal(0.0, sigma, times.size)
-        th = S2.mc_fit(m, inc, obs, sigma, s_b, ke_sd,
-                       S2.KE * np.exp(z), "recorded")
+        th = S2.mc_fit(m, inc, obs, sigma, s_b, ke_sd, ke_c,
+                       "recorded")
         err.append(np.log(th) - np.log(theta))
     e = np.array(err)
     boot = np.random.default_rng(99).choice(e, (400, e.size))
@@ -342,6 +348,134 @@ def part_f():
                   f"{r['robust']:7.3f} {r['collapse']:5d}")
 
 
+def part_g():
+    banner("G. TWO BUDGET TABLES, NOT ONE CONSERVATIVE TABLE")
+    print("""  sigma* was solved throughout at the paper's own 0.8 population prior on ln k_e.
+  Solving it instead at S2b's realistic per-patient 0.054 gives a DIFFERENT table,
+  and the difference is larger than the spacing between adjacent schedules, so a
+  verdict has to name which table it belongs to. `CV` columns are at a 10% load
+  record; `none` means the load record alone already exceeds the budget.""")
+    for cname, theta in CAPS.items():
+        L, m_bar, b = anchor(theta)
+        s_b = 0.10 * L
+        print(f"\n  {cname}")
+        print(f"    {'schedule':16s} {'sigma* ke 0.8':>14s} {'sigma* ke 0.054':>16s} "
+              f"{'ratio':>7s} {'CV, ke 0.8':>12s} {'CV, ke 0.054':>14s}")
+        for name, times in SCHED.items():
+            a = sigma_star(theta, times, s_b, ke_prior=KE_PRIOR)
+            c = sigma_star(theta, times, s_b, ke_prior=0.054)
+
+            def cv(x):
+                rem = x ** 2 - (0.10 * L) ** 2
+                return (f"{100 * np.sqrt(rem) / (b * m_bar):.2f}%" if rem > 0
+                        else "none")
+            print(f"    {name:16s} {a:14.2f} {c:16.2f} {c / a:7.3f} "
+                  f"{cv(a):>12s} {cv(c):>14s}")
+    print("""
+  The ratio is the whole point: it is not a constant. Read it down the three
+  capacities before quoting any budget.""")
+
+
+def part_h():
+    banner("H. THE MONTE CARLO ON BOTH NUISANCE CONVENTIONS, AND WHERE THE "
+           "COLLAPSES ARE")
+    print("""  S2 established that the two honest ways of drawing the k_e nuisance answer
+  different questions and carried both, so both are carried here and every RMSE
+  is labelled.
+
+      truth   the patient's TRUE k_e is drawn from the prior and the prior's
+              centre stays at the reference: a POPULATION prior with the patient
+              a draw from the population.
+      centre  the true k_e stays at the reference and the prior's CENTRE is
+              drawn: a per-patient MEASUREMENT of k_e carrying that error, which
+              is what the micro-dose study would supply.
+
+  At sigma*, where the Fisher bound reads exactly 0.20, monthly, s_b at 0.10 L,
+  96 records, k_e prior 0.8.""")
+    theta = 3000.0
+    L = anchor(theta)[0]
+    s_b = 0.10 * L
+    print(f"\n    {'schedule':16s} {'convention':10s} {'Fisher':>7s} "
+          f"{'RMSE':>7s} {'robust':>7s} {'coll':>5s}")
+    for name, times in SCHED.items():
+        star = sigma_star(theta, times, s_b)
+        for nu in ("truth", "centre"):
+            r = mc_at_sigma(theta, times, star, s_b, nuisance=nu)
+            print(f"    {name:16s} {nu:10s} "
+                  f"{med_sd(theta, times, star, s_b):7.3f} {r['rmse']:7.3f} "
+                  f"{r['robust']:7.3f} {r['collapse']:5d}")
+    print("""
+  And WHICH records collapse, on the centre convention, monthly, across
+  capacities. The question is whether the mechanism is the disease-range one.""")
+    print(f"\n    {'theta':>8s} {'sigma*':>8s} {'collapses':>10s}   "
+          f"(record, ln error, drawn k_e centre / true k_e)")
+    for theta_ in (3000.0, 2472.0, 18814.0, 300.0):
+        times = SCHED["monthly 25"]
+        star = sigma_star(theta_, times, s_b)
+        if star is None:
+            print(f"    {theta_:8.0f} {'none':>8s}")
+            continue
+        inc = S2.increment(times)
+        bad = []
+        for r in range(96):
+            rng = np.random.default_rng(10_007 * r + 3)
+            Ls = S2.loads_for(times.size, r, L)
+            z = rng.normal(0.0, KE_PRIOR)
+            b_t = rng.normal(0.0, s_b)
+            m = S2.level(theta_, inc, Ls + b_t)
+            obs = Ls + rng.normal(0.0, star, times.size)
+            th = S2.mc_fit(m, inc, obs, star, s_b, KE_PRIOR,
+                           S2.KE * np.exp(z), "recorded")
+            e = np.log(th) - np.log(theta_)
+            if abs(e) > S2.COLLAPSE:
+                bad.append((r, round(float(e), 3), round(float(np.exp(z)), 2)))
+        print(f"    {theta_:8.0f} {star:8.2f} {len(bad):10d}   {bad}")
+
+
+def part_i():
+    banner("I. THE FORTNIGHTLY SCHEDULE: SETTLING THE GAP, NOT ATTRIBUTING IT")
+    print("""  This session's fortnightly sigma* is 45.99 and the author's is 47.4 to 48.3.
+  The first hypothesis was the dose-instant draw at t = 392, where 0.5 + 14.5k is
+  a multiple of 14. That is TESTED here rather than asserted, and then the
+  schedule itself is varied until the author's figure is reproduced.""")
+    theta = 3000.0
+    L = anchor(theta)[0]
+    s_b = 0.10 * L
+    t = SCHED["fortnightly 51"]
+    hits = [float(x) for x in t if abs(x / Q.T_DOSE - round(x / Q.T_DOSE)) < 1e-9]
+    print(f"\n    draws landing on a dose instant: {hits}")
+    moved = t.copy()
+    for h in hits:
+        moved[int(np.argmin(abs(moved - h)))] = h + 0.25
+    drop = np.array([x for x in t if float(x) not in hits])
+    print(f"    {'as is, pre-dose':34s} sigma* "
+          f"{sigma_star(theta, t, s_b):.4f}")
+    print(f"    {'t = 392 moved to 392.25':34s} sigma* "
+          f"{sigma_star(theta, moved, s_b):.4f}")
+    print(f"    {f't = 392 dropped, n = {drop.size}':34s} sigma* "
+          f"{sigma_star(theta, drop, s_b):.4f}")
+    with Q.rebind(Q, DOSE_DAY_DRAW="post-dose"):
+        print(f"    {'as is, read post-dose':34s} sigma* "
+              f"{sigma_star(theta, t, s_b):.4f}")
+    print("""
+  None of those reaches 47.4, so the dose-instant draw is NOT the cause. The
+  schedules themselves are compared next.""")
+    cands = {"arange(0.5, 730, 14.5), this session": np.arange(0.5, 730.0, 14.5),
+             "arange(0.0, 730, 14.5), t = 0 included": np.arange(0.0, 730.0, 14.5),
+             "arange(7.0, 730, 14.5), trough phase": np.arange(7.0, 730.0, 14.5),
+             "linspace(0.5, 730, 51)": np.linspace(0.5, 730.0, 51),
+             "arange(0.5, 730, 14.0), phase-locked": np.arange(0.5, 730.0, 14.0)}
+    print(f"\n    {'schedule':40s} {'n':>4s} {'sigma*':>9s}")
+    for k, v in cands.items():
+        print(f"    {k:40s} {v.size:4d} {sigma_star(theta, v, s_b):9.4f}")
+    print("""
+  The last row is a separate warning and not part of this question: a 14.0 d
+  schedule against a 14 d train puts every draw at one cycle phase, the increment
+  is then constant across the record, and the budget collapses by a factor near
+  70. That is OPEN_QUESTIONS item (c), 14 d and 14.5 d identical on a calendar
+  axis and twentyfold apart in the answer, showing up in the budget.""")
+
+
 def main():
     print("=" * 104)
     print("  STEP 3(a). THE REQUIREMENT AS A BUDGET ON sigma")
@@ -354,6 +488,9 @@ def main():
     part_d()
     part_e()
     part_f()
+    part_g()
+    part_h()
+    part_i()
     return 0
 
 

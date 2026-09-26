@@ -304,6 +304,9 @@ At θ = 3000, converting each reading to sigma. The committed footing reproduces
 
 ### 3a.3 The load record alone can close the gate **[measured]**
 
+**The band edges throughout this section are θ = 2472 and θ = 18814**, Section 6.2's own working band,
+82% and 627% of the normal-capacity illustration, as `n5_scope_contribution.py` records them.
+
 sigma has a floor the marker cannot get below: at marker CV zero it is still `load_frac·L`. Where
 that floor exceeds a schedule's budget, **no assay however good reaches the gate**.
 
@@ -322,44 +325,129 @@ that floor exceeds a schedule's budget, **no assay however good reaches the gate
    assay does.** That is a stronger statement than the 15% one and it applies at the load accuracy
    the specification actually asks for. **[measured]**
 
-### 3a.4 The Monte Carlo, and whose miss it is **[measured]**
+### 3a.4 The Monte Carlo, on both nuisance conventions **[measured]**
 
-A budget the estimator does not honour is not a budget, so each schedule was re-run through the MAP
-estimator at its own sigma*, 96 records, `s_b` at 0.10 L. **At the paper's own 0.8 population prior
-on `ln k_e` the estimator misses badly**: RMSE 0.33 to 0.42 where the Fisher bound reads exactly
-0.200, with one or two collapses per cell.
+An earlier draft of this section reported RMSE 0.33 to 0.42 at sigma* and attributed the miss to the
+`k_e` prior's collapse tail as a disease-range mechanism. **Both halves needed correcting, and the
+author caught both.** S2 established that the two honest ways of drawing the `k_e` nuisance answer
+different questions and carried both; this section now does the same, and every figure is labelled.
 
-**That miss is the `k_e` prior's, not the budget's.** Re-running the identical cells with the `k_e`
-prior at 0.054, the realistic per-patient precision S2b says the micro-dose study delivers, and
-changing nothing else, sigma* left where the 0.8 prior put it:
+- **truth**: the patient's true `k_e` is drawn from the prior and the prior's centre stays at the
+  reference. A population prior, with the patient a draw from the population.
+- **centre**: the true `k_e` stays at the reference and the prior's **centre** is drawn. A
+  per-patient measurement of `k_e` carrying that error, which is what the micro-dose study supplies.
 
-| schedule | sigma* | Fisher | RMSE at k_e 0.8 | robust | RMSE at k_e 0.054 | robust | collapses |
-|---|---|---|---|---|---|---|---|
-| monthly | 36.72 | 0.200 | 0.351 | 0.200 | **0.110** | 0.104 | 0 |
-| fortnightly | 45.99 | 0.200 | 0.382 | 0.268 | **0.150** | 0.144 | 0 |
-| weekly | 69.69 | 0.200 | 0.327 | 0.241 | **0.142** | 0.159 | 0 |
-| every 2 days | 130.96 | 0.200 | 0.419 | 0.251 | **0.132** | 0.125 | 0 |
+At sigma*, where the Fisher bound reads exactly 0.200, `s_b` at 0.10 L, 96 records, `k_e` prior 0.8:
 
-1. **Once `k_e` is measured per patient, the budget is honoured and is conservative.** RMSE 0.110 to
-   0.150 against a gate of 0.20, no collapses anywhere. **[measured]**
-2. **At the population prior the estimator misses sigma*'s gate by a factor of about 1.8, and the
-   robust spread shows why:** it is 0.200 at monthly, exactly the Fisher figure, while the RMSE is
-   0.351. The difference is a collapse tail, which is the wide `k_e` prior's signature that S2
-   identified, not a property of the noise budget. **[measured]**
-3. **So the budget is conditional on the same thing everything else in Phase 8 was conditional on.**
-   sigma* is a valid requirement to state provided `k_e` is measured; quoted against a population
-   prior it is optimistic by about 1.8 and the specification should not quote it that way.
-   **[judgement]**
-4. A direction not pursued, and filed: sigma* was solved at the 0.8 prior throughout, so **the
-   budget for a measured-`k_e` patient is larger than the numbers above**, and every verdict in
-   3a.2 is therefore conservative. Re-solving sigma* at 0.054 would raise all four budgets and could
-   move monthly's verdict against the analytical floor. That is a new computation and is filed, not
-   run. **[judgement]**
+| schedule | convention | Fisher | RMSE | robust sd | collapses |
+|---|---|---|---|---|---|
+| monthly | truth | 0.200 | **0.220** | 0.200 | 0 |
+| monthly | centre | 0.200 | 0.351 | 0.200 | 2 |
+| fortnightly | truth | 0.200 | **0.224** | 0.223 | 0 |
+| fortnightly | centre | 0.200 | 0.382 | 0.268 | 1 |
+| weekly | truth | 0.200 | **0.241** | 0.229 | 0 |
+| weekly | centre | 0.200 | 0.327 | 0.241 | 1 |
+| every 2 days | truth | 0.200 | **0.214** | 0.201 | 0 |
+| every 2 days | centre | 0.200 | 0.419 | 0.251 | 1 |
 
-### 3a.5 The practical form, for a protocol writer
+1. **On the population convention the budget is honoured to within 7 to 21%**, with zero collapses on
+   every schedule. The author's independently computed 0.220 and robust 0.197 at monthly reproduce
+   this session's 0.220 and 0.200 exactly. **[measured]**
+2. **On the per-patient convention the robust spread also honours it**, 0.200 to 0.268, and only the
+   RMSE misses, because 1 or 2 records in 96 collapse. **So the earlier "missed by 1.7x" was an
+   unlabelled RMSE on the convention with a tail, quoted against a bound that has none.**
+   **[measured]**
+3. **The earlier claim that the collapses are the disease-range mechanism was wrong, and so is the
+   expectation that there are none at normal capacity.** They occur at normal capacity, and the two
+   records are identifiable: on the centre convention, monthly, the collapsing records are exactly
+   those where the drawn `k_e` prior centre sits 3.7 and 5.0 times **above** the truth. The prior
+   then pulls `k_e·m` up until it absorbs load that θ should carry, and θ̂ falls, by 1.5 and 1.9 in
+   ln units. At the band's lower edge, θ = 2472, the same two records collapse to the floor, 52 and
+   36 in ln units. At the band's **upper** edge, θ = 18814, and at θ = 300, there are none.
+   **[measured]**
+4. **So the mechanism is the opposite of a disease-range one.** It bites where sigma* is large
+   relative to the enzymatic share of the balance, which is normal capacity and the lower band edge,
+   and not where capacity is lowest: at θ = 300 sigma* is only 2.01, so the data pin θ whatever the
+   prior does. **[judgement]** on the mechanism, **[measured]** on where it occurs.
+5. **Quoting rule that follows.** No RMSE in this phase is reportable without its nuisance
+   convention, and a budget derived from a Fisher bound should be read against the **robust** spread
+   rather than the RMSE, since the bound has no tail to match. **[judgement]**
+
+### 3a.6 Two budget tables, not one conservative table **[measured]**
+
+sigma* was solved at the 0.8 population prior throughout. **Solving it at S2b's realistic
+per-patient 0.054 gives a different table, not a tighter version of the same one**, and the author
+is right that the difference exceeds the spacing between adjacent schedules. `CV` is at a 10% load
+record; `none` means the load record alone exceeds the budget.
+
+| capacity | schedule | sigma* at k_e 0.8 | sigma* at k_e 0.054 | ratio | CV at 0.8 | CV at 0.054 |
+|---|---|---|---|---|---|---|
+| band low, 2472 | monthly | 20.80 | 57.73 | **2.78** | none | 16.24% |
+| band low, 2472 | fortnightly | 26.75 | 71.23 | 2.66 | none | 21.54% |
+| band low, 2472 | weekly | 40.25 | 108.07 | 2.69 | 8.16% | 35.00% |
+| band low, 2472 | every 2 days | 74.68 | 203.87 | 2.73 | 22.85% | 68.30% |
+| normal, 3000 | monthly | 36.72 | 56.10 | **1.53** | 5.88% | 15.40% |
+| normal, 3000 | fortnightly | 45.99 | 69.83 | 1.52 | 11.00% | 20.79% |
+| normal, 3000 | weekly | 69.69 | 105.95 | 1.52 | 20.73% | 33.87% |
+| normal, 3000 | every 2 days | 130.96 | 199.36 | 1.52 | 42.60% | 66.03% |
+| band high, 18814 | monthly | 21.75 | 21.88 | **1.006** | none | none |
+| band high, 18814 | every 2 days | 79.57 | 80.05 | 1.006 | 22.91% | 23.07% |
+
+1. **The author's 1.5 at normal capacity reproduces**: 36.72 to 56.10, against their 36.66 to 55.00.
+   **[measured]**
+2. **The ratio is not a constant, and that is the finding.** Measuring `k_e` is worth a factor of 2.7
+   at the band's lower edge, 1.5 at normal capacity, and **nothing at all, 1.006, at the upper
+   edge**, where the enzymatic term dominates the balance so tightly that `k_e`'s precision stops
+   mattering. **[measured]**
+3. **The cell the author names changes verdict as predicted.** At a 10% load record with marker
+   scatter at 15%, sigma is about 55: that is above monthly's budget at the population prior, 36.72,
+   and just below it at a measured `k_e`, 56.10. **So monthly's verdict in that cell is decided
+   entirely by which prior the budget was solved at, and a table quoted without naming the prior is
+   not interpretable.** **[measured]**
+4. Since a measured `k_e` is what S2b's study is for, the second column is the one a specification
+   written around that study should quote, and the first is the one to quote if the study is not
+   done. **They are not upper and lower bounds on one number.** **[judgement]**
+
+### 3a.7 The fortnightly gap, settled **[measured]**
+
+This session's fortnightly sigma* is 45.99 and the author's is 47.4 to 48.3. The first hypothesis was
+the dose-instant draw at t = 392, where `0.5 + 14.5k` is a multiple of 14. **Tested, and it is not
+the cause:**
+
+| variant | sigma* |
+|---|---|
+| as is, pre-dose | 45.99 |
+| t = 392 moved to 392.25 | 46.47 |
+| t = 392 dropped, n = 50 | 45.02 |
+| as is, read post-dose | 46.58 |
+
+None reaches 47.4, so the convention accounts for at most 0.6 of a gap of 1.4 to 2.3. **The
+schedules are not the same object**, and the difference is the first draw:
+
+| schedule | n | sigma* |
+|---|---|---|
+| `arange(0.5, 730, 14.5)`, this session | 51 | 45.99 |
+| `arange(0.0, 730, 14.5)`, t = 0 included | 51 | **47.56** |
+| `arange(7.0, 730, 14.5)`, trough phase | 50 | 50.35 |
+| `linspace(0.5, 730, 51)` | 51 | 51.13 |
+
+**`arange(0.0, 730, 14.5)` lands inside the author's range.** So the author's fortnightly record
+starts at t = 0 and, on the pre-dose reading, carries an untreated baseline draw; this session's
+starts half a day in and carries none. That is the baseline-draw effect S1.R identified and S4
+priced, worth 1.6 in sigma* here, and not a dose-instant artifact. **Both are legitimate records and
+the table must say which.** The budgets quoted in 3a.1 are the no-baseline ones. **[measured]**
+
+**One warning found on the way, and not part of this question.** A 14.0 d draw schedule against the
+14 d dose train puts every draw at one cycle phase, the increment is then constant across the record,
+and sigma* falls to 0.64, a factor of 72. That is `OPEN_QUESTIONS` item (c), 14 d and 14.5 d
+identical on a calendar axis and twentyfold apart in the answer, appearing in the budget.
+**[measured]**
+
+### 3a.8 The practical form, for a protocol writer
 
 A protocol writer spends on diet records and assays, not on sigma, so the budget's practical form is
-the marker CV each budget allows at each load record. At θ = 3000, `s_b` at 0.10 L:
+the marker CV each budget allows at each load record. At θ = 3000, `s_b` at 0.10 L, **sigma* solved
+at the 0.8 population prior**, no baseline draw; 3a.6 gives the measured-`k_e` column.
 
 | schedule | sigma* | load 2% | load 5% | load 10% | load 15% |
 |---|---|---|---|---|---|
