@@ -2836,3 +2836,46 @@ runs past it, which check 4 already measures. It now compares interior seeds and
 box seeds. Check 11 rebuilds both footings from the probe's own truths and fitter. 25 of 25
 pass. S2 was held for the author's review, as the rule requires when a conclusion changes, and
 released after it.
+
+---
+
+## R55. S2b: the `k_e` measurement itself
+
+`audit/q2b_ke_measurement.py`, written against the micro-dose IV ¹³C₃-3-HP study that
+`paper/sections/08_specification.tex` proposes. S2 priced the requirement on a per-patient
+`k_e` to about 2% at 5% of normal; S2b asks whether that study delivers it, sweeping everything
+brief **R1** leaves unknown (half-life 5 min to 6 h, window, draw count, assay CV, C0/LOQ).
+
+**The study can reach 2 to 5% on `ln k_e`, but the sampling window has to cover the half-life,
+and the half-life is unknown by a factor of 70.** A 24 h collection with 8 or more draws is the
+only design that works across the sweep. Under a two-compartment tracer a truncated window does
+not degrade the estimate, it destroys it: `sd(ln CL)` of 20 and over at a 6 h half-life in a 2 h
+window, against 0.03 at 24 h.
+
+**Two findings change what S2 concluded rather than confirming it.**
+
+1. **What the tracer measures is a biochemical question the paper does not settle.** Taking the
+   balance literally, a trace-level tracer is cleared enzymatically too, so the study observes
+   `k_e + θ/(K_m + m₀)` and enters as a row, not a prior. That reading buys a factor of 1.3
+   where the end-product reading buys 7.6, and no schedule at any capacity then reaches 0.20.
+   The specification should carry the premise explicitly, with its evidence.
+2. **Within-patient drift in `k_e` is the binding constraint below 10% of normal.** At 10%
+   drift no schedule reaches the gate at 5% of normal however good the study, and once drift is
+   at 10% tightening the study from 5% to 2% buys about 8%. Repeating the study is the only
+   design answer in view and is not in the specification.
+
+In the Monte Carlo, **exactly one cell at 5% of normal meets the gate**: baseline draw, load
+measured, study 2%, no drift, every 2 days, RMSE 0.125 [0.109, 0.142]. S2's "about 2%" stands
+as a number and does not stand as a sufficient condition.
+
+**Re-check record.** `q9` gains check 13 on three routes that share no code with `q2b`: the
+plasma arm's `sd(ln CL)` against ordinary least squares with the delta method, the
+two-compartment bolus against a matrix exponential, and the tracer row collapsing into S2's own
+0.8-prior bound as the study's error grows. 30 of 30 pass.
+
+**One correction made before any number was reported.** The first version of the reading-(i)
+matrix dropped the population prior on `ln k_e` altogether, charging that reading for
+information the other reading never created. The prior is a property of the literature, not of
+the study, and is now kept at 0.8; the reading-(i) figures fell from 2.84 to 2.33 at 5% of
+normal, monthly.
+

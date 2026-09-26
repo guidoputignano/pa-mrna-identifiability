@@ -604,6 +604,71 @@ def check_12_s2():
     return ok
 
 
+def check_13_s2b():
+    banner("13. S2b: THE TRACER STUDY, BY THREE INDEPENDENT ROUTES")
+    print("""  (a) The plasma arm's sd(ln CL) by ORDINARY LEAST SQUARES algebra rather
+  than q2b's information matrix in (ln CL, ln V). Regress ln c on t; with
+  intercept a = ln(D/V) and slope s = -lambda, ln CL = ln lambda + ln D - a,
+  so the delta method on the OLS covariance cv^2 (X'X)^-1 gives sd(ln CL)
+  directly. No line of q2b is used.
+  (b) The two-compartment bolus concentration against a MATRIX EXPONENTIAL of
+  the rate matrix, which shares no algebra with the A/B/alpha/beta form.
+  (c) The tracer ROW, reading (i), must vanish as the study's error grows: with
+  sd_tracer enormous, q2b's matrix has to fall back on S2's own Fisher bound
+  at the population prior 0.8, which check 12 already tied to the probe.""")
+    from scipy.linalg import expm
+    import q2b_ke_measurement as B
+    import q2_requirement_map as S2
+
+    worst = 0.0
+    for th_min, w, n, cv, c0 in ((5.0, 2.0, 8, 0.10, 100.0),
+                                 (30.0, 6.0, 12, 0.05, 1000.0),
+                                 (120.0, 24.0, 6, 0.15, 30.0),
+                                 (360.0, 6.0, 16, 0.10, 100.0)):
+        t_all = B.draw_times(n, w)
+        lam = np.log(2.0) / (th_min / 60.0)
+        t = t_all[np.exp(-lam * t_all) * c0 >= 1.0]
+        mine, _ = B.one_comp_sd(th_min / 60.0, t_all, cv, c0)
+        X = np.stack([np.ones_like(t), t], axis=1)
+        C2 = cv ** 2 * np.linalg.inv(X.T @ X)
+        #  ln CL = ln(-s) + ln D - a, so d/d(a, s) = (-1, 1/s) with s = -lam
+        g = np.array([-1.0, -1.0 / lam])
+        theirs = float(np.sqrt(g @ C2 @ g))
+        worst = max(worst, abs(mine / theirs - 1.0))
+        print(f"    t1/2 {th_min:5.0f} min, {w:4.0f} h, N {n:2d}, CV "
+              f"{100 * cv:2.0f}%: q2b {mine:.5f}  OLS {theirs:.5f}")
+    ok = report("plasma arm sd(ln CL) vs OLS delta method", worst, 0.0, 1e-9,
+                rel=False)
+
+    worst = 0.0
+    for CL, V1, Q, V2 in ((1.0, 1.0, 1.0, 1.0), (0.3, 1.0, 2.0, 5.0),
+                          (2.0, 0.5, 0.1, 3.0)):
+        A = np.array([[-(CL / V1 + Q / V1), Q / V2], [Q / V1, -Q / V2]])
+        for t in (0.01, 0.1, 1.0, 5.0):
+            mine = B.two_comp_conc(np.array([t]), CL, V1, Q, V2)[0]
+            theirs = (expm(A * t) @ np.array([1.0, 0.0]))[0] / V1
+            worst = max(worst, abs(mine / theirs - 1.0))
+    ok &= report("two-compartment bolus vs matrix exponential", worst, 0.0,
+                 1e-10, rel=False)
+
+    worst = 0.0
+    for cap in (0.05, 0.20):
+        th = S2.TH_NOM * cap
+        for sn in ("monthly", "every 2 d"):
+            for ld in S2.LOADS:
+                t = S2.times_for(sn, "no baseline")
+                mine = float(np.median([B.fisher_with_tracer(th, t, s, ld,
+                                                             1e6, 0.0)
+                                        for s in S2.SEEDS]))
+                theirs = S2.fisher_cell(th, t, 0.8, ld)[0]
+                worst = max(worst, abs(mine / theirs - 1.0))
+                print(f"    {100 * cap:3.0f}% {sn:13s} {ld:9s} "
+                      f"q2b(no study) {mine:.4f}  S2 at 0.8 {theirs:.4f}")
+    ok &= report("tracer row vanishes into S2's 0.8 prior", worst, 0.0, 1e-6,
+                 rel=False)
+    return ok
+
+
 def main():
     print("=" * 92)
     print("  PHASE 8 RE-CHECKS. Independent routes to every reported result.")
@@ -612,7 +677,7 @@ def main():
                check_4_fit, check_5_interval, check_6_dose_arithmetic,
                check_7_two_phase, check_8_residual_reference,
                check_9_kappa_prior, check_10_dose_day_draw,
-               check_11_footings, check_12_s2):
+               check_11_footings, check_12_s2, check_13_s2b):
         try:
             fn()
         except Exception as exc:          # a check that cannot run is a failure

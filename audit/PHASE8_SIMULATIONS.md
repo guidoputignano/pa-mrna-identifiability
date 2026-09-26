@@ -685,6 +685,170 @@ S2b's question.
 
 ---
 
+## S2b. The `k_e` measurement itself
+
+`audit/q2b_ke_measurement.py`. S2 priced the whole requirement on a per-patient measurement
+of `k_e`: about 2% at 5% of normal, about 5% at 10%, about 10% at 20%. This section asks
+whether the study `paper/sections/08_specification.tex` proposes, a micro-dose intravenous
+bolus of ¹³C₃-3-HP with serial plasma sampling and timed urine collection, can deliver those
+numbers. Re-checks: `q9_recheck.py` check 13, three routes, all passing; 30 of 30 overall.
+
+The `dose` amplitude convention, the committed 3.5 d increment and the pre-dose dose-day draw
+throughout, as in S2.
+
+### S2b.0 What is not known, and is therefore swept **[judgement]**
+
+Brief **R1** finds **no human 3-HP half-life, clearance, volume or renal fraction**, in any
+population. So the tracer's kinetics are swept rather than assumed: terminal half-life 5, 15,
+30, 60, 120 and 360 min, bracketing blood propionate's 4 to 5 min in controls and its 3 to 7
+fold lengthening in PA. The design is swept alongside it: 4 to 16 draws log-spaced from 2 min
+to the end of a 2 h, 6 h or 24 h window, assay CV 5, 10 or 15%, and the bolus expressed as
+C0/LOQ, the multiple of the assay's limit the first concentration sits at, which is what a
+micro-dose buys.
+
+### S2b.1 The plasma arm can reach 2%, but only when the window matches the half-life **[measured]**
+
+`sd(ln CL)`, one compartment, parameters (ln CL, ln V), draws below the LOQ lost. The sd is
+scale-free in the dose; what the dose buys is how long the tracer stays readable.
+
+| truth t½ | window | N = 4 | N = 8 | N = 16 |
+|---|---|---|---|---|
+| 5 min | 2 h | 0.045 | 0.023 | 0.016 |
+| 30 min | 2 h | 0.025 | 0.018 | 0.013 |
+| 30 min | 24 h | 0.152 | 0.025 | 0.017 |
+| 120 min | 2 h | 0.075 | 0.066 | 0.053 |
+| 360 min | 2 h | 0.254 | 0.224 | 0.178 |
+| 360 min | 24 h | 0.025 | 0.020 | 0.015 |
+
+(C0/LOQ 30, assay CV 5%; the full sweep is in the script's output.)
+
+1. **The 2% S2 asks for at 5% of normal is reachable**, at 5% assay CV, with 8 or more draws,
+   *provided the window covers the half-life*. **[measured]**
+2. **A window shorter than the terminal half-life is the failure mode, and more draws do not
+   repair it**: at t½ 360 min in a 2 h clinic window, 16 draws still give 0.18. Each extra
+   draw buys only the assay error's √N, while the truncation bias on the slope does not move.
+   **[measured]**
+3. **Since the half-life is unknown by a factor of 70, the window cannot be chosen in advance.**
+   A 24 h collection covers every half-life in the sweep at 8 draws or more, and is the only
+   design that does. **[judgement]**
+4. The Fisher figure is the fitted one: 400 simulated studies per cell reproduce it to within
+   3%, with bias under 0.003 in ln CL. **[measured]**
+
+### S2b.2 A two-compartment tracer is the real risk **[measured]**
+
+With a two-compartment truth analysed two-compartment (V₂ = V₁, Q = CL), the same designs give:
+
+| terminal t½ | window | N = 6 | N = 12 | N = 16 | one-comp, N = 12 |
+|---|---|---|---|---|---|
+| 5 min | 2 h | 0.293 | 0.202 | 0.186 | 0.038 |
+| 30 min | 2 h | 0.042 | 0.029 | 0.025 | 0.030 |
+| 120 min | 2 h | 0.825 | 0.479 | 0.442 | 0.118 |
+| 360 min | 2 h | 55.6 | 23.6 | 20.4 | 0.395 |
+| 360 min | 24 h | 0.051 | 0.034 | 0.029 | 0.034 |
+
+1. **A truncated window does not merely degrade a two-compartment estimate, it destroys it.**
+   At t½ 360 min in 2 h the sd is 20 and over: the distribution and elimination phases are not
+   separated, and CL is unidentified. **[measured]**
+2. **A very short half-life is the other end of the same problem**: at t½ 5 min a 2 min first
+   draw is already past the distribution phase, and sd stays near 0.2 however many draws follow.
+   **[measured]**
+3. **Both failures are cured by matching the window, not by adding draws**: 24 h and N ≥ 8
+   returns 0.03 to 0.04 at every half-life in the sweep, within a third of the one-compartment
+   figure. **[measured]**
+4. **So the study has to be designed as if the tracer were two-compartment**, since nothing
+   establishes that it is not, and a one-compartment design that happens to be wrong is not
+   conservative: it is 0.44 where it believed it was 0.12. **[judgement]**
+
+### S2b.3 The urine arm measures the renal arm, and cannot close the gap **[measured]**
+
+Renal clearance is the tracer recovered over the plasma AUC, so its error is the collection's
+own CV and the plasma arm's in quadrature. With the plasma arm at 0.02, a 5% collection gives
+0.054 and a 10% collection 0.102: **the collection, not the assay, sets the renal figure.**
+And **R1 does not establish that `k_e` is entirely renal**, so the urine arm is a lower bound
+on `k_e`, not a measurement of it. Its role is the renal fraction, which is a different
+quantity from the one S2 needs. **[measured]**, **[judgement]** on the second point.
+
+### S2b.4 What the study measures is a biological question the paper does not settle **[judgement]**
+
+At trace level the paper's own balance removes the tracer by both routes, at
+`CL = k_e + θ/(K_m + m₀)`. Two readings follow, and they are not a fine distinction:
+
+- **(ii), biological.** 3-HP is an end product and not a PCC substrate, so the tracer measures
+  `k_e` itself and the study's sd becomes the prior on `ln k_e`. Brief **R1** argues this, and
+  S2's whole pricing assumes it.
+- **(i), model-literal.** The tracer measures `k_e + θ/(K_m + m₀)`, one joint observation on θ
+  and `k_e`, entering the information matrix as a row rather than a prior. The population prior
+  0.8 is kept, since it is a property of the literature and not of the study.
+
+The enzyme's share of total clearance at the untreated level is 16% at 5% of normal, 29% at 10%
+and 47% at 20%, so under (i) the study is mostly measuring `k_e` anyway, but it never separates
+the two. `sd(ln θ̂)`, Fisher, median over 24 records, no baseline draw, load recorded, study 2%,
+no drift:
+
+| capacity | reading (ii) | reading (i) | S2 with no study (0.8) |
+|---|---|---|---|
+| 5%, monthly | 0.405 | 2.33 | 3.07 |
+| 5%, every 2 d | 0.214 | 1.29 | 1.42 |
+| 10%, monthly | 0.217 | 1.35 | 1.58 |
+| 20%, monthly | 0.127 | 0.78 | 0.81 |
+
+**Under reading (i) the study is very nearly worthless**: it buys a factor of about 1.3 where
+reading (ii) buys 7.6, and no schedule at any capacity reaches the 0.20 gate. **[measured]**
+**The identifiability of θ therefore rests on a biochemical claim, that 3-HP is not a PCC
+substrate, which this repository has not verified and which no sweep can substitute for.**
+That claim should be stated in the specification as a premise, with its evidence, not left
+implicit. **[judgement]**
+
+### S2b.5 Within-patient drift in `k_e`, not the study, is the binding constraint **[measured]**
+
+What the record needs is `k_e` over two years, not on the day of the study. Renal decline is
+the obvious mechanism, and **R1** reports eGFR under 60 in about half of adults with PA, so
+drift is swept at 0, 5 and 10% and added in quadrature. Reading (ii), Fisher, load measured,
+no baseline draw:
+
+| capacity | schedule | study 2%, drift 0 | 2%, 5% | 2%, 10% | 5%, 10% | 10%, 10% |
+|---|---|---|---|---|---|---|
+| 5% | every 2 d | 0.117 | 0.249 | 0.439 | 0.475 | 0.579 |
+| 5% | weekly | 0.171 | 0.280 | 0.471 | 0.510 | 0.629 |
+| 10% | every 2 d | 0.061 | 0.124 | 0.219 | 0.238 | 0.293 |
+| 10% | monthly | 0.177 | 0.208 | 0.280 | 0.297 | 0.351 |
+
+**A 10% drift alone puts 5% of normal beyond the gate on every schedule, however good the
+study.** At 5% drift only the densest record survives. **Once drift reaches 10%, tightening
+the study from 5% to 2% buys about 8%** (0.475 to 0.439 at 5% of normal, every 2 days): the two
+enter in quadrature, so the larger term governs, and below the drift the study's own precision
+stops mattering. **[measured]**
+
+### S2b.6 The Monte Carlo, at the gate **[measured]**
+
+218 Fisher cells fall in the 0.10 to 0.40 band and were re-run through S2's MAP estimator, 96
+records each, with the prior's centre drawn about the truth because the study is a measurement
+(S2's `centre` convention). At 5% of normal, **exactly one cell MEETS the gate**: an untreated
+baseline draw, the load measured, the study at 2%, no drift, every 2 days (RMSE 0.125
+[0.109, 0.142]). Weekly at the same settings is `edge` (0.186). Every 5% cell with any drift
+fails. At 10% the meeting cells need the study at 2 to 5% and drift at 0 to 5%; at 20% the
+gate is met monthly across the study and drift sweep except the 10%/10% corner, which is
+`edge`. Collapses appear only in the failing cells. **[measured]**
+
+### S2b.7 What S2b hands back to S2, and to the specification
+
+1. **The study can deliver 2 to 5% on `ln k_e`, but only with a 24 h window and at least 8
+   draws**, designed for a two-compartment tracer. A clinic-day window is a design failure
+   whose size depends on a half-life nobody has measured. **[measured]**
+2. **The first thing to measure is the half-life itself**, in a handful of patients, because
+   it is what the main study's window must be chosen against. **[judgement]**
+3. **Reading (i) versus (ii) decides whether the study is worth running at all.** It is a
+   biochemical question, not a design one. **[measured]** on the sizes, **[judgement]** on the
+   premise.
+4. **Within-patient drift in `k_e` is the binding constraint below 10% of normal**, and the
+   micro-dose study does not address it. Repeating it, say annually, is the only design answer
+   in view; that is not in the specification. **[judgement]**
+5. **S2's requirement at 5% of normal survives only in its most favourable corner** and only if
+   `k_e` is stable to better than 5% over two years. S2's "about 2%" was the right number; what
+   S2b adds is that it is not sufficient on its own. **[measured]**
+
+---
+
 ## What is open after S1
 
 - **The shape itself**, and **which reading of Attarwala's kernel is right**. Nothing here
@@ -695,4 +859,12 @@ S2b's question.
 - **Whether to carry the two-compartment family as the analyst.** S1.3 says it buys bias
   under 14% on every truth for about twice the RMSE. That is S2's to price against the
   gate.
-- **S2 to S5** have not been run.
+- **Whether 3-HP is a PCC substrate at trace level.** S2b.4 makes this the question that
+  decides whether the micro-dose study is worth running: reading (ii) buys a factor of 7.6 on
+  `sd(ln θ̂)`, reading (i) a factor of 1.3. Brief **R1** asserts the first and does not
+  establish it.
+- **The human 3-HP half-life**, unknown by a factor of 70, which is what the tracer study's
+  sampling window must be chosen against (S2b.1, S2b.2).
+- **Within-patient stability of `k_e` over two years.** S2b.5 makes it the binding constraint
+  below 10% of normal, and nothing in the specification addresses it.
+- **S3 to S5** have not been run.
