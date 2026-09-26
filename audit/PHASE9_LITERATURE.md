@@ -111,26 +111,37 @@ in sigma counts it twice.
 ### How much the model already explains **[measured]**
 
 The marker's within-patient CV across the monthly record, produced by the dose train alone at a
-perfectly constant recorded load, θ = 3000:
+perfectly constant recorded load, θ = 3000. **It is one quantity on three conventions for the
+t = 0 draw, and it is recorded that way because a number without its convention is this
+repository's own named failure** (`REVIEW_LOG.md` R54, S1.R 3a):
 
-| footing | within-patient marker CV | levels | with 10% load variation, 24 records |
-|---|---|---|---|
-| on therapy, n = 24 | **27.2%** | 3.544 to 8.747 | median 30.0% [25.6, 33.5] |
-| including the untreated t = 0 draw, n = 25 | **28.3%** | 3.544 to 10.000 | median 30.6% [27.0, 35.2] |
+| t = 0 draw | n | levels | CV, sample sd | CV, population sd |
+|---|---|---|---|---|
+| read post-dose, `design.run.delta`'s own convention, so every draw is treated | 25 | 3.510 to 8.747 | 28.63% | **28.05%** |
+| read pre-dose, the convention S1 adopted, so the t = 0 draw is untreated at m = 10.000 | 25 | 3.544 to 10.000 | 28.35% | **27.78%** |
+| dropped, the on-therapy footing | 24 | 3.544 to 8.747 | 27.22% | **26.65%** |
 
-Checked by summing the kernel over doses and solving the balance by root-finding rather than by the
-closed-form root, agreeing to 1.3e-10 (`q10` check 1). **[measured]**
+With the specification's 10% day-to-day load variation added, over 24 records, the on-therapy
+footing gives a median 30.0% [25.6, 33.5] and the 25-draw pre-dose footing 30.6% [27.0, 35.2],
+sample sd.
 
-Two notes on the figures the brief quoted. The brief's 28.0% with levels "3.5 to 8.7" mixes the two
-footings: the 3.5 to 8.7 range is the 24-draw on-therapy record, whose CV is 27.2%, while the
-25-draw record includes the untreated draw at m = 10.0 and gives 28.3%. The difference is small and
-changes nothing below. And the brief's 29.4% for the load-varied case is a single number where the
-seed set spans 25.6 to 35.2%, so it is inside the range but below the median; the standing rule
-asks for the spread.
+The per-visit levels were checked by summing the kernel over doses and solving the balance by root
+finding rather than by the closed-form root, agreeing to 1.3e-10 (`q10` check 1). **[measured]**
 
-**The point survives either way: roughly 27 to 30% of within-patient marker variation in a treated
-patient on this design is dose cycle and recorded diet, which the model fits rather than absorbs
-into sigma.** **[measured]**
+**Two reconciliations, both resolved, and neither a disagreement about the model.** The author's
+independent figures are 28.0%, 27.8% and 26.6% on those three conventions, with the same level
+ranges to three decimals. The 0.6 point gap against the first column is entirely the sample-versus-
+population standard deviation: multiplying each sample-sd figure by `sqrt((n-1)/n)` gives 28.05,
+27.78 and 26.65 against the author's 28.0, 27.8 and 26.6. **So the three conventions agree exactly
+and the remaining choice is a definition, not a result.** The population sd is quoted in bold above
+because it is the author's; the sample sd is the more conservative reading for a requirement and
+both are given. An earlier draft of this section described the author's figures as mixing two
+footings. That was wrong, it is withdrawn here, and the cause was that this file compared a
+post-dose level range against pre-dose CVs.
+
+**The point survives on every convention: roughly 27 to 30% of within-patient marker variation in a
+treated patient on this design is dose cycle and recorded diet, which the model fits rather than
+absorbs into sigma.** **[measured]**
 
 ### The decomposition, surrogate by surrogate
 
@@ -209,6 +220,33 @@ published record, which converts the specification's sigma from a number into a 
 No constant has moved. The two reruns are not begun: item 7 was to supply the central case for the
 marker-variability rerun and instead establishes that there is no central case, so what the rerun
 should hold sigma at is now a decision for the author and not a reading from the literature.
+
+**Reproduced, and it raises one question before step 3.** The author's four schedule tolerances at
+normal capacity over two years, the largest total residual scatter at which `sd(ln theta)` reaches
+0.20, were reproduced here to locate their footing rather than taken on trust:
+
+| schedule | n | author | this footing, load recorded to 5% | this footing, load recorded to 10% |
+|---|---|---|---|---|
+| monthly | 25 | 11.0% | 10.9% | **5.9%** |
+| fortnightly, off-period | 51 | 15.2% | 14.7% | 11.0% |
+| weekly, phase-spread | 100 | 23.2% | 23.1% | 20.7% |
+| every 2 days | 365 | 44.4% | 44.2% | 42.6% |
+
+The author's figures reproduce on a footing that reads the t = 0 draw post-dose, carries both the
+load-recording and marker terms in sigma, and holds **the load record to 5%**. **At the paper's own
+stated load requirement of about 10%, monthly's tolerance halves, from 11.0% to 5.9%.**
+**[measured]**
+
+That matters for the shape of the requirement table, and it sharpens the author's reading rather
+than softening it. At a 10% load record, monthly demands a residual scatter of 5.9%, which is
+**below the 5 to 8% analytical floor established above**, so monthly does not merely require the
+scatter to sit near its floor, it requires the floor itself to be at the optimistic end. And the
+coincidence the author noticed, monthly's tolerance landing on the load requirement's own figure,
+holds one step along: it is 11.0% at a 5% load record and 11.0% is the fortnightly tolerance at a
+10% one. **The two axes trade against each other exactly as S3 measured, so the requirement table
+has to fix one axis to state the other, and which value it fixes changes the monthly verdict from
+"demanding" to "impossible".** That is a decision for the author and step 3 waits on it.
+**[judgement]**
 
 **Filed rather than pursued.** Whether a standardised sampling protocol, fasting state and time of
 day fixed, would narrow the upper bound enough to matter. It bears on both the sigma bound and the
