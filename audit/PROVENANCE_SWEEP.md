@@ -1,5 +1,26 @@
 # The numeric provenance sweep
 
+## What this document found, in one paragraph
+
+**Across 130 claims this sweep found no wrong number in the paper by checking, and five wrong numbers
+in the checker.** Every "does not reproduce" it produced was mine: a schedule built by hand instead
+of read from the table that owns it, a t = 0 convention, a capacity sweep stopped at 5% of nominal
+twice, and a reconstruction of route 6 that concluded a correct clause was false. Route 6 is right in
+all three clauses. **The defect this document exists to report is entirely in the machinery**, not in
+the paper's arithmetic: 343 numbers are generated and checked, 2472 are not, and five generators that
+the build never runs own 21 of the paper's sentences.
+
+**One amendment, made after the above was drafted and honest about the order.** The author asked for
+that paragraph and then directed the wiring of those five generators into the build. **The wiring
+immediately found two genuine paper-against-generator disagreements**, `t3`'s "7% and 32%" against a
+computed 6.3% and 24.1%, and `t4`'s "0.288" against a computed 0.286 (R88). So the accurate statement
+is narrower and more interesting than the one drafted: **checking the paper against reconstructions
+found nothing wrong with it five times over, and connecting it to its own generators found two things
+wrong immediately.** That is the argument for the machinery, not against the paper, and it is why
+wiring came before rewording.
+
+---
+
 **What this is.** Every numeric literal in `paper/` that is not inside a `\num{}` macro, classified,
 with category 3 listed. Commissioned after R75 found that route 6's `2.659`, `thirteen`, `six` and
 `eighteen` are hardcoded prose rather than generated macros, so the artefact guard never compared

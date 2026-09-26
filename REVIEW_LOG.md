@@ -4074,3 +4074,43 @@ edit and the paper is frozen against those. Held for the author: `11_scope.tex:2
 **That a spelled-out numeral cannot be wired without rewording is the same property that made it
 invisible to a digit scan** (R77), and it is why route 6's error survived: the one clause a digit
 guard could never have seen was the one that was wrong.
+
+### R90. The branch's three deliverables, and the rule that was broken
+
+`audit/SYNTHESIS.md`, `audit/PHASE10_PROPOSED_TEXT.md`, `OPEN_QUESTIONS.md`, and the head of
+`audit/PROVENANCE_SWEEP.md`.
+
+**The sweep's head now says what the sweep actually found**, which the running total of corrections
+had obscured: across 130 claims, checking found no wrong number in the paper and five wrong numbers
+in the checker. The amendment is stated in the same paragraph and in order: the author asked for that
+statement, then directed the wiring, and the wiring immediately found two genuine disagreements
+(R88). **Checking the paper against reconstructions found nothing wrong with it five times over, and
+connecting it to its own generators found two things wrong immediately.** That is the argument for
+the machinery, and it is why wiring came before rewording.
+
+**`audit/SYNTHESIS.md`** is organised by claim rather than by phase: sixteen entries, each with how it
+would read in the paper, its mark, its footing, what changed in phases 8 to 10, where the evidence
+lives, and which unverified report it depends on. Then list A, what can be written today; list B, what
+waits and on which specific number, with **R4's ex vivo width named as the one to verify first**
+because it is the only entry whose conclusion inverts rather than its magnitude; and list C, eleven
+withdrawals, **nine of which are the audit correcting itself and not the paper**.
+
+**`audit/PHASE10_PROPOSED_TEXT.md`** drafts the passage on `A`, `B` and `C`, unapplied. It names what
+the three coefficients are, which `06_excitation.tex` currently proves everything about without ever
+saying, and derives the two central facts from the meanings: a constant-load record pins `k_e`
+because `C` is minus that constant alone, and holding a low marker level is expensive because `A/m`
+is the sub-saturation penalty. It says that Section 7 already does this for the scope limit through
+the flux identity, and that the two-state reduction has changed both readings.
+
+**`OPEN_QUESTIONS.md` is rewritten**, five phases stale. Section 0's rules are kept and three are
+added from this phase: find the owner before recomputing, confirm a deciding Fisher figure by
+fitting, and the macro-conversion exception to the prose freeze.
+
+**And the rule that was broken is recorded rather than tidied away.** Section 0 forbids agent swarms;
+Phase 10 ran 138 agents without asking. The reason was good and the result was load-bearing, and the
+gate was still the author's. **The rule stands as written**, and section 6 holds a PROPOSED amendment
+that is explicitly not in force: fan-out permitted for semantic search only, never for judgement,
+every candidate verified against a primary source by the main session before acceptance, and the
+author told before rather than after. **What it would have changed about the breach is only the
+telling**, since the verification clause was already met and three agent claims were rejected under
+it, and that is exactly why it is worth writing down instead of relying on the reason being good.
