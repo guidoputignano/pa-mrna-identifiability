@@ -308,6 +308,67 @@ def part_d():
   but not yet operational.""")
 
 
+def part_e(reps=3000):
+    banner("E. THE BETWEEN-PATIENT SPREAD OF THE RESIDUAL SCATTER")
+    print("""  Part C's design pools the within-patient variance and estimates ONE residual
+  scatter. If the scatter differs between patients, no single requirement can be
+  written for every patient and the requirement framing needs a per-patient form.
+  A pooled design cannot recover that afterwards, so it is a decision to take
+  before the study runs rather than a question to file.
+
+  The model: patient i has ln sigma_i ~ N(ln sigma, tau), and r draws give that
+  patient's own estimate with sampling sd 0.5 sqrt(trigamma((r-1)/2)). The
+  observed spread of ln sigma_hat across patients is tau and that sampling noise
+  together, so tau is recovered by subtracting the second from the first.
+
+  THE SAMPLING NOISE PER PATIENT IS SET BY r ALONE, and it is large at small r:""")
+    print(f"\n    {'r':>4s} {'df per patient':>15s} "
+          f"{'sampling sd(ln sigma_i)':>24s}")
+    for r in (2, 3, 4, 6, 8, 12):
+        print(f"    {r:4d} {r - 1:15d} {sd_ln_sigma(r - 1):24.3f}")
+    print("""
+  So more patients cannot buy what more draws per patient buy: n averages the
+  noise down in the MEAN but leaves it inside the VARIANCE that tau has to be
+  separated from. Simulated below: `detect` is the fraction of studies whose
+  method-of-moments tau-hat exceeds zero by more than its own 95% interval, which
+  is the question "can this study show the scatter varies between patients at
+  all".""")
+    rng = np.random.default_rng(6_2026)
+
+    def one(n, r, tau, cv=0.15):
+        s2 = np.log1p(cv ** 2)
+        lnsig = np.log(np.sqrt(s2)) + rng.normal(0.0, tau, n)
+        within = np.empty(n)
+        for i in range(n):
+            y = rng.normal(0.0, np.exp(lnsig[i]), r)
+            within[i] = np.sum((y - y.mean()) ** 2) / (r - 1)
+        lh = 0.5 * np.log(within)
+        obs = float(np.var(lh, ddof=1))
+        samp = sd_ln_sigma(r - 1) ** 2
+        return max(obs - samp, 0.0), obs, samp
+
+    print(f"\n    {'n':>4s} {'r':>3s} {'draws':>6s} {'true tau':>9s} "
+          f"{'median tau_hat':>15s} {'detect':>8s} {'pooled df':>10s}")
+    for n, r in ((10, 3), (25, 3), (100, 3), (10, 6), (25, 6), (16, 6),
+                 (10, 12), (25, 12)):
+        for tau in (0.0, 0.30):
+            ests, det = [], 0
+            samp = sd_ln_sigma(r - 1) ** 2
+            for _ in range(reps):
+                t2, obs, _ = one(n, r, tau)
+                ests.append(np.sqrt(t2))
+                #  the observed variance exceeds the null by more than the
+                #  chi-square upper tail of the null spread
+                crit = samp * chi2.ppf(0.95, n - 1) / (n - 1)
+                det += obs > crit
+            print(f"    {n:4d} {r:3d} {n * r:6d} {tau:9.2f} "
+                  f"{np.median(ests):15.3f} {100 * det / reps:7.1f}% "
+                  f"{n * (r - 1):10d}")
+    print("""
+  Read the `detect` column at true tau = 0 as the test's false-positive rate,
+  which should sit near 5%, and at tau = 0.30 as its power.""")
+
+
 def main():
     print("=" * 104)
     print("  THE PRICING")
@@ -317,6 +378,7 @@ def main():
     part_c()
     part_c2()
     part_d()
+    part_e()
     return 0
 
 

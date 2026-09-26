@@ -462,6 +462,49 @@ and sigma* falls to 0.64, a factor of 72. That is `OPEN_QUESTIONS` item (c), 14 
 identical on a calendar axis and twentyfold apart in the answer, appearing in the budget.
 **[measured]**
 
+### 3a.9 The budget confirmed at the band edges, where the strongest claim lives **[measured]**
+
+The standing rule this phase produced applies to this phase's own main deliverable. Every sigma* in
+3a.1 and 3a.6 is a Fisher figure. 3a.4 confirmed it against the estimator at normal capacity only,
+and **the band edges carry the strongest claim in Phase 9**: that there the paper's own 10% load
+requirement closes the gate for monthly and fortnightly whatever the assay does (3a.3). At the edges
+sigma* roughly halves, to 20.80 and 26.75, and a halved budget is exactly where a needle would hide.
+
+So all 48 cells were fitted: three capacities, four schedules, both `k_e` priors, both nuisance
+conventions, 96 records each, at each cell's own sigma* where the Fisher bound reads exactly 0.200.
+
+| k_e prior | robust spread, across all 24 cells | collapses |
+|---|---|---|
+| population, 0.8 | **0.169 to 0.302** | 13 in 24 cells, all on the `centre` convention |
+| measured, 0.054 | **0.153 to 0.241** | **0 in 24 cells** |
+
+The band edges specifically, monthly and fortnightly, the two the claim rests on:
+
+| capacity | schedule | k_e | convention | sigma* | Fisher | robust | collapses |
+|---|---|---|---|---|---|---|---|
+| band low, 2472 | monthly | 0.8 | centre | 20.80 | 0.200 | 0.240 | 2 |
+| band low, 2472 | monthly | 0.8 | truth | 20.80 | 0.200 | 0.221 | 0 |
+| band low, 2472 | fortnightly | 0.8 | centre | 26.75 | 0.200 | 0.285 | 1 |
+| band high, 18814 | monthly | 0.8 | centre | 21.75 | 0.200 | 0.169 | 0 |
+| band high, 18814 | fortnightly | 0.8 | centre | 27.97 | 0.200 | 0.200 | 0 |
+
+1. **The budget holds at both band edges. There is no needle.** The worst cell in the whole grid is
+   0.302 against a Fisher of 0.200, 51% high, at the band's lower edge on the densest schedule and
+   the `centre` convention; the band-edge cells the claim depends on are 0.169 to 0.285. **So sigma*
+   is a budget and not a curvature at every capacity where this phase quotes it, and 3(a) is
+   finished.** **[measured]**
+2. **3a.3's claim stands.** At both band edges a 10% load record exceeds monthly's and fortnightly's
+   budgets, and the budgets are now confirmed against the estimator rather than read off a matrix.
+   **[measured]**
+3. **The collapse pattern is the same everywhere and confirms 3a.4's mechanism from a third
+   direction.** All 13 collapses are on the `centre` convention at the population prior, they occur
+   at the band's lower edge and at normal capacity, and **there are none at the band's upper edge**,
+   where the enzymatic term dominates the balance so `k_e` cannot absorb the load. Measuring `k_e`
+   removes them everywhere: zero in all 24 cells at 0.054. **[measured]**
+4. **And the budget is slightly conservative once `k_e` is measured**: the robust spread at 0.054
+   runs 0.153 to 0.241 against 0.200, so several cells beat their own budget. **[measured]**
+
+
 ### 3a.8 The practical form, for a protocol writer
 
 A protocol writer spends on diet records and assays, not on sigma, so the budget's practical form is
@@ -827,11 +870,68 @@ recoverable under the published algebraic structure. What the anchor is still wo
 statement the paper's identifiability claim rests on, and that is not nothing: **it is the difference
 between a claim that is false and one that is true but not yet operational.** **[judgement]**
 
+### P.6 The between-patient spread: promoted from filed, and it changes the design **[measured]**
+
+P.3's design pools the within-patient variance and estimates one residual scatter. **If the scatter
+differs between patients, no single requirement can be written for every patient**, and a pooled
+design cannot recover that afterwards. So it is a decision to take before the study runs, and it is
+promoted here from the filed list.
+
+The model: patient `i` has `ln σ_i ~ N(ln σ, τ)`, and `r` draws give that patient's own estimate with
+a sampling sd of `0.5·sqrt(trigamma((r−1)/2))`. The observed spread of `ln σ̂` across patients carries
+τ and that sampling noise together.
+
+**The sampling noise per patient is set by `r` alone, and it is large at small `r`:**
+
+| r | df per patient | sampling sd(ln σ̂ᵢ) |
+|---|---|---|
+| 2 | 1 | 1.111 |
+| 3 | 2 | 0.641 |
+| 6 | 5 | 0.350 |
+| 12 | 11 | 0.223 |
+
+**So more patients cannot buy what more draws per patient buy.** `n` averages the noise down in the
+mean and leaves it inside the variance τ has to be separated from. Simulated, at a true τ of 0.30 and
+a marker CV of 15%:
+
+| n | r | total draws | power at τ = 0.30 | false positive at τ = 0 | pooled df |
+|---|---|---|---|---|---|
+| 10 | 3 | **30** | **15.4%** | 8.3% | 20 |
+| 25 | 3 | 75 | 20.7% | 11.4% | 50 |
+| 100 | 3 | 300 | 40.1% | 12.1% | 200 |
+| 25 | 6 | 150 | 63.6% | 7.8% | 125 |
+| 10 | 12 | **120** | **72.6%** | 5.4% | 110 |
+| 25 | 12 | 300 | 96.6% | 7.0% | 275 |
+
+1. **At equal cost, draws per patient beat patients, and not marginally.** 100 patients at 3 draws
+   and 25 at 12 are both 300 draws; the first has 40% power and the second 97%. **120 draws at
+   `r = 12` beats 300 draws at `r = 3`.** **[measured]**
+2. **The 30-draw design priced in P.3 cannot address this question at all**, 15.4% power, and its
+   nominal 5% test actually runs at 8.3% because the chi-square approximation for the spread of
+   `ln σ̂` is poor at two degrees of freedom. **So `r = 3` is the wrong design for this question on
+   two counts, and the second is a reason not to trust a null result from it.** **[measured]**
+3. **The recommended design, if the between-patient question is to be answered: 10 patients at 12
+   draws each, 120 draws.** It gives pooled `df = 110`, which is a ×0.88 to ×1.16 interval on the
+   residual scatter, better than the 30-draw design's ×0.77 to ×1.44, **and** 73% power on a τ of
+   0.30 at a correctly sized 5% test. **[measured]**
+4. **The cost is four times the draws, 30 to 120, and it is worth paying.** The pooled answer alone
+   sets a requirement that may not be writable; the paired answer says whether the requirement can be
+   written at all, and no later study can recover it from pooled data. Twelve draws at one fixed
+   dose-cycle phase is about twelve dose intervals, roughly five and a half months on the 14 d train,
+   which is inside the two-year record the design already assumes. **[judgement]**
+5. **If only 30 draws are available, spend them as 5 patients at 6 draws rather than 10 at 3.** The
+   pooled df falls from 20 to 25, so the pooled answer is unharmed, and the per-patient sampling
+   noise halves, which leaves the between-patient question answerable later by adding patients
+   rather than unanswerable. **[judgement]**
+
+
 ### P.5 What the pricing says, in order of cost
 
-1. **The repeatability study, about 30 blood draws.** It measures the one quantity sigma needs, it is
-   the cheapest item by a wide margin, and it returns either a schedule decision or the knowledge
-   that none is available. **Run it first.** **[judgement]**
+1. **The repeatability study, 30 draws for the pooled answer or 120 for both answers** (P.3, P.6). It
+   measures the one quantity sigma needs, it is the cheapest item by a wide margin, and it returns
+   either a schedule decision or the knowledge that none is available. **Run it first, and at
+   `r = 12` if the between-patient question is to be settled**, since a pooled design forecloses it.
+   **[judgement]**
 2. **The `k_e` micro-dose study**, one bolus with a 24 h window and 8 or more draws per patient
    (S2b.1). It buys a factor of 1.5 on the budget and removes a 2% per-patient failure mode. At
    normal capacity it need not be repeated. **[measured]**
@@ -894,5 +994,4 @@ has to fix one axis to state the other, and which value it fixes changes the mon
 - **Re-solving sigma\* at the measured `k_e` prior throughout**, rather than carrying two tables. P.1
   shows the two differ by a factor of 1.5, so the choice of which to quote is a specification
   decision and not an audit one.
-- **The between-patient spread of the marker's residual scatter**, which P.3's pooled design does not
-  estimate and which decides whether one requirement can be written for every patient.
+- (promoted to P.6 and no longer filed: the between-patient spread of the residual scatter.)

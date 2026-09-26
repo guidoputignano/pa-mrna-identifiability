@@ -24,6 +24,21 @@ again every time two scripts compute the same quantity by different routes.
   `delta`. On the monthly record that is the t = 0 draw alone, and it moves the level from 10.000 to
   3.510. `REVIEW_LOG.md` R54 and `audit/PHASE8_SIMULATIONS.md` S1.R 3a record what it cost the first
   time.
+- **A Fisher figure that decides a verdict is confirmed by fitting before it is reported.** An
+  information matrix is the curvature of the log likelihood at one point. Where the likelihood is
+  quadratic over the range a reader cares about, the curvature is the interval; where it is not, the
+  two diverge without warning and the curvature is always the optimistic one. **The case that makes
+  them diverge is a needle: a sharp minimum sitting on a nearly flat floor**, where the matrix
+  measures the needle and a record at realistic noise sees the floor. Confirm by simulating records
+  and fitting them, report the **robust spread** rather than the RMSE, since a Fisher bound has no
+  tail to match, and quote the collapse count with a binomial interval beside it.
+
+  This is a house rule and not a lesson from one phase. `REVIEW_LOG.md` **R20** retracted
+  Cramer-Rao curvatures quoted where a reader reads an interval; `audit/n6_profile_vs_crb.py` exists
+  for the same reason and profiles the design the paper recommends; and Phase 9 step 3(b) produced
+  three instances in one section, the last of which withdrew that section's headline. Five instances
+  in the project is a rule.
+
 - **A noise figure is reported with what is inside it.** `sigma` carries both the load-recording
   error and the marker's scatter; the load-bias prior `s_b` carries the load-recording error a second
   time and is not inside `sigma`. A tolerance quoted for one axis is meaningless without the other
@@ -3343,4 +3358,48 @@ verification last, for the structural claim.
 
 **Re-check record.** `q10` gains check 5: `sd(ln σ̂)` from the trigamma function against chi-square
 draws, and the budget inversion checked by going forward. 18 of 18 pass.
+
+---
+
+## R65. The budget confirmed at the band edges, and the between-patient design decision
+
+`audit/PHASE9_LITERATURE.md` 3a.9 and P.6, plus a promotion to the standing conventions.
+
+**The method note is now a house rule**, not a Phase 9 lesson: a Fisher figure that decides a verdict
+is confirmed by fitting before it is reported, the robust spread is what gets quoted, and the collapse
+count carries a binomial interval. It sits in the standing-conventions section beside the
+sample-versus-population line. It is not new: **R20** retracted Cramer-Rao curvatures quoted where a
+reader reads an interval, `audit/n6_profile_vs_crb.py` exists for the same reason, and step 3(b)
+produced three instances in one section. Five in the project is a rule.
+
+**Applied to this phase's own main deliverable, and it holds.** Every sigma* in 3a.1 and 3a.6 is a
+Fisher figure confirmed at normal capacity only, while the band edges carry Phase 9's strongest claim
+and have budgets roughly half the size, which is where a needle would hide. All 48 cells were fitted,
+three capacities by four schedules by two `k_e` priors by two nuisance conventions, 96 records each.
+**The robust spread runs 0.169 to 0.302 at the population prior and 0.153 to 0.241 at the measured
+one, against a Fisher bound of 0.200 everywhere.** The worst cell is 51% high; the band-edge cells the
+claim rests on are 0.169 to 0.285. **So sigma\* is a budget and not a curvature wherever this phase
+quotes it, 3a.3's claim stands, and step 3(a) is finished.**
+
+The collapse pattern confirms 3a.4's mechanism from a third direction: all 13 collapses are on the
+`centre` convention at the population prior, they occur at the band's lower edge and at normal
+capacity, and **there are none at the band's upper edge**, where the enzymatic term dominates so
+`k_e` cannot absorb the load. Zero in all 24 cells at the measured prior.
+
+**And one filed item is promoted, because it is a design decision rather than a question.** If the
+residual scatter varies between patients, no single requirement can be written for every patient, and
+a pooled design cannot recover that afterwards. The sampling noise on a patient's own scatter is set
+by the number of draws per patient alone: 0.641 at `r = 3`, 0.350 at 6, 0.223 at 12. **So more
+patients cannot buy what more draws per patient buy.** At a true between-patient spread of 0.30: 100
+patients at 3 draws, 300 in total, gives 40% power; 25 at 12, also 300, gives 97%; **120 draws at
+`r = 12` beats 300 at `r = 3`.**
+
+**The 30-draw design priced in P.3 cannot answer this question**, 15.4% power, and its nominal 5% test
+runs at 8.3% because the chi-square approximation is poor at two degrees of freedom, which is a reason
+not to trust a null result from it. **The recommendation is 10 patients at 12 draws, 120 in total**:
+pooled `df = 110`, a ×0.88 to ×1.16 interval on the scatter, better than the 30-draw design's ×0.77 to
+×1.44, and 73% power at a correctly sized test. Four times the draws, about five and a half months of
+sampling at one fixed dose-cycle phase, inside the record the design already assumes. If only 30 draws
+are available, **5 patients at 6 draws beats 10 at 3**: the pooled answer is unharmed and the
+between-patient question stays answerable by adding patients later.
 
