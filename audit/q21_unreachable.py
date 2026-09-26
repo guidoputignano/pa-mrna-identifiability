@@ -57,6 +57,17 @@ CONFIRMED = [
          "bias to 5%:  0.1696"),
         ("08_specification.tex:255", "98% of the degradation is scatter",
          "the scatter channel accounts for 0.1133  (98%)"),
+        ("08_specification.tex:256", "the target is met at every offset from "
+                                     "1% to 500%",
+         "the gate holds at EVERY bias from 1% to 500% (0.1691, 0.1733)"),
+        ("06_excitation.tex:286", "sd runs 0.159 at a 1% recording error to "
+                                  "0.288 at 20%",
+         "1%  0.1589  ... 20%  0.2863"),
+        ("06_excitation.tex:287", "98% of that is the per-visit scatter and "
+                                  "2% the systematic offset",
+         "the same 98% split, restated in a second section"),
+        ("06_excitation.tex:290", "the target is met at every bias from 1% "
+                                  "to 500%", "the same 1%-to-500% sweep"),
     ]),
     ("t8_load_by_capacity", [
         ("11_scope.tex:207", "worth a factor of 1.81 at nominal capacity",
@@ -90,6 +101,10 @@ CONFIRMED = [
          "R80's finding, the first instance"),
         ("08_specification.tex:372", "the same three values restated",
          "same generator"),
+        ("08_specification.tex:375", "prescribing it is worth between nothing "
+                                     "and two per cent",
+         "designed 0.1696 vs spontaneous 0.1698, ratio 1.001 at nominal; the "
+         "upper endpoint sits at a capacity not located here"),
     ]),
 ]
 

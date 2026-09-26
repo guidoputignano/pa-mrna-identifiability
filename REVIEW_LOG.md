@@ -3951,3 +3951,31 @@ candidate 9's own pricing must use the full move; what it got wrong is implying 
 conflated them. It had not.**
 
 Another spelled-out numeral, so no digit scan would see it.
+
+### R85. The four unreachable generators own 21 paper sites, not four
+
+`audit/PROVENANCE_SWEEP.md` section 11, `audit/q21_unreachable.py`. Final count after the workflow's
+remaining investigators returned and each new site was verified here against captured stdout.
+
+| script | sites owned |
+|:--|---:|
+| `t4_bias_vs_scatter` | **8** |
+| `t9_measured_load` | **6** |
+| `t8_load_by_capacity` | **4** |
+| `t3_diet_modulation` | **3** |
+
+**`t4`'s decomposition is restated across two sections and every statement of it is unowned.**
+Besides `08_specification.tex:254-256`, `06_excitation.tex:286-290` carries the same result again:
+"runs 0.159 at a 1% recording error to 0.288 at 20%", the 98%/2% split, and "the target is met at
+every bias from 1% to 500%". `t4` prints `1% 0.1589`, `20% 0.2863`, and verbatim
+`the gate holds at EVERY bias from 1% to 500% (0.1691 at 1%, 0.1733 at 500%)`.
+
+**So one generator the build never runs supplies the same finding to two sections.** That is the
+shape the consolidation pass should expect: not isolated literals, but a result stated several times
+from a single unreachable source, where moving or rewording any one statement cannot be checked
+against the others or against the code.
+
+One site is accepted with its endpoint unverified and marked as such: `08_specification.tex:375`,
+"prescribing it is worth between nothing and two per cent". `t3` owns the quantity, printing
+`designed 0.1696 vs spontaneous 0.1698, ratio 1.001` at nominal, which is the "nothing" end; the
+capacity at which it reaches two per cent was not located.

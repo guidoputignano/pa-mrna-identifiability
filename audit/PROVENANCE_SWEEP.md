@@ -436,6 +436,14 @@ third-tightest requirement:
 | "against a 0.170 baseline" | `bias to 5%:  0.1696` |
 | "98% of the degradation is scatter" | `the scatter channel accounts for 0.1133  (98%)` |
 
+**And `t4`'s decomposition is not stated once but restated across sections, all of it unowned.**
+`06_excitation.tex:286-290` carries the same result again: "runs 0.159 at a 1% recording error to
+0.288 at 20%", "98% of that is the per-visit scatter and 2% is the systematic offset", and "with the
+scatter at 5% the target is met at every bias from 1% to 500%". `t4` prints `1%  0.1589`,
+`20%  0.2863`, and, verbatim in its own output, `the gate holds at EVERY bias from 1% to 500%
+(0.1691 at 1%, 0.1733 at 500%)`. **So one unreachable generator supplies the same finding to two
+sections, nine literals in all, and no macro cites any of them.**
+
 **`t8_load_by_capacity.py` owns route 5's factors**: `100% of nom  1.808` against the paper's 1.81,
 and `20% of nom 1.215 ... 2% of nom 1.464` against its "1.22 to 1.46 across the disease range". So the
 band runs from a fifth of nominal down to two per cent, which section 10 inferred and this confirms
