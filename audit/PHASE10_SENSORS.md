@@ -311,11 +311,34 @@ This is the finding, and it was not visible before the state was made explicit.
    `k_e / alpha`.** So the study delivers the numerator and `alpha` is a new unmeasured nuisance
    sitting on exactly the quantity Phase 9 wanted to 2%. If `alpha` were 0.3, the model's constant is
    3.3 times the measured one. **[proven]** on the algebra; the size of `alpha` is unmeasured.
-4. **`alpha` is measurable, and what measures it is the marker panel.** Each overflow marker's
+4. **And the physical reading, which makes `alpha` intuitive rather than surprising.** Eliminating
+   `p` gives `c p` identically equal to `(k_e/alpha) m`. **So the paper's second channel is not a
+   clearance of the marker at all.** It is the disposal of propionyl-CoA down the overflow route,
+   expressed in marker units, and `alpha` appears because the model carries a flux out of a pool it
+   does not represent, divided by the fraction of that flux that happens to be measured. Read that
+   way the `alpha` dependence is not a technicality: it is the exchange rate between a pool the model
+   omits and the one quantity it observes. **[proven]**
+5. **`alpha` is measurable, and what measures it is the marker panel.** Each overflow marker's
    formation flux is its clearance times its level, so
    `alpha = k_e,3HP * m_3HP / sum_j (k_e,j * m_j)`: measuring the panel's levels **and** each
    marker's clearance closes the overflow budget and returns `alpha`. **[proven]**
-5. **Which answers Phase 10's original question from an unexpected direction.** The panel's value is
+6. **That estimator carries a CLOSURE ASSUMPTION, and it must be named.** It is right only if the
+   measured markers **exhaust** the overflow routes. The panel R3 describes covers four: 3-HP, 2-MC,
+   C3 and propionylglycine. Routes known to exist outside it include urinary free propionate,
+   propionyl-CoA incorporated into odd-chain fatty acids, and any conjugate not on the assay.
+   **The error is directional, not symmetric**: an unmeasured route makes the denominator short, so
+   `alpha` comes out **too high** and the model's `k_e/alpha` **too low**. If the panel captures a
+   fraction `f` of the overflow, the estimate of `alpha` is inflated by `1/f` and `k_e/alpha`
+   deflated by `f`, so a panel capturing 70% of the overflow understates the model's constant by
+   30%. **This is the same failure mode as R5's floor**: a ratio whose denominator is assumed
+   complete. **[proven]** on the direction and the factor, **[judgement]** on which routes matter.
+7. **And it is not one measurement.** That estimator needs the clearance of **every** marker in the
+   panel, not only 3-HP, and R1 establishes that no human clearance exists for even one of them. So
+   converting the micro-dose study's result into the model's parameter needs **as many tracer studies
+   as there are panel markers**, each with its own synthesis, its own window and its own assay. The
+   pricing in section P treats the `k_e` study as a single item and that is now wrong; the corrected
+   row is in P.8. **[judgement]**
+8. **Which answers Phase 10's original question from an unexpected direction.** The panel's value is
    not noise averaging, which is what the paper priced, and not the different functional forms, which
    is what R3 recommended it for. **It is that the sum of the overflow routes is what converts a
    measurable tracer clearance into the model's parameter.** That is structural information, it is the
@@ -345,7 +368,28 @@ reproduces the two-state marker. The best-fitting `K_m` across capacity, and its
    are informative precisely because they are not reductions of the same one-state form.
    **[judgement]**
 
-### R.4 What the verdict licenses, and what it does not
+### R.4 Where this sits in the reduction ladder **[judgement]**
+
+The repository already maintains reductions rather than replacements: `REVIEW_LOG.md` **R22** records
+the carnitine one, where `k` cancels from the reduced curve and survives only as the relaxation rate,
+verified to 2.45e-16 over four orders of magnitude. **This belongs beside it, not in a category of its
+own**, and gets the same three-part treatment.
+
+| | the carnitine reduction (R22) | the propionyl-CoA reduction (here) |
+|---|---|---|
+| what it assumes | the conjugation pool is quasi-steady | both `p` and `m` quasi-steady, **and the overflow linear in `p`** |
+| where it is exact | `k` cancels exactly; worst spread 2.45e-16 | residual 0 symbolically, 6.7e-15 numerically over 54 cells |
+| what it costs when wrong | `k` still sets the relaxation rate, so a fast-pool assumption is checkable from dynamics | **a saturable overflow has no one-state form at all**: at `K_o = 100` the best `K_m` is 69 against 100, with a 16% residual |
+
+**And the 16% residual is invisible as a missing state.** It presents as a `K_m` that will not
+calibrate, which a reader fixes by moving `K_m`, which is exactly what the fit does. **That is the
+fourth instance of this project's own pattern**: R14's curvature read as recovery, R15's knife edge
+read as a shape limit, Phase 9 3b's needle read as identifiability, and now a missing state read as a
+calibration error. In every case the arithmetic was right and the object it described was not the one
+named. **[judgement]**
+
+
+### R.5 What the verdict licenses, and what it does not
 
 **Licensed.** The five dropped candidates are now expressible, because `p` exists: the breath test
 attaches to `theta p/(K_p + p)`, and 2-MC, C3, C3/C2 and propionylglycine attach to `p` through R3's

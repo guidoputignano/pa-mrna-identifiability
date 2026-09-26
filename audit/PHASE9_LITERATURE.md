@@ -1059,6 +1059,34 @@ over a window contributes `D_window² / 12` to the variance:
    and not measured away by this design. Filed, not run. **[judgement]**
 
 
+### P.8 The `k_e` study repriced: it is one study per marker, not one study **[measured]**
+
+P.5 ordered the `k_e` micro-dose study second by cost, as a single item. **Phase 10's reduction makes
+that wrong.** The model's parameter is `k_e/alpha`, the tracer study measures `k_e`, and `alpha` is
+recovered only by closing the overflow budget, which needs the clearance of every marker in the panel:
+
+    alpha = k_e,3HP * m_3HP / sum_j (k_e,j * m_j)
+
+So the corrected row is:
+
+| item | as priced in P.5 | as it actually is |
+|---|---|---|
+| the `k_e` route to the model's parameter | one IV micro-dose study, 24 h window, 8+ draws | **four** IV micro-dose studies, one per panel marker, each needing its own labelled compound synthesised, its own window and its own assay, **plus** a closure assumption that the four exhaust the overflow |
+
+1. **The cost is at least fourfold and probably more**, since none of the four labelled compounds is
+   off the shelf and three of them have no human clearance study of any kind to design against (R1).
+   **[judgement]**
+2. **And the closure assumption is not removable by spending more.** Adding a fifth marker narrows
+   the shortfall but cannot prove the budget closed; only a mass balance against total propiogenic
+   input would, which is candidate 9's measurement. **[judgement]**
+3. **The error from an incomplete panel is directional.** A panel capturing a fraction `f` of the
+   overflow inflates `alpha` by `1/f` and deflates the model's `k_e/alpha` by `f`, so it is understated,
+   never overstated. **[proven]**
+4. **This moves the `k_e` route down the order of cost and is why the cohort route is now priced
+   first.** A hierarchical fit estimates `k_e/alpha` directly from marker records and never meets
+   `alpha` at all. **[judgement]**
+
+
 ### P.5 What the pricing says, in order of cost
 
 1. **The repeatability study, 30 draws for the pooled answer or 120 for both answers** (P.3, P.6). It
@@ -1066,9 +1094,11 @@ over a window contributes `D_window² / 12` to the variance:
    either a schedule decision or the knowledge that none is available. **Run it first, and at
    `r = 12` if the between-patient question is to be settled**, since a pooled design forecloses it.
    **[judgement]**
-2. **The `k_e` micro-dose study**, one bolus with a 24 h window and 8 or more draws per patient
-   (S2b.1). It buys a factor of 1.5 on the budget and removes a 2% per-patient failure mode. At
-   normal capacity it need not be repeated. **[measured]**
+2. **The `k_e` route, repriced by P.8 and no longer a single study.** Reaching the model's parameter
+   `k_e/alpha` needs one IV micro-dose study **per panel marker**, four in all, plus a closure
+   assumption. What a single study buys remains a factor of 1.5 on the budget and the removal of a 2%
+   failure mode, but it buys it in `k_e` and not in the parameter. **The cohort route below reaches
+   the same parameter without any of it.** **[measured]**, **[judgement]** on the ordering.
 3. **The load record to better than 5%**, which inside the booked two years is the binding
    requirement S3 found, and which at 15% closes the gate for the two sparse schedules whatever the
    assay does (3a.3). **[measured]**

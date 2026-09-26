@@ -3521,3 +3521,42 @@ conclusion does not need that choice, because both conventions fail: **at the po
 no statable budget on either honest convention, so measuring `k_e` is the precondition for the
 requirement framework existing at all.** That is the form Phase 9 should be read as concluding.
 
+
+---
+
+### R69. The second channel is not a clearance, and the composite has a directional bias
+
+`audit/PHASE10_SENSORS.md` R.2 points 4, 6 and 7.
+
+Eliminating `p` from the two-state model gives `c*p` identically equal to `(k_e/alpha)*m`, so the
+paper's second channel **is not a clearance of the marker at all**. It is the disposal of
+propionyl-CoA down the overflow route, expressed in marker units, and `alpha` appears because the
+model carries a flux out of a pool it does not represent, divided by the fraction of that flux that
+happens to be measured.
+
+`alpha = k_e,3HP*m_3HP / sum_j k_e,j*m_j` is right **only if the measured markers exhaust the overflow
+routes**. If any route is unmeasured the denominator is short, `alpha` comes out too high and the
+model's `k_e/alpha` too low, so **the error is directional, not symmetric**: a panel capturing a
+fraction `f` of the overflow understates the model's constant by `1 - f`. R3's panel is 3-HP, 2-MC, C3
+and propionylglycine; urinary free propionate and odd-chain fatty acid incorporation sit outside it.
+This is the same failure mode as R5's floor, a ratio whose denominator is assumed complete.
+
+### R70. The tracer route is one study per marker, not one study
+
+`audit/PHASE9_LITERATURE.md` P.8, with P.5 item 2 rewritten to point at it.
+
+Converting a micro-dose study's result into the model's parameter needs `k_e,j` and `m_j` for **every**
+panel marker, so the pricing row "one IV micro-dose study, 24 h window, 8+ draws" becomes **four IV
+micro-dose studies, one per panel marker**, plus a closure assumption that is not itself measurable
+from the panel. The row is repriced rather than caveated.
+
+### R71. The reduction enters the ladder, and it is the fourth instance of the pattern
+
+`audit/PHASE10_SENSORS.md` R.4, placed beside R22's carnitine reduction and given the same treatment:
+what it assumes, where it is exact, what it costs when it is wrong.
+
+The entry that matters: **the 16% residual is invisible as a missing state and reads as a calibration
+problem.** A saturable overflow at `K_o = 100` fits a `K_m` of 69.48 against a true 100, which a reader
+takes as a mis-set constant, not as evidence that a state is absent from the model. That is the fourth
+instance of this project's own pattern, after R14's curvature read as recovery, R15's knife edge read
+as a shape limit, and Phase 9 3b's needle read as identifiability.
