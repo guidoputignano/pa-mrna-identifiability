@@ -4250,3 +4250,209 @@ disagreement must be settled on footing evidence instead. **There is no join, so
 argument is available for all 109 claims still to wire**, not only for those after a date. That
 correction matters more than the fact it corrects, because the caveat would otherwise have been
 applied 109 times.
+
+---
+
+# Phase 11. Three computations on an existing footing: the `K_m` bypass, the sampling modality, the constant-capacity assumption
+
+*Working in `audit/PHASE11_KM_BYPASS.md`, `audit/PHASE11_SAMPLING.md`,
+`audit/PHASE11_DRIFT.md`. Proposed wording in `audit/PHASE11_PROPOSED_TEXT.md`, **unapplied**.
+Scripts `audit/u1` to `audit/u8`, each with an independent re-check sharing no code path.
+No literature, no network, no fan-out. Nothing under `paper/` is changed.*
+
+### R95. One external `K_m` closes the fibre exactly, and buys five per cent
+
+**The claim is confirmed and the conclusion drawn from it is not.**
+
+At a constant recorded load the quasi-steady record determines exactly the triple
+`A = (L+b)K_m`, `B = (L+b) - theta - k_e K_m`, `C = k_e`, and
+`theta = A/K_m - B - k_e K_m` is exact. Three `sympy` identities, all `True`
+(`audit/u1_fibre_bypass.py` part A). The record's information matrix has an **exactly
+one-dimensional** null space, relative smallest eigenvalue 4.5e-17 to 1.9e-16, whose
+eigenvector aligns with the fibre tangent to `|cos| = 1.00000000` at every capacity tested.
+The slope has the closed form `-(L + b + k_e K_m)/theta`, confirmed by finite difference to
+3e-10.
+
+**And an exactly known `K_m` is worth a factor of 1.056, 1.037 and 1.058** at
+`theta = 3000, 600, 300`. Restoring rank and buying precision are different things: the
+second eigenvalue is 5.8e-8 to 1.5e-5 of the largest and `K_m` does not touch it. Closing
+the fibre by the other available route, an exact load bias, buys 0.3%.
+
+`k_e` is the load-bearing external quantity: an exact `k_e` is worth 2.09, 6.43 and 7.43,
+which reproduces `tab:keprior`'s "2.1 at nominal and 6.9 in the disease range" from an
+independent construction.
+
+### R96. The breath test does not measure `theta g(m)`, and the ratio determines a different combination
+
+**A correction to the mechanism, not to any number in the paper.**
+
+Derived from the two-channel split rather than assumed: the oxidised fraction of a labelled
+bolus is `F(m) = theta/(theta + k_e(K_m + m))`, and `sympy` reports `F` proportional to
+`theta g(m)`: **`False`**. The unknown recovery factor still cancels in a ratio, which is
+the property that matters and which survives. But a two-level ratio determines
+**`u = theta/k_e + K_m`**, not `K_m`, and capacity follows only through the record's own
+coefficients: `K_m = A/(B + Cu)`, `theta = C(u - K_m)`.
+
+Both amplifications have the same closed form with `u` for `K_m`,
+`(u+m1)(u+m2)/(u(m2-m1))`, each confirmed by finite difference.
+
+**Every figure computed on the assumed functional reproduces**: `sd(ln K_m)` of 1.435,
+0.454 and 0.366 at a 5% breath CV, `sd(ln theta)` of 0.394 and 1.003, a dose-train fold of
+6.68 against a load cut's 2.15, and a load-step-against-dose-cycle comparison of 1.272
+against 0.732 at a 10% CV. On the derived functional the same propagation gives 27.0, 4.06
+and 3.56, and the direction survives for `sd(ln u)` but not for `theta`, which becomes
+non-monotone.
+
+A finite tracer bolus biases the inferred `u` down and the bias does **not** cancel with the
+recovery factor, because one absolute bolus displaces two levels by different relative
+amounts: -0.5% at a hundredth of the pool, -9.5% at a fifth, -21% at a half.
+
+### R97. The joint Fisher: how few breath tests a marker record needs
+
+25 monthly draws plus `k` breath readings alternating the dose train's trough and peak,
+recovery factor carried free. **`k = 1` contributes exactly nothing** at every capacity, the
+recovery factor absorbing it, and that falls out of the construction rather than being
+assumed.
+
+| theta | 5% breath CV | 10% | 14% (the only published figure) |
+|---|---|---|---|
+| 3000 | **0** (the record alone gives 0.170) | 0 | 0 |
+| 600 | **34** | 133 | 261 |
+| 300 | **70** | 279 | 547 |
+
+Lengthening the marker record barely moves it: at `theta = 300` and 5%, the count is 78 at
+thirteen draws and 47 at two hundred. Breath alone is infinite at every capacity, the
+contrasts determining `u` and nothing else.
+
+**The regime complementarity is real and it is not enough.** The breath observable's
+elasticity to capacity **rises** as capacity falls, 0.155 at nominal to 0.837 at a twentieth
+of nominal, exactly against the marker's -0.915 to -0.173, the two crossing near a fifth of
+nominal. `11_scope`'s verdict survives; its stated mechanism, "a quantity the observable has
+stopped responding to", is true of the marker and false of observables in general. Proposed
+wording drafted and **not applied**.
+
+### R98. A Fisher variance is a posterior variance, and a simulation must draw every prior
+
+**Recorded because it produced a two-fold error that read as a finding.**
+
+`audit/u4_recheck_breath.py` first held `k_e` at its prior mean while drawing the load bias
+from its prior, and reported the Fisher as pessimistic by a factor of two at nominal
+capacity: a robust spread of 0.0782 against a predicted 0.1696. It was neither. Holding a
+prior-carrying nuisance at its prior mean **silently simulates the nuisance-known design**,
+and 0.0782 is `audit/u1`'s `k_e`-exact figure of 0.0813, not the paper's.
+
+Drawing every prior-carrying nuisance from its prior, 300 replicates, the ratios of
+simulated robust spread to Fisher run **0.911 to 1.165** at the paper's own `k_e` log-prior
+and 0.879 to 1.175 at a 0.2 control. The gate-relevant row, `theta = 300` at `k = 70`, gives
+0.1819 against 0.1998.
+
+An optimiser fault was found and discarded on the way: Nelder-Mead started at the truth
+stalls in the fibre's flat valley and under-disperses. It is not what caused the two-fold
+error, and replacing it with scaled trust-region least squares did not fix it. The rule is
+the finding, not the optimiser.
+
+### R99. The sampling modality: the split confirmed, the penalty damped, and home sampling priced
+
+**Confirmed on this repository's own footing.** Load-record term **16.1364**, assay term
+**14.8967**, `sigma` 21.9612, assay share 46.01% of `sigma^2`, crossover 1.0832. Measured
+rather than evaluated, from 20000 simulated draws with each error source switched on alone:
+16.0214 and 15.0436, within 1%.
+
+**The sample-count factor** against assay CV is 2.380 at 10% and 4.681 at 15% analytically,
+and **2.091 and 3.909** counted in the design itself. Undamped it would be 4.00 and 9.00, so
+the damping is 1.68 and 1.92, and the load-record term is the floor that creates it.
+
+**The re-check validates the surface and not the count, after two attempts to locate the
+count failed.** Interpolating a gate crossing between simulated grid points reports Monte
+Carlo noise as a count, because at a few hundred replicates the simulated curve is not
+monotone in `n`. Fitting `sd = c n^p` across the grid looked principled and returned
+exponents of -0.29, -0.10 and -0.22 against the -0.5 a count factor assumes, for "factors"
+of 1.60 and 7.32 that estimate nothing. Comparing the simulated spread with the Fisher at
+the same `(n, assay CV)` instead, over nine cells at 400 replicates, gives ratios of
+**0.871 to 1.142**, and the count factor is a deterministic consequence of that surface.
+
+**Tier 1 in calendar time.** 118 monthly clinic draws is 9.82 years and 118 trips. Home
+volumetric microsampling, phase-spread, three per week: 285 draws in **2.11 years** at a 10%
+assay and 567 in **4.25 years** at 15%, with no clinic attendances. One per week does not
+pay: at 15% and worse it is slower than the clinic arm.
+
+**Both placement effects are smaller than expected and one conjecture is refuted.** The
+aliasing cliff is entirely between one reachable phase and two: fortnightly sampling costs a
+factor of 67, weekly costs nothing, and phase-spreading buys nothing at any cadence reaching
+two or more. Weekday-only clinic booking costs 0.1% to 0.5%. The conjecture that a weekly
+home cadence leans on the unsmoothed diet record, prompted by its data rank being 2 of 4 at a
+constant load, is **refuted**: the two priors close both null directions and it returns
+0.1583 with the load held perfectly constant.
+
+**The binding nuisance does change**, from `k_e` to `K_m`, and the crossover sits between a
+5% and a 10% assay CV, which is exactly where the assay share of `sigma^2` goes from 46% to
+77%. **The load bias is never the binding nuisance at any assay CV**, buying 0.0002 to
+0.0004 throughout: the load-record prior `08_specification.tex:367` reports stuck near 1.05
+stays stuck and is not what a protocol should attack.
+
+**One verdict is method-dependent and is reported as such.** Profiling instead of inverting
+puts `K_m` first at every assay CV. Two optimiser faults were found and fixed before this was
+treated as a disagreement, and neither changed it; the control did. Re-running both methods
+at a `k_e` log-prior of 0.2 brings them to within 3% and both then rank `K_m` first. A
+profile is not a marginal, and a log-prior of 0.8 is a factor of 2.2. **The `K_m` verdict at
+high assay CV is robust; the `k_e` verdict at low assay CV is not.**
+
+### R100. The constant-capacity assumption has no margin on the arm that needs a decade
+
+`eq:input` fixes `theta_base` over the whole record and `04_local.tex` warrants constancy
+**over the afebrile range**. Tier 1 spends **9.82 years** of it.
+
+**At nominal capacity the question is moot**: the gate is met at 13 to 25 draws, the
+optimiser shortens the record, and the floor crosses 0.20 only at a drift of 0.67 per year,
+a halving time of one year.
+
+**On the Tier 1 arm it inverts.** With the increment at the published 14.02% the floor
+crosses the gate at about **0.9% a year**, a halving time of 76 years, and at the
+requirement's own 118 draws there is no margin at all, because 118 is by construction the
+count that lands exactly on 0.20: `sd = 0.2000` with no drift, and `rmse = 0.2020` at half a
+per cent a year. The increment's prior floors the variance at 0.174, leaving 0.098 of budget
+for bias, and a decade of any drift exhausts it.
+
+**The fix is nearly free.** A drift column costs between **0.3% and 1.6%** when there is no
+drift to find, and restores the gate at every rate tested. A decade-long record should carry
+one whether or not anyone believes in the drift, and fitting it returns an estimate of the
+drift rate for the price of one parameter.
+
+**This establishes a conditional, not a fact about patients.** Nothing here measures the
+drift rate, and the paper's kinetic argument for constancy is untouched.
+
+### R101. A first-order bias projection is exact and useless past its own validity condition
+
+The linearised bias of a constant-capacity fit is exactly the weighted least squares it
+claims to be, and it has the **wrong sign** from 60 monthly draws onward at a 5% drift. Its
+validity condition is `r` times the record's span, and the Tier 1 record sits at 0.487 of
+it. Every bias reported in Phase 11 is from an exact nonlinear fit instead.
+
+**And the exact fit had a silent bug worth recording.** Written as the difference between
+the model's flux at the model's own root and the data's flux at the data's own root, the
+residual is identically the load: both roots satisfy their own balance, so every dependence
+on `theta` cancels and the fit returns its start point. It produced biases of exactly
+`0.00000` in some cells and nonsense in others, with no error and no warning. The residual
+must evaluate the model clearance **at the observed level**. The same pattern was found and
+fixed a second time in `audit/u6_recheck_sampling.py`, which had converted a level
+difference through the local gain instead of evaluating the flux exactly.
+
+### R102. Three gates reached and reported, none proceeded through
+
+`OPEN_QUESTIONS.md` section 0 says stop at a gate and report. For this run the instruction
+was to stop that line of work, record the gate, and move to the next item. Three were
+reached.
+
+1. **No literature check is possible and none was attempted.** The container has no egress,
+   `OPEN_QUESTIONS.md` section 1 still holds, and the breath test's functional in R96 is
+   derived from *this repository's model*, not from the assay literature. The only external
+   figure used is the 14.02% repeatability, on trust, exactly as `08_specification.tex`
+   already uses it.
+2. **The bolus size relative to the marker pool is unknown**, so R96's bolus table is a
+   sensitivity and not a correction. It is also the place where the paper's
+   observation-model assumption bites hardest: the tracer is propionate, on the substrate
+   side of a map the paper states as an assumption, while the model administers it into the
+   marker pool.
+3. **No assay CV for home volumetric microsampling is available.** R99 sweeps it for that
+   reason, and which column applies is the one external measurement that decides whether the
+   trade is worth making.

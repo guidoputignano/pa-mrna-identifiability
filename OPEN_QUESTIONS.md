@@ -183,3 +183,37 @@ is someone else's judgement.
 - **(c) The two-state reduction goes in, in the consolidation pass and not as a passage.** It is
   exact and every existing result survives as its reduction, so it is a reorganisation rather than a
   rewrite, but it changes the spine.
+
+---
+
+## 8. Opened by Phase 11, and not closed
+
+Three computations on the existing footing, no literature and no network. Working in
+`audit/PHASE11_KM_BYPASS.md`, `audit/PHASE11_SAMPLING.md` and `audit/PHASE11_DRIFT.md`;
+`REVIEW_LOG.md` R95 to R102. Proposed wording in `audit/PHASE11_PROPOSED_TEXT.md` and
+**not applied**, which makes three unapplied sets now, with `PHASE4` and `PHASE10`.
+
+**The three gates Phase 11 reached and reported rather than proceeding through.**
+
+| # | gate | what it blocks |
+|---|---|---|
+| **(g)** | **No assay CV exists for home volumetric microsampling.** | It is the single input deciding whether the trade in `PHASE11_SAMPLING.md` section 3 is worth making: three home samples a week finishes Tier 1 in 2.11 years at a 10% assay and 4.25 at 15%, against 9.82 in clinic, and one a week does not pay at 15% or worse. The sweep is a sweep because nothing here can supply the number. |
+| **(h)** | **The tracer bolus size relative to the marker pool is unknown.** | It sets whether the bolus bias on the breath ratio (-0.5% at a hundredth of the pool, -21% at a half) is a correction or a nuisance. It is also where the paper's observation-model assumption bites hardest: the tracer is propionate, on the substrate side of a map the paper states as an assumption. |
+| **(i)** | **The plausible magnitude of a drift in capacity is unquantified.** | Growth, hepatic progression and the therapy's own effect on endogenous expression all act over Tier 1's decade and none is quantified anywhere in this repository. `PHASE11_DRIFT.md` establishes a conditional, not a fact about patients. |
+
+**Two decisions this adds to section 2's list.**
+
+- **(g1) Should a decade-long record carry a drift term?** It costs 0.3% to 1.6% when there
+  is no drift and removes the exposure entirely, and Tier 1 as written has no margin against
+  a drift of about one per cent a year because its 118 draws land exactly on the gate by
+  construction. This is the cheapest thing Phase 11 found and it needs a yes or a no.
+- **(g2) Which object does "the binding nuisance" mean?** The marginal and the profile
+  disagree on the ranking at a low assay CV at the paper's own `k_e` prior width of 0.8, and
+  agree at 0.2. The `K_m` verdict at high assay CV is robust; the `k_e` verdict at low assay
+  CV is not. Anything built on the ranking has to say which.
+
+**One conjecture tested and refuted, recorded so it is not re-proposed.** A weekly home
+cadence reaches only two of the fourteen dose-cycle phases and its data rank is 2 of 4 at a
+constant load, which looks like it should make the unsmoothed diet record load-bearing. It
+does not: the two priors close both null directions and the precision is within one per cent
+of monthly, with the load held perfectly constant. Only a cadence reaching ONE phase fails.
