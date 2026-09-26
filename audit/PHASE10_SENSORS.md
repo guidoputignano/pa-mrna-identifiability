@@ -410,9 +410,183 @@ satisfies. That re-reading is the first thing steps 2 to 4 should carry. **[judg
 
 ---
 
+## The hierarchical cohort fit, priced
+
+`audit/q14_hierarchical.py`, re-checked by `audit/q11_phase10_recheck.py` check 3, 6 of 6.
+
+Run first, ahead of steps 2 to 4, because the reduction gave the cohort route a large new advantage
+from a direction neither strand was looking. The cohort route estimates the coefficient multiplying
+`m` in the balance the records obey, which IS `k_e/alpha`, whatever that coefficient turns out to be
+made of. So it never performs the conversion and never meets `alpha` at all, while the tracer route
+now needs four micro-dose studies plus a closure assumption to reach the same quantity (P.8).
+
+**The advantage is real and it does not rescue the route.** The cohort route cannot deliver the
+number at any cohort size a PA study could reach, and if R1 is right about the between-patient spread
+it cannot deliver it at any cohort size whatever.
+
+### C.0 What is computed
+
+Each patient contributes information about the shared `(ln K_m, ln k_e)` and about their own
+`(ln theta_i, b_i)`. The individual pair is profiled out by the exact Schur complement,
+`F_ss - F_si F_ii^-1 F_is`, with the patient's own `b` prior inside `F_ii`; the population prior of
+0.8 on `ln k_e` is added once, at the population level, not once per patient. Capacities are spread
+over 5 to 20% of nominal, which is where a PA cohort would sit. The trial's own cohort is 16.
+
+The audit has not settled on one recommended schedule for the main record, so all three are priced,
+with monthly the trial's own.
+
+### C.1 The population value against cohort size **[measured]**
+
+| n | monthly | weekly 7.3 d | every 2 d |
+|---:|---:|---:|---:|
+| 16 (the trial) | 0.3546 | 0.1845 | 0.1028 |
+| 32 | 0.2627 | 0.1332 | 0.0733 |
+| 64 | 0.2003 | 0.0955 | 0.0514 |
+| 128 | 0.1432 | 0.0675 | 0.0365 |
+
+And the cohort each target needs, by a doubling search and bisection on a quantity proven monotone
+in `n`:
+
+| schedule | n for 6% | n for 2% |
+|:--|---:|---:|
+| monthly | **723** | **6491** |
+| weekly 7.3 d | 163 | 1461 |
+| every 2 d | 48 | 429 |
+
+**On the trial's own monthly record, the disease range's looser target needs 723 patients and its
+tighter one needs 6491.** The largest cohort appearing anywhere in the six literature reports is 60
+participants. So on the schedule the trial actually runs, the cohort route is not expensive, it is
+**out of reach by one to two orders of magnitude**. **[measured]**, **[judgement]** on the reach.
+
+Only the every-2-day record brings the looser target inside a plausible study, 48 patients. That is
+48 patients giving a draw every two days for two years, 365 draws each, 17,520 draws in total. It is
+not obviously cheaper than four micro-dose studies.
+
+### C.2 The question that actually decides it, and the cohort loses on it **[measured]**
+
+R1 states the disposal constant is patient-specific: 3-HP is renally secreted by OAT1, half of adults
+with PA have an eGFR under 60, and the between-patient CV is "probably a third or more". A cohort fit
+pins the POPULATION value. A patient's `theta_i` consumes THEIR OWN. The gap between the two is the
+between-patient spread, and no cohort size closes it.
+
+`sd(ln k_e_i)` for one patient once the cohort is fitted, monthly:
+
+| between-patient CV | n=16 | n=64 | n=128 | floor at n=4096 | meets 6% |
+|:--|---:|---:|---:|---:|:--|
+| 0, shared exactly | 0.3546 | 0.2003 | 0.1432 | 0.0251 | yes |
+| 10% | 0.3596 | 0.2218 | 0.1735 | **0.1027** | NO |
+| 20% | 0.3945 | 0.2777 | 0.2418 | **0.1982** | NO |
+| 33%, R1's figure | 0.4598 | 0.3693 | 0.3443 | **0.3166** | NO |
+| 50% | 0.5564 | 0.4901 | 0.4731 | 0.4549 | NO |
+
+**At R1's "a third or more" the floor is 0.3166 and the looser target is 0.06, so the cohort route
+misses it by a factor of five with an infinite cohort.** Even a CV of 10%, well below what R1 argues
+for, floors at 0.1027 and still misses. Only the exactly-shared row, which R1 gives reasons to
+disbelieve, ever reaches a target, and then only the looser one.
+
+**What the floor is made of, and why more patients cannot remove it.** Once the cohort is large the
+population value is known essentially exactly, and the patient's own constant is known only to what
+their own record says about it against a prior of the between-patient width. The cohort contributes
+nothing further. **A larger cohort measures the population better and the patient no better.**
+
+The cost of ignoring this is not a wider interval but a wrong one. A shared-`k_e` fit run on a
+population whose CV is a third is misspecified, and 3a's whole apparatus prices variance, not that.
+
+### C.3 The headline confirmed by fitting **[measured]**
+
+Per the standing house rule. Cohorts simulated and fitted jointly, one shared `ln K_m`, one shared
+`ln k_e`, a `(ln theta_i, b_i)` per patient, on the stacked residual. Spread is a sample standard
+deviation, ddof = 1.
+
+| n | schedule | Fisher | fitted sd | fitted/Fisher | median err |
+|---:|:--|---:|---:|---:|---:|
+| 16 | monthly | 0.3546 | 0.2189 | 0.617 | -0.0607 |
+| 16 | monthly, start jittered | 0.3546 | 0.2211 | 0.624 | -0.0607 |
+| 16 | weekly 7.3 d | 0.1845 | 0.1944 | 1.053 | +0.0141 |
+| 64 | monthly | 0.2003 | 0.1769 | 0.883 | +0.0416 |
+| 128 | monthly | 0.1432 | 0.1672 | 1.168 | +0.0029 |
+
+**fitted/Fisher runs 0.617 to 1.168, so the cohort figures are a budget and not a curvature**, the
+same verdict 3a.9 reached for the single-patient design.
+
+**The first cell came out BELOW its own Fisher figure, which the house rule obliges naming rather
+than reporting past.** That is either a biased estimator or an optimiser that never left its start,
+and the two are distinguished by starting every shared and individual parameter a log-sd of 0.5 from
+the truth. The jittered row reproduces it to 0.002 with an identical median error, so the optimum is
+global and the gap is bias: at `n = 16` monthly the estimator trades a median error of -0.061 for a
+narrower spread. **The Fisher figure is conservative there, not wrong, which means C.1's cohort sizes
+are if anything generous to the cohort route and it fails anyway.** **[measured]**
+
+### C.4 What it does to the requirement table **[measured]**
+
+S2's map read ACROSS the `k_e` prior. This reads DOWN the routes that could supply it.
+`sd(ln theta)`, recorded load, Fisher route, median over S2's 24 load seeds. Gate 0.20.
+
+| capacity | route for the constant | `k_e` sd | monthly | weekly 7.3 d | every 2 d |
+|---:|:--|---:|---:|---:|---:|
+| 5% | population prior only | 0.800 | 3.068 | 2.194 | 1.424 |
+| 5% | cohort n=16 monthly, shared | 0.355 | 1.578 | 1.411 | 1.132 |
+| 5% | cohort n=64 monthly, shared | 0.200 | 0.969 | 0.904 | 0.816 |
+| 5% | cohort n=64 monthly, CV 33% | 0.369 | 1.635 | 1.453 | 1.153 |
+| 5% | four micro-dose studies + closure | 0.054 | 0.463 | 0.367 | 0.313 |
+| 10% | population prior only | 0.800 | 1.581 | 1.224 | 0.842 |
+| 10% | cohort n=16 monthly, shared | 0.355 | 0.787 | 0.725 | 0.617 |
+| 10% | cohort n=64 monthly, shared | 0.200 | 0.485 | 0.451 | 0.419 |
+| 10% | cohort n=64 monthly, CV 33% | 0.369 | 0.815 | 0.748 | 0.631 |
+| 10% | four micro-dose studies + closure | 0.054 | 0.243 | 0.185 | **0.155** |
+| 20% | population prior only | 0.800 | 0.812 | 0.707 | 0.549 |
+| 20% | cohort n=16 monthly, shared | 0.355 | 0.391 | 0.369 | 0.340 |
+| 20% | cohort n=64 monthly, shared | 0.200 | 0.245 | 0.224 | 0.213 |
+| 20% | cohort n=64 monthly, CV 33% | 0.369 | 0.405 | 0.382 | 0.350 |
+| 20% | four micro-dose studies + closure | 0.054 | **0.138** | **0.097** | **0.077** |
+
+**Not one cohort row meets the gate anywhere in the table.** The best of them, n=64 shared at 20%
+capacity on a 2-daily record, reaches 0.213 against a gate of 0.20 and misses. The micro-dose row
+meets it at 20% capacity on every schedule and at 10% capacity on the 2-daily record.
+
+**And the two rows to compare are the last two of each block**, because those are the two routes as
+they would actually be run: a cohort of 64 with R1's spread, against four micro-dose studies. At 10%
+capacity that is **0.815 against 0.243, a factor of 3.4**. At 20% it is 0.405 against 0.138, a factor
+of 2.9. The cohort route is not close.
+
+### C.5 The verdict, and the shape it has **[judgement]**
+
+**The cohort route's advantage over the tracer route is real, large, and irrelevant.** It genuinely
+never meets `alpha`: `k_e/alpha` is exactly the coefficient a marker record identifies, so the
+closure assumption that P.8 showed the tracer route cannot escape simply does not arise. That is a
+clean win on the axis the reduction exposed. It loses on a different axis entirely, arithmetic, and
+loses there by a factor of three to five with the largest cohort the disease could supply.
+
+So the answer to "how many patients at the recommended schedule to pin `k_e/alpha` to 2 to 6 per
+cent" is: **723 and 6491 on the trial's monthly record if the constant is shared, and no number at
+all if it is not.** The requirement table is unchanged by the cohort route because the cohort route
+cannot enter it.
+
+**What this does NOT license.** It does not restore the tracer route to where P.8 left it. Four
+micro-dose studies plus a closure assumption is still four studies and an assumption, and C.4's
+micro-dose rows are computed at `k_e` sd 0.054 as though the closure assumption were free, which it
+is not. **Both routes to the model's second constant are now in difficulty, and the cohort route's
+difficulty is the harder kind**: the tracer route is expensive and leans on an assumption that could
+be tested by widening the panel, while the cohort route runs into a floor that no amount of money
+moves.
+
+**Where it leaves Phase 9's conclusion.** Strengthened, and in the direction Phase 9 already pointed.
+Phase 9 concluded that measuring the second constant is the precondition for the requirement
+framework existing at all. The obvious cheap alternative to measuring it, borrowing it from a cohort,
+has now been priced and does not work. **[judgement]**
+
+### C.6 The item this raises, filed rather than run
+
+If the between-patient CV is what kills the cohort route, then the CV is the quantity worth measuring
+first, and P.6's repeatability design, 10 patients at 12 draws, is already scoped to estimate exactly
+that. **The order is now: measure the between-patient spread before committing to either route**,
+since a CV near zero makes a 723-patient cohort merely infeasible rather than pointless, and a CV
+near a third rules the cohort route out permanently and makes the four tracer studies the only route
+there is. That is a cheap decision-relevant measurement standing in front of an expensive one.
+
+---
+
 ## Steps 2 to 4, and the hierarchical family
 
-Not started, by instruction: no sensor is priced until the reduction verdict has been read. Two
-strands are queued and depend on nothing above: the hierarchical cohort fit, and steps 2 to 4 on the
-five candidates that survive step 1 in the one-state model, where candidate 9, propionate turnover,
-is the row no phase has priced.
+The hierarchical strand is done, above. Steps 2 to 4 on the five candidates that survive step 1 are
+next, with candidate 9, propionate turnover, the row no phase has priced.

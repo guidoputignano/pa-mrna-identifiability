@@ -63,6 +63,8 @@ COHORT_CAPS = (0.05, 0.08, 0.10, 0.15, 0.20)
 TARGETS = (0.02, 0.06)
 #: the paper's own population prior on ln k_e, used as the population-level prior
 POP_PRIOR = 0.8
+#: a cohort far larger than any PA trial could be, used to expose the floor
+N_FLOOR = 4096
 SCHEDS = ("monthly", "weekly 7.3 d", "every 2 d")
 
 
@@ -70,6 +72,18 @@ def banner(t):
     print("\n" + "=" * 104)
     print("  " + t)
     print("=" * 104)
+
+
+_INC = {}
+
+
+def _inc(times):
+    """S2.increment reassembles the dose kernel on every call; the draw times are
+    one of three fixed grids, so it is computed once per grid."""
+    k = (times.size, float(times[0]), float(times[-1]))
+    if k not in _INC:
+        _INC[k] = S2.increment(times)
+    return _INC[k]
 
 
 def blocks(theta, times, seed):
@@ -81,7 +95,7 @@ def blocks(theta, times, seed):
     """
     L, _, sigma, s_b = S2.footing(theta)
     Ls = S2.loads_for(times.size, seed, L)
-    inc = S2.increment(times)
+    inc = _inc(times)
     m = S2.level(theta, inc, Ls)
     g = m / (KM + m)
     Sh = np.stack([-(theta + inc) * KM * m / (KM + m) ** 2, KE * m],
@@ -98,17 +112,22 @@ def shared_info(theta, times, seed):
     return F_ss - F_si @ np.linalg.solve(F_ii, F_si.T)
 
 
-def cohort_info(n, sched, seed0=0):
-    """(total shared information, the first patient's own share)."""
-    times = S2.times_for(sched, "no baseline")
-    tot, first = np.zeros((2, 2)), None
-    for i in range(n):
-        th = TH_NOM * COHORT_CAPS[i % len(COHORT_CAPS)]
-        Fi = shared_info(th, times, seed0 + i)
-        tot = tot + Fi
-        if first is None:
-            first = Fi
-    return tot, first
+#: cumulative shared information by schedule, so a cohort of n costs O(n) ONCE
+#: and every later query is a lookup. Patient i is capacity COHORT_CAPS[i mod 5]
+#: with load seed i, so the sequence is fixed and the cache is exact, not an
+#: approximation.
+_CUM = {}
+
+
+def cohort_info(n, sched):
+    """(total shared information over n patients, the first patient's share)."""
+    cum = _CUM.setdefault(sched, [np.zeros((2, 2))])
+    if len(cum) <= n:
+        times = S2.times_for(sched, "no baseline")
+        for i in range(len(cum) - 1, n):
+            th = TH_NOM * COHORT_CAPS[i % len(COHORT_CAPS)]
+            cum.append(cum[i] + shared_info(th, times, i))
+    return cum[n], cum[1]
 
 
 def sd_population(n, sched):
@@ -136,6 +155,25 @@ def sd_patient(n, sched, cv):
     return float(np.sqrt(np.linalg.inv(F)[1, 1]))
 
 
+def n_for(sched, target, cap=131072):
+    """The smallest cohort reaching `target`. Information adds over patients, so
+    sd is monotone in n and a doubling search then a bisection is exact. A linear
+    scan would be quadratic in n and does not finish."""
+    hi = 2
+    while sd_population(hi, sched) > target:
+        hi *= 2
+        if hi > cap:
+            return f">{cap}"
+    lo, hi = hi // 2, hi
+    while lo + 1 < hi:
+        mid = (lo + hi) // 2
+        if sd_population(mid, sched) <= target:
+            hi = mid
+        else:
+            lo = mid
+    return hi
+
+
 # ==========================================================================
 def part_a():
     banner("A. THE POPULATION CONSTANT AGAINST COHORT SIZE")
@@ -157,9 +195,7 @@ def part_a():
     for sched in SCHEDS:
         cells = []
         for t in TARGETS:
-            need = next((n for n in range(2, 20001)
-                         if sd_population(n, sched) <= t), None)
-            cells.append(f"{need if need else '>20000':>16}")
+            cells.append(f"{n_for(sched, t):>16}")
         print(f"    {sched:16s}" + "".join(cells))
 
 
@@ -180,11 +216,11 @@ def part_b():
   The first row is what a shared-parameter fit returns. Every other row is what
   ONE patient's constant is known to after the cohort is fitted, which is the
   number their theta needs.""")
-    print(f"\n    {'CV':>6s} {'floor at n = 20000':>20s} {'meets 6%':>10s} "
+    print(f"\n    {'CV':>6s} {'floor, n = 4096':>20s} {'meets 6%':>10s} "
           f"{'meets 2%':>10s}   {'what the floor is':s}")
     for cv in CVS:
-        f = sd_patient(20000, "monthly", cv)
-        own = (sd_patient(20000, "monthly", cv) if cv == 0 else
+        f = sd_patient(N_FLOOR, "monthly", cv)
+        own = (sd_patient(N_FLOOR, "monthly", cv) if cv == 0 else
                float(np.sqrt(np.linalg.inv(
                    cohort_info(1, "monthly")[1]
                    + np.diag([0.0, 1.0 / np.sqrt(np.log1p(cv ** 2)) ** 2])
@@ -196,7 +232,7 @@ def part_b():
               f"{'yes' if f <= 0.02 else 'NO':>10s}   {what}")
 
 
-def simulate_and_fit(n, sched, reps, seed0=0):
+def simulate_and_fit(n, sched, reps, seed0=0, jitter=0.0):
     """A cohort simulated and fitted jointly: one shared ln K_m, one shared
     ln k_e, a per-patient (ln theta_i, b_i). Returns the shared ln k_e errors."""
     times = S2.times_for(sched, "no baseline")
@@ -227,9 +263,11 @@ def simulate_and_fit(n, sched, reps, seed0=0):
             out.append(np.array([(q[1] - np.log(KE)) / POP_PRIOR]))
             return np.concatenate(out)
 
-        q0 = [np.log(KM), np.log(KE)]
+        jr = np.random.default_rng(99 * (seed0 + r) + 5)
+        q0 = [np.log(KM) + jitter * jr.normal(),
+              np.log(KE) + jitter * jr.normal()]
         for i in range(n):
-            q0 += [np.log(ths[i]), 0.0]
+            q0 += [np.log(ths[i]) + jitter * jr.normal(), 0.0]
         o = least_squares(res, np.array(q0), method="lm", xtol=1e-12,
                           ftol=1e-12, max_nfev=400000)
         errs.append(float(o.x[1] - np.log(KE)))
@@ -243,19 +281,30 @@ def part_c():
   simulated and fitted jointly on the stacked residual. The marker level `m` is
   held at its simulated value, as everywhere else in this audit, so the fit sees
   the same design the Fisher block does.""")
-    print(f"\n    {'n':>5s} {'schedule':13s} {'Fisher':>9s} {'fitted sd':>10s} "
+    print(f"\n    {'n':>5s} {'schedule':18s} {'Fisher':>9s} {'fitted sd':>10s} "
           f"{'fitted/Fisher':>14s} {'median err':>11s} {'reps':>5s}")
-    for n, sched, reps in ((16, "monthly", 24), (16, "weekly 7.3 d", 16),
-                           (64, "monthly", 12), (128, "monthly", 8)):
+    for n, sched, reps, jit in ((16, "monthly", 24, 0.0),
+                                (16, "monthly", 24, 0.5),
+                                (16, "weekly 7.3 d", 16, 0.0),
+                                (64, "monthly", 12, 0.0),
+                                (128, "monthly", 8, 0.0)):
         fis = sd_population(n, sched)
-        e = simulate_and_fit(n, sched, reps)
-        print(f"    {n:5d} {sched:13s} {fis:9.4f} {e.std(ddof=1):10.4f} "
+        e = simulate_and_fit(n, sched, reps, jitter=jit)
+        tag = sched if jit == 0 else sched + ", jit"
+        print(f"    {n:5d} {tag:18s} {fis:9.4f} {e.std(ddof=1):10.4f} "
               f"{e.std(ddof=1) / fis:14.3f} {np.median(e):+11.4f} {reps:5d}",
               flush=True)
     print("""
   A fitted spread near the Fisher value means the cohort figure is a budget and
   not a curvature, which is the check 3a.9 ran on the single-patient design.
-  Spread is a sample standard deviation, ddof = 1.""")
+  Spread is a sample standard deviation, ddof = 1.
+
+  THE `jit` ROW EXISTS BECAUSE THE FIRST CELL CAME OUT BELOW ITS OWN FISHER
+  FIGURE, which is either a biased estimator or an optimiser that never left its
+  start. It starts every shared and individual parameter a log-sd of 0.5 away
+  from the truth instead of at it. If the two rows agree the optimum is global and
+  the gap is bias, not failure to converge, and the Fisher figure is CONSERVATIVE
+  there rather than wrong.""")
 
 
 def part_d():

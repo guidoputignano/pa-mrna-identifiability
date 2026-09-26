@@ -3560,3 +3560,43 @@ problem.** A saturable overflow at `K_o = 100` fits a `K_m` of 69.48 against a t
 takes as a mis-set constant, not as evidence that a state is absent from the model. That is the fourth
 instance of this project's own pattern, after R14's curvature read as recovery, R15's knife edge read
 as a shape limit, and Phase 9 3b's needle read as identifiability.
+
+---
+
+### R72. The cohort route escapes alpha entirely, and still cannot supply the constant
+
+`audit/PHASE10_SENSORS.md` C.0 to C.6, `audit/q14_hierarchical.py`, re-checked by
+`audit/q11_phase10_recheck.py` check 3, 6 of 6.
+
+Run ahead of Phase 10 steps 2 to 4 because the reduction handed the cohort route a large new
+advantage: `k_e/alpha` is exactly the coefficient multiplying `m` in the balance a marker record
+obeys, so a cohort fit estimates it directly and **never meets `alpha` at all**, while the tracer
+route needs four micro-dose studies plus a closure assumption to reach the same quantity (R70).
+
+**The advantage is real, large, and irrelevant.** On the trial's own monthly record the disease
+range's looser target of 6% needs **723 patients** and its tighter 2% needs **6491**; the largest
+cohort anywhere in the six literature reports is 60. Only a 2-daily record brings 6% inside a
+plausible study, at 48 patients giving 17,520 draws.
+
+**And the sample size is not what decides it.** R1 puts the between-patient CV of the disposal
+constant at "probably a third or more". A cohort pins the POPULATION value; a patient's `theta_i`
+consumes their own. At a CV of a third the patient's constant **floors at 0.3166 with an infinite
+cohort**, missing the looser target by a factor of five; even a CV of 10% floors at 0.1027 and misses.
+A larger cohort measures the population better and the patient no better.
+
+Confirmed by fitting per the house rule, fitted/Fisher 0.617 to 1.168. **The `n = 16` cell came out
+below its own Fisher figure**, so the fit was restarted a log-sd of 0.5 from the truth: it reproduced
+to 0.002 with an identical median error of -0.061, which makes it a biased estimator and not a stalled
+optimiser, and makes the cohort sizes above generous to the cohort route.
+
+Not one cohort row meets the 0.20 gate anywhere in the requirement table; the best, n=64 shared at
+20% capacity on a 2-daily record, reaches 0.213. The two routes as they would actually be run, a
+cohort of 64 at CV 33% against four micro-dose studies, are 0.815 against 0.243 at 10% capacity.
+
+**The shape of it.** The cohort route wins cleanly on the axis the reduction exposed and loses on
+arithmetic. Its difficulty is the harder kind: the tracer route is expensive and leans on an
+assumption a wider panel could test, while the cohort route meets a floor no money moves.
+
+**And the item it raises, filed.** If the between-patient CV is what kills the route, the CV is the
+thing to measure first, and P.6's repeatability design, 10 patients at 12 draws, is already scoped to
+estimate it. A cheap decision-relevant measurement now stands in front of an expensive one.

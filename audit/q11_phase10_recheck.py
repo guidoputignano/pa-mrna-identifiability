@@ -117,12 +117,72 @@ def check_2_sensitivity():
     return ok
 
 
+def check_3_cohort():
+    banner("3. THE COHORT FIT'S MACHINERY")
+    print("""  q14 profiles each patient's own (ln theta_i, b_i) out by a Schur complement and
+  caches the cumulative sum. Both are exact claims, so both are checked against
+  the thing they replace: a direct inverse of the full block matrix, and a direct
+  uncached loop.""")
+    import q14_hierarchical as H
+    import q2_requirement_map as S2
+    times = S2.times_for("monthly", "no baseline")
+
+    #  (a) the Schur complement against a direct inverse of the 4x4
+    worst = 0.0
+    for cap in (0.05, 0.10, 0.20):
+        th = 3000.0 * cap
+        F_ss, F_si, F_ii, s_b = H.blocks(th, times, 3)
+        F_ii = F_ii + np.diag([0.0, 1.0 / s_b ** 2])
+        full = np.block([[F_ss, F_si], [F_si.T, F_ii]])
+        #  the shared block of the full inverse must equal the Schur's inverse
+        a = np.linalg.inv(full)[:2, :2]
+        b = np.linalg.inv(H.shared_info(th, times, 3))
+        worst = max(worst, float(np.max(np.abs(a - b) / np.abs(b))))
+    ok_a = worst < 1e-10
+    print(f"\n    Schur complement vs direct 4x4 inverse, worst rel. "
+          f"difference {worst:.2e}   {'PASSES' if ok_a else 'FAILS'}")
+    RESULTS.append(("cohort Schur complement equals the direct inverse", ok_a))
+
+    #  (b) the cumulative cache against an uncached loop
+    H._CUM.clear()
+    n = 37
+    direct = np.zeros((2, 2))
+    for i in range(n):
+        direct = direct + H.shared_info(
+            3000.0 * H.COHORT_CAPS[i % len(H.COHORT_CAPS)], times, i)
+    H._CUM.clear()
+    H.cohort_info(120, "monthly")           # fill past n, then read back
+    cached = H.cohort_info(n, "monthly")[0]
+    d = float(np.max(np.abs(cached - direct) / np.abs(direct)))
+    ok_b = d < 1e-12
+    print(f"    cumulative cache vs an uncached loop at n = {n}, worst rel. "
+          f"difference {d:.2e}   {'PASSES' if ok_b else 'FAILS'}")
+    RESULTS.append(("cohort cumulative cache equals an uncached loop", ok_b))
+
+    #  (c) at CV 0 the patient's value IS the population's, by construction
+    e = max(abs(H.sd_patient(n, "monthly", 0.0) - H.sd_population(n, "monthly"))
+            for n in (8, 32))
+    ok_c = e < 1e-14
+    print(f"    sd_patient at CV 0 equals sd_population, worst absolute "
+          f"difference {e:.2e}   {'PASSES' if ok_c else 'FAILS'}")
+    RESULTS.append(("sd_patient at CV 0 equals sd_population", ok_c))
+
+    #  (d) a cohort of n must beat a cohort of n-1, strictly, on every schedule
+    ok_d = all(H.sd_population(n + 1, s) < H.sd_population(n, s)
+               for s in ("monthly", "every 2 d") for n in (4, 16, 63))
+    print(f"    sd_population strictly decreasing in n   "
+          f"{'PASSES' if ok_d else 'FAILS'}")
+    RESULTS.append(("sd_population strictly decreasing in n", ok_d))
+    return ok_a and ok_b and ok_c and ok_d
+
+
 def main():
     print("=" * 92)
     print("  PHASE 10 RE-CHECKS")
     print("=" * 92)
     check_1_identities()
     check_2_sensitivity()
+    check_3_cohort()
     banner("SUMMARY")
     bad = [n for n, o in RESULTS if not o]
     for n, o in RESULTS:
