@@ -63,6 +63,11 @@ CONFIRMED = [
          "100% of nom   1.808"),
         ("11_scope.tex:207", "and 1.22 to 1.46 across the disease range",
          "20% of nom 1.215 ... 2% of nom 1.464"),
+        ("08_specification.tex:265", "the offset's share runs 1.8% at nominal, "
+                                     "9.9% at half, 26.2% at a fifth",
+         "offset share: 100% 1.8% | 50% 9.9% | 20% 26.2%"),
+        ("11_scope.tex:210", "a perfect record in both channels leaves 2.659",
+         "theta = 150 (5% of nominal): 0.1% 2.6595   [also printed by t9]"),
     ]),
     ("t9_measured_load", [
         ("11_scope.tex:213", "thirteen measured-load visits match twenty-five "

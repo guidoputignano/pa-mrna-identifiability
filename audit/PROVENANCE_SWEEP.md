@@ -441,6 +441,23 @@ and `20% of nom 1.215 ... 2% of nom 1.464` against its "1.22 to 1.46 across the 
 band runs from a fifth of nominal down to two per cent, which section 10 inferred and this confirms
 from the owning generator.
 
+**And `t8` owns a second Section 8 sentence, which resolves the last residual in section 9 above.**
+Section 9 verified the decomposition against the paper and left one cell moving, the offset's share
+at a fifth of nominal, 25.1 here against the paper's 26.2. `t8` prints
+
+```
+       theta  5/5 baseline  offset at 20%  scatter at 20%  offset share
+ 100% of nom        0.1699         0.1720          0.2842          1.8%
+  50% of nom        0.3228         0.3308          0.3960          9.9%
+  20% of nom        0.8104         0.8408          0.8958         26.2%
+```
+
+**1.8, 9.9 and 26.2, exactly the paper's three figures.** So that residual was not seed granularity
+either; it was my reconstruction again, and the owner matches the paper to every digit.
+
+**`2.659` is printed by BOTH `t8` and `t9`**, at 2.6595. One value, two unreachable generators, three
+sites in the paper, no macro.
+
 **`t9_measured_load.py` owns route 6 entirely**, and this is the finding that matters:
 
 ```
