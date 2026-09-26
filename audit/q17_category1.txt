@@ -1,0 +1,218 @@
+paper/note_structural_identifiability.tex:30	0	value exists in results/	\title{\textbf{Structural Identifiability of Model A}\\[0.3em]
+paper/note_structural_identifiability.tex:114	2	value exists in results/	F(m) \;=\; \frac{k_e\, m^2 \;+\; (\theta + k_e K_m)\, m}{m + K_m} .
+paper/note_structural_identifiability.tex:145	2	value exists in results/	\frac{\partial F}{\partial K_m} = -\frac{\theta\, m}{(K_m + m)^2}, \qquad
+paper/note_structural_identifiability.tex:217	1	value exists in results/	\qquad i = 1, \dots, N .
+paper/note_structural_identifiability.tex:261	7	value exists in results/	\emph{PCCB} c.990dupT (p.E331Xfs) occurs in 7 families and is reported as a null allele.
+paper/note_structural_identifiability.tex:329	1	value exists in results/	\begin{adjustwidth}{-1.0cm}{-1.0cm}
+paper/note_structural_identifiability.tex:329	1	value exists in results/	\begin{adjustwidth}{-1.0cm}{-1.0cm}
+paper/note_structural_identifiability.tex:335	0.17	value exists in results/	\begin{tabular}{@{}p{0.17\textwidth} p{0.20\textwidth} p{0.28\textwidth} p{0.30\textwidth}@{}}
+paper/note_structural_identifiability.tex:335	0.20	value exists in results/	\begin{tabular}{@{}p{0.17\textwidth} p{0.20\textwidth} p{0.28\textwidth} p{0.30\textwidth}@{}}
+paper/note_structural_identifiability.tex:335	0.28	value exists in results/	\begin{tabular}{@{}p{0.17\textwidth} p{0.20\textwidth} p{0.28\textwidth} p{0.30\textwidth}@{}}
+paper/note_structural_identifiability.tex:459	2	value exists in results/	answer a question the note was not asking, and the deficiency-2 result stands untouched.
+paper/preamble.tex:43	3	value exists in results/	maxbibnames=3, minbibnames=1, giveninits=true,
+paper/preamble.tex:43	1	value exists in results/	maxbibnames=3, minbibnames=1, giveninits=true,
+paper/preamble.tex:56	1	value exists in results/	\newcommand{\num}[1]{%
+paper/preamble.tex:57	1	value exists in results/	\ifcsname paper@num@#1\endcsname
+paper/preamble.tex:58	1	value exists in results/	\csname paper@num@#1\endcsname
+paper/preamble.tex:103	8	value exists in results/	menzy/.style    = {mblock, fill=green!8,  draw=green!45!black!50, minimum width=27mm},
+paper/preamble.tex:103	45	value exists in results/	menzy/.style    = {mblock, fill=green!8,  draw=green!45!black!50, minimum width=27mm},
+paper/preamble.tex:103	50	value exists in results/	menzy/.style    = {mblock, fill=green!8,  draw=green!45!black!50, minimum width=27mm},
+paper/preamble.tex:104	6	value exists in results/	malt/.style     = {mblock, fill=blue!6,   draw=blue!40,           minimum width=27mm},
+paper/preamble.tex:104	40	value exists in results/	malt/.style     = {mblock, fill=blue!6,   draw=blue!40,           minimum width=27mm},
+paper/preamble.tex:107	2	value exists in results/	mar/.style      = {-{Stealth[length=2.2mm]}, thick},
+paper/preamble.tex:113	3	value exists in results/	\newcommand{\channelglyph}[3]{%
+paper/preamble.tex:114	1	value exists in results/	\begin{scope}[shift={#1}, scale=0.62]
+paper/preamble.tex:115	55	value exists in results/	\draw[gray!55, line width=0.3pt] (0,0) -- (1.15,0) (0,0) -- (0,0.8);
+paper/preamble.tex:115	0	value exists in results/	\draw[gray!55, line width=0.3pt] (0,0) -- (1.15,0) (0,0) -- (0,0.8);
+paper/preamble.tex:116	2	value exists in results/	\if#3l \draw[#2, line width=1.1pt] (0,0) -- (1.05,0.72);
+paper/preamble.tex:116	1	value exists in results/	\if#3l \draw[#2, line width=1.1pt] (0,0) -- (1.05,0.72);
+paper/preamble.tex:117	2	value exists in results/	\else\if#3n \draw[#2, line width=1.1pt]
+paper/preamble.tex:117	1	value exists in results/	\else\if#3n \draw[#2, line width=1.1pt]
+paper/preamble.tex:119	2	value exists in results/	\else   \draw[#2, line width=1.1pt]
+paper/preamble.tex:119	1	value exists in results/	\else   \draw[#2, line width=1.1pt]
+paper/preamble.tex:128	0.9	value exists in results/	\renewcommand{\topfraction}{0.9}
+paper/preamble.tex:129	0.7	value exists in results/	\renewcommand{\bottomfraction}{0.7}
+paper/preamble.tex:130	0.08	value exists in results/	\renewcommand{\textfraction}{0.08}
+paper/preamble.tex:139	2	value exists in results/	\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+paper/preamble.tex:139	1	value exists in results/	\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+paper/preamble.tex:139	2	value exists in results/	\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+paper/sections/01_biology.tex:14	3	value exists in results/	item~3 of the next paragraph is about.
+paper/sections/01_biology.tex:75	0.44	value exists in results/	\begin{tabular}{@{}p{0.44\linewidth} p{0.16\linewidth} p{0.34\linewidth}@{}}
+paper/sections/01_biology.tex:75	0.16	value exists in results/	\begin{tabular}{@{}p{0.44\linewidth} p{0.16\linewidth} p{0.34\linewidth}@{}}
+paper/sections/01_biology.tex:75	0.34	value exists in results/	\begin{tabular}{@{}p{0.44\linewidth} p{0.16\linewidth} p{0.34\linewidth}@{}}
+paper/sections/01_biology.tex:113	2	value exists in results/	plasma marker, 2-methylcitrate or 3-hydroxypropionate or C3 acylcarnitine, each a
+paper/sections/01_biology.tex:113	3	value exists in results/	plasma marker, 2-methylcitrate or 3-hydroxypropionate or C3 acylcarnitine, each a
+paper/sections/01_biology.tex:182	3	value exists in results/	and strongly age-dependent: around $1.4$ per patient-year between ages 3 and 6, falling to
+paper/sections/01_biology.tex:182	6	value exists in results/	and strongly age-dependent: around $1.4$ per patient-year between ages 3 and 6, falling to
+paper/sections/01_biology.tex:183	13	value exists in results/	$0.1$ between 13 and 17~\cite{mde_claims_us}. % C06
+paper/sections/01_biology.tex:183	17	value exists in results/	$0.1$ between 13 and 17~\cite{mde_claims_us}. % C06
+paper/sections/01_biology.tex:188	18	value exists in results/	18~\cite{mde_emr_us}. % C31
+paper/sections/01_biology.tex:189	49	value exists in results/	Events are also not rare within the population: in the natural history cohort 49 of 50
+paper/sections/01_biology.tex:189	50	value exists in results/	Events are also not rare within the population: in the natural history cohort 49 of 50
+paper/sections/01_biology.tex:191	12	value exists in results/	age two against $0.2$ between 12 and 18, and $1.2$ in early-onset against $0.3$ in
+paper/sections/01_biology.tex:191	18	value exists in results/	age two against $0.2$ between 12 and 18, and $1.2$ in early-onset against $0.3$ in
+paper/sections/01_biology.tex:200	1	value exists in results/	Reported phase 1/2 results indicate a $70\%$ reduction in decompensation risk, but the
+paper/sections/01_biology.tex:200	2	value exists in results/	Reported phase 1/2 results indicate a $70\%$ reduction in decompensation risk, but the
+paper/sections/01_biology.tex:214	12	value exists in results/	12~\cite{trial_phase12}, % C36
+paper/sections/02_model.tex:24	3	value exists in results/	$m$ & the plasma marker, 3-HP & $\bar m$ & the operating point, and the sample mean \\
+paper/sections/02_model.tex:85	1	value exists in results/, retyped in a claim	\qquad \delta(m) = \delta_0\left(1 + \frac{m}{M_i}\right),
+paper/sections/02_model.tex:115	1	value exists in results/, retyped in a claim	\qquad \rho(m) = \rho_0\left(1 + \frac{m}{M_i}\right),
+paper/sections/02_model.tex:276	1	value exists in results/	\begin{adjustwidth}{-1.0cm}{-1.0cm}
+paper/sections/02_model.tex:276	1	value exists in results/	\begin{adjustwidth}{-1.0cm}{-1.0cm}
+paper/sections/02_model.tex:332	3	value exists in results/	Plasma 3-hydroxypropionate is used. It is the one marker with an endpoint association: a
+paper/sections/02_model.tex:335	2	value exists in results/	where 2-methylcitrate has none ($1.0$, $0.7$--$1.3$), and it is not a carnitine conjugate,
+paper/sections/02_model.tex:337	3	value exists in results/	substrate. 3-HP is an overflow metabolite downstream of accumulated propionyl-CoA, and so
+paper/sections/02_model.tex:338	2	value exists in results/	is 2-MC. Writing either as the $m$ of \eqref{eq:parent} assumes it tracks the substrate
+paper/sections/02_system.tex:11	3	value exists in results/	$m$ & the plasma marker, 3-HP & $\bar m$ & the operating point, and the sample mean \\
+paper/sections/02_system.tex:103	0.085	value exists in results/	\begin{tabular}{@{}p{0.085\textwidth} p{0.175\textwidth} p{0.135\textwidth} p{0.20\textwidth} p{0.30\textwidth}@{}}
+paper/sections/02_system.tex:103	0.20	value exists in results/	\begin{tabular}{@{}p{0.085\textwidth} p{0.175\textwidth} p{0.135\textwidth} p{0.20\textwidth} p{0.30\textwidth}@{}}
+paper/sections/02_system.tex:116	3	value exists in results/	3-HP & 3-hydroxypropionate &
+paper/sections/02_system.tex:116	3	value exists in results/	3-HP & 3-hydroxypropionate &
+paper/sections/02_system.tex:119	3	value exists in results/	a $50\%$ lower 3-HP is associated with a decompensation rate ratio of $0.7$
+paper/sections/02_system.tex:130	2	value exists in results/	2-MC & 2-methylcitrate &
+paper/sections/02_system.tex:130	2	value exists in results/	2-MC & 2-methylcitrate &
+paper/sections/02_system.tex:176	1	value exists in results/	biweekly, on the published phase 1/2 schedule, and the input the paper's identification
+paper/sections/02_system.tex:176	2	value exists in results/	biweekly, on the published phase 1/2 schedule, and the input the paper's identification
+paper/sections/02_system.tex:212	1	value exists in results/	\begin{adjustwidth}{-1.0cm}{-1.0cm}
+paper/sections/02_system.tex:212	1	value exists in results/	\begin{adjustwidth}{-1.0cm}{-1.0cm}
+paper/sections/02_system.tex:213	0.13	value exists in results/	\begin{tabular}{@{}p{0.035\textwidth} p{0.235\textwidth} p{0.175\textwidth} p{0.185\textwidth} p{0.145\textwidth} p{0.13\textwidth}@{}}
+paper/sections/03_dynamic.tex:59	1	value exists in results/, retyped in a claim	\qquad \delta(m) = \delta_0\left(1 + \frac{m}{M_i}\right),
+paper/sections/03_dynamic.tex:75	1	value exists in results/, retyped in a claim	\qquad u(m) = \frac{m}{K_c+m}, \quad \rho(m) = \rho_0\left(1 + \frac{m}{M_i}\right),
+paper/sections/03_dynamic.tex:237	3927	value exists in results/	pharmacodynamic models of mRNA-3927 are indirect-response models in which the dose drives a
+paper/sections/03_dynamic.tex:281	1	value exists in results/	\begin{description}[leftmargin=1.6em, itemsep=3pt]
+paper/sections/03_dynamic.tex:308	2	value exists in results/	a \;=\; \theta\, g(\bar m)^2 \;+\; \bigl[\alpha(\bar m) - \bar m\,\alpha'(\bar m)\bigr],
+paper/sections/03_dynamic.tex:390	0	value exists in results/	\max_{m > 0}\, C(m;\theta) \;=\; s.
+paper/sections/04_local.tex:18	1	value exists in results/	\begin{description}[leftmargin=1.4em, itemsep=1pt]
+paper/sections/04_local.tex:51	3	value exists in results/	\paragraph{The marker is 3-hydroxypropionate.}
+paper/sections/04_local.tex:53	3	value exists in results/, retyped in a claim	Earlier drafts left $m$ as ``the plasma marker'' on the grounds that nothing in Sections 3
+paper/sections/04_local.tex:54	4	value exists in results/	and 4 depends on the choice. That is true of the algebra and false of the decision the paper
+paper/sections/04_local.tex:60	3	value exists in results/	plasma 3-HP is associated with a decompensation rate ratio of $0.7$ (95\% CI $0.6$ to $0.9$,
+paper/sections/04_local.tex:60	95	value exists in results/	plasma 3-HP is associated with a decompensation rate ratio of $0.7$ (95\% CI $0.6$ to $0.9$,
+paper/sections/04_local.tex:61	2	value exists in results/	$p<0.01$); a $50\%$ lower C3 with $0.6$ ($p=0.017$); and 2-methylcitrate shows no
+paper/sections/04_local.tex:65	3	value exists in results/	below one means \emph{fewer events when the marker is lower}: 3-HP is a risk marker in the
+paper/sections/04_local.tex:81	2	value exists in results/	2-MC is excluded on the endpoint, and its strength lies in the arm this paper
+paper/sections/04_local.tex:82	2	value exists in results/	excludes. 2-MC is among the strongest correlates of plasma ammonia \emph{during} an
+paper/sections/04_local.tex:88	3	value exists in results/	3-HP carries C3's immunity without its defect. It is not a carnitine conjugate, so
+paper/sections/04_local.tex:90	2	value exists in results/	2-MC lacks; and it is the covariate the natural history study's own longitudinal hazard is
+paper/sections/04_local.tex:97	3	value exists in results/	The trial measures four markers together, 3-HP, 2-MC, C3 and
+paper/sections/04_local.tex:97	2	value exists in results/	The trial measures four markers together, 3-HP, 2-MC, C3 and
+paper/sections/04_local.tex:115	3	value exists in results/	is 3-HP and $n$-propionylglycine, a glycine conjugate that carnitine does not raise, with
+paper/sections/04_local.tex:135	2	value exists in results/	\frac{\Delta}{\bar m} \;\le\; 2.
+paper/sections/04_local.tex:163	2	value exists in results/	a \;=\; \theta\,\bigl(g(\bar m) - \bar m\, g'(\bar m)\bigr) \;=\; \theta\, g(\bar m)^2,
+paper/sections/04_local.tex:181	2	value exists in results/	\theta(K_m) = \frac{a\,(K_m+\bar m)^2}{\bar m^{2}},
+paper/sections/04_local.tex:181	2	value exists in results/	\theta(K_m) = \frac{a\,(K_m+\bar m)^2}{\bar m^{2}},
+paper/sections/04_local.tex:183	2	value exists in results/	k_e(K_m) = b - \frac{a\,K_m}{\bar m^{2}},
+paper/sections/04_local.tex:184	0	value exists in results/	\qquad 0 < K_m \le \frac{b\,\bar m^{2}}{a},
+paper/sections/04_local.tex:184	2	value exists in results/	\qquad 0 < K_m \le \frac{b\,\bar m^{2}}{a},
+paper/sections/04_local.tex:192	0	value exists in results/	\frac{\theta(K_{\max})}{\theta(0^+)}
+paper/sections/04_local.tex:193	1	value exists in results/, retyped in a claim	\;=\; \left(1 + \frac{b\,\bar m}{a}\right)^{\!2}
+paper/sections/04_local.tex:193	2	value exists in results/, retyped in a claim	\;=\; \left(1 + \frac{b\,\bar m}{a}\right)^{\!2}
+paper/sections/04_local.tex:194	2	value exists in results/, retyped in a claim	\;=\; \left(\frac{C(\bar m)}{a}\right)^{\!2},
+paper/sections/04_local.tex:229	0	value exists in results/	\bar m\, k_e = 0$ to the second of these, since a line through the origin has no intercept,
+paper/sections/04_local.tex:243	2	value exists in results/, retyped in a claim	\operatorname{Var}(\hat a) \;=\; \sigma^2\!\left[\frac{1}{n} +
+paper/sections/04_local.tex:243	1	value exists in results/, retyped in a claim	\operatorname{Var}(\hat a) \;=\; \sigma^2\!\left[\frac{1}{n} +
+paper/sections/04_local.tex:244	2	value exists in results/	\frac{\bar m^2}{\sum_i (m_i - \bar m)^2}\right],
+paper/sections/04_local.tex:244	2	value exists in results/	\frac{\bar m^2}{\sum_i (m_i - \bar m)^2}\right],
+paper/sections/04_local.tex:246	2	value exists in results/	\operatorname{Var}(\hat b) \;=\; \frac{\sigma^2}{\sum_i (m_i - \bar m)^2}.
+paper/sections/04_local.tex:246	2	value exists in results/	\operatorname{Var}(\hat b) \;=\; \frac{\sigma^2}{\sum_i (m_i - \bar m)^2}.
+paper/sections/04_local.tex:257	12	value exists in results/	\frac{\sigma}{\theta}\;\sqrt{\frac{12}{n}}\;\frac{\bar m}{\Delta}\;g(\bar m)^{-2}.
+paper/sections/04_local.tex:257	2	value exists in results/	\frac{\sigma}{\theta}\;\sqrt{\frac{12}{n}}\;\frac{\bar m}{\Delta}\;g(\bar m)^{-2}.
+paper/sections/04_local.tex:335	1	value exists in results/	\begin{description}[leftmargin=1.4em, itemsep=2pt]
+paper/sections/04_local.tex:350	1	value exists in results/	\;+\; \underbrace{D \sum_i e^{-\lambda (t - t_i)} \mathbf{1}_{\{t \ge t_i\}}}_{\text{known: } \Delta(t)}.
+paper/sections/04_local.tex:354	1	value exists in results/	it. \emph{Superseded.} It is administered, on the published phase 1/2 biweekly schedule,
+paper/sections/04_local.tex:354	2	value exists in results/	it. \emph{Superseded.} It is administered, on the published phase 1/2 biweekly schedule,
+paper/sections/04_local.tex:429	0	value exists in results/	J_{\Delta}(t) - J_{u_c}(t) \;=\; -\,\kappa u_c(t)\, g(m(t)) \;\le\; 0.
+paper/sections/04_local.tex:477	2	value exists in results/	\det M \;\approx\; g(\bar m)^2\,(m' - m),
+paper/sections/04_local.tex:583	2	value exists in results/	\theta(K_m) = \frac{a\,(K_m + \bar m)^2}{\bar m^{2}},
+paper/sections/04_local.tex:583	2	value exists in results/	\theta(K_m) = \frac{a\,(K_m + \bar m)^2}{\bar m^{2}},
+paper/sections/04_local.tex:585	2	value exists in results/	k_e(K_m) = b - \frac{a\,K_m}{\bar m^{2}},
+paper/sections/04_local.tex:591	2	value exists in results/	- \frac{a\,\mtol}{\bar m^{2}}\right] \;+\; (a - P).
+paper/sections/04_local.tex:604	1	value exists in results/, retyped in a claim	\spk \in \left(\;\frac{K_{\max} S + a}{1 + K_{\max}/\mtol} + b\,\mtol,
+paper/sections/04_local.tex:606	2	value exists in results/	\qquad S = \frac{2a}{\bar m} - \frac{a\,\mtol}{\bar m^{2}},
+paper/sections/04_local.tex:710	12	value exists in results/	\frac{\sigma}{a}\,\sqrt{\frac{12}{n}}\;\frac{\bar m}{\Delta},
+paper/sections/04_local.tex:738	1.08	value exists in results/	\mathrm{CV} \;=\; \frac{C(\bar m)}{b\,\bar m}\, f \;\approx\; 1.08\, f,
+paper/sections/04_local.tex:754	1	value exists in results/	\sqrt{\frac{1}{n} + \frac{\bar m^2}{S}}
+paper/sections/04_local.tex:754	2	value exists in results/	\sqrt{\frac{1}{n} + \frac{\bar m^2}{S}}
+paper/sections/04_local.tex:757	1	value exists in results/	c(n) = \sqrt{1 + \frac{3(n-1)}{n+1}} \;\le\; 2,
+paper/sections/04_local.tex:757	3	value exists in results/	c(n) = \sqrt{1 + \frac{3(n-1)}{n+1}} \;\le\; 2,
+paper/sections/04_local.tex:757	1	value exists in results/	c(n) = \sqrt{1 + \frac{3(n-1)}{n+1}} \;\le\; 2,
+paper/sections/04_local.tex:757	1	value exists in results/	c(n) = \sqrt{1 + \frac{3(n-1)}{n+1}} \;\le\; 2,
+paper/sections/04_local.tex:757	2	value exists in results/	c(n) = \sqrt{1 + \frac{3(n-1)}{n+1}} \;\le\; 2,
+paper/sections/04_local.tex:854	2	value exists in results/	= \frac{k_e (K_m + \bar m)^2}{\theta\,K_m},
+paper/sections/04_local.tex:857	2	value exists in results/	= \frac{2 k_e (K_m + \bar m)}{\theta}.
+paper/sections/06_excitation.tex:43	0	value exists in results/	K_m(b) = \frac{K_m^{0}\,L}{L+b},
+paper/sections/06_excitation.tex:44	0	value exists in results/	\qquad \theta(b) = \theta^{0} + b + k_e\bigl(K_m^{0} - K_m(b)\bigr),
+paper/sections/06_excitation.tex:44	0	value exists in results/	\qquad \theta(b) = \theta^{0} + b + k_e\bigl(K_m^{0} - K_m(b)\bigr),
+paper/sections/06_excitation.tex:53	1	value exists in results/	\hat K_m = K_m\Bigl(1 + \frac{b}{L}\Bigr),
+paper/sections/06_excitation.tex:55	1	value exists in results/	\hat\theta = \theta - b\Bigl(1 + \frac{K_m k_e}{L}\Bigr)
+paper/sections/06_excitation.tex:94	2	value exists in results/	\Bigl(\theta g(m),\;\; -\bigl(\theta + \Delta\bigr) K_m \tfrac{m}{(K_m+m)^2},\;\;
+paper/sections/06_excitation.tex:95	1	value exists in results/	k_e m, \;\; 1 \Bigr);
+paper/sections/06_excitation.tex:116	2	value exists in results/	Part~(2) is conditional on $L_0$ being unknown, and that is what makes the load record
+paper/sections/06_excitation.tex:170	1	value exists in results/	the term whose curvature the identification needs. On the phase 1/2
+paper/sections/06_excitation.tex:170	2	value exists in results/	the term whose curvature the identification needs. On the phase 1/2
+paper/sections/06_excitation.tex:178	1	value exists in results/, retyped in a claim	\caption{\label{tab:factors}The two factors of the excitation, over the phase 1/2 record. The marker band moves $\varphi$ by a twentieth; the dose train moves $
+paper/sections/06_excitation.tex:178	2	value exists in results/, retyped in a claim	\caption{\label{tab:factors}The two factors of the excitation, over the phase 1/2 record. The marker band moves $\varphi$ by a twentieth; the dose train moves $
+paper/sections/06_excitation.tex:178	1	value exists in results/, retyped in a claim	\caption{\label{tab:factors}The two factors of the excitation, over the phase 1/2 record. The marker band moves $\varphi$ by a twentieth; the dose train moves $
+paper/sections/06_excitation.tex:244	0	value exists in results/	n \;=\; \bigl(\,L + b + k_e K_m,\;\; -K_m,\;\; 0,\;\; L + b\,\bigr)
+paper/sections/07_design.tex:30	1	value exists in results/	P_k^{-1} \;=\; P_0^{-1} \;+\; \sum_{i \le k} \frac{q(m_i, \Delta_i)\,q(m_i, \Delta_i)^{\!\top}}{\sigma^2},
+paper/sections/07_design.tex:30	1	value exists in results/	P_k^{-1} \;=\; P_0^{-1} \;+\; \sum_{i \le k} \frac{q(m_i, \Delta_i)\,q(m_i, \Delta_i)^{\!\top}}{\sigma^2},
+paper/sections/07_design.tex:30	2	value exists in results/	P_k^{-1} \;=\; P_0^{-1} \;+\; \sum_{i \le k} \frac{q(m_i, \Delta_i)\,q(m_i, \Delta_i)^{\!\top}}{\sigma^2},
+paper/sections/07_design.tex:104	1	value exists in results/	\begin{adjustwidth}{-1.4cm}{-1.4cm}
+paper/sections/07_design.tex:104	1	value exists in results/	\begin{adjustwidth}{-1.4cm}{-1.4cm}
+paper/sections/07_design.tex:581	1	value exists in results/	\begin{adjustwidth}{-1.0cm}{-1.0cm}
+paper/sections/07_design.tex:581	1	value exists in results/	\begin{adjustwidth}{-1.0cm}{-1.0cm}
+paper/sections/07_design.tex:604	1	value exists in results/	\begin{adjustwidth}{-1.2cm}{-1.2cm}
+paper/sections/07_design.tex:604	1	value exists in results/	\begin{adjustwidth}{-1.2cm}{-1.2cm}
+paper/sections/07b_decision.tex:30	339	value exists in results/	\caption{\label{tab:decision}The decision characteristic, by simulation, on three designs. Twelve seeds at four hundred replicates each; the $\pm$ is the spread
+paper/sections/08_specification.tex:7	1	value exists in results/, retyped in a claim	three tiers and they are ordered by dependency rather than by cost. Tier~1 is one blood
+paper/sections/08_specification.tex:166	2	value exists in results/, retyped in a claim	cannot supply, and unlike Tier~2 it can be bought incrementally: the design's precision is
+paper/sections/08_specification.tex:417	1	value exists in results/	Fourteen is inside a phase 1/2 trial of sixteen; ninety-six is not. The
+paper/sections/08_specification.tex:417	2	value exists in results/	Fourteen is inside a phase 1/2 trial of sixteen; ninety-six is not. The
+paper/sections/09_validation.tex:94	1	value exists in results/	\begin{adjustwidth}{-1.4cm}{-1.4cm}
+paper/sections/09_validation.tex:94	1	value exists in results/	\begin{adjustwidth}{-1.4cm}{-1.4cm}
+paper/sections/09_validation.tex:130	1	value exists in results/	the improvement does not change that. The phase 1/2 trial enrolled
+paper/sections/09_validation.tex:130	2	value exists in results/	the improvement does not change that. The phase 1/2 trial enrolled
+paper/sections/10_results.tex:23	0.48	value exists in results/	\begin{minipage}[t]{0.48\textwidth}
+paper/sections/10_results.tex:27	0.48	value exists in results/	\begin{minipage}[t]{0.48\textwidth}
+paper/sections/10_results.tex:202	0.47	value exists in results/	\begin{minipage}[t]{0.47\textwidth}
+paper/sections/10_results.tex:206	0.50	value exists in results/	\begin{minipage}[t]{0.50\textwidth}
+paper/sections/10_results.tex:265	0.48	value exists in results/	\begin{minipage}[t]{0.48\textwidth}
+paper/sections/10_results.tex:269	0.50	value exists in results/	\begin{minipage}[t]{0.50\textwidth}
+paper/sections/10_results.tex:279	1	value exists in results/	are the routes out. Arrow~1 drives the load below baseline, which raises the separatrix
+paper/sections/10_results.tex:281	2	value exists in results/	mainstay of treatment. Arrow~2 lowers the metabolite directly, by haemofiltration, and is
+paper/sections/10_results.tex:295	3	value exists in results/, retyped in a claim	so ``does 3-HP return to baseline'' is not the question to take to the records. Free
+paper/sections/10_results.tex:298	0.0370	value exists in results/	0.0370$~\cite{amd_phenotyping}, % C38
+paper/sections/11_scope.tex:12	0	value exists in results/	m \;\longrightarrow\; \frac{L_0 + L}{k_e} \qquad \text{as } \theta \to 0,
+paper/sections/11_scope.tex:277	1	value exists in results/, retyped in a claim	dose calibrated to the falls the phase 1/2 interim analysis reports~\cite{trial_phase12}.
+paper/sections/11_scope.tex:277	2	value exists in results/, retyped in a claim	dose calibrated to the falls the phase 1/2 interim analysis reports~\cite{trial_phase12}.
+paper/sections/12_discussion.tex:221	2	value exists in results/, retyped in a claim	Tier~2 of Section~\ref{sec:spec} asks for, since everything the therapy channel buys is
+paper/sections/A1_open.tex:32	3	value exists in results/	shape: a generalised additive \emph{mixed} model on 3-HP concentration, with a smooth term
+paper/sections/A1_open.tex:68	3	value exists in results/	marker at 3-HP, on the endpoint association and on the sign of the perturbation, which is
+paper/sections/A1_open.tex:165	1	value exists in results/	therapy, using the published phase 1/2 biweekly schedule as it stands. The therapy is not
+paper/sections/A1_open.tex:165	2	value exists in results/	therapy, using the published phase 1/2 biweekly schedule as it stands. The therapy is not
+paper/sections/A1_supplementary.tex:74	1	value exists in results/, retyped in a claim	of $4$ to $20$ at a dose calibrated to the falls the phase 1/2 interim analysis actually
+paper/sections/A1_supplementary.tex:89	50	value exists in results/	\qquad P = E_0 + \mathrm{base}\,q,\quad U = P\theta + (E_0+\mathrm{base})\mathrm{IC}_{50},
+paper/sections/A1_supplementary.tex:90	50	value exists in results/	\quad V = \mathrm{IC}_{50} + \theta,
+paper/sections/A1_supplementary.tex:158	2	value exists in results/	moving. Part~(2) is untouched by any dosing schedule.
+paper/sections/A1_supplementary.tex:170	1	value exists in results/	m\,(1-u) \;=\; K_m\, u, \qquad m \;=\; \frac{K_m\,u}{1-u}.
+paper/sections/A1_supplementary.tex:170	1	value exists in results/	m\,(1-u) \;=\; K_m\, u, \qquad m \;=\; \frac{K_m\,u}{1-u}.
+paper/sections/A1_supplementary.tex:178	1	value exists in results/	\pd{G}{K_m} = -(\theta+\Delta)\,\frac{u(1-u)}{K_m}, \qquad
+paper/sections/A1_supplementary.tex:180	1	value exists in results/	\pd{G}{b} = -1.
+paper/sections/A1_supplementary.tex:185	0	value exists in results/	+ e\,\partial_b G = 0$ for every $\Delta$. The increment is eliminated by the balance
+paper/sections/A1_supplementary.tex:190	1	value exists in results/	\underbrace{\gamma\,\frac{K_m u}{1-u}}_{\text{pole at }u=1}
+paper/sections/A1_supplementary.tex:190	1	value exists in results/	\underbrace{\gamma\,\frac{K_m u}{1-u}}_{\text{pole at }u=1}
+paper/sections/A1_supplementary.tex:192	0	value exists in results/	\;-\; \Bigl(e + \frac{\beta (L+b)}{K_m}\Bigr) \;=\; 0.
+paper/sections/A1_supplementary.tex:408	1	value exists in results/	\begin{description}[leftmargin=1.4em, itemsep=3pt]
+paper/sections/A1_supplementary.tex:520	84	value exists in results/	A published series of 84 Saudi patients identified 16 distinct variants (7 in \emph{PCCA},
+paper/sections/A1_supplementary.tex:520	16	value exists in results/	A published series of 84 Saudi patients identified 16 distinct variants (7 in \emph{PCCA},
+paper/sections/A1_supplementary.tex:520	7	value exists in results/	A published series of 84 Saudi patients identified 16 distinct variants (7 in \emph{PCCA},
+paper/sections/A1_supplementary.tex:521	9	value exists in results/	9 in \emph{PCCB})~\cite{saudi84}. % C11
+paper/sections/A1_supplementary.tex:539	68	value exists in results/	(68 of 84 patients) against $19\%$ \emph{PCCB}, where the two genes contribute roughly
+paper/sections/A1_supplementary.tex:539	84	value exists in results/	(68 of 84 patients) against $19\%$ \emph{PCCB}, where the two genes contribute roughly
+paper/sections/A1_supplementary.tex:612	1	value exists in results/	C(m,t) \;=\; \sum_{i=1}^{n} \bigl(a_i + \Delta_i(t) \bigr)\, f(m; K_i).
+paper/sections/A1_supplementary.tex:617	1	value exists in results/	C(p^\pi) - C(p) \;=\; \sum_j \bigl(\Delta_{\pi^{-1}(j)} - \Delta_j \bigr)\, f(m; K_j).
+paper/sections/A2_provenance.tex:35	1	value exists in results/	\begin{adjustwidth}{-1.4cm}{-1.4cm}
+paper/sections/A2_provenance.tex:35	1	value exists in results/	\begin{adjustwidth}{-1.4cm}{-1.4cm}
+paper/supplement.tex:23	0	value exists in results/	\title{\textbf{Supplementary material}\\[0.3em]
+paper/supplement.tex:60	1	value exists in results/	\begin{adjustwidth}{-1.4cm}{-1.4cm}
+paper/supplement.tex:60	1	value exists in results/	\begin{adjustwidth}{-1.4cm}{-1.4cm}

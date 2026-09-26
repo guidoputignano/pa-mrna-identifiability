@@ -1,0 +1,1472 @@
+paper/note_structural_identifiability.tex:30	0	\title{\textbf{Structural Identifiability of Model A}\\[0.3em]
+paper/note_structural_identifiability.tex:67	0	with $p = (\theta, K_m, k_e) \in \R_{>0}^3$ the unknown parameter vector, $s(t)$ a known
+paper/note_structural_identifiability.tex:67	3	with $p = (\theta, K_m, k_e) \in \R_{>0}^3$ the unknown parameter vector, $s(t)$ a known
+paper/note_structural_identifiability.tex:72	1	with $n = 1$, elsewhere.
+paper/note_structural_identifiability.tex:114	2	F(m) \;=\; \frac{k_e\, m^2 \;+\; (\theta + k_e K_m)\, m}{m + K_m} .
+paper/note_structural_identifiability.tex:129	0	$(K_m,\, k_e,\, \theta + k_e K_m)$ is a bijection on $\R_{>0}^3$.
+paper/note_structural_identifiability.tex:129	3	$(K_m,\, k_e,\, \theta + k_e K_m)$ is a bijection on $\R_{>0}^3$.
+paper/note_structural_identifiability.tex:145	2	\frac{\partial F}{\partial K_m} = -\frac{\theta\, m}{(K_m + m)^2}, \qquad
+paper/note_structural_identifiability.tex:150	3	$S \in \R^{r \times 3}$.
+paper/note_structural_identifiability.tex:154	3	$\operatorname{rank} S = \min(r, 3)$ generically. Hence the trajectory must visit at least
+paper/note_structural_identifiability.tex:156	1	parameters. One level gives rank $1$; two levels give rank $2$.
+paper/note_structural_identifiability.tex:156	2	parameters. One level gives rank $1$; two levels give rank $2$.
+paper/note_structural_identifiability.tex:169	3000	$(\theta, K_m, k_e) = (3000, 100, 5)$.
+paper/note_structural_identifiability.tex:169	100	$(\theta, K_m, k_e) = (3000, 100, 5)$.
+paper/note_structural_identifiability.tex:169	5	$(\theta, K_m, k_e) = (3000, 100, 5)$.
+paper/note_structural_identifiability.tex:180	2	$2\%$   & $9.8,\ 10,\ 10.2$   & $2.7 \times 10^{6}$ \\
+paper/note_structural_identifiability.tex:180	9.8	$2\%$   & $9.8,\ 10,\ 10.2$   & $2.7 \times 10^{6}$ \\
+paper/note_structural_identifiability.tex:180	10	$2\%$   & $9.8,\ 10,\ 10.2$   & $2.7 \times 10^{6}$ \\
+paper/note_structural_identifiability.tex:180	10.2	$2\%$   & $9.8,\ 10,\ 10.2$   & $2.7 \times 10^{6}$ \\
+paper/note_structural_identifiability.tex:180	2.7	$2\%$   & $9.8,\ 10,\ 10.2$   & $2.7 \times 10^{6}$ \\
+paper/note_structural_identifiability.tex:180	10	$2\%$   & $9.8,\ 10,\ 10.2$   & $2.7 \times 10^{6}$ \\
+paper/note_structural_identifiability.tex:180	6	$2\%$   & $9.8,\ 10,\ 10.2$   & $2.7 \times 10^{6}$ \\
+paper/note_structural_identifiability.tex:181	5	$5\%$   & $9.5,\ 10,\ 10.5$   & $4.4 \times 10^{5}$ \\
+paper/note_structural_identifiability.tex:181	9.5	$5\%$   & $9.5,\ 10,\ 10.5$   & $4.4 \times 10^{5}$ \\
+paper/note_structural_identifiability.tex:181	10	$5\%$   & $9.5,\ 10,\ 10.5$   & $4.4 \times 10^{5}$ \\
+paper/note_structural_identifiability.tex:181	10.5	$5\%$   & $9.5,\ 10,\ 10.5$   & $4.4 \times 10^{5}$ \\
+paper/note_structural_identifiability.tex:181	4.4	$5\%$   & $9.5,\ 10,\ 10.5$   & $4.4 \times 10^{5}$ \\
+paper/note_structural_identifiability.tex:181	10	$5\%$   & $9.5,\ 10,\ 10.5$   & $4.4 \times 10^{5}$ \\
+paper/note_structural_identifiability.tex:181	5	$5\%$   & $9.5,\ 10,\ 10.5$   & $4.4 \times 10^{5}$ \\
+paper/note_structural_identifiability.tex:182	10	$10\%$  & $9,\ 10,\ 11$       & $1.1 \times 10^{5}$ \\
+paper/note_structural_identifiability.tex:182	9	$10\%$  & $9,\ 10,\ 11$       & $1.1 \times 10^{5}$ \\
+paper/note_structural_identifiability.tex:182	10	$10\%$  & $9,\ 10,\ 11$       & $1.1 \times 10^{5}$ \\
+paper/note_structural_identifiability.tex:182	11	$10\%$  & $9,\ 10,\ 11$       & $1.1 \times 10^{5}$ \\
+paper/note_structural_identifiability.tex:182	1.1	$10\%$  & $9,\ 10,\ 11$       & $1.1 \times 10^{5}$ \\
+paper/note_structural_identifiability.tex:182	10	$10\%$  & $9,\ 10,\ 11$       & $1.1 \times 10^{5}$ \\
+paper/note_structural_identifiability.tex:182	5	$10\%$  & $9,\ 10,\ 11$       & $1.1 \times 10^{5}$ \\
+paper/note_structural_identifiability.tex:183	20	$20\%$  & $8,\ 10,\ 12$       & $2.8 \times 10^{4}$ \\
+paper/note_structural_identifiability.tex:183	8	$20\%$  & $8,\ 10,\ 12$       & $2.8 \times 10^{4}$ \\
+paper/note_structural_identifiability.tex:183	10	$20\%$  & $8,\ 10,\ 12$       & $2.8 \times 10^{4}$ \\
+paper/note_structural_identifiability.tex:183	12	$20\%$  & $8,\ 10,\ 12$       & $2.8 \times 10^{4}$ \\
+paper/note_structural_identifiability.tex:183	2.8	$20\%$  & $8,\ 10,\ 12$       & $2.8 \times 10^{4}$ \\
+paper/note_structural_identifiability.tex:183	10	$20\%$  & $8,\ 10,\ 12$       & $2.8 \times 10^{4}$ \\
+paper/note_structural_identifiability.tex:183	4	$20\%$  & $8,\ 10,\ 12$       & $2.8 \times 10^{4}$ \\
+paper/note_structural_identifiability.tex:184	50	$50\%$  & $5,\ 10,\ 15$       & $5.3 \times 10^{3}$ \\
+paper/note_structural_identifiability.tex:184	5	$50\%$  & $5,\ 10,\ 15$       & $5.3 \times 10^{3}$ \\
+paper/note_structural_identifiability.tex:184	10	$50\%$  & $5,\ 10,\ 15$       & $5.3 \times 10^{3}$ \\
+paper/note_structural_identifiability.tex:184	15	$50\%$  & $5,\ 10,\ 15$       & $5.3 \times 10^{3}$ \\
+paper/note_structural_identifiability.tex:184	5.3	$50\%$  & $5,\ 10,\ 15$       & $5.3 \times 10^{3}$ \\
+paper/note_structural_identifiability.tex:184	10	$50\%$  & $5,\ 10,\ 15$       & $5.3 \times 10^{3}$ \\
+paper/note_structural_identifiability.tex:184	3	$50\%$  & $5,\ 10,\ 15$       & $5.3 \times 10^{3}$ \\
+paper/note_structural_identifiability.tex:185	100	$100\%$ & $10,\ 20,\ 30$      & $1.5 \times 10^{3}$ \\
+paper/note_structural_identifiability.tex:185	10	$100\%$ & $10,\ 20,\ 30$      & $1.5 \times 10^{3}$ \\
+paper/note_structural_identifiability.tex:185	20	$100\%$ & $10,\ 20,\ 30$      & $1.5 \times 10^{3}$ \\
+paper/note_structural_identifiability.tex:185	30	$100\%$ & $10,\ 20,\ 30$      & $1.5 \times 10^{3}$ \\
+paper/note_structural_identifiability.tex:185	1.5	$100\%$ & $10,\ 20,\ 30$      & $1.5 \times 10^{3}$ \\
+paper/note_structural_identifiability.tex:185	10	$100\%$ & $10,\ 20,\ 30$      & $1.5 \times 10^{3}$ \\
+paper/note_structural_identifiability.tex:185	3	$100\%$ & $10,\ 20,\ 30$      & $1.5 \times 10^{3}$ \\
+paper/note_structural_identifiability.tex:186	500	$500\%$ & $10,\ 60,\ 110$     & $1.5 \times 10^{2}$ \\
+paper/note_structural_identifiability.tex:186	10	$500\%$ & $10,\ 60,\ 110$     & $1.5 \times 10^{2}$ \\
+paper/note_structural_identifiability.tex:186	60	$500\%$ & $10,\ 60,\ 110$     & $1.5 \times 10^{2}$ \\
+paper/note_structural_identifiability.tex:186	110	$500\%$ & $10,\ 60,\ 110$     & $1.5 \times 10^{2}$ \\
+paper/note_structural_identifiability.tex:186	1.5	$500\%$ & $10,\ 60,\ 110$     & $1.5 \times 10^{2}$ \\
+paper/note_structural_identifiability.tex:186	10	$500\%$ & $10,\ 60,\ 110$     & $1.5 \times 10^{2}$ \\
+paper/note_structural_identifiability.tex:186	2	$500\%$ & $10,\ 60,\ 110$     & $1.5 \times 10^{2}$ \\
+paper/note_structural_identifiability.tex:194	10	visits, presents a problem conditioned at $10^{5}$ to $10^{6}$, which is beyond the
+paper/note_structural_identifiability.tex:194	5	visits, presents a problem conditioned at $10^{5}$ to $10^{6}$, which is beyond the
+paper/note_structural_identifiability.tex:194	10	visits, presents a problem conditioned at $10^{5}$ to $10^{6}$, which is beyond the
+paper/note_structural_identifiability.tex:194	6	visits, presents a problem conditioned at $10^{5}$ to $10^{6}$, which is beyond the
+paper/note_structural_identifiability.tex:217	1	\qquad i = 1, \dots, N .
+paper/note_structural_identifiability.tex:221	2	This is a system of $N$ equations in $N + 2$ unknowns, namely $\theta_1, \dots, \theta_N$
+paper/note_structural_identifiability.tex:222	2	together with $K_m$ and $k_e$. It is underdetermined with deficiency exactly $2$, regardless
+paper/note_structural_identifiability.tex:238	0	$\theta_j = 0$; and
+paper/note_structural_identifiability.tex:261	7	\emph{PCCB} c.990dupT (p.E331Xfs) occurs in 7 families and is reported as a null allele.
+paper/note_structural_identifiability.tex:264	0	up $\theta_j = 0$ with a molecular argument about what happens to the transcript, or to
+paper/note_structural_identifiability.tex:286	2	The intercept is $\theta\,(g(\bar m) - \bar m\, g'(\bar m)) = \theta\, g(\bar m)^2$, the
+paper/note_structural_identifiability.tex:291	2	fitted intercept divides by $g(\bar m)^2$, and $g$ is increasing, so the amplification a
+paper/note_structural_identifiability.tex:296	0	to $m = 0$. Being asymptomatic is exactly what puts them there.
+paper/note_structural_identifiability.tex:329	1	\begin{adjustwidth}{-1.0cm}{-1.0cm}
+paper/note_structural_identifiability.tex:329	1	\begin{adjustwidth}{-1.0cm}{-1.0cm}
+paper/note_structural_identifiability.tex:335	0.17	\begin{tabular}{@{}p{0.17\textwidth} p{0.20\textwidth} p{0.28\textwidth} p{0.30\textwidth}@{}}
+paper/note_structural_identifiability.tex:335	0.20	\begin{tabular}{@{}p{0.17\textwidth} p{0.20\textwidth} p{0.28\textwidth} p{0.30\textwidth}@{}}
+paper/note_structural_identifiability.tex:335	0.28	\begin{tabular}{@{}p{0.17\textwidth} p{0.20\textwidth} p{0.28\textwidth} p{0.30\textwidth}@{}}
+paper/note_structural_identifiability.tex:335	0.30	\begin{tabular}{@{}p{0.17\textwidth} p{0.20\textwidth} p{0.28\textwidth} p{0.30\textwidth}@{}}
+paper/note_structural_identifiability.tex:353	0.99	correctness (e.g.\ $0.99$). Typically faster than pure differential algebra on
+paper/note_structural_identifiability.tex:361	2	Section 2, since the input--output relation is precisely \eqref{eq:Frational} cleared of
+paper/note_structural_identifiability.tex:369	2	If the analysis of Section 2 is correct, then asking for identifiable functions under a
+paper/note_structural_identifiability.tex:398	0.99	IdentifiabilityODE(sigma, GetParameters(sigma), p_mod = 0.99);
+paper/note_structural_identifiability.tex:427	0	\item \textbf{A4.} As A3, with $\theta_2 = 0$ imposed (null anchor). \emph{Returned:}
+paper/note_structural_identifiability.tex:458	2	deficiency $2$ exactly as claimed. The ODE framework cannot express that case, so A2--A4
+paper/note_structural_identifiability.tex:459	2	answer a question the note was not asking, and the deficiency-2 result stands untouched.
+paper/preamble.tex:43	3	maxbibnames=3, minbibnames=1, giveninits=true,
+paper/preamble.tex:43	1	maxbibnames=3, minbibnames=1, giveninits=true,
+paper/preamble.tex:56	1	\newcommand{\num}[1]{%
+paper/preamble.tex:57	1	\ifcsname paper@num@#1\endcsname
+paper/preamble.tex:58	1	\csname paper@num@#1\endcsname
+paper/preamble.tex:60	1	\PackageError{paper}{No generated number named '#1'}{Run make figures.}%
+paper/preamble.tex:103	8	menzy/.style    = {mblock, fill=green!8,  draw=green!45!black!50, minimum width=27mm},
+paper/preamble.tex:103	45	menzy/.style    = {mblock, fill=green!8,  draw=green!45!black!50, minimum width=27mm},
+paper/preamble.tex:103	50	menzy/.style    = {mblock, fill=green!8,  draw=green!45!black!50, minimum width=27mm},
+paper/preamble.tex:104	6	malt/.style     = {mblock, fill=blue!6,   draw=blue!40,           minimum width=27mm},
+paper/preamble.tex:104	40	malt/.style     = {mblock, fill=blue!6,   draw=blue!40,           minimum width=27mm},
+paper/preamble.tex:107	2	mar/.style      = {-{Stealth[length=2.2mm]}, thick},
+paper/preamble.tex:113	3	\newcommand{\channelglyph}[3]{%
+paper/preamble.tex:114	1	\begin{scope}[shift={#1}, scale=0.62]
+paper/preamble.tex:114	0.62	\begin{scope}[shift={#1}, scale=0.62]
+paper/preamble.tex:115	55	\draw[gray!55, line width=0.3pt] (0,0) -- (1.15,0) (0,0) -- (0,0.8);
+paper/preamble.tex:115	0	\draw[gray!55, line width=0.3pt] (0,0) -- (1.15,0) (0,0) -- (0,0.8);
+paper/preamble.tex:115	0,0	\draw[gray!55, line width=0.3pt] (0,0) -- (1.15,0) (0,0) -- (0,0.8);
+paper/preamble.tex:115	1.15,0	\draw[gray!55, line width=0.3pt] (0,0) -- (1.15,0) (0,0) -- (0,0.8);
+paper/preamble.tex:115	0,0	\draw[gray!55, line width=0.3pt] (0,0) -- (1.15,0) (0,0) -- (0,0.8);
+paper/preamble.tex:115	0,0.8	\draw[gray!55, line width=0.3pt] (0,0) -- (1.15,0) (0,0) -- (0,0.8);
+paper/preamble.tex:116	2	\if#3l \draw[#2, line width=1.1pt] (0,0) -- (1.05,0.72);
+paper/preamble.tex:116	1	\if#3l \draw[#2, line width=1.1pt] (0,0) -- (1.05,0.72);
+paper/preamble.tex:116	0,0	\if#3l \draw[#2, line width=1.1pt] (0,0) -- (1.05,0.72);
+paper/preamble.tex:116	1.05,0.72	\if#3l \draw[#2, line width=1.1pt] (0,0) -- (1.05,0.72);
+paper/preamble.tex:117	2	\else\if#3n \draw[#2, line width=1.1pt]
+paper/preamble.tex:117	1	\else\if#3n \draw[#2, line width=1.1pt]
+paper/preamble.tex:118	0,0	plot[smooth] coordinates {(0,0) (0.24,0.46) (0.52,0.64) (0.80,0.48) (1.05,0.20)};
+paper/preamble.tex:118	0.24,0.46	plot[smooth] coordinates {(0,0) (0.24,0.46) (0.52,0.64) (0.80,0.48) (1.05,0.20)};
+paper/preamble.tex:118	0.52,0.64	plot[smooth] coordinates {(0,0) (0.24,0.46) (0.52,0.64) (0.80,0.48) (1.05,0.20)};
+paper/preamble.tex:118	0.80,0.48	plot[smooth] coordinates {(0,0) (0.24,0.46) (0.52,0.64) (0.80,0.48) (1.05,0.20)};
+paper/preamble.tex:118	1.05,0.20	plot[smooth] coordinates {(0,0) (0.24,0.46) (0.52,0.64) (0.80,0.48) (1.05,0.20)};
+paper/preamble.tex:119	2	\else   \draw[#2, line width=1.1pt]
+paper/preamble.tex:119	1	\else   \draw[#2, line width=1.1pt]
+paper/preamble.tex:120	0,0	plot[smooth] coordinates {(0,0) (0.26,0.36) (0.58,0.58) (1.05,0.70)};
+paper/preamble.tex:120	0.26,0.36	plot[smooth] coordinates {(0,0) (0.26,0.36) (0.58,0.58) (1.05,0.70)};
+paper/preamble.tex:120	0.58,0.58	plot[smooth] coordinates {(0,0) (0.26,0.36) (0.58,0.58) (1.05,0.70)};
+paper/preamble.tex:120	1.05,0.70	plot[smooth] coordinates {(0,0) (0.26,0.36) (0.58,0.58) (1.05,0.70)};
+paper/preamble.tex:128	0.9	\renewcommand{\topfraction}{0.9}
+paper/preamble.tex:129	0.7	\renewcommand{\bottomfraction}{0.7}
+paper/preamble.tex:130	0.08	\renewcommand{\textfraction}{0.08}
+paper/preamble.tex:131	0.85	\renewcommand{\floatpagefraction}{0.85}
+paper/preamble.tex:139	2	\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+paper/preamble.tex:139	1	\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+paper/preamble.tex:139	2	\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+paper/sections/00_abstract.tex:20	5	load: $\num{share_nominal_pct}\%$ at normal, $\num{share_5pct}\%$ at the $5\%$ that
+paper/sections/00_abstract.tex:26	6	survives there is $K_m$, to $6$--$7\%$ at every capacity, and an upper bound on $\theta$.
+paper/sections/00_abstract.tex:26	7	survives there is $K_m$, to $6$--$7\%$ at every capacity, and an upper bound on $\theta$.
+paper/sections/00_abstract.tex:36	1	$1$-$^{13}$C-propionate breath test, which nobody has published, then the record itself.
+paper/sections/00_abstract.tex:36	13	$1$-$^{13}$C-propionate breath test, which nobody has published, then the record itself.
+paper/sections/01_biology.tex:7	1	Section~1 of the paper states the pathway and is not repeated here. Two structural facts
+paper/sections/01_biology.tex:14	3	item~3 of the next paragraph is about.
+paper/sections/01_biology.tex:27	8	bad/.style={box, fill=red!8, draw=red!50},
+paper/sections/01_biology.tex:27	50	bad/.style={box, fill=red!8, draw=red!50},
+paper/sections/01_biology.tex:28	6	esc/.style={box, fill=blue!6, draw=blue!40},
+paper/sections/01_biology.tex:28	40	esc/.style={box, fill=blue!6, draw=blue!40},
+paper/sections/01_biology.tex:29	8	ok/.style={box, fill=green!8, draw=green!45!black!50},
+paper/sections/01_biology.tex:29	45	ok/.style={box, fill=green!8, draw=green!45!black!50},
+paper/sections/01_biology.tex:29	50	ok/.style={box, fill=green!8, draw=green!45!black!50},
+paper/sections/01_biology.tex:30	2	ar/.style={-{Stealth[length=2.2mm]}, thick},
+paper/sections/01_biology.tex:34	0,1.6	\node[src] (aa)  at (0,1.6)  {Ile, Val, Met, Thr\\{\scriptsize dietary and catabolic}};
+paper/sections/01_biology.tex:35	0,0	\node[src] (fa)  at (0,0)    {odd-chain fatty acids};
+paper/sections/01_biology.tex:36	0	\node[src] (gut) at (0,-1.4) {gut flora};
+paper/sections/01_biology.tex:36	1.4	\node[src] (gut) at (0,-1.4) {gut flora};
+paper/sections/01_biology.tex:39	4.9,0	\node[mid] (pcoa) at (4.9,0) {propionyl-CoA};
+paper/sections/01_biology.tex:46	10.4,0	\node[ok] (mmcoa) at (10.4,0) {methylmalonyl-CoA\\$\rightarrow$ TCA cycle};
+paper/sections/01_biology.tex:48	7.65,0.75	\node[font=\scriptsize, align=center] at (7.65,0.75) {PCC \; $\alpha_6\beta_6$};
+paper/sections/01_biology.tex:49	70	\node[font=\scriptsize, align=center, red!70!black] at (7.65,-0.62) {capacity $\theta$};
+paper/sections/01_biology.tex:49	7.65	\node[font=\scriptsize, align=center, red!70!black] at (7.65,-0.62) {capacity $\theta$};
+paper/sections/01_biology.tex:49	0.62	\node[font=\scriptsize, align=center, red!70!black] at (7.65,-0.62) {capacity $\theta$};
+paper/sections/01_biology.tex:50	70	\draw[very thick, red!70!black] (7.65,-0.34) -- (7.65,0.34);
+paper/sections/01_biology.tex:50	7.65	\draw[very thick, red!70!black] (7.65,-0.34) -- (7.65,0.34);
+paper/sections/01_biology.tex:50	0.34	\draw[very thick, red!70!black] (7.65,-0.34) -- (7.65,0.34);
+paper/sections/01_biology.tex:50	7.65,0.34	\draw[very thick, red!70!black] (7.65,-0.34) -- (7.65,0.34);
+paper/sections/01_biology.tex:53	10.1,3.0	\node[esc] (carn) at (10.1,3.0) {propionylcarnitine\\{\scriptsize urinary excretion}};
+paper/sections/01_biology.tex:54	55	\draw[ar, blue!55!black] (pcoa) to[out=60,in=190] (carn);
+paper/sections/01_biology.tex:54	60	\draw[ar, blue!55!black] (pcoa) to[out=60,in=190] (carn);
+paper/sections/01_biology.tex:54	190	\draw[ar, blue!55!black] (pcoa) to[out=60,in=190] (carn);
+paper/sections/01_biology.tex:55	55	\node[font=\scriptsize, align=center, blue!55!black, fill=white, inner sep=1pt]
+paper/sections/01_biology.tex:56	6.7,1.95	at (6.7,1.95) {$+$ carnitine\\{\scriptsize consumed, not catalytic}};
+paper/sections/01_biology.tex:59	10.1	\node[bad] (tox) at (10.1,-3.0) {2-methylcitrate\\3-hydroxypropionate\\{\scriptsize measured biomarkers}};
+paper/sections/01_biology.tex:59	3.0	\node[bad] (tox) at (10.1,-3.0) {2-methylcitrate\\3-hydroxypropionate\\{\scriptsize measured biomarkers}};
+paper/sections/01_biology.tex:59	2	\node[bad] (tox) at (10.1,-3.0) {2-methylcitrate\\3-hydroxypropionate\\{\scriptsize measured biomarkers}};
+paper/sections/01_biology.tex:60	60	\draw[ar, red!60!black] (pcoa) to[out=-55,in=180] (tox);
+paper/sections/01_biology.tex:60	55	\draw[ar, red!60!black] (pcoa) to[out=-55,in=180] (tox);
+paper/sections/01_biology.tex:60	180	\draw[ar, red!60!black] (pcoa) to[out=-55,in=180] (tox);
+paper/sections/01_biology.tex:63	4.1	\node[bad, text width=34mm] (coa) at (4.1,-3.0)
+paper/sections/01_biology.tex:63	3.0	\node[bad, text width=34mm] (coa) at (4.1,-3.0)
+paper/sections/01_biology.tex:65	60	\draw[ar, red!60!black] (pcoa) -- (coa);
+paper/sections/01_biology.tex:75	0.44	\begin{tabular}{@{}p{0.44\linewidth} p{0.16\linewidth} p{0.34\linewidth}@{}}
+paper/sections/01_biology.tex:75	0.16	\begin{tabular}{@{}p{0.44\linewidth} p{0.16\linewidth} p{0.34\linewidth}@{}}
+paper/sections/01_biology.tex:75	0.34	\begin{tabular}{@{}p{0.44\linewidth} p{0.16\linewidth} p{0.34\linewidth}@{}}
+paper/sections/01_biology.tex:113	2	plasma marker, 2-methylcitrate or 3-hydroxypropionate or C3 acylcarnitine, each a
+paper/sections/01_biology.tex:113	3	plasma marker, 2-methylcitrate or 3-hydroxypropionate or C3 acylcarnitine, each a
+paper/sections/01_biology.tex:163	7	ganglia particularly vulnerable: lesions there are reported in $7$ to $56\%$ of patients and
+paper/sections/01_biology.tex:163	56	ganglia particularly vulnerable: lesions there are reported in $7$ to $56\%$ of patients and
+paper/sections/01_biology.tex:174	29.4	encounters as well raises the proportion of patients with at least one event from $29.4\%$
+paper/sections/01_biology.tex:175	47.6	to $47.6\%$ within that same cohort. In the natural history study~\cite{natural_history}
+paper/sections/01_biology.tex:180	0.5	In the claims study the rate is approximately $0.5$ decompensations per patient-year
+paper/sections/01_biology.tex:182	1.4	and strongly age-dependent: around $1.4$ per patient-year between ages 3 and 6, falling to
+paper/sections/01_biology.tex:182	3	and strongly age-dependent: around $1.4$ per patient-year between ages 3 and 6, falling to
+paper/sections/01_biology.tex:182	6	and strongly age-dependent: around $1.4$ per patient-year between ages 3 and 6, falling to
+paper/sections/01_biology.tex:183	0.1	$0.1$ between 13 and 17~\cite{mde_claims_us}. % C06
+paper/sections/01_biology.tex:183	13	$0.1$ between 13 and 17~\cite{mde_claims_us}. % C06
+paper/sections/01_biology.tex:183	17	$0.1$ between 13 and 17~\cite{mde_claims_us}. % C06
+paper/sections/01_biology.tex:185	0.2	to $0.2$ per patient-year~\cite{mde_claims_us}. % C07
+paper/sections/01_biology.tex:187	0.72	$0.72$ per patient-year against $0.22$ to $0.34$ between ages 2 and
+paper/sections/01_biology.tex:187	0.22	$0.72$ per patient-year against $0.22$ to $0.34$ between ages 2 and
+paper/sections/01_biology.tex:187	0.34	$0.72$ per patient-year against $0.22$ to $0.34$ between ages 2 and
+paper/sections/01_biology.tex:187	2	$0.72$ per patient-year against $0.22$ to $0.34$ between ages 2 and
+paper/sections/01_biology.tex:188	18	18~\cite{mde_emr_us}. % C31
+paper/sections/01_biology.tex:189	49	Events are also not rare within the population: in the natural history cohort 49 of 50
+paper/sections/01_biology.tex:189	50	Events are also not rare within the population: in the natural history cohort 49 of 50
+paper/sections/01_biology.tex:190	98	participants ($98\%$) reported at least one, with annualised rates of $2.6$ and $2.4$ below
+paper/sections/01_biology.tex:190	2.6	participants ($98\%$) reported at least one, with annualised rates of $2.6$ and $2.4$ below
+paper/sections/01_biology.tex:190	2.4	participants ($98\%$) reported at least one, with annualised rates of $2.6$ and $2.4$ below
+paper/sections/01_biology.tex:191	0.2	age two against $0.2$ between 12 and 18, and $1.2$ in early-onset against $0.3$ in
+paper/sections/01_biology.tex:191	12	age two against $0.2$ between 12 and 18, and $1.2$ in early-onset against $0.3$ in
+paper/sections/01_biology.tex:191	18	age two against $0.2$ between 12 and 18, and $1.2$ in early-onset against $0.3$ in
+paper/sections/01_biology.tex:191	1.2	age two against $0.2$ between 12 and 18, and $1.2$ in early-onset against $0.3$ in
+paper/sections/01_biology.tex:191	0.3	age two against $0.2$ between 12 and 18, and $1.2$ in early-onset against $0.3$ in
+paper/sections/01_biology.tex:200	1	Reported phase 1/2 results indicate a $70\%$ reduction in decompensation risk, but the
+paper/sections/01_biology.tex:200	2	Reported phase 1/2 results indicate a $70\%$ reduction in decompensation risk, but the
+paper/sections/01_biology.tex:200	70	Reported phase 1/2 results indicate a $70\%$ reduction in decompensation risk, but the
+paper/sections/01_biology.tex:214	12	12~\cite{trial_phase12}, % C36
+paper/sections/01_question.tex:10	49	hyperammonaemia and metabolic acidosis. Decompensations are frequent, $49$ of $50$
+paper/sections/01_question.tex:10	50	hyperammonaemia and metabolic acidosis. Decompensations are frequent, $49$ of $50$
+paper/sections/01_question.tex:12	1.0	frequency of $1.0$~\cite{natural_history}, % C08
+paper/sections/01_question.tex:46	17	sampling spread of $17\%$ on $\ln\hat\theta$ over two years. A $95\%$ interval is a separate
+paper/sections/01_question.tex:46	95	sampling spread of $17\%$ on $\ln\hat\theta$ over two years. A $95\%$ interval is a separate
+paper/sections/01_question.tex:65	24	$24$ and the sign flips for the same patient with perfect data (supplement, \S S1).
+paper/sections/01_question.tex:79	1.3	a factor of $1.3$ to $2.0$ at a residual under a fifth of one $\sigma$, so nothing in the
+paper/sections/01_question.tex:79	2.0	a factor of $1.3$ to $2.0$ at a residual under a fifth of one $\sigma$, so nothing in the
+paper/sections/01_question.tex:86	1	third with a marker state and a different steady map, and it is Tier~1 of the specification
+paper/sections/02_model.tex:24	3	$m$ & the plasma marker, 3-HP & $\bar m$ & the operating point, and the sample mean \\
+paper/sections/02_model.tex:33	1	$\varphi(m)$ & $K_m/(K_m+m) = 1-g(m)$ & $E$ & the excitation, $\varphi$'s drop across a
+paper/sections/02_model.tex:62	1	the marker, and a $1$-$^{13}$C-propionate breath test is what such an anchor looks
+paper/sections/02_model.tex:62	13	the marker, and a $1$-$^{13}$C-propionate breath test is what such an anchor looks
+paper/sections/02_model.tex:72	0	then $\dot c = 0$ fixes the conjugation flux at every $m$. What is missing is a reason for
+paper/sections/02_model.tex:85	1	\qquad \delta(m) = \delta_0\left(1 + \frac{m}{M_i}\right),
+paper/sections/02_model.tex:102	0.92	carnitine time constant is $0.92$~d against the marker's $\num{tau_hours}$~h, slower by a factor of
+paper/sections/02_model.tex:103	27	$27$, and published human kinetics put whole-body carnitine turnover at $38$ to $119$~h
+paper/sections/02_model.tex:103	38	$27$, and published human kinetics put whole-body carnitine turnover at $38$ to $119$~h
+paper/sections/02_model.tex:103	119	$27$, and published human kinetics put whole-body carnitine turnover at $38$ to $119$~h
+paper/sections/02_model.tex:104	2	with a rapidly equilibrating compartment at $2$ to $3$~h~\cite{carnitine_turnover}, slower
+paper/sections/02_model.tex:104	3	with a rapidly equilibrating compartment at $2$ to $3$~h~\cite{carnitine_turnover}, slower
+paper/sections/02_model.tex:108	0	\emph{defined} by solving $\dot c = 0$, and $\dot c = 0$ holds exactly at any fixed point,
+paper/sections/02_model.tex:108	0	\emph{defined} by solving $\dot c = 0$, and $\dot c = 0$ holds exactly at any fixed point,
+paper/sections/02_model.tex:111	0	$\dot c = 0$ in \eqref{eq:twostate} for $c$ and substituting gives that flux in closed form,
+paper/sections/02_model.tex:115	1	\qquad \rho(m) = \rho_0\left(1 + \frac{m}{M_i}\right),
+paper/sections/02_model.tex:121	1	$\tau_c = 1/(k[u(m) + \rho(m)])$, so it sets the reduction's validity \emph{off}
+paper/sections/02_model.tex:127	0.8	settles in about $0.8$~h against a therapeutic half-life of $3.5$~d''. That is withdrawn,
+paper/sections/02_model.tex:127	3.5	settles in about $0.8$~h against a therapeutic half-life of $3.5$~d''. That is withdrawn,
+paper/sections/02_model.tex:134	0.52	$0.52$ to $55$ across the parameter region the cohort of Section~\ref{sec:coverage} samples,
+paper/sections/02_model.tex:134	55	$0.52$ to $55$ across the parameter region the cohort of Section~\ref{sec:coverage} samples,
+paper/sections/02_model.tex:138	0	Setting $\dot m = 0$ gives the equilibrium reduction, which is what a steady-state fit to a
+paper/sections/02_model.tex:159	10	parent's basin extends $10\%$ to $18\%$ past the reduced separatrix across the corners of
+paper/sections/02_model.tex:159	18	parent's basin extends $10\%$ to $18\%$ past the reduced separatrix across the corners of
+paper/sections/02_model.tex:160	50	the region the cohort samples, and up to $50\%$ at the extremes of the shape constants.
+paper/sections/02_model.tex:165	0.8	less: at $0.8$, $0.5$ and $0.25$ of $c^{\ast}(m)$ the boundary falls $1.9\%$, $4.8\%$ and
+paper/sections/02_model.tex:165	0.5	less: at $0.8$, $0.5$ and $0.25$ of $c^{\ast}(m)$ the boundary falls $1.9\%$, $4.8\%$ and
+paper/sections/02_model.tex:165	0.25	less: at $0.8$, $0.5$ and $0.25$ of $c^{\ast}(m)$ the boundary falls $1.9\%$, $4.8\%$ and
+paper/sections/02_model.tex:165	1.9	less: at $0.8$, $0.5$ and $0.25$ of $c^{\ast}(m)$ the boundary falls $1.9\%$, $4.8\%$ and
+paper/sections/02_model.tex:165	4.8	less: at $0.8$, $0.5$ and $0.25$ of $c^{\ast}(m)$ the boundary falls $1.9\%$, $4.8\%$ and
+paper/sections/02_model.tex:166	7.3	$7.3\%$ \emph{below} the reduced separatrix at the illustrative values, and halving the pool
+paper/sections/02_model.tex:167	0.5	costs between $0.5\%$ and $32\%$ across the sampled corners. There the reduced model calls
+paper/sections/02_model.tex:167	32	costs between $0.5\%$ and $32\%$ across the sampled corners. There the reduced model calls
+paper/sections/02_model.tex:200	0,0	\node[mpool] (m) at (0,0) {$m$\\[1pt]\scriptsize\mdseries accumulated\\metabolite};
+paper/sections/02_model.tex:201	3.6,0	\node[mlabel] (in) at (-3.6,0) {$s(t)$};
+paper/sections/02_model.tex:203	2.4,0.42	\node[msmall] at (-2.4,0.42) {load};
+paper/sections/02_model.tex:205	2.3	\node[menzy] (enz) at (-2.3,-2.7) {$\theta\, g(m)$\\{\scriptsize saturating}};
+paper/sections/02_model.tex:205	2.7	\node[menzy] (enz) at (-2.3,-2.7) {$\theta\, g(m)$\\{\scriptsize saturating}};
+paper/sections/02_model.tex:206	3.55	\channelglyph{(-3.55,-4.15)}{green!45!black}{s}
+paper/sections/02_model.tex:206	4.15	\channelglyph{(-3.55,-4.15)}{green!45!black}{s}
+paper/sections/02_model.tex:206	45	\channelglyph{(-3.55,-4.15)}{green!45!black}{s}
+paper/sections/02_model.tex:208	2.3	\node[malt] (alt) at (2.3,-2.7) {$k_e\, m$\\{\scriptsize linear}};
+paper/sections/02_model.tex:208	2.7	\node[malt] (alt) at (2.3,-2.7) {$k_e\, m$\\{\scriptsize linear}};
+paper/sections/02_model.tex:209	1.15	\channelglyph{(1.15,-4.15)}{blue!55!black}{l}
+paper/sections/02_model.tex:209	4.15	\channelglyph{(1.15,-4.15)}{blue!55!black}{l}
+paper/sections/02_model.tex:209	55	\channelglyph{(1.15,-4.15)}{blue!55!black}{l}
+paper/sections/02_model.tex:211	0	\draw[mar] (m.south) -- ++(0,-0.55) -| (enz.north);
+paper/sections/02_model.tex:211	0.55	\draw[mar] (m.south) -- ++(0,-0.55) -| (enz.north);
+paper/sections/02_model.tex:212	0	\draw[mar] (m.south) -- ++(0,-0.55) -| (alt.north);
+paper/sections/02_model.tex:212	0.55	\draw[mar] (m.south) -- ++(0,-0.55) -| (alt.north);
+paper/sections/02_model.tex:214	2.3	\node[msmall] (o1) at (-2.3,-5.0) {eliminated};
+paper/sections/02_model.tex:214	5.0	\node[msmall] (o1) at (-2.3,-5.0) {eliminated};
+paper/sections/02_model.tex:215	2.3	\node[msmall] (o2) at (2.3,-5.0) {eliminated};
+paper/sections/02_model.tex:215	5.0	\node[msmall] (o2) at (2.3,-5.0) {eliminated};
+paper/sections/02_model.tex:219	45	\node[mlabel, green!45!black] (thr) at (-6.6,-2.7) {therapy\\$\Delta(t)$};
+paper/sections/02_model.tex:219	6.6	\node[mlabel, green!45!black] (thr) at (-6.6,-2.7) {therapy\\$\Delta(t)$};
+paper/sections/02_model.tex:219	2.7	\node[mlabel, green!45!black] (thr) at (-6.6,-2.7) {therapy\\$\Delta(t)$};
+paper/sections/02_model.tex:220	45	\draw[mar, green!45!black] (thr) -- (enz);
+paper/sections/02_model.tex:221	55	\node[mlabel, blue!55!black] (carn) at (6.6,-2.7) {carnitine\\$u_c(t)$};
+paper/sections/02_model.tex:221	6.6	\node[mlabel, blue!55!black] (carn) at (6.6,-2.7) {carnitine\\$u_c(t)$};
+paper/sections/02_model.tex:221	2.7	\node[mlabel, blue!55!black] (carn) at (6.6,-2.7) {carnitine\\$u_c(t)$};
+paper/sections/02_model.tex:222	55	\draw[mar, blue!55!black] (carn) -- (alt);
+paper/sections/02_model.tex:254	374	illustrative constants that term is $374$ against the enzymatic term's $61$, so the
+paper/sections/02_model.tex:254	61	illustrative constants that term is $374$ against the enzymatic term's $61$, so the
+paper/sections/02_model.tex:276	1	\begin{adjustwidth}{-1.0cm}{-1.0cm}
+paper/sections/02_model.tex:276	1	\begin{adjustwidth}{-1.0cm}{-1.0cm}
+paper/sections/02_model.tex:296	3000	\emph{Capacity.} The identifiability results do not turn on $\theta = 3000$, but two
+paper/sections/02_model.tex:298	3000	it, the anchor attenuating at $3000$ and amplifying at the parent model's $300$, and by
+paper/sections/02_model.tex:298	300	it, the anchor attenuating at $3000$ and amplifying at the parent model's $300$, and by
+paper/sections/02_model.tex:302	5	is $\num{sd_monthly}$ at nominal capacity and $\num{sd_5pct}$ at the $5\%$ of nominal that
+paper/sections/02_model.tex:303	0.20	defines the disease, against a target of $0.20$. This is the row that says who the paper
+paper/sections/02_model.tex:308	5	Over $K_m$ from $5$ to $1000$~$\mu$M, $\operatorname{sd}(\ln\hat\theta)$ runs
+paper/sections/02_model.tex:308	1000	Over $K_m$ from $5$ to $1000$~$\mu$M, $\operatorname{sd}(\ln\hat\theta)$ runs
+paper/sections/02_model.tex:310	100	$K_m = \num{km_crossing}$ against the $100$ assumed, a factor of $\num{km_headroom}$ of
+paper/sections/02_model.tex:313	100	$\num{sd_monthly_hi}$ at $K_m = 100$ and $\num{km_crossing_sd_lo}$ to
+paper/sections/02_model.tex:332	3	Plasma 3-hydroxypropionate is used. It is the one marker with an endpoint association: a
+paper/sections/02_model.tex:333	50	$50\%$ lower concentration carries a decompensation rate ratio of $0.7$ ($95\%$ CI
+paper/sections/02_model.tex:333	0.7	$50\%$ lower concentration carries a decompensation rate ratio of $0.7$ ($95\%$ CI
+paper/sections/02_model.tex:333	95	$50\%$ lower concentration carries a decompensation rate ratio of $0.7$ ($95\%$ CI
+paper/sections/02_model.tex:334	0.6	$0.6$--$0.9$, $p<0.01$)~\cite{natural_history}, % C49
+paper/sections/02_model.tex:334	0.9	$0.6$--$0.9$, $p<0.01$)~\cite{natural_history}, % C49
+paper/sections/02_model.tex:334	0.01	$0.6$--$0.9$, $p<0.01$)~\cite{natural_history}, % C49
+paper/sections/02_model.tex:335	2	where 2-methylcitrate has none ($1.0$, $0.7$--$1.3$), and it is not a carnitine conjugate,
+paper/sections/02_model.tex:335	1.0	where 2-methylcitrate has none ($1.0$, $0.7$--$1.3$), and it is not a carnitine conjugate,
+paper/sections/02_model.tex:335	0.7	where 2-methylcitrate has none ($1.0$, $0.7$--$1.3$), and it is not a carnitine conjugate,
+paper/sections/02_model.tex:335	1.3	where 2-methylcitrate has none ($1.0$, $0.7$--$1.3$), and it is not a carnitine conjugate,
+paper/sections/02_model.tex:337	3	substrate. 3-HP is an overflow metabolite downstream of accumulated propionyl-CoA, and so
+paper/sections/02_model.tex:338	2	is 2-MC. Writing either as the $m$ of \eqref{eq:parent} assumes it tracks the substrate
+paper/sections/02_model.tex:347	10	stiff-capable solver (\texttt{LSODA} or \texttt{Radau}) at relative tolerance $10^{-8}$ or
+paper/sections/02_model.tex:347	8	stiff-capable solver (\texttt{LSODA} or \texttt{Radau}) at relative tolerance $10^{-8}$ or
+paper/sections/02_model.tex:350	10	One halves the integration step and asserts the answer does not move by more than $10^{-6}$
+paper/sections/02_model.tex:350	6	One halves the integration step and asserts the answer does not move by more than $10^{-6}$
+paper/sections/02_model.tex:369	24	at the call site, and each quoted precision is a median over $24$ intake records with its
+paper/sections/02_system.tex:11	3	$m$ & the plasma marker, 3-HP & $\bar m$ & the operating point, and the sample mean \\
+paper/sections/02_system.tex:20	1	$\varphi(m)$ & $K_m/(K_m+m) = 1-g(m)$ & $E$ & the excitation, $\varphi$'s drop across a
+paper/sections/02_system.tex:36	5	side/.style  = {box, fill=blue!5, draw=blue!35, text width=31mm},
+paper/sections/02_system.tex:36	35	side/.style  = {box, fill=blue!5, draw=blue!35, text width=31mm},
+paper/sections/02_system.tex:37	8	term/.style  = {box, fill=green!8, draw=green!45!black!50,
+paper/sections/02_system.tex:37	45	term/.style  = {box, fill=green!8, draw=green!45!black!50,
+paper/sections/02_system.tex:37	50	term/.style  = {box, fill=green!8, draw=green!45!black!50,
+paper/sections/02_system.tex:40	45	arw/.style   = {-{Stealth[length=2mm]}, thick, blue!45, dashed},
+paper/sections/02_system.tex:46	2	{Rem.~\ref{rem:fibre}, \eqref{eq:span}: $\theta$ open to $(C(\bar m)/a)^2$};
+paper/sections/02_system.tex:48	2	{\eqref{eq:mufibre}: the $K_m^2$ terms cancel, so the \emph{sign} survives};
+paper/sections/02_system.tex:103	0.085	\begin{tabular}{@{}p{0.085\textwidth} p{0.175\textwidth} p{0.135\textwidth} p{0.20\textwidth} p{0.30\textwidth}@{}}
+paper/sections/02_system.tex:103	0.175	\begin{tabular}{@{}p{0.085\textwidth} p{0.175\textwidth} p{0.135\textwidth} p{0.20\textwidth} p{0.30\textwidth}@{}}
+paper/sections/02_system.tex:103	0.135	\begin{tabular}{@{}p{0.085\textwidth} p{0.175\textwidth} p{0.135\textwidth} p{0.20\textwidth} p{0.30\textwidth}@{}}
+paper/sections/02_system.tex:103	0.20	\begin{tabular}{@{}p{0.085\textwidth} p{0.175\textwidth} p{0.135\textwidth} p{0.20\textwidth} p{0.30\textwidth}@{}}
+paper/sections/02_system.tex:103	0.30	\begin{tabular}{@{}p{0.085\textwidth} p{0.175\textwidth} p{0.135\textwidth} p{0.20\textwidth} p{0.30\textwidth}@{}}
+paper/sections/02_system.tex:107	3	$m(t)$ & plasma 3-hydroxypropionate, fixed in Section~\ref{sec:marker_orig} &
+paper/sections/02_system.tex:112	3	The algebra of Sections 3 and 4 does not depend on the choice; the decision does, and
+paper/sections/02_system.tex:112	4	The algebra of Sections 3 and 4 does not depend on the choice; the decision does, and
+paper/sections/02_system.tex:116	3	3-HP & 3-hydroxypropionate &
+paper/sections/02_system.tex:116	3	3-HP & 3-hydroxypropionate &
+paper/sections/02_system.tex:119	50	a $50\%$ lower 3-HP is associated with a decompensation rate ratio of $0.7$
+paper/sections/02_system.tex:119	3	a $50\%$ lower 3-HP is associated with a decompensation rate ratio of $0.7$
+paper/sections/02_system.tex:119	0.7	a $50\%$ lower 3-HP is associated with a decompensation rate ratio of $0.7$
+paper/sections/02_system.tex:120	0.01	($p<0.01$)~\cite{natural_history} % C19
+paper/sections/02_system.tex:126	50	a $50\%$ lower C3 gives a rate ratio of $0.6$ ($p=0.017$)~\cite{natural_history}, on its
+paper/sections/02_system.tex:126	0.6	a $50\%$ lower C3 gives a rate ratio of $0.6$ ($p=0.017$)~\cite{natural_history}, on its
+paper/sections/02_system.tex:126	0.017	a $50\%$ lower C3 gives a rate ratio of $0.6$ ($p=0.017$)~\cite{natural_history}, on its
+paper/sections/02_system.tex:130	2	2-MC & 2-methylcitrate &
+paper/sections/02_system.tex:130	2	2-MC & 2-methylcitrate &
+paper/sections/02_system.tex:133	1.0	rate ratio $1.0$ ($p=0.84$) for decompensation~\cite{natural_history}, yet among the
+paper/sections/02_system.tex:133	0.84	rate ratio $1.0$ ($p=0.84$) for decompensation~\cite{natural_history}, yet among the
+paper/sections/02_system.tex:176	1	biweekly, on the published phase 1/2 schedule, and the input the paper's identification
+paper/sections/02_system.tex:176	2	biweekly, on the published phase 1/2 schedule, and the input the paper's identification
+paper/sections/02_system.tex:178	46	and fixed carnitine gain, and with $K_m$ free the two channels differ by a factor of $46$
+paper/sections/02_system.tex:179	807	to $807$ in $\operatorname{sd}(\ln\hat\theta)$. Decay rate $\lambda$ possibly
+paper/sections/02_system.tex:212	1	\begin{adjustwidth}{-1.0cm}{-1.0cm}
+paper/sections/02_system.tex:212	1	\begin{adjustwidth}{-1.0cm}{-1.0cm}
+paper/sections/02_system.tex:213	0.035	\begin{tabular}{@{}p{0.035\textwidth} p{0.235\textwidth} p{0.175\textwidth} p{0.185\textwidth} p{0.145\textwidth} p{0.13\textwidth}@{}}
+paper/sections/02_system.tex:213	0.235	\begin{tabular}{@{}p{0.035\textwidth} p{0.235\textwidth} p{0.175\textwidth} p{0.185\textwidth} p{0.145\textwidth} p{0.13\textwidth}@{}}
+paper/sections/02_system.tex:213	0.175	\begin{tabular}{@{}p{0.035\textwidth} p{0.235\textwidth} p{0.175\textwidth} p{0.185\textwidth} p{0.145\textwidth} p{0.13\textwidth}@{}}
+paper/sections/02_system.tex:213	0.185	\begin{tabular}{@{}p{0.035\textwidth} p{0.235\textwidth} p{0.175\textwidth} p{0.185\textwidth} p{0.145\textwidth} p{0.13\textwidth}@{}}
+paper/sections/02_system.tex:213	0.145	\begin{tabular}{@{}p{0.035\textwidth} p{0.235\textwidth} p{0.175\textwidth} p{0.185\textwidth} p{0.145\textwidth} p{0.13\textwidth}@{}}
+paper/sections/02_system.tex:213	0.13	\begin{tabular}{@{}p{0.035\textwidth} p{0.235\textwidth} p{0.175\textwidth} p{0.185\textwidth} p{0.145\textwidth} p{0.13\textwidth}@{}}
+paper/sections/03_dynamic.tex:39	0	rate $R$. If conjugation is the only route out of the pool, $\dot c = 0$ fixes the
+paper/sections/03_dynamic.tex:59	1	\qquad \delta(m) = \delta_0\left(1 + \frac{m}{M_i}\right),
+paper/sections/03_dynamic.tex:69	3	$\theta g(m)$ is unchanged, with $\theta$ and $K_m$ carrying the meanings of Section~3.
+paper/sections/03_dynamic.tex:72	0	$\dot c = 0$ for $c$ and substituting gives a quasi-steady alternative flux
+paper/sections/03_dynamic.tex:75	1	\qquad u(m) = \frac{m}{K_c+m}, \quad \rho(m) = \rho_0\left(1 + \frac{m}{M_i}\right),
+paper/sections/03_dynamic.tex:78	0	with $\rho_0 = \delta_0/k$. It vanishes at $m = 0$ because $u$ does, rises while the
+paper/sections/03_dynamic.tex:86	0	the justification that replaces it: $\alpha$ is defined by solving $\dot c = 0$, and
+paper/sections/03_dynamic.tex:87	0	$\dot c = 0$ holds exactly at any fixed point, so at equilibrium the reduced and two-state
+paper/sections/03_dynamic.tex:95	300	value and its source, $M_i = 300$ among them. A constant a figure depends on and the text
+paper/sections/03_dynamic.tex:99	500	One constraint fixes $R_0$ outright. It is set so the alternative route alone peaks at $500$
+paper/sections/03_dynamic.tex:100	600	against a baseline load of $600$, so that a patient with $\theta = 0$ cannot be maintained,
+paper/sections/03_dynamic.tex:100	0	against a baseline load of $600$, so that a patient with $\theta = 0$ cannot be maintained,
+paper/sections/03_dynamic.tex:111	0.5	non-conjugative loss, and nothing measures it; $\rho_0 = 0.5$ sits inside a window the next
+paper/sections/03_dynamic.tex:117	1	so the fraction rises as $1 + m/M_i$ while the load falls with the plasma level. Free
+paper/sections/03_dynamic.tex:118	5.7	carnitine of $5.7$~$\mu$M against a normal $37 \pm 8$~\cite{carnitine_pa_child} % C25
+paper/sections/03_dynamic.tex:118	37	carnitine of $5.7$~$\mu$M against a normal $37 \pm 8$~\cite{carnitine_pa_child} % C25
+paper/sections/03_dynamic.tex:118	8	carnitine of $5.7$~$\mu$M against a normal $37 \pm 8$~\cite{carnitine_pa_child} % C25
+paper/sections/03_dynamic.tex:119	6.5	makes the load $6.5$ times lower, and at the attractor the fraction rises only $1.3$-fold,
+paper/sections/03_dynamic.tex:119	1.3	makes the load $6.5$ times lower, and at the attractor the fraction rises only $1.3$-fold,
+paper/sections/03_dynamic.tex:122	1	The prediction fails once $1 + m/M_i$ exceeds $37/5.7$, that is above
+paper/sections/03_dynamic.tex:122	37	The prediction fails once $1 + m/M_i$ exceeds $37/5.7$, that is above
+paper/sections/03_dynamic.tex:122	5.7	The prediction fails once $1 + m/M_i$ exceeds $37/5.7$, that is above
+paper/sections/03_dynamic.tex:123	5.5	$m \approx 5.5\,M_i = 1650$, some $1.6$ times the separatrix. This paragraph is the
+paper/sections/03_dynamic.tex:123	1650	$m \approx 5.5\,M_i = 1650$, some $1.6$ times the separatrix. This paragraph is the
+paper/sections/03_dynamic.tex:123	1.6	$m \approx 5.5\,M_i = 1650$, some $1.6$ times the separatrix. This paragraph is the
+paper/sections/03_dynamic.tex:128	0.20	$\rho_0$ below $0.20$, where the separatrix moves far enough out to reverse the sign. Holding
+paper/sections/03_dynamic.tex:129	0.35	$R_0$ while moving $\rho_0$ gives $0.35$ instead, but that sweep breaks the calibration
+paper/sections/03_dynamic.tex:137	0,0	\node[mpool] (m) at (0,0) {$m$\\[1pt]\scriptsize\mdseries accumulated\\metabolite};
+paper/sections/03_dynamic.tex:138	3.6,0	\node[mlabel] (in) at (-3.6,0) {$s(t)$};
+paper/sections/03_dynamic.tex:140	2.4,0.42	\node[msmall] at (-2.4,0.42) {load};
+paper/sections/03_dynamic.tex:142	5.6,0	\node[mpool] (c) at (5.6,0) {$c$\\[1pt]\scriptsize\mdseries available\\carnitine};
+paper/sections/03_dynamic.tex:143	9.6,0	\node[mlabel] (rep) at (9.6,0) {$R_0$};
+paper/sections/03_dynamic.tex:145	8.0,0.42	\node[msmall] at (8.0,0.42) {replenishment};
+paper/sections/03_dynamic.tex:147	2.3	\node[menzy] (enz) at (-2.3,-2.7) {$\theta\, g(m)$\\{\scriptsize saturating}};
+paper/sections/03_dynamic.tex:147	2.7	\node[menzy] (enz) at (-2.3,-2.7) {$\theta\, g(m)$\\{\scriptsize saturating}};
+paper/sections/03_dynamic.tex:148	3.55	\channelglyph{(-3.55,-4.15)}{green!45!black}{s}
+paper/sections/03_dynamic.tex:148	4.15	\channelglyph{(-3.55,-4.15)}{green!45!black}{s}
+paper/sections/03_dynamic.tex:148	45	\channelglyph{(-3.55,-4.15)}{green!45!black}{s}
+paper/sections/03_dynamic.tex:149	0	\draw[mar] (m.south) -- ++(0,-0.85) -| (enz.north);
+paper/sections/03_dynamic.tex:149	0.85	\draw[mar] (m.south) -- ++(0,-0.85) -| (enz.north);
+paper/sections/03_dynamic.tex:150	2.3	\node[msmall] (o1) at (-2.3,-5.0) {eliminated};
+paper/sections/03_dynamic.tex:150	5.0	\node[msmall] (o1) at (-2.3,-5.0) {eliminated};
+paper/sections/03_dynamic.tex:153	2.5	\node[malt] (kcm) at (2.5,-2.7) {$k\, c\, m/(K_c+m)$\\[1pt]\scriptsize\mdseries consumes one $c$\\per $m$ removed};
+paper/sections/03_dynamic.tex:153	2.7	\node[malt] (kcm) at (2.5,-2.7) {$k\, c\, m/(K_c+m)$\\[1pt]\scriptsize\mdseries consumes one $c$\\per $m$ removed};
+paper/sections/03_dynamic.tex:154	1.15	\channelglyph{(1.15,-4.15)}{blue!55!black}{n}
+paper/sections/03_dynamic.tex:154	4.15	\channelglyph{(1.15,-4.15)}{blue!55!black}{n}
+paper/sections/03_dynamic.tex:154	55	\channelglyph{(1.15,-4.15)}{blue!55!black}{n}
+paper/sections/03_dynamic.tex:155	55	\draw[mar, blue!55!black] (m.south east).. controls +(0.7,-0.9).. (kcm.north west);
+paper/sections/03_dynamic.tex:155	0.7	\draw[mar, blue!55!black] (m.south east).. controls +(0.7,-0.9).. (kcm.north west);
+paper/sections/03_dynamic.tex:155	0.9	\draw[mar, blue!55!black] (m.south east).. controls +(0.7,-0.9).. (kcm.north west);
+paper/sections/03_dynamic.tex:156	55	\draw[mar, blue!55!black] (c.south west).. controls +(-0.7,-0.9).. (kcm.north east);
+paper/sections/03_dynamic.tex:156	0.7	\draw[mar, blue!55!black] (c.south west).. controls +(-0.7,-0.9).. (kcm.north east);
+paper/sections/03_dynamic.tex:156	0.9	\draw[mar, blue!55!black] (c.south west).. controls +(-0.7,-0.9).. (kcm.north east);
+paper/sections/03_dynamic.tex:157	2.5	\node[msmall] (o2) at (2.5,-5.1) {eliminated together,\\as propionylcarnitine};
+paper/sections/03_dynamic.tex:157	5.1	\node[msmall] (o2) at (2.5,-5.1) {eliminated together,\\as propionylcarnitine};
+paper/sections/03_dynamic.tex:160	6.9	\node[malt] (dc) at (6.9,-2.7) {$\delta(m)\, c$\\[1pt]\scriptsize\mdseries not recovered\\from the filtrate};
+paper/sections/03_dynamic.tex:160	2.7	\node[malt] (dc) at (6.9,-2.7) {$\delta(m)\, c$\\[1pt]\scriptsize\mdseries not recovered\\from the filtrate};
+paper/sections/03_dynamic.tex:161	55	\draw[mar, blue!55!black] (c.south east).. controls +(0.6,-0.9).. (dc.north);
+paper/sections/03_dynamic.tex:161	0.6	\draw[mar, blue!55!black] (c.south east).. controls +(0.6,-0.9).. (dc.north);
+paper/sections/03_dynamic.tex:161	0.9	\draw[mar, blue!55!black] (c.south east).. controls +(0.6,-0.9).. (dc.north);
+paper/sections/03_dynamic.tex:162	6.9	\node[msmall] (o3) at (6.9,-5.1) {lost in urine};
+paper/sections/03_dynamic.tex:162	5.1	\node[msmall] (o3) at (6.9,-5.1) {lost in urine};
+paper/sections/03_dynamic.tex:165	60	\draw[red!60!black, thick, -{Bar[width=2.4mm]}]
+paper/sections/03_dynamic.tex:165	2	\draw[red!60!black, thick, -{Bar[width=2.4mm]}]
+paper/sections/03_dynamic.tex:166	0,1.45	(m.north) -- ++(0,1.45) coordinate (fbtop) -| (10.35,-2.7) -- (dc.east);
+paper/sections/03_dynamic.tex:166	10.35	(m.north) -- ++(0,1.45) coordinate (fbtop) -| (10.35,-2.7) -- (dc.east);
+paper/sections/03_dynamic.tex:166	2.7	(m.north) -- ++(0,1.45) coordinate (fbtop) -| (10.35,-2.7) -- (dc.east);
+paper/sections/03_dynamic.tex:167	60	\node[msmall, red!60!black, fill=white, inner sep=3pt]
+paper/sections/03_dynamic.tex:168	5.0,0	at ([shift={(5.0,0)}]fbtop)
+paper/sections/03_dynamic.tex:208	0	The unstable equilibrium is a \emph{separatrix}. Beyond it, $\dot m > 0$ even at baseline
+paper/sections/03_dynamic.tex:237	3927	pharmacodynamic models of mRNA-3927 are indirect-response models in which the dose drives a
+paper/sections/03_dynamic.tex:264	1	$-(1 + \Delta(t)/\theta)\,\varphi(m)$ is modulated by $\Delta(t)$, and the dose train
+paper/sections/03_dynamic.tex:281	1	\begin{description}[leftmargin=1.6em, itemsep=3pt]
+paper/sections/03_dynamic.tex:283	0	\eqref{eq:C} behind it. Verified: solving $\dot c = 0$ and substituting returns
+paper/sections/03_dynamic.tex:285	0	\item[The equilibrium reduction.] Setting $\dot m = 0$ gives $L = \theta g(m) + \alpha(m)$,
+paper/sections/03_dynamic.tex:289	0	digits, but that agreement is $\dot c = 0$ holding at a fixed point and cannot fail at any
+paper/sections/03_dynamic.tex:294	10	with $c$ left at its pre-perturbation value the basin runs $10\%$ to $18\%$ past the reduced
+paper/sections/03_dynamic.tex:294	18	with $c$ left at its pre-perturbation value the basin runs $10\%$ to $18\%$ past the reduced
+paper/sections/03_dynamic.tex:295	50	separatrix at the sampled corners, and up to $50\%$ at the extremes of the shape constants.
+paper/sections/03_dynamic.tex:308	2	a \;=\; \theta\, g(\bar m)^2 \;+\; \bigl[\alpha(\bar m) - \bar m\,\alpha'(\bar m)\bigr],
+paper/sections/03_dynamic.tex:311	2	so the local model's identity $a = \theta g(\bar m)^2$ holds \emph{only} when the second
+paper/sections/03_dynamic.tex:313	374	origin. At the illustrative constants the bracket is $374$ against the enzymatic term's
+paper/sections/03_dynamic.tex:314	61	$61$: the alternative channel owns six-sevenths of the intercept, which is the term
+paper/sections/03_dynamic.tex:329	100	two-sided bound: fitting $(a,b)$ excludes all but roughly $K_c \in [100, 300]$, and inside
+paper/sections/03_dynamic.tex:329	300	two-sided bound: fitting $(a,b)$ excludes all but roughly $K_c \in [100, 300]$, and inside
+paper/sections/03_dynamic.tex:330	1.41	that window the recovered $\theta$ moves by a factor of $1.41$.
+paper/sections/03_dynamic.tex:352	1.1	condition number rises from $1.1\times10^{5}$ to $4.8\times10^{7}$, a factor of about
+paper/sections/03_dynamic.tex:352	5	condition number rises from $1.1\times10^{5}$ to $4.8\times10^{7}$, a factor of about
+paper/sections/03_dynamic.tex:352	4.8	condition number rises from $1.1\times10^{5}$ to $4.8\times10^{7}$, a factor of about
+paper/sections/03_dynamic.tex:352	7	condition number rises from $1.1\times10^{5}$ to $4.8\times10^{7}$, a factor of about
+paper/sections/03_dynamic.tex:353	450	$450$. That is the \emph{local} price and it is the one this remark originally quoted.
+paper/sections/03_dynamic.tex:390	0	\max_{m > 0}\, C(m;\theta) \;=\; s.
+paper/sections/03_dynamic.tex:407	0	intersection and $\dot m = s - C > 0$ everywhere. At equality the two intersections
+paper/sections/03_dynamic.tex:408	0	coincide at the maximum, where $C' = 0$, which is the saddle-node condition.
+paper/sections/03_dynamic.tex:433	0	$\thc^{\,\mathrm{int}}(s) > 0$ if and only if $\max_m \alpha(m) < s$. The fold exists only
+paper/sections/03_dynamic.tex:439	500	This is what fixes $R_0$. At the illustrative constants the alternative route peaks at $500$
+paper/sections/03_dynamic.tex:440	600	against a baseline load of $600$, giving $\thc^{\,\mathrm{int}} = 151$; raising $R_0$ far
+paper/sections/03_dynamic.tex:440	151	against a baseline load of $600$, giving $\thc^{\,\mathrm{int}} = 151$; raising $R_0$ far
+paper/sections/03_dynamic.tex:441	600	enough to lift that peak past $600$ would make null genotypes maintainable, which the
+paper/sections/03_dynamic.tex:450	300	which at $\theta = 300$ is $706$ against a baseline of $600$. An excursion of
+paper/sections/03_dynamic.tex:450	706	which at $\theta = 300$ is $706$ against a baseline of $600$. An excursion of
+paper/sections/03_dynamic.tex:450	600	which at $\theta = 300$ is $706$ against a baseline of $600$. An excursion of
+paper/sections/03_dynamic.tex:451	18	$18\%$ in the load is the smallest that strands a patient, and the illnesses drawn in
+paper/sections/03_dynamic.tex:452	42	Figures~\ref{fig:C1} and \ref{fig:C2} are $42\%$ and $50\%$ above baseline, clearing it by
+paper/sections/03_dynamic.tex:452	50	Figures~\ref{fig:C1} and \ref{fig:C2} are $42\%$ and $50\%$ above baseline, clearing it by
+paper/sections/03_dynamic.tex:453	2.4	factors of $2.4$ and $2.8$. The margin of Figure~\ref{fig:C5} is measured in metabolite and
+paper/sections/03_dynamic.tex:453	2.8	factors of $2.4$ and $2.8$. The margin of Figure~\ref{fig:C5} is measured in metabolite and
+paper/sections/03_dynamic.tex:472	1.37	$\thc^{\,\mathrm{int}}$ by a factor of $1.37$ against $K_c$'s $1.56$ over thirty-two-fold,
+paper/sections/03_dynamic.tex:472	1.56	$\thc^{\,\mathrm{int}}$ by a factor of $1.37$ against $K_c$'s $1.56$ over thirty-two-fold,
+paper/sections/03_dynamic.tex:473	1.6	and $\rho_0$ across its whole admissible window moves it by $1.6\%$. Sweeping the three
+paper/sections/03_dynamic.tex:474	1.4	together over those ranges leaves $\thc^{\,\mathrm{int}}$ inside a factor of $1.4$.
+paper/sections/03_dynamic.tex:489	509	eight-fold range it runs from $509$ to $3275$. Figure~\ref{fig:C5} now draws that
+paper/sections/03_dynamic.tex:489	3275	eight-fold range it runs from $509$ to $3275$. Figure~\ref{fig:C5} now draws that
+paper/sections/03_dynamic.tex:490	954	range as a band rather than quoting the nominal $954$ as a curve, so the figure carries its
+paper/sections/03_dynamic.tex:513	7	the deterministic crossing into a hazard. That is the reformulation set out in Section~7,
+paper/sections/03_dynamic.tex:538	38.9	it: the median falls from $38.9$ to $22.0$~$\mu$M between samples drawn outside a
+paper/sections/03_dynamic.tex:538	22.0	it: the median falls from $38.9$ to $22.0$~$\mu$M between samples drawn outside a
+paper/sections/03_dynamic.tex:539	0.0370	decompensation and during one, $P = 0.0370$~\cite{amd_phenotyping}. % C38
+paper/sections/04_local.tex:18	1	\begin{description}[leftmargin=1.4em, itemsep=1pt]
+paper/sections/04_local.tex:27	0,1	\item[$g(m)$] the \emph{Michaelis-Menten saturation function}, $g \in [0,1)$.
+paper/sections/04_local.tex:51	3	\paragraph{The marker is 3-hydroxypropionate.}
+paper/sections/04_local.tex:53	3	Earlier drafts left $m$ as ``the plasma marker'' on the grounds that nothing in Sections 3
+paper/sections/04_local.tex:54	4	and 4 depends on the choice. That is true of the algebra and false of the decision the paper
+paper/sections/04_local.tex:59	50	The endpoint. Over a three-year natural history cohort, a $50\%$ \emph{lower}
+paper/sections/04_local.tex:60	3	plasma 3-HP is associated with a decompensation rate ratio of $0.7$ (95\% CI $0.6$ to $0.9$,
+paper/sections/04_local.tex:60	0.7	plasma 3-HP is associated with a decompensation rate ratio of $0.7$ (95\% CI $0.6$ to $0.9$,
+paper/sections/04_local.tex:60	95	plasma 3-HP is associated with a decompensation rate ratio of $0.7$ (95\% CI $0.6$ to $0.9$,
+paper/sections/04_local.tex:60	0.6	plasma 3-HP is associated with a decompensation rate ratio of $0.7$ (95\% CI $0.6$ to $0.9$,
+paper/sections/04_local.tex:60	0.9	plasma 3-HP is associated with a decompensation rate ratio of $0.7$ (95\% CI $0.6$ to $0.9$,
+paper/sections/04_local.tex:61	0.01	$p<0.01$); a $50\%$ lower C3 with $0.6$ ($p=0.017$); and 2-methylcitrate shows no
+paper/sections/04_local.tex:61	50	$p<0.01$); a $50\%$ lower C3 with $0.6$ ($p=0.017$); and 2-methylcitrate shows no
+paper/sections/04_local.tex:61	0.6	$p<0.01$); a $50\%$ lower C3 with $0.6$ ($p=0.017$); and 2-methylcitrate shows no
+paper/sections/04_local.tex:61	0.017	$p<0.01$); a $50\%$ lower C3 with $0.6$ ($p=0.017$); and 2-methylcitrate shows no
+paper/sections/04_local.tex:61	2	$p<0.01$); a $50\%$ lower C3 with $0.6$ ($p=0.017$); and 2-methylcitrate shows no
+paper/sections/04_local.tex:62	1.0	association at all, rate ratio $1.0$, $p=0.84$~\cite{natural_history}. % C19
+paper/sections/04_local.tex:62	0.84	association at all, rate ratio $1.0$, $p=0.84$~\cite{natural_history}. % C19
+paper/sections/04_local.tex:65	3	below one means \emph{fewer events when the marker is lower}: 3-HP is a risk marker in the
+paper/sections/04_local.tex:81	2	2-MC is excluded on the endpoint, and its strength lies in the arm this paper
+paper/sections/04_local.tex:82	2	excludes. 2-MC is among the strongest correlates of plasma ammonia \emph{during} an
+paper/sections/04_local.tex:88	3	3-HP carries C3's immunity without its defect. It is not a carnitine conjugate, so
+paper/sections/04_local.tex:90	2	2-MC lacks; and it is the covariate the natural history study's own longitudinal hazard is
+paper/sections/04_local.tex:92	7	so the reformulation in Section~7 substitutes into machinery that exists rather than
+paper/sections/04_local.tex:97	3	The trial measures four markers together, 3-HP, 2-MC, C3 and
+paper/sections/04_local.tex:97	2	The trial measures four markers together, 3-HP, 2-MC, C3 and
+paper/sections/04_local.tex:104	1	on each, the assay contribution to $\sigma$ averages down as $J^{-1/2}$. The error in the
+paper/sections/04_local.tex:104	2	on each, the assay contribution to $\sigma$ averages down as $J^{-1/2}$. The error in the
+paper/sections/04_local.tex:108	2	pays nothing where it is not. At a load recorded to $2\%$ a four-marker panel cuts $\sigma$
+paper/sections/04_local.tex:109	1.65	by $1.65$; at $10\%$ it cuts it by $1.07$ and at $20\%$ by $1.02$.
+paper/sections/04_local.tex:109	10	by $1.65$; at $10\%$ it cuts it by $1.07$ and at $20\%$ by $1.02$.
+paper/sections/04_local.tex:109	1.07	by $1.65$; at $10\%$ it cuts it by $1.07$ and at $20\%$ by $1.02$.
+paper/sections/04_local.tex:109	20	by $1.65$; at $10\%$ it cuts it by $1.07$ and at $20\%$ by $1.02$.
+paper/sections/04_local.tex:109	1.02	by $1.65$; at $10\%$ it cuts it by $1.07$ and at $20\%$ by $1.02$.
+paper/sections/04_local.tex:115	3	is 3-HP and $n$-propionylglycine, a glycine conjugate that carnitine does not raise, with
+paper/sections/04_local.tex:116	2	$J = 2$ and a factor of $1.31$ at a load recorded to $2\%$, falling to $1.05$ at $10\%$.
+paper/sections/04_local.tex:116	1.31	$J = 2$ and a factor of $1.31$ at a load recorded to $2\%$, falling to $1.05$ at $10\%$.
+paper/sections/04_local.tex:116	2	$J = 2$ and a factor of $1.31$ at a load recorded to $2\%$, falling to $1.05$ at $10\%$.
+paper/sections/04_local.tex:116	1.05	$J = 2$ and a factor of $1.31$ at a load recorded to $2\%$, falling to $1.05$ at $10\%$.
+paper/sections/04_local.tex:116	10	$J = 2$ and a factor of $1.31$ at a load recorded to $2\%$, falling to $1.05$ at $10\%$.
+paper/sections/04_local.tex:133	0	they carry a constraint. The metabolite cannot be negative, so $m_{\min} \ge 0$ and
+paper/sections/04_local.tex:135	2	\frac{\Delta}{\bar m} \;\le\; 2.
+paper/sections/04_local.tex:139	200	as band widths above $200\%$ of $\bar m$ describe an interval whose foot is below zero, and
+paper/sections/04_local.tex:143	0.09	least-squares fit over the band is $0.09\%$ at $\Delta/\bar m = 10\%$ and $8.8\%$ at
+paper/sections/04_local.tex:143	10	least-squares fit over the band is $0.09\%$ at $\Delta/\bar m = 10\%$ and $8.8\%$ at
+paper/sections/04_local.tex:143	8.8	least-squares fit over the band is $0.09\%$ at $\Delta/\bar m = 10\%$ and $8.8\%$ at
+paper/sections/04_local.tex:144	100	$\Delta/\bar m = 100\%$, where the latter means $m \in [\bar m/2,\, 3\bar m/2]$. Read as a
+paper/sections/04_local.tex:144	2	$\Delta/\bar m = 100\%$, where the latter means $m \in [\bar m/2,\, 3\bar m/2]$. Read as a
+paper/sections/04_local.tex:144	3	$\Delta/\bar m = 100\%$, where the latter means $m \in [\bar m/2,\, 3\bar m/2]$. Read as a
+paper/sections/04_local.tex:144	2	$\Delta/\bar m = 100\%$, where the latter means $m \in [\bar m/2,\, 3\bar m/2]$. Read as a
+paper/sections/04_local.tex:145	0	half-width the same phrase would mean $m \in [0,\, 2\bar m]$ and the gap would be $35.4\%$,
+paper/sections/04_local.tex:145	2	half-width the same phrase would mean $m \in [0,\, 2\bar m]$ and the gap would be $35.4\%$,
+paper/sections/04_local.tex:145	35.4	half-width the same phrase would mean $m \in [0,\, 2\bar m]$ and the gap would be $35.4\%$,
+paper/sections/04_local.tex:163	2	a \;=\; \theta\,\bigl(g(\bar m) - \bar m\, g'(\bar m)\bigr) \;=\; \theta\, g(\bar m)^2,
+paper/sections/04_local.tex:181	2	\theta(K_m) = \frac{a\,(K_m+\bar m)^2}{\bar m^{2}},
+paper/sections/04_local.tex:181	2	\theta(K_m) = \frac{a\,(K_m+\bar m)^2}{\bar m^{2}},
+paper/sections/04_local.tex:183	2	k_e(K_m) = b - \frac{a\,K_m}{\bar m^{2}},
+paper/sections/04_local.tex:184	0	\qquad 0 < K_m \le \frac{b\,\bar m^{2}}{a},
+paper/sections/04_local.tex:184	2	\qquad 0 < K_m \le \frac{b\,\bar m^{2}}{a},
+paper/sections/04_local.tex:192	0	\frac{\theta(K_{\max})}{\theta(0^+)}
+paper/sections/04_local.tex:193	1	\;=\; \left(1 + \frac{b\,\bar m}{a}\right)^{\!2}
+paper/sections/04_local.tex:193	2	\;=\; \left(1 + \frac{b\,\bar m}{a}\right)^{\!2}
+paper/sections/04_local.tex:194	2	\;=\; \left(\frac{C(\bar m)}{a}\right)^{\!2},
+paper/sections/04_local.tex:204	322.7	At the illustrative values this is $(322.7/24.79)^2 = 169$, which is the factor this paper
+paper/sections/04_local.tex:204	24.79	At the illustrative values this is $(322.7/24.79)^2 = 169$, which is the factor this paper
+paper/sections/04_local.tex:204	2	At the illustrative values this is $(322.7/24.79)^2 = 169$, which is the factor this paper
+paper/sections/04_local.tex:204	169	At the illustrative values this is $(322.7/24.79)^2 = 169$, which is the factor this paper
+paper/sections/04_local.tex:208	3	$g(\bar m)$, so it is a statement about $\theta$ \emph{given} $K_m$. Nothing in Section~3
+paper/sections/04_local.tex:216	2	Proposition~\ref{prop:anchor}, then $K_m = (b - k_e)\bar m^{2}/a$ and $\theta$ follows from
+paper/sections/04_local.tex:229	0	\bar m\, k_e = 0$ to the second of these, since a line through the origin has no intercept,
+paper/sections/04_local.tex:230	2	which leaves \eqref{eq:intercept}; the identity $g(\bar m) - \bar m g'(\bar m) = g(\bar m)^2$
+paper/sections/04_local.tex:239	0	Remark~\ref{rem:fibre}. It is the value the fitted line takes when extrapolated back to $m = 0$, and
+paper/sections/04_local.tex:243	2	\operatorname{Var}(\hat a) \;=\; \sigma^2\!\left[\frac{1}{n} +
+paper/sections/04_local.tex:243	1	\operatorname{Var}(\hat a) \;=\; \sigma^2\!\left[\frac{1}{n} +
+paper/sections/04_local.tex:244	2	\frac{\bar m^2}{\sum_i (m_i - \bar m)^2}\right],
+paper/sections/04_local.tex:244	2	\frac{\bar m^2}{\sum_i (m_i - \bar m)^2}\right],
+paper/sections/04_local.tex:246	2	\operatorname{Var}(\hat b) \;=\; \frac{\sigma^2}{\sum_i (m_i - \bar m)^2}.
+paper/sections/04_local.tex:246	2	\operatorname{Var}(\hat b) \;=\; \frac{\sigma^2}{\sum_i (m_i - \bar m)^2}.
+paper/sections/04_local.tex:249	2	Both scale as the reciprocal of $\sum_i (m_i - \bar m)^2$, and their ratio tends to
+paper/sections/04_local.tex:250	2	$\bar m^2$ as the band narrows, so the two variances carry different units and are not
+paper/sections/04_local.tex:252	2	$\hat\theta = \hat a / g(\bar m)^2$. Writing $\Delta$ for the width of the band and taking
+paper/sections/04_local.tex:253	2	the $n$ samples spread across it, $\sum_i (m_i - \bar m)^2 \approx n\Delta^2/12$, and for
+paper/sections/04_local.tex:253	2	the $n$ samples spread across it, $\sum_i (m_i - \bar m)^2 \approx n\Delta^2/12$, and for
+paper/sections/04_local.tex:253	12	the $n$ samples spread across it, $\sum_i (m_i - \bar m)^2 \approx n\Delta^2/12$, and for
+paper/sections/04_local.tex:257	12	\frac{\sigma}{\theta}\;\sqrt{\frac{12}{n}}\;\frac{\bar m}{\Delta}\;g(\bar m)^{-2}.
+paper/sections/04_local.tex:257	2	\frac{\sigma}{\theta}\;\sqrt{\frac{12}{n}}\;\frac{\bar m}{\Delta}\;g(\bar m)^{-2}.
+paper/sections/04_local.tex:261	1	$n^{-1/2}$, the extrapolation from the band back to the origin as $\bar m/\Delta$, and the
+paper/sections/04_local.tex:261	2	$n^{-1/2}$, the extrapolation from the band back to the origin as $\bar m/\Delta$, and the
+paper/sections/04_local.tex:262	2	patient's position on the saturation curve as $g(\bar m)^{-2}$. The last two are the two
+paper/sections/04_local.tex:263	2	factors of the determinant $\det M = g(\bar m)^2 (m' - m)$ of
+paper/sections/04_local.tex:268	2	$\sum_i (m_i - \bar m)^2 \approx n\Delta^2/12$, and they are not substitutes. At a fixed
+paper/sections/04_local.tex:268	2	$\sum_i (m_i - \bar m)^2 \approx n\Delta^2/12$, and they are not substitutes. At a fixed
+paper/sections/04_local.tex:268	12	$\sum_i (m_i - \bar m)^2 \approx n\Delta^2/12$, and they are not substitutes. At a fixed
+paper/sections/04_local.tex:271	2	$2$, and doubling it again buys another. Adding visits inside a fixed band does not widen
+paper/sections/04_local.tex:310	0.29	intracellular mitochondrial propionyl-CoA, reported as $0.29$ mM in purified human liver
+paper/sections/04_local.tex:335	1	\begin{description}[leftmargin=1.4em, itemsep=2pt]
+paper/sections/04_local.tex:350	1	\;+\; \underbrace{D \sum_i e^{-\lambda (t - t_i)} \mathbf{1}_{\{t \ge t_i\}}}_{\text{known: } \Delta(t)}.
+paper/sections/04_local.tex:354	1	it. \emph{Superseded.} It is administered, on the published phase 1/2 biweekly schedule,
+paper/sections/04_local.tex:354	2	it. \emph{Superseded.} It is administered, on the published phase 1/2 biweekly schedule,
+paper/sections/04_local.tex:405	2	$2 \times 2$ system for $(\theta, k_e)$ has the coefficient matrix $M$ of
+paper/sections/04_local.tex:405	2	$2 \times 2$ system for $(\theta, k_e)$ has the coefficient matrix $M$ of
+paper/sections/04_local.tex:422	5	\emph{same} trajectory, the $(\theta, k_e)$ sub-Gramians differ by at most $5\%$ in
+paper/sections/04_local.tex:423	2.3	determinant and $2.3\%$ in $\operatorname{sd}(\ln\hat\theta)$, over excursions from $5\%$ to
+paper/sections/04_local.tex:423	5	determinant and $2.3\%$ in $\operatorname{sd}(\ln\hat\theta)$, over excursions from $5\%$ to
+paper/sections/04_local.tex:424	76	$76\%$. The mechanism is exact rather than numerical. The two sensitivity forcings,
+paper/sections/04_local.tex:429	0	J_{\Delta}(t) - J_{u_c}(t) \;=\; -\,\kappa u_c(t)\, g(m(t)) \;\le\; 0.
+paper/sections/04_local.tex:440	46	by a factor of $46$ to $807$ in $\operatorname{sd}(\ln\hat\theta)$. (That is carnitine
+paper/sections/04_local.tex:440	807	by a factor of $46$ to $807$ in $\operatorname{sd}(\ln\hat\theta)$. (That is carnitine
+paper/sections/04_local.tex:447	1	forcing to the $\theta$ forcing is $-(1 + \Delta(t)/\theta)\,K_m/(K_m + m)$: the therapy
+paper/sections/04_local.tex:449	0.1	$\bar m/K_m = 0.1$ the two sensitivities are collinear to $|\!\cos| = 0.99994$ under
+paper/sections/04_local.tex:449	0.99994	$\bar m/K_m = 0.1$ the two sensitivities are collinear to $|\!\cos| = 0.99994$ under
+paper/sections/04_local.tex:450	0.967	carnitine and $0.967$ under the therapy.
+paper/sections/04_local.tex:456	0.1	$m/K_m = 0.1$ to $m/K_m = 2$ drops the collinearity to $0.982$ and raises $\det G$ by
+paper/sections/04_local.tex:456	2	$m/K_m = 0.1$ to $m/K_m = 2$ drops the collinearity to $0.982$ and raises $\det G$ by
+paper/sections/04_local.tex:456	0.982	$m/K_m = 0.1$ to $m/K_m = 2$ drops the collinearity to $0.982$ and raises $\det G$ by
+paper/sections/04_local.tex:477	2	\det M \;\approx\; g(\bar m)^2\,(m' - m),
+paper/sections/04_local.tex:481	2	$g(\bar m)^2 = a/\theta$: the two propositions are about the same object, one fitted to the
+paper/sections/04_local.tex:485	8	The approximation in \eqref{eq:detgamma} is not free. At $m = 8$ and $m' = 14$ with
+paper/sections/04_local.tex:485	14	The approximation in \eqref{eq:detgamma} is not free. At $m = 8$ and $m' = 14$ with
+paper/sections/04_local.tex:486	100	$K_m = 100$, a $55\%$ excursion, it overstates \eqref{eq:detexact} by $8\%$, so the
+paper/sections/04_local.tex:486	55	$K_m = 100$, a $55\%$ excursion, it overstates \eqref{eq:detexact} by $8\%$, so the
+paper/sections/04_local.tex:486	8	$K_m = 100$, a $55\%$ excursion, it overstates \eqref{eq:detexact} by $8\%$, so the
+paper/sections/04_local.tex:513	1	Proposition~\ref{prop:channel} in numbers, and both stay near $1\%$, which is well under
+paper/sections/04_local.tex:524	1	cannot move the first factor of $-(1 + \Delta(t)/\theta)\,\varphi(m)$ at all, and on the
+paper/sections/04_local.tex:525	0.170	footing that gives the dose train $\operatorname{sd}(\ln\hat\theta) = 0.170$, adding
+paper/sections/04_local.tex:526	1.91	recorded carnitine steps gives $1.91$ to $2.02$, \emph{worse} than leaving them out
+paper/sections/04_local.tex:526	2.02	recorded carnitine steps gives $1.91$ to $2.02$, \emph{worse} than leaving them out
+paper/sections/04_local.tex:583	2	\theta(K_m) = \frac{a\,(K_m + \bar m)^2}{\bar m^{2}},
+paper/sections/04_local.tex:583	2	\theta(K_m) = \frac{a\,(K_m + \bar m)^2}{\bar m^{2}},
+paper/sections/04_local.tex:585	2	k_e(K_m) = b - \frac{a\,K_m}{\bar m^{2}},
+paper/sections/04_local.tex:591	2	- \frac{a\,\mtol}{\bar m^{2}}\right] \;+\; (a - P).
+paper/sections/04_local.tex:594	2	The $K_m^2$ terms cancel identically. The margin is \emph{linear} along the
+paper/sections/04_local.tex:604	1	\spk \in \left(\;\frac{K_{\max} S + a}{1 + K_{\max}/\mtol} + b\,\mtol,
+paper/sections/04_local.tex:606	2	\qquad S = \frac{2a}{\bar m} - \frac{a\,\mtol}{\bar m^{2}},
+paper/sections/04_local.tex:609	2	with $K_{\max} = b\bar m^{2}/a$, the two roots of $\mu(K_{\max}) = 0$ and
+paper/sections/04_local.tex:609	0	with $K_{\max} = b\bar m^{2}/a$, the two roots of $\mu(K_{\max}) = 0$ and
+paper/sections/04_local.tex:610	0	$\mu(0) = 0$. Outside that window the decision is determined by the data even
+paper/sections/04_local.tex:610	0	$\mu(0) = 0$. Outside that window the decision is determined by the data even
+paper/sections/04_local.tex:612	169	factor of $169$. Inside it no width of band settles the decision, because every point
+paper/sections/04_local.tex:615	40	The window is narrow where it matters. At $\mtol = 40$ it is
+paper/sections/04_local.tex:616	3.25	$(3.25, 3.77)$ times the patient's baseline load, $14.8\%$ wide about its centre,
+paper/sections/04_local.tex:616	3.77	$(3.25, 3.77)$ times the patient's baseline load, $14.8\%$ wide about its centre,
+paper/sections/04_local.tex:616	14.8	$(3.25, 3.77)$ times the patient's baseline load, $14.8\%$ wide about its centre,
+paper/sections/04_local.tex:618	0	\ref{fig:C2}, half again the baseline load, sits well below it with $\mu > 0$ at
+paper/sections/04_local.tex:620	1.2	approaches the band the patient is actually observed in: $1.2\%$ at $\mtol = 15$,
+paper/sections/04_local.tex:620	15	approaches the band the patient is actually observed in: $1.2\%$ at $\mtol = 15$,
+paper/sections/04_local.tex:621	14.8	$14.8\%$ at $40$, $67\%$ at $160$. This replaces a tolerance on $\theta$, which the
+paper/sections/04_local.tex:621	40	$14.8\%$ at $40$, $67\%$ at $160$. This replaces a tolerance on $\theta$, which the
+paper/sections/04_local.tex:621	67	$14.8\%$ at $40$, $67\%$ at $160$. This replaces a tolerance on $\theta$, which the
+paper/sections/04_local.tex:621	160	$14.8\%$ at $40$, $67\%$ at $160$. This replaces a tolerance on $\theta$, which the
+paper/sections/04_local.tex:659	2	$K_m = \bar m^2 b_e/a_e$ follows outright. Given $\alpha$, a fitted tangent determines
+paper/sections/04_local.tex:666	2	First, the identity $a = \theta g(\bar m)^2$ is a property of this model and not of
+paper/sections/04_local.tex:669	2	$a = \theta g(\bar m)^2 + [\alpha(\bar m) - \bar m\,\alpha'(\bar m)]$, and at the nominal
+paper/sections/04_local.tex:670	374	constants the second term is $374$ against the first's $61$. The alternative channel owns
+paper/sections/04_local.tex:670	61	constants the second term is $374$ against the first's $61$. The alternative channel owns
+paper/sections/04_local.tex:690	0.170	across dose cycles over two years reach $\operatorname{sd}(\ln\hat\theta) = 0.170$
+paper/sections/04_local.tex:694	53	instrument arithmetic below, a floor of $53\%$ at six instrument events and the wrong
+paper/sections/04_local.tex:703	2	$\hat\theta = \hat a/g(\bar m)^2$ is the fitted intercept times a constant, so
+paper/sections/04_local.tex:705	2	coordinate cancels. The $g(\bar m)^{-2}$ of \eqref{eq:thetaerr} is not a separate unknown:
+paper/sections/04_local.tex:706	2	since $a = \theta g(\bar m)^2$, the product $(\sigma/\theta)g(\bar m)^{-2}$ is $\sigma/a$,
+paper/sections/04_local.tex:706	2	since $a = \theta g(\bar m)^2$, the product $(\sigma/\theta)g(\bar m)^{-2}$ is $\sigma/a$,
+paper/sections/04_local.tex:710	12	\frac{\sigma}{a}\,\sqrt{\frac{12}{n}}\;\frac{\bar m}{\Delta},
+paper/sections/04_local.tex:714	169	factor of $169$; it leaves its \emph{relative} precision known. The two are different
+paper/sections/04_local.tex:723	0	constant is days. The accessible design is therefore steady states, where $\dot m = 0$ and
+paper/sections/04_local.tex:738	1.08	\mathrm{CV} \;=\; \frac{C(\bar m)}{b\,\bar m}\, f \;\approx\; 1.08\, f,
+paper/sections/04_local.tex:742	8	by under $8\%$ at these values. The assay term therefore dominates at every load
+paper/sections/04_local.tex:745	2	$2\%$ and a $5\%$ assay the assay term is $14.9$ against the load's $6.5$, and the total
+paper/sections/04_local.tex:745	5	$2\%$ and a $5\%$ assay the assay term is $14.9$ against the load's $6.5$, and the total
+paper/sections/04_local.tex:745	14.9	$2\%$ and a $5\%$ assay the assay term is $14.9$ against the load's $6.5$, and the total
+paper/sections/04_local.tex:745	6.5	$2\%$ and a $5\%$ assay the assay term is $14.9$ against the load's $6.5$, and the total
+paper/sections/04_local.tex:750	1	$1/n$, and it does not move with the band width, so it binds in exactly the wide-band regime
+paper/sections/04_local.tex:751	2	this section recommends buying. Writing $S = \sum_i (m_i - \bar m)^2$,
+paper/sections/04_local.tex:754	1	\sqrt{\frac{1}{n} + \frac{\bar m^2}{S}}
+paper/sections/04_local.tex:754	2	\sqrt{\frac{1}{n} + \frac{\bar m^2}{S}}
+paper/sections/04_local.tex:757	1	c(n) = \sqrt{1 + \frac{3(n-1)}{n+1}} \;\le\; 2,
+paper/sections/04_local.tex:757	3	c(n) = \sqrt{1 + \frac{3(n-1)}{n+1}} \;\le\; 2,
+paper/sections/04_local.tex:757	1	c(n) = \sqrt{1 + \frac{3(n-1)}{n+1}} \;\le\; 2,
+paper/sections/04_local.tex:757	1	c(n) = \sqrt{1 + \frac{3(n-1)}{n+1}} \;\le\; 2,
+paper/sections/04_local.tex:757	2	c(n) = \sqrt{1 + \frac{3(n-1)}{n+1}} \;\le\; 2,
+paper/sections/04_local.tex:761	0	only as the band's foot reaches $m = 0$. The best any design supported on $[L, H]$ can do is
+paper/sections/04_local.tex:763	1	between the two ends in the optimal proportion, which is $c(n) \to 1$: an evenly spaced band
+paper/sections/04_local.tex:771	460	in it, and so could quote band widths of $460\%$, $920\%$ and $1841\%$ of $\bar m$ as design
+paper/sections/04_local.tex:771	920	in it, and so could quote band widths of $460\%$, $920\%$ and $1841\%$ of $\bar m$ as design
+paper/sections/04_local.tex:771	1841	in it, and so could quote band widths of $460\%$, $920\%$ and $1841\%$ of $\bar m$ as design
+paper/sections/04_local.tex:777	3	$\operatorname{sd}(\hat c_2)$ against a true $|c_2| = \theta K_m/(K_m+\bar m)^3$, and it is
+paper/sections/04_local.tex:781	6	$n = 6$ instrument events and a $5\%$ assay:
+paper/sections/04_local.tex:781	5	$n = 6$ instrument events and a $5\%$ assay:
+paper/sections/04_local.tex:791	20	\item \textbf{At six instrument events the question of $20\%$ precision does not arise.}
+paper/sections/04_local.tex:792	53	The floor is $53\%$ even at a load recorded to $2\%$. Reaching $20\%$ needs $43$
+paper/sections/04_local.tex:792	2	The floor is $53\%$ even at a load recorded to $2\%$. Reaching $20\%$ needs $43$
+paper/sections/04_local.tex:792	20	The floor is $53\%$ even at a load recorded to $2\%$. Reaching $20\%$ needs $43$
+paper/sections/04_local.tex:792	43	The floor is $53\%$ even at a load recorded to $2\%$. Reaching $20\%$ needs $43$
+paper/sections/04_local.tex:793	714	instrument events at that load and $714$ at a load recorded to $20\%$, and $n$ counts
+paper/sections/04_local.tex:793	20	instrument events at that load and $714$ at a load recorded to $20\%$, and $n$ counts
+paper/sections/04_local.tex:800	2.9	requirement is an excursion to between $2.9$ and $5.4$ times the operating point, and
+paper/sections/04_local.tex:800	5.4	requirement is an excursion to between $2.9$ and $5.4$ times the operating point, and
+paper/sections/04_local.tex:815	2	$\hat k_e = \hat b - \hat a K_m/\bar m^2$ goes negative, $\thc^{\mathrm{A}}$ rises, and
+paper/sections/04_local.tex:817	0	parameter set. Imposing $k_e \ge 0$ leaves the margin biased downward by about $7\%$ at
+paper/sections/04_local.tex:817	7	parameter set. Imposing $k_e \ge 0$ leaves the margin biased downward by about $7\%$ at
+paper/sections/04_local.tex:818	20	$\sigma_m/\Delta = 20\%$ and no more, which is small beside everything else here.
+paper/sections/04_local.tex:820	20	What survives is better than the bias. At $\sigma_m/\Delta = 20\%$, $96\%$ of unconstrained
+paper/sections/04_local.tex:820	96	What survives is better than the bias. At $\sigma_m/\Delta = 20\%$, $96\%$ of unconstrained
+paper/sections/04_local.tex:821	0	fits return $\hat k_e < 0$, and that is checkable from the fit alone, with no knowledge of
+paper/sections/04_local.tex:824	1.6	the fibre \eqref{eq:fibre0} from above, and past about $1.6$ times the true $a$ the fibre
+paper/sections/04_local.tex:831	0	without an excursion: a patient with $\theta_j = 0$ has $s_j = k_e m_j$ outright, and by
+paper/sections/04_local.tex:838	1100	crossing one at $\theta \approx 1100$ and reaching $3.7$ at the $\theta = 300$ the
+paper/sections/04_local.tex:838	3.7	crossing one at $\theta \approx 1100$ and reaching $3.7$ at the $\theta = 300$ the
+paper/sections/04_local.tex:838	300	crossing one at $\theta \approx 1100$ and reaching $3.7$ at the $\theta = 300$ the
+paper/sections/04_local.tex:849	0	spends its length arguing against. A null patient has $\theta_j = 0$, so $s_j = k_e m_j$ and
+paper/sections/04_local.tex:851	2	$K_m = (b - k_e)\bar m^2/a$ and \eqref{eq:fibre0} it reaches
+paper/sections/04_local.tex:854	2	= \frac{k_e (K_m + \bar m)^2}{\theta\,K_m},
+paper/sections/04_local.tex:857	2	= \frac{2 k_e (K_m + \bar m)}{\theta}.
+paper/sections/04_local.tex:860	1	Both scale as $1/\theta$, so this is a ratio, the same shape as the
+paper/sections/04_local.tex:861	3000	load-error amplification of Figure~\ref{fig:A2}. At $\theta = 3000$ they are $0.20$ and
+paper/sections/04_local.tex:861	0.20	load-error amplification of Figure~\ref{fig:A2}. At $\theta = 3000$ they are $0.20$ and
+paper/sections/04_local.tex:862	0.37	$0.37$ and the anchor attenuates; they pass one at $\theta = k_e(K_m+\bar m)^2/K_m = 605$
+paper/sections/04_local.tex:862	2	$0.37$ and the anchor attenuates; they pass one at $\theta = k_e(K_m+\bar m)^2/K_m = 605$
+paper/sections/04_local.tex:862	605	$0.37$ and the anchor attenuates; they pass one at $\theta = k_e(K_m+\bar m)^2/K_m = 605$
+paper/sections/04_local.tex:863	1100	and $\theta = 2k_e(K_m+\bar m) = 1100$; at the parent's own $\theta = 300$ they are $2.0$ and
+paper/sections/04_local.tex:863	300	and $\theta = 2k_e(K_m+\bar m) = 1100$; at the parent's own $\theta = 300$ they are $2.0$ and
+paper/sections/04_local.tex:863	2.0	and $\theta = 2k_e(K_m+\bar m) = 1100$; at the parent's own $\theta = 300$ they are $2.0$ and
+paper/sections/04_local.tex:864	3.7	$3.7$ and the anchor \emph{amplifies}. It is therefore worst for the severe patients the
+paper/sections/06_excitation.tex:34	0	so the increment depends on the parameters only through $(A,B,C)$. Since $A>0$ and $C<0$
+paper/sections/06_excitation.tex:34	0	so the increment depends on the parameters only through $(A,B,C)$. Since $A>0$ and $C<0$
+paper/sections/06_excitation.tex:35	0	the map is a bijection from $(0,\infty)$ onto $\mathbb{R}$, and three distinct levels
+paper/sections/06_excitation.tex:37	2	$\Delta_i m_i = A + B m_i + C m_i^2$, a Vandermonde system in $(A,B,C)$ whose nodes are
+paper/sections/06_excitation.tex:43	0	K_m(b) = \frac{K_m^{0}\,L}{L+b},
+paper/sections/06_excitation.tex:44	0	\qquad \theta(b) = \theta^{0} + b + k_e\bigl(K_m^{0} - K_m(b)\bigr),
+paper/sections/06_excitation.tex:44	0	\qquad \theta(b) = \theta^{0} + b + k_e\bigl(K_m^{0} - K_m(b)\bigr),
+paper/sections/06_excitation.tex:49	0	its tangent at $b=0$. For the capacity the tangent is the whole story. Matching the three
+paper/sections/06_excitation.tex:53	1	\hat K_m = K_m\Bigl(1 + \frac{b}{L}\Bigr),
+paper/sections/06_excitation.tex:55	1	\hat\theta = \theta - b\Bigl(1 + \frac{K_m k_e}{L}\Bigr)
+paper/sections/06_excitation.tex:66	272.7	closes it directly: \eqref{eq:fibrecl} is admissible for every $b > -272.7$, and at the
+paper/sections/06_excitation.tex:67	5	$5\%$ load record of Section~\ref{sec:spec} it leaves $\theta$ open by a factor of
+paper/sections/06_excitation.tex:72	0.98	$\sigma^{0.98}$ rather than as $\sqrt\sigma$. A singular Fisher matrix here does not
+paper/sections/06_excitation.tex:82	0	\item \textbf{Below the half-saturation level.} As $m/K_m \to 0$, total clearance collapses
+paper/sections/06_excitation.tex:85	1	\item \textbf{Above it.} As $m/K_m \to \infty$, $g \to 1$ and $\theta$ enters only through
+paper/sections/06_excitation.tex:94	2	\Bigl(\theta g(m),\;\; -\bigl(\theta + \Delta\bigr) K_m \tfrac{m}{(K_m+m)^2},\;\;
+paper/sections/06_excitation.tex:95	1	k_e m, \;\; 1 \Bigr);
+paper/sections/06_excitation.tex:100	10	improving the conditioning by about five orders of magnitude at $m/K_m = 10^{-6}$, and
+paper/sections/06_excitation.tex:100	6	improving the conditioning by about five orders of magnitude at $m/K_m = 10^{-6}$, and
+paper/sections/06_excitation.tex:102	0.01	What the low end gives back is $K_m$ and not $\theta$: at $m/K_m = 0.01$,
+paper/sections/06_excitation.tex:103	0.587	$\operatorname{sd}(\ln\hat K_m)$ falls from $0.587$ to $0.209$ while
+paper/sections/06_excitation.tex:103	0.209	$\operatorname{sd}(\ln\hat K_m)$ falls from $0.587$ to $0.209$ while
+paper/sections/06_excitation.tex:107	2	$-\theta K_m m/(K_m+m)^2$, dropping $\Delta$ while evaluating at levels $\Delta$ produced,
+paper/sections/06_excitation.tex:116	2	Part~(2) is conditional on $L_0$ being unknown, and that is what makes the load record
+paper/sections/06_excitation.tex:128	1	$\theta$ sensitivity is $-\bigl(1 + \Delta(t)/\theta\bigr)\varphi(m)$ with
+paper/sections/06_excitation.tex:140	1	At fixed fold range $r = m_{\max}/m_{\min} > 1$, $E$ is maximised at
+paper/sections/06_excitation.tex:141	1	$\sqrt{m_{\min} m_{\max}} = K_m$, where $E_{\max}(r) = (\sqrt r - 1)/(\sqrt r + 1)$, so a
+paper/sections/06_excitation.tex:141	1	$\sqrt{m_{\min} m_{\max}} = K_m$, where $E_{\max}(r) = (\sqrt r - 1)/(\sqrt r + 1)$, so a
+paper/sections/06_excitation.tex:142	1	required $E$ needs $r \ge \bigl((1+E)/(1-E)\bigr)^2$.
+paper/sections/06_excitation.tex:142	1	required $E$ needs $r \ge \bigl((1+E)/(1-E)\bigr)^2$.
+paper/sections/06_excitation.tex:142	2	required $E$ needs $r \ge \bigl((1+E)/(1-E)\bigr)^2$.
+paper/sections/06_excitation.tex:148	2	for: at $r = 2$ the band the illustrative patient is held in gives $E = 0.058$ against a
+paper/sections/06_excitation.tex:148	0.058	for: at $r = 2$ the band the illustrative patient is held in gives $E = 0.058$ against a
+paper/sections/06_excitation.tex:149	0.172	possible $0.172$, a factor of three thrown away by placement alone. Precision depends on
+paper/sections/06_excitation.tex:151	2	$\operatorname{sd}(\ln\hat\theta)$ is about $2\,100$ times its best.
+paper/sections/06_excitation.tex:151	100	$\operatorname{sd}(\ln\hat\theta)$ is about $2\,100$ times its best.
+paper/sections/06_excitation.tex:170	1	the term whose curvature the identification needs. On the phase 1/2
+paper/sections/06_excitation.tex:170	2	the term whose curvature the identification needs. On the phase 1/2
+paper/sections/06_excitation.tex:178	1	\caption{\label{tab:factors}The two factors of the excitation, over the phase 1/2 record. The marker band moves $\varphi$ by a twentieth; the dose train moves $
+paper/sections/06_excitation.tex:178	2	\caption{\label{tab:factors}The two factors of the excitation, over the phase 1/2 record. The marker band moves $\varphi$ by a twentieth; the dose train moves $
+paper/sections/06_excitation.tex:178	1	\caption{\label{tab:factors}The two factors of the excitation, over the phase 1/2 record. The marker band moves $\varphi$ by a twentieth; the dose train moves $
+paper/sections/06_excitation.tex:183	0.50	band does, on the same record.} Against the $E \approx 0.50$ this paper adopts as its target, the band
+paper/sections/06_excitation.tex:192	5.5	(Section~\ref{sec:excursion_table}), against which the train is worth $5.5$ times, and that
+paper/sections/06_excitation.tex:198	1	fold range $r \ge \bigl((1+\mathcal{E})/(1-\mathcal{E})\bigr)^2$ about $K_m$, or by moving
+paper/sections/06_excitation.tex:198	1	fold range $r \ge \bigl((1+\mathcal{E})/(1-\mathcal{E})\bigr)^2$ about $K_m$, or by moving
+paper/sections/06_excitation.tex:198	2	fold range $r \ge \bigl((1+\mathcal{E})/(1-\mathcal{E})\bigr)^2$ about $K_m$, or by moving
+paper/sections/06_excitation.tex:214	0.55	$\num{train_drop}$ against the $0.55$ that would suffice. \textbf{The excitation was
+paper/sections/06_excitation.tex:244	0	n \;=\; \bigl(\,L + b + k_e K_m,\;\; -K_m,\;\; 0,\;\; L + b\,\bigr)
+paper/sections/06_excitation.tex:263	0	to \eqref{eq:fibrecl}. Evaluated at $b = 0$ the vector annihilates the Jacobian only at the
+paper/sections/06_excitation.tex:264	31.6	truth, failing to at $b = 31.6$, and its integral curve is $K_m = K_m^{0}e^{-b/L}$, which
+paper/sections/06_excitation.tex:264	0	truth, failing to at $b = 31.6$, and its integral curve is $K_m = K_m^{0}e^{-b/L}$, which
+paper/sections/06_excitation.tex:268	2.7	$\lVert Qc\rVert/\lVert Q\rVert = 2.7\times10^{-17}$ with $c$ matching the smallest right
+paper/sections/06_excitation.tex:268	17	$\lVert Qc\rVert/\lVert Q\rVert = 2.7\times10^{-17}$ with $c$ matching the smallest right
+paper/sections/06_excitation.tex:269	1.000000000	singular vector to $\lvert\cos\rvert = 1.000000000$; and \eqref{eq:nullvec} reproduces the
+paper/sections/06_excitation.tex:271	1.79	component difference of $1.79\times10^{-7}$.
+paper/sections/06_excitation.tex:271	7	component difference of $1.79\times10^{-7}$.
+paper/sections/06_excitation.tex:276	2	measurable quantity: what a computation returns there is arithmetic noise, $2\times10^{-15}$
+paper/sections/06_excitation.tex:276	15	measurable quantity: what a computation returns there is arithmetic noise, $2\times10^{-15}$
+paper/sections/06_excitation.tex:277	5	with the dose train and $5\times10^{-32}$ without it, both at the floor of the
+paper/sections/06_excitation.tex:277	32	with the dose train and $5\times10^{-32}$ without it, both at the floor of the
+paper/sections/06_excitation.tex:278	0.1	decomposition. Measured from the first record that is not exactly singular, a $0.1\%$
+paper/sections/06_excitation.tex:279	40	coefficient of variation, to $40\%$, the ratio $s_{\min}/s_{\max}$ of the column-normalised
+paper/sections/06_excitation.tex:280	4.7	matrix rises from $4.7\times10^{-8}$ to $7.2\times10^{-3}$ without the dose train and from
+paper/sections/06_excitation.tex:280	8	matrix rises from $4.7\times10^{-8}$ to $7.2\times10^{-3}$ without the dose train and from
+paper/sections/06_excitation.tex:280	7.2	matrix rises from $4.7\times10^{-8}$ to $7.2\times10^{-3}$ without the dose train and from
+paper/sections/06_excitation.tex:280	3	matrix rises from $4.7\times10^{-8}$ to $7.2\times10^{-3}$ without the dose train and from
+paper/sections/06_excitation.tex:281	3.8	$3.8\times10^{-4}$ to $1.1\times10^{-1}$ with it: about five orders of magnitude in the
+paper/sections/06_excitation.tex:281	4	$3.8\times10^{-4}$ to $1.1\times10^{-1}$ with it: about five orders of magnitude in the
+paper/sections/06_excitation.tex:281	1.1	$3.8\times10^{-4}$ to $1.1\times10^{-1}$ with it: about five orders of magnitude in the
+paper/sections/06_excitation.tex:281	1	$3.8\times10^{-4}$ to $1.1\times10^{-1}$ with it: about five orders of magnitude in the
+paper/sections/06_excitation.tex:286	0.159	$0.159$ at a $1\%$ recording error to $0.288$ at $20\%$, so the target holds only below
+paper/sections/06_excitation.tex:286	1	$0.159$ at a $1\%$ recording error to $0.288$ at $20\%$, so the target holds only below
+paper/sections/06_excitation.tex:286	0.288	$0.159$ at a $1\%$ recording error to $0.288$ at $20\%$, so the target holds only below
+paper/sections/06_excitation.tex:286	20	$0.159$ at a $1\%$ recording error to $0.288$ at $20\%$, so the target holds only below
+paper/sections/06_excitation.tex:287	10	about $10\%$ (Section~\ref{sec:spec}). Decomposed, $98\%$ of that is the per-visit scatter
+paper/sections/06_excitation.tex:287	98	about $10\%$ (Section~\ref{sec:spec}). Decomposed, $98\%$ of that is the per-visit scatter
+paper/sections/06_excitation.tex:288	2	entering through $\sigma$ and $2\%$ is the systematic offset the fibre runs along: once the
+paper/sections/06_excitation.tex:290	5	$b$ is inert, so that with the scatter at $5\%$ the target is met at every bias from $1\%$
+paper/sections/06_excitation.tex:290	1	$b$ is inert, so that with the scatter at $5\%$ the target is met at every bias from $1\%$
+paper/sections/06_excitation.tex:291	500	to $500\%$. A weighed-intake calibration of the mean offset, which is the cheap study,
+paper/sections/06_excitation.tex:296	28.1	Without the dose train, prior-free $\operatorname{sd}(\ln\hat\theta)$ is still $28.1$ at
+paper/sections/06_excitation.tex:297	1.30	half a per cent of variation and $1.30$ at ten, while the rank has long since been restored.
+paper/sections/06_excitation.tex:301	0.5	not at once: the $0.5\%$ and $2\%$ records return $0.86$ and $\num{free_cv2}$ prior-free, so what the
+paper/sections/06_excitation.tex:301	2	not at once: the $0.5\%$ and $2\%$ records return $0.86$ and $\num{free_cv2}$ prior-free, so what the
+paper/sections/06_excitation.tex:301	0.86	not at once: the $0.5\%$ and $2\%$ records return $0.86$ and $\num{free_cv2}$ prior-free, so what the
+paper/sections/06_excitation.tex:306	10	applies is a fact about a real record rather than about the model.} At the $10\%$
+paper/sections/06_excitation.tex:308	98	data and the prior on $b$ is very nearly inert, which is the $98\%$--$2\%$ split above and
+paper/sections/06_excitation.tex:308	2	data and the prior on $b$ is very nearly inert, which is the $98\%$--$2\%$ split above and
+paper/sections/06_excitation.tex:319	95	the prior's $95\%$ half-width of $\pm31.6$ in $b$ is the whole of what the number contains.
+paper/sections/06_excitation.tex:320	2	A diagnostic reading the power of the noiseless $\chi^2$ along the smallest eigendirection
+paper/sections/06_excitation.tex:322	2	at second order, so $\chi^2 \propto \varepsilon^4$ whether or not the data constrain
+paper/sections/06_excitation.tex:322	4	at second order, so $\chi^2 \propto \varepsilon^4$ whether or not the data constrain
+paper/sections/06_excitation.tex:325	36	running $36$, $49$, $69$ across two-daily, weekly and monthly sampling.
+paper/sections/06_excitation.tex:325	49	running $36$, $49$, $69$ across two-daily, weekly and monthly sampling.
+paper/sections/06_excitation.tex:325	69	running $36$, $49$, $69$ across two-daily, weekly and monthly sampling.
+paper/sections/07_design.tex:12	3.5	increment a fortnightly dose with a $3.5$-day half-life delivers, as a
+paper/sections/07_design.tex:30	1	P_k^{-1} \;=\; P_0^{-1} \;+\; \sum_{i \le k} \frac{q(m_i, \Delta_i)\,q(m_i, \Delta_i)^{\!\top}}{\sigma^2},
+paper/sections/07_design.tex:30	1	P_k^{-1} \;=\; P_0^{-1} \;+\; \sum_{i \le k} \frac{q(m_i, \Delta_i)\,q(m_i, \Delta_i)^{\!\top}}{\sigma^2},
+paper/sections/07_design.tex:30	2	P_k^{-1} \;=\; P_0^{-1} \;+\; \sum_{i \le k} \frac{q(m_i, \Delta_i)\,q(m_i, \Delta_i)^{\!\top}}{\sigma^2},
+paper/sections/07_design.tex:52	0.8	\item \textbf{$k_e$ carries a log-prior of $0.8$}, a factor of $2.2$, and is the only
+paper/sections/07_design.tex:52	2.2	\item \textbf{$k_e$ carries a log-prior of $0.8$}, a factor of $2.2$, and is the only
+paper/sections/07_design.tex:56	6.9	($6.9$ to $7.9$). That the two priors divide this way is the null vector
+paper/sections/07_design.tex:56	7.9	($6.9$ to $7.9$). That the two priors divide this way is the null vector
+paper/sections/07_design.tex:63	10	\item \textbf{Intake varies day to day at a $10\%$ coefficient of variation, and is
+paper/sections/07_design.tex:64	5	recorded to $5\%$.} By Proposition~\ref{prop:rank} a perfectly steady load is the exactly
+paper/sections/07_design.tex:67	0.5	$0.5\%$, moves the densest design by about one per cent.
+paper/sections/07_design.tex:71	1	$\bigl((\theta+\Delta) g'(\bar m) + k_e\bigr)^{-1}$ is $\num{tau_hours}$ hours at the illustrative
+paper/sections/07_design.tex:72	3.5	values against a therapeutic half-life of $3.5$ days, a separation of
+paper/sections/07_design.tex:96	20	simulated intake records with its range beneath. Bold is inside the $20\%$ target. The
+paper/sections/07_design.tex:104	1	\begin{adjustwidth}{-1.4cm}{-1.4cm}
+paper/sections/07_design.tex:104	1	\begin{adjustwidth}{-1.4cm}{-1.4cm}
+paper/sections/07_design.tex:111	20	$\operatorname{sd}(\ln\hat\theta) = \num{sd_monthly}$ ($\num{sd_monthly_lo}$ to $\num{sd_monthly_hi}$), inside the $20\%$ target;
+paper/sections/07_design.tex:113	0.457	passes; six-monthly visits reach $0.457$ ($0.412$ to $0.510$) and do not. Every precision
+paper/sections/07_design.tex:113	0.412	passes; six-monthly visits reach $0.457$ ($0.412$ to $0.510$) and do not. Every precision
+paper/sections/07_design.tex:113	0.510	passes; six-monthly visits reach $0.457$ ($0.412$ to $0.510$) and do not. Every precision
+paper/sections/07_design.tex:129	14	$T = 14$~d. Each visit advances the phase by $\varepsilon$, so after $n$ visits the
+paper/sections/07_design.tex:150	4	fraction of a lap swept, $n\varepsilon/T$ & $4\%$ & $10\%$ & $25\%$ & $50\%$ & $75\%$ \\
+paper/sections/07_design.tex:150	10	fraction of a lap swept, $n\varepsilon/T$ & $4\%$ & $10\%$ & $25\%$ & $50\%$ & $75\%$ \\
+paper/sections/07_design.tex:150	25	fraction of a lap swept, $n\varepsilon/T$ & $4\%$ & $10\%$ & $25\%$ & $50\%$ & $75\%$ \\
+paper/sections/07_design.tex:150	50	fraction of a lap swept, $n\varepsilon/T$ & $4\%$ & $10\%$ & $25\%$ & $50\%$ & $75\%$ \\
+paper/sections/07_design.tex:150	75	fraction of a lap swept, $n\varepsilon/T$ & $4\%$ & $10\%$ & $25\%$ & $50\%$ & $75\%$ \\
+paper/sections/07_design.tex:165	14.5	are, which is the reverse of the natural reading.} At the $14.5$-day step a clinic that
+paper/sections/07_design.tex:166	20	can book $20$ visits instead of $25$ sweeps $\num{lap_frac_n20}\%$ of a lap rather than
+paper/sections/07_design.tex:166	25	can book $20$ visits instead of $25$ sweeps $\num{lap_frac_n20}\%$ of a lap rather than
+paper/sections/07_design.tex:170	20	the step and not the calendar. At $20$ visits a lap needs
+paper/sections/07_design.tex:171	20	$\varepsilon \ge T/20 = \num{lap_eps_h_n20}$~hours, so booking
+paper/sections/07_design.tex:172	14.5	$\num{lap_step_n20}$~days instead of $14.5$ takes the same $20$ visits from
+paper/sections/07_design.tex:172	20	$\num{lap_step_n20}$~days instead of $14.5$ takes the same $20$ visits from
+paper/sections/07_design.tex:173	25	$\num{sd_n20_off}$ to $\num{sd_n20_lap}$ --- within $\num{n20_vs_n25}$ of what $25$
+paper/sections/07_design.tex:174	14.5	visits at $14.5$~days achieve. \textbf{Five hours on the step buy back almost exactly
+paper/sections/07_design.tex:177	0	At $\varepsilon = 0$, sampling exactly at the dose interval or any multiple of it, the
+paper/sections/07_design.tex:181	0.999	correlation between $\ln\theta$ and $\ln K_m$ returns to $+0.999$, and
+paper/sections/07_design.tex:186	14.5	satisfies \eqref{eq:lap} with room to spare: every $14.5$ days over the full two-year
+paper/sections/07_design.tex:190	14.5	fortnightly density. \emph{This is not the $14.5$-day design of
+paper/sections/07_design.tex:200	14	those $\num{near_phases}$ phases are packed into $\num{near_span_h}$~hours of a $14$-day
+paper/sections/07_design.tex:217	1	$\sqrt{[\mathcal{I}^{-1}]_{11}}$, the Cram\'er--Rao bound: the \emph{curvature} of the log
+paper/sections/07_design.tex:217	11	$\sqrt{[\mathcal{I}^{-1}]_{11}}$, the Cram\'er--Rao bound: the \emph{curvature} of the log
+paper/sections/07_design.tex:219	1.96	repeated records. Multiplying it by $1.96$ to read a confidence interval is a different
+paper/sections/07_design.tex:222	95	$(\ln K_m, b, \ln k_e)$ at each point under this paper's own priors, the $95\%$ profile
+paper/sections/07_design.tex:228	0.4	it. On a noiseless record the profile's curvature reproduces the bound to $0.4\%$, so this
+paper/sections/07_design.tex:238	0.072	determines it. On the monthly design $\operatorname{sd}(\ln \hat K_m)$ is $0.072$ at
+paper/sections/07_design.tex:239	0.062	normal capacity and $0.062$ at the $5\%$ of normal that defines the disease, flat across
+paper/sections/07_design.tex:239	5	normal capacity and $0.062$ at the $5\%$ of normal that defines the disease, flat across
+paper/sections/07_design.tex:243	20	of $20$ to $25$ on it, so Remark~\ref{rem:aliasing} governs this quantity too. The design
+paper/sections/07_design.tex:243	25	of $20$ to $25$ on it, so Remark~\ref{rem:aliasing} governs this quantity too. The design
+paper/sections/07_design.tex:255	365	of $\num{straddle_gain}$: the same $365$ samples placed to straddle $K_m$ reach
+paper/sections/07_design.tex:271	20	conditional and is stated as such: this design identifies $\theta$ to better than $20\%$
+paper/sections/07_design.tex:275	52	a factor of $52$ to $141$ across the designs a protocol could adopt with no prior on $k_e$
+paper/sections/07_design.tex:275	141	a factor of $52$ to $141$ across the designs a protocol could adopt with no prior on $k_e$
+paper/sections/07_design.tex:276	7	at all, and $7$ to $16$ with the prior in place, record by record over twenty-four records. The data specification rests on that comparison
+paper/sections/07_design.tex:276	16	at all, and $7$ to $16$ with the prior in place, record by record over twenty-four records. The data specification rests on that comparison
+paper/sections/07_design.tex:286	0	constant along the fibre \eqref{eq:fibrecl}: at $b=0$ it is $29.79$~d$^{-1}$
+paper/sections/07_design.tex:286	29.79	constant along the fibre \eqref{eq:fibrecl}: at $b=0$ it is $29.79$~d$^{-1}$
+paper/sections/07_design.tex:286	1	constant along the fibre \eqref{eq:fibrecl}: at $b=0$ it is $29.79$~d$^{-1}$
+paper/sections/07_design.tex:287	400	and at $b=400$ it is $59.96$~d$^{-1}$, a factor of two between two parameter points the
+paper/sections/07_design.tex:287	59.96	and at $b=400$ it is $59.96$~d$^{-1}$, a factor of two between two parameter points the
+paper/sections/07_design.tex:287	1	and at $b=400$ it is $59.96$~d$^{-1}$, a factor of two between two parameter points the
+paper/sections/07_design.tex:289	2.8	separates the trajectories by $2.8$ assay standard deviations fifteen minutes after the
+paper/sections/07_design.tex:295	5	$\num{trans_gain_nominal}\%$ at nominal capacity and $\num{trans_gain_disease}\%$ at $5\%$
+paper/sections/07_design.tex:315	2	which nothing in the literature establishes. Tier~2 of Section~\ref{sec:spec} asks for the
+paper/sections/07_design.tex:328	4.8	$4.8\%$ of precision for a $65\%$ cut in the trough, and a twenty-eight-day interval at
+paper/sections/07_design.tex:328	65	$4.8\%$ of precision for a $65\%$ cut in the trough, and a twenty-eight-day interval at
+paper/sections/07_design.tex:329	6.5	the same delivered rate buys $6.5\%$ for an $87\%$ cut: about thirteen to one against the
+paper/sections/07_design.tex:329	87	the same delivered rate buys $6.5\%$ for an $87\%$ cut: about thirteen to one against the
+paper/sections/07_design.tex:333	29	Shortening the interval to seven days \emph{doubles} the trough and costs $29\%$ of the
+paper/sections/07_design.tex:349	28	have turned over at some intermediate interval and does not. Swept from $28$ days down to
+paper/sections/07_design.tex:354	5	$\num{exp_fall_disease}$ at $5\%$ of it ($\num{exp_h28_disease}$ to
+paper/sections/07_design.tex:362	1	Proposition~\ref{prop:tworoutes} is carried by the factor $1 + \Delta(t)/\theta$, which
+paper/sections/07_design.tex:370	3.5	continuous infusion does not. Biweekly dosing with a $3.5$-day half-life satisfies it
+paper/sections/07_design.tex:388	14	same \emph{number} of visits, $\num{visits}$, onto the $14$-day cycle,
+paper/sections/07_design.tex:389	14	$t \mapsto t \bmod 14$. The visits themselves differ, and so does the calendar
+paper/sections/07_design.tex:407	14.5	$\num{available_monthly}$ its step admits and the $14.5$-day schedule
+paper/sections/07_design.tex:415	14.5	one schedule only: the $14.5$-day one reads $\num{range_off}$ here against
+paper/sections/07_design.tex:424	14.5	else. The $14.5$-day schedule leaves $\varepsilon = \num{eps_off_d}$ days, so
+paper/sections/07_design.tex:431	0	enrolment: at $t=0$ the dose train is still filling, so the draws smear over a
+paper/sections/07_design.tex:434	1	window is shaded and is all but invisible: at a $1\%$ tolerance it is
+paper/sections/07_design.tex:435	0.4	$\num{settle_hours_1pct}$~hours, $0.4\%$ of the cycle, but the phase it removes
+paper/sections/07_design.tex:447	0.20	$0.20$ target marked. \textbf{These curves are prior-conditional and assume the
+paper/sections/07_design.tex:448	5	dose scale is known exactly}: the $5\%$ prior on the load bias is what closes
+paper/sections/07_design.tex:452	2	$\operatorname{sd}(n) = \sqrt{\mathrm{floor}^2 + c^2/n}$ separates what visits
+paper/sections/07_design.tex:452	2	$\operatorname{sd}(n) = \sqrt{\mathrm{floor}^2 + c^2/n}$ separates what visits
+paper/sections/07_design.tex:454	10	a $10\%$ day-to-day variability the floor is $0.150$ and the target is reached
+paper/sections/07_design.tex:454	0.150	a $10\%$ day-to-day variability the floor is $0.150$ and the target is reached
+paper/sections/07_design.tex:455	4.5	at eleven visits, while sampling at the dose interval has a floor of $4.5$ and
+paper/sections/07_design.tex:470	96	unreachable and $96\%$ of the increment range available, where an afternoon
+paper/sections/07_design.tex:514	5	$5\%$ tolerance used in Section~\ref{sec:collapse} the window is
+paper/sections/07_design.tex:515	1	$\num{settle_hours}$~hours; at a $1\%$ tolerance it is
+paper/sections/07_design.tex:519	0.4	more in value than in time. It is $0.4\%$ of the dose cycle, but the phase it
+paper/sections/07_design.tex:540	1	$1 + \Delta_{\mathrm{peak}}/\theta$, so the ceiling binds at
+paper/sections/07_design.tex:541	19	$\Delta_{\mathrm{peak}}/\theta = 19$ at the $5\%$ residual-activity reference
+paper/sections/07_design.tex:541	5	$\Delta_{\mathrm{peak}}/\theta = 19$ at the $5\%$ residual-activity reference
+paper/sections/07_design.tex:542	9	this paper adopts, and at $9$ at the $10\%$ reading kept as a check. The
+paper/sections/07_design.tex:542	10	this paper adopts, and at $9$ at the $10\%$ reading kept as a check. The
+paper/sections/07_design.tex:543	16	committed dose sits at $\Delta_{\mathrm{peak}}/\theta = \num{train_peak_frac}$ and uses $16\%$
+paper/sections/07_design.tex:544	5	of normal capacity at the $5\%$ reference, so it is inside the ceiling by a
+paper/sections/07_design.tex:550	1	$\mathrm{frac} \times (1 + \Delta_{\mathrm{peak}}/\theta)$, which cannot report a
+paper/sections/07_design.tex:553	3000	disease at all. Read the other way, with $\theta = 3000$ as normal and $D$ held
+paper/sections/07_design.tex:555	10	mg/kg is, the same bound is breached at $10\%$ of nominal and below
+paper/sections/07_design.tex:572	5	costs the design. Every row is admissible on the capacity ceiling at the $5\%$
+paper/sections/07_design.tex:573	0.20	reference. Visits are monthly visits to reach the $0.20$ gate, a median over
+paper/sections/07_design.tex:576	0.189	why the committed row reads $0.189$ where Table~\ref{tab:designs} reads
+paper/sections/07_design.tex:581	1	\begin{adjustwidth}{-1.0cm}{-1.0cm}
+paper/sections/07_design.tex:581	1	\begin{adjustwidth}{-1.0cm}{-1.0cm}
+paper/sections/07_design.tex:596	0.50	$E \approx 0.50$ adopted in Section~\ref{sec:therapychannel}. Direction matters: the curvature is at high $m$, and
+paper/sections/07_design.tex:604	1	\begin{adjustwidth}{-1.2cm}{-1.2cm}
+paper/sections/07_design.tex:604	1	\begin{adjustwidth}{-1.2cm}{-1.2cm}
+paper/sections/07_design.tex:614	0.50	against the $0.50$ adopted, at $\num{decomp_frac_pct}\%$ of what its fold range could
+paper/sections/07_design.tex:618	0.076	a labelled-propionate bolus, is small at $E = 0.076$ for a doubling of the marker; its
+paper/sections/07b_decision.tex:30	339	\caption{\label{tab:decision}The decision characteristic, by simulation, on three designs. Twelve seeds at four hundred replicates each; the $\pm$ is the spread
+paper/sections/07b_decision.tex:37	0	patients with $\mu<0$ within ten points falls from about $\num{cohort_fixed}$ to about $\num{cohort_monthly}$: a
+paper/sections/07b_decision.tex:55	1	$L_{\mathrm{base}} + \rho\,(s_{\mathrm{true}} - L_{\mathrm{base}})$, so $\rho = 1$ is a
+paper/sections/07b_decision.tex:56	0	record that tracks the load to its recording error and $\rho \le 0$ is crisis protocol,
+paper/sections/07b_decision.tex:58	1	monthly design $\rho = 1$ errs at $17.5\%$ and $41.8\%$ with a median $\hat\theta/\theta$
+paper/sections/07b_decision.tex:58	17.5	monthly design $\rho = 1$ errs at $17.5\%$ and $41.8\%$ with a median $\hat\theta/\theta$
+paper/sections/07b_decision.tex:58	41.8	monthly design $\rho = 1$ errs at $17.5\%$ and $41.8\%$ with a median $\hat\theta/\theta$
+paper/sections/07b_decision.tex:59	1.03	of $1.03$; at $\rho = 0.5$ the two errors become $99.0\%$ and $0.0\%$ at $0.90$; at
+paper/sections/07b_decision.tex:59	0.5	of $1.03$; at $\rho = 0.5$ the two errors become $99.0\%$ and $0.0\%$ at $0.90$; at
+paper/sections/07b_decision.tex:59	99.0	of $1.03$; at $\rho = 0.5$ the two errors become $99.0\%$ and $0.0\%$ at $0.90$; at
+paper/sections/07b_decision.tex:59	0.0	of $1.03$; at $\rho = 0.5$ the two errors become $99.0\%$ and $0.0\%$ at $0.90$; at
+paper/sections/07b_decision.tex:59	0.90	of $1.03$; at $\rho = 0.5$ the two errors become $99.0\%$ and $0.0\%$ at $0.90$; at
+paper/sections/07b_decision.tex:60	0	$\rho = 0$, intake pinned at baseline, $100\%$ and $0.0\%$ at $0.086$; at $\rho = -0.25$,
+paper/sections/07b_decision.tex:60	100	$\rho = 0$, intake pinned at baseline, $100\%$ and $0.0\%$ at $0.086$; at $\rho = -0.25$,
+paper/sections/07b_decision.tex:60	0.0	$\rho = 0$, intake pinned at baseline, $100\%$ and $0.0\%$ at $0.086$; at $\rho = -0.25$,
+paper/sections/07b_decision.tex:60	0.086	$\rho = 0$, intake pinned at baseline, $100\%$ and $0.0\%$ at $0.086$; at $\rho = -0.25$,
+paper/sections/07b_decision.tex:60	0.25	$\rho = 0$, intake pinned at baseline, $100\%$ and $0.0\%$ at $0.086$; at $\rho = -0.25$,
+paper/sections/07b_decision.tex:61	100	protein stopped, $100\%$ and $0.0\%$ at $0.009$. The mechanism is in the last of those
+paper/sections/07b_decision.tex:61	0.0	protein stopped, $100\%$ and $0.0\%$ at $0.009$. The mechanism is in the last of those
+paper/sections/07b_decision.tex:61	0.009	protein stopped, $100\%$ and $0.0\%$ at $0.009$. The mechanism is in the last of those
+paper/sections/07b_decision.tex:70	0.07	costs the managed regime wants the boundary at $+0.07\,\theta$ and the crisis regime wants
+paper/sections/07b_decision.tex:71	0.39	it at $-0.39\,\theta$; at a cost ratio of ten to one or worse every regime wants every
+paper/sections/08_specification.tex:7	1	three tiers and they are ordered by dependency rather than by cost. Tier~1 is one blood
+paper/sections/08_specification.tex:8	2	draw and it decides whether the model the other two calibrate is the right one; Tier~2 is a
+paper/sections/08_specification.tex:10	3	to the question Tier~3 asks.}
+paper/sections/08_specification.tex:26	0.20	exactly on $\operatorname{sd}(\ln\hat\theta) = 0.20$? The $\num{kappa_monthly_pct}\%$ on the delivered
+paper/sections/08_specification.tex:30	2	between-visit repeatability in Tier~2~\cite{breath_test_mma}, and it is there to show that
+paper/sections/08_specification.tex:33	0.20	The root-finding runs on the illustrative constants of Table~\ref{tab:params} and the $0.20$
+paper/sections/08_specification.tex:42	1	\subsection{Tier 1: which family of structures, and it is one blood draw}
+paper/sections/08_specification.tex:51	1	\textbf{Tier~1 is a \emph{structure} test and not a goodness-of-fit threshold}, and it
+paper/sections/08_specification.tex:64	5	$\num{struct_sigma_3min}$ standard deviations at a $5\%$ assay from \emph{one} draw three
+paper/sections/08_specification.tex:67	20	$20\%$; at a deliberately poor $40\%$ it takes $\num{struct_draws_40pct}$ draws over the
+paper/sections/08_specification.tex:67	40	$20\%$; at a deliberately poor $40\%$ it takes $\num{struct_draws_40pct}$ draws over the
+paper/sections/08_specification.tex:101	2	\subsection{Tier 2: the increment measurement}
+paper/sections/08_specification.tex:104	1	What to run. One cohort, two $1$-$^{13}$C-propionate breath tests bracketing a
+paper/sections/08_specification.tex:104	13	What to run. One cohort, two $1$-$^{13}$C-propionate breath tests bracketing a
+paper/sections/08_specification.tex:113	20	monthly sampling to reach the $20\%$ target on $\theta$. Everything the therapy
+paper/sections/08_specification.tex:119	14.02	$14.02 \pm 12.86\%$ with a range of $0.39$ to $50.84\%$. The widely quoted $12.8\%$ is the
+paper/sections/08_specification.tex:119	12.86	$14.02 \pm 12.86\%$ with a range of $0.39$ to $50.84\%$. The widely quoted $12.8\%$ is the
+paper/sections/08_specification.tex:119	0.39	$14.02 \pm 12.86\%$ with a range of $0.39$ to $50.84\%$. The widely quoted $12.8\%$ is the
+paper/sections/08_specification.tex:119	50.84	$14.02 \pm 12.86\%$ with a range of $0.39$ to $50.84\%$. The widely quoted $12.8\%$ is the
+paper/sections/08_specification.tex:119	12.8	$14.02 \pm 12.86\%$ with a range of $0.39$ to $50.84\%$. The widely quoted $12.8\%$ is the
+paper/sections/08_specification.tex:125	14.0	$14.0\%$ coefficient of variation the recommended record returns
+paper/sections/08_specification.tex:126	0.212	$\operatorname{sd}(\ln\hat\theta) = 0.212$ against a gate of $0.20$, and reaches the gate
+paper/sections/08_specification.tex:126	0.20	$\operatorname{sd}(\ln\hat\theta) = 0.212$ against a gate of $0.20$, and reaches the gate
+paper/sections/08_specification.tex:127	118	only at $118$ monthly draws, which is nearly ten years of follow-up, against eleven with
+paper/sections/08_specification.tex:128	1.21	the increment known exactly. A same-day pair must therefore be a factor of $1.21$ tighter
+paper/sections/08_specification.tex:129	17	than a between-visit one, a $17\%$ reduction in the coefficient of variation, and that
+paper/sections/08_specification.tex:130	2	factor is the whole of what Tier~2 has to establish.
+paper/sections/08_specification.tex:145	10	increment CV & $10\%$ & $\num{kappa_monthly_pct}\%$ & $14\%$ & $20\%$ & $30\%$ \\
+paper/sections/08_specification.tex:145	14	increment CV & $10\%$ & $\num{kappa_monthly_pct}\%$ & $14\%$ & $20\%$ & $30\%$ \\
+paper/sections/08_specification.tex:145	20	increment CV & $10\%$ & $\num{kappa_monthly_pct}\%$ & $14\%$ & $20\%$ & $30\%$ \\
+paper/sections/08_specification.tex:145	30	increment CV & $10\%$ & $\num{kappa_monthly_pct}\%$ & $14\%$ & $20\%$ & $30\%$ \\
+paper/sections/08_specification.tex:146	0.151	floor as $n \to \infty$ & $0.151$ & $0.160$ & $0.174$ & $0.207$ & $0.248$ \\
+paper/sections/08_specification.tex:146	0.160	floor as $n \to \infty$ & $0.151$ & $0.160$ & $0.174$ & $0.207$ & $0.248$ \\
+paper/sections/08_specification.tex:146	0.174	floor as $n \to \infty$ & $0.151$ & $0.160$ & $0.174$ & $0.207$ & $0.248$ \\
+paper/sections/08_specification.tex:146	0.207	floor as $n \to \infty$ & $0.151$ & $0.160$ & $0.174$ & $0.207$ & $0.248$ \\
+paper/sections/08_specification.tex:146	0.248	floor as $n \to \infty$ & $0.151$ & $0.160$ & $0.174$ & $0.207$ & $0.248$ \\
+paper/sections/08_specification.tex:151	18.7	The floor crosses the target at an increment CV of $18.7\%$, and past that point no
+paper/sections/08_specification.tex:152	0.20	schedule and no number of visits reaches $0.20$. The published \emph{per-patient} range
+paper/sections/08_specification.tex:153	50.8	runs to $50.8\%$, so the requirement is on the spread and not only on the mean: a cohort
+paper/sections/08_specification.tex:159	13	twenty subjects, where recovery of $^{13}$CO$_2$ was significantly below normal and
+paper/sections/08_specification.tex:164	2	\paragraph{And a second external measurement, cheaper and not proposed before.} Tier~2
+paper/sections/08_specification.tex:166	2	cannot supply, and unlike Tier~2 it can be bought incrementally: the design's precision is
+paper/sections/08_specification.tex:178	5	Tightening $k_e$ from the published width to $5\%$ is worth a factor of $2.1$ at nominal
+paper/sections/08_specification.tex:178	2.1	Tightening $k_e$ from the published width to $5\%$ is worth a factor of $2.1$ at nominal
+paper/sections/08_specification.tex:179	6.9	capacity and $6.9$ in the disease range. It does not close the gate there: even an exact
+paper/sections/08_specification.tex:180	0.388	$k_e$ leaves $0.388$, about twice the target, so this is a second anchor and not a
+paper/sections/08_specification.tex:181	2	substitute for Tier~2. It is nonetheless the better-value measurement per unit of effort
+paper/sections/08_specification.tex:182	2	in exactly the population Tier~2 is hardest to run in.
+paper/sections/08_specification.tex:186	13	micro-dose intravenous bolus of $^{13}$C$_3$-3-hydroxypropionate with serial plasma
+paper/sections/08_specification.tex:186	3	micro-dose intravenous bolus of $^{13}$C$_3$-3-hydroxypropionate with serial plasma
+paper/sections/08_specification.tex:190	3	catalogued research-grade, and second-tier newborn screening already quantifies 3-HP in
+paper/sections/08_specification.tex:196	3	\subsection{Tier 3: the identification study}
+paper/sections/08_specification.tex:206	14	with the sampling interval written as $h = T + \varepsilon$ against the $14$-day dose
+paper/sections/08_specification.tex:210	0	natural thing to write and it is $\varepsilon = 0$: every draw lands at the same phase,
+paper/sections/08_specification.tex:227	14.5	$\num{delta_range_monthly}$ monthly, $\num{delta_range_off}$ at $14.5$ days and
+paper/sections/08_specification.tex:230	14.5	$14.5$-day schedule changes: there it has reached half the record and spans
+paper/sections/08_specification.tex:250	0.20	and on those numbers the design reaches $0.20$ only if intake is recorded to better than
+paper/sections/08_specification.tex:251	10	about $10\%$.
+paper/sections/08_specification.tex:254	20	what study to run.} Separating them at the $20\%$ row: the per-visit scatter alone gives
+paper/sections/08_specification.tex:255	0.283	$0.283$, the systematic offset alone gives $0.172$ against a $0.170$ baseline, so $98\%$ of
+paper/sections/08_specification.tex:255	0.172	$0.283$, the systematic offset alone gives $0.172$ against a $0.170$ baseline, so $98\%$ of
+paper/sections/08_specification.tex:255	0.170	$0.283$, the systematic offset alone gives $0.172$ against a $0.170$ baseline, so $98\%$ of
+paper/sections/08_specification.tex:255	98	$0.283$, the systematic offset alone gives $0.172$ against a $0.170$ baseline, so $98\%$ of
+paper/sections/08_specification.tex:256	2	the degradation is scatter and $2\%$ is offset. Holding the scatter at $5\%$, the target is
+paper/sections/08_specification.tex:256	5	the degradation is scatter and $2\%$ is offset. Holding the scatter at $5\%$, the target is
+paper/sections/08_specification.tex:257	1	met at every offset from $1\%$ to $500\%$; holding the offset at $5\%$, the scatter must be
+paper/sections/08_specification.tex:257	500	met at every offset from $1\%$ to $500\%$; holding the offset at $5\%$, the scatter must be
+paper/sections/08_specification.tex:257	5	met at every offset from $1\%$ to $500\%$; holding the offset at $5\%$, the scatter must be
+paper/sections/08_specification.tex:258	10.4	tighter than $10.4\%$, which is the requirement above almost exactly. The reason is
+paper/sections/08_specification.tex:264	1.8	the decomposition at each capacity, the offset's share of the degradation runs $1.8\%$ at
+paper/sections/08_specification.tex:265	9.9	nominal, $9.9\%$ at half, $26.2\%$ at a fifth and about a quarter through the disease range
+paper/sections/08_specification.tex:265	26.2	nominal, $9.9\%$ at half, $26.2\%$ at a fifth and about a quarter through the disease range
+paper/sections/08_specification.tex:270	2.659	reaches the target, and a perfect one in both channels still leaves $2.659$ at $5\%$ of
+paper/sections/08_specification.tex:270	5	reaches the target, and a perfect one in both channels still leaves $2.659$ at $5\%$ of
+paper/sections/08_specification.tex:276	1	almost nothing: from no knowledge of the offset at all to knowing it within $1\%$ is worth
+paper/sections/08_specification.tex:284	167	running at $167\%$ of prescribed, a median of $40\%$ above it~\cite{pku_prescribed_actual}.
+paper/sections/08_specification.tex:284	40	running at $167\%$ of prescribed, a median of $40\%$ above it~\cite{pku_prescribed_actual}.
+paper/sections/08_specification.tex:285	40	With both channels at $40\%$ this design returns $\num{sd_load_acc_40pct}$, two and a half
+paper/sections/08_specification.tex:289	167	eating a steady $167\%$ of prescription is a pure offset, and an offset of that size costs
+paper/sections/08_specification.tex:301	2	record gives $\num{free_steady}$ and a $2\%$ record already gives $\num{free_cv2}$.
+paper/sections/08_specification.tex:308	41	in four PA and five MMA children is a mean fall of $41\%$, range $12$ to
+paper/sections/08_specification.tex:308	12	in four PA and five MMA children is a mean fall of $41\%$, range $12$ to
+paper/sections/08_specification.tex:309	76	$76\%$~\cite{metronidazole_pa}. The non-enzymatic load is therefore not a constant in these
+paper/sections/08_specification.tex:310	40	patients: it is close to a square wave of order $40\%$ amplitude on a three- to five-week
+paper/sections/08_specification.tex:313	0.170	$\num{sd_monthly}$ to between $0.170$ and $0.177$ at every period tried. \emph{Un}recorded
+paper/sections/08_specification.tex:313	0.177	$\num{sd_monthly}$ to between $0.170$ and $0.177$ at every period tried. \emph{Un}recorded
+paper/sections/08_specification.tex:314	0.327	it lands in the residual and takes the design to between $0.327$ and $0.348$, more than
+paper/sections/08_specification.tex:314	0.348	it lands in the residual and takes the design to between $0.327$ and $0.348$, more than
+paper/sections/08_specification.tex:320	0.170	($0.170$), because every draw lands at the same phase and the load-bias column absorbs a
+paper/sections/08_specification.tex:335	5	statement about the \emph{prior}, not the larger claim that nothing depends on $K_m$: over $K_m$ from $5$ to $1000$~$\mu$M the
+paper/sections/08_specification.tex:335	1000	statement about the \emph{prior}, not the larger claim that nothing depends on $K_m$: over $K_m$ from $5$ to $1000$~$\mu$M the
+paper/sections/08_specification.tex:338	100	the $100$ assumed. What rescues it is the record, which
+paper/sections/08_specification.tex:339	6	determines $K_m$ to $6$ to $7\%$ at every capacity (Remark~\ref{rem:kmrecovered}).
+paper/sections/08_specification.tex:339	7	determines $K_m$ to $6$ to $7\%$ at every capacity (Remark~\ref{rem:kmrecovered}).
+paper/sections/08_specification.tex:348	0.8	$K_m$ free, a log-prior of $0.8$ on $\ln k_e$, the load recorded to $5\%$, twenty-five
+paper/sections/08_specification.tex:348	5	$K_m$ free, a log-prior of $0.8$ on $\ln k_e$, the load recorded to $5\%$, twenty-five
+paper/sections/08_specification.tex:355	0.20	\caption{\label{tab:instruments}Three sources of excitation on one footing, against the $0.20$ target. Only the dose train reaches it, which is why the design h
+paper/sections/08_specification.tex:360	0.20	$0.20$ at any coefficient of variation: the median floors at about $0.376$ near a
+paper/sections/08_specification.tex:360	0.376	$0.20$ at any coefficient of variation: the median floors at about $0.376$ near a
+paper/sections/08_specification.tex:361	120	day-to-day CV of $120$ to $200\%$ and rises beyond it. Drawing more blood does not work
+paper/sections/08_specification.tex:361	200	day-to-day CV of $120$ to $200\%$ and rises beyond it. Drawing more blood does not work
+paper/sections/08_specification.tex:363	0.33	sampling for two years at about $0.33$ against a computed $0.65$, and the fitted exponent
+paper/sections/08_specification.tex:363	0.65	sampling for two years at about $0.33$ against a computed $0.65$, and the fitted exponent
+paper/sections/08_specification.tex:364	0.06	stays between $0.06$ and $0.24$ out to $n = 3\times10^{5}$. That is not information
+paper/sections/08_specification.tex:364	0.24	stays between $0.06$ and $0.24$ out to $n = 3\times10^{5}$. That is not information
+paper/sections/08_specification.tex:364	3	stays between $0.06$ and $0.24$ out to $n = 3\times10^{5}$. That is not information
+paper/sections/08_specification.tex:364	5	stays between $0.06$ and $0.24$ out to $n = 3\times10^{5}$. That is not information
+paper/sections/08_specification.tex:367	1.05	$1.05$ there and does not move (supplement, \S S1).
+paper/sections/08_specification.tex:370	7	protein, recorded as prescribed and carried as a known regressor, is worth $7\%$ at a
+paper/sections/08_specification.tex:371	32	disease-range capacity at a $\pm15\%$ swing and $32\%$ at an implausible $\pm50\%$, which
+paper/sections/08_specification.tex:372	2.32	leaves $2.32$ against a target of $0.20$; at nominal capacity it is worth nothing and at
+paper/sections/08_specification.tex:372	0.20	leaves $2.32$ against a target of $0.20$; at nominal capacity it is worth nothing and at
+paper/sections/08_specification.tex:392	1	cannot touch the first factor of $-(1+\Delta/\theta)\varphi(m)$ at all and can move
+paper/sections/08_specification.tex:393	1.3	$\varphi$ only by shifting the level. Doubling $k_e$ moves $\varphi$ by $1.3\%$ while
+paper/sections/08_specification.tex:394	13.1	costing the $\theta$ sensitivity $13.1\%$ of its magnitude: about ten to one against, with
+paper/sections/08_specification.tex:412	20	Confirming that the design achieves its stated precision to $\pm 20\%$ relative needs about
+paper/sections/08_specification.tex:413	15	fourteen patients, and to $\pm 15\%$ about twenty-four. Bounding the \emph{fraction} of
+paper/sections/08_specification.tex:417	1	Fourteen is inside a phase 1/2 trial of sixteen; ninety-six is not. The
+paper/sections/08_specification.tex:417	2	Fourteen is inside a phase 1/2 trial of sixteen; ninety-six is not. The
+paper/sections/08_specification.tex:428	2.2	$k_e$ (the prior's own factor of $2.2$), managed load (four-fold) and the delivered
+paper/sections/08_specification.tex:432	0.20	$\num{cohort_q3_drawn}$, and \textbf{just over a third meet the $0.20$ target}:
+paper/sections/08_specification.tex:436	2	Tier~2 is for.
+paper/sections/08_specification.tex:441	0.20	draw past it and miss: for those, no schedule and no number of visits reaches $0.20$,
+paper/sections/08_specification.tex:449	0.56	$\Delta/\theta$ at $+0.56$ on logs, alongside $K_m$ at $+0.59$: the increment is fixed in
+paper/sections/08_specification.tex:449	0.59	$\Delta/\theta$ at $+0.56$ on logs, alongside $K_m$ at $+0.59$: the increment is fixed in
+paper/sections/08_specification.tex:451	33	entirely above the disease, its $\theta$ spanning $33\%$ to $300\%$ of normal where
+paper/sections/08_specification.tex:451	300	entirely above the disease, its $\theta$ spanning $33\%$ to $300\%$ of normal where
+paper/sections/08_specification.tex:452	5	propionic acidemia sits under $5\%$, so $41\%$ of its span lies below the working band of
+paper/sections/08_specification.tex:452	41	propionic acidemia sits under $5\%$, so $41\%$ of its span lies below the working band of
+paper/sections/09_validation.tex:44	1	$1$-$^{13}$C-propionate breath test at the same visit. The comparison is of the two
+paper/sections/09_validation.tex:44	13	$1$-$^{13}$C-propionate breath test at the same visit. The comparison is of the two
+paper/sections/09_validation.tex:59	2	limits of agreement on the log scale lie inside $\pm \ln 2$, that is if the two methods
+paper/sections/09_validation.tex:63	169	the illustrative values is $169$.
+paper/sections/09_validation.tex:66	6.9	repeatability is a coefficient of variation of $6.9\%$ in controls and, in patients, a
+paper/sections/09_validation.tex:67	14.0	mean of $14.0\%$ with a range of $0.4$ to $50.8\%$ over $n = 15$~\cite{breath_test_mma}.
+paper/sections/09_validation.tex:67	0.4	mean of $14.0\%$ with a range of $0.4$ to $50.8\%$ over $n = 15$~\cite{breath_test_mma}.
+paper/sections/09_validation.tex:67	50.8	mean of $14.0\%$ with a range of $0.4$ to $50.8\%$ over $n = 15$~\cite{breath_test_mma}.
+paper/sections/09_validation.tex:67	15	mean of $14.0\%$ with a range of $0.4$ to $50.8\%$ over $n = 15$~\cite{breath_test_mma}.
+paper/sections/09_validation.tex:69	12.8	\textbf{The widely quoted $12.8\%$ is the standard deviation of the per-subject
+paper/sections/09_validation.tex:70	14.0	coefficients and not their mean}; the paragraphs below are stated against $14.0\%$. A validation
+paper/sections/09_validation.tex:72	14.0	$14.0\%$ is a floor on the width of any limits of agreement, whatever the marker side
+paper/sections/09_validation.tex:73	0.4	contributes, and the $0.4$ to $50.8\%$ spread means that floor is a property of the
+paper/sections/09_validation.tex:73	50.8	contributes, and the $0.4$ to $50.8\%$ spread means that floor is a property of the
+paper/sections/09_validation.tex:94	1	\begin{adjustwidth}{-1.4cm}{-1.4cm}
+paper/sections/09_validation.tex:94	1	\begin{adjustwidth}{-1.4cm}{-1.4cm}
+paper/sections/09_validation.tex:103	0.170	gives $\operatorname{sd}(\ln\hat\theta) = 0.170$ ($\num{sd_monthly_lo}$ to $\num{sd_monthly_hi}$ across intake
+paper/sections/09_validation.tex:104	14.0	records) against the $14.0\%$ above, a factor of $1.2$ rather than an order of magnitude.
+paper/sections/09_validation.tex:104	1.2	records) against the $14.0\%$ above, a factor of $1.2$ rather than an order of magnitude.
+paper/sections/09_validation.tex:111	0.132	over an interquartile range of $0.132$ to $0.329$ (Section~\ref{sec:spec}), so
+paper/sections/09_validation.tex:111	0.329	over an interquartile range of $0.132$ to $0.329$ (Section~\ref{sec:spec}), so
+paper/sections/09_validation.tex:113	14.0	$14.0\%$ is a between-visit figure rather than the same-day repeatability a pre/post pair
+paper/sections/09_validation.tex:114	2	depends on, which is why Tier~2 of Table~\ref{tab:spec} exists and why that floor is an
+paper/sections/09_validation.tex:122	2	question (Section~\ref{sec:spec}). What the protocol asks for instead is Tier~2 of Table~\ref{tab:spec}: a same-day paired repeatability arm, which
+paper/sections/09_validation.tex:126	0	with $\mu<0$ within ten percentage points requires correcting for per-patient
+paper/sections/09_validation.tex:127	1	misclassification, which inflates the variance by $(1-2p)^{-2}$. At the therapy-channel
+paper/sections/09_validation.tex:127	2	misclassification, which inflates the variance by $(1-2p)^{-2}$. At the therapy-channel
+paper/sections/09_validation.tex:128	2	design's simulated sign error near the boundary the requirement is about $2\,200$ patients,
+paper/sections/09_validation.tex:128	200	design's simulated sign error near the boundary the requirement is about $2\,200$ patients,
+paper/sections/09_validation.tex:129	4	against roughly $4\,900$ for the design it replaces. Neither number is reachable and
+paper/sections/09_validation.tex:129	900	against roughly $4\,900$ for the design it replaces. Neither number is reachable and
+paper/sections/09_validation.tex:130	1	the improvement does not change that. The phase 1/2 trial enrolled
+paper/sections/09_validation.tex:130	2	the improvement does not change that. The phase 1/2 trial enrolled
+paper/sections/09_validation.tex:133	1	an incidence near $1{:}14\,000$~\cite{nbs_saudi_national}, % C10
+paper/sections/09_validation.tex:133	14	an incidence near $1{:}14\,000$~\cite{nbs_saudi_national}, % C10
+paper/sections/09_validation.tex:133	000	an incidence near $1{:}14\,000$~\cite{nbs_saudi_national}, % C10
+paper/sections/09_validation.tex:153	14.0	protocol is an assumed one, and the $14.0\%$ quoted as its precision is transferred from an
+paper/sections/10_results.tex:9	169	fibre, the factor of $169$ and the shortfall of the accessible perturbations used to be
+paper/sections/10_results.tex:23	0.48	\begin{minipage}[t]{0.48\textwidth}
+paper/sections/10_results.tex:27	0.48	\begin{minipage}[t]{0.48\textwidth}
+paper/sections/10_results.tex:32	2	the relative excursion of the metabolite, on log axes. The slope is $-2$: conditioning
+paper/sections/10_results.tex:34	10	per cent between visits presents a problem conditioned at $10^{5}$ to $10^{6}$.
+paper/sections/10_results.tex:34	5	per cent between visits presents a problem conditioned at $10^{5}$ to $10^{6}$.
+paper/sections/10_results.tex:34	10	per cent between visits presents a problem conditioned at $10^{5}$ to $10^{6}$.
+paper/sections/10_results.tex:34	6	per cent between visits presents a problem conditioned at $10^{5}$ to $10^{6}$.
+paper/sections/10_results.tex:38	1.4	property of the model. It is $1.4$ at these illustrative values only because most of the
+paper/sections/10_results.tex:39	7	flux goes through the enzyme, it reaches $7$ at $\theta = 100$, and it diverges as
+paper/sections/10_results.tex:39	100	flux goes through the enzyme, it reaches $7$ at $\theta = 100$, and it diverges as
+paper/sections/10_results.tex:40	0	$\theta \to 0$, so the amplification is worst for exactly the patients the paper is
+paper/sections/10_results.tex:51	1	The separation remains near $1\%$ across the plausible dose range, well below assay
+paper/sections/10_results.tex:70	2	population parameters yields $N$ equations in $N+2$ unknowns, and the deficiency is two for
+paper/sections/10_results.tex:74	2	coefficients, giving $2N$ equations in $N+2$ unknowns, determined at $N = 2$ and
+paper/sections/10_results.tex:74	2	coefficients, giving $2N$ equations in $N+2$ unknowns, determined at $N = 2$ and
+paper/sections/10_results.tex:76	2	$K_m = (b_2 - b_1)/(a_2/\bar m_2^2 - a_1/\bar m_1^2)$, whenever the denominator is
+paper/sections/10_results.tex:76	2	$K_m = (b_2 - b_1)/(a_2/\bar m_2^2 - a_1/\bar m_1^2)$, whenever the denominator is
+paper/sections/10_results.tex:91	169	against the $K_m$ that indexes them. With noiseless data $\theta$ spans a factor of $169$,
+paper/sections/10_results.tex:93	2	reaches zero at $K_m = b\bar m^2/a$ and bounds the family from above. A null genotype fixes
+paper/sections/10_results.tex:132	20	crosses the $20\%$ target well outside it. (b) The band at which the curvature of
+paper/sections/10_results.tex:135	2.5	on the far side of the same line, from about $2.5$ times outside at a load known to $2\%$ to
+paper/sections/10_results.tex:135	2	on the far side of the same line, from about $2.5$ times outside at a load known to $2\%$ to
+paper/sections/10_results.tex:136	8	about $8$ times at $20\%$. (c) The steady-state design puts the noise in the
+paper/sections/10_results.tex:136	20	about $8$ times at $20\%$. (c) The steady-state design puts the noise in the
+paper/sections/10_results.tex:138	0	returning $\hat k_e < 0$, which is not a parameter set; with $k_e \ge 0$ imposed the bias is
+paper/sections/10_results.tex:138	0	returning $\hat k_e < 0$, which is not a parameter set; with $k_e \ge 0$ imposed the bias is
+paper/sections/10_results.tex:142	3000	$\theta = 3000$ and amplifies below $\theta = 1100$, so it is worst for the severe patients
+paper/sections/10_results.tex:142	1100	$\theta = 3000$ and amplifies below $\theta = 1100$, so it is worst for the severe patients
+paper/sections/10_results.tex:150	0	one patient with a null genotype, so that $\theta_j = 0$, and at least one patient
+paper/sections/10_results.tex:163	1	bands and no null genotype suffice as well, since $(a_i, b_i)$ for $i = 1, 2$ give $K_m$
+paper/sections/10_results.tex:163	2	bands and no null genotype suffice as well, since $(a_i, b_i)$ for $i = 1, 2$ give $K_m$
+paper/sections/10_results.tex:167	0	What justifies setting $\theta_j = 0$ for the null patients is the form of the model, and needs no
+paper/sections/10_results.tex:183	0.49	\begin{minipage}[t]{0.49\textwidth}
+paper/sections/10_results.tex:187	0.49	\begin{minipage}[t]{0.49\textwidth}
+paper/sections/10_results.tex:202	0.47	\begin{minipage}[t]{0.47\textwidth}
+paper/sections/10_results.tex:206	0.50	\begin{minipage}[t]{0.50\textwidth}
+paper/sections/10_results.tex:216	1.1	number rises from $1.1 \times 10^{5}$ in the local reduction to $4.8 \times 10^{7}$ under
+paper/sections/10_results.tex:216	10	number rises from $1.1 \times 10^{5}$ in the local reduction to $4.8 \times 10^{7}$ under
+paper/sections/10_results.tex:216	5	number rises from $1.1 \times 10^{5}$ in the local reduction to $4.8 \times 10^{7}$ under
+paper/sections/10_results.tex:216	4.8	number rises from $1.1 \times 10^{5}$ in the local reduction to $4.8 \times 10^{7}$ under
+paper/sections/10_results.tex:216	10	number rises from $1.1 \times 10^{5}$ in the local reduction to $4.8 \times 10^{7}$ under
+paper/sections/10_results.tex:216	7	number rises from $1.1 \times 10^{5}$ in the local reduction to $4.8 \times 10^{7}$ under
+paper/sections/10_results.tex:217	450	the ceiling hypothesis, a factor of roughly $450$. A condition number cannot show the
+paper/sections/10_results.tex:240	0	system \eqref{eq:C} by solving $\dot c = 0$. What makes $\alpha$ vanish with the metabolite
+paper/sections/10_results.tex:247	0.49	\begin{minipage}[t]{0.49\textwidth}
+paper/sections/10_results.tex:251	0.49	\begin{minipage}[t]{0.49\textwidth}
+paper/sections/10_results.tex:265	0.48	\begin{minipage}[t]{0.48\textwidth}
+paper/sections/10_results.tex:269	0.50	\begin{minipage}[t]{0.50\textwidth}
+paper/sections/10_results.tex:279	1	are the routes out. Arrow~1 drives the load below baseline, which raises the separatrix
+paper/sections/10_results.tex:281	2	mainstay of treatment. Arrow~2 lowers the metabolite directly, by haemofiltration, and is
+paper/sections/10_results.tex:295	3	so ``does 3-HP return to baseline'' is not the question to take to the records. Free
+paper/sections/10_results.tex:296	38.9	carnitine does move, its median falling from $38.9$ to $22.0$ $\mu$M between samples
+paper/sections/10_results.tex:296	22.0	carnitine does move, its median falling from $38.9$ to $22.0$ $\mu$M between samples
+paper/sections/10_results.tex:298	0.0370	0.0370$~\cite{amd_phenotyping}, % C38
+paper/sections/10_results.tex:310	151	and the separatrix falls, and at $\thc^{\,\mathrm{int}} = 151$ they merge in a saddle-node;
+paper/sections/10_results.tex:322	300	$\theta$ and every $M_i$ in the sweep, while at the nominal $\theta = 300$ it runs across
+paper/sections/10_results.tex:323	954	roughly a factor of six about the nominal $954$. Read the figure for the sign and for the
+paper/sections/11_scope.tex:12	0	m \;\longrightarrow\; \frac{L_0 + L}{k_e} \qquad \text{as } \theta \to 0,
+paper/sections/11_scope.tex:15	6.45	which at the illustrative values is $6.45$ times the managed level. The elasticity of the
+paper/sections/11_scope.tex:21	0.5	from it. The elasticity falls below $0.5$ at $3.6$ times managed, below $0.25$ at $5.0$,
+paper/sections/11_scope.tex:21	3.6	from it. The elasticity falls below $0.5$ at $3.6$ times managed, below $0.25$ at $5.0$,
+paper/sections/11_scope.tex:21	0.25	from it. The elasticity falls below $0.5$ at $3.6$ times managed, below $0.25$ at $5.0$,
+paper/sections/11_scope.tex:21	5.0	from it. The elasticity falls below $0.5$ at $3.6$ times managed, below $0.25$ at $5.0$,
+paper/sections/11_scope.tex:22	0.1	and below $0.1$ at $5.8$. At the bottom of Table~\ref{tab:scope} two patients differing
+paper/sections/11_scope.tex:22	5.8	and below $0.1$ at $5.8$. At the bottom of Table~\ref{tab:scope} two patients differing
+paper/sections/11_scope.tex:23	10	tenfold in capacity, $10\%$ of nominal against $1\%$, are separated by less than a third
+paper/sections/11_scope.tex:23	1	tenfold in capacity, $10\%$ of nominal against $1\%$, are separated by less than a third
+paper/sections/11_scope.tex:31	3000	this paper reports is computed at $\theta = 3000$, which is that table's $100\%$ row.
+paper/sections/11_scope.tex:31	100	this paper reports is computed at $\theta = 3000$, which is that table's $100\%$ row.
+paper/sections/11_scope.tex:33	3000	That is worth stating plainly. The model carries $\theta = 3000$ as the \emph{maximal}
+paper/sections/11_scope.tex:34	300	enzymatic velocity and the parent model's $\theta = 300$ as about a tenth of normal, which
+paper/sections/11_scope.tex:35	3000	together put normal at $3000$ and the illustrative block at $100\%$ of it: it is a
+paper/sections/11_scope.tex:35	100	together put normal at $3000$ and the illustrative block at $100\%$ of it: it is a
+paper/sections/11_scope.tex:37	5	activity in propionic acidemia is under $5\%$ of control~\cite{pcc_residual_activity}, so
+paper/sections/11_scope.tex:38	150	the patient sits at $\theta \le 150$, which the table carries as its own row. Nothing
+paper/sections/11_scope.tex:53	10	$\num{share_nominal_pct}\%$ at nominal, $\num{share_10pct}\%$ at $10\%$ of nominal and
+paper/sections/11_scope.tex:54	5	$\num{share_5pct}\%$ at $5\%$. Against the $k_e$ column,
+paper/sections/11_scope.tex:55	5.455	$k_e m$, the ratio is exactly enzymatic flux over alternative flux and runs $5.455$ to
+paper/sections/11_scope.tex:56	0.195	$0.195$ across the same range, so at a disease-range capacity $\theta$ is recovered as a
+paper/sections/11_scope.tex:70	24	recommended monthly design, as medians over $24$ simulated intake records at the
+paper/sections/11_scope.tex:71	10	specification's own $10\%$ day-to-day variability, with the seed ranges in the accompanying
+paper/sections/11_scope.tex:72	600	code. A dash means the target is not reached at any number of monthly visits up to $600$,
+paper/sections/11_scope.tex:81	3	anywhere between $3$ and $224$ against a truth of $150$.
+paper/sections/11_scope.tex:81	224	anywhere between $3$ and $224$ against a truth of $150$.
+paper/sections/11_scope.tex:81	150	anywhere between $3$ and $224$ against a truth of $150$.
+paper/sections/11_scope.tex:84	30	increment from a $30\%$ coefficient of variation to an exact one is worth $88\%$ of the
+paper/sections/11_scope.tex:84	88	increment from a $30\%$ coefficient of variation to an exact one is worth $88\%$ of the
+paper/sections/11_scope.tex:85	0.3	precision at nominal capacity and $0.3\%$ at $5\%$ of nominal: \textbf{Tier~2 is
+paper/sections/11_scope.tex:85	5	precision at nominal capacity and $0.3\%$ at $5\%$ of nominal: \textbf{Tier~2 is
+paper/sections/11_scope.tex:85	2	precision at nominal capacity and $0.3\%$ at $5\%$ of nominal: \textbf{Tier~2 is
+paper/sections/11_scope.tex:91	7	useful with its complement attached. The record still determines $K_m$, to $7\%$ at normal
+paper/sections/11_scope.tex:92	6	capacity and $6\%$ in the disease range (Remark~\ref{rem:kmrecovered}), and it still supplies an \emph{upper} bound
+paper/sections/11_scope.tex:111	1	nothing supplies.} The enzymatic share is $1 - k_e m/L$, so quartering $k_e$ moves the band
+paper/sections/11_scope.tex:119	150	$\theta = 150$ to meet the gate at all}. So the limit is robust in direction and soft in
+paper/sections/11_scope.tex:131	20	& normal & dose $D$ & verdict at $20\%$ / $10\%$ of nominal \\
+paper/sections/11_scope.tex:131	10	& normal & dose $D$ & verdict at $20\%$ / $10\%$ of nominal \\
+paper/sections/11_scope.tex:133	0.05	\textbf{R1} & inferred, $\theta/0.05$ & scaled with $\theta$ &
+paper/sections/11_scope.tex:135	0.05	\textbf{R2} & inferred, $\theta/0.05$ & booked &
+paper/sections/11_scope.tex:137	3000	\textbf{R3} & fixed at $3000$ & booked &
+paper/sections/11_scope.tex:145	1	$\operatorname{frac} \times (1 + \Delta_{\mathrm{peak}}/\theta)$ with $\theta$ cancelled:
+paper/sections/11_scope.tex:150	10	$10\%$ of nominal and below. \textbf{R3} instead fixes normal at $3000$ and breaches at
+paper/sections/11_scope.tex:150	3000	$10\%$ of nominal and below. \textbf{R3} instead fixes normal at $3000$ and breaches at
+paper/sections/11_scope.tex:151	100	every capacity in the table, $100\%$ included, where it reads $\num{adm_r3_100}$.
+paper/sections/11_scope.tex:155	3000	and R2 agree at $\theta = 3000$, where the booked dose \emph{is} the scaled dose, and R2
+paper/sections/11_scope.tex:156	150	and R3 agree at $\theta = 150$, where $\theta/0.05$ is exactly $3000$. So at $5\%$ of
+paper/sections/11_scope.tex:156	0.05	and R3 agree at $\theta = 150$, where $\theta/0.05$ is exactly $3000$. So at $5\%$ of
+paper/sections/11_scope.tex:156	3000	and R3 agree at $\theta = 150$, where $\theta/0.05$ is exactly $3000$. So at $5\%$ of
+paper/sections/11_scope.tex:156	5	and R3 agree at $\theta = 150$, where $\theta/0.05$ is exactly $3000$. So at $5\%$ of
+paper/sections/11_scope.tex:157	2.18	nominal the booked increment drives the enzyme to $2.18$ times normal \emph{on either R2
+paper/sections/11_scope.tex:158	2672	or R3}, and the largest admissible increment there is $D = 2672$ rather than $6000$ on
+paper/sections/11_scope.tex:158	6000	or R3}, and the largest admissible increment there is $D = 2672$ rather than $6000$ on
+paper/sections/11_scope.tex:161	10	$10\%$ of nominal R2 permits $D = \num{dceil_r2_10}$ against R3's
+paper/sections/11_scope.tex:165	2672	That does not rescue the precision, since at $D = 2672$ and $\theta = 150$ the monthly design
+paper/sections/11_scope.tex:165	150	That does not rescue the precision, since at $D = 2672$ and $\theta = 150$ the monthly design
+paper/sections/11_scope.tex:166	2.96	returns $2.96$, but it is a second and independent reason to think the increment is set too
+paper/sections/11_scope.tex:171	10	merged.} Sweeping $D$ from $10$ to $30000$ at a disease-range capacity, the best the
+paper/sections/11_scope.tex:171	30000	merged.} Sweeping $D$ from $10$ to $30000$ at a disease-range capacity, the best the
+paper/sections/11_scope.tex:172	2.75	monthly design achieves is $2.75$ at $D \approx 100$ against $3.07$ at the booked $6000$,
+paper/sections/11_scope.tex:172	100	monthly design achieves is $2.75$ at $D \approx 100$ against $3.07$ at the booked $6000$,
+paper/sections/11_scope.tex:172	3.07	monthly design achieves is $2.75$ at $D \approx 100$ against $3.07$ at the booked $6000$,
+paper/sections/11_scope.tex:172	6000	monthly design achieves is $2.75$ at $D \approx 100$ against $3.07$ at the booked $6000$,
+paper/sections/11_scope.tex:175	6000	capacity the same sweep says something else. The booked $D = 6000$ returns $\num{sd_monthly}$ against
+paper/sections/11_scope.tex:176	0.165	a sweep best of $0.165$, so \textbf{the trial's dose is within three per cent of optimal
+paper/sections/11_scope.tex:200	30	\item \textbf{Measure the increment better.} Going from a $30\%$ coefficient of variation
+paper/sections/11_scope.tex:201	0.3	on the delivered increment to an exact one is worth $0.3\%$ at this capacity, against
+paper/sections/11_scope.tex:202	88	$88\%$ at nominal.
+paper/sections/11_scope.tex:204	7	protein is worth $7\%$, and an implausible $\pm50\%$ swing $32\%$, leaving $2.32$ against
+paper/sections/11_scope.tex:204	32	protein is worth $7\%$, and an implausible $\pm50\%$ swing $32\%$, leaving $2.32$ against
+paper/sections/11_scope.tex:204	2.32	protein is worth $7\%$, and an implausible $\pm50\%$ swing $32\%$, leaving $2.32$ against
+paper/sections/11_scope.tex:205	0.20	a target of $0.20$ (Section~\ref{sec:whoto}).
+paper/sections/11_scope.tex:206	20	\item \textbf{Record the diet better.} Tightening the load record from $20\%$ to $1\%$ is
+paper/sections/11_scope.tex:206	1	\item \textbf{Record the diet better.} Tightening the load record from $20\%$ to $1\%$ is
+paper/sections/11_scope.tex:207	1.81	worth a factor of $1.81$ at nominal capacity and $1.22$ to $1.46$ across the disease range
+paper/sections/11_scope.tex:207	1.22	worth a factor of $1.81$ at nominal capacity and $1.22$ to $1.46$ across the disease range
+paper/sections/11_scope.tex:207	1.46	worth a factor of $1.81$ at nominal capacity and $1.22$ to $1.46$ across the disease range
+paper/sections/11_scope.tex:208	5	--- \emph{less} where the question is, not more, although the flux identity makes a $5\%$
+paper/sections/11_scope.tex:210	2.659	channels leaves $2.659$ at $5\%$ of nominal.
+paper/sections/11_scope.tex:210	5	channels leaves $2.659$ at $5\%$ of nominal.
+paper/sections/11_scope.tex:215	2.659	\emph{exactly} known load leaves $2.659$ at $5\%$ of nominal --- and the advantage shrinks
+paper/sections/11_scope.tex:215	5	\emph{exactly} known load leaves $2.659$ at $5\%$ of nominal --- and the advantage shrinks
+paper/sections/11_scope.tex:226	2	wherever this paper has priced it --- $2\%$ of the load-record requirement
+paper/sections/11_scope.tex:276	1.3	by a factor of $1.3$ to $2.0$ at this paper's own dose, and by a factor of $4$ to $20$ at a
+paper/sections/11_scope.tex:276	2.0	by a factor of $1.3$ to $2.0$ at this paper's own dose, and by a factor of $4$ to $20$ at a
+paper/sections/11_scope.tex:276	4	by a factor of $1.3$ to $2.0$ at this paper's own dose, and by a factor of $4$ to $20$ at a
+paper/sections/11_scope.tex:276	20	by a factor of $1.3$ to $2.0$ at this paper's own dose, and by a factor of $4$ to $20$ at a
+paper/sections/11_scope.tex:277	1	dose calibrated to the falls the phase 1/2 interim analysis reports~\cite{trial_phase12}.
+paper/sections/11_scope.tex:277	2	dose calibrated to the falls the phase 1/2 interim analysis reports~\cite{trial_phase12}.
+paper/sections/11_scope.tex:285	3	recommended designs agree across structures to about $3\%$. Whether $\theta$ is
+paper/sections/11_scope.tex:301	1	minutes and $\num{struct_sigma_15min}$ at fifteen. That measurement is Tier~1 of
+paper/sections/12_discussion.tex:21	10	is $\bar m = 10$; the two are different quantities and a ratio taken against one does not
+paper/sections/12_discussion.tex:37	300	model's $\theta = 300$, against an intrinsic threshold of $\num{theta_crit}$: so
+paper/sections/12_discussion.tex:68	5	admissible fit's residual over these levels is $\num{fit_resid_sigma}$ of a single $5\%$
+paper/sections/12_discussion.tex:82	4	$-4$ to $+9$, so \textbf{the sign of what survives is not determined by the data at all},
+paper/sections/12_discussion.tex:82	9	$-4$ to $+9$, so \textbf{the sign of what survives is not determined by the data at all},
+paper/sections/12_discussion.tex:115	3.4	formulations part company: the reduced and two-state systems differ by $3.4\%$ to $25.4\%$
+paper/sections/12_discussion.tex:115	25.4	formulations part company: the reduced and two-state systems differ by $3.4\%$ to $25.4\%$
+paper/sections/12_discussion.tex:116	49.6	along the approach to equilibrium, and the basin boundary itself sits up to $49.6\%$ away
+paper/sections/12_discussion.tex:136	16	on dosing days, which is still a factor of $16$ at a disease-range capacity where the estimate itself
+paper/sections/12_discussion.tex:146	4.8	known only to a factor of $4.8$, and the map has no published reference concentration to
+paper/sections/12_discussion.tex:159	1	$-(1 + \Delta(t)/\theta)\,\varphi(m)$, of which the literature had measured only the
+paper/sections/12_discussion.tex:193	1.3	capacity too \emph{high}, by a factor of $1.3$ to $2.0$ at this paper's own dose. The
+paper/sections/12_discussion.tex:193	2.0	capacity too \emph{high}, by a factor of $1.3$ to $2.0$ at this paper's own dose. The
+paper/sections/12_discussion.tex:196	300	$300$. The mechanisms are unrelated: the first is a free marker offset carried alongside a
+paper/sections/12_discussion.tex:221	2	Tier~2 of Section~\ref{sec:spec} asks for, since everything the therapy channel buys is
+paper/sections/12_discussion.tex:233	2	Tier~2 is the only anchor here outside the longitudinal record, and a second one
+paper/sections/A1_open.tex:32	3	shape: a generalised additive \emph{mixed} model on 3-HP concentration, with a smooth term
+paper/sections/A1_open.tex:50	49	event each: $49$ of $50$ participants in the natural history cohort reported at least
+paper/sections/A1_open.tex:50	50	event each: $49$ of $50$ participants in the natural history cohort reported at least
+paper/sections/A1_open.tex:51	1.0	one, at a mean annualised frequency of $1.0$~\cite{natural_history}, % C08
+paper/sections/A1_open.tex:68	3	marker at 3-HP, on the endpoint association and on the sign of the perturbation, which is
+paper/sections/A1_open.tex:104	4.3	answered and is not open: Section~4.3 of the paper prices every change to the dose train
+paper/sections/A1_open.tex:126	24	moves by a factor of $24$ while the sign of the margin flips for the same patient with
+paper/sections/A1_open.tex:133	5.3	\emph{Closed, on two independent grounds, in Section~5.3 of the paper.} The question as
+paper/sections/A1_open.tex:139	1.79	that gives the dose train $\num{sd_monthly}$, spontaneous load variation alone gives $1.79$ ($1.41$ to
+paper/sections/A1_open.tex:139	1.41	that gives the dose train $\num{sd_monthly}$, spontaneous load variation alone gives $1.79$ ($1.41$ to
+paper/sections/A1_open.tex:140	2.53	$2.53$ across intake records) and adding
+paper/sections/A1_open.tex:141	1.91	recorded carnitine steps gives $1.91$ to $2.02$, \emph{worse} than leaving them out.
+paper/sections/A1_open.tex:141	2.02	recorded carnitine steps gives $1.91$ to $2.02$, \emph{worse} than leaving them out.
+paper/sections/A1_open.tex:165	1	therapy, using the published phase 1/2 biweekly schedule as it stands. The therapy is not
+paper/sections/A1_open.tex:165	2	therapy, using the published phase 1/2 biweekly schedule as it stands. The therapy is not
+paper/sections/A1_open.tex:170	46	$\det G$ and by a factor of $46$ to $807$ in $\operatorname{sd}(\ln\hat\theta)$, because the
+paper/sections/A1_open.tex:170	807	$\det G$ and by a factor of $46$ to $807$ in $\operatorname{sd}(\ln\hat\theta)$, because the
+paper/sections/A1_open.tex:175	1.79	without a dose train the same footing gives $1.79$ against a $0.20$ target, and with one it
+paper/sections/A1_open.tex:175	0.20	without a dose train the same footing gives $1.79$ against a $0.20$ target, and with one it
+paper/sections/A1_open.tex:176	5.3	gives $\num{sd_monthly}$. Section~5.3 states the consequence, which is that the therapy is not an
+paper/sections/A1_supplementary.tex:22	2	$K_m$ the Michaelis constant, the substrate concentration at which $v = V_{\max}/2$.
+paper/sections/A1_supplementary.tex:26	1	function with cooperativity coefficient $n = 1$. Throughout this paper the three names are
+paper/sections/A1_supplementary.tex:53	2	$a = \theta\, g(\bar m)^2$ carries $K_m$, and the cancellation in \eqref{eq:mufibre} that
+paper/sections/A1_supplementary.tex:66	3	unchanged, and the two recommended designs agree across structures to about $3\%$. What
+paper/sections/A1_supplementary.tex:73	1.3	$\hat\theta$ high by a factor of $1.3$ to $2.0$ at this paper's own dose, and by a factor
+paper/sections/A1_supplementary.tex:73	2.0	$\hat\theta$ high by a factor of $1.3$ to $2.0$ at this paper's own dose, and by a factor
+paper/sections/A1_supplementary.tex:74	4	of $4$ to $20$ at a dose calibrated to the falls the phase 1/2 interim analysis actually
+paper/sections/A1_supplementary.tex:74	20	of $4$ to $20$ at a dose calibrated to the falls the phase 1/2 interim analysis actually
+paper/sections/A1_supplementary.tex:74	1	of $4$ to $20$ at a dose calibrated to the falls the phase 1/2 interim analysis actually
+paper/sections/A1_supplementary.tex:74	2	of $4$ to $20$ at a dose calibrated to the falls the phase 1/2 interim analysis actually
+paper/sections/A1_supplementary.tex:85	1	structure makes the marker $E_0 + \mathrm{base}\,(1 - I_{\max}E/(\mathrm{IC}_{50}+E))$,
+paper/sections/A1_supplementary.tex:85	50	structure makes the marker $E_0 + \mathrm{base}\,(1 - I_{\max}E/(\mathrm{IC}_{50}+E))$,
+paper/sections/A1_supplementary.tex:89	50	\qquad P = E_0 + \mathrm{base}\,q,\quad U = P\theta + (E_0+\mathrm{base})\mathrm{IC}_{50},
+paper/sections/A1_supplementary.tex:90	50	\quad V = \mathrm{IC}_{50} + \theta,
+paper/sections/A1_supplementary.tex:93	1	with $q = 1 - I_{\max}$. A record therefore carries three numbers about that map, and the
+paper/sections/A1_supplementary.tex:95	50	$(E_0, \mathrm{base}, \mathrm{IC}_{50})$ leaves \emph{no} relation on $\theta$: for any
+paper/sections/A1_supplementary.tex:96	0	$\theta \in (0,V)$, setting
+paper/sections/A1_supplementary.tex:97	50	$\mathrm{IC}_{50} = V-\theta$, $\mathrm{base} = (U-PV)/((1-q)(V-\theta))$ and
+paper/sections/A1_supplementary.tex:97	1	$\mathrm{IC}_{50} = V-\theta$, $\mathrm{base} = (U-PV)/((1-q)(V-\theta))$ and
+paper/sections/A1_supplementary.tex:108	50	Fixing $E_0$ to zero, or measuring $\mathrm{IC}_{50}$ externally, restores it too. What
+paper/sections/A1_supplementary.tex:128	2	which is what the tiered specification of Section~\ref{sec:spec} is for: Tier~2 is a direct
+paper/sections/A1_supplementary.tex:147	0	$\bigl(\theta m/K_m,\, -(\theta+\Delta)m/K_m,\, k_e m\bigr)$ as $m/K_m \to 0$ and to
+paper/sections/A1_supplementary.tex:148	0	$(\theta,\, 0,\, k_e m)$ as $m/K_m \to \infty$. At a fixed regimen, where $\Delta$ is
+paper/sections/A1_supplementary.tex:156	1	At the high end $g \to 1$ makes the first column constant and therefore parallel to the
+paper/sections/A1_supplementary.tex:158	2	moving. Part~(2) is untouched by any dosing schedule.
+paper/sections/A1_supplementary.tex:161	1	so $E = (1+x)^{-1} - (1+rx)^{-1}$. Then $\partial E/\partial x = -(1+x)^{-2} + r(1+rx)^{-2}$,
+paper/sections/A1_supplementary.tex:161	1	so $E = (1+x)^{-1} - (1+rx)^{-1}$. Then $\partial E/\partial x = -(1+x)^{-2} + r(1+rx)^{-2}$,
+paper/sections/A1_supplementary.tex:161	1	so $E = (1+x)^{-1} - (1+rx)^{-1}$. Then $\partial E/\partial x = -(1+x)^{-2} + r(1+rx)^{-2}$,
+paper/sections/A1_supplementary.tex:161	1	so $E = (1+x)^{-1} - (1+rx)^{-1}$. Then $\partial E/\partial x = -(1+x)^{-2} + r(1+rx)^{-2}$,
+paper/sections/A1_supplementary.tex:161	1	so $E = (1+x)^{-1} - (1+rx)^{-1}$. Then $\partial E/\partial x = -(1+x)^{-2} + r(1+rx)^{-2}$,
+paper/sections/A1_supplementary.tex:161	2	so $E = (1+x)^{-1} - (1+rx)^{-1}$. Then $\partial E/\partial x = -(1+x)^{-2} + r(1+rx)^{-2}$,
+paper/sections/A1_supplementary.tex:161	1	so $E = (1+x)^{-1} - (1+rx)^{-1}$. Then $\partial E/\partial x = -(1+x)^{-2} + r(1+rx)^{-2}$,
+paper/sections/A1_supplementary.tex:161	2	so $E = (1+x)^{-1} - (1+rx)^{-1}$. Then $\partial E/\partial x = -(1+x)^{-2} + r(1+rx)^{-2}$,
+paper/sections/A1_supplementary.tex:162	1	which vanishes when $\sqrt r\,(1+x) = 1 + rx$, that is at $x = 1/\sqrt r$. Substituting gives
+paper/sections/A1_supplementary.tex:162	1	which vanishes when $\sqrt r\,(1+x) = 1 + rx$, that is at $x = 1/\sqrt r$. Substituting gives
+paper/sections/A1_supplementary.tex:162	1	which vanishes when $\sqrt r\,(1+x) = 1 + rx$, that is at $x = 1/\sqrt r$. Substituting gives
+paper/sections/A1_supplementary.tex:163	1	$E_{\max} = \sqrt r/(\sqrt r + 1) - 1/(1+\sqrt r) = (\sqrt r - 1)/(\sqrt r + 1)$, and
+paper/sections/A1_supplementary.tex:163	1	$E_{\max} = \sqrt r/(\sqrt r + 1) - 1/(1+\sqrt r) = (\sqrt r - 1)/(\sqrt r + 1)$, and
+paper/sections/A1_supplementary.tex:163	1	$E_{\max} = \sqrt r/(\sqrt r + 1) - 1/(1+\sqrt r) = (\sqrt r - 1)/(\sqrt r + 1)$, and
+paper/sections/A1_supplementary.tex:163	1	$E_{\max} = \sqrt r/(\sqrt r + 1) - 1/(1+\sqrt r) = (\sqrt r - 1)/(\sqrt r + 1)$, and
+paper/sections/A1_supplementary.tex:163	1	$E_{\max} = \sqrt r/(\sqrt r + 1) - 1/(1+\sqrt r) = (\sqrt r - 1)/(\sqrt r + 1)$, and
+paper/sections/A1_supplementary.tex:168	1	out. Write $u = m/(K_m+m)$, so that $1-u = K_m/(K_m+m)$ and
+paper/sections/A1_supplementary.tex:170	1	m\,(1-u) \;=\; K_m\, u, \qquad m \;=\; \frac{K_m\,u}{1-u}.
+paper/sections/A1_supplementary.tex:170	1	m\,(1-u) \;=\; K_m\, u, \qquad m \;=\; \frac{K_m\,u}{1-u}.
+paper/sections/A1_supplementary.tex:178	1	\pd{G}{K_m} = -(\theta+\Delta)\,\frac{u(1-u)}{K_m}, \qquad
+paper/sections/A1_supplementary.tex:180	1	\pd{G}{b} = -1.
+paper/sections/A1_supplementary.tex:185	0	+ e\,\partial_b G = 0$ for every $\Delta$. The increment is eliminated by the balance
+paper/sections/A1_supplementary.tex:187	1	$-(\beta/K_m)\bigl[(L+b)(1-u) - k_e K_m u\bigr]$ by \eqref{eq:usubs}. Substituting, and
+paper/sections/A1_supplementary.tex:188	1	using $m = K_m u/(1-u)$ in the third term, the condition becomes
+paper/sections/A1_supplementary.tex:190	1	\underbrace{\gamma\,\frac{K_m u}{1-u}}_{\text{pole at }u=1}
+paper/sections/A1_supplementary.tex:190	1	\underbrace{\gamma\,\frac{K_m u}{1-u}}_{\text{pole at }u=1}
+paper/sections/A1_supplementary.tex:192	0	\;-\; \Bigl(e + \frac{\beta (L+b)}{K_m}\Bigr) \;=\; 0.
+paper/sections/A1_supplementary.tex:196	0	forces $\gamma = 0$: the alternative clearance is the one direction that cannot enter a
+paper/sections/A1_supplementary.tex:201	1	$c_\theta = (1 + K_m k_e/(L+b))/\theta$ and $c_{K_m} = -1/(L+b)$.
+paper/sections/A1_supplementary.tex:201	1	$c_\theta = (1 + K_m k_e/(L+b))/\theta$ and $c_{K_m} = -1/(L+b)$.
+paper/sections/A1_supplementary.tex:208	0	$b = 0$ annihilates the Jacobian at the truth and fails to at $b = 31.6$, and integrating it
+paper/sections/A1_supplementary.tex:208	31.6	$b = 0$ annihilates the Jacobian at the truth and fails to at $b = 31.6$, and integrating it
+paper/sections/A1_supplementary.tex:209	0	gives $K_m = K_m^{0}e^{-b/L}$, which leaves \eqref{eq:fibrecl} at second order. With $b$
+paper/sections/A1_supplementary.tex:219	1.84	$\theta$: monthly sampling spans $1.84$ of the cycle and $14.5$-daily spans $1.99$, while
+paper/sections/A1_supplementary.tex:219	14.5	$\theta$: monthly sampling spans $1.84$ of the cycle and $14.5$-daily spans $1.99$, while
+paper/sections/A1_supplementary.tex:219	1.99	$\theta$: monthly sampling spans $1.84$ of the cycle and $14.5$-daily spans $1.99$, while
+paper/sections/A1_supplementary.tex:220	0.13	fortnightly puts every draw at one phase and collapses it to $0.13$. The excluded hour after
+paper/sections/A1_supplementary.tex:232	2	$\Delta^{-2}$. The affine fit resolves two coefficients from first-order information, while
+paper/sections/A1_supplementary.tex:261	100	that range is inadmissible and the bound is two-sided: below $K_c \approx 100$ the
+paper/sections/A1_supplementary.tex:263	300	contains, and above $K_c \approx 300$ it accounts for more of the slope. Inside the
+paper/sections/A1_supplementary.tex:264	213	window the $\theta$ recovered from one fitted $(a,b)$ runs from $213$ to $300$, a
+paper/sections/A1_supplementary.tex:264	300	window the $\theta$ recovered from one fitted $(a,b)$ runs from $213$ to $300$, a
+paper/sections/A1_supplementary.tex:265	1.41	factor of $1.41$. The two-sided bound is the useful part, and it is a real piece of
+paper/sections/A1_supplementary.tex:307	3	The identifiability analysis of Section~3 concerns the \emph{stable} patient, where the
+paper/sections/A1_supplementary.tex:316	38.9	$38.9$ $\mu$M in samples drawn outside a decompensation ($n = 56$, SD $16.8$) to $22.0$
+paper/sections/A1_supplementary.tex:316	56	$38.9$ $\mu$M in samples drawn outside a decompensation ($n = 56$, SD $16.8$) to $22.0$
+paper/sections/A1_supplementary.tex:316	16.8	$38.9$ $\mu$M in samples drawn outside a decompensation ($n = 56$, SD $16.8$) to $22.0$
+paper/sections/A1_supplementary.tex:316	22.0	$38.9$ $\mu$M in samples drawn outside a decompensation ($n = 56$, SD $16.8$) to $22.0$
+paper/sections/A1_supplementary.tex:317	25	$\mu$M in samples drawn during one ($n = 25$, SD $12.4$), $P = 0.0370$, a fall of
+paper/sections/A1_supplementary.tex:317	12.4	$\mu$M in samples drawn during one ($n = 25$, SD $12.4$), $P = 0.0370$, a fall of
+paper/sections/A1_supplementary.tex:317	0.0370	$\mu$M in samples drawn during one ($n = 25$, SD $12.4$), $P = 0.0370$, a fall of
+paper/sections/A1_supplementary.tex:319	5.7	Chronic depletion in the stable patient is documented separately, at $5.7$ $\mu$M against a
+paper/sections/A1_supplementary.tex:320	37	normal $37 \pm 8$ with short-chain acylcarnitines correspondingly
+paper/sections/A1_supplementary.tex:320	8	normal $37 \pm 8$ with short-chain acylcarnitines correspondingly
+paper/sections/A1_supplementary.tex:336	25	$25$ event samples and the $56$ non-event samples are pooled across the cohort, and no
+paper/sections/A1_supplementary.tex:336	56	$25$ event samples and the $56$ non-event samples are pooled across the cohort, and no
+paper/sections/A1_supplementary.tex:357	0	$t = 0$; each panel here releases one of them, at a $k_e$ prior of $0.8$.
+paper/sections/A1_supplementary.tex:357	0.8	$t = 0$; each panel here releases one of them, at a $k_e$ prior of $0.8$.
+paper/sections/A1_supplementary.tex:358	10	(a) with no prior on the load bias: solid is a $10\%$ day-to-day variability,
+paper/sections/A1_supplementary.tex:359	2	dashed $2\%$, and a perfectly steady load is exactly singular at every number
+paper/sections/A1_supplementary.tex:361	20	exact, dashed at the precision the gate requires, dotted at $20\%$. (c) when
+paper/sections/A1_supplementary.tex:387	1	factor of $-(1 + \Delta(t)/\theta)\,\varphi(m)$ at all; it moves the second by pushing the
+paper/sections/A1_supplementary.tex:389	0.170	the dose train $\operatorname{sd}(\ln\hat\theta) = 0.170$, adding recorded carnitine steps
+paper/sections/A1_supplementary.tex:390	1.91	gives $1.91$ to $2.02$, \emph{worse} than leaving them out. What survives below is the
+paper/sections/A1_supplementary.tex:390	2.02	gives $1.91$ to $2.02$, \emph{worse} than leaving them out. What survives below is the
+paper/sections/A1_supplementary.tex:397	2	on $K_m$, so with $K_m$ free the $2\times2$ system is two equations in three unknowns, and
+paper/sections/A1_supplementary.tex:399	46	$46$ to $807$ in $\operatorname{sd}(\ln\hat\theta)$ (Remark~\ref{rem:channel_scope}). The
+paper/sections/A1_supplementary.tex:399	807	$46$ to $807$ in $\operatorname{sd}(\ln\hat\theta)$ (Remark~\ref{rem:channel_scope}). The
+paper/sections/A1_supplementary.tex:408	1	\begin{description}[leftmargin=1.4em, itemsep=3pt]
+paper/sections/A1_supplementary.tex:505	1	newborn screening. Three cohorts give $1{:}10{,}241$ among $40{,}965$ newborns in
+paper/sections/A1_supplementary.tex:505	10	newborn screening. Three cohorts give $1{:}10{,}241$ among $40{,}965$ newborns in
+paper/sections/A1_supplementary.tex:505	241	newborn screening. Three cohorts give $1{:}10{,}241$ among $40{,}965$ newborns in
+paper/sections/A1_supplementary.tex:505	40	newborn screening. Three cohorts give $1{:}10{,}241$ among $40{,}965$ newborns in
+paper/sections/A1_supplementary.tex:505	965	newborn screening. Three cohorts give $1{:}10{,}241$ among $40{,}965$ newborns in
+paper/sections/A1_supplementary.tex:506	1	Riyadh~\cite{nbs_riyadh_kfmc}, $1{:}14{,}158$ among $56{,}632$ infants at a second Riyadh
+paper/sections/A1_supplementary.tex:506	14	Riyadh~\cite{nbs_riyadh_kfmc}, $1{:}14{,}158$ among $56{,}632$ infants at a second Riyadh
+paper/sections/A1_supplementary.tex:506	158	Riyadh~\cite{nbs_riyadh_kfmc}, $1{:}14{,}158$ among $56{,}632$ infants at a second Riyadh
+paper/sections/A1_supplementary.tex:506	56	Riyadh~\cite{nbs_riyadh_kfmc}, $1{:}14{,}158$ among $56{,}632$ infants at a second Riyadh
+paper/sections/A1_supplementary.tex:506	632	Riyadh~\cite{nbs_riyadh_kfmc}, $1{:}14{,}158$ among $56{,}632$ infants at a second Riyadh
+paper/sections/A1_supplementary.tex:507	1	centre~\cite{nbs_psmmc}, and $1{:}14{,}000$ in the national programme covering
+paper/sections/A1_supplementary.tex:507	14	centre~\cite{nbs_psmmc}, and $1{:}14{,}000$ in the national programme covering
+paper/sections/A1_supplementary.tex:507	000	centre~\cite{nbs_psmmc}, and $1{:}14{,}000$ in the national programme covering
+paper/sections/A1_supplementary.tex:508	775	$775{,}000$ newborns~\cite{nbs_saudi_national}. % C10
+paper/sections/A1_supplementary.tex:508	000	$775{,}000$ newborns~\cite{nbs_saudi_national}. % C10
+paper/sections/A1_supplementary.tex:511	95	sampling noise rather than disagreement: exact Poisson $95\%$ intervals run $1{:}4{,}000$ to
+paper/sections/A1_supplementary.tex:511	1	sampling noise rather than disagreement: exact Poisson $95\%$ intervals run $1{:}4{,}000$ to
+paper/sections/A1_supplementary.tex:511	4	sampling noise rather than disagreement: exact Poisson $95\%$ intervals run $1{:}4{,}000$ to
+paper/sections/A1_supplementary.tex:511	000	sampling noise rather than disagreement: exact Poisson $95\%$ intervals run $1{:}4{,}000$ to
+paper/sections/A1_supplementary.tex:512	1	$1{:}37{,}587$, $1{:}5{,}530$ to $1{:}51{,}962$ and $1{:}10{,}826$ to $1{:}18{,}705$, and
+paper/sections/A1_supplementary.tex:512	37	$1{:}37{,}587$, $1{:}5{,}530$ to $1{:}51{,}962$ and $1{:}10{,}826$ to $1{:}18{,}705$, and
+paper/sections/A1_supplementary.tex:512	587	$1{:}37{,}587$, $1{:}5{,}530$ to $1{:}51{,}962$ and $1{:}10{,}826$ to $1{:}18{,}705$, and
+paper/sections/A1_supplementary.tex:512	1	$1{:}37{,}587$, $1{:}5{,}530$ to $1{:}51{,}962$ and $1{:}10{,}826$ to $1{:}18{,}705$, and
+paper/sections/A1_supplementary.tex:512	5	$1{:}37{,}587$, $1{:}5{,}530$ to $1{:}51{,}962$ and $1{:}10{,}826$ to $1{:}18{,}705$, and
+paper/sections/A1_supplementary.tex:512	530	$1{:}37{,}587$, $1{:}5{,}530$ to $1{:}51{,}962$ and $1{:}10{,}826$ to $1{:}18{,}705$, and
+paper/sections/A1_supplementary.tex:512	1	$1{:}37{,}587$, $1{:}5{,}530$ to $1{:}51{,}962$ and $1{:}10{,}826$ to $1{:}18{,}705$, and
+paper/sections/A1_supplementary.tex:512	51	$1{:}37{,}587$, $1{:}5{,}530$ to $1{:}51{,}962$ and $1{:}10{,}826$ to $1{:}18{,}705$, and
+paper/sections/A1_supplementary.tex:512	962	$1{:}37{,}587$, $1{:}5{,}530$ to $1{:}51{,}962$ and $1{:}10{,}826$ to $1{:}18{,}705$, and
+paper/sections/A1_supplementary.tex:512	1	$1{:}37{,}587$, $1{:}5{,}530$ to $1{:}51{,}962$ and $1{:}10{,}826$ to $1{:}18{,}705$, and
+paper/sections/A1_supplementary.tex:512	10	$1{:}37{,}587$, $1{:}5{,}530$ to $1{:}51{,}962$ and $1{:}10{,}826$ to $1{:}18{,}705$, and
+paper/sections/A1_supplementary.tex:512	826	$1{:}37{,}587$, $1{:}5{,}530$ to $1{:}51{,}962$ and $1{:}10{,}826$ to $1{:}18{,}705$, and
+paper/sections/A1_supplementary.tex:512	1	$1{:}37{,}587$, $1{:}5{,}530$ to $1{:}51{,}962$ and $1{:}10{,}826$ to $1{:}18{,}705$, and
+paper/sections/A1_supplementary.tex:512	18	$1{:}37{,}587$, $1{:}5{,}530$ to $1{:}51{,}962$ and $1{:}10{,}826$ to $1{:}18{,}705$, and
+paper/sections/A1_supplementary.tex:512	705	$1{:}37{,}587$, $1{:}5{,}530$ to $1{:}51{,}962$ and $1{:}10{,}826$ to $1{:}18{,}705$, and
+paper/sections/A1_supplementary.tex:520	84	A published series of 84 Saudi patients identified 16 distinct variants (7 in \emph{PCCA},
+paper/sections/A1_supplementary.tex:520	16	A published series of 84 Saudi patients identified 16 distinct variants (7 in \emph{PCCA},
+paper/sections/A1_supplementary.tex:520	7	A published series of 84 Saudi patients identified 16 distinct variants (7 in \emph{PCCA},
+paper/sections/A1_supplementary.tex:521	9	9 in \emph{PCCB})~\cite{saudi84}. % C11
+paper/sections/A1_supplementary.tex:525	70.2	\item The variant \emph{PCCA} c.425G$>$A (p.Gly142Asp) accounts for $70.2\%$ of families and
+paper/sections/A1_supplementary.tex:538	81	It is bought at a price in generalisability. The series is $81\%$ \emph{PCCA}
+paper/sections/A1_supplementary.tex:539	68	(68 of 84 patients) against $19\%$ \emph{PCCB}, where the two genes contribute roughly
+paper/sections/A1_supplementary.tex:539	84	(68 of 84 patients) against $19\%$ \emph{PCCB}, where the two genes contribute roughly
+paper/sections/A1_supplementary.tex:539	19	(68 of 84 patients) against $19\%$ \emph{PCCB}, where the two genes contribute roughly
+paper/sections/A1_supplementary.tex:571	0	$\Delta \equiv 0$ it returns \emph{locally} identifiable, and the identifiable functions
+paper/sections/A1_supplementary.tex:612	1	C(m,t) \;=\; \sum_{i=1}^{n} \bigl(a_i + \Delta_i(t) \bigr)\, f(m; K_i).
+paper/sections/A1_supplementary.tex:617	1	C(p^\pi) - C(p) \;=\; \sum_j \bigl(\Delta_{\pi^{-1}(j)} - \Delta_j \bigr)\, f(m; K_j).
+paper/sections/A1_supplementary.tex:652	2	input resolves the exchange only when $n = 2$; at $n \ge 3$ it breaks every transposition
+paper/sections/A1_supplementary.tex:652	3	input resolves the exchange only when $n = 2$; at $n \ge 3$ it breaks every transposition
+paper/sections/A1_supplementary.tex:653	1	involving the driven channel and leaves $S_{n-1}$ untouched, so the fibre falls from $n!$
+paper/sections/A1_supplementary.tex:654	1	to $(n-1)!$ rather than to one. Verified: three saturating channels with a varying input on
+paper/sections/A1_supplementary.tex:662	1	Section~\ref{sec:therapychannel} is $-(1 + \Delta/\theta)\,\varphi(m)$, a product in which
+paper/sections/A1_supplementary.tex:686	0	$(L + k_e K_m,\, -K_m,\, 0,\, L)$ in $(\theta, K_m, k_e, b)$. Its third entry is zero, so
+paper/sections/A1_supplementary.tex:691	10	design column on the others leaves residuals of $10^{-14}$ for $\ln\theta$, $\ln K_m$ and
+paper/sections/A1_supplementary.tex:691	14	design column on the others leaves residuals of $10^{-14}$ for $\ln\theta$, $\ln K_m$ and
+paper/sections/A1_supplementary.tex:693	3.7	$3.7\times10^{-3}$ for $\ln k_e$, a column that is \emph{nearly}, not exactly, dependent on
+paper/sections/A1_supplementary.tex:693	3	$3.7\times10^{-3}$ for $\ln k_e$, a column that is \emph{nearly}, not exactly, dependent on
+paper/sections/A1_supplementary.tex:703	0	$b = L(K_m^{0}/K_m - 1)$: a log-prior of standard deviation $s$ confines $b$ to
+paper/sections/A1_supplementary.tex:703	1	$b = L(K_m^{0}/K_m - 1)$: a log-prior of standard deviation $s$ confines $b$ to
+paper/sections/A1_supplementary.tex:704	1	$[L(e^{-1.96s}-1),\, L(e^{1.96s}-1)]$. What that shows is how tight such a prior would have
+paper/sections/A1_supplementary.tex:704	1	$[L(e^{-1.96s}-1),\, L(e^{1.96s}-1)]$. What that shows is how tight such a prior would have
+paper/sections/A1_supplementary.tex:704	1	$[L(e^{-1.96s}-1),\, L(e^{1.96s}-1)]$. What that shows is how tight such a prior would have
+paper/sections/A1_supplementary.tex:704	1	$[L(e^{-1.96s}-1),\, L(e^{1.96s}-1)]$. What that shows is how tight such a prior would have
+paper/sections/A1_supplementary.tex:705	0.8	to be. At $s = 0.8$ it leaves $b$ in $[-255, +1225]$, forty times the load record's own
+paper/sections/A1_supplementary.tex:705	255	to be. At $s = 0.8$ it leaves $b$ in $[-255, +1225]$, forty times the load record's own
+paper/sections/A1_supplementary.tex:705	1225	to be. At $s = 0.8$ it leaves $b$ in $[-255, +1225]$, forty times the load record's own
+paper/sections/A1_supplementary.tex:706	0.048	$\pm31.6$, and matching the record would need $s = 0.048$, a factor of $1.10$ on $K_m$. No
+paper/sections/A1_supplementary.tex:706	1.10	$\pm31.6$, and matching the record would need $s = 0.048$, a factor of $1.10$ on $K_m$. No
+paper/sections/A1_supplementary.tex:709	0.2820	alone takes the filter from singular to $\operatorname{sd}(\ln\hat\theta) = 0.2820$ at
+paper/sections/A1_supplementary.tex:710	0.8	$s = 0.8$ and $0.1854$ at $s = 0.2$ on the monthly design, so it helps; the conclusion
+paper/sections/A1_supplementary.tex:710	0.1854	$s = 0.8$ and $0.1854$ at $s = 0.2$ on the monthly design, so it helps; the conclusion
+paper/sections/A1_supplementary.tex:710	0.2	$s = 0.8$ and $0.1854$ at $s = 0.2$ on the monthly design, so it helps; the conclusion
+paper/sections/A1_supplementary.tex:717	0.1500	Removing it takes the same design from $0.1500$ to $1.1096$, a factor of $7.4$ taken record by record ($6.9$ to $7.9$ over twenty-four intake records). A direct
+paper/sections/A1_supplementary.tex:717	1.1096	Removing it takes the same design from $0.1500$ to $1.1096$, a factor of $7.4$ taken record by record ($6.9$ to $7.9$ over twenty-four intake records). A direct
+paper/sections/A1_supplementary.tex:717	7.4	Removing it takes the same design from $0.1500$ to $1.1096$, a factor of $7.4$ taken record by record ($6.9$ to $7.9$ over twenty-four intake records). A direct
+paper/sections/A1_supplementary.tex:717	6.9	Removing it takes the same design from $0.1500$ to $1.1096$, a factor of $7.4$ taken record by record ($6.9$ to $7.9$ over twenty-four intake records). A direct
+paper/sections/A1_supplementary.tex:717	7.9	Removing it takes the same design from $0.1500$ to $1.1096$, a factor of $7.4$ taken record by record ($6.9$ to $7.9$ over twenty-four intake records). A direct
+paper/sections/A2_provenance.tex:32	5	One consequence is worth stating because it is nowhere else: $k_e = 5$/day is a marker
+paper/sections/A2_provenance.tex:33	2	half-life of $\ln 2/5 = 0.139$~d, about $3.3$ hours.
+paper/sections/A2_provenance.tex:33	5	half-life of $\ln 2/5 = 0.139$~d, about $3.3$ hours.
+paper/sections/A2_provenance.tex:33	0.139	half-life of $\ln 2/5 = 0.139$~d, about $3.3$ hours.
+paper/sections/A2_provenance.tex:33	3.3	half-life of $\ln 2/5 = 0.139$~d, about $3.3$ hours.
+paper/sections/A2_provenance.tex:35	1	\begin{adjustwidth}{-1.4cm}{-1.4cm}
+paper/sections/A2_provenance.tex:35	1	\begin{adjustwidth}{-1.4cm}{-1.4cm}
+paper/sections/A2_reproducibility.tex:31	3	errors-in-variables simulation uses seeds $3$ and $7$; the decision operating characteristic
+paper/sections/A2_reproducibility.tex:31	7	errors-in-variables simulation uses seeds $3$ and $7$; the decision operating characteristic
+paper/sections/A2_reproducibility.tex:32	11	uses $11$ for the figure and $12$, $13$ and $21$ for the numbers quoted in
+paper/sections/A2_reproducibility.tex:32	12	uses $11$ for the figure and $12$, $13$ and $21$ for the numbers quoted in
+paper/sections/A2_reproducibility.tex:32	13	uses $11$ for the figure and $12$, $13$ and $21$ for the numbers quoted in
+paper/sections/A2_reproducibility.tex:32	21	uses $11$ for the figure and $12$, $13$ and $21$ for the numbers quoted in
+paper/sections/A2_reproducibility.tex:40	10	relative tolerances at $10^{-8}$ or tighter, and the estimator of
+paper/sections/A2_reproducibility.tex:40	8	relative tolerances at $10^{-8}$ or tighter, and the estimator of
+paper/sections/A2_reproducibility.tex:43	10	integration step and asserts the answer does not move by more than $10^{-6}$ relative; the
+paper/sections/A2_reproducibility.tex:43	6	integration step and asserts the answer does not move by more than $10^{-6}$ relative; the
+paper/supplement.tex:23	0	\title{\textbf{Supplementary material}\\[0.3em]
+paper/supplement.tex:60	1	\begin{adjustwidth}{-1.4cm}{-1.4cm}
+paper/supplement.tex:60	1	\begin{adjustwidth}{-1.4cm}{-1.4cm}

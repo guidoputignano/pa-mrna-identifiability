@@ -123,6 +123,36 @@ def floor_at(theta, kappa_cv, n_big=20000):
     return over_seeds(theta, n_big, kappa_cv)[0]
 
 
+def tier1_numbers():
+    """
+    The Tier 2 figures Section 8 quotes, generated rather than typed.
+
+    WHY THIS FUNCTION NOW EXISTS. This script's docstring said "Scoping only.
+    Nothing here reaches the paper." That was false: `08_specification.tex`
+    states five of its results as prose literals, so nothing in the build ever
+    compared them with the code (REVIEW_LOG.md R86). The declaration is now
+    true the other way round, and these are the numbers the paper cites.
+    """
+    from common.numbers import write_numbers
+    N25 = 25
+    N = {}
+    N["tier1_sd_at_pub"] = over_seeds(3000.0, N25, PUBLISHED_CV)[0]
+    N["tier1_visits_at_pub"] = float(visits_to_gate(3000.0, PUBLISHED_CV))
+    N["tier1_years_at_pub"] = N["tier1_visits_at_pub"] * 30.4 / 365.0
+    N["tier1_visits_exact"] = float(visits_to_gate(3000.0, None))
+    N["tier1_factor"] = PUBLISHED_CV / REQUIRED_CV
+    N["tier1_cv_cut_pct"] = 100.0 * (1.0 - REQUIRED_CV / PUBLISHED_CV)
+    for cv, tag in ((0.10, "10"), (REQUIRED_CV, "req"), (0.14, "14"),
+                    (0.20, "20"), (0.30, "30")):
+        N["tier1_floor_" + tag] = floor_at(3000.0, cv)
+    fmt = {k: "{:.3f}" for k in N}
+    fmt.update({"tier1_visits_at_pub": "{:.0f}", "tier1_visits_exact": "{:.0f}",
+                "tier1_years_at_pub": "{:.1f}", "tier1_factor": "{:.2f}",
+                "tier1_cv_cut_pct": "{:.0f}"})
+    write_numbers("tier1", N, fmt)
+    return N
+
+
 def main():
     print(__doc__)
     bar = "=" * 78
@@ -230,6 +260,9 @@ def main():
     print(f"  sd rises with every loosening of the prior: "
           f"{all(b >= a for a, b in zip(seq, seq[1:]))}")
 
+
+    #  the numbers the paper cites, written where the build can see them
+    tier1_numbers()
 
 if __name__ == "__main__":
     main()

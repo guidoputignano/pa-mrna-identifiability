@@ -201,13 +201,13 @@ diary's $\pm\num{trans_b_prior}$, and that channel was not the binding one
 on the delivered increment to an exact one is worth $0.3\%$ at this capacity, against
 $88\%$ at nominal.
 \item \textbf{Modulate the diet on purpose.} A prescribed $\pm15\%$ swing in natural
-protein is worth $7\%$, and an implausible $\pm50\%$ swing $32\%$, leaving $2.32$ against
+protein is worth $\num{diet_gain15_pct}\%$, and an implausible $\pm50\%$ swing $\num{diet_gain50_pct}\%$, leaving $\num{diet_sd50_disease}$ against
 a target of $0.20$ (Section~\ref{sec:whoto}).
 \item \textbf{Record the diet better.} Tightening the load record from $20\%$ to $1\%$ is
-worth a factor of $1.81$ at nominal capacity and $1.22$ to $1.46$ across the disease range
+worth a factor of $\num{loadcap_ratio_nominal}$ at nominal capacity and $\num{loadcap_ratio_dis_lo}$ to $\num{loadcap_ratio_dis_hi}$ across the disease range
 --- \emph{less} where the question is, not more, although the flux identity makes a $5\%$
 error on $L$ six times larger a fraction of $\theta\,g(m)$ there. A perfect record in both
-channels leaves $2.659$ at $5\%$ of nominal.
+channels leaves $\num{loadcap_perfect_5pct}$ at $5\%$ of nominal.
 \item \textbf{Measure the diet instead of recording it.} Whole-body propionate turnover is
 measurable by isotope dilution, which removes $b$ from the parameter vector rather than
 bounding it. At nominal that is a real efficiency: thirteen measured-load visits match

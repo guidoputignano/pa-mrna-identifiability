@@ -95,6 +95,39 @@ def over(theta, bias, scatter):
     return median_spread([sd_of(theta, s, bias, scatter) for s in SEEDS])
 
 
+def bias_numbers():
+    """
+    The load decomposition Sections 6 and 8 quote, generated rather than typed.
+
+    WHY THIS FUNCTION NOW EXISTS. This script's docstring said "Scoping only.
+    Nothing here reaches the paper." It owns the paper's third-tightest
+    requirement, stated as prose literals in TWO sections and compared with
+    nothing (REVIEW_LOG.md R81).
+    """
+    from common.numbers import write_numbers
+    TH = 3000.0
+    base = over(TH, LOAD_FRAC, LOAD_FRAC)[0]
+    both = over(TH, 0.20, 0.20)[0]
+    bias = over(TH, 0.20, LOAD_FRAC)[0]
+    scat = over(TH, LOAD_FRAC, 0.20)[0]
+    tot = (bias - base) + (scat - base)
+    N = {"bias_base": base, "bias_both20": both,
+         "bias_alone20": bias, "bias_scatter20": scat,
+         "bias_scatter_share": 100.0 * (scat - base) / tot,
+         "bias_offset_share": 100.0 * (bias - base) / tot,
+         "bias_tight": over(TH, 0.01, 0.01)[0],
+         "bias_loose": both,
+         "bias_sweep_lo": over(TH, 0.01, LOAD_FRAC)[0],
+         "bias_sweep_hi": over(TH, 5.00, LOAD_FRAC)[0]}
+    #  the format is the precision the PAPER prints, so a macro renders exactly
+    #  the literal it replaces and no number changes in the conversion
+    fmt = {k: "{:.3f}" for k in N}
+    fmt.update({"bias_scatter_share": "{:.0f}", "bias_offset_share": "{:.0f}",
+                "bias_sweep_lo": "{:.4f}", "bias_sweep_hi": "{:.4f}"})
+    write_numbers("bias", N, fmt)
+    return N
+
+
 def main():
     print(__doc__)
     bar = "=" * 78
@@ -212,6 +245,9 @@ def main():
     print(f"  they agree to {abs(loose-none)/none:.2%}, so the prior is inert "
           f"once it is wide")
 
+
+    #  the numbers the paper cites, written where the build can see them
+    bias_numbers()
 
 if __name__ == "__main__":
     main()

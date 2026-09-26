@@ -107,6 +107,39 @@ def enz_share(theta):
     return (LB - KE * m) / LB, LB - KE * m
 
 
+def loadcap_numbers():
+    """
+    The load-accuracy x capacity results Sections 8 and 11 quote.
+
+    WHY THIS FUNCTION NOW EXISTS. See REVIEW_LOG.md R81: this script's
+    docstring said nothing of it reached the paper, and it owns route 5's
+    factors and Section 8's capacity split.
+    """
+    from common.numbers import write_numbers
+    r = {}
+    for cap in CAPS:
+        th = 3000.0 * cap
+        r[cap] = over(th, 0.20, 0.20) / over(th, 0.01, 0.01)
+    dis = [v for c, v in r.items() if c <= 0.20]
+    N = {"loadcap_ratio_nominal": r[1.00],
+         "loadcap_ratio_dis_lo": min(dis), "loadcap_ratio_dis_hi": max(dis)}
+    for cap, tag in ((1.00, "nominal"), (0.50, "half"), (0.20, "fifth")):
+        th = 3000.0 * cap
+        b0 = over(th, LOAD_FRAC, LOAD_FRAC)
+        bo = over(th, 0.20, LOAD_FRAC)
+        sc = over(th, LOAD_FRAC, 0.20)
+        N["loadcap_share_" + tag] = 100.0 * (bo - b0) / ((bo - b0) + (sc - b0))
+    N["loadcap_perfect_5pct"] = over(150.0, 1e-6, 1e-6)
+    #  each format is the precision the PAPER prints, so a macro renders the
+    #  literal it replaces exactly
+    fmt = {k: "{:.2f}" for k in N}
+    fmt.update({"loadcap_share_nominal": "{:.1f}",
+                "loadcap_share_half": "{:.1f}", "loadcap_share_fifth": "{:.1f}",
+                "loadcap_perfect_5pct": "{:.3f}"})
+    write_numbers("loadcap", N, fmt)
+    return N
+
+
 def main():
     print(__doc__)
     bar = "=" * 84
@@ -206,6 +239,9 @@ def main():
         print(f"  {100*f:3.0f}% of nominal: {got:.4f} against the committed "
               f"{want:.4f} ({abs(got-want)/want:.2%} apart)")
 
+
+    #  the numbers the paper cites, written where the build can see them
+    loadcap_numbers()
 
 if __name__ == "__main__":
     main()

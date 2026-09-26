@@ -116,6 +116,45 @@ def visits_to_gate(theta, nmax=600, **kw):
     return None
 
 
+def measured_numbers():
+    """
+    Route 6's figures, generated rather than typed.
+
+    WHY THIS FUNCTION NOW EXISTS. This script's docstring said "Scoping only.
+    Nothing here reaches the paper." It owns the whole of Section 11's route 6
+    and a sentence in Section 6, stated as prose literals that nothing in the
+    build compared with anything (REVIEW_LOG.md R81, R82).
+    """
+    from common.numbers import write_numbers
+    TH = 3000.0
+    tgt = over(TH)[0]
+    match = None
+    for n in range(3, 61):
+        if over(TH, n_visits=n, measured=True, prec=0.02)[0] <= tgt:
+            match = n
+            break
+    th2 = 3000.0 * 0.02
+    tgt2 = over(th2)[0]
+    match2 = None
+    for n in range(3, 61):
+        if over(th2, n_visits=n, measured=True, prec=0.02)[0] <= tgt2:
+            match2 = n
+            break
+    pinned = over(TH)[0]
+    gone = over(TH, measured=True, prec=LOAD_FRAC)[0]
+    N = {"meas_match_nominal": float(match),
+         "meas_gate_nominal": float(visits_to_gate(TH, measured=True,
+                                                   prec=0.02, nmax=120)),
+         "meas_match_2pct": float(match2),
+         "meas_exact_5pct": over(150.0, measured=True, prec=1e-6)[0],
+         "meas_b_only_gain_pct": 100.0 * (1.0 - gone / pinned)}
+    fmt = {"meas_match_nominal": "{:.0f}", "meas_gate_nominal": "{:.0f}",
+           "meas_match_2pct": "{:.0f}", "meas_exact_5pct": "{:.3f}",
+           "meas_b_only_gain_pct": "{:.2f}"}
+    write_numbers("measured", N, fmt)
+    return N
+
+
 def main():
     print(__doc__)
     bar = "=" * 86
@@ -221,6 +260,9 @@ def main():
         print(f"  {100*f:5.0f}% of nominal: b removed {gone:.4f}, "
               f"b free at the same sigma {pinned:.4f}")
 
+
+    #  the numbers the paper cites, written where the build can see them
+    measured_numbers()
 
 if __name__ == "__main__":
     main()

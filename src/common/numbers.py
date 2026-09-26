@@ -58,6 +58,14 @@ GENERATORS = {
     "margin": "src/model_C/run.py",
     "therapy": "audit/t13_therapy_forward.py",
     "boundary": "src/model_C/run.py",
+    #  the five added after REVIEW_LOG.md R81/R86: each declared in its own
+    #  docstring that nothing of it reached the paper, and each owned prose the
+    #  paper asserts as bare literals.
+    "tier1": "audit/t2_tier1_margin.py",
+    "diet": "audit/t3_diet_modulation.py",
+    "bias": "audit/t4_bias_vs_scatter.py",
+    "loadcap": "audit/t8_load_by_capacity.py",
+    "measured": "audit/t9_measured_load.py",
 }
 
 
