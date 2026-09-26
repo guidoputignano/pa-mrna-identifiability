@@ -395,3 +395,108 @@ schedule, where I built the grid by hand instead of using the table's, and route
 swept 5% to 20% and the paper's upper endpoint sits at 2%. Both were caught by asking where the
 paper's own value comes from before concluding it is wrong. That is the habit this list should be
 read with.
+
+---
+
+## 11. The declaration is not a mechanism, and route 6 was right all along
+
+`audit/q21_unreachable.py`. R80 reported `t3_diet_modulation.py` as one instance of a generator the
+build never runs whose numbers are in the paper as literals. **It is one of four, and finding the
+other three overturns R75's retraction.**
+
+### 11.1 The 12 scripts that declare they do not reach the paper
+
+Of 111 scripts in `audit/`, **12 declare in their docstrings that nothing of theirs reaches the
+paper** ("Scoping only. Nothing here reaches the paper."). They split exactly in two:
+
+| | in `make figures` | writes a numbers file | owns a paper claim |
+|:--|:--|:--|:--|
+| `t1_transient_worth`, `t5_band_vs_ke`, `t6_cohort_with_kappa`, `t7_structure_transient`, `t11_phase_lattice` | **yes** | **yes** | no |
+| `t2_tier1_margin`, `t10_vandermonde`, `t12_triples` | no | no | no |
+| **`t3_diet_modulation`, `t4_bias_vs_scatter`, `t8_load_by_capacity`, `t9_measured_load`** | **no** | **no** | **YES** |
+
+**The declaration is wrong in both directions.** Five scripts say nothing of theirs reaches the paper
+while being wired into `make figures` and writing macros the paper cites, which is harmless because
+those numbers are guarded. Four say the same thing while owning prose the paper asserts, which is not.
+**A docstring is not a mechanism.** What the build runs is decided by `make figures` and what the
+paper cites is decided by `\num{}`, and neither reads English.
+
+### 11.2 The four that own paper claims
+
+None writes a `results/numbers` file, so none is among the 14 the guard checks for reachability. The
+guard is not failing; it was never pointed at this class.
+
+**`t4_bias_vs_scatter.py` owns Section 8's load decomposition**, which carries the paper's
+third-tightest requirement:
+
+| the paper says | the script prints |
+|:--|:--|
+| "the per-visit scatter alone gives 0.283" | `at 20% in the SCATTER alone   0.2829` |
+| "the systematic offset alone gives 0.172" | `at 20% in the BIAS alone      0.1718` |
+| "against a 0.170 baseline" | `bias to 5%:  0.1696` |
+| "98% of the degradation is scatter" | `the scatter channel accounts for 0.1133  (98%)` |
+
+**`t8_load_by_capacity.py` owns route 5's factors**: `100% of nom  1.808` against the paper's 1.81,
+and `20% of nom 1.215 ... 2% of nom 1.464` against its "1.22 to 1.46 across the disease range". So the
+band runs from a fifth of nominal down to two per cent, which section 10 inferred and this confirms
+from the owning generator.
+
+**`t9_measured_load.py` owns route 6 entirely**, and this is the finding that matters:
+
+```
+        theta  recorded n=25   measured n to match   measured n to gate
+  100% of nom         0.1699                    13                    6
+   50% of nom         0.3228                    12                > 120
+   20% of nom         0.8104                    13                > 120
+   10% of nom         1.5828                    15                > 120
+    5% of nom         3.0642                    17                > 120
+    2% of nom         7.4406                    18                > 120
+```
+and, at 5% of nominal, `to 0.1%, n=25:  2.6595`.
+
+### 11.3 R75's retraction is withdrawn: route 6 is correct in every clause
+
+| route 6's clause | R75 | the owning generator |
+|:--|:--|:--|
+| thirteen measured visits match twenty-five recorded | reproduces (12) | **13, exactly** |
+| six reach the target | reproduces exactly | **6, exactly** |
+| `2.659` at 5% of nominal | reproduces | **2.6595, exactly** |
+| **"the advantage shrinks ... from thirteen visits to eighteen"** | **RETRACTED as wrong** | **13 at nominal, 18 at 2% of nominal. Correct.** |
+
+**The clause is right and the retraction was wrong.** The count rises monotonically as capacity falls,
+13, 12, 13, 15, 17, 18, which is exactly "shrinks rather than reverses". R75 swept only to 5% of
+nominal and built the schedule by hand; the paper's range runs to 2%.
+
+**And R75's second charge against route 6 also falls.** R75 said its prose "describes a different
+computation from the one that produced its numbers", because "removes `b` from the parameter vector"
+is the b-only reading. `t9`'s own docstring is explicit: **"THREE THINGS CHANGE AT ONCE, and they are
+not independent. (1) b disappears... (2) sigma stops being a diet record's accuracy and becomes a
+tracer measurement's precision. (3) The steady record closes on itself."** The prose names the first
+of three and omits the second. **That is an incomplete description, not a wrong one**, and Sections 7
+and 11 do not contradict each other: Section 7 says `sigma` carries the requirement, route 6 says `b`
+is removed, and measuring the load does both.
+
+**What survives from R75 is the provenance defect and nothing else.** Route 6's numbers are correct,
+computed by a real generator, and stated in the paper as literals that no macro cites and no build
+step regenerates. That was always the finding worth having.
+
+### 11.4 Four times, the same error
+
+R77 reported `2.659` as "unowned and unprinted", meaning no generator printed it. `t9` prints it at
+four significant figures. R77's reproduction pass ran fourteen generators and `t9` was not among them,
+because `t9` is not in `make figures` **and that is precisely the defect being reported**. The method
+inherited the very gap it was measuring.
+
+That is the fourth time in this phase that a reconstruction of mine disagreed with the paper and the
+paper was right:
+
+1. the six-monthly schedule, built by hand instead of taken from `tab_D_designs.tex`
+2. Section 8's decomposition, on the wrong t = 0 convention
+3. route 5's band, swept to 5% when its endpoint sits at 2%
+4. route 6's eighteen visits, swept to 5% when its endpoint sits at 2%, and on a hand-rolled grid
+
+**Every one has the same cause: recomputing a quantity instead of finding the generator that owns it.**
+The discipline that would have prevented all four is the one this sweep exists to enable, which is
+worth stating plainly: **find the owner before recomputing, and if no owner can be found, say so
+before concluding the number is wrong.** The sweep's own list is the tool for finding the owner, and I
+built it and then did not use it four times.

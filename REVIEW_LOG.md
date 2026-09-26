@@ -13,6 +13,15 @@ than quoted.
 These are not findings. They are definitions that have cost reconciliation time and will cost it
 again every time two scripts compute the same quantity by different routes.
 
+- **Find the owner before recomputing.** A number in the paper is either generated, and owned by a
+  named script, or it is a prose literal. Before concluding that a paper number is wrong, locate the
+  script that produces it and read what that script computes; recompute only to check the owner, never
+  to replace it. Four disagreements in Phase 10 were a hand-built reconstruction losing to the paper:
+  a schedule built by hand rather than read from `tab_D_designs.tex`, a t = 0 convention, and twice a
+  capacity sweep stopping at 5% of nominal when the paper's range runs to 2%. **If no owner can be
+  found, say so before concluding the number is wrong** (R81 to R83). `audit/PROVENANCE_SWEEP.md` is
+  the index of which numbers have owners and which do not.
+
 - **A spread is reported with its divisor.** `numpy.std` defaults to the POPULATION standard
   deviation, `ddof = 0`; the sample standard deviation is `ddof = 1`. The two differ by
   `sqrt((n-1)/n)`, which is 2.0% at n = 25 and 0.1% at n = 365, so a gap of that size between two
@@ -3850,3 +3859,76 @@ which.
 schedule, built by hand instead of taken from the table, and route 5's band, swept over 5% to 20%
 when the paper's upper endpoint sits at 2%. Both were caught by asking where the paper's own value
 comes from before concluding it is wrong.
+
+---
+
+### R81. The docstring declaration is not a mechanism, and four generators the build never runs own paper prose
+
+`audit/PROVENANCE_SWEEP.md` section 11, `audit/q21_unreachable.py`.
+
+R80 reported `t3_diet_modulation.py` as one instance of a generator absent from `make figures` whose
+results reach the paper only as literals. **It is one of four.**
+
+Of 111 scripts in `audit/`, **12 declare in their docstrings that nothing of theirs reaches the
+paper**. They split exactly: five (`t1`, `t5`, `t6`, `t7`, `t11`) are in `make figures` AND write a
+numbers file, so their declaration is false but harmless, their numbers being guarded macros; three
+(`t2`, `t10`, `t12`) are genuinely scoping work; and **four own prose the paper asserts**:
+
+| script | owns |
+|:--|:--|
+| `t4_bias_vs_scatter` | **Section 8's load decomposition**, the paper's third-tightest requirement: 0.2829 against "0.283", 0.1718 against "0.172", 0.1696 against "0.170", and "the scatter channel accounts for 0.1133 (98%)" against "98%" |
+| `t8_load_by_capacity` | **route 5's factors**: `100% of nom 1.808` against "1.81", `20% 1.215 ... 2% 1.464` against "1.22 to 1.46" |
+| `t9_measured_load` | **route 6 entirely** |
+| `t3_diet_modulation` | route 4's swing, R80's instance |
+
+**None writes a `results/numbers` file**, so none is among the 14 the guard checks for reachability.
+The guard is not failing; it was never pointed at this class. **The declaration is wrong in both
+directions, which is the point: a docstring is not a mechanism.** What the build runs is decided by
+`make figures` and what the paper cites by `\num{}`, and neither reads English. **R23's failure mode
+on a second surface**: a generator no entry point calls, in prose instead of a table.
+
+### R82. WITHDRAWAL of R75's retraction: route 6 is correct in every clause
+
+`audit/PROVENANCE_SWEEP.md` section 11.3. **This withdraws a retraction, so it is stated plainly.**
+
+R75 retracted route 6's clause that the advantage "shrinks rather than reverses as capacity falls,
+from thirteen visits to eighteen", on the ground that a recomputation gave a flat 10 to 12. **The
+owning generator prints exactly the paper's numbers:**
+
+```
+  100% of nom   0.1699    13 to match     6 to gate
+   50% of nom   0.3228    12
+   20% of nom   0.8104    13
+   10% of nom   1.5828    15
+    5% of nom   3.0642    17
+    2% of nom   7.4406    18
+```
+
+13 at nominal rising to 18 at 2% of nominal, monotone, which is "shrinks rather than reverses"
+exactly. **R75 swept only to 5% of nominal and built the schedule by hand.** The clause is right.
+
+**R75's second charge also falls.** It said route 6's prose "describes a different computation from
+the one that produced its numbers". `t9`'s docstring: "THREE THINGS CHANGE AT ONCE... (1) b
+disappears... (2) sigma stops being a diet record's accuracy and becomes a tracer measurement's
+precision. (3) The steady record closes on itself." The prose names the first and omits the second.
+**Incomplete, not wrong**, and Sections 7 and 11 do not contradict each other.
+
+**What survives from R75 is the provenance defect alone**, which was always the finding worth having:
+route 6's numbers are correct, computed by a real generator, and stated as literals no macro cites and
+no build step regenerates.
+
+### R83. The method inherited the gap it was measuring, four times
+
+R77 called `2.659` "unowned and unprinted". `t9` prints it at four significant figures. R77's
+reproduction pass ran fourteen generators and `t9` was not among them **because `t9` is not in
+`make figures`, which is precisely the defect being reported**.
+
+Four reconstructions in this phase disagreed with the paper and the paper was right each time: the
+six-monthly schedule built by hand instead of read from `tab_D_designs.tex`; Section 8's decomposition
+on the wrong t = 0 convention; route 5's band swept to 5% when its endpoint is at 2%; and route 6's
+eighteen visits, same too-narrow sweep plus a hand-rolled grid.
+
+**Every one has the same cause: recomputing a quantity instead of finding the generator that owns
+it.** The rule, stated for the standing conventions: **find the owner before recomputing, and if no
+owner can be found, say so before concluding the number is wrong.** The sweep's own list is the tool
+for finding the owner.
