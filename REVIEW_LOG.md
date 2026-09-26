@@ -3040,3 +3040,74 @@ that was empty in every row, since the prior's own width varies by column and no
 described the quadrature identity as a measured shortfall. Both are corrected: the column is gone
 and the identity is stated and proved as S5.0.
 
+---
+
+## R59. The R4 retraction is confirmed, not overturned
+
+`audit/PHASE9_LITERATURE.md` item 6. The 25 September literature reports disagree about the
+breath-test CV that **R4** retracted. R3 quotes the abstract of Manoli 2021, "mean coefficient of
+variation 6.9% and 12.8%, respectively", and reads the 12.8% as a mean of per-subject CVs. R4 quotes
+the Results, an average of 14.02 ± 12.86% in patients and 6.94 ± 5.3% in controls.
+
+**The arithmetic settles it against R3.** 12.8 is not a rounding of 14.02, the mean; it is a
+rounding of 12.86, the SD. And the decisive point is one neither report makes: **the abstract's two
+figures come from different columns of the same table.** The controls' 6.9 is their mean, 6.94, and
+the patients' 12.8 is their SD, 12.86. A reader assuming the abstract is internally consistent
+takes both as means, which is precisely the error R4 identified, and the inconsistency is visible
+without leaving the paper.
+
+**So R4 stands and there is no retraction of a retraction.** R3 is wrong here, and wrong in the way
+the September pack was wrong: it trusted a label in an abstract over numbers in a Results section.
+R4 is less wrong rather than right, since its own sentence "abstract rounds these to 6.9% and 12.8%"
+asserts both are roundings of the means it has just quoted.
+
+**Conditional, and recorded as such.** The argument rests on two quotations this repository has not
+verified, R4's Results sentence and its controls figure, because outbound access to publisher and
+index records is denied in this container. It must be confirmed at the source. What does not depend
+on the quotes is the direction of the retraction, which no reading here overturns. Either way the
+figure is a breath-test repeatability CV across visits months to years apart in MMA, and is not a
+within-patient CV of any plasma marker.
+
+---
+
+## R60. The marker CV is a bound, not a number, and the earlier framing double-counted
+
+`audit/PHASE9_LITERATURE.md` item 7. The brief that opened Phase 9 took R3's 25 to 35% surrogate
+figures as variation the model does not explain, and concluded the monthly design fails. **The first
+half stands and the second does not follow**, which the author identified before any rerun was
+begun.
+
+**What the model already explains.** The marker's within-patient CV across the monthly record,
+produced by the dose train alone at a perfectly constant recorded load, is **27.2%** on the
+on-therapy footing with levels 3.544 to 8.747, and **28.3%** including the untreated t = 0 draw at
+m = 10.0. With the specification's 10% load variation it is a median 30.0% [25.6, 33.5] over 24
+records. Checked by summing the kernel over doses and root-finding the balance rather than using the
+closed-form root, agreeing to 1.3e-10. R3's surrogates are TOTAL within-patient variation in
+subjects receiving no dose train, so they are the same order as what the model fits, and carrying
+them into sigma unchanged double-counts.
+
+**Neither surrogate can be decomposed, and that is item 7's central result.** Thompson 2012
+separates analytical (7.9%) from biological (25.2% by quadrature) and stops; feeding drives both C3
+and the substrate load this model records, so an unknown and probably large part of that 25.2% is a
+regressor here. Manoli 2021 separates nothing, and its interval of two months to four years contains
+treatment changes, growth and intercurrent illness with no diet standardisation.
+
+**So sigma is bounded below by the analytical component, 5 to 8%, and above by the surrogates'
+totals, 25 to 35%, with no measured value in between.** The design's 5% is analytical only, and
+Thompson's analytical figure for a comparable assay is 7.9%, so 5% is the optimistic end rather than
+the centre. This is weaker than either end taken alone and it is what the evidence supports. **There
+is no central case**, which is a decision for the author rather than a reading from the literature,
+and the marker-variability rerun waits on it.
+
+**And the panel remark is untested rather than supported.** Part of the residual must be shared,
+since variation in the propionyl-CoA pool propagates to every marker derived from it, and a shared
+part cannot be averaged away. Part must be marker-specific, and R3 names the confounders: free
+carnitine for C3, oxaloacetate for 2-MC, glycine for propionylglycine. The split cannot be estimated
+from anything R3 found, because it needs repeated simultaneous measurements of two markers in the
+same patients and no within-patient figure exists for any marker in PA at any timescale. The fasting
+result R3 quotes, a 62% fall in C3/C2 driven mostly by C3, is the kind of shared driver that would
+defeat panel averaging.
+
+**Re-check record.** `audit/q10_phase9_recheck.py` is new: the model-explained CV by an independent
+route, and the item 6 arithmetic with both readings tested rather than one asserted. 7 of 7 pass.
+

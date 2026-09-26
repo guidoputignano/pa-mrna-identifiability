@@ -64,3 +64,23 @@ own cells as a log-normal prior on θ and finds its value and its danger in the 
 3. **What would establish the centring**, rather than the width: paired measurements in the same
    patients, ex vivo activity against any in vivo flux measure (a labelled propionate oxidation
    study is the obvious candidate), across more than one cell type.
+
+---
+
+## R3. The marker's within-patient variability
+
+Raised by `audit/PHASE9_LITERATURE.md` item 7, which finds the existing surrogates undecomposable.
+
+1. **The residual scatter, not the total.** What sigma needs is the variation left after a dose
+   cycle and a recorded diet are fitted. No published figure reports it. Thompson 2012 separates
+   analytical (7.9%) from biological (25.2% by quadrature) and no further; Manoli 2021 separates
+   nothing across an interval of two months to four years. A repeatability study in treated PA
+   patients, with diet recorded and sampling time fixed, is what would replace the bound with a
+   number.
+2. **Shared or marker-specific.** The paper's panel remark needs the residual to be
+   marker-specific. Deciding it requires repeated SIMULTANEOUS measurements of two or more markers
+   in the same patients at the same times, which no located study provides.
+3. **Whether a standardised sampling protocol narrows the bound.** Fasting state and time of day
+   fixed. The fasting evidence, a 62% fall in plasma C3/C2 driven mostly by C3, suggests
+   nutritional state is a large shared driver, and protocol is cheaper than a second assay. Filed
+   rather than pursued.

@@ -1,0 +1,181 @@
+"""
+Phase 9 re-checks. Independent routes to every number PHASE9_LITERATURE.md reports.
+
+Phase 9 is a literature phase, so most of its content is quotation and
+adjudication rather than computation, and quotation is checked against sources
+and not against code. Two things in it ARE computed, and both are checked here
+by a route that shares no code path with the one that produced them.
+
+  1. The model-explained within-patient marker CV, which is what decides
+     whether a surrogate's total variation may be carried into sigma. The
+     reported route builds the increment through `q2_requirement_map.increment`
+     (which calls `q1`'s ExpSum assembly) and solves the quasi-steady balance
+     with the closed-form positive root. The route here sums the exponential
+     kernel over doses in a Python loop and solves the balance by Brent
+     root-finding on the residual. Nothing is shared but the constants.
+
+  2. The item 6 arithmetic, which is a rounding claim about two published
+     numbers and is checked as arithmetic.
+
+Nothing here records an expected result in advance.
+
+Run:  python audit/q10_phase9_recheck.py
+"""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+import numpy as np
+from scipy.optimize import brentq
+
+import q1_increment_shape as Q
+import q2_requirement_map as S2
+
+TH, KM, KE = S2.TH_NOM, S2.KM, S2.KE
+RESULTS = []
+
+
+def report(name, got, want, tol, rel=False):
+    gap = abs(got / want - 1.0) if rel else abs(got - want)
+    ok = gap <= tol
+    RESULTS.append((name, ok))
+    print(f"    {name:<52s} {'PASSES' if ok else 'FAILS':>6s}  "
+          f"{'relative' if rel else 'absolute'} gap {gap:.3e} against {tol:g}")
+    return ok
+
+
+def banner(t):
+    print("\n" + "=" * 92)
+    print("  " + t)
+    print("=" * 92)
+
+
+# ==========================================================================
+def brute_increment(t, half_life=None, D=None, period=None, t_end=900.0):
+    """
+    The increment at time `t` by summing one exponential per past dose.
+
+    A dose at exactly `t` does not contribute, which is the PRE-DOSE reading
+    `q1.DOSE_DAY_DRAW` fixes; `q1` implements it inside `at_draw`, this route
+    implements it as a strict inequality in the sum.
+    """
+    half_life = Q.TH_HALF0 if half_life is None else half_life
+    D = Q.D_AMP if D is None else D
+    period = Q.T_DOSE if period is None else period
+    lam = np.log(2.0) / half_life
+    return float(sum(D * np.exp(-lam * (t - u))
+                     for u in np.arange(0.0, t_end, period) if u < t - 1e-12))
+
+
+def brute_level(theta, inc, load):
+    """The quasi-steady level by root-finding, not by the closed-form root."""
+    def f(m):
+        return (theta + inc) * m / (KM + m) + KE * m - load
+    return float(brentq(f, 1e-12, 1e9, xtol=1e-14, rtol=1e-15))
+
+
+def check_1_model_explained_cv():
+    banner("1. THE MODEL-EXPLAINED MARKER CV, BY BRUTE SUMMATION AND ROOT-FINDING")
+    print("""  The within-patient CV of the marker across the monthly record produced by the
+  dose train alone, at a perfectly constant recorded load. This is the quantity
+  PHASE9 item 7 uses to argue that a surrogate's TOTAL within-patient variation
+  may not be carried into sigma unchanged. Reported on both footings, because
+  the untreated t = 0 draw sits at the undosed level and moves the CV.""")
+    L = S2.footing(TH)[0]
+    ok = True
+    for name, times in (("incl t = 0, n = 25", Q.MONTHLY),
+                        ("on therapy, n = 24",
+                         S2.times_for("monthly", "no baseline"))):
+        mine = S2.level(TH, S2.increment(times), np.full(times.size, L))
+        theirs = np.array([brute_level(TH, brute_increment(t), L)
+                           for t in times])
+        cv_a = float(mine.std(ddof=1) / mine.mean())
+        cv_b = float(theirs.std(ddof=1) / theirs.mean())
+        print(f"    {name}: q2 route CV {100 * cv_a:.3f}%, brute route "
+              f"{100 * cv_b:.3f}%, levels {theirs.min():.3f} to "
+              f"{theirs.max():.3f}")
+        ok &= report(f"marker CV, {name}", cv_b, cv_a, 1e-9)
+        ok &= report(f"per-visit levels, {name}",
+                     float(np.abs(theirs / mine - 1.0).max()), 0.0, 1e-8)
+    print("""
+  And the same with the specification's 10% day-to-day load variation added,
+  over the seed set, because a single-seed figure is not reportable here.""")
+    for name, times in (("incl t = 0, n = 25", Q.MONTHLY),
+                        ("on therapy, n = 24",
+                         S2.times_for("monthly", "no baseline"))):
+        v = []
+        for s in S2.SEEDS:
+            Ls = S2.loads_for(times.size, s, L)
+            m = np.array([brute_level(TH, brute_increment(t), x)
+                          for t, x in zip(times, Ls)])
+            v.append(m.std(ddof=1) / m.mean())
+        v = np.array(v)
+        print(f"    {name}: median {100 * np.median(v):.2f}% "
+              f"[{100 * v.min():.2f}, {100 * v.max():.2f}] over "
+              f"{len(S2.SEEDS)} records")
+    return ok
+
+
+def check_2_item6_arithmetic():
+    banner("2. ITEM 6: THE ROUNDING ARITHMETIC, BOTH READINGS TESTED")
+    print("""  Manoli 2021 as quoted in the two reports. The Results give, for patients, a
+  mean of per-subject CVs of 14.02 with an SD of 12.86, and for controls a mean
+  of 6.94 with an SD of 5.3. The abstract gives 6.9 and 12.8 and calls both a
+  "mean coefficient of variation". The question is which Results quantity each
+  abstract figure is a rounding of. This is arithmetic on quoted numbers, and
+  it is reported as such: it does not verify the quotes.""")
+    controls_mean, controls_sd = 6.94, 5.3
+    patients_mean, patients_sd = 14.02, 12.86
+    abs_controls, abs_patients = 6.9, 12.8
+    rows = [("controls, abstract 6.9 against Results mean 6.94",
+             abs_controls, controls_mean),
+            ("controls, abstract 6.9 against Results SD 5.3",
+             abs_controls, controls_sd),
+            ("patients, abstract 12.8 against Results mean 14.02",
+             abs_patients, patients_mean),
+            ("patients, abstract 12.8 against Results SD 12.86",
+             abs_patients, patients_sd)]
+    print(f"\n    {'comparison':<52s} {'gap':>8s} {'rounds?':>9s}")
+    for label, a, b in rows:
+        gap = abs(a - b)
+        print(f"    {label:<52s} {gap:8.3f} {'yes' if gap < 0.1 else 'no':>9s}")
+    ok = report("abstract controls figure matches the MEAN", abs_controls,
+                controls_mean, 0.05)
+    ok &= report("abstract patients figure matches the SD", abs_patients,
+                 patients_sd, 0.07)
+    ok &= report("abstract patients figure does NOT match the mean",
+                 1.0 if abs(abs_patients - patients_mean) > 1.0 else 0.0,
+                 1.0, 0.0)
+    print("""
+  So the two abstract figures come from different columns of the same table:
+  the controls' mean and the patients' SD. That internal inconsistency is the
+  evidence, and it does not depend on which reading either report prefers.""")
+    return ok
+
+
+def main():
+    print("=" * 92)
+    print("  PHASE 9 RE-CHECKS")
+    print("=" * 92)
+    for fn in (check_1_model_explained_cv, check_2_item6_arithmetic):
+        try:
+            fn()
+        except Exception as exc:
+            RESULTS.append((fn.__name__ + " (raised)", False))
+            print(f"    {fn.__name__} RAISED {type(exc).__name__}: {exc}")
+    banner("SUMMARY")
+    bad = [n for n, ok in RESULTS if not ok]
+    for name, ok in RESULTS:
+        print(f"    {'PASS' if ok else 'FAIL'}  {name}")
+    print(f"\n    {len(RESULTS) - len(bad)} of {len(RESULTS)} checks pass.")
+    if bad:
+        print("    FAILURES, reported and not repaired:")
+        for n in bad:
+            print(f"      - {n}")
+    return 1 if bad else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
