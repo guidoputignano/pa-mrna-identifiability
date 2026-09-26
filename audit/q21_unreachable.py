@@ -80,6 +80,9 @@ CONFIRMED = [
                              "to eighteen", "2% of nom  7.4406  18"),
         ("08_specification.tex:270", "a perfect one in both channels still "
                                      "leaves 2.659", "the same 2.6595"),
+        ("06_excitation.tex:309", "measuring the load instead of recording it "
+                                  "is worth under one per cent",
+         "100% of nom: recorded 5% 0.1699 vs b gone, sig 5% 0.1693 = 0.35%"),
     ]),
     ("t3_diet_modulation", [
         ("11_scope.tex:204", "a prescribed +/-15% swing is worth 7%, an "

@@ -471,6 +471,14 @@ sites in the paper, no macro.
 ```
 and, at 5% of nominal, `to 0.1%, n=25:  2.6595`.
 
+**A fifth site, and it reconciles R80's two figures.** `06_excitation.tex:309` says "measuring the
+load instead of recording it is worth under one per cent". `t9` prints, at nominal,
+`recorded 5%  0.1699` against `b gone, sig 5%  0.1693`, which is 0.35%. **So the paper separately and
+correctly prices the b-removal channel ALONE at under one per cent**, which is the same channel R80's
+first pass measured at 0.3 to 1.5% and then treated as an error. Both figures were right: the paper
+states the b-only channel here and the full accuracy move in route 6, and the two differ by a factor
+of twenty because they are different channels. A spelled-out numeral again, so no digit scan sees it.
+
 ### 11.3 R75's retraction is withdrawn: route 6 is correct in every clause
 
 | route 6's clause | R75 | the owning generator |

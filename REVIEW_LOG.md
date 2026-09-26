@@ -3932,3 +3932,22 @@ eighteen visits, same too-narrow sweep plus a hand-rolled grid.
 it.** The rule, stated for the standing conventions: **find the owner before recomputing, and if no
 owner can be found, say so before concluding the number is wrong.** The sweep's own list is the tool
 for finding the owner.
+
+### R84. A fifth site, and it reconciles R80's two figures rather than contradicting either
+
+`audit/PROVENANCE_SWEEP.md` section 11.2. Surfaced by the workflow at low confidence and verified
+here against `t9`'s captured output before being accepted.
+
+`06_excitation.tex:309` states that "measuring the load instead of recording it is worth under one
+per cent". `t9_measured_load.py` prints, at nominal, `recorded 5%  0.1699` against
+`b gone, sig 5%  0.1693`: **0.35%**.
+
+**So the paper separately and correctly prices the `b`-removal channel ALONE at under one per cent.**
+That is the same channel R80's first pass measured at 0.3 to 1.5% and then treated as an error of
+mine. Both figures are right and neither correction was needed on that point: the paper states the
+b-only channel at `06_excitation:309` and `11_scope:227`, and the full accuracy move in route 6, and
+they differ by a factor of twenty because they are different channels. **What R80 got right is that
+candidate 9's own pricing must use the full move; what it got wrong is implying the paper had
+conflated them. It had not.**
+
+Another spelled-out numeral, so no digit scan would see it.
