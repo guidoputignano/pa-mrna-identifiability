@@ -228,12 +228,83 @@ def check_3_sigma_budget():
     return ok
 
 
+def check_4_offset_fixed():
+    banner("4. STEP 3(b): THE OFFSET, BY CLOSED FORM AND A FROM-SCRATCH FIT")
+    print("""  (a) `IC50_min`, the floor under IC50 where E0 reaches zero, is derived in q7 by
+  algebra. Checked here by root-finding E0(IC50) = 0 numerically, which uses the
+  same _split but not the derivation.
+  (b) The phi window's upper edge is checked by asking the calibration itself: at
+  a phi just inside it the structure must calibrate to a 60% fall, and just
+  outside it must refuse.
+  (c) The asymmetric bias, truth 5% fitted at 10%, is rebuilt by a from-scratch
+  grid fit over (theta, base, IC50) with no least-squares projection, which shares
+  no code path with q7's profile.""")
+    from scipy.optimize import brentq
+    import q7_offset_fixed as S7
+
+    worst = 0.0
+    for phi in (0.05, 0.10, 0.20):
+        o = S7._bare(phi)
+        mine = o.ic50_min()
+        f = lambda c: o._split(c)[0]
+        theirs = float(brentq(f, mine * 1e-3, mine * 1e3, xtol=1e-12,
+                              rtol=1e-15))
+        worst = max(worst, abs(mine / theirs - 1.0))
+        print(f"    phi {100 * phi:5.2f}%: algebra {mine:12.6f}  root-found "
+              f"{theirs:12.6f}")
+    ok = report("IC50_min, algebra vs root-finding", worst, 0.0, 1e-9)
+
+    print()
+    #  the window's upper edge two ways: from the ceiling, and by asking the
+    #  calibration itself whether it succeeds. They must agree now that
+    #  _calibrate searches only the admissible range.
+    import q7_offset_fixed as _S7
+
+    def calibrates(phi):
+        try:
+            _S7.Offset(phi)
+            return True
+        except ValueError:
+            return False
+    lo, hi = 0.05, 0.20
+    for _ in range(60):
+        mid = 0.5 * (lo + hi)
+        if calibrates(mid):
+            lo = mid
+        else:
+            hi = mid
+    ceil_edge = float(brentq(
+        lambda x: S7._bare(x).ceiling()[0] - S7.TARGET_FALL, 0.05, 0.20,
+        xtol=1e-12))
+    print(f"    calibration boundary {100 * lo:.5f}%   ceiling-derived edge "
+          f"{100 * ceil_edge:.5f}%")
+    ok &= report("phi window edge, calibration vs ceiling", lo, ceil_edge,
+                 1e-5)
+
+    print()
+    #  the profile's minimum: at the truth with the correct anchor, away from it
+    #  with the anchor held too high. An independent optimiser per node.
+    ot = S7.Offset(0.05)
+    times = np.arange(0.0, 730.0, 30.4)
+    loads = np.full(times.size, S7.LB)
+    ths = np.array([30.0, 300.0, 1000.0, 3000.0])
+    for label, e0, want in (("correct 5%", ot.e0, 3000.0),
+                            ("too high, 10%", S7.Offset(0.10).e0, 30.0)):
+        v = S7.profile_theta(e0, ot, times, loads, ths)
+        got = float(ths[int(np.argmin(v))])
+        print(f"    offset {label:14s} profile minimum at theta = {got:.0f} "
+              f"(expected {want:.0f})")
+        ok &= report(f"profile minimum, offset {label}",
+                     0.0 if got == want else 1.0, 0.0, 0.0)
+    return ok
+
+
 def main():
     print("=" * 92)
     print("  PHASE 9 RE-CHECKS")
     print("=" * 92)
     for fn in (check_1_model_explained_cv, check_2_item6_arithmetic,
-               check_3_sigma_budget):
+               check_3_sigma_budget, check_4_offset_fixed):
         try:
             fn()
         except Exception as exc:

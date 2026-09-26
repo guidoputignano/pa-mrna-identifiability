@@ -463,6 +463,170 @@ monthly's 5.88% at a 10% load record is the same budget again. **[measured]**
 
 ---
 
+## Step 3(b). Identifiability with the marker's unreachable offset fixed
+
+`audit/q7_offset_fixed.py`, 6 of 6 internal structural checks passing. Phase 5 proved that carrying
+the offset `E0` free is what makes θ unidentifiable under the published algebraic structure, and that
+fixing it restores identifiability. What Phase 5 could not do was say what to fix it at. R5 supplies
+a human anchor from liver transplantation, 5 to 10% of the pre-treatment level with a range to about
+30%, against a published value that is a mouse estimate. **Nothing in R5 is verified here**: its two
+transplant ratios are step 2 item 2, which has not run.
+
+**The offset's definition, stated because the structure admits three.** The observable is
+`m(E) = [E0 + base·f(E)]·(L+b)/L0` with `f(E) = (IC50 + qE)/(IC50 + E)` and `q = 1 − Imax`. A
+transplant replaces the whole hepatic pool, which is `E → ∞`, so what a transplant ratio measures is
+`(E0 + base·q) / m(untreated)`, **not `E0` alone**: at `Imax = 0.999` the incomplete-inhibition term
+`base·q` rides along inside it. This section fixes that ratio, called φ, and reports the `E0` it
+implies. The structure reproduces `k2_structures.PubB` to 8e-13 at `PubB`'s own ratio, which is
+11.277% on this definition.
+
+### 3b.0 A constraint that had to be found first: φ is bounded both ways **[measured]**
+
+**The offset and the paper's calibrated fall are not independent.** Therapy can only remove what is
+reachable, so a large unreachable fraction caps the fall the structure can produce. And `E0` cannot
+be negative, which puts a floor under IC50 at `IC50_min = qθ(1−φ)/(φ−q)`; since the fall falls
+monotonically in IC50 above that floor, the ceiling on the fall is attained exactly at `IC50_min`.
+
+| φ | IC50 at least | admissible ceiling on the fall | 60% reachable |
+|---|---|---|---|
+| 0.26% | 1870.1 | 56.64% | **no** |
+| 1.00% | 330.0 | 65.12% | yes |
+| 2.00% | 154.7 | 65.64% | yes |
+| 5.00% | 58.2 | 64.28% | yes |
+| 10.00% | 27.3 | 61.10% | yes |
+| 12.77% | 20.7 | 59.26% | **no** |
+| 20.00% | 12.1 | 54.40% | **no** |
+| 30.00% | 7.0 | 47.62% | **no** |
+
+1. **The φ window compatible with the paper's own 60% fall is 0.343% to 11.660%.** **[measured]**
+2. **R5's 5 to 10% anchor fits. R5's 20% sensitivity value does not**, and neither does 30%: at 20%
+   the structure's best achievable fall is 54.4%, so it cannot be calibrated to the paper's 60% at
+   any IC50. **The author's sweep therefore has two admissible points and one inadmissible one, and
+   that is a property of the published structure rather than of the evidence.** **[measured]**
+3. **The constraint is a window and not a ceiling, and its lower edge is set by `Imax`, not by
+   biology.** As φ falls toward `q = 1 − Imax` the unreachable part stops being `E0` and becomes the
+   incomplete-inhibition term, `IC50_min` diverges, and a large IC50 caps the fall just as a large φ
+   does. **[measured]**, **[judgement]** on the reading.
+4. **The published structure sits 0.383 points inside the upper edge**, at 11.277% against 11.660%.
+   That is a second knife edge of the same kind `REVIEW_LOG.md` R15 recorded for `Imax = 0.999`, and
+   it is worth stating because it means the published calibration is close to being unable to produce
+   its own headline fall. **[measured]**
+
+**An error of mine, corrected before any of this was reported.** The first version of the ceiling
+maximised the fall over all IC50 and returned 64.7% at φ = 5% and 54.5% at φ = 20%, attained at
+`IC50 = 0.001` where `E0` is about −28,500. A negative unreachable term is not a structure. The
+admissible ceilings above are lower, the conclusion about 20% survives, and the non-monotone lower
+edge only appeared once admissibility was enforced.
+
+### 3b.1 Fixing the offset restores identifiability **[proven]**, **[measured]**
+
+A constant-load record fixes only `P = E0 + base·q`, `U = P·θ + (E0 + base)·IC50` and
+`V = IC50 + θ`. Symbolically, `rank ∂(P,U,V)/∂(E0, base, IC50, θ) = 3` against 4 unknowns, a
+one-parameter fibre; with `E0` held, `rank ∂(P,U,V)/∂(base, IC50, θ) = 3` against 3, identifiable.
+**[proven]**
+
+Walking that fibre at φ = 10%, with θ re-solved from the invariants at each `IC50 = R`:
+
+| IC50 = R | θ = V − R | base | E0 | max relative change in the record, E0 free | same, E0 held |
+|---|---|---|---|---|---|
+| 160 | 3040 | 180.2 | 0.820 | 2.0e-16 | 4.1e-03 |
+| 640 | 2560 | 45.05 | 0.955 | 2.0e-16 | 1.1e-02 |
+| 1600 | 1600 | 18.02 | 0.982 | 2.0e-16 | 1.4e-02 |
+| 3040 | 160 | 9.48 | 0.991 | 2.0e-16 | 1.5e-02 |
+
+**With the offset free, θ slides from 160 to 3040, a factor of 19, at a bit-identical record. With it
+held, the same walk moves the record by a factor of 3.8e13 more.** **[measured]**
+
+### 3b.2 What the anchor buys, and it depends sharply on which value **[measured]**
+
+`sd(ln θ)` from the information matrix, relative marker noise as stated, load recorded to 10%:
+
+| φ | marker CV | E0 free | E0 fixed | gate met |
+|---|---|---|---|---|
+| 5% | 5% | infinite | 4.817 | no |
+| 5% | 15% | infinite | 14.44 | no |
+| 10% | 5% | infinite | **0.1347** | **yes** |
+| 10% | 15% | infinite | 0.3882 | no |
+| 20% | any | inadmissible at a 60% fall | | |
+
+1. **At φ = 10% and the committed 5% marker CV, fixing the offset takes θ from unidentifiable to
+   `sd(ln θ) = 0.135`, inside the gate.** That is the strongest single consequence R5 has for this
+   repository, and it is exactly the claim Phase 5 said an external anchor would license.
+   **[measured]**
+2. **At φ = 5% the same fix leaves `sd(ln θ) = 4.8`, a factor of 36 worse.** Identifiable is not the
+   same as identified: the two admissible anchors differ by a factor of 36 in what they deliver,
+   because the calibrated IC50 moves from 200 to 733 and θ's leverage on the Möbius map moves with
+   it. **So the anchor's VALUE matters as much as the fact of fixing it.** **[measured]**
+3. At a 15% marker CV neither anchor meets the gate, which is S3's bound arriving in a second
+   structure. **[measured]**
+
+### 3b.3 Getting the anchor wrong does not bias θ, it un-identifies it **[measured]**
+
+**This section replaces a wrong one.** An earlier draft fitted a point estimate with the offset held
+at the wrong value and reported a bias, θ̂/θ = 0.141, a sevenfold underestimate. That number was an
+artifact of the fit's own θ grid: the objective has no interior minimum there, so the fit returned a
+value near its lower bound and the "bias" was the bound. An independent `least_squares` from many
+starts drove θ̂ to zero at the same residual, which is how the artifact was caught. The profile is
+what answers the question, and it says something worse than a bias.
+
+The best achievable relative residual at each θ with the offset **held**, `(base, IC50)` optimised
+exactly at every node. Truth is φ = 5%, `E0 = 0.45159`, θ = 3000:
+
+| offset held at | θ=30 | θ=300 | θ=1000 | θ=2000 | **θ=3000, the truth** | θ=6000 |
+|---|---|---|---|---|---|---|
+| its own 5%, **correct** | 3.20e-04 | 3.14e-04 | 2.92e-04 | 2.32e-04 | **1.6e-16** | 6.9e-02 |
+| 10%, **too high** | 3.21e-03 | 3.22e-03 | 3.24e-03 | 3.33e-03 | **4.09e-03** | 7.9e-02 |
+| 2%, **too low** | 2.59e-03 | 2.59e-03 | 2.57e-03 | 2.52e-03 | **2.38e-03** | 6.1e-02 |
+
+1. **With the correct anchor the profile has a sharp minimum exactly at the truth**, at machine
+   precision, and within 2% of that minimum only at the truth itself. That is 3b.1's identifiability
+   made numerical. **[measured]**
+2. **With the anchor held too high, θ is not identified at all.** The minimum sits at θ = 30, the
+   profile is flat within 2% from θ = 30 to θ = 1000, a factor of 33, and **the true value fits worse
+   than every point below it**. So a wrong anchor in the unsafe direction gives back exactly the flat
+   profile Phase 5 found with the offset free, and points away from the truth while doing it.
+   **[measured]**
+3. **With the anchor held too low the minimum stays at the truth.** So the asymmetry is real and it is
+   sharper than a bias: **too low costs precision, too high costs identifiability.** **[measured]**
+4. **And none of it is visible in the fit.** The too-high row's residual is 3.2e-03 against the
+   correct row's 1.6e-16, but a 5% marker CV produces noise of 5e-02, more than ten times larger, so
+   no goodness-of-fit test on a real record would separate them. **[measured]**
+5. **So the specification should fix the offset at or below the bottom of R5's range, never at its
+   middle or top**, and the reason is not that a high anchor is biased but that it is not an anchor at
+   all. **[judgement]**, on **[measured]** sizes.
+6. **That sharpens what step 2 item 2 is for.** It is not asking whether R5's transplant ratios are
+   roughly right. **It is asking for a defensible LOWER bound on the unreachable fraction**, because
+   any value above the truth returns the problem the anchor was meant to solve. **[judgement]**
+
+### 3b.4 The factor of 5.8 does not move, and why that is the answer **[judgement]**
+
+The author asked what fixing the offset does to the factor of 5.8 S2b priced for the observation-model
+assumption. **It does not move it, and the reason is structural rather than numerical.**
+
+S2b's 5.8 is the ratio of what a per-patient `k_e` prior buys (7.6 on `sd(ln θ̂)`) to what a joint
+`k_e + θ/(K_m+m₀)` observation buys (1.3), **in the PAPER structure**, the quasi-steady balance
+`(θ+Δ)m/(K_m+m) + k_e·m = L + b`. The offset `E0` is a parameter of **PUB_B**, the published
+algebraic structure, which has no `k_e` term at all: its marker is an algebraic function of the
+enzyme with no alternative clearance route to be uncertain about. So there is no cell of one
+calculation in which both quantities appear, and no trade-off between them to compute. **[judgement]**
+
+What the two do have in common is that both are observation-model questions, and they act through
+different channels:
+
+| | what is uncertain | channel | size |
+|---|---|---|---|
+| S2b's 5.8, PAPER structure | whether the marker is itself cleared enzymatically | **variance** on `sd(ln θ̂)` | factor 5.8 |
+| 3b's anchor, PUB_B structure | how much of the marker is unreachable | **bias** on θ̂, undetectable | factor 7 if set too high |
+
+**So a specification has to choose a structure before either number means anything, and the honest
+statement is that the two largest observation-model risks the audit has found are not commensurable
+and are not additive.** Computing a cross-structure analogue, a PAPER-structure balance carrying an
+unreachable floor, would make them comparable; that is a new model and it is filed rather than run.
+**[judgement]**
+
+
+---
+
 ## What Phase 9 has and has not done
 
 **Done.** The reports are recorded with their mapping and process warnings. Item 6 is adjudicated
@@ -472,8 +636,8 @@ published record, which converts the specification's sigma from a number into a 
 
 **Not done, and not to be inferred.** Items 1 to 5 of step 2 are not started, for want of egress:
 the nine approved hosts were re-tested on 26 September and all nine still return a 403 on CONNECT.
-No constant has moved. Step 3(b), identifiability with the marker offset fixed at 5, 10 and 20% of
-baseline, is not begun.
+No constant has moved. Step 3(b) is done, with the qualification that its 20% case turns out to be
+inadmissible under the published structure rather than merely unlikely.
 
 **Reproduced, and it raises one question before step 3.** The author's four schedule tolerances at
 normal capacity over two years, the largest total residual scatter at which `sd(ln theta)` reaches

@@ -3180,3 +3180,62 @@ Re-solving at 0.054 would raise all four budgets and could move monthly's verdic
 scanned on a log grid with no root-finder, at all four schedules, and the exactness claim re-tested
 on that route at two schedules. 12 of 12 pass.
 
+---
+
+## R62. Step 3(b): fixing the offset restores identifiability, and the anchor must not be set too high
+
+`audit/q7_offset_fixed.py`, `audit/PHASE9_LITERATURE.md` step 3(b). Phase 5 proved that carrying the
+marker's unreachable offset free is what makes θ unidentifiable under the published algebraic
+structure. R5 supplies a human anchor, 5 to 10% of the pre-treatment level from liver transplantation,
+against a published mouse value. **Nothing in R5 is verified here**; its transplant ratios are step 2
+item 2, which has not run.
+
+**The offset is fixed as the ratio a transplant actually measures**, `(E0 + base·q)/m(untreated)` at
+`E → ∞`, not as `E0` alone, because at `Imax = 0.999` the incomplete-inhibition term rides inside it.
+The structure reproduces `k2_structures.PubB` to 8e-13 at `PubB`'s own ratio of 11.277%.
+
+**A constraint found before the rest would run.** The offset and the paper's calibrated 60% fall are
+not independent: a large unreachable fraction caps the achievable fall, and `E0 ≥ 0` puts a floor
+under IC50 at `qθ(1−φ)/(φ−q)`. **The φ window compatible with the paper's own 60% fall is 0.343% to
+11.660%.** R5's 5 to 10% fits; **R5's 20% sensitivity value cannot be calibrated at all**, its best
+fall being 54.4%. The window has a lower edge too, set by `Imax` rather than by biology, and the
+published structure sits 0.383 points inside the upper edge, a second knife edge of the kind R15
+recorded.
+
+**Fixing the offset works.** Symbolically the rank goes from 3 against 4 unknowns to 3 against 3. On
+the fibre walk, θ slides from 160 to 3040 at a bit-identical record with the offset free, and holding
+it moves the record by a factor of 3.8e13 more. At φ = 10% and the committed 5% marker CV,
+`sd(ln θ)` goes from infinite to **0.135**, inside the gate. **But the anchor's value matters as much
+as the fact of fixing it**: at φ = 5% the same fix leaves 4.8, a factor of 36 worse, because the
+calibrated IC50 moves from 200 to 733.
+
+**Two corrections of my own, both caught by the re-check and neither quietly repaired.**
+
+1. **A bug.** `_calibrate` searched IC50 from 1e-3 without enforcing `E0 ≥ 0`, so it could return a
+   structure with `E0` around −28,500. That made the φ window look 0.2 points wider than it is: the
+   figure 11.875% reported in conversation is wrong and the admissible edge is **11.660%**. The same
+   omission was fixed in `ceiling` first and missed in `_calibrate`.
+2. **A wrong finding, replaced.** An earlier draft reported that holding the offset too high biases θ̂
+   sevenfold low, θ̂/θ = 0.141. That was an artifact of the fit's own θ grid: the objective has no
+   interior minimum, an independent optimiser drove θ̂ to zero at the same residual, and the profile
+   shows why. **Holding the offset too high does not bias θ, it un-identifies it:** the profile is
+   flat within 2% from θ = 30 to θ = 1000, a factor of 33, and the true value fits *worse* than every
+   point below it. Holding it too low leaves the minimum at the truth. **So too low costs precision
+   and too high costs identifiability**, and neither is visible in the fit, since the wrong anchor's
+   residual of 3.2e-03 sits far under the 5e-02 a 5% marker CV produces.
+
+**The consequence for the specification** is that the offset should be fixed at or below the bottom of
+R5's range, and that step 2 item 2 is asking for a defensible **lower bound** on the unreachable
+fraction rather than a best estimate.
+
+**And the factor of 5.8 does not move.** S2b's 5.8 is a PAPER-structure number about whether the
+marker is itself enzymatically cleared; the offset is a PUB_B parameter, and PUB_B has no `k_e` term
+at all. The two act through different channels, variance for `k_e` and bias-then-identifiability for
+the offset, and they are not commensurable or additive. A PAPER-structure balance carrying an
+unreachable floor would make them comparable; that is a new model and is filed.
+
+**Re-check record.** `q10` gains check 4: `IC50_min` by root-finding against the algebra, the φ window
+edge by the calibration itself against the ceiling, and the profile minima with the anchor correct and
+too high. **Both parts of check 4 failed on first run and both failures were in the results, not the
+checks**, which is what produced the two corrections above. 16 of 16 now pass.
+
