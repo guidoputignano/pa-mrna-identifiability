@@ -8,13 +8,17 @@ Everything that had to vary is assembled in the audit script from an explicit ke
 explicit dose train, and the committed shape is reproduced as one member of that family.
 
 Scripts: `audit/q1_increment_shape.py` (S1), `audit/q1b_reconcile.py` (S1 against the
-25 September probes). Independent re-check: `audit/q9_recheck.py`. The probes themselves:
-`audit/probes_2026-09-25/`.
+25 September probes), `audit/q1c_baseline_footings.py` (Gap B on two baseline footings, and
+the provenance of `ke0`), `audit/q2_requirement_map.py` (S2). Independent re-check:
+`audit/q9_recheck.py`. The probes themselves: `audit/probes_2026-09-25/`.
 
-**This file was revised on 26 September 2026.** The first S1 report (commit `043a3ec`)
-carried numbers and four conclusions that the reconciliation against the probes withdrew.
-What changed and why is section S1.R, first; `REVIEW_LOG.md` R54 records it. Everything
-after S1.R is the corrected S1.
+**This file was revised twice on 26 September 2026.** The first S1 report (commit `043a3ec`)
+carried numbers and conclusions that the reconciliation against the probes withdrew. The
+second revision, at the author's request, separates the three error corrections from a
+design change the first revision had run together with them: an untreated baseline draw.
+What changed, sorted by kind, is section S1.R; `REVIEW_LOG.md` R54 records it. The author has
+independently reproduced the corrected numbers with the probe, the `t = 0` draw read
+pre-dose.
 
 ---
 
@@ -29,14 +33,16 @@ Unless a line says otherwise:
 | noise | `sigma = 21.9612`, the ordinate model of `design/run.py:598-604` | same |
 | priors | `b ~ N(0, 16.1364)`, `ln k_e ~ N(ln 5, 0.8)`, and where the dose scale is free, `ln kappa ~ N(0, 0.12)` | the paper's own, and `g_design_common.sd_ln_theta`'s coordinate for `kappa` |
 | design | monthly, `np.arange(0, 730, 30.4)`, `n = 25`, load CV `10%` | the paper's own |
+| **baseline** | **two footings.** `baseline`: the `t = 0` draw taken before the first infusion, an untreated measurement. `on therapy`: no untreated draw, the `t = 0` draw removed, `n = 24`. S1.1b gives Gap B on both; the other tables are on `baseline` unless they say otherwise | the author, 26 Sep |
 | dose train | uniform 14 d from `t = 0`, `D_AMP = 6000`, steady peak `6400` | `design/run.py` |
-| **dose-day draw** | **read PRE-dose**: a draw at a dose instant is taken before the infusion, for the truth and the analyst alike. Only `t = 0` is affected on this schedule | new, S1.R |
+| **dose-day draw** | a draw at a dose instant is **never read post-dose**, which would put it inside the marker's settling window. It is read pre-dose, for truth and analyst alike; on this schedule only `t = 0` is affected, and it then becomes the baseline draw | S1.R 3a |
 | estimator | global scan over `K_m` in `[1, 1000]`, exact polish inside that box | `i1_estimator.varpro_exact`, extended |
 | seeds | **24**, and every median below carries its min and max | the repository's `SEEDS` |
 
-**The amplitude convention of the tables below is `peak`-matched**, as the first report's
-was, so that the correction and the convention change are not confounded. S1.6 gives all
-three; S1.9 records the author's decision that `dose` becomes primary from S2 on.
+**The amplitude convention of S1.1 to S1.5 is `peak`-matched**, as the first report's was,
+so that the corrections and the convention change are not confounded. **S1.1b, the Gap B
+statement the author asked for, leads with `dose`**, which becomes the primary convention from
+S2 on (S1.9); S1.6 gives all three.
 
 ### 0a. Where the shape constants come from, and that they are not human
 
@@ -99,39 +105,47 @@ On identical records the two estimators agree to **5e-7** in the median, on ever
 **So there is no estimator error in the fixed-amplitude cells. The 5.8 is a property of the
 record, and specifically of one draw in it.**
 
-### 3. What carries the 5.8: one draw at the instant of an infusion **[measured]**
+### 3. The t = 0 draw was two things, and only one of them an error **[measured]**
 
 The monthly record `np.arange(0, 730, 30.4)` puts exactly one draw at a dose instant in two
 years, `t = 0`, because `30.4 k` is a multiple of 14 only at `k = 35`. `design.run.delta`
 reads it on the **post**-dose side (`t >= t_k`), and so did `q1`. At that draw the analyst's
 increment is `6000`, the probe's jump kernel is `5541`, and `q1`'s rising kernel is **zero**.
-Everything else in the record is within the kernels' ordinary disagreement.
 
-`theta_hat/theta`, fixed 3.5 d analyst, peak-matched, 8 noiseless records:
+`theta_hat/theta`, fixed 3.5 d analyst, peak-matched, 8 noiseless records (`q1b` R2):
 
-| kernel | as run (post-dose at t = 0) | **pre-dose at t = 0** | t = 0 dropped |
+| kernel | post-dose at t = 0 | t = 0 dropped | pre-dose at t = 0 |
 |---|---|---|---|
-| probe (jump) | 1.37 | 1.31 | 1.39 |
-| `q1` (effect compartment) | **5.81** | **1.14** | 1.23 |
+| probe (jump) | 1.37 | 1.39 | 1.31 |
+| `q1` (rising) | **5.81** | **1.23** | 1.14 |
 
-The probe's own 14.5 d schedule has the same kind of draw, at `t = 392`
-(`0.5 + 14.5 x 27`); it moves `q1`'s kernel from `2.23` as run to `1.25` pre-dose.
+Reading those columns in order separates two changes that the first revision of this file ran
+together, and which the author has asked to be kept apart.
 
-**Why the pre-dose reading is the right one, and not a convenience.** The draw is inside the
-marker's own settling window, `0.054 d` (1.3 h) by `g_design_common.settling_days`, so the
-quasi-steady model under test does not describe it on either side. A clinic draws before it
-infuses. And it is exactly the instant at which two defensible readings of the published
-kernel disagree by the whole dose, a jump against a rise, so a result carried by it is a
-result about that instant and not about the shape. **[judgement]**, adopted as the S1 footing
-(`DOSE_DAY_DRAW = "pre-dose"` in `q1`).
+**(a) The fix: not reading a draw at an infusion instant as post-dose.** Read post-dose, the
+draw sits inside the marker's own settling window, `0.054 d` (1.3 h) by
+`g_design_common.settling_days`, where the quasi-steady model under test does not describe
+the marker at all. **That is wrong for any kernel, not only the rising one**; it is merely
+catastrophic for the rising one, because there the two readings of the published kernel
+disagree by the whole dose. Removing it moves the rising kernel from `5.81` to `1.23` and the
+jump kernel from `1.37` to `1.39`. **This is an error correction.** The probe's own 14.5 d
+schedule has the same kind of draw, at `t = 392` (`0.5 + 14.5 x 27`).
 
-**The same draw moves the exponential truths too, and that was not visible before.**
-`q1b` R4, fixed analyst, peak-matched: 7 d is `2.02` as run, `1.38` pre-dose and `1.78` with
-the draw dropped; 5 d is `1.36`, `1.17` and `1.29`. A pre-dose draw at `t = 0` is an
-**untreated baseline** measurement, which pins `theta` through the untreated balance with no
-increment in it at all, and that is why it shrinks the shape bias by more than dropping the
-post-dose draw does. **A pre-treatment baseline draw is worth about half the 7 d shape bias.
-[measured]** That is a design finding, and the trial already takes pre-treatment draws.
+**(b) The design change: an untreated baseline draw.** Read pre-dose rather than dropped,
+the `t = 0` draw becomes an **untreated baseline**: a measurement of the balance with no
+increment in it, which pins `theta` directly. That moves the rising kernel from `1.23` to
+`1.14` and, much more, the slow exponentials (7 d, peak: `1.78` dropped, `1.38` pre-dose).
+**This is not an error correction. It is a different record**, and a patient already on
+therapy when the record starts cannot have it.
+
+So the first report's `1.934` (7 d) and `1.310` (5 d) were **not wrong arithmetic**. They
+belong to a record with no valid baseline, carrying one draw that should not have been there;
+with that draw removed and no baseline added, the same cells read `1.744` and `1.267` (S1.1b,
+noisy, 24 seeds). The first report's `5.637` for the rising kernel **was** the invalid draw:
+without it, on the same no-baseline footing, `1.196`.
+
+The corrected S1 tables below are on the `baseline` footing unless they say otherwise, and
+S1.1b gives Gap B on both.
 
 ### 4. The free-amplitude cell: an error in `q1` **[measured]**
 
@@ -183,20 +197,37 @@ poorly determined**: its 8-seed range as run is `0.75` to `1.83`, the probe's `0
 inside it, and the pre-dose baseline draw moves it to `0.30`. It should not be quoted as a
 point.
 
-### 7. What the reconciliation withdrew from the first report
+### 7. What changed, sorted by kind
 
-| first report said | corrected | status |
+**Error corrections**, which change the first report's numbers because the first report was
+wrong:
+
+| error | what it did | fixed by |
 |---|---|---|
-| Attarwala truth `5.637` [2.440, 8.609], "not in the 1.3 to 2.0 band" | **`1.131` [1.036, 1.366]**, between the 3.5 d and 5 d exponentials | **withdrawn** |
-| "the two-compartment truth should stop being grouped with a slightly slower exponential" | it behaves like one, and is grouped | **withdrawn** |
-| "audible, `2.35 sigma` on every seed; the paper's under-a-fifth-of-sigma sentence does not describe it" | `1.079` [0.743, 1.524] against the null's `0.981` [0.706, 1.324]: **inaudible** | **withdrawn** |
-| free amplitude "switches the increment off, capacity nine times low" | `1.126`, identical to the fixed analyst | **withdrawn**; `q1`'s kappa prior was in the wrong coordinate |
-| half-life free on the two-compartment truth, "capacity zero on all 24 seeds" | **`1.129`** [0.886, 1.286] | **withdrawn** |
-| two-compartment analyst "biased on every exponential truth, 1.18 to 2.25"; "no analyst family is safe" | **1.05 to 1.14 on every truth** | **withdrawn**; see S1.3 |
-| 7 d truth `1.934`, 5 d `1.310`, "confirming the review's 1.3 to 2.0" | **`1.358` and `1.161`** at the pre-dose footing | numbers change; direction stands |
-| "the family question wants the hours after an infusion" (S1.8) | true under the effect-compartment reading **only** | **qualified**, S1.8 |
-| getting the dose train wrong costs more than the shape, and is audible | still so: Q3W as Q2W reads **6.52** at `2.20 sigma` | **stands** |
-| freeing the amplitude does not help on the exponential truths | still so, and now on every truth | **stands, widened** |
+| a draw at an infusion instant read post-dose, inside the settling window | carried the rising two-compartment cell to `5.637` at `2.35 sigma`; drove the half-life-free analyst to capacity zero on that truth; biased the two-compartment analyst on every exponential truth | not reading such a draw post-dose (S1.R 3a) |
+| the dose-scale prior on `kappa` rather than `ln kappa` | let the free-amplitude fit "switch the increment off", `0.111` | the prior on `ln kappa` (S1.R 4) |
+| a profile stranded near `k_e = 0` | shortened some upper interval edges | restarting `k_e` from the prior's centre (S1.R 5) |
+
+**A design change**, which moves numbers because it is a different record, not because
+anything was wrong:
+
+| change | what it does |
+|---|---|
+| an untreated baseline draw at `t = 0`, taken before the first infusion | roughly halves the slow-truth bias: 7 d, dose-matched, `1.529` without it and `1.145` with it (S1.1b) |
+
+**What the corrections withdrew**, on either footing:
+
+| first report said | now | status |
+|---|---|---|
+| rising two-compartment truth `5.637`, "not in the 1.3 to 2.0 band", "should stop being grouped" | `1.196` without baseline, `1.131` with, peak-matched; between the 3.5 d and 5 d exponentials | **withdrawn**, grouped |
+| "audible, `2.35 sigma` on every seed; the paper's under-a-fifth-of-sigma sentence does not describe it" | `1.01` to `1.08 sigma` against the null's `0.97` to `0.98` | **withdrawn** |
+| free amplitude "switches the increment off, capacity nine times low" | identical to the fixed analyst | **withdrawn** |
+| half-life free on the two-compartment truth, "capacity zero on all 24 seeds" | `1.129` (baseline footing) | **withdrawn** |
+| two-compartment analyst "biased 1.18 to 2.25"; "no analyst family is safe" | `1.05` to `1.14` on every truth (baseline footing) | **withdrawn**, S1.3 |
+| "the family question wants the hours after an infusion" (S1.8) | holds only on the reading that drops plasma-mRNA PK | **qualified**, S1.8 |
+| 7 d `1.934`, 5 d `1.310` | **not withdrawn**: a record without a valid baseline, `1.744` and `1.267` with the invalid draw removed | footing named |
+| an unrecorded dose train costs more than a wrong shape, and is audible | Q3W read as Q2W, `6.52` at `2.20 sigma` | **stands** |
+| freeing the amplitude does not help | on every truth now | **stands, widened** |
 
 ---
 
@@ -261,6 +292,54 @@ and the 5 d truth, at a residual indistinguishable from the null. **By the autho
 it is grouped with the exponentials from here on**: it behaves like a single exponential of
 about 4 d, which is what a single-exponential analyst with its half-life free recovers from it
 (`3.61 d` [2.30, 4.89]).
+
+### S1.1b Gap B on two baseline footings, all three conventions **[measured]**
+
+`audit/q1c_baseline_footings.py`. Fixed 3.5 d analyst, amplitude fixed and matched to each
+convention, `theta = 3000`, monthly, noisy, 24 seeds: median `theta_hat/theta` [min, max],
+the RMS residual in sigma, and profile-interval coverage. The rising and jump rows are the two
+readings of the published two-compartment kernel (S1.R 1).
+
+**Therapy starts within the record, with a pre-dose baseline draw** (`n = 25`):
+
+| truth | **dose** | peak | mean |
+|---|---|---|---|
+| exp 2.5 d | **0.967** [0.875, 1.187] 1.13s 100% | 0.926 [0.838, 1.134] 1.14s 100% | 0.690 [0.625, 0.836] 1.21s 17% |
+| exp 3.5 d (null) | **0.986** [0.900, 1.183] 0.98s 100% | 0.986 | 0.986 |
+| exp 5.0 d | **1.080** [0.993, 1.273] 1.17s 100% | 1.161 [1.066, 1.377] 1.14s 100% | 1.442 [1.319, 1.754] 1.10s 100% |
+| exp 7.0 d | **1.145** [1.065, 1.342] 1.60s 100% | 1.358 [1.267, 1.634] 1.47s 83% | 2.000 [1.829, 2.525] 1.26s 38% |
+| 2-comp, rising | **1.046** [0.960, 1.255] 1.09s 100% | 1.131 [1.036, 1.366] 1.08s 100% | 1.282 [1.171, 1.567] 1.05s 100% |
+| 2-comp, jump | **1.211** [1.105, 1.471] 1.09s 100% | 1.292 [1.177, 1.579] 1.07s 100% | 1.309 [1.191, 1.602] 1.07s 100% |
+
+**Already on therapy, no untreated draw** (`n = 24`):
+
+| truth | **dose** | peak | mean |
+|---|---|---|---|
+| exp 2.5 d | **0.911** [0.760, 1.180] 1.06s 96% | 0.871 [0.727, 1.124] 1.07s 92% | 0.638 [0.535, 0.811] 1.12s 4% |
+| exp 3.5 d (null) | **0.978** [0.822, 1.235] 0.97s 100% | 0.978 | 0.978 |
+| exp 5.0 d | **1.185** [0.990, 1.488] 1.04s 100% | 1.267 [1.054, 1.602] 1.04s 100% | 1.555 [1.277, 2.017] 1.03s 100% |
+| exp 7.0 d | **1.529** [1.261, 1.943] 1.09s 71% | 1.744 [1.424, 2.260] 1.08s 67% | 2.384 [1.888, 3.288] 1.05s 8% |
+| 2-comp, rising | **1.113** [0.920, 1.436] 1.01s 100% | 1.196 [0.988, 1.555] 1.01s 100% | 1.345 [1.106, 1.772] 1.01s 100% |
+| 2-comp, jump | **1.273** [1.052, 1.685] 1.02s 100% | 1.353 [1.115, 1.803] 1.02s 100% | 1.370 [1.128, 1.828] 1.02s 100% |
+
+A sensitivity row for "on therapy" places the 25 monthly draws 100 dose intervals into the
+train, so no draw is first-cycle: every cell is within `0.05` of the `on therapy` table
+(7 d, dose: `1.489`). So removing the `t = 0` draw is a fair stand-in for a patient already on
+therapy.
+
+**The noiseless probe agrees.** `q9` check 11 rebuilds the 7 d and jump rows from the probe's
+own truths and fitter, noiseless, on both footings, and matches `q1`'s route to `6e-4`: 7 d
+`1.144 / 1.378 / 2.05` with baseline and `1.557 / 1.780 / 2.44` without; jump `1.226 / 1.310
+/ 1.327` and `1.311 / 1.394 / 1.411`. Those are the figures the author reported from the
+probe.
+
+**What the table says.** On the primary `dose` convention, a truth half-life of 5 to 7 d
+read as 3.5 d costs `1.08` to `1.15` with a baseline draw and `1.19` to `1.53` without one.
+The two readings of the two-compartment kernel sit inside that band on both footings. The
+baseline draw is worth most where the truth is slowest: it takes 7 d from `1.529` to `1.145`.
+**Every one of these is at a median residual inside the null's own seed range, `0.71` to
+`1.32`, except 7 d with a baseline**, at `1.60 sigma` dose-matched and `1.47` peak-matched: the
+misfit a baseline draw exposes at 7 d is also the one that shows. **[measured]**
 
 ### S1.2 Freeing the amplitude does not help, on any truth **[measured]**
 
@@ -402,6 +481,46 @@ measurements at 20% CV whatever the window. **The first report's S1.8 conclusion
 to the effect-compartment reading.** The half-life result is not affected, since it is within
 one family.
 
+**Where `ke0` comes from, and what the rising reading leaves out.** The timing conclusion rests
+on how fast the protein rises, and in the rising reading that is set by `ke0`.
+
+- **Value and source.** `ke0 = 0.242 /h`, Attarwala et al. 2023, *Nucleic Acid Ther*
+  33(2):141-147, Table 1, RSE 3.35%; transcribed in `audit/k1_sources.py` as `KE0`. **[proven
+  from the source, as transcribed]**
+- **Species: mouse.** The paper scales only the PK parameters to human by allometry; `ke0`,
+  `Slope`, `kdeg` and `kq` are the Pcca-/- (A138T) mouse fit, unscaled
+  (`k1_sources.py` finding 2, brief R2).
+- **Role: not the decay of a bolus.** Suppl. Table S1(B) writes `d(Ce)/dt = ke0 (C13 - Ce)`,
+  an effect compartment **equilibrating with plasma mRNA `C13`**, which has its own
+  two-compartment PK. `q1`'s rising kernel starts `Ce` at 1 and lets it decay at `ke0`: that
+  is the published structure **with the plasma-mRNA stage removed**, and it is why the rise is
+  over in hours (`ke0` half-life 2.86 h, single-dose peak at 13 h). The probe's jump kernel
+  removes the effect compartment too. **Both readings drop a stage the published model has.**
+
+`q1c` Part B restores the stage as a sweep, since no human plasma-mRNA half-life is
+established in this repository. Brief R2 quotes a human population-PK PCCA mRNA clearance of
+0.266 L/h and volume 13.9 L (Gao/Zhang, ACoP 2025), a one-compartment half-life of 36.2 h,
+**not verified here** and carried as one point of the sweep. Functional readout, peak-matched:
+
+| kernel | single-dose peak at | family separation per CV, window from 1 h | 6 h | 1 d |
+|---|---|---|---|---|
+| jump (probe) | 0 h | 0.131 | 0.130 | 0.125 |
+| rising, no mRNA stage (`q1`) | 13.1 h | 0.515 | 0.149 | 0.087 |
+| rising, mRNA half-life 2 h | 17.4 h | 0.680 | 0.281 | 0.078 |
+| rising, mRNA half-life 12 h | 39.6 h | 0.719 | 0.546 | 0.130 |
+| rising, mRNA half-life 36.2 h (R2's human popPK) | **72.5 h** | 0.772 | **0.689** | 0.379 |
+| rising, mRNA half-life 72 h | 104.5 h | 0.756 | 0.707 | 0.497 |
+
+**With the plasma-mRNA stage restored, the protein takes days to peak, not hours, and the
+families become easier to tell apart, not harder, and less dependent on the window.** At R2's
+human mRNA half-life the separation from a six-hour window is `0.69` per unit CV against `0.15`
+without the stage: roughly a 3-sigma call from two functional readings at 20% CV rather than 34.
+**[measured]** So the timing conclusion depends on two things this repository cannot settle:
+whether the protein jumps or rises, and, if it rises, on the plasma-mRNA half-life, which is a
+human PK quantity brief R2 reports and this repository has not verified. The earlier
+statement "the family question wants the hours after an infusion" holds only for a fast rise;
+for a slow one, any draw in the first day or two is informative.
+
 ### S1.9 The author's decisions, and what S1 now hands S2
 
 The author answered three questions on 26 September, conditionally on this reconciliation.
@@ -414,27 +533,31 @@ same-day pair of breath tests across one dose, so it measures the **per-dose jum
 capacity. For an instantaneous-rise kernel that is the delivered dose `D`. **That is `q1`'s
 `dose` convention**, which holds the single-dose peak equal to `D_AMP`; for every exponential
 kernel the single-dose peak **is** the jump at the infusion. It exists and needs no adding.
-One qualification the author should see: under the effect-compartment reading the protein
-rises over a few hours, so a breath-test pair spanning one dose measures the jump only if its
-second test falls after the rise (`ke0` gives a 2.9 h half-life, so about 12 h after the
-infusion is within 6% of it). **[judgement]** `dose` becomes primary from S2 on, with `peak`
-and `mean` as the sensitivity column in S4.
+One qualification the author should see: under a rising reading, a same-day breath-test pair
+spanning one dose measures the per-dose jump only if its second test falls after the rise. On
+`q1`'s reading, with no plasma-mRNA stage, the single-dose peak is at 13 h. With the stage
+restored at R2's human mRNA half-life it is at **72 h**, and a same-day pair would see a
+fraction of the jump (S1.8). So "same-day" and "per-dose jump" are the same thing only for a
+fast rise. **[judgement]** `dose` becomes primary from S2 on, with `peak` and `mean` as the
+sensitivity column in S4.
 
 **(c) The dose train enters the specification as a record requirement**: administered dates,
 times and amounts, including delays, skipped doses and dose changes, used as the regressor,
 not a new design variable. S1.5 (b) prices ignoring it: up to `6.5x` on capacity.
 
-**Not started.** The author's instruction was to proceed to S2 only if the reconciliation left
-S1's conclusions unchanged. It did not (S1.R 7), so S2 has not been started.
+**The author reviewed the reconciliation, reproduced its numbers independently, asked for the
+fixes and the design change to be separated, and released S2** with `dose` primary. S4 carries
+both baseline footings and both kernels.
 
 ### A flag for the author, not a finding
 
 The paper's own headline design numbers are computed on the same record, with the `t = 0` draw
 read post-dose inside the settling window. `q1b` R5 prices it through
 `g_design_common.sd_over_seeds`: **`0.1699`** [0.1684, 0.1709] as committed, **`0.1695`** with
-that draw read pre-dose, `0.1721` with it dropped. **The headline does not depend on it.** It
-matters for misspecification, not for the well-specified bound. No text proposed; `paper/` is
-untouched.
+that draw read pre-dose, `0.1721` with it dropped. **The normal-capacity headline does not
+depend on it.** At 5% of normal it does, and in the correctly specified model: S2 Part A0
+gives the review's monthly `3.07` as the figure with **no** baseline, and `2.38` with an
+untreated baseline draw. No text proposed; `paper/` is untouched.
 
 ---
 

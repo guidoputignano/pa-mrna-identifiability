@@ -38,6 +38,8 @@ Covers, for `audit/q1_increment_shape.py` (S1):
      the first run's kappa prior in the wrong coordinate.
  10  The dose-day draw: pre-dose, every kernel is zero at t = 0; post-dose, the
      committed analyst is design.run.delta there.
+ 11  Gap B on both baseline footings (q1c), rebuilt from the probe's own
+     truths and fitter.
 
 Run:  python audit/q9_recheck.py
 """
@@ -474,6 +476,73 @@ def check_10_dose_day_draw():
     return ok
 
 
+def check_11_footings():
+    banner("11. GAP B ON BOTH BASELINE FOOTINGS, BY THE PROBE'S OWN ROUTE")
+    print("""  q1c_baseline_footings.py reports Gap B with and without an untreated
+  t = 0 draw, under three amplitude conventions. Here the same cells are built
+  a second way: truths from the probe's own train() and train_biexp(), scaled
+  by the probe's own steady-state window (days 600 to 614) or its per-dose D,
+  and fitted by the probe's own fitter. q1's route is q1's amplitude(),
+  assemble() and Analyst. Noiseless, the probe's 8 load records, monthly.
+  The probe's cycle mean is a window average that carries the trapezoid error
+  across each dose jump (q1 Part 0 check 3), about 2e-3, so agreement is
+  asked to 1e-2 on the medians.""")
+    sys.path.insert(0, str(Path(__file__).resolve().parent / "probes_2026-09-25"))
+    import core as C
+    import fit as PF
+    ref = Q.committed_ref()
+    fine = np.arange(0.0, 730.0, 0.01)
+    ss = (fine > 600) & (fine < 614)
+    an = C.train(fine)
+    a_pk, a_mn = an[ss].max(), an[ss].mean()
+
+    def probe_truth(kind, conv):
+        if kind == "jump":
+            base = lambda t: C.train_biexp(t)
+        else:
+            base = lambda t: C.train(t, D=1.0, half=7.0)
+        b = base(fine)
+        scale = {"dose": 6000.0, "peak": a_pk / b[ss].max(),
+                 "mean": a_mn / b[ss].mean()}[conv]
+        return lambda t: scale * base(t)
+
+    A = np.array([[-(Q.K1.KQ + Q.K1.KDEG), Q.K1.KQ], [Q.K1.KQ, -Q.K1.KQ]]) * 24
+    w, V = np.linalg.eig(A)
+    c = np.linalg.solve(V, np.array([1.0, 0.0]))
+    kernels = {"exp 7.0 d": Q.kernel_exp(7.0),
+               "jump": Q.ExpSum(np.real(V[0] * c), np.real(w))}
+    tn, wn = Q.nominal_train()
+    worst = 0.0
+    fa = Q.make_analysts((tn, wn), ref, "peak",
+                         which=("fixed 3.5 d",))["fixed 3.5 d"]
+    print(f"\n    {'truth':10s} {'footing':11s} {'conv':5s} {'q1 route':>9s} "
+          f"{'probe route':>12s}")
+    for kname, k in kernels.items():
+        for foot, times in (("baseline", np.arange(0.0, 730.0, 30.4)),
+                            ("on therapy", np.arange(0.0, 730.0, 30.4)[1:])):
+            t_eval = times - 1e-9
+            for conv in ("dose", "peak", "mean"):
+                amp = Q.amplitude(k, conv, ref)
+                inc_q = amp * Q.assemble(k, tn, wn, t_eval)
+                inc_p = probe_truth("jump" if kname == "jump" else "exp",
+                                    conv)(t_eval)
+                rq, rp = [], []
+                for s in range(8):
+                    m, y, sig, _ = PF.record(C.TH_NOM, times, s,
+                                             inc_true=inc_q, noisy=False)
+                    with Q.rebind(Q, DOSE_DAY_DRAW="pre-dose"):
+                        rq.append(fa.fit(m, y, times=times)["theta"] / 3000)
+                    m, y, sig, _ = PF.record(C.TH_NOM, times, s,
+                                             inc_true=inc_p, noisy=False)
+                    rp.append(PF.fit(m, C.train(t_eval), y, sig,
+                                     C.L_A)["theta"] / 3000)
+                a, b = float(np.median(rq)), float(np.median(rp))
+                worst = max(worst, abs(a / b - 1.0))
+                print(f"    {kname:10s} {foot:11s} {conv:5s} {a:9.3f} {b:12.3f}")
+    return report("footings, q1 route vs probe route", worst, 0.0, 1e-2,
+                  rel=False)
+
+
 def main():
     print("=" * 92)
     print("  PHASE 8 RE-CHECKS. Independent routes to every reported result.")
@@ -481,7 +550,8 @@ def main():
     for fn in (check_1_kernel, check_2_steady_identity, check_3_bias_direction,
                check_4_fit, check_5_interval, check_6_dose_arithmetic,
                check_7_two_phase, check_8_residual_reference,
-               check_9_kappa_prior, check_10_dose_day_draw):
+               check_9_kappa_prior, check_10_dose_day_draw,
+               check_11_footings):
         try:
             fn()
         except Exception as exc:          # a check that cannot run is a failure

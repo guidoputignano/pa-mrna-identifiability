@@ -2754,9 +2754,24 @@ half-lives `1.99 d` and `11.81 d`, but `q1` drives it through the effect compart
 it **jump**. That difference is negligible everywhere except at the one draw the monthly record
 places at a dose instant, `t = 0`, which `q1` read on the post-dose side as `design.run.delta`
 does. There the rising kernel is zero and the analyst is `6000`, and that single draw carried
-the cell from `1.14` to `5.81`. The draw is inside the marker's own settling window (1.3 h), so
-the quasi-steady model does not describe it on either side; `q1` now reads a dose-instant draw
-**pre-dose**, for truth and analyst alike.
+the cell to `5.81`. The draw is inside the marker's own settling window (1.3 h), where the
+quasi-steady model does not describe the marker, **which is wrong for any kernel**; it was only
+catastrophic for the rising one. Removing it gives `1.23`.
+
+**What the first revision of this entry ran together, now separated at the author's request.**
+Reading that draw pre-dose, rather than dropping it, is **not** a further correction. It turns
+it into an **untreated baseline draw**, which pins `theta` through the untreated balance and
+roughly halves the bias for a slow truth. That is a change of **design**: a patient already on
+therapy when the record starts has no such draw. So:
+
+- **Error corrections** (three): not reading a draw at an infusion instant post-dose; the
+  dose-scale prior on `ln kappa`; the profile stranded near `k_e = 0` (both below).
+- **Design change** (one): an untreated baseline draw at `t = 0`.
+
+The first report's `1.934` (7 d) and `1.310` (5 d) were **not wrong arithmetic**. They belong to
+a record with no valid baseline and one invalid draw; with the invalid draw removed and no
+baseline added they read `1.744` and `1.267` (noisy, 24 seeds, peak). The first report's
+`5.637` for the rising two-compartment truth **was** the invalid draw: `1.196` without it.
 
 **Two errors in `q1`, found on the way.**
 
@@ -2772,16 +2787,24 @@ the quasi-steady model does not describe it on either side; `q1` now reads a dos
    between adjacent `theta` and upper interval edges came out short. `q9` check 5 found it
    against `n6`.
 
-**What changes, 24 seeds, peak-matched, pre-dose:**
+**Gap B on the two footings**, fixed 3.5 d analyst, 24 seeds, `dose / peak / mean`
+(`audit/q1c_baseline_footings.py`; reproduced by the author with the probe):
+
+| truth | with a pre-dose baseline draw | already on therapy, no untreated draw |
+|---|---|---|
+| exp 5.0 d | 1.080 / 1.161 / 1.442 | 1.185 / 1.267 / 1.555 |
+| exp 7.0 d | 1.145 / 1.358 / 2.000 | 1.529 / 1.744 / 2.384 |
+| 2-comp, rising (`q1`) | 1.046 / 1.131 / 1.282 | 1.113 / 1.196 / 1.345 |
+| 2-comp, jump (probe) | 1.211 / 1.292 / 1.309 | 1.273 / 1.353 / 1.370 |
+
+**Cells the corrections changed** (baseline footing, peak):
 
 | cell | first report | corrected |
 |---|---|---|
-| Attarwala, fixed 3.5 d | 5.637 [2.440, 8.609], 2.35 sigma | **1.131** [1.036, 1.366], 1.08 sigma (null 0.98) |
-| Attarwala, + free amplitude | 0.111, "increment switched off" | **1.126** |
-| Attarwala, half-life free | 0 on 24 of 24 seeds | **1.129** [0.886, 1.286] |
+| rising 2-comp, fixed 3.5 d | 5.637 [2.440, 8.609], 2.35 sigma | **1.131** [1.036, 1.366], 1.08 sigma (null 0.98) |
+| rising 2-comp, + free amplitude | 0.111, "increment switched off" | **1.126** |
+| rising 2-comp, half-life free | 0 on 24 of 24 seeds | **1.129** [0.886, 1.286] |
 | exponentials, two-comp analyst | 1.18 to 2.25 | **1.05 to 1.14** |
-| exp 7.0 d, fixed 3.5 d | 1.934 | **1.358** |
-| exp 5.0 d, fixed 3.5 d | 1.310 | **1.161** |
 
 **Conclusions withdrawn:** that the two-compartment truth differs in kind from a slower
 exponential; that it is audible; that the paper's "under a fifth of one sigma" sentence needs
@@ -2792,13 +2815,24 @@ under the effect-compartment reading only. **Standing:** the direction of gap B,
 the amplitude does not help, and that an unrecorded dose train costs more than a wrong shape and
 announces itself (Q3W read as Q2W, `6.52` at `2.20 sigma`).
 
-**New, from the correction itself:** a pre-dose baseline draw at `t = 0` roughly halves the 7 d
-shape bias (`2.02` post-dose, `1.78` dropped, `1.38` pre-dose, noiseless). And a flag, not a
-finding: the paper's own `0.1699` is computed with the same draw read post-dose, and does
-not depend on it (`0.1695` pre-dose).
+**New, from the design change:** a pre-treatment baseline draw roughly halves the slow-truth
+shape bias (7 d, dose: `1.529` without, `1.145` with). It matters in the correctly specified
+model too, at a disease-range capacity: the review's monthly `3.07` at 5% of normal is the
+figure with **no** baseline, and `2.38` with one (S2 Part A0). At normal capacity the paper's
+`0.1699` does not depend on it (`0.1695` with a baseline). S4 tests whether the effect
+survives noise and the 14.5 d schedule and whether two or three pre-treatment draws do
+better.
+
+**And a provenance correction to S1.8.** `ke0 = 0.242 /h` is a **mouse** estimate (Attarwala
+Table 1), and in the published structure it is the equilibration of an effect compartment with
+**plasma mRNA**, which has its own PK. `q1`'s rising kernel drops that PK stage; restoring it at
+brief R2's human popPK half-life (36 h, unverified here) moves the protein's single-dose peak
+from 13 h to 72 h, and the "hours after an infusion" timing conclusion holds only for the fast
+reading.
 
 **Re-check record.** `q9` gains checks 9 and 10. **The first version of check 9 failed** at
 `0.223`; the two failing seeds are where `q1`'s `K_m` sits on its box bound and the probe's
 runs past it, which check 4 already measures. It now compares interior seeds and prints the
-box seeds. 24 of 24 pass. S2 was not started, per the author's rule that a changed conclusion
-stops the programme for a report.
+box seeds. Check 11 rebuilds both footings from the probe's own truths and fitter. 25 of 25
+pass. S2 was held for the author's review, as the rule requires when a conclusion changes, and
+released after it.
