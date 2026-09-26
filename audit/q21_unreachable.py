@@ -95,6 +95,22 @@ CONFIRMED = [
                                   "is worth under one per cent",
          "100% of nom: recorded 5% 0.1699 vs b gone, sig 5% 0.1693 = 0.35%"),
     ]),
+    ("t2_tier1_margin", [
+        ("08_specification.tex:125", "at a 14.0% CV the recommended record "
+                                     "returns 0.212 against a gate of 0.20",
+         "14.02%   0.2120 [0.2108, 0.2135]   <- the published figure"),
+        ("08_specification.tex:126", "reaches the gate only at 118 monthly "
+                                     "draws, nearly ten years",
+         "visits needed at that CV: 118 ... 9.8 years of follow-up"),
+        ("08_specification.tex:127", "against eleven with the increment known "
+                                     "exactly", "exact  0.1696  ...  11"),
+        ("08_specification.tex:146", "the floor row 0.151, 0.160, 0.174, "
+                                     "0.207, 0.248",
+         "CV 10% floor 0.1510 | 11.62% 0.1603 | 14% 0.1740 | 30% 0.2482"),
+        ("08_specification.tex:151", "the floor crosses the target at an "
+                                     "increment CV of 18.7%",
+         "the floor reaches the gate at an increment CV of 18.7%"),
+    ]),
     ("t3_diet_modulation", [
         ("11_scope.tex:204", "a prescribed +/-15% swing is worth 7%, an "
                              "implausible +/-50% 32%, leaving 2.32",

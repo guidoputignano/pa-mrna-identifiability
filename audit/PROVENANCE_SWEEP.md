@@ -412,8 +412,29 @@ paper** ("Scoping only. Nothing here reaches the paper."). They split exactly in
 | | in `make figures` | writes a numbers file | owns a paper claim |
 |:--|:--|:--|:--|
 | `t1_transient_worth`, `t5_band_vs_ke`, `t6_cohort_with_kappa`, `t7_structure_transient`, `t11_phase_lattice` | **yes** | **yes** | no |
-| `t2_tier1_margin`, `t10_vandermonde`, `t12_triples` | no | no | no |
+| `t10_vandermonde`, `t12_triples` | no | no | no |
+| **`t2_tier1_margin`** | no | no | **YES** |
 | **`t3_diet_modulation`, `t4_bias_vs_scatter`, `t8_load_by_capacity`, `t9_measured_load`** | **no** | **no** | **YES** |
+
+**CORRECTION, made after the adversarial workflow finished.** An earlier version of this section put
+`t2_tier1_margin` in the middle row as genuine scoping work. **It is not: it owns the whole of Tier
+2's requirement cluster**, `08_specification.tex:125-151`, verified here against its captured output:
+
+| the paper says | `t2` prints |
+|:--|:--|
+| "at a 14.0% CV the record returns 0.212 against a gate of 0.20" | `14.02%   0.2120 [0.2108, 0.2135]` |
+| "reaches the gate only at 118 monthly draws, nearly ten years" | `visits needed: 118 ... 9.8 years` |
+| "against eleven with the increment known exactly" | `exact  0.1696  ...  11` |
+| the floor row "0.151, 0.160, 0.174, 0.207, 0.248" | `0.1510 | 0.1603 | 0.1740 | ... | 0.2482` |
+| "the floor crosses the target at an increment CV of 18.7%" | `the floor reaches the gate at an increment CV of 18.7%` |
+
+**So it is five scripts, not four, and the second load-bearing requirement in the specification is
+owned the same way the first is.** Section 8's load record comes from `t4` and `t8`; Tier 2's
+increment repeatability comes from `t2`. Neither generator is run by the build.
+
+This also closes a row section 10 left open: `08_specification.tex:126` was listed there as "cannot
+be recomputed, same increment-CV machinery as `11_scope:201`". The machinery is `t2`, not `t6`, and
+`t2` prints the answer.
 
 **The declaration is wrong in both directions.** Five scripts say nothing of theirs reaches the paper
 while being wired into `make figures` and writing macros the paper cites, which is harmless because

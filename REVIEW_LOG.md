@@ -3979,3 +3979,36 @@ One site is accepted with its endpoint unverified and marked as such: `08_specif
 "prescribing it is worth between nothing and two per cent". `t3` owns the quantity, printing
 `designed 0.1696 vs spontaneous 0.1698, ratio 1.001` at nominal, which is the "nothing" end; the
 capacity at which it reaches two per cent was not located.
+
+### R86. CORRECTION to R81 and R85: it is five scripts, and t2 owns Tier 2's requirement
+
+`audit/PROVENANCE_SWEEP.md` section 11.1, `audit/q21_unreachable.py`. The adversarial workflow
+finished after R85 was written and contradicted a clearing of mine.
+
+**R81 placed `t2_tier1_margin` among the three scripts doing genuine scoping work. It is not.** It
+owns the whole of Tier 2's requirement cluster, `08_specification.tex:125-151`, verified here against
+its captured output: `0.2120` against the paper's "0.212", `118` monthly draws and `9.8 years` against
+"118 ... nearly ten years", `11` against "eleven with the increment known exactly", the floor row
+`0.1510 | 0.1603 | 0.1740 | ... | 0.2482` against "0.151, 0.160, 0.174, 0.207, 0.248", and
+`the floor reaches the gate at an increment CV of 18.7%` against "18.7%".
+
+**So it is five scripts, not four, and the specification's TWO load-bearing requirements are owned
+the same way.** Section 8's load record comes from `t4` and `t8`; Tier 2's increment repeatability
+comes from `t2`. Neither generator is run by the build, and neither writes a macro.
+
+**It also closes a row R80 left open.** `08_specification.tex:126` was listed as "cannot be
+recomputed, same increment-CV machinery as `11_scope:201`". The machinery is `t2`, not `t6`, and `t2`
+prints the answer.
+
+**And I told the author the opposite while it was still running**, that nothing pending could change
+the four-script finding because the outstanding scripts were already cleared. That was a prediction
+about work not yet done, and it was wrong. **The clearing of `t2` rested on the same value-matching
+that section 11 says is worthless**: `t2` printed no distinctive literal my matcher recognised, and I
+read that absence as absence of ownership instead of as a limit of the method.
+
+**Three agent claims did NOT survive verification and are rejected**, which is why every one was
+checked against captured output rather than accepted: `t1_transient_worth` was credited with
+`07_design.tex:286`'s 29.79 and 59.96 per day and `:289`'s 2.8 assay standard deviations, and `t1`
+prints none of them. `t5_band_vs_ke` and `t11_phase_lattice` are partially supported, but both are in
+`make figures` and write numbers files, so they are the milder category: a generator the build DOES
+run, whose result the paper still states as a literal.
