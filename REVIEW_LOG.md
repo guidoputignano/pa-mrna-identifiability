@@ -2993,3 +2993,50 @@ over 4000 past doses against the closed form (2e-16), the drift conventions meas
 assumed to coincide (0.8% at width 0.05, 2.5% at 0.15, against 41% at the paper's 0.8), and one
 joint-scenario cell rebuilt through the probe's fitter (1e-7). 36 of 36 pass.
 
+---
+
+## R58. S5: the ex vivo prior on θ
+
+`audit/q5_exvivo_prior.py`. A direct enzyme assay on the patient's own cells, carried as a
+log-normal prior on θ of swept width 0.3 to 1.0, at 5, 10, 20 and 100% of normal, alone and with
+the `k_e` precision S2b says the micro-dose study can deliver.
+
+**One thing is proven rather than measured.** The prior enters the information matrix only in its
+(ln θ, ln θ) element and therefore survives the Schur complement untouched, so the prior and the
+record add in exact quadrature, confirmed at 1.000 in all 48 cells. Under this model an ex vivo
+assay and a marker record carry independent information about θ, so neither can spoil the other.
+
+**Three findings.**
+
+1. **The assay is not an alternative to measuring `k_e`.** With the paper's 0.8 population prior on
+   `k_e`, every combined figure in the disease range sits barely below the assay's own width (0.299
+   against 0.300 at 5% of normal), so the record contributes under 1% and the answer is the assay's
+   answer wearing an in vivo estimate's clothes. And it still misses the gate: no width in the
+   sweep reaches 0.20 anywhere below normal capacity.
+2. **With `k_e` measured it changes exactly three verdicts, all at a prior of 0.3.** The practical
+   contribution is to turn monthly sampling at 10% of normal from 0.243 into 0.189, an edge pass in
+   the Monte Carlo. A prior of 0.5 or wider rescues nothing anywhere in the grid, so the assay's
+   value rests entirely on brief **R4** establishing a mapping good to about a third.
+3. **The risk is concentrated exactly where the benefit is.** At 5% of normal with a 0.3 prior, 54
+   to 60% of a mapping centring error passes into θ̂; at normal capacity, 3 to 6%. At 10% of normal
+   **a prior wrong by a factor of two is worth precisely nothing**: RMSE 0.249 with it and 0.249
+   without, the variance it buys and the bias it injects cancelling to three decimals. At 20% and
+   above a wrong prior is worse than none. A wide prior is safe and useless, a tight one useful and
+   unsafe, with no width at which it is both.
+
+**So the recommendation is that the assay enters as a cross-check and not as a prior in the
+estimator**, unless R4 establishes the mapping to about a third AND establishes it as unbiased;
+and if it does enter, the resulting interval must not be quoted as an in vivo measurement of
+capacity, since in the disease range it is dominated by the prior. `refs/brief_questions.md` now
+carries R4's two questions, with the centring named as the more important.
+
+**Re-check record.** `q9` gains check 16 on three routes: the Fisher bound with the prior against a
+numerical Hessian of the whole posterior (5e-8), the MAP against a from-scratch Nelder-Mead fit
+(3e-7), and an uninformative-record limit that must and does return the prior's own centre exactly.
+39 of 39 pass.
+
+**One presentation error, caught before reporting.** The first run printed a `prior alone` column
+that was empty in every row, since the prior's own width varies by column and not by row, and
+described the quadrature identity as a measured shortfall. Both are corrected: the column is gone
+and the identity is stated and proved as S5.0.
+

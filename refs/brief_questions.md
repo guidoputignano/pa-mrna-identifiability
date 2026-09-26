@@ -44,3 +44,23 @@ a per-patient measurement of `k_e`.
    volume of distribution, and the renal fraction of its elimination. The half-life is unknown by
    a factor of about 70 across the sweep, and it is what the tracer study's sampling window must
    be chosen against.
+
+---
+
+## R4. The ex vivo mapping to θ
+
+Raised by `audit/PHASE8_SIMULATIONS.md` S5, which carries a direct enzyme assay on the patient's
+own cells as a log-normal prior on θ and finds its value and its danger in the same cells.
+
+1. **How wide is the mapping** from an ex vivo activity, per milligram of cell protein in
+   fibroblasts or lymphocytes under assay conditions, to the whole-body maximal velocity the model
+   calls θ? S5 sweeps sd(ln θ) from 0.3 to 1.0 and finds that **only 0.3 changes any verdict**, so
+   the question has a sharp answer-or-nothing quality: a mapping good to about a third is worth
+   one cell of the requirement map, and anything wider is worth none.
+2. **Is the mapping CENTRED?** S5.3 makes this the more important of the two, and it is the one
+   nobody asks. At 5% of normal with a 0.3 prior, 54 to 60% of any centring error passes straight
+   into θ̂, and at 10% a prior wrong by a factor of two is worth exactly nothing (RMSE 0.249 with
+   it and 0.249 without). A width without a centring claim cannot be used in an estimator.
+3. **What would establish the centring**, rather than the width: paired measurements in the same
+   patients, ex vivo activity against any in vivo flux measure (a labelled propionate oxidation
+   study is the obvious candidate), across more than one cell type.

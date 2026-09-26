@@ -830,6 +830,129 @@ def check_15_s4():
     return ok
 
 
+def check_16_s5():
+    banner("16. S5: THE THETA PRIOR, BY A HESSIAN, A FROM-SCRATCH FIT, AND A LIMIT")
+    print("""  (a) S5's Fisher bound with the ex vivo prior against a FINITE-DIFFERENCE
+  HESSIAN of the negative log posterior, the prior term included. q5 adds the
+  prior to one diagonal element of an analytic information matrix; this route
+  differentiates the whole objective numerically.
+  (b) S5's MAP against a FROM-SCRATCH objective minimised by Nelder-Mead from
+  several starts, sharing no line with q5's variable-projection grid and polish.
+  (c) A LIMIT: with the record made uninformative, the posterior must return the
+  prior's own centre and width, so the offset passes through entirely. That is
+  the boundary Part D's pass-through numbers are read against.""")
+    from scipy.optimize import minimize
+    import q2_requirement_map as S2
+    import q5_exvivo_prior as S5
+
+    def hess_sd(theta, times, ke_sd, load, th_sd):
+        L, _, sigma, s_b = S2.footing(theta)
+        Ls = S2.loads_for(times.size, 0, L)
+        inc = S2.increment(times)
+        m = S2.level(theta, inc, Ls)
+
+        def J(q):
+            th, km, b, ke = np.exp(q[0]), np.exp(q[1]), q[2], np.exp(q[3])
+            pred = (th + inc) * m / (km + m) + ke * m + b
+            out = float(np.sum(((pred - Ls) / sigma) ** 2))
+            if load == "recorded":
+                out += (b / s_b) ** 2
+            if ke_sd:
+                out += ((q[3] - np.log(S2.KE)) / ke_sd) ** 2
+            if th_sd is not None:
+                out += ((q[0] - np.log(theta)) / th_sd) ** 2
+            return out
+        q0 = np.array([np.log(theta), np.log(S2.KM), 0.0, np.log(S2.KE)])
+        h = 1e-5
+        H = np.empty((4, 4))
+        for i in range(4):
+            for j in range(4):
+                ei, ej = np.zeros(4), np.zeros(4)
+                ei[i] = ej[j] = h
+                H[i, j] = (J(q0 + ei + ej) - J(q0 + ei - ej)
+                           - J(q0 - ei + ej) + J(q0 - ei - ej)) / (4 * h * h)
+        F = H / 2.0
+        w = np.linalg.eigvalsh(F)
+        if w[0] <= 1e-12 * w[-1]:
+            return np.inf
+        return float(np.sqrt(np.linalg.inv(F)[0, 0]))
+
+    worst = 0.0
+    for cap in (0.05, 0.20, 1.00):
+        th = S2.TH_NOM * cap
+        for v in (0.3, 1.0, None):
+            for ks in (0.8, 0.054):
+                t = S2.times_for("monthly", "no baseline")
+                mine = S5.fisher_sd(th, t, 0, ks, "recorded", v)
+                theirs = hess_sd(th, t, ks, "recorded", v)
+                worst = max(worst, abs(mine / theirs - 1.0))
+        print(f"    {100 * cap:4.0f}% prior 0.3, k_e 0.054: q5 "
+              f"{S5.fisher_sd(th, t, 0, 0.054, 'recorded', 0.3):.5f}  Hessian "
+              f"{hess_sd(th, t, 0.054, 'recorded', 0.3):.5f}")
+    ok = report("S5 Fisher with theta prior vs numerical Hessian", worst, 0.0,
+                1e-4, rel=False)
+
+    print()
+    worst_e = 0.0
+    for cap, v, ks in ((0.05, 0.5, 0.054), (0.20, 0.3, 0.8), (1.00, 1.0, 0.02)):
+        theta = S2.TH_NOM * cap
+        t = S2.times_for("monthly", "no baseline")
+        L, _, sigma, s_b = S2.footing(theta)
+        inc = S2.increment(t)
+        for r in range(6):
+            rng = np.random.default_rng(10_007 * r + 3)
+            Ls = S2.loads_for(t.size, r, L)
+            z = rng.normal(0.0, ks)
+            b_t = rng.normal(0.0, s_b)
+            m = S2.level(theta, inc, Ls + b_t)
+            s = Ls + rng.normal(0.0, sigma, t.size)
+            th_c = theta * np.exp(rng.normal(0.0, v))
+            mine = S5.mc_fit(m, inc, s, sigma, s_b, ks, S2.KE * np.exp(z),
+                             "recorded", v, th_c)
+
+            def obj(q):
+                th, km, ke, b = np.exp(q[0]), np.exp(q[1]), np.exp(q[2]), q[3]
+                pred = (th + inc) * m / (km + m) + ke * m + b
+                return (np.sum(((pred - s) / sigma) ** 2)
+                        + ((q[0] - np.log(th_c)) / v) ** 2
+                        + ((q[2] - np.log(S2.KE * np.exp(z))) / ks) ** 2
+                        + (b / s_b) ** 2)
+            best = None
+            for t0 in (theta, theta * 3, theta / 3, th_c):
+                for k0 in (10.0, 100.0, 500.0):
+                    o = minimize(obj, [np.log(t0), np.log(k0),
+                                       np.log(S2.KE), 0.0],
+                                 method="Nelder-Mead",
+                                 options=dict(maxiter=40000, maxfev=40000,
+                                              xatol=1e-12, fatol=1e-12))
+                    if best is None or o.fun < best.fun:
+                        best = o
+            worst_e = max(worst_e, abs(np.log(mine) - best.x[0]))
+        print(f"    {100 * cap:4.0f}% prior {v} k_e {ks}: worst |ln theta| gap "
+              f"so far {worst_e:.2e}")
+    ok &= report("S5 MAP vs from-scratch Nelder-Mead", worst_e, 0.0, 1e-3,
+                 rel=False)
+
+    print()
+    #  the uninformative-record limit: one draw, noise blown up by 1e6
+    theta = S2.TH_NOM
+    t = S2.times_for("monthly", "no baseline")[:1]
+    L, _, sigma, s_b = S2.footing(theta)
+    inc = S2.increment(t)
+    m = S2.level(theta, inc, np.full(1, L))
+    worst = 0.0
+    for off in (0.3, 0.7):
+        th_c = theta * np.exp(off)
+        got = S5.mc_fit(m, inc, np.full(1, L), sigma * 1e6, s_b * 1e6, 0.054,
+                        S2.KE, "recorded", 0.5, th_c)
+        worst = max(worst, abs(np.log(got) - np.log(th_c)))
+        print(f"    offset {off}: prior centre {th_c:8.1f}  posterior "
+              f"{got:8.1f}")
+    ok &= report("uninformative record returns the prior centre", worst, 0.0,
+                 1e-6, rel=False)
+    return ok
+
+
 def main():
     print("=" * 92)
     print("  PHASE 8 RE-CHECKS. Independent routes to every reported result.")
@@ -839,7 +962,7 @@ def main():
                check_7_two_phase, check_8_residual_reference,
                check_9_kappa_prior, check_10_dose_day_draw,
                check_11_footings, check_12_s2, check_13_s2b,
-               check_14_s3, check_15_s4):
+               check_14_s3, check_15_s4, check_16_s5):
         try:
             fn()
         except Exception as exc:          # a check that cannot run is a failure

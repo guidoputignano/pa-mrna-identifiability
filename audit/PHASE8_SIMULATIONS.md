@@ -1191,6 +1191,140 @@ identical across the columns and what is measured is the run-in itself. RMSE, jo
 
 ---
 
+## S5. The ex vivo prior on θ
+
+`audit/q5_exvivo_prior.py`. Residual PCC activity can be measured directly, in cultured
+fibroblasts or lymphocytes, and that measurement is what the clinical literature on propionic
+acidemia actually reports. It is not the quantity the paper estimates: it is an activity per
+milligram of cell protein in one cell type under assay conditions, and mapping it to a whole-body
+maximal velocity carries the cell-type mix, the assay conditions and the protein content. Brief
+**R4** is that mapping and it is unresolved, so the assay is carried as a log-normal prior on θ of
+swept width, 0.3 to 1.0 in ln θ, at 5, 10, 20 and 100% of normal, alone and with the `k_e`
+precision S2b says the micro-dose study can actually deliver (0.8 with no study, 0.054 for a 2%
+study with 5% drift, 0.02 for 2% with none).
+
+Conventions as S2: dose-day draws pre-dose, schedules on therapy, footing convention A, `dose`
+amplitude, load recorded. Re-checks: `q9` check 16, three routes (the Fisher bound against a
+numerical Hessian of the whole posterior, 5e-8; the MAP against a from-scratch Nelder-Mead fit,
+3e-7; and the uninformative-record limit returning the prior's own centre exactly). 39 of 39
+overall.
+
+### S5.0 The prior and the record are exactly independent **[proven]**
+
+The prior enters the information matrix only in its (ln θ, ln θ) element, and the marginal
+precision of ln θ is the Schur complement `F00 - F0r Frr⁻¹ Fr0`, in which the added term survives
+untouched because it sits outside every block the complement subtracts. So
+
+    1 / sd(both)² = 1 / sd(record)² + 1 / prior²
+
+holds to machine precision, and the script's `ratio` column confirms the arithmetic at 1.000 in
+every one of 48 cells rather than measuring anything. **What it means is the substantive part:
+under this model an ex vivo assay and a marker record carry independent information about θ, so
+neither can spoil the other and the weaker one is never wasted.** It also means the combination
+can be read off without simulation, which is worth saying because it makes the rest of this
+section checkable by hand. **[proven]**
+
+### S5.1 Without a `k_e` measurement the assay simply replaces the record **[measured]**
+
+`sd(ln θ̂)`, Fisher, monthly, load recorded, `k_e` at the paper's 0.8:
+
+| capacity | prior 0.3 | prior 0.5 | prior 0.7 | prior 1.0 | record alone |
+|---|---|---|---|---|---|
+| 5% | 0.299 | 0.493 | 0.682 | 0.951 | 3.068 |
+| 10% | 0.295 | 0.477 | 0.640 | 0.845 | 1.581 |
+| 20% | 0.281 | 0.426 | 0.530 | 0.630 | 0.812 |
+| 100% | 0.149* | 0.163* | 0.167* | 0.170* | 0.172* |
+
+1. **In the disease range each combined figure is barely below the prior's own width**, 0.299
+   against 0.300 at 5%, so **the record contributes almost nothing and the answer is the assay's
+   answer.** A reader given 0.299 would be reading an ex vivo measurement wearing an in vivo
+   estimate's clothes. **[measured]**
+2. **And it still does not reach the gate.** Even a mapping good to a third gives 0.28 to 0.30
+   across the whole disease range, above 0.20. **An ex vivo assay cannot substitute for the `k_e`
+   measurement**: no width in the sweep, including widths better than the literature supports,
+   rescues a design that has no per-patient `k_e`. **[measured]**
+3. At normal capacity the relation inverts: the record alone is 0.172 and the prior adds 1 to 13%.
+   **The assay is worth having where it is least needed.** **[measured]**
+
+### S5.2 With the `k_e` measurement it changes three verdicts, and only at 0.3 **[measured]**
+
+Monthly, load recorded, `k_e` at the realistic 0.054:
+
+| capacity | prior 0.3 | prior 0.5 | prior 0.7 | prior 1.0 | record alone |
+|---|---|---|---|---|---|
+| 5% | 0.252 | 0.340 | 0.386 | 0.420 | 0.463 |
+| 10% | 0.189* | 0.219 | 0.230 | 0.236 | 0.243 |
+| 20% | 0.125* | 0.133* | 0.135* | 0.137* | 0.138* |
+| 100% | 0.082* | 0.085* | 0.085* | 0.085* | 0.086* |
+
+Across the whole grid of three `k_e` cases, three schedules, four capacities and four widths,
+**exactly three cells are rescued**, meaning the record alone misses the gate and the record with
+the prior meets it, and all three need the tightest prior in the sweep:
+
+| k_e | schedule | capacity | prior | record alone | Fisher | MAP RMSE [90%] | bias | verdict |
+|---|---|---|---|---|---|---|---|---|
+| realistic 0.054 | monthly | 10% | 0.30 | 0.243 | 0.189 | 0.195 [0.166, 0.222] | −0.020 | edge |
+| optimistic 0.02 | monthly | 10% | 0.30 | 0.217 | 0.176 | 0.177 [0.150, 0.201] | −0.014 | edge |
+| optimistic 0.02 | every 2 d | 5% | 0.30 | 0.214 | 0.174 | 0.160 [0.143, 0.179] | −0.020 | MEETS |
+
+1. **The assay's whole practical contribution is to turn monthly sampling at 10% of normal from a
+   near miss into an edge pass, and to add one 5% cell that needs an every-2-days record and a
+   perfect `k_e` anyway.** **[measured]**
+2. **A prior of 0.5 or wider rescues nothing, anywhere in the grid.** So the value of the assay
+   rests entirely on brief **R4** establishing a mapping good to about a third, which nothing in
+   this repository does. **[measured]**
+3. The Monte Carlo agrees with the bound in these cells to within 3%, unlike S2's prior-free cells
+   near the gate, because a proper prior on θ is exactly what removes the collapse tail: zero
+   collapses in all three. **[measured]**
+
+### S5.3 The risk is concentrated where the benefit is **[measured]**
+
+A prior borrowed through an unresolved mapping may be centred wrong, and a tight prior transmits
+that offset. The prior's centre is offset by 0, 0.3 and 0.7 in ln θ, a mapping wrong by a factor
+of 1, 1.35 and 2. `pass-through` is the median bias divided by the offset, so 1 means the estimate
+moved the whole way with the prior. MAP, 96 records, monthly, `k_e` 0.054:
+
+| capacity | prior | bias at offset 0.3 | pass | bias at offset 0.7 | pass | RMSE at 0.7 | RMSE, no prior |
+|---|---|---|---|---|---|---|---|
+| 5% | 0.3 | +0.181 | 0.60 | +0.377 | 0.54 | 0.416 | 3.486 |
+| 5% | 1.0 | +0.001 | 0.00 | +0.068 | 0.10 | 0.396 | 3.486 |
+| 10% | 0.3 | +0.096 | 0.32 | +0.209 | 0.30 | 0.249 | 0.249 |
+| 10% | 1.0 | −0.000 | 0.00 | +0.020 | 0.03 | 0.228 | 0.249 |
+| 20% | 0.3 | +0.039 | 0.13 | +0.100 | 0.14 | 0.141 | 0.130 |
+| 100% | 0.3 | +0.010 | 0.03 | +0.040 | 0.06 | 0.093 | 0.081 |
+
+1. **Pass-through tracks exactly the cells where the prior helps.** At 5% of normal with a 0.3
+   prior, 54 to 60% of a mapping error lands in θ̂; at normal capacity, 3 to 6%. **The assay is
+   dangerous precisely in the disease range, which is the only place it is useful.** **[measured]**
+2. **At 10% of normal a prior wrong by a factor of two is worth exactly nothing:** RMSE 0.249 with
+   it and 0.249 without. The variance it buys and the bias it injects cancel to three decimals.
+   That is the cleanest statement of the trade available here. **[measured]**
+3. **At 20% and at normal capacity a wrong prior is worse than none** (0.141 against 0.130, 0.093
+   against 0.081), because the record already meets the gate and the prior can only add bias.
+   **[measured]**
+4. **A wide prior is safe and useless, a tight prior is useful and unsafe**, monotonically across
+   the sweep, with no width at which it is both. **[measured]**
+
+### S5.4 What S5 hands on
+
+1. **The ex vivo assay is not an alternative to measuring `k_e`.** Without a per-patient `k_e` no
+   prior width in the sweep reaches the gate anywhere in the disease range, and the combined
+   estimate is then the assay's own number with the record contributing under 1%. **[measured]**
+2. **With `k_e` measured, the assay is worth one verdict: monthly sampling at 10% of normal, at a
+   prior of 0.3 and no wider.** **[measured]**
+3. **It should enter as a cross-check, not as a prior in the estimator**, unless brief **R4**
+   establishes the mapping to about a third AND establishes it as unbiased. A width of 0.3 buys
+   0.243 → 0.189 and transmits 30% of any centring error at the same capacity; an assay believed
+   to a third but wrong by a factor of two is worth nothing at all there. **[measured]** on the
+   sizes, **[judgement]** on the recommendation.
+4. **If it does enter the estimator, the reported interval must not be quoted as an in vivo
+   measurement of capacity.** In the disease range it is dominated by the prior, and the paper's
+   own claim is about identifiability from plasma. **[judgement]**
+5. **Brief R4 should be asked for two things, not one:** the width of the ex vivo to in vivo
+   mapping, and whether it is centred. S5 makes the second the more important. **[judgement]**
+
+---
+
 ## What is open after S1
 
 - **The shape itself**, and **which reading of Attarwala's kernel is right**. Nothing here
@@ -1213,7 +1347,8 @@ identical across the columns and what is measured is the run-in itself. RMSE, jo
 - **The marker's within-subject biological variation in stable outpatients**, which S3 makes as
   important as the load record and which brief **R3** has not been asked for in that form. Above
   25% the design does not close at normal capacity; above 15% the working band is empty.
-- **S5** has not been run.
+- **The centring of the ex vivo to in vivo mapping**, which S5.3 makes more important than its
+  width, and which brief **R4** has not been asked for. Filed in `refs/brief_questions.md`.
 
 ### A boundary on this phase
 
