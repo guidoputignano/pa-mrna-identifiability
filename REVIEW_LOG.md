@@ -3722,3 +3722,45 @@ better unless that anticorrelation is near perfect.**
 **So the ordering is forced**: measure the between-patient spread before committing to either route.
 It should be the top line of whatever the specification becomes, ahead of the load-record requirement
 and ahead of the `k_e` study, both of which are conditional on it.
+
+---
+
+### R77. The provenance sweep: the guard sees 343 numbers and the paper asserts 2472
+
+`audit/PROVENANCE_SWEEP.md`, `audit/q17_*.py`. Commissioned after R75, and it closes no hole: it
+measures one. **`paper/` is untouched.**
+
+`tools/check_artefacts.py` regenerates the tables, the figures and `results/numbers/*.tex`, so a
+`\num{}` value is owned and checked and a prose literal is owned by nobody. **343 guarded references
+against 2472 unguarded literals**, of which 1000 are spelled-out numerals. **A scan over digits would
+have missed route 6's own two values, since `thirteen` and `eighteen` are words**, which is the
+sharpest structural lesson: any guard built from this has to read English numerals.
+
+| category | count |
+|:--|---:|
+| 1, generated elsewhere and retyped here | 218 |
+| 2, structural | 1017 |
+| **3, asserting a computed result** | **206** in 130 claims |
+| 4, harmless | 1031 |
+
+**Category 3 carries two columns.** A generator exists for a claim if its paragraph already cites a
+`\num{}` macro, which means a named script already runs and already emits numbers there: **52 of 130
+have one, 78 do not.** Reproduction was tested by running fourteen generators and searching their
+printed output, since these scripts print far more than they write as macros: **26 reproduce, 53 are
+unowned but printed somewhere, 18 are NOT IN OUTPUT, 8 PARTIAL, 25 unowned and unprinted.**
+
+**NOT IN OUTPUT is a statement that nothing checks the number, not that it is wrong.** Route 6's
+`eighteen` was exactly this before q16 showed it wrong, so the 51 claims in the bottom three rows are
+the queue.
+
+**Two clusters were checked the stronger way, by recomputing the quantity.** Section 8's load-record
+decomposition, which carries the paper's third-tightest requirement and has no generator at all,
+**reproduces throughout**: 0.283 against 0.293, 0.172 against 0.174, the 98/2 split against 96.8/1.6,
+the capacity shares 1.8/9.9/26.2 against 1.6/10.1/27.9, the 10.4% threshold against 9.73%. **An
+unguarded number is unchecked, not wrong, and that has to be said as loudly as the retraction.**
+
+**Three findings for the consolidation pass.** `2.659` appears in three places across two sections
+and is owned by nothing in any of them, one value hand-copied three times under both route 5 and
+route 6. `07_design.tex:113`, the gate claim itself, asserts `0.457, 0.412, 0.510` with no generator
+printing them. And the 218 category-1 literals are pure upside: the macro exists, the prose simply
+does not use it.

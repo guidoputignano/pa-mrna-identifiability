@@ -1,0 +1,206 @@
+paper/sections/00_abstract.tex:24	Fifteen	spelled-out numeral asserting an outcome	$\num{disease_factor}$ below it. Fifteen times the sampling moves its lower edge by
+paper/sections/01_question.tex:46	17	prose asserting a computed outcome	sampling spread of $17\%$ on $\ln\hat\theta$ over two years. A $95\%$ interval is a separate
+paper/sections/01_question.tex:46	95	prose asserting a computed outcome	sampling spread of $17\%$ on $\ln\hat\theta$ over two years. A $95\%$ interval is a separate
+paper/sections/01_question.tex:47	four	spelled-out numeral asserting an outcome	quantity and a separate calculation, and on the same design it is a factor of about four
+paper/sections/02_model.tex:165	0.8	prose asserting a computed outcome	less: at $0.8$, $0.5$ and $0.25$ of $c^{\ast}(m)$ the boundary falls $1.9\%$, $4.8\%$ and
+paper/sections/02_model.tex:165	0.5	prose asserting a computed outcome	less: at $0.8$, $0.5$ and $0.25$ of $c^{\ast}(m)$ the boundary falls $1.9\%$, $4.8\%$ and
+paper/sections/02_model.tex:165	0.25	prose asserting a computed outcome	less: at $0.8$, $0.5$ and $0.25$ of $c^{\ast}(m)$ the boundary falls $1.9\%$, $4.8\%$ and
+paper/sections/02_model.tex:165	1.9	prose asserting a computed outcome	less: at $0.8$, $0.5$ and $0.25$ of $c^{\ast}(m)$ the boundary falls $1.9\%$, $4.8\%$ and
+paper/sections/02_model.tex:165	4.8	prose asserting a computed outcome	less: at $0.8$, $0.5$ and $0.25$ of $c^{\ast}(m)$ the boundary falls $1.9\%$, $4.8\%$ and
+paper/sections/02_model.tex:167	0.5	prose asserting a computed outcome	costs between $0.5\%$ and $32\%$ across the sampled corners. There the reduced model calls
+paper/sections/02_model.tex:167	32	prose asserting a computed outcome	costs between $0.5\%$ and $32\%$ across the sampled corners. There the reduced model calls
+paper/sections/02_system.tex:126	50	prose asserting a computed outcome	a $50\%$ lower C3 gives a rate ratio of $0.6$ ($p=0.017$)~\cite{natural_history}, on its
+paper/sections/02_system.tex:126	0.6	prose asserting a computed outcome	a $50\%$ lower C3 gives a rate ratio of $0.6$ ($p=0.017$)~\cite{natural_history}, on its
+paper/sections/02_system.tex:126	0.017	prose asserting a computed outcome	a $50\%$ lower C3 gives a rate ratio of $0.6$ ($p=0.017$)~\cite{natural_history}, on its
+paper/sections/03_dynamic.tex:119	6.5	prose asserting a computed outcome	makes the load $6.5$ times lower, and at the attractor the fraction rises only $1.3$-fold,
+paper/sections/03_dynamic.tex:119	1.3	prose asserting a computed outcome	makes the load $6.5$ times lower, and at the attractor the fraction rises only $1.3$-fold,
+paper/sections/03_dynamic.tex:128	0.20	prose asserting a computed outcome	$\rho_0$ below $0.20$, where the separatrix moves far enough out to reverse the sign. Holding
+paper/sections/03_dynamic.tex:129	0.35	prose asserting a computed outcome	$R_0$ while moving $\rho_0$ gives $0.35$ instead, but that sweep breaks the calibration
+paper/sections/03_dynamic.tex:266	one	spelled-out numeral asserting an outcome	(Section~\ref{sec:therapychannel}). What supplies almost none is a record without one, and
+paper/sections/03_dynamic.tex:269	one	spelled-out numeral asserting an outcome	the load-record prior holds that direction at every $n$ a study could reach. The one way
+paper/sections/03_dynamic.tex:294	10	prose asserting a computed outcome	with $c$ left at its pre-perturbation value the basin runs $10\%$ to $18\%$ past the reduced
+paper/sections/03_dynamic.tex:294	18	prose asserting a computed outcome	with $c$ left at its pre-perturbation value the basin runs $10\%$ to $18\%$ past the reduced
+paper/sections/03_dynamic.tex:330	1.41	prose asserting a computed outcome	that window the recovered $\theta$ moves by a factor of $1.41$.
+paper/sections/03_dynamic.tex:352	1.1	prose asserting a computed outcome	condition number rises from $1.1\times10^{5}$ to $4.8\times10^{7}$, a factor of about
+paper/sections/03_dynamic.tex:352	5	prose asserting a computed outcome	condition number rises from $1.1\times10^{5}$ to $4.8\times10^{7}$, a factor of about
+paper/sections/03_dynamic.tex:352	4.8	prose asserting a computed outcome	condition number rises from $1.1\times10^{5}$ to $4.8\times10^{7}$, a factor of about
+paper/sections/03_dynamic.tex:352	7	prose asserting a computed outcome	condition number rises from $1.1\times10^{5}$ to $4.8\times10^{7}$, a factor of about
+paper/sections/03_dynamic.tex:473	1.6	prose asserting a computed outcome	and $\rho_0$ across its whole admissible window moves it by $1.6\%$. Sweeping the three
+paper/sections/03_dynamic.tex:473	three	spelled-out numeral asserting an outcome	and $\rho_0$ across its whole admissible window moves it by $1.6\%$. Sweeping the three
+paper/sections/03_dynamic.tex:474	1.4	prose asserting a computed outcome	together over those ranges leaves $\thc^{\,\mathrm{int}}$ inside a factor of $1.4$.
+paper/sections/04_local.tex:524	1	prose asserting a computed outcome	cannot move the first factor of $-(1 + \Delta(t)/\theta)\,\varphi(m)$ at all, and on the
+paper/sections/04_local.tex:525	0.170	prose asserting a computed outcome	footing that gives the dose train $\operatorname{sd}(\ln\hat\theta) = 0.170$, adding
+paper/sections/04_local.tex:526	1.91	prose asserting a computed outcome	recorded carnitine steps gives $1.91$ to $2.02$, \emph{worse} than leaving them out
+paper/sections/04_local.tex:526	2.02	prose asserting a computed outcome	recorded carnitine steps gives $1.91$ to $2.02$, \emph{worse} than leaving them out
+paper/sections/04_local.tex:625	Two	spelled-out numeral asserting an outcome	Two patients matched at $\bar m$ and sharing $K_m$ separate exactly:
+paper/sections/04_local.tex:690	0.170	prose asserting a computed outcome	across dose cycles over two years reach $\operatorname{sd}(\ln\hat\theta) = 0.170$
+paper/sections/04_local.tex:714	169	prose asserting a computed outcome	factor of $169$; it leaves its \emph{relative} precision known. The two are different
+paper/sections/04_local.tex:817	0	prose asserting a computed outcome	parameter set. Imposing $k_e \ge 0$ leaves the margin biased downward by about $7\%$ at
+paper/sections/04_local.tex:817	7	prose asserting a computed outcome	parameter set. Imposing $k_e \ge 0$ leaves the margin biased downward by about $7\%$ at
+paper/sections/06_excitation.tex:39	three	spelled-out numeral asserting an outcome	those nodes must satisfy and three visits at three different levels suffice. At a constant recorded load, $(A,B,C)$ is therefore exactly what the
+paper/sections/06_excitation.tex:39	three	spelled-out numeral asserting an outcome	those nodes must satisfy and three visits at three different levels suffice. At a constant recorded load, $(A,B,C)$ is therefore exactly what the
+paper/sections/06_excitation.tex:67	5	prose asserting a computed outcome	$5\%$ load record of Section~\ref{sec:spec} it leaves $\theta$ open by a factor of
+paper/sections/06_excitation.tex:102	0.01	prose asserting a computed outcome	What the low end gives back is $K_m$ and not $\theta$: at $m/K_m = 0.01$,
+paper/sections/06_excitation.tex:103	0.587	prose asserting a computed outcome	$\operatorname{sd}(\ln\hat K_m)$ falls from $0.587$ to $0.209$ while
+paper/sections/06_excitation.tex:103	0.209	prose asserting a computed outcome	$\operatorname{sd}(\ln\hat K_m)$ falls from $0.587$ to $0.209$ while
+paper/sections/06_excitation.tex:148	0.058	prose asserting a computed outcome	for: at $r = 2$ the band the illustrative patient is held in gives $E = 0.058$ against a
+paper/sections/06_excitation.tex:178	two	spelled-out numeral asserting an outcome	\caption{\label{tab:factors}The two factors of the excitation, over the phase 1/2 record. The marker band moves $\varphi$ by a twentieth; the dose train moves $1+\Delta/\theta$ by nearly two. Their product is what a desi
+paper/sections/06_excitation.tex:178	two	spelled-out numeral asserting an outcome	\caption{\label{tab:factors}The two factors of the excitation, over the phase 1/2 record. The marker band moves $\varphi$ by a twentieth; the dose train moves $1+\Delta/\theta$ by nearly two. Their product is what a desi
+paper/sections/06_excitation.tex:192	5.5	prose asserting a computed outcome	(Section~\ref{sec:excursion_table}), against which the train is worth $5.5$ times, and that
+paper/sections/06_excitation.tex:214	0.55	prose asserting a computed outcome	$\num{train_drop}$ against the $0.55$ that would suffice. \textbf{The excitation was
+paper/sections/06_excitation.tex:301	0.5	prose asserting a computed outcome	not at once: the $0.5\%$ and $2\%$ records return $0.86$ and $\num{free_cv2}$ prior-free, so what the
+paper/sections/06_excitation.tex:301	2	prose asserting a computed outcome	not at once: the $0.5\%$ and $2\%$ records return $0.86$ and $\num{free_cv2}$ prior-free, so what the
+paper/sections/06_excitation.tex:301	0.86	prose asserting a computed outcome	not at once: the $0.5\%$ and $2\%$ records return $0.86$ and $\num{free_cv2}$ prior-free, so what the
+paper/sections/07_design.tex:17	two	spelled-out numeral asserting an outcome	draws walk around the dose cycle and over two years leave no gap in phase
+paper/sections/07_design.tex:67	0.5	prose asserting a computed outcome	$0.5\%$, moves the densest design by about one per cent.
+paper/sections/07_design.tex:110	two	spelled-out numeral asserting an outcome	cycles for two years, twenty-five draws, no excursion and no admission, reaches
+paper/sections/07_design.tex:110	twenty-five	spelled-out numeral asserting an outcome	cycles for two years, twenty-five draws, no excursion and no admission, reaches
+paper/sections/07_design.tex:112	thirteen	spelled-out numeral asserting an outcome	two-monthly sampling, thirteen draws, reaches $\num{sd_two_monthly}$ ($\num{sd_two_monthly_lo}$ to $\num{sd_two_monthly_hi}$) and also
+paper/sections/07_design.tex:113	0.457	prose asserting a computed outcome	passes; six-monthly visits reach $0.457$ ($0.412$ to $0.510$) and do not. Every precision
+paper/sections/07_design.tex:113	0.412	prose asserting a computed outcome	passes; six-monthly visits reach $0.457$ ($0.412$ to $0.510$) and do not. Every precision
+paper/sections/07_design.tex:113	0.510	prose asserting a computed outcome	passes; six-monthly visits reach $0.457$ ($0.412$ to $0.510$) and do not. Every precision
+paper/sections/07_design.tex:118	thirteen	spelled-out numeral asserting an outcome	What separates them is not $n$: two-monthly sampling passes with thirteen samples while
+paper/sections/07_design.tex:174	Five	spelled-out numeral asserting an outcome	visits at $14.5$~days achieve. \textbf{Five hours on the step buy back almost exactly
+paper/sections/07_design.tex:175	five	spelled-out numeral asserting an outcome	what five visits would}, and cost nothing.
+paper/sections/07_design.tex:181	0.999	prose asserting a computed outcome	correlation between $\ln\theta$ and $\ln K_m$ returns to $+0.999$, and
+paper/sections/07_design.tex:255	365	prose asserting a computed outcome	of $\num{straddle_gain}$: the same $365$ samples placed to straddle $K_m$ reach
+paper/sections/07_design.tex:260	one	spelled-out numeral asserting an outcome	unavailable. And one dose cycle of seven samples does not do it: it reaches
+paper/sections/07_design.tex:260	seven	spelled-out numeral asserting an outcome	unavailable. And one dose cycle of seven samples does not do it: it reaches
+paper/sections/07_design.tex:293	Eight	spelled-out numeral asserting an outcome	gives.} Eight post-dose draws placed where the information actually is, over the first
+paper/sections/07_design.tex:296	twenty	spelled-out numeral asserting an outcome	of nominal; twenty draws move it by $\num{trans_gain20_nominal}\%$ and
+paper/sections/07_design.tex:329	6.5	prose asserting a computed outcome	the same delivered rate buys $6.5\%$ for an $87\%$ cut: about thirteen to one against the
+paper/sections/07_design.tex:329	87	prose asserting a computed outcome	the same delivered rate buys $6.5\%$ for an $87\%$ cut: about thirteen to one against the
+paper/sections/07_design.tex:329	thirteen	spelled-out numeral asserting an outcome	the same delivered rate buys $6.5\%$ for an $87\%$ cut: about thirteen to one against the
+paper/sections/07_design.tex:333	29	prose asserting a computed outcome	Shortening the interval to seven days \emph{doubles} the trough and costs $29\%$ of the
+paper/sections/07_design.tex:333	seven	spelled-out numeral asserting an outcome	Shortening the interval to seven days \emph{doubles} the trough and costs $29\%$ of the
+paper/sections/07_design.tex:454	10	prose asserting a computed outcome	a $10\%$ day-to-day variability the floor is $0.150$ and the target is reached
+paper/sections/07_design.tex:454	0.150	prose asserting a computed outcome	a $10\%$ day-to-day variability the floor is $0.150$ and the target is reached
+paper/sections/07_design.tex:467	twelve	spelled-out numeral asserting an outcome	week. Left: twelve visits spread across the dial, each on the weekday its phase
+paper/sections/07_design.tex:564	ten	spelled-out numeral asserting an outcome	the same gate is reached in ten monthly visits on one row and not at all
+paper/sections/07_design.tex:564	one	spelled-out numeral asserting an outcome	the same gate is reached in ten monthly visits on one row and not at all
+paper/sections/07_design.tex:572	5	prose asserting a computed outcome	costs the design. Every row is admissible on the capacity ceiling at the $5\%$
+paper/sections/07_design.tex:573	0.20	prose asserting a computed outcome	reference. Visits are monthly visits to reach the $0.20$ gate, a median over
+paper/sections/07_design.tex:613	eight	spelled-out numeral asserting an outcome	and still falls short: an excursion to eight times the operating point reaches $E = \num{decomp_E}$
+paper/sections/07b_decision.tex:11	one	spelled-out numeral asserting an outcome	patient who does not need it costs an infusion and a venous line, and failing to treat one
+paper/sections/07b_decision.tex:37	ten	spelled-out numeral asserting an outcome	patients with $\mu<0$ within ten points falls from about $\num{cohort_fixed}$ to about $\num{cohort_monthly}$: a
+paper/sections/07b_decision.tex:70	0.07	prose asserting a computed outcome	costs the managed regime wants the boundary at $+0.07\,\theta$ and the crisis regime wants
+paper/sections/07b_decision.tex:71	0.39	prose asserting a computed outcome	it at $-0.39\,\theta$; at a cost ratio of ten to one or worse every regime wants every
+paper/sections/07b_decision.tex:71	ten	spelled-out numeral asserting an outcome	it at $-0.39\,\theta$; at a cost ratio of ten to one or worse every regime wants every
+paper/sections/08_specification.tex:35	one	spelled-out numeral asserting an outcome	conditional on one patient; Section~\ref{sec:coverage} measures how far that reaches. One
+paper/sections/08_specification.tex:35	One	spelled-out numeral asserting an outcome	conditional on one patient; Section~\ref{sec:coverage} measures how far that reaches. One
+paper/sections/08_specification.tex:40	two	spelled-out numeral asserting an outcome	Section~\ref{sec:tierload} draws out because the two are bought by different studies.
+paper/sections/08_specification.tex:45	one	spelled-out numeral asserting an outcome	\textbf{Before either tier below is worth running, one measurement rules out the published
+paper/sections/08_specification.tex:66	One	spelled-out numeral asserting an outcome	$\num{struct_sigma_30min}$ at half an hour. One draw suffices at any assay precision to
+paper/sections/08_specification.tex:76	one	spelled-out numeral asserting an outcome	one restores it. Ruling out a family is worth one blood draw; it is not the same as
+paper/sections/08_specification.tex:76	one	spelled-out numeral asserting an outcome	one restores it. Ruling out a family is worth one blood draw; it is not the same as
+paper/sections/08_specification.tex:88	One	spelled-out numeral asserting an outcome	\paragraph{What it costs and what it settles.} One infusion visit, already scheduled, with
+paper/sections/08_specification.tex:113	20	prose asserting a computed outcome	monthly sampling to reach the $20\%$ target on $\theta$. Everything the therapy
+paper/sections/08_specification.tex:125	14.0	prose asserting a computed outcome	$14.0\%$ coefficient of variation the recommended record returns
+paper/sections/08_specification.tex:126	0.212	prose asserting a computed outcome	$\operatorname{sd}(\ln\hat\theta) = 0.212$ against a gate of $0.20$, and reaches the gate
+paper/sections/08_specification.tex:126	0.20	prose asserting a computed outcome	$\operatorname{sd}(\ln\hat\theta) = 0.212$ against a gate of $0.20$, and reaches the gate
+paper/sections/08_specification.tex:152	0.20	prose asserting a computed outcome	schedule and no number of visits reaches $0.20$. The published \emph{per-patient} range
+paper/sections/08_specification.tex:178	5	prose asserting a computed outcome	Tightening $k_e$ from the published width to $5\%$ is worth a factor of $2.1$ at nominal
+paper/sections/08_specification.tex:178	2.1	prose asserting a computed outcome	Tightening $k_e$ from the published width to $5\%$ is worth a factor of $2.1$ at nominal
+paper/sections/08_specification.tex:180	0.388	prose asserting a computed outcome	$k_e$ leaves $0.388$, about twice the target, so this is a second anchor and not a
+paper/sections/08_specification.tex:199	two	spelled-out numeral asserting an outcome	for two years reach the target, and two-monthly draws, thirteen over two years, also
+paper/sections/08_specification.tex:199	thirteen	spelled-out numeral asserting an outcome	for two years reach the target, and two-monthly draws, thirteen over two years, also
+paper/sections/08_specification.tex:199	two	spelled-out numeral asserting an outcome	for two years reach the target, and two-monthly draws, thirteen over two years, also
+paper/sections/08_specification.tex:238	twenty	spelled-out numeral asserting an outcome	record more \emph{variable} buys nothing, and making it twenty times less variable costs
+paper/sections/08_specification.tex:250	0.20	prose asserting a computed outcome	and on those numbers the design reaches $0.20$ only if intake is recorded to better than
+paper/sections/08_specification.tex:254	20	prose asserting a computed outcome	what study to run.} Separating them at the $20\%$ row: the per-visit scatter alone gives
+paper/sections/08_specification.tex:255	0.283	prose asserting a computed outcome	$0.283$, the systematic offset alone gives $0.172$ against a $0.170$ baseline, so $98\%$ of
+paper/sections/08_specification.tex:255	0.172	prose asserting a computed outcome	$0.283$, the systematic offset alone gives $0.172$ against a $0.170$ baseline, so $98\%$ of
+paper/sections/08_specification.tex:255	0.170	prose asserting a computed outcome	$0.283$, the systematic offset alone gives $0.172$ against a $0.170$ baseline, so $98\%$ of
+paper/sections/08_specification.tex:255	98	prose asserting a computed outcome	$0.283$, the systematic offset alone gives $0.172$ against a $0.170$ baseline, so $98\%$ of
+paper/sections/08_specification.tex:270	2.659	prose asserting a computed outcome	reaches the target, and a perfect one in both channels still leaves $2.659$ at $5\%$ of
+paper/sections/08_specification.tex:270	5	prose asserting a computed outcome	reaches the target, and a perfect one in both channels still leaves $2.659$ at $5\%$ of
+paper/sections/08_specification.tex:270	one	spelled-out numeral asserting an outcome	reaches the target, and a perfect one in both channels still leaves $2.659$ at $5\%$ of
+paper/sections/08_specification.tex:276	1	prose asserting a computed outcome	almost nothing: from no knowledge of the offset at all to knowing it within $1\%$ is worth
+paper/sections/08_specification.tex:285	40	prose asserting a computed outcome	With both channels at $40\%$ this design returns $\num{sd_load_acc_40pct}$, two and a half
+paper/sections/08_specification.tex:289	167	prose asserting a computed outcome	eating a steady $167\%$ of prescription is a pure offset, and an offset of that size costs
+paper/sections/08_specification.tex:301	2	prose asserting a computed outcome	record gives $\num{free_steady}$ and a $2\%$ record already gives $\num{free_cv2}$.
+paper/sections/08_specification.tex:308	41	prose asserting a computed outcome	in four PA and five MMA children is a mean fall of $41\%$, range $12$ to
+paper/sections/08_specification.tex:308	12	prose asserting a computed outcome	in four PA and five MMA children is a mean fall of $41\%$, range $12$ to
+paper/sections/08_specification.tex:308	four	spelled-out numeral asserting an outcome	in four PA and five MMA children is a mean fall of $41\%$, range $12$ to
+paper/sections/08_specification.tex:308	five	spelled-out numeral asserting an outcome	in four PA and five MMA children is a mean fall of $41\%$, range $12$ to
+paper/sections/08_specification.tex:355	0.20	prose asserting a computed outcome	\caption{\label{tab:instruments}Three sources of excitation on one footing, against the $0.20$ target. Only the dose train reaches it, which is why the design h
+paper/sections/08_specification.tex:361	120	prose asserting a computed outcome	day-to-day CV of $120$ to $200\%$ and rises beyond it. Drawing more blood does not work
+paper/sections/08_specification.tex:361	200	prose asserting a computed outcome	day-to-day CV of $120$ to $200\%$ and rises beyond it. Drawing more blood does not work
+paper/sections/08_specification.tex:367	1.05	prose asserting a computed outcome	$1.05$ there and does not move (supplement, \S S1).
+paper/sections/08_specification.tex:370	7	prose asserting a computed outcome	protein, recorded as prescribed and carried as a known regressor, is worth $7\%$ at a
+paper/sections/08_specification.tex:372	2.32	prose asserting a computed outcome	leaves $2.32$ against a target of $0.20$; at nominal capacity it is worth nothing and at
+paper/sections/08_specification.tex:372	0.20	prose asserting a computed outcome	leaves $2.32$ against a target of $0.20$; at nominal capacity it is worth nothing and at
+paper/sections/08_specification.tex:392	1	prose asserting a computed outcome	cannot touch the first factor of $-(1+\Delta/\theta)\varphi(m)$ at all and can move
+paper/sections/08_specification.tex:393	1.3	prose asserting a computed outcome	$\varphi$ only by shifting the level. Doubling $k_e$ moves $\varphi$ by $1.3\%$ while
+paper/sections/08_specification.tex:412	20	prose asserting a computed outcome	Confirming that the design achieves its stated precision to $\pm 20\%$ relative needs about
+paper/sections/08_specification.tex:441	0.20	prose asserting a computed outcome	draw past it and miss: for those, no schedule and no number of visits reaches $0.20$,
+paper/sections/08_specification.tex:471	thirteen	spelled-out numeral asserting an outcome	at a fixed operating point buys nothing: two-monthly sampling with thirteen draws beats
+paper/sections/09_validation.tex:103	0.170	prose asserting a computed outcome	gives $\operatorname{sd}(\ln\hat\theta) = 0.170$ ($\num{sd_monthly_lo}$ to $\num{sd_monthly_hi}$ across intake
+paper/sections/10_results.tex:48	two	spelled-out numeral asserting an outcome	\caption{Left: a selective perturbation renders two patients matched at the operating
+paper/sections/10_results.tex:69	one	spelled-out numeral asserting an outcome	\caption{Left: \textbf{one steady state per patient}. A cohort of $N$ patients sharing the
+paper/sections/10_results.tex:73	two	spelled-out numeral asserting an outcome	Proposition~\ref{prop:degeneracy} is built on. A patient observed over a band supplies two
+paper/sections/10_results.tex:75	two	spelled-out numeral asserting an outcome	overdetermined beyond: two patients alone give
+paper/sections/10_results.tex:118	Two	spelled-out numeral asserting an outcome	(d) Two patients matched at the operating point, whose margins separate exactly as
+paper/sections/10_results.tex:161	two	spelled-out numeral asserting an outcome	patient supplies two coefficients, and by Remark~\ref{rem:fibre} a null genotype's $k_e$
+paper/sections/10_results.tex:216	1.1	prose asserting a computed outcome	number rises from $1.1 \times 10^{5}$ in the local reduction to $4.8 \times 10^{7}$ under
+paper/sections/10_results.tex:216	10	prose asserting a computed outcome	number rises from $1.1 \times 10^{5}$ in the local reduction to $4.8 \times 10^{7}$ under
+paper/sections/10_results.tex:216	5	prose asserting a computed outcome	number rises from $1.1 \times 10^{5}$ in the local reduction to $4.8 \times 10^{7}$ under
+paper/sections/10_results.tex:216	4.8	prose asserting a computed outcome	number rises from $1.1 \times 10^{5}$ in the local reduction to $4.8 \times 10^{7}$ under
+paper/sections/10_results.tex:216	10	prose asserting a computed outcome	number rises from $1.1 \times 10^{5}$ in the local reduction to $4.8 \times 10^{7}$ under
+paper/sections/10_results.tex:216	7	prose asserting a computed outcome	number rises from $1.1 \times 10^{5}$ in the local reduction to $4.8 \times 10^{7}$ under
+paper/sections/11_scope.tex:21	0.5	prose asserting a computed outcome	from it. The elasticity falls below $0.5$ at $3.6$ times managed, below $0.25$ at $5.0$,
+paper/sections/11_scope.tex:21	3.6	prose asserting a computed outcome	from it. The elasticity falls below $0.5$ at $3.6$ times managed, below $0.25$ at $5.0$,
+paper/sections/11_scope.tex:21	0.25	prose asserting a computed outcome	from it. The elasticity falls below $0.5$ at $3.6$ times managed, below $0.25$ at $5.0$,
+paper/sections/11_scope.tex:21	5.0	prose asserting a computed outcome	from it. The elasticity falls below $0.5$ at $3.6$ times managed, below $0.25$ at $5.0$,
+paper/sections/11_scope.tex:72	600	prose asserting a computed outcome	code. A dash means the target is not reached at any number of monthly visits up to $600$,
+paper/sections/11_scope.tex:84	30	prose asserting a computed outcome	increment from a $30\%$ coefficient of variation to an exact one is worth $88\%$ of the
+paper/sections/11_scope.tex:84	88	prose asserting a computed outcome	increment from a $30\%$ coefficient of variation to an exact one is worth $88\%$ of the
+paper/sections/11_scope.tex:92	6	prose asserting a computed outcome	capacity and $6\%$ in the disease range (Remark~\ref{rem:kmrecovered}), and it still supplies an \emph{upper} bound
+paper/sections/11_scope.tex:105	fifteen	spelled-out numeral asserting an outcome	fifteen times the draws, moves that edge only from $\num{band_lo_pct}\%$ to
+paper/sections/11_scope.tex:166	2.96	prose asserting a computed outcome	returns $2.96$, but it is a second and independent reason to think the increment is set too
+paper/sections/11_scope.tex:172	2.75	prose asserting a computed outcome	monthly design achieves is $2.75$ at $D \approx 100$ against $3.07$ at the booked $6000$,
+paper/sections/11_scope.tex:172	3.07	prose asserting a computed outcome	monthly design achieves is $2.75$ at $D \approx 100$ against $3.07$ at the booked $6000$,
+paper/sections/11_scope.tex:174	ten	spelled-out numeral asserting an outcome	increment swamps the capacity, and ten per cent separates the two failures. At nominal
+paper/sections/11_scope.tex:201	0.3	prose asserting a computed outcome	on the delivered increment to an exact one is worth $0.3\%$ at this capacity, against
+paper/sections/11_scope.tex:204	7	prose asserting a computed outcome	protein is worth $7\%$, and an implausible $\pm50\%$ swing $32\%$, leaving $2.32$ against
+paper/sections/11_scope.tex:204	32	prose asserting a computed outcome	protein is worth $7\%$, and an implausible $\pm50\%$ swing $32\%$, leaving $2.32$ against
+paper/sections/11_scope.tex:204	2.32	prose asserting a computed outcome	protein is worth $7\%$, and an implausible $\pm50\%$ swing $32\%$, leaving $2.32$ against
+paper/sections/11_scope.tex:207	1.81	prose asserting a computed outcome	worth a factor of $1.81$ at nominal capacity and $1.22$ to $1.46$ across the disease range
+paper/sections/11_scope.tex:207	1.22	prose asserting a computed outcome	worth a factor of $1.81$ at nominal capacity and $1.22$ to $1.46$ across the disease range
+paper/sections/11_scope.tex:207	1.46	prose asserting a computed outcome	worth a factor of $1.81$ at nominal capacity and $1.22$ to $1.46$ across the disease range
+paper/sections/11_scope.tex:210	2.659	prose asserting a computed outcome	channels leaves $2.659$ at $5\%$ of nominal.
+paper/sections/11_scope.tex:210	5	prose asserting a computed outcome	channels leaves $2.659$ at $5\%$ of nominal.
+paper/sections/11_scope.tex:213	thirteen	spelled-out numeral asserting an outcome	bounding it. At nominal that is a real efficiency: thirteen measured-load visits match
+paper/sections/11_scope.tex:214	twenty-five	spelled-out numeral asserting an outcome	twenty-five recorded ones and six reach the target. Below nominal it opens nothing --- an
+paper/sections/11_scope.tex:214	six	spelled-out numeral asserting an outcome	twenty-five recorded ones and six reach the target. Below nominal it opens nothing --- an
+paper/sections/11_scope.tex:215	2.659	prose asserting a computed outcome	\emph{exactly} known load leaves $2.659$ at $5\%$ of nominal --- and the advantage shrinks
+paper/sections/11_scope.tex:215	5	prose asserting a computed outcome	\emph{exactly} known load leaves $2.659$ at $5\%$ of nominal --- and the advantage shrinks
+paper/sections/11_scope.tex:216	thirteen	spelled-out numeral asserting an outcome	rather than reverses as capacity falls, from thirteen visits to eighteen.
+paper/sections/11_scope.tex:216	eighteen	spelled-out numeral asserting an outcome	rather than reverses as capacity falls, from thirteen visits to eighteen.
+paper/sections/11_scope.tex:236	two	spelled-out numeral asserting an outcome	the steady map. The two questions want the same blood draw and give opposite answers, and
+paper/sections/11_scope.tex:283	one	spelled-out numeral asserting an outcome	advice survive the substitution: a record locked to one dose-cycle phase leaves $K_m$
+paper/sections/12_discussion.tex:172	Two	spelled-out numeral asserting an outcome	to improve.} Two of the three are worse than neutral. A dietary record \emph{tightened} by
+paper/sections/12_discussion.tex:172	three	spelled-out numeral asserting an outcome	to improve.} Two of the three are worse than neutral. A dietary record \emph{tightened} by
+paper/sections/A1_open.tex:85	two	spelled-out numeral asserting an outcome	worth buying only after the load record is, which orders the two pieces of work.
+paper/sections/A1_open.tex:126	24	prose asserting a computed outcome	moves by a factor of $24$ while the sign of the margin flips for the same patient with
+paper/sections/A1_open.tex:139	1.79	prose asserting a computed outcome	that gives the dose train $\num{sd_monthly}$, spontaneous load variation alone gives $1.79$ ($1.41$ to
+paper/sections/A1_open.tex:139	1.41	prose asserting a computed outcome	that gives the dose train $\num{sd_monthly}$, spontaneous load variation alone gives $1.79$ ($1.41$ to
+paper/sections/A1_open.tex:141	1.91	prose asserting a computed outcome	recorded carnitine steps gives $1.91$ to $2.02$, \emph{worse} than leaving them out.
+paper/sections/A1_open.tex:141	2.02	prose asserting a computed outcome	recorded carnitine steps gives $1.91$ to $2.02$, \emph{worse} than leaving them out.
+paper/sections/A1_open.tex:175	1.79	prose asserting a computed outcome	without a dose train the same footing gives $1.79$ against a $0.20$ target, and with one it
+paper/sections/A1_open.tex:175	0.20	prose asserting a computed outcome	without a dose train the same footing gives $1.79$ against a $0.20$ target, and with one it
+paper/sections/A1_supplementary.tex:317	25	prose asserting a computed outcome	$\mu$M in samples drawn during one ($n = 25$, SD $12.4$), $P = 0.0370$, a fall of
+paper/sections/A1_supplementary.tex:317	0.0370	prose asserting a computed outcome	$\mu$M in samples drawn during one ($n = 25$, SD $12.4$), $P = 0.0370$, a fall of
+paper/sections/A1_supplementary.tex:317	one	spelled-out numeral asserting an outcome	$\mu$M in samples drawn during one ($n = 25$, SD $12.4$), $P = 0.0370$, a fall of
+paper/sections/A1_supplementary.tex:387	1	prose asserting a computed outcome	factor of $-(1 + \Delta(t)/\theta)\,\varphi(m)$ at all; it moves the second by pushing the
+paper/sections/A1_supplementary.tex:388	ten	spelled-out numeral asserting an outcome	patient deeper into the linear regime, about ten to one against. On the footing that gives
+paper/sections/A1_supplementary.tex:388	one	spelled-out numeral asserting an outcome	patient deeper into the linear regime, about ten to one against. On the footing that gives
+paper/sections/A1_supplementary.tex:390	1.91	prose asserting a computed outcome	gives $1.91$ to $2.02$, \emph{worse} than leaving them out. What survives below is the
+paper/sections/A1_supplementary.tex:390	2.02	prose asserting a computed outcome	gives $1.91$ to $2.02$, \emph{worse} than leaving them out. What survives below is the
+paper/sections/A1_supplementary.tex:398	six	spelled-out numeral asserting an outcome	the two input routes separate by six orders of magnitude in $\det G$ and by a factor of
+paper/sections/A1_supplementary.tex:538	81	prose asserting a computed outcome	It is bought at a price in generalisability. The series is $81\%$ \emph{PCCA}
+paper/sections/A1_supplementary.tex:705	0.8	prose asserting a computed outcome	to be. At $s = 0.8$ it leaves $b$ in $[-255, +1225]$, forty times the load record's own
+paper/sections/A1_supplementary.tex:705	255	prose asserting a computed outcome	to be. At $s = 0.8$ it leaves $b$ in $[-255, +1225]$, forty times the load record's own
+paper/sections/A1_supplementary.tex:705	1225	prose asserting a computed outcome	to be. At $s = 0.8$ it leaves $b$ in $[-255, +1225]$, forty times the load record's own
+paper/sections/A1_supplementary.tex:705	forty	spelled-out numeral asserting an outcome	to be. At $s = 0.8$ it leaves $b$ in $[-255, +1225]$, forty times the load record's own
+paper/sections/A1_supplementary.tex:725	six	spelled-out numeral asserting an outcome	says is worth asking for. A control study that pinned $K_m$ to one per cent would buy six
