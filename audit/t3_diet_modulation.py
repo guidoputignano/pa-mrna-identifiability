@@ -57,6 +57,9 @@ KE_PRIOR_LOG = 0.8
 GATE = 0.20
 MONTH = 30.4
 N_VISITS = 25
+#: the modulation period Part 1 finds best, hoisted to module scope so the
+#: generated-numbers function uses the same value main() prints.
+P_GOOD = 21.0
 T_DOSE = 50.0 * DOSE_INTERVAL
 PEAK = D_AMP / (1.0 - np.exp(-LAMBDA * DOSE_INTERVAL))
 
@@ -114,13 +117,44 @@ def over(theta, **kw):
     return median_spread([sd_of(theta, s, **kw) for s in SEEDS])
 
 
+def diet_numbers():
+    """
+    The prescribed-modulation figures Sections 8 and 11 quote.
+
+    WHY THIS FUNCTION NOW EXISTS. See REVIEW_LOG.md R80 and R81: this script
+    is absent from `make figures` and its results reach the paper only as
+    prose literals.
+    """
+    from common.numbers import write_numbers
+    TH_DIS = 150.0
+    base = over(TH_DIS)[0]
+    #  ONLY the value that reproduces is generated. This script's own output
+    #  gives a 6.2% gain at a 15% swing and 24.1% at 50%, against the paper's
+    #  "7%" and "32%" at 08_specification.tex:372 and 11_scope.tex:204. The
+    #  baseline is not in doubt: 2.3198 at a 50% swing rounds to the paper's
+    #  own 2.32, so the capacity and period are the ones the paper used. The
+    #  two percentages therefore DISAGREE with their generator, and neither is
+    #  adopted here: wiring the computed value would silently change a
+    #  published number and wiring the published one would falsify the
+    #  generator. Reported instead (REVIEW_LOG.md R88).
+    N = {"diet_sd50_disease": over(TH_DIS, amp=0.50, period_d=P_GOOD)[0],
+         "diet_gain15_pct_UNRECONCILED": 100.0 * (
+             1.0 - over(TH_DIS, amp=0.15, period_d=P_GOOD)[0] / base),
+         "diet_gain50_pct_UNRECONCILED": 100.0 * (
+             1.0 - over(TH_DIS, amp=0.50, period_d=P_GOOD)[0] / base)}
+    fmt = {"diet_sd50_disease": "{:.2f}",
+           "diet_gain15_pct_UNRECONCILED": "{:.1f}",
+           "diet_gain50_pct_UNRECONCILED": "{:.1f}"}
+    write_numbers("diet", N, fmt)
+    return N
+
+
 def main():
     print(__doc__)
     bar = "=" * 78
     caps = [(3000.0, "100%"), (300.0, "10%"), (150.0, "5%")]
     #  a period that is not a multiple of the 30.4 d sampling interval and not
     #  a multiple of the 14 d dose interval either
-    P_GOOD = 21.0
 
     print(bar)
     print("1. WITH AND WITHOUT THE DOSE TRAIN, AT A 15% SWING ON 21 DAYS")
@@ -216,6 +250,9 @@ def main():
     print(f"  a 30% swing at 30.4 d gives {at:.4f} against {none:.4f} with no "
           f"modulation at all: {abs(at-none)/none:.2%} apart")
 
+
+    #  the numbers the paper cites, written where the build can see them
+    diet_numbers()
 
 def sd_of_cv(theta, seed, cv, n_visits=N_VISITS):
     """The paper's design with the day-to-day CV raised, nothing prescribed."""

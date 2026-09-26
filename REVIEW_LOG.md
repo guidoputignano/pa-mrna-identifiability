@@ -4012,3 +4012,65 @@ checked against captured output rather than accepted: `t1_transient_worth` was c
 prints none of them. `t5_band_vs_ke` and `t11_phase_lattice` are partially supported, but both are in
 `make figures` and write numbers files, so they are the milder category: a generator the build DOES
 run, whose result the paper still states as a literal.
+
+---
+
+### R87. The five are wired: 22 literals become checked macros, and two refuse
+
+`audit/q22_wire_macros.py`, `audit/q21_unreachable.py`. Author-directed, ahead of the consolidation
+pass, because one result restated across sections from a source the build never runs cannot be
+reworded safely.
+
+**What was done.** `t2_tier1_margin`, `t3_diet_modulation`, `t4_bias_vs_scatter`,
+`t8_load_by_capacity` and `t9_measured_load` each gained a `*_numbers()` function, are registered in
+`common/numbers.py`'s `GENERATORS`, and run in `make figures`. **22 literals in
+`06_excitation.tex`, `08_specification.tex` and `11_scope.tex` are now `\num{}` macros.** The guard
+went from 14 numbers-file generators checked for reachability to **19**, and from 328 generated keys
+across 17 files to **364 across 22**.
+
+**No value changed, and that is enforced rather than intended.** `q22` refuses any replacement whose
+macro does not render EXACTLY the literal it replaces; each generator's format string was set to the
+paper's own printed precision, and three sites were refused on the first pass (1.808 against "1.81")
+until the format matched. `pdflatex` is not installed in this container so the built document could
+not be compared visually; what was checked is that every `\num{}` key resolves to a defined macro and
+that each rendered string equals the literal it replaced.
+
+### R88. Two genuine paper-against-generator disagreements, the first in the whole sweep
+
+Both were found BY the wiring, which is what the wiring is for. Neither value is adopted: taking the
+computed one would silently change a published number and taking the published one would falsify its
+generator.
+
+**1. `t3_diet_modulation`, at `11_scope.tex:204` and `08_specification.tex:372`.** The paper: "a
+prescribed +/-15% swing in natural protein is worth 7%, and an implausible +/-50% swing 32%, leaving
+2.32". The generator's own amplitude sweep at 5% of nominal gives 3.0583 at no swing, 2.8671 at 15%
+and 2.3198 at 50%, so **6.3% and 24.1%**, not 7% and 32%. **The footing is not in doubt**: 2.3198
+rounds to the paper's own 2.32, so the capacity and the 21 d period are the ones the paper used. Only
+`diet_sd50_disease` is generated; the two percentages are written as
+`diet_gain15_pct_UNRECONCILED` and `diet_gain50_pct_UNRECONCILED` and cited nowhere.
+
+**2. `t4_bias_vs_scatter`, at `06_excitation.tex:286`.** The paper: "sd runs 0.159 at a 1% recording
+error to 0.288 at 20%". The generator gives 0.1589, which is the 0.159, and **0.2863, which renders
+0.286 and not 0.288**. The 1% end wired; the 20% end is held.
+
+**This is the first time in 130 claims that a paper number has failed against its own code**, and it
+took wiring to find it, because every earlier check compared the paper against a reconstruction and
+five times the reconstruction was what was wrong. **A generator that the build never runs is free to
+drift, and these two are what drift looks like.** Which of the pair is right in each case is not
+decidable from here: the script may have changed since the sentence was written, or the sentence may
+always have been wrong. Both need the author.
+
+### R89. Seven sites cannot be wired without rewording, and that is the same property
+
+`\num{}` renders a digit, so wiring "thirteen measured-load visits" makes it "13". That is a prose
+edit and the paper is frozen against those. Held for the author: `11_scope.tex:213` ("thirteen",
+"six"), `:216` ("thirteen", "eighteen"), `08_specification.tex:126` ("nearly ten years"), `:127`
+("eleven"), `06_excitation.tex:309` ("under one per cent").
+
+**The macros for all seven exist** (`meas_match_nominal` = 13, `meas_gate_nominal` = 6,
+`meas_match_2pct` = 18, `tier1_visits_exact` = 11, `tier1_years_at_pub` = 9.8,
+`meas_b_only_gain_pct` = 0.33), so approving the rewording is the only step left.
+
+**That a spelled-out numeral cannot be wired without rewording is the same property that made it
+invisible to a digit scan** (R77), and it is why route 6's error survived: the one clause a digit
+guard could never have seen was the one that was wrong.

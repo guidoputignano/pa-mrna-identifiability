@@ -123,10 +123,10 @@ removes.
 
 \textbf{That bound is on the wrong side of the requirement, and not by a little.} At a
 $14.0\%$ coefficient of variation the recommended record returns
-$\operatorname{sd}(\ln\hat\theta) = 0.212$ against a gate of $0.20$, and reaches the gate
-only at $118$ monthly draws, which is nearly ten years of follow-up, against eleven with
-the increment known exactly. A same-day pair must therefore be a factor of $1.21$ tighter
-than a between-visit one, a $17\%$ reduction in the coefficient of variation, and that
+$\operatorname{sd}(\ln\hat\theta) = \num{tier1_sd_at_pub}$ against a gate of $0.20$, and reaches the gate
+only at $\num{tier1_visits_at_pub}$ monthly draws, which is nearly ten years of follow-up, against eleven with
+the increment known exactly. A same-day pair must therefore be a factor of $\num{tier1_factor}$ tighter
+than a between-visit one, a $\num{tier1_cv_cut_pct}\%$ reduction in the coefficient of variation, and that
 factor is the whole of what Tier~2 has to establish.
 
 \textbf{And beyond a certain width no number of visits is enough.} The prior on the
@@ -143,7 +143,7 @@ requirement the identifiability gate names.}
 \begin{tabular}{@{}rccccc@{}}
 \toprule
 increment CV & $10\%$ & $\num{kappa_monthly_pct}\%$ & $14\%$ & $20\%$ & $30\%$ \\
-floor as $n \to \infty$ & $0.151$ & $0.160$ & $0.174$ & $0.207$ & $0.248$ \\
+floor as $n \to \infty$ & $\num{tier1_floor_10}$ & $\num{tier1_floor_req}$ & $\num{tier1_floor_14}$ & $\num{tier1_floor_20}$ & $\num{tier1_floor_30}$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -252,7 +252,7 @@ about $10\%$.
 
 \textbf{The two do not carry equal weight, and which one carries the requirement decides
 what study to run.} Separating them at the $20\%$ row: the per-visit scatter alone gives
-$0.283$, the systematic offset alone gives $0.172$ against a $0.170$ baseline, so $98\%$ of
+$\num{bias_scatter20}$, the systematic offset alone gives $\num{bias_alone20}$ against a $\num{bias_base}$ baseline, so $\num{bias_scatter_share}\%$ of
 the degradation is scatter and $2\%$ is offset. Holding the scatter at $5\%$, the target is
 met at every offset from $1\%$ to $500\%$; holding the offset at $5\%$, the scatter must be
 tighter than $10.4\%$, which is the requirement above almost exactly. The reason is
@@ -262,12 +262,12 @@ the prior on it inert.
 
 \textbf{That split is a statement about nominal capacity and not a general one.} Repeating
 the decomposition at each capacity, the offset's share of the degradation runs $1.8\%$ at
-nominal, $9.9\%$ at half, $26.2\%$ at a fifth and about a quarter through the disease range
+nominal, $\num{loadcap_share_half}\%$ at half, $\num{loadcap_share_fifth}\%$ at a fifth and about a quarter through the disease range
 below that. The offset stops being negligible almost exactly where the elasticity of the
 marker to capacity starts to fail. What keeps the conclusion above intact is not that the
 share stays small but that the gate is only in reach at nominal at all
 (Section~\ref{sec:scopeprec}): where the split changes, no load record of any accuracy
-reaches the target, and a perfect one in both channels still leaves $2.659$ at $5\%$ of
+reaches the target, and a perfect one in both channels still leaves $\num{loadcap_perfect_5pct}$ at $5\%$ of
 nominal. So the study to run is still the better diary, and the reason is the scope limit
 rather than the decomposition.
 

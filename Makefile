@@ -58,6 +58,13 @@ figures:
 	$(PYW) audit/g2_visits_vs_sd.py
 	$(PYW) audit/g3_calendar.py
 	$(PYW) audit/g5_conditions.py
+	@echo ">> the five generators whose results the paper states as prose"
+	@echo ">>   (REVIEW_LOG.md R81/R86: each declared it did not reach the paper)"
+	$(PYW) audit/t2_tier1_margin.py
+	$(PYW) audit/t3_diet_modulation.py
+	$(PYW) audit/t4_bias_vs_scatter.py
+	$(PYW) audit/t8_load_by_capacity.py
+	$(PYW) audit/t9_measured_load.py
 
 refs:
 	$(PY) tools/fetch_refs.py
