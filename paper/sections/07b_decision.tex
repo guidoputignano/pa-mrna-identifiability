@@ -55,10 +55,15 @@ any reading.
 $L_{\mathrm{base}} + \rho\,(s_{\mathrm{true}} - L_{\mathrm{base}})$, so $\rho = 1$ is a
 record that tracks the load to its recording error and $\rho \le 0$ is crisis protocol,
 where prescribed intake is cut while catabolic muscle breakdown supplies the load. On the
-monthly design $\rho = 1$ errs at $17.5\%$ and $41.8\%$ with a median $\hat\theta/\theta$
-of $1.03$; at $\rho = 0.5$ the two errors become $99.0\%$ and $0.0\%$ at $0.90$; at
-$\rho = 0$, intake pinned at baseline, $100\%$ and $0.0\%$ at $0.086$; at $\rho = -0.25$,
-protein stopped, $100\%$ and $0.0\%$ at $0.009$. The mechanism is in the last of those
+monthly design, over twelve seeds at four hundred replicates each, $\rho = 1$ errs at
+$19.1\%$ $[16.8, 24.5]$ and $41.6\%$ $[37.5, 44.5]$ with a median $\hat\theta/\theta$ of
+$0.88$ $[0.29, 1.08]$; at $\rho = 0.5$ the two errors become $99.3\%$ $[98.8, 99.8]$ and
+$0.1\%$ $[0.0, 0.2]$ at $0.69$ $[0.00, 0.97]$; at $\rho = 0$, intake pinned at baseline,
+$100\%$ and $0.0\%$ on every seed at $0.04$ $[0.01, 0.14]$; at $\rho = -0.25$, protein
+stopped, $100\%$ and $0.0\%$ on every seed at $0.007$ $[0.005, 0.011]$. The
+partial-recording cell is the least stable of the four, its median ranging from $0.00$ to
+$0.97$, so $\rho = 0.5$ should not be read as an intermediate value lying between the two
+ends. The mechanism is in the last of those
 numbers: when recorded intake falls while the marker climbs, least squares has nowhere to
 put the marker except lost capacity, and $\hat\theta$ collapses by two orders of
 magnitude. ``The estimator fails towards declaring patients safe'' holds only while the
@@ -67,10 +72,12 @@ estimator declares every patient unsafe. Neither half belongs in an abstract on 
 and neither is a bug to be fixed by weighting: they are one estimator meeting two
 data-generating processes, and which one a record came from is a fact about the chart
 rather than about the patient. Nor does a regret-equalised threshold repair it. At equal
-costs the managed regime wants the boundary at $+0.07\,\theta$ and the crisis regime wants
-it at $-0.39\,\theta$; at a cost ratio of ten to one or worse every regime wants every
-patient escalated, which is the decision-theoretic way of saying the test has stopped
-contributing.
+costs the managed regime wants the boundary at $+0.07\,\theta$, a twelve-seed median of
+$+0.073$ over $[+0.053, +0.085]$ with a finite crossing on every seed. The crisis regimes
+have no such boundary on this design: at $\rho = 0$ and at $\rho = -0.25$ the regret
+comparison does not cross on any of the twelve, and it fails on the side of escalating
+every patient. Raising the cost ratio to ten to one or worse leaves that unchanged, which
+is the decision-theoretic way of saying the test has stopped contributing.
 
 These error rates are simulated rather than propagated, and the difference matters. The
 design's near-null direction is very nearly the direction along which $\mu$ is monotone

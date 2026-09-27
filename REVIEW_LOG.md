@@ -6030,3 +6030,93 @@ and adds none.
 **What this cost to find: one script and one sweep.** What it would have cost unfound: a wired
 macro, a guard reporting `ARTEFACTS MATCH THE CODE`, and a clause whose truth value depends on a
 band width nobody wrote down.
+
+---
+
+### R152. Six generated numbers files were never loaded by the document, 24 keys the paper prints were undefined, and the guard called it a match
+
+**Found by compiling the paper**, which the author's delivery-pass instruction required and which
+nothing in this audit had done before. It is the largest defect this effort has found, and it was
+invisible to every check in `tools/check_artefacts.py`.
+
+`paper/preamble.tex` `\input`s **17** of the **23** files in `results/numbers/`. Never loaded:
+**`bias`, `tier1`, `loadcap`, `diet`, `measured`, `frontier`.**
+
+**The consequence is not cosmetic.** `pdflatex` raised **29 `\PackageError`s** on **24 distinct
+keys**, every one of them living in one of those six files, and not one error coming from a loaded
+file. The correspondence is exact. Those numbers do not render: the paper prints an error where a
+measured quantity should be.
+
+**And `frontier` is Phase 11's own wiring.** The pass at R146 computed nineteen macros, registered
+the generator in `GENERATORS`, added it to `make figures`, confirmed 382 keys across 23 files, and
+shipped them into a file the document does not open. **The guard reported
+`ARTEFACTS MATCH THE CODE` throughout.**
+
+**Why every existing check missed it, which is the part worth keeping.** They each stop one level
+too early:
+
+| check | what it establishes | why it cannot see this |
+|---|---|---|
+| `check_regenerated` | the file's contents match the generator | the file is correct; nobody reads it |
+| `check_generators_reachable` | `make figures` runs the generator | it does, and writes the file |
+| `check_key_collisions` | no two files define one key | one file defining it is enough to pass |
+| `check_value_twins` | no two keys share a value | same |
+| `check_inputs_reachable` | every **section** file is `\input` | it asks this of prose and never of numbers |
+
+**The last row is the sharpest.** The guard already contained the idea, applied to sections, and the
+numbers half was simply never written. A check that asks "does anything read this?" of one artefact
+class and not of the neighbouring one is the kind of gap that survives indefinitely, because every
+individual check passes and the suite looks complete.
+
+**Fixed both ways.** The six `\input` lines are added and the error count goes **29 to 0**. And
+`check_numbers_loaded()` now asserts that every generated numbers file is `\input` by some document
+in `paper/`, that every file the document inputs is actually generated, and that no cited `\num{}`
+key lives in an unloaded file. Its self-test is real: removing the `frontier` line makes it fail
+and name the file, its nineteen keys and the zero of them the paper currently cites.
+
+**The standing lesson, and it is the author's from an earlier round**: the highest-yield check
+targets what has already been accepted once. Six of these files had been generated and guarded for
+weeks. What found them was not a cleverer check, it was **running the build and reading its log**,
+which no amount of checking the inputs to the build can substitute for.
+
+---
+
+### R153. The threshold correction I was about to land was wrong, and the paper's `+0.07` was right all along
+
+**I reported to the author, in this session, that `+0.07` should become `+0.10`.** That was wrong and
+it is withdrawn here.
+
+`d6_regimes.py` builds its threshold table on `lv9 = geomspace(M_BAR, 5 * M_BAR, 9)`, a **nine-level
+geometric ladder at seed 11**. `u19` and `u25` use `design_record` over `arange(0, 730, 30.4)`, the
+**twenty-five-point monthly dose train**. **Two different designs**, and the paragraph's own subject
+sentence says *"On the monthly design"*. I read a threshold off the ladder and proposed it as a
+correction to a sentence about the record. **That is the footing defect for the fourth time, and the
+first time it would have put a wrong number INTO the paper rather than into a report.**
+
+`audit/u25_threshold_spread.py`, on the monthly design, twelve seeds, on R138's repaired grid of
+3001 points with the crossing interpolated:
+
+| cell | result |
+|---|---|
+| managed $\rho = 1$, equal costs | median **+0.0730**, $[+0.0533, +0.0852]$, finite **12/12** |
+| crisis $\rho = 0$, equal costs | **no crossing 12/12**, falling to **escalate all** |
+| crisis $\rho = -0.25$, equal costs | **no crossing 12/12**, falling to **escalate all** |
+| crisis $\rho = -0.25$, ten to one | **no crossing 12/12**, falling to **escalate all** |
+
+**So the published `+0.07` is correct**, and R138 remains true about `d6` while saying nothing about
+this sentence. **And `-0.39` has no home on the monthly design at all**, at any cost ratio tested,
+on any seed. It exists on the ladder. The sentence paired a ladder number with a record number and
+called both "the monthly design".
+
+The corrected sentence keeps `+0.07`, adds its twelve-seed range, and replaces `-0.39` with what is
+true on this design: the crisis regimes have **no** finite boundary and fail towards escalating
+everyone, already at equal costs, which is a stronger form of the claim the second clause was
+reaching for.
+
+**Two further defects of mine inside the script that found this.** `over_seeds` computed whether a
+non-crossing means "escalate none" or "escalate all" and then **discarded which** before printing,
+although that distinction is exactly what decides the second clause. And the summary line
+**hard-coded "escalate nobody"**, a conclusion I typed before the run could produce one, against
+this repository's own rule that no expected result is written into a script in advance. The answer
+was the opposite. **Seven defects in my own checking code this sitting**, which continues to be a
+richer source of error than the paper.

@@ -864,6 +864,74 @@ def check_value_twins():
     return not twins and probe_ok
 
 
+def check_numbers_loaded():
+    r"""
+    Every generated numbers file must be \input by the document, and every
+    \num{} key the paper uses must live in a file that IS.
+
+    THE GAP THIS CLOSES, AND IT WAS OPEN THE WHOLE TIME (REVIEW_LOG.md R152).
+    The other checks establish that a key is produced by a generator the build
+    reaches, and that no two files define one key. **None of them asks whether
+    the preamble loads the file the key lives in.** It did not, for six files:
+    `bias`, `tier1`, `loadcap`, `diet`, `measured` and `frontier`. Twenty-four
+    keys the paper prints were therefore undefined at compile time and raised
+    \PackageError, twenty-nine times, while this script reported
+    ARTEFACTS MATCH THE CODE.
+
+    **It is the exact failure mode the guard exists to prevent, one level up.**
+    A number with no generator is what `check_regenerated` catches. A number
+    with a generator nobody loads is invisible to every check here, because
+    each one stops at the generated file and never asks whether LaTeX reads it.
+    `frontier` is Phase 11's own wiring, so the pass that added nineteen
+    macros shipped them into a file the document does not open, and the guard
+    certified that too.
+
+    Two directions, because they fail differently. An unloaded file whose keys
+    the paper never cites is silent today and a trap tomorrow; an unloaded file
+    whose keys it does cite is already broken. Both are reported.
+    """
+    numdir = ROOT / "results" / "numbers"
+    generated = {f.stem for f in sorted(numdir.glob("*.tex"))}
+    #  which files the document actually opens, read from every .tex in paper/
+    loaded = set()
+    for tex in sorted((ROOT / "paper").rglob("*.tex")):
+        for m in re.finditer(r"\\input\{[^}]*results/numbers/([A-Za-z0-9_]+)\}",
+                             tex.read_text(errors="replace")):
+            loaded.add(m.group(1))
+    unloaded = sorted(generated - loaded)
+    missing_files = sorted(loaded - generated)
+
+    #  which keys the paper cites, and where each one lives
+    cited = set()
+    for tex in sorted((ROOT / "paper").rglob("*.tex")):
+        cited |= set(re.findall(r"\\num\{([A-Za-z0-9_]+)\}",
+                                tex.read_text(errors="replace")))
+    home = {}
+    for stem in generated:
+        for line in (numdir / f"{stem}.tex").read_text(errors="replace").splitlines():
+            m = _MACRO_LINE.search(line)
+            if m:
+                home[m.group(1)] = stem
+    undefined = sorted(k for k in cited
+                       if home.get(k) is not None and home[k] not in loaded)
+
+    print(f"  {len(generated)} numbers file(s) generated, {len(loaded)} loaded "
+          f"by the document, {len(cited)} \\num{{}} key(s) cited")
+    for stem in unloaded:
+        n = sum(1 for k, v in home.items() if v == stem)
+        cites = sum(1 for k in cited if home.get(k) == stem)
+        print(f"    results/numbers/{stem}.tex is GENERATED BUT NEVER \\input "
+              f"({n} keys, {cites} of them cited by the paper): add it to "
+              f"paper/preamble.tex")
+    for stem in missing_files:
+        print(f"    paper/ inputs results/numbers/{stem}, which no generator "
+              f"writes")
+    for k in undefined:
+        print(f"    \\num{{{k}}} is cited but lives in the unloaded "
+              f"{home[k]}.tex, so it raises \\PackageError at compile time")
+    return not unloaded and not missing_files and not undefined
+
+
 def check_figure_numbers():
     """
     Every number a figure DRAWS must be classified, and a claim must be
@@ -1309,6 +1377,12 @@ def main():
     #  agrees today is the only kind that can silently diverge tomorrow
     #  (REVIEW_LOG.md R146, R147)
     ok = check_value_twins() and ok
+    #  and the level none of the above reached: a key can be generated,
+    #  reachable, collision-free and STILL undefined in the document, because
+    #  nothing here asked whether the preamble inputs the file it lives in.
+    #  Six files were in that state and the paper raised 29 LaTeX errors while
+    #  this script printed ARTEFACTS MATCH THE CODE (REVIEW_LOG.md R152)
+    ok = check_numbers_loaded() and ok
     #  and the class the cache hid: a check whose verdict depended on
     #  whether `make clean` had run. This one compiles the source itself.
     ok = check_source_warnings() and ok
