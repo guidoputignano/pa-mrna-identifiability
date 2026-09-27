@@ -69,10 +69,15 @@ the set whose retrieval evidently worked: it carries verbatim quotations and sec
 **independently found** the Manoli abstract-versus-Results discrepancy that R4 had already
 retracted."*
 
-**And the decisive argument is internal.** R59's reasoning needs only the Results numbers both
-secondaries agree on, and then checks them against the abstract for consistency. 12.8 is not a
-rounding of 14.02; it is a rounding of 12.86. **That inconsistency is visible without leaving the
-paper**, so the retraction's *direction* does not rest on either quotation being right.
+**The internal argument is SUGGESTIVE, NOT ARITHMETIC, and an earlier version of this file
+overstated it.** R59 and I both wrote that 12.8 is "a rounding of 12.86". **It is not: 12.86 to one
+decimal is 12.9.** So the abstract's 12.8 is a truncation, or a differently computed figure, and not
+a correct rounding of the Results SD.
+
+**The direction still looks right**, because 12.8 is 0.06 from 12.86 and 1.22 from 14.02, and the
+SD-as-mean story explains the confusion where nothing explains 12.8 as a mean. **But it is a
+plausibility argument rather than an identity**, so it does not settle the question on its own.
+**That makes the retrieval more necessary, not less.**
 
 ### So, stated precisely
 

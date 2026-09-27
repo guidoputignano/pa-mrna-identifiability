@@ -102,6 +102,22 @@ Set by the author and held throughout. They are not negotiable defaults.
   **The discipline: name the step your check stops at, in the check, and say what is therefore
   still unverified.** Adding a fourth check per artefact type is not the lesson; asking "what does
   this not inspect?" before trusting a green result is.
+- **A RECORDED DEFECT NEEDS RE-VERIFICATION BEFORE IT IS RE-REPORTED, on the same footing as a
+  recorded claim.** **A record is evidence that something WAS true, not that it IS.** A defect
+  record outlives its defect unless someone strikes it, and **three records of a fixed defect look
+  exactly like three records of a live one.** This has now happened three times in this effort,
+  the same shape each time, and each time the record was trusted **because it was written down**:
+  1. R139, which reported three unapplied proposed-text sets when much of PHASE4 was already
+     applied;
+  2. `u20_staleness.py`'s nine STALE passages, which the later text-based classifier scored at
+     **zero** (R160);
+  3. `PHASE7_TABLE2_PROVENANCE.md` D10's *"`params.py` and `tab_params.tex` still print the
+     retracted 12.8%"*, re-reported by me as a live item and **struck at R172**: `params.py:357-358`
+     carries the correction and `tab_params.tex` reproduces it verbatim. The line numbers I cited,
+     `:133-134`, are the theta row.
+  **The rule: before citing a recorded defect, open the file it names and check it is still there.**
+  The same standing-search discipline the section applies to claims applies to defects, and a
+  stale defect is more dangerous than a stale claim because nobody re-checks a problem.
 - **A CHECK THAT CANNOT RUN LEAVES ITS SUBJECT UNVERIFIED, NOT FINE.** This is the inverse of the
   bounded-search rule above, and it cost more. For weeks every CI report on this branch concluded
   *"not this PR's, no runner was assigned, nothing ran, no fix exists to port"*. **Every clause was
@@ -188,6 +204,7 @@ effort are not repeated, and three things that were on the list are now off it.
 | ~~The PHASE4 reconciliation~~ | **DONE** (R160, R162). 9 applied, 0 stale, 4 orphaned, and the four orphans read: **3, 4 and 11 withdrawn on evidence**, all made or made moot by the rewrite that removed their anchors. **14 KEPT**: that capacity is constant across a two-year record is assumed by every number in the paper and stated nowhere in it. That one is a passage to draft, not a decision to take. |
 | **`kappa_cv = 0.1402`, which sizes 118** | **NEW and first in the R4 queue** (R171). `u30`'s footing assertion showed Tier 1 needs 118 draws *because* of this figure, so the specification's headline count rests on it. Status: **corroborated but not primary-verified.** Two independent secondaries agree on Manoli's Results text and the retraction's direction is internally checkable, but this repository has never read the source and **where R4 obtained its quotations is recorded nowhere**. One retrieval settles it. |
 | **The genotype-prior document** | **Its first checked figure is wrong** (R170): it repeats the abstract's 12.8% that R4 retracted and R59 confirmed. The failure mode is specific, an abstract quoted where the Results were needed, so **every figure in it needs checking against its source's Results**; its findings of absence are untouched. Nothing from it is imported. |
+| **A duplicated clause in the supplement** | **NEW and live** (R174). `src/common/params.py:358-359`, and so `tab_params.tex` and the built supplement, reads *"...and not their mean, **and is not their mean**"*. `08_specification.tex:133-134` states the same correction without the repetition, so the paper's two statements of it disagree. One line in the register's annotation; the fix is to delete four trailing words. Not applied, under the prose freeze. |
 | **The literature verification** | Open and **blocked on the environment**. Needs a session with network egress, because DOI and PMID resolution is what the `audit` CI job does and what this container cannot reach. **Starts with R4**, on which the deferred breath group also rests. |
 | **The merge** | Open. Last. |
 | **The GitHub Actions setting** | **The author's**, and the reason it is on this list is that it is the difference between a check and a decoration. Until it is fixed, CI reports nothing about its subject and every check must be run locally and said to have been (section 0). |

@@ -6759,3 +6759,79 @@ corroboration above is why, but the provenance line must not read as a primary c
 
 **First item for the R4 queue when egress exists**, ahead of the rest, because one retrieval settles
 the figure that sizes the headline count. Full working: `audit/PHASE12_GENOTYPE_REVIEW.md`.
+
+---
+
+### R172. D10 was fixed long ago and I re-reported it as live. A record is evidence that something WAS true
+
+**The author checked `main` before correcting me, and the correction holds on every point.**
+`src/common/params.py:357-358` reads *"the Results give $14.02 \pm 12.86\%$ in patients and $6.9\%$
+in controls; the widely quoted $12.8\%$ is the standard deviation of the per-subject coefficients
+and not their mean"*, and `results/tables/tab_params.tex` reproduces it verbatim. **The only
+occurrence of `12.8` in that table is inside the correction sentence.** The lines I cited,
+`params.py:133-134`, are the **theta row about capacity** and have nothing to do with the breath
+test.
+
+**I carried `PHASE7_TABLE2_PROVENANCE.md` D10 forward without opening the file it names.** D10 is
+struck at its source rather than deleted.
+
+**THE SHAPE, WHICH IS THE PART WORTH KEEPING, AND IT IS THE THIRD INSTANCE.** A defect record
+outlives its defect unless someone strikes it, and **three records of a fixed defect look exactly
+like three records of a live one**. Each time, the record was trusted **because it was written
+down**:
+
+| | the stale record | what checking found |
+|---|---|---|
+| R139 | three unapplied proposed-text sets | much of PHASE4 was already applied |
+| R160 | `u20_staleness.py`'s **nine STALE** passages | the text-based classifier scored **zero** |
+| **R172** | D10's *"`params.py` still prints the retracted 12.8%"* | it has printed the correction for some time |
+
+`OPEN_QUESTIONS.md` section 0 now states it once: **a recorded defect needs re-verification before
+it is re-reported, on the same footing as a recorded claim. A record is evidence that something WAS
+true, not that it IS.** A stale defect is more dangerous than a stale claim, because nobody
+re-checks a problem.
+
+---
+
+### R173. The internal argument for the retraction is suggestive, not arithmetic, and R59 and I both overstated it
+
+**The author's correction, and it is right.** R59 and `PHASE12` both wrote that the abstract's 12.8
+is *"a rounding of 12.86"*. **It is not. 12.86 to one decimal is 12.9.** So the abstract's figure is
+a truncation, or a differently computed number, and not a correct rounding of the Results SD.
+
+**The direction still looks right**: 12.8 is 0.06 from 12.86 and 1.22 from 14.02, and the
+SD-as-mean story explains the confusion where nothing explains 12.8 as a mean of the per-subject
+CVs. **But that is a plausibility argument rather than an identity**, so it does not settle the
+question by itself, and the claim that the retraction's direction is internally checkable **does not
+hold as stated**.
+
+**This makes the retrieval more necessary, not less**, and `kappa_cv = 0.1402` stays first in the R4
+queue. One retrieval of Manoli's Results now settles three things at once: the number that sizes
+118, the provenance of R4's quotations, and whether 12.8 is a truncation or a separate computation.
+
+---
+
+### R174. A live duplicated clause in the supplement, found while verifying the struck record
+
+**Found by the re-verification the author's rule requires**, which is the rule paying for itself in
+the same pass it was written.
+
+`src/common/params.py:358-359`, and therefore `results/tables/tab_params.tex`, reads:
+
+> *"the widely quoted $12.8\%$ is the standard deviation of the per-subject coefficients and not
+> their mean, **and is not their mean**"*
+
+**The clause is doubled.** `08_specification.tex:133-134` carries the same sentence correctly and
+without the repetition, so the two places in the paper that state the correction do not match.
+
+**It renders.** `A2_provenance.tex:45` inputs `tab_params`, so it is in the built supplement, and
+the phrase reads *"...coefficients and not their mean, and is not their mean"* on the page.
+
+**And a check of my own failed first.** I initially reported that the duplication rendered in
+neither PDF. That was wrong: the phrase spans a line break, and a `pdftotext` grep without
+whitespace normalisation missed it. Corrected within the same check by searching again with
+`tr -s`, which is the bounded-search rule applied to my own output rather than to the repository's.
+
+**Not fixed here.** It is one line in the register's annotation text, which generates supplement
+prose, and the paper is frozen. The fix is to delete the four trailing words. Reported for the
+author.
