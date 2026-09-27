@@ -780,6 +780,18 @@ def _value_twins(sources, min_decimals=3):
     paper and mean nothing by it, which is why only values carrying at least
     `min_decimals` decimals are considered: coincidence at four places is
     worth a human's glance, coincidence at two is arithmetic.
+
+    AND THE CHECK MUST NOT TRY TO DECIDE, because the two cases it separates
+    look identical from here. `sd_load_1pct` and `sd_load_steady` agree to four
+    places, and they are a load record good to 1% against one with no
+    variability at all: TWO DIFFERENT INPUTS GIVING THE SAME ANSWER, which is
+    an invariance `src/design/run.py:1686` already states by contrasting 1%
+    against 20%. A redundant key and a real invariance are the same bytes in
+    this file. So the check reports both and adjudicates neither, and the
+    declaration carries a human's reason: for a redundancy, that it is pending
+    collapse; for an invariance, that the coincidence IS the result. A check
+    that guessed between them would suppress findings half the time and
+    manufacture them the other half.
     """
     def _stem(k):
         """A median and its seed range are one quantity under three keys."""

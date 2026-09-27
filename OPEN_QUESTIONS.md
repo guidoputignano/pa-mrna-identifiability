@@ -85,6 +85,15 @@ Set by the author and held throughout. They are not negotiable defaults.
   already runs the output test this rule elsewhere demands, and line 202 sits in section 4, whose
   subject is the 25 claims with **no** owner and no match anywhere. **Whoever escalates owns the
   reading**, and the cost of opening the file is one minute (R144).
+- **A CHECK THAT CANNOT DISTINGUISH TWO CASES MUST REPORT BOTH AND DECIDE NEITHER.** Two keys
+  carrying the same value are either a redundancy pending collapse or an invariance worth
+  stating, and from inside the generated file those are the same bytes. `sd_load_1pct` and
+  `sd_load_steady` agree to four places because a load record good to 1% and one with no
+  variability at all give the same answer, which is the insensitivity `src/design/run.py:1686`
+  already states. `bias_both20` and `bias_loose` agree because one variable was assigned to two
+  keys. **A check that guessed between them would suppress findings half the time and
+  manufacture them the other half**, so `check_value_twins` hands both to a human and the
+  declaration carries the reason (R147).
 - **A MACRO IS FOR A NUMBER THAT COULD MOVE, AND WRONG FOR A QUANTITY WHOSE CONTENT IS THAT IT
   DOES NOT.** Wiring a degenerate quantity destroys the finding it was meant to protect: *"with no
   seed-to-seed variation"* is the result, and `\num{lo} to \num{hi}` renders it as *"100.0 to

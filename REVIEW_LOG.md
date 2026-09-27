@@ -5961,3 +5961,72 @@ a commit, and running the suite afterwards converts it from a gate into a note.
 
 **This entry is written before the commit it describes**, and `make test` is run before it rather
 than after. If the suite fails, nothing in this pass is committed.
+
+---
+
+### R151. `06_excitation.tex:103` cannot be derived, because the sentence does not determine a construction. Both of its claims flip sign inside what it leaves unstated
+
+The author's instruction split the thirty proposed passages by kind and put this one among the
+corrections: *"The 0.587/0.209 pair at 06_excitation.tex:103, which has no generator and must be
+derived or withdrawn rather than wired."*
+
+**Derivation was attempted and it failed in an informative way.** `audit/u24_km_band.py`.
+
+**First, the owner question is settled and the answer is that there is none.** R141 found the pair's
+only trace to be a sentence in `d0c_mechanism.py`'s docstring. **Reading the script confirms it
+computes three constructions and none is the one the paper describes:** the real dose train, the
+same levels with the increment reassigned, and a single marker level at the **median of the
+record**. There is no idealised band at $m/K_m = 0.01$ anywhere in the repository.
+
+**The difficulty is stated before any number, because it is the finding.** *"An idealised band with
+Delta sweeping monotonically with m"* does not name a construction. It leaves the band's width, its
+number of points and the increment's range free. **A script that searched those choices until 0.587
+and 0.209 appeared would not be deriving the claim, it would be reverse-engineering it**, and the
+guard would then certify whatever it found. So `u24` fixes the construction by the most natural
+reading, names every free choice as an argument, and **sweeps each one** to ask whether the claim's
+content survives.
+
+The Fisher matrix, priors and noise are copied from `d0c_mechanism.py` unchanged, so the two are
+comparable rather than two conventions.
+
+**PART A, the stated construction** (centre $m/K_m = 0.01$, half-width 0.5 decades, $n = 365$,
+increment sweeping $0$ to $2\theta$):
+
+| quantity | increment dropped | carried | ratio |
+|---|---|---|---|
+| $\operatorname{sd}(\ln \hat K_m)$ | **0.5766** | **0.1664** | 0.289 |
+| $\operatorname{sd}(\ln\hat\theta)$ | 0.5603 | 0.5127 | 0.915 |
+
+**The paper's literals are not reproduced.** 0.587 against 0.5766 is close, 0.209 against 0.1664 is
+a 20% relative departure. Deterministic Fisher computation, so there is no seed spread to quote and
+that is stated rather than left as a gap.
+
+**PART B is the result, and it is about the sentence rather than about the numbers.** Sweeping each
+free choice:
+
+- **The first clause holds robustly.** Carrying the increment improves
+  $\operatorname{sd}(\ln \hat K_m)$ at **every** setting, the worst ratio over sixteen rows being
+  0.709. That part of the sentence is sound.
+- **The second clause is false as stated.** *"$\operatorname{sd}(\ln\hat\theta)$ does not improve at
+  all"* is contradicted at the stated construction, where it improves by 8.5%, and badly
+  contradicted elsewhere: **ratio 0.585 at $m/K_m = 0.03$, 0.539 at $m/K_m = 0.1$, 0.698 at
+  $n = 1000$.**
+- **And its SIGN is not determined by the sentence.** At half-width 0.25 decades
+  $\operatorname{sd}(\ln\hat\theta)$ gets **worse** (ratio 1.081), at 0.5 it gets **better** (0.915),
+  at 1.5 worse again (1.215). `d0c`'s docstring reports it getting worse, my construction has it
+  getting better, and **both are readings of the same English sentence.**
+
+**So the correction is not a new pair of digits.** The sentence rests on a construction it does not
+state, and one of its two claims changes sign inside what it leaves open. Replacing 0.587 and 0.209
+with 0.577 and 0.166 would preserve the defect while making it look generated, which is precisely
+the failure R141 identified and the reason wiring was ordered after derivation.
+
+**Two ways out, and only one of them is mine to take.** Withdraw the pair and the absolute clause,
+keeping the robust qualitative statement that the low end gives back $K_m$ and not $\theta$; or
+state the construction in the paper and quote what it gives. **The second changes what the paper
+claims and needs the author.** The withdrawal is prepared as the default, because it removes claims
+and adds none.
+
+**What this cost to find: one script and one sweep.** What it would have cost unfound: a wired
+macro, a guard reporting `ARTEFACTS MATCH THE CODE`, and a clause whose truth value depends on a
+band width nobody wrote down.
