@@ -6197,3 +6197,44 @@ rather than how precisely they answer.
 **Both are consequences of the same finding** and neither adds a claim: the retitling restates
 Section 8.1's own sentence in the place a reader meets first, and the Monday paragraph restates
 Section 6.2's.
+
+---
+
+### R156. Order B is not a file move, and the reason is invisible to both the guard and the compiler
+
+The author chose order B: the recoverable band first, `k_e` gathered as the constant that places it,
+model and methods to the back. **Checking what the move would break, before making it, found that the
+mechanical version of B is unsafe in a way nothing in this repository can detect.**
+
+`paper/sections/11_scope.tex` carries thirteen cross-references. **Eight of them point outside
+itself**, into `07_design` (`sec:collapse`, `sec:designsec`, `rem:curvature`, `rem:kmrecovered`),
+`08_specification` (`sec:tierstruct`, `sec:tierload`, `sec:whoto`), `06_excitation`
+(`sec:excitation`) and `02_model` (`eq:local`, `tab:params`). Its opening sentence is *"This section
+is a scope limit on everything above."*
+
+**Move it to position two and LaTeX still resolves every one of them**, because references resolve
+regardless of order. The build stays green at 0 errors and 0 unresolved references. **What breaks is
+only the prose**: eight forward references to material the reader has not met, and an opening
+sentence that is now false.
+
+**That is R152's failure class one level up.** There, a check verified everything about a numbers file
+except whether the document read it. Here, the compiler verifies everything about a reference except
+whether it points backwards. *"The build passes"* was never evidence about the thing neither the
+build nor the guard inspects, which is the section 0 rule the author just added, arriving again from
+a different direction within one pass of being written.
+
+**So B's spine was taken without the move.** The author's reason for B was precise: *"a precision
+quoted before its range is meaningless, so the band comes first."* That is achieved by stating the
+band where the reader meets it first rather than by relocating the section that derives it. The
+introduction's scope paragraph, which already said the target is *"not recoverable in the patients
+the question matters most for"* without saying where, now carries the numbers:
+`\num{band_lo_pct}` to `\num{band_hi_pct}` per cent of normal, with the disease a factor of
+`\num{disease_factor}` below, all three already generated and guarded. **No precision appears
+anywhere in the paper before the range it holds over.** Section 7 remains the derivation.
+
+**What B still asks for and has not had**, stated so it is not mistaken for done: relocating
+Section 7 with its connective tissue rewritten, gathering `k_e` from Sections 6.3, 6.5 and Table 11
+into one section, and moving model and methods to the back. **Each is prose work rather than a file
+operation**, each needs the eight references re-pointed or re-worded, and the paper is frozen for
+prose. Recorded as the author's call, with the blocking detail now specific rather than a warning
+that it would be large.
