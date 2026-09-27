@@ -7111,3 +7111,41 @@ one cost a wrong number in a committed findings document. The section 0 procedur
 ago would have caught it at step 1, `never grep -c`, and at step 3, **check the pattern against a line
 you know matches before trusting a zero**. I wrote the procedure and then did not apply it to a figure
 already in hand.
+
+---
+
+### R182. The supplement carried the pre-R155 title, the contents collision is fixed, and my finding (b) overstated
+
+**Three things, found while fixing the contents page, and one is mine from two passes ago.**
+
+**(a) THE SUPPLEMENT'S TITLE WAS STALE AND I MADE IT SO.** `paper/supplement.tex` read *"for The Dose
+Train is the Identification Experiment: **Estimating Residual Enzymatic Capacity in Propionic
+Acidemia**"*. **R155 retitled the main document and did not touch this**, so for two passes the
+supplement carried the old subtitle, which names the one thing Section 7 concludes cannot be done and
+which R155 changed precisely because it promised an estimation study containing no patient data.
+**Matched to the main document here.**
+
+**It is also a Part 3 miss.** Part 3 compared shared **figures** between the documents and found one
+disagreement. It did not compare **titles**, and the largest cross-document disagreement in the
+project was on the front page of both.
+
+**(b) THE CONTENTS COLLISION IS FIXED.** `article`'s `\numberline` boxes are 2.3em for subsections and
+3.2em for subsubsections, which fit `1.10` but not `S1.10`, and nothing fits `S1.15.7`. Widened to
+3.6em and 4.8em in `supplement.tex` rather than in `preamble.tex`, because the main document has no
+contents page. *"S1.10The Saudi context"* now reads *"S1.10 The Saudi context"*, and `S1.13.1` and
+`S1.15.7` separate cleanly. Rebuilds at 64 pages, 0 errors.
+
+**(c) MY COLD-READ FINDING (b) OVERSTATED, AND IS SOFTENED.** I wrote that 58 cross-document
+references *"do not say they are cross-document"*. **The supplement does state the convention**, once,
+on the page before the contents: *"Section numbers in this document carry an S. References to numbered
+results without an S point into the paper."* **I missed it**, which is the cold read's own
+bounded-search failure and the sixth of the pass.
+
+**What survives is narrower and still real**: the rule is stated once, at the front, and never
+repeated, which is right for a read-through and wrong for a reference. A reader arriving at `S1.16.3`
+from a main-text pointer has not passed the front matter. **The defect is placement, not absence**, and
+the fix is a running reminder rather than 58 edits.
+
+**The pattern across (a) and (c) is the same one this pass keeps producing**: a claim about a document
+made without checking the one page that settles it. (a) is a change I made and did not propagate;
+(c) is a page I did not read before asserting what it lacked.

@@ -72,10 +72,18 @@ the cross-references were not rewritten. It is the compression, not carelessness
 `"Table 2"` ×4, `"Table 7"` ×3, `"Section 5"` ×3, `"Section 8"` ×1. Against that, the main text is
 named explicitly **5 times** (`"the main text"` ×3, `"of the main"` ×2).
 
-**None is broken** — nothing resolves to `??` or `0`, so the `xr` mechanism works. The defect is
-that the supplement's own sections are `S1.x` and `S2`–`S4`, so a bare "Section 6" must mean the
-main document, and the reader has to infer that 58 times. In a document that is consulted rather
-than read, that inference is made cold each time.
+**None is broken** — nothing resolves to `??` or `0`, so the `xr` mechanism works.
+
+> **SOFTENED AT R182, because the cold read overstated this.** The supplement **does** state the
+> convention, once, on the page before the contents: *"Section numbers in this document carry an S.
+> References to numbered results without an S point into the paper."* **So the rule is documented and
+> I missed it**, which is the cold read's own bounded-search failure.
+>
+> **What survives is narrower and still real.** The rule is stated once, at the front, and never
+> repeated. That is correct for a read-through and wrong for a reference: a reader who arrives at
+> `S1.16.3` from a main-text pointer has not passed the front matter, and must supply from memory a
+> convention the page in front of them does not carry. **The defect is placement, not absence**, and
+> the fix is a running reminder rather than 58 edits.
 
 ### (c) The contents page collides from S1.10 onward
 
