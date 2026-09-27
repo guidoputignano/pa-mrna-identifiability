@@ -1437,6 +1437,229 @@ def check_spelled_numbers(numdir=None):
     return not bad
 
 
+#: The pointer the main document uses to reach the supplement, written as
+#: literal text because the two documents are compiled separately and neither
+#: loads the other's labels. `\S S1.16.6`, and `\S\S S1.3, S1.18.2 and
+#: S1.15.5` for a list.
+_SPTR_RE = re.compile(r"\\S(?:\\S)?~?\s*"
+                      r"(S\d+(?:\.\d+)*"
+                      r"(?:\s*(?:,|and|to|--)\s*S\d+(?:\.\d+)*)*)")
+_SNUM_RE = re.compile(r"S(\d+(?:\.\d+)*)")
+
+#: Pointers allowed to name a section that has numbered subsections, with the
+#: reason. Empty, and that is the point: every such pointer was repointed at
+#: the subsection holding the promised material, so a new one is a regression
+#: rather than a style choice.
+DECLARED_COARSE_POINTERS = {}
+
+
+#: `\newif\ifflag` declares a flag, it does not open a conditional. Without
+#: this exclusion preamble.tex's declaration opens a block that never closes.
+_NEWIF_RE = re.compile(r"\\newif\\if[a-zA-Z]*")
+_COND_RE = re.compile(r"\\(if[a-zA-Z]*)\b|\\(fi)\b")
+
+
+def _drop_conditionals(text):
+    r"""
+    The text LaTeX typesets in a default build, with `\if...\fi` blocks removed.
+
+    WHY THIS IS NEEDED, and the independent check that found it. The first
+    version of _supplement_numbering counted five top-level sections where
+    supplement.toc has four, because supplement.tex's final section sits
+    inside `\ifshowregister`, a flag preamble.tex declares false and sets true
+    only when \overfullrule is positive, which is a draft switch. A static
+    parse cannot evaluate \ifdim, so the rule is: a conditional block is not
+    part of the default build.
+
+    The consequence is stated rather than hidden. A section inside a
+    conditional gets no number here, so a pointer into one reads as dangling,
+    which is the right answer: in the build a reader compiles, it is not
+    there. In this document the only such section is the last one, so
+    including or excluding it cannot shift the number of any section a
+    pointer already names.
+
+    FAIL-SAFE ON UNBALANCED NESTING. If the \if and \fi in one file do not
+    balance, nothing is removed from that file and the caller is told,
+    because swallowing the rest of a file silently is the larger error. That
+    is the state preamble.tex is in, and it carries no sectioning commands.
+    """
+    masked = _NEWIF_RE.sub(lambda m: " " * len(m.group(0)), text)
+    depth, out, cut_from, balanced = 0, [], None, True
+    pos = 0
+    for m in _COND_RE.finditer(masked):
+        if m.group(1):
+            if depth == 0:
+                out.append(text[pos:m.start()])
+                cut_from = m.start()
+            depth += 1
+        else:
+            if depth == 0:
+                balanced = False
+                break
+            depth -= 1
+            if depth == 0:
+                pos = m.end()
+    if depth != 0:
+        balanced = False
+    if not balanced:
+        return text, False
+    out.append(text[pos:])
+    return "".join(out), True
+
+
+def _supplement_numbering(sources, root="supplement.tex"):
+    r"""
+    Every section number the supplement defines, and its title, derived from
+    the .tex sources rather than from a build artefact.
+
+    THE REASON IT DOES NOT READ supplement.toc. The .toc exists only after a
+    successful compile, so a check that read it would be a check whose verdict
+    depended on whether `make clean` had run -- the class check_source_warnings
+    already exists for. Walking the sources means this runs on a cold tree.
+
+    It is also the independent path the numbers were confirmed against: LaTeX
+    derives the .toc from its own counters and this derives the same numbers
+    from the sectioning commands, so the two agreeing is a re-check and not a
+    restatement.
+    """
+    order, unbalanced = [], []
+    #  ordered depth-first expansion, because a section number is a position
+    #  and _input_closure returns a set, which has none.
+    def walk(name):
+        if name not in sources:
+            return
+        text, ok = _drop_conditionals(_uncommented(sources[name]))
+        if not ok:
+            unbalanced.append(name)
+        for m in re.finditer(
+                r"\\(input|include)\{([^}]*)\}"
+                r"|\\(section|subsection|subsubsection)\*?\{", text):
+            if m.group(1):
+                walk(_tex_name(m.group(2)))
+            else:
+                order.append(m.group(3))
+    walk(root)
+    numbers, c = {}, [0, 0, 0]
+    depth = {"section": 0, "subsection": 1, "subsubsection": 2}
+    for kind in order:
+        d = depth[kind]
+        c[d] += 1
+        for j in range(d + 1, 3):
+            c[j] = 0
+        numbers[".".join(str(x) for x in c[:d + 1])] = kind
+    return numbers, unbalanced
+
+
+def check_supplement_pointers():
+    r"""
+    Every `\S S...` pointer from the main document names a supplement
+    subsection that exists, and names the smallest one available.
+
+    THE DEFECT THIS EXISTS FOR (REVIEW_LOG.md R179, R183). Eighteen pointers
+    in the main text read `supplement, \S S1`, and \S S1 is forty-nine pages
+    with forty-five numbered subsections. Each promised something specific --
+    a block diagram, a null-genotype anchor, the derivation of a null vector
+    -- and delivered a section number that no reader can act on. Nothing
+    caught it: the pointers are literal text, so LaTeX has nothing to resolve
+    and cannot report an unresolved reference, and no test reads prose.
+
+    Repointing them at subsections fixes the pointers and creates the hazard
+    this function closes. A hardcoded `S1.16.6` is correct only until the
+    supplement is reordered, at which point it silently names the wrong
+    subsection -- a pointer that resolves to the wrong place, which is worse
+    than one that resolves nowhere. The main document cannot use \ref here,
+    because the two documents compile separately and neither loads the
+    other's .aux, so the number has to be literal and the check has to be
+    external.
+
+    TWO FAILURES, not one.
+      A pointer to a number the supplement does not define. That is the
+      reordering case, and it fails hard.
+      A pointer to a section that HAS numbered subsections. That is R179's
+      original defect, and it fails hard too, because the alternative is to
+      let it back in one pointer at a time. DECLARED_COARSE_POINTERS is the
+      escape hatch and it is empty.
+
+    THE LIMIT, stated rather than assumed. This checks that a pointer names
+    something that exists, not that the thing it names says what was
+    promised. That is a reading question, and the reading is in
+    audit/SUPPLEMENT_PASS.md. A pointer moved to a subsection whose content
+    later moves elsewhere passes this and is still wrong.
+    """
+    paper = ROOT / "paper"
+    sources = {str(p.relative_to(paper)): p.read_text()
+               for p in sorted(paper.rglob("*.tex"))}
+    numbers, unbalanced = _supplement_numbering(sources)
+    #  main-side files only: a pointer inside the supplement to its own
+    #  section number is the self-reference case, which is prose rather than
+    #  a broken pointer, and R182 removed those.
+    main_seen, _ = _input_closure(sources, ["main.tex"])
+    supp_seen, _ = _input_closure(sources, ["supplement.tex"])
+    main_only = sorted(main_seen - supp_seen)
+
+    dangling, coarse, total = [], [], 0
+    for name in main_only:
+        for i, line in enumerate(_uncommented(sources[name]).splitlines(), 1):
+            for m in _SPTR_RE.finditer(line):
+                for num in _SNUM_RE.findall(m.group(1)):
+                    total += 1
+                    where = f"{name}:{i}  \\S S{num}"
+                    if num not in numbers:
+                        dangling.append(where)
+                    elif any(k.startswith(num + ".") for k in numbers):
+                        if where not in DECLARED_COARSE_POINTERS:
+                            coarse.append((where, num))
+
+    #  THE SELF-TEST, to the same standard as every other check here: the
+    #  detector is run against a document with each defect and against one
+    #  with neither, so a clean sweep is a result rather than an absence.
+    probe_src = {
+        "d.tex": r"\input{s}",
+        "s.tex": (r"\section{A}" "\n" r"\subsection{B}" "\n"
+                  r"\subsubsection{C}" "\n" r"\section{D}"),
+    }
+    pn, _ = _supplement_numbering(probe_src, "d.tex")
+    #  the same probe with the second section behind a conditional, which is
+    #  the defect the .toc comparison found in the first version of this check
+    cond_src = {"d.tex": probe_src["s.tex"].replace(
+        r"\section{D}", "\\ifflag\n\\section{D}\n\\fi")}
+    cn, _ = _supplement_numbering(cond_src, "d.tex")
+    probe_ok = (pn == {"1": "section", "1.1": "subsection",
+                       "1.1.1": "subsubsection", "2": "section"}
+                and "2" not in cn and "1.1.1" in cn
+                and _drop_conditionals(r"a\iffoo b\fi c") == ("a c", True)
+                and _drop_conditionals(r"a\iffoo b") == (r"a\iffoo b", False)
+                and _drop_conditionals(r"\newif\ifshowregister x")
+                    == (r"\newif\ifshowregister x", True)
+                and _SNUM_RE.findall(
+                    _SPTR_RE.search(r"\S\S S1.3, S1.18.2 and S1.15.5")
+                    .group(1)) == ["1.3", "1.18.2", "1.15.5"]
+                and _SPTR_RE.search(r"see \S S2 below").group(1) == "S2"
+                and _SPTR_RE.search(r"\eqref{eq:S34}") is None)
+
+    print(f"  {total} supplement pointer(s) from the main document checked "
+          f"against {len(numbers)} numbered section(s) "
+          f"(self-test: {'PASS' if probe_ok else 'FAIL'})")
+    if unbalanced:
+        #  reported rather than silent: these files kept their conditional
+        #  text, so a section inside one of them is numbered here and is not
+        #  numbered by LaTeX. None of them carries a sectioning command
+        #  today, which is why this is a note and not a failure.
+        print(f"    note, \\if/\\fi unbalanced so conditionals were kept in: "
+              f"{', '.join(unbalanced)}")
+    for w in dangling:
+        print(f"    DANGLING, the supplement defines no such number: {w}")
+    for w, num in coarse:
+        kids = [k for k in numbers if k.startswith(num + ".")]
+        print(f"    TOO COARSE, that section has {len(kids)} numbered "
+              f"subsection(s): {w}")
+    if not dangling and not coarse and probe_ok:
+        return True
+    if not probe_ok:
+        print("    the self-test failed, so a clean sweep above means nothing")
+    return False
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--working-tree", action="store_true",
@@ -1480,6 +1703,11 @@ def main():
     #  out in English. The one error this repository's sweep was provoked by
     #  was exactly that (REVIEW_LOG.md R92)
     ok = check_spelled_numbers() and ok
+    #  and the pointer the guard could not see at all: `\S S1` is literal
+    #  text, so LaTeX has nothing to resolve and reports nothing, and
+    #  eighteen of them promised specific material and delivered a 49-page
+    #  section (REVIEW_LOG.md R179, R183)
+    ok = check_supplement_pointers() and ok
     print("  ARTEFACTS MATCH THE CODE" if ok else "  ARTEFACTS HAVE DRIFTED")
     return 0 if ok else 1
 

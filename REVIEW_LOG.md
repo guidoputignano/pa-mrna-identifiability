@@ -7149,3 +7149,97 @@ the fix is a running reminder rather than 58 edits.
 **The pattern across (a) and (c) is the same one this pass keeps producing**: a claim about a document
 made without checking the one page that settles it. (a) is a change I made and did not propagate;
 (c) is a page I did not read before asserting what it lacked.
+
+---
+
+### R183. The eighteen pointers repointed, and a guard so they cannot rot, which caught two of my own
+
+**The last of the author's five mechanical items, and it was not mechanical.** *"Repoint the 19
+section-S1 pointers at subsections"* sounds like a substitution. It is not one: `\S S1` is a single
+string with eighteen different correct replacements, and each one has to be found by reading where the
+promised material actually sits.
+
+**FIRST, THE COUNT WAS WRONG, AND IT WAS MINE.** Eighteen, not nineteen. The nineteenth was
+`07_design.tex`'s caption, which R181 had already repointed at `\S S4`. **A recorded count needs
+re-verification before it is re-used**, which is the rule R172 put in section 0, applied here to my own
+figure rather than to a defect.
+
+**THE EIGHTEEN, AND WHERE EACH LANDED.** Located by reading the supplement, one at a time.
+
+| Pointer | What it promises | Target |
+|---|---|---|
+| `01_question:70` | $\thc$ a convention, factor of $24$, sign flips | `S1.20` |
+| `01_question:99` | background, clinical course, $\theta$ as decision variable | `S1.13.1` to `S1.13.3` |
+| `02_model:8` | derivations, rejected alternatives, the checks | `S1.3`, `S1.18.2`, `S1.15.5` |
+| `02_model:93` | block diagram, positive feedback | `S1.15.1`, `S1.15.2` |
+| `02_model:177` | intrinsic $\thc$, the fold, the ceiling comparison | `S1.15.6`, `S1.18.3`, `S1.18.2` |
+| `02_model:232` | with $K_m$ free the channels are not interchangeable | `S1.11.1` |
+| `06_excitation:98` | the argument behind `eq:columns` | `S1.3` |
+| `06_excitation:231` | channel exchange, proof and cost | `S1.11.1` |
+| `06_excitation:254` | the null vector's derivation | `S1.3` |
+| `07_design:59` | why the two priors divide as they do | `S1.12` |
+| `07_design:98` | the design table with the dropped-increment column | `S1.17.2` |
+| `07_design:265` | the same footing | `S1.17.2` |
+| `07_design:619` | the validation protocol | `S1.17.2` |
+| `07b_decision:94` | the margin theorem's fibre calculation | `S1.16.6` |
+| `08_specification:381` | the load-record prior holding the weak direction | `S1.12` |
+| `08_specification:472` | the null-genotype anchor | `S1.16.7` |
+| `11_scope:306` | both marker structures worked through | `S1.2` |
+| `12_discussion:164` | the channel-exchange result | `S1.11.1` |
+
+**TWO CANDIDATE TARGETS FAILED ON READING, AND BOTH WOULD HAVE PASSED ON PLAUSIBILITY.**
+
+`08_specification:381` promises *"the load-record prior holds about $1.05$ there"*. The only `1.05` in
+the supplement is `04_local.tex:116`, and it is **a different quantity**: the factor by which a
+two-marker panel cuts $\sigma$ at a load recorded to $10\%$. Matching on the number would have produced
+a confident pointer to unrelated arithmetic. The claim's *mechanism* is in `S1.12`, which is where it
+now points. **The `1.05` itself has no owner in either document** and is a candidate finding, not
+something this round fixed.
+
+`11_scope:306` promises both marker structures worked through. `S1.6`, *"The testable discriminant"*,
+is the obvious guess and is **the wrong discriminant**: it separates the ceiling from the fold, not an
+algebraic marker from a marker that is a state. The right target is `S1.2`, which names the difference
+and says what to look for *"in any third structure"*, which is exactly the sentence's claim.
+
+**ONE POINTER WAS AIMED AT THE WRONG DOCUMENT ENTIRELY.** `01_question:99` promised *"the full constant
+registry"* in `\S S1`. The registry is `\S S2`, *"Provenance of every constant"*. A pointer can be
+wrong by section and also by **document**, and nothing in the pass before this one asked that question.
+
+**THE FIX CREATES THE HAZARD, SO THE GUARD CLOSES IT.** `\S S1.16.6` is literal text. The two documents
+compile separately and neither loads the other's `.aux`, so `\ref` is not available and the number
+cannot resolve. A literal number is correct until the supplement is reordered, at which point it
+**silently names the wrong subsection**, which is worse than naming nothing: an unresolved reference
+prints `??` and a stale one prints a plausible number. LaTeX cannot see this, because there is nothing
+for it to resolve, which is why eighteen of them survived every build and every test.
+
+`check_supplement_pointers()` derives the supplement's numbering from the `.tex` sources and fails on
+two things: a pointer to a number that does not exist, and **a pointer to a section that has numbered
+subsections**, which is R179's original defect. `DECLARED_COARSE_POINTERS` is the escape hatch and it
+is empty, because the alternative is to let the defect back in one pointer at a time.
+
+**IT CAUGHT TWO OF MINE ON FIRST RUN.** `\S S1.13` and `\S S1.17` both have children, and in both cases
+the more precise target is the right one: `S1.13`'s three subsections are exactly the three things that
+sentence names, in order, and the validation protocol proper is `S1.17.2` rather than `S1.17`, which
+also contains the objection. **A check written for eighteen old pointers failed two new ones written
+minutes earlier.**
+
+**AND THE INDEPENDENT RE-CHECK CAUGHT A DEFECT IN THE GUARD.** The rule is one re-check sharing no code
+path, so the source walk was compared against `supplement.toc`, which LaTeX writes from its own
+counters. **They disagreed: 50 against 49.** The walk counted `\section{Claim register}`, which sits
+inside `\ifshowregister`, a flag `preamble.tex` declares false and sets true only when `\overfullrule`
+is positive. A static parse cannot evaluate `\ifdim`, so `_drop_conditionals()` now treats a
+conditional block as absent from the default build, fails safe on unbalanced nesting and reports which
+files it left alone. **The two paths now agree on all 49 numbers and their kinds.**
+
+Had the comparison been skipped, the guard would have shipped reporting a number that was wrong by one
+and would have kept reporting `ARTEFACTS MATCH THE CODE`. The consequence is bounded here only by
+accident: the conditional section is the **last** one, so excluding it shifts no number a pointer names.
+
+**State.** 36 pointers checked against 49 numbered sections, self-test PASS. No bare `§S1` anywhere in
+the rebuilt `main.pdf`. Both documents 0 errors, 0 unresolved, 45 and 64 pages. 102 tests pass and the
+guard reports `ARTEFACTS MATCH THE CODE`.
+
+**What this round says about the method.** The item the author called mechanical produced two wrong
+targets that plausibility would have accepted, one pointer aimed at the wrong document, a miscount of
+my own figure, and a defect in the check written to prevent all of it. **Mechanical was the wrong
+word, and the way that became visible was reading the destination rather than the pointer.**
