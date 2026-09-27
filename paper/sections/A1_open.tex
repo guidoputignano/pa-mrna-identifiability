@@ -122,11 +122,24 @@ the answer that closed it.
 
 \paragraph{Well-posedness, and whether the decision is invariant to it.} Asked above as the
 central question. \emph{Answered, and in the negative.} The critical capacity is an
-operational definition built on two chosen constants, and across their defensible range it
-moves by a factor of $24$ while the sign of the margin flips for the same patient with
-perfect data. The decision is therefore \emph{not} invariant to the arbitrariness, which is
-the second of the paper's four claims and the reason it ends in a data specification rather
-than a dosing rule.
+operational definition built on two chosen constants, and the sign of the margin flips for
+the same patient with perfect data whenever the illness amplitude falls inside the window of
+\eqref{eq:window}. That window is $\num{mtol_window_lo_pct}\%$ of its centre at
+$\mtol = 15$, $\num{mtol_window_pct}\%$ at $40$ and $\num{mtol_window_hi_pct}\%$ at
+$160$, so the cost of the convention is stated as an interval in $\spk$ rather than as a
+tolerance on $\theta$, which is what \S\ref{sec:window} computes and what no tolerance on
+$\theta$ in this note ever stated. The decision is therefore \emph{not} invariant to the
+arbitrariness, which is the second of the paper's four claims and the reason it ends in a
+data specification rather than a dosing rule.
+
+\emph{A factor of $24$ stood here and in Section~1 and is withdrawn.} It was the sensitivity
+of $\thc$ to the two conventions and it had no derivation in either place. It is also not
+recoverable: of the $181$ pairs of endpoints this repository states for $\mtol$ and for the
+illness fold that keep $\thc$ positive, none gives a factor between $23.5$ and $24.5$, and
+over the $\mtol$ range the constant registry itself quotes, $15$ to $160$, $\thc$ does not
+move by a factor at all but passes through zero at $\spk/k_e$ and changes sign. The window
+above is what the fibre calculation supports, and it is the stronger statement, because a
+clinician can compute it.
 
 \paragraph{Confounding of the accessible input.}
 \label{sec:confounding}

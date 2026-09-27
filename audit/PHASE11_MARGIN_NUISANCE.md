@@ -165,6 +165,36 @@ capacity is.** Yet `sd(mu)` comes out small, and small only through a 3.25x canc
 quantity more exposed to the fibre emerging better determined, by a cancellation, is the shape of a
 result that might depend on something incidental.
 
+> **CORRECTED, AND THE CORRECTION IS TWOFOLD** (R184, `audit/u32_fibre_coordinates.py`). The
+> author flagged that this sits beside `S1.16.6`'s opposite conclusion, that the margin is
+> *linear* along the unidentified direction where `theta` is *quadratic*, and so better
+> conditioned by one order. Both numbers are arithmetically right and **they are not about the
+> same curve.**
+>
+> **The paper uses the letter `b` for two different quantities.** In `eq:fibre`, which is what
+> `S1.16.6` works along, `b` is the affine *slope* of total clearance, the fit `(a, b)` is held
+> fixed, `K_m` is the coordinate and **`k_e` varies**, at `d k_e/d K_m = -0.2479`. In
+> `eq:fibrecl`, which is what the numbers above are taken along, `b` is the **load bias** in
+> uM/d and `06_excitation.tex:45` says in so many words that **`k_e` is unchanged**. In
+> `(ln theta, ln K_m, ln k_e)` the two tangents are `(+0.3382, +0.1860, -0.9225)` and
+> `(+0.2645, -0.9644, 0.0000)`: **84.8 degrees apart**, so nearly orthogonal. A derivative ratio
+> along one says nothing about the other. `06_excitation.tex:48` already states which is the
+> estimator's: *"Proposition 2's null vector is its tangent at `b = 0`"*, and R168's null
+> eigenvector had its `k_e` component zero to machine precision, which is `eq:fibrecl`.
+>
+> **And `9.9500` is on the wrong footing, which is mine.** It requires `s_peak = 1155.36`, a fold
+> of **3.580** of the baseline load, against the paper's committed **1.50**; its `theta_crit` of
+> `3343.77` is the 3343.8 recorded earlier in this document. **At the paper's own fold,
+> `d mu/db = 4.7500` and the ratio is `1.863`, not `3.903`.** That is R142's defect again, a ratio
+> formed across two footings, and it inflated the exposure by 2.1x.
+>
+> **What each statement is, stated so neither is quoted for the other.** Along `eq:fibre`, at the
+> paper's fold, `|d mu/d K_m| / |d theta/d K_m| = 0.2334`, so the margin is **4.28x LESS** exposed,
+> and over the whole fibre `theta` spans a factor of `169.4` against `mu`'s `3.09`: that is
+> `S1.16.6`'s change of order, in degree (2 against 1, residuals `2e-12` and `1e-12`) and in span.
+> Along `eq:fibrecl`, at the paper's fold, the margin is **1.86x MORE** exposed. **The ordering of
+> the capacities in the table below is untouched**, because it does not depend on either ratio.
+
 `audit/u29_fibre_limit.py` sweeps the load variation to zero, where Proposition 4 is exactly
 singular, and watches both together.
 

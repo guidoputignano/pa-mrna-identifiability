@@ -7243,3 +7243,90 @@ guard reports `ARTEFACTS MATCH THE CODE`.
 targets that plausibility would have accepted, one pointer aimed at the wrong document, a miscount of
 my own figure, and a defect in the check written to prevent all of it. **Mechanical was the wrong
 word, and the way that became visible was reading the destination rather than the pointer.**
+
+---
+
+### R184. The factor of 24 is withdrawn, and the margin derivatives were two curves 84.8 degrees apart
+
+**Two items, and they turned out to share a cause: a quantity quoted without the curve or the
+footing it was computed on.**
+
+## (a) THE FACTOR OF 24 HAS NO DERIVATION AND IS NOT RECOVERABLE
+
+The author set three outcomes: derivable and never written down, derivable and far smaller, or no
+derivation. **It is the third, and more strongly than that: the number cannot be reconstructed from
+the ranges this repository states.** `audit/u31_factor24.py` computes `theta_crit` through the
+function that owns it, never a reimplementation, and sweeps every range the repository states for
+the two conventions rather than choosing one and calling the result derived.
+
+**Of the 181 pairs of stated endpoints that keep `theta_crit` positive, NONE gives a factor between
+23.5 and 24.5.** The nearest are `24.581` (`m_tol` 15 to 160 with the fold 3.25 to 4.25, which
+excludes the paper's own 1.50) and `23.142` (`m_tol` 15 to 40 with the fold 1.0 to 4.25, the most
+aggressive reading of the muscle-catabolism bound). Both conventions taken at their own stated
+ranges, `m_tol` 15 to 40 and the fold 1.18 to 1.50, give **4.956**.
+
+**And over the range the constant registry itself quotes, a factor is the wrong statistic.** S34's
+threshold is `(s_peak - k_e m_tol)(K_m + m_tol)/m_tol`, which vanishes at `m_tol = s_peak/k_e`,
+independent of `K_m`. At the paper's fold that is **96.82 uM**, inside the registry's own quoted
+`m_tol` range of 15 to 160: `theta_crit` runs `3136.4` at 15, `994.3` at 40, `-513.4` at 160. It
+does not move by a factor, it **changes sign**, and past the crossing every positive capacity is
+safe by construction. A ratio across a sign change is not a sensitivity.
+
+**Verified on four paths.** `common.models.theta_crit`, `design.run.theta_crit_local`,
+`theta - model_A.run.margin` and S34 evaluated by hand all give `994.3182`. The crossing comes out
+`96.8182` from `brentq` on two different modules and from the closed form `s_peak/k_e`. The factor
+over a box was computed by corner enumeration (justified by monotonicity) and by a 400x400 grid,
+agreeing to `1e-6`.
+
+**Withdrawn in both places, and the window put where it stood**, which is the author's third
+outcome and his reading of it: a window a clinician can compute beats a factor nobody can source.
+`01_question` and `S1.20` now state `S1.16.6`'s result, `1.2%` of its centre at `m_tol = 15`,
+`14.8%` at 40 and `67%` at 160, through the macros that already generated those numbers rather
+than typed again. `S1.20` records the withdrawal explicitly, with the 181 pairs and the sign
+change, because a claim that stood as one of the paper's four should not simply vanish. `S1.16.6`
+gained a `\label` so the supplement references it instead of naming its own number.
+
+## (b) THE TWO MARGIN DERIVATIVES ARE ABOUT DIFFERENT CURVES, AND MINE WAS ALSO MIS-FOOTED
+
+The author's flag: `S1.16.6` says the margin is *linear* along the unidentified direction where
+`theta` is *quadratic*, better conditioned by one order, while this effort computed
+`d mu/db = 9.950` against `d theta/db = 2.549` and called the margin 3.90 times **more** exposed.
+His diagnosis was that they are different coordinates. **They are, and the mechanism is that the
+paper uses the letter `b` for two different quantities.**
+
+| | `eq:fibre` (`S1.16.6`) | `eq:fibrecl` (`06_excitation`) |
+|---|---|---|
+| what `b` is | the affine **slope** of clearance | the **load bias**, uM/d |
+| coordinate | `K_m` | `b` |
+| `k_e` along it | **varies**, `d k_e/d K_m = -0.2479` | **unchanged**, as the text says |
+| tangent in `(ln theta, ln K_m, ln k_e)` | `(+0.3382, +0.1860, -0.9225)` | `(+0.2645, -0.9644, 0.0000)` |
+
+**The two tangents are 84.8 degrees apart.** A derivative ratio along one says nothing about the
+other, and `06_excitation.tex:48` already says which one the estimator sees: *"Proposition 2's null
+vector is its tangent at b = 0"*, matching R168's null eigenvector whose `k_e` component is zero to
+machine precision.
+
+**A second defect, and it is mine.** `9.9500` requires `s_peak = 1155.36`, a fold of **3.580** of
+the baseline load against the paper's committed **1.50**, and its implied `theta_crit` of `3343.77`
+is the `3343.8` recorded earlier in the same document. **At the paper's own fold the derivative is
+`4.7500` and the ratio is `1.863`, not `3.903`.** R142's defect again, a ratio formed across two
+footings, inflating the exposure by `2.1x`.
+
+**Both statements, each with its curve named.** Along `eq:fibre` at the paper's fold the margin is
+`4.28x` **less** exposed, and over the whole fibre `theta` spans `169.4` against `mu`'s `3.09`,
+which is `S1.16.6`'s change of order in both senses, degree (2 against 1, polynomial residuals
+`2e-12` and `1e-12`) and span. Along `eq:fibrecl` at the paper's fold it is `1.86x` **more**
+exposed. **Neither number was wrong. Neither was comparable.**
+
+**Every derivative here is computed twice**, in closed form and by central difference on the module
+function that owns the curve, because the question was whether two derivatives describe one object.
+All agree to `1e-5` or better. **The capacity ordering in the margin table is untouched**, since it
+rests on neither ratio.
+
+## WHAT THE PAIR HAS IN COMMON
+
+`24` was quoted without the range it was taken over. `9.950` was quoted without the curve or the
+fold it was taken on. In both cases the number was carried forward and the footing was not, and in
+both cases the footing is what decided the answer. **This is the same failure as R142 and R145,
+and it is why every declaration in `u23` states its footing.** The margin document has now been
+made to state the curve as well, which those rules did not require and should.
