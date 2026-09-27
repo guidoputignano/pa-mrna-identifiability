@@ -232,27 +232,36 @@ factually wrong is neither a claim nor a value.
 | `118` | 5 | 6 | **AGREE** |
 | `1.79`, the no-dose-train footing | 2 | 2 | **AGREE** |
 | **`0.1699`, the headline result** | **16** | **5** | — |
-| **`0.170`, the same quantity** | **0** | **3** | **DISAGREE** |
+| **`0.170`** | **3**, none of them the headline | **4**, all of them the headline | **DISAGREE** |
 
 ## The one real disagreement, and it is the paper's central number
 
-**The main document writes the headline design result as `0.1699` sixteen times and never as
-`0.170`. The supplement writes it as `0.1699` five times and as `0.170` three times.**
+> **CORRECTED AT R181. The counts first published here were wrong, and the finding is sharper than
+> the wrong version.** I published *"main 0, supplement 3"*. Those figures came from the broken
+> `grep -c` table, which I had already discarded, and I carried one of its numbers forward. A proper
+> boundary search, `grep -oE "0\.170([^0-9]|$)"`, because `0.170` is a prefix of `0.1701` and
+> `0.1709`, gives **main 3 and supplement 4**. **Fifth instance of the invisible bound in one pass,
+> and the only one that reached a committed document.**
 
-The three are: *"On the footing that gives the dose train `sd(ln θ̂) = 0.170`"* (twice, in the two
-duplicated carnitine remarks `S1.7` and `S1.16.5`), and *"two years reach `sd(ln θ̂) = 0.170`
-(Section 4)"*.
+**The main document has three `0.170`s and not one of them is the headline result:** a *"0.170
+baseline"* in an offset comparison, the low end of the range *"between 0.170 and 0.177"*, and a
+different design's value *"(0.170), because every draw lands at the same phase"*.
 
-**No number is wrong**: `0.170` is a correct rounding of `0.1699`. **But the supplement is
-internally inconsistent and inconsistent with the main text about the precision of the one figure
-the whole design turns on**, and it is inconsistent in the duplicated sections, so the duplication is
-what carries it.
+**The supplement has four, and all four are the headline result:** twice as *"the footing that gives
+the dose train `sd(ln θ̂) = 0.170`"* in the two duplicated carnitine remarks, once as *"over two
+years reach `sd(ln θ̂) = 0.170`"*, and once, worst, as *"gives `sd(ln θ̂) = 0.170`
+(`\num{sd_monthly_lo}` to `\num{sd_monthly_hi}`)"* — **hand-typing the point estimate while wiring
+its own range.**
 
-**Why it is not cosmetic.** R142 was a footing conflict decided at the **fourth** digit, `0.1699`
-against `0.1695`, and this session settled the profile-marginal question on that digit. A document
-that quotes the same quantity to three digits in one place and four in another is one transcription
-away from re-opening exactly that. **Reported, not fixed: a rounding of a headline value is a value,
-and the freeze protects values.**
+**So the disagreement is real and it is one-sided.** The supplement writes the paper's central figure
+at three digits four times; the main document never does. **No number is wrong** — `0.170` is a
+correct rounding — **but R142 was a footing conflict decided at the fourth digit**, and this session
+settled the profile-marginal question there.
+
+**FIXED, on the author's instruction that a wired value should not also exist as a rounding.** All
+four are now `\num{sd_monthly}`. The supplement's standalone `0.170` count goes **4 to 0** and its
+`0.1699` count **5 to 9**, and it rebuilds at 64 pages with 0 errors. **The main document's three are
+left alone, because they are different quantities**, which the wrong count had hidden.
 
 ---
 

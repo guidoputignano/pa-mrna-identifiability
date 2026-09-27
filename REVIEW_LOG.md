@@ -7069,3 +7069,45 @@ instances of the invisible bound: fixed strings with `grep -oF | wc -l` and neve
 metacharacter against a multibyte character; check a pattern against a known-matching line before
 trusting a zero; normalise whitespace before searching prose; state the corpus and that no limit
 applied.
+
+---
+
+### R181. A wrong count in a committed finding, and it is the fifth invisible bound of the pass
+
+**R177's Part 3 published *"main 0, supplement 3"* for the headline result written as `0.170`. Both
+figures are wrong.** Corrected here, and the corrected finding is **sharper** than the wrong one.
+
+**How the error happened, because it is the point.** The Part 3 table was built twice. The first
+attempt used `grep -c`, which counts matching LINES and therefore returns 1 on a whitespace-normalised
+single-line file however many matches exist; I caught that, rebuilt the table with
+`grep -oF | wc -l`, and **the corrected table did not contain a `0.170` row at all.** The `0/3` I
+published came from the discarded broken table, where the pattern also carried a trailing space.
+**So the number reached a committed document from a table I had already thrown away.**
+
+**And `-F` alone would not have saved it either**, because `0.170` is a prefix of `0.1701` and
+`0.1709`: `grep -oF "0.170"` returns **9 in the main text and 7 in the supplement**. The count needs a
+boundary: `grep -oE "0\.170([^0-9]|$)"`.
+
+**The true counts: main 3, supplement 4.**
+
+| | `0.1699` | `0.170` | what the `0.170`s are |
+|---|---|---|---|
+| main | **16** | **3** | a *"0.170 baseline"* in an offset comparison; the low end of *"between 0.170 and 0.177"*; another design's value. **None is the headline result** |
+| supplement | **5** | **4** | **all four are the headline result**, including one that hand-types the point estimate while wiring its own range |
+
+**The finding survives and improves.** The disagreement is real, one-sided, and four places rather
+than three: the supplement writes the paper's central figure at three digits four times and the main
+document never does. **The wrong count had hidden that main's three are different quantities**, which
+is exactly what would have made a naive fix wrong.
+
+**FIXED on the author's instruction** that a wired value should not also exist as a rounding. All four
+supplement-side occurrences are now `\num{sd_monthly}`: `04_local.tex:525`, `:690`,
+`A1_supplementary.tex:389` and `09_validation.tex:103`. Standalone `0.170` in the built supplement
+goes **4 to 0**, `0.1699` goes **5 to 9**, and it rebuilds at 64 pages with 0 errors and 0 unresolved
+references. **The main document's three are left alone.**
+
+**Five instances in one pass, and this is the one that matters**: the other four cost a re-run, this
+one cost a wrong number in a committed findings document. The section 0 procedure written one commit
+ago would have caught it at step 1, `never grep -c`, and at step 3, **check the pattern against a line
+you know matches before trusting a zero**. I wrote the procedure and then did not apply it to a figure
+already in hand.
