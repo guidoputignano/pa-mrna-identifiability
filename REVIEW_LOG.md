@@ -6528,3 +6528,80 @@ untouched."* The passage is a conditional and says so in its own last paragraph.
 Three decisions are left to the author and listed in the file: whether it lands, whether it sits
 beside the Tier 1 requirement or with the other scope conditions, and whether its three numbers are
 wired or left as prose under R143's rule.
+
+---
+
+### R165. The decidability result tested against the null-fibre limit: it holds, degraded and bounded, and the sweep found what actually holds the design together
+
+**The author's challenge, and it was the right one to put.** Along the exact fibre,
+`d mu/db = 9.9500` against `d theta/db = 2.5493`, **confirmed analytically and by central
+differences at every capacity, ratio 3.903.** So the margin is nearly four times more exposed to the
+unidentified direction than capacity is, while `sd(mu)` comes out small and small only through a
+3.25x cancellation. **A quantity more exposed to the fibre emerging better determined, by a
+cancellation, is the shape of a result that depends on something incidental.**
+
+`audit/u29_fibre_limit.py` sweeps `LOAD_CV` from the register's 0.10 to zero:
+
+| `theta` | `sd(ln theta)` growth | `sd(mu)` growth | `|mu|/sd` | cancellation |
+|---|---|---|---|---|
+| 3000 | **x1.00** | **x1.15** | 1.87 to 1.63 | 4.00 to 3.51 |
+| 600 | **x1.05** | **x1.27** | 18.81 to 14.79 | 4.31 to 3.61 |
+| 300 | **x1.07** | **x1.27** | 21.62 to 17.01 | 3.81 to 3.26 |
+
+**THE RESULT HOLDS.** `sd(mu)` is the more exposed of the two and the dependence is real, so it is
+stated. But **neither diverges**: both converge by `load_cv ~ 0.002`, `|mu|/sd` degrades by at most
+**21%** and plateaus, the cancellation weakens by 12 to 16% rather than by orders, and **the ordering
+across capacities is untouched.** So the answer sits between the two branches the author framed: not
+independent of the load variation, and not dependent on it in the way that would undermine it.
+
+**AND THE SWEEP FOUND SOMETHING NEITHER BRANCH ANTICIPATED.** Removing the load-bias prior at a
+constant load gives a minimum-to-maximum eigenvalue ratio of **1.41e-19** at nominal and
+**-1.20e-18** at a tenth: **singular to machine precision**, confirming Proposition 4 directly. With
+the prior present it is 1.45e-07. Meanwhile the dose train varies the levels by **162%** at nominal
+and **550%** at a twentieth and **does not break the fibre**, because the fibre is a direction in
+parameter space that level variation alone does not separate.
+
+**So the dependence to state is on `LOAD_FRAC`, a registered constant, and not on `LOAD_CV`.** What
+keeps the constant-load design finite is the prior on the load bias. The load variation is what makes
+the design **prior-free** rather than what makes it possible. That is more useful than the sentence
+the challenge anticipated, because `LOAD_FRAC = 0.05` is a number the specification already asks a
+study to achieve.
+
+**The result is now led by the author's own framing**, which is better than mine was: *moving either
+convention moves all three ratios in the same direction, so the ordering survives any single
+convention and the magnitudes do not.*
+
+**And the `m_tol` correction's REASON is carried, not just its attribution.** The paper's ground for
+calling it the more troubling convention is *"because it is not a fact about the patient at all"*.
+`s_peak` is at least a claim about how ill someone gets; `m_tol` is a claim about what a clinic will
+tolerate. **So the boundary decidability is measured from is partly set by a quantity that describes
+nobody**, which is sharper than "both are conventions" and is what the proposed text should carry.
+
+---
+
+### R166. The constancy passage: all three decisions taken, and the bias argument sharpened from a cost to a ceiling
+
+**The author's rulings.** It lands. It sits **beside the Tier 1 requirement**, not with the scope
+conditions, because the finding is specific to that number and because the delivery pass found this
+paper's characteristic weakness to be qualifications that are present, correct and late. And its
+numbers are **wired**, since they are computed, they can move, and R143's degenerate-macro exception
+does not apply.
+
+**The sharpening, which is the author's and is the strongest sentence available from the result.**
+The excess over the gate at `r = 0.005` decomposes in variance as **0.000240 from the sd and
+0.000581 from the bias, so the bias is 70.7% of it** (verified). That says drift dominates. It does
+not yet say the requirement cannot buy its way out.
+
+**What makes it a ceiling is where the bias comes from.** Round 1 established `bias ~ -r T / 2`, and
+at `r = 0.005` over 118 monthly draws the span is 3587 days, 9.82 years, giving **-0.02455 against
+the reported -0.0241** (verified). **The bias is set by the record's SPAN, not by its COUNT.** So
+more draws inside a fixed window shrink the variance and leave the bias exactly where it was, and
+lengthening the window to fit more draws makes it worse.
+
+**The sentence is therefore not that no number of draws reduces the second term, it is that no
+SCHEDULE reduces it.** That is what makes 118 a boundary rather than a price, and the draft now says
+it that way.
+
+Seven macros are named with their owners, and the draft states that **a generator must be written or
+extended before any is cited** (R141): `u7_drift.py` computes all five drift figures today and emits
+no numbers file.

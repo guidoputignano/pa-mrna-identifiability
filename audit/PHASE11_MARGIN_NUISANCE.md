@@ -87,6 +87,13 @@ requirement above.**
 
 ### (b) A positive result the paper does not state anywhere, ON A CONDITION STATED FIRST
 
+**THE RESULT IN THE FORM IT SHOULD BE PUBLISHED IN, which is the author's:**
+
+> **Moving either convention moves all three ratios in the same direction, so the ORDERING
+> survives any single convention and the MAGNITUDES do not.**
+
+Everything below is that sentence's working.
+
 **THE CONDITION, BEFORE THE RESULT, BECAUSE THE RESULT IS ONLY AS GOOD AS IT.** The whole of
 finding (b) is distance to a fixed boundary. The author verified that it reproduces from
 `theta_crit` alone, and it does, exactly:
@@ -117,9 +124,15 @@ property of the information matrix.
 amplitude of an illness. **The convention is the more troubling of the two, because it is not a
 fact about the patient at all.**"* It then notes that the equilibrium reduction does not need it.
 
-**One attribution corrected**, because the argument should not carry it wrong: the paper applies
-"more troubling" to **`m_tol`**, not to `s_peak`. Both are conventions and neither is measured,
-which is the point that survives, but `m_tol` is the one the paper singles out.
+**One attribution corrected, and the paper's REASON is the part worth carrying**, not the
+attribution. "More troubling" applies to **`m_tol`**, not to `s_peak`, and the paper says why:
+*"because it is not a fact about the patient at all."* `s_peak` is at least a claim about how ill
+someone gets. `m_tol` is a claim about what a clinic will tolerate.
+
+**So the boundary that decidability is measured from is partly set by a quantity that describes
+nobody.** That is a sharper statement than "both are conventions", and it is the one the proposed
+text should carry: the distance `|mu|` is large in the disease range, and part of what it is a
+distance *from* is an administrative choice.
 
 **So the result reads:** *conditional on a boundary whose position is set by two clinical
 conventions and one parameter this audit has shown to be unstable, the sign of `mu` is robust in
@@ -127,6 +140,51 @@ the disease range and fragile near nominal capacity.* **The sign is robust; the 
 line it is measured from is not.** Moving `m_tol` or `s_peak` moves `theta_crit` and moves every
 ratio in the table with it, in the same direction for all three capacities, so the ORDERING
 survives any single convention and the MAGNITUDES do not.
+
+### Tested against the limit where the fibre is exactly null
+
+**The author's challenge, and it is the right one to put to this result.** Along the fibre
+`d mu/db = 9.9500` against `d theta/db = 2.5493`, confirmed analytically and by central differences
+at every capacity: **the margin is 3.903 times more exposed to the unidentified direction than
+capacity is.** Yet `sd(mu)` comes out small, and small only through a 3.25x cancellation. A
+quantity more exposed to the fibre emerging better determined, by a cancellation, is the shape of a
+result that might depend on something incidental.
+
+`audit/u29_fibre_limit.py` sweeps the load variation to zero, where Proposition 4 is exactly
+singular, and watches both together.
+
+| `theta` | `sd(ln theta)` 0.10 to 0 | `sd(mu)` 0.10 to 0 | `|mu|/sd` 0.10 to 0 | cancellation 0.10 to 0 |
+|---|---|---|---|---|
+| 3000 | 0.1543 to 0.1542, **x1.00** | 183.4 to 210.4, **x1.15** | 1.87 to 1.63 | 4.00 to 3.51 |
+| 600 | 0.6988 to 0.7331, **x1.05** | 145.9 to 185.6, **x1.27** | 18.81 to **14.79** | 4.31 to 3.61 |
+| 300 | 1.2062 to 1.2930, **x1.07** | 140.8 to 178.9, **x1.27** | 21.62 to **17.01** | 3.81 to 3.26 |
+
+**THE RESULT HOLDS, DEGRADED AND BOUNDED.** `sd(mu)` is the more exposed of the two, growing by
+1.15 to 1.27 against 1.00 to 1.07, so the dependence is real and must be stated. But **neither
+diverges**, both converge to finite limits by `load_cv ~ 0.002`, `|mu|/sd` falls by at most **21%**
+and then plateaus, and the cancellation weakens by 12 to 16% rather than by orders. **The ordering
+across capacities is untouched.**
+
+**AND THE SWEEP FOUND WHAT ACTUALLY HOLDS THE DESIGN TOGETHER, which is neither candidate.**
+
+| `theta` | `load_cv` | load-bias prior | min/max eigenvalue |
+|---|---|---|---|
+| 3000 | 0.10 | present | 2.13e-07 |
+| 3000 | 0.10 | **removed** | 7.08e-08 |
+| 3000 | 0 | present | 1.45e-07 |
+| 3000 | **0** | **removed** | **1.41e-19** |
+| 300 | **0** | **removed** | **-1.20e-18** |
+
+**At a constant load with the load-bias prior removed, the matrix is singular to machine
+precision**, confirming Proposition 4 directly. The dose train varies the levels by **162%** at
+nominal and **550%** at a twentieth, and **does not break the fibre**, because the fibre is a
+direction in parameter space that level variation alone does not separate.
+
+**So the dependence to state is on `LOAD_FRAC`, a registered constant, and not on `LOAD_CV`.** What
+keeps the constant-load design finite is the prior on the load bias; the load variation is what
+makes the design **prior-free** rather than what makes it possible. That is a different sentence
+from the one the challenge anticipated, and a more useful one, because `LOAD_FRAC = 0.05` is a
+number the specification already asks a study to achieve.
 
 ### The result itself
 
