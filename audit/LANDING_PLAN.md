@@ -59,6 +59,7 @@ hold the pass.
 |---|---|---|---|
 | **(g1)** | Should a decade-long record carry a drift term? | `PHASE11` §3 and §6, which both state Tier 1's missing margin against a drift of order 1% a year. The passages can be written either way but not both. | **No.** It is the cheapest finding of the five rounds and it is one word, yes or no. |
 | **(g2)** | Which object does "the binding nuisance" mean? | `PHASE11` §7, the caveat attaching to every Fisher figure. Section 0 now records that the profile, the asymmetry and the robust-versus-sd gap are **one non-Gaussian posterior with three symptoms**, which makes this one decision rather than three. | **No**, and it is now cheaper than when it was raised. |
+| **(g7)** | **Which `rho` is "the crisis regime" in the threshold sentence, and does `-0.39` still stand?** | `07b_decision.tex:70-71`. The paper names two regimes, `d6` has four rows, and `-0.39` does not reproduce from any of them at seed 11. Needs the Phase 2D-era code or the author. | **No.** It sits in the same edit as `PHASE11` §14 and the seed spreads. |
 | (g5) | Does the model need the catabolic coupling? | Nothing in the proposed text. It gates *future* pricing of prescribed load reduction. | **Yes.** |
 | (g6) | What is `q`? | Nothing. The author has already ruled it sizes the hazard's wording, not the protocol, since a metered load gives `rho = 1` either way. | **Yes**, and it should be researched in parallel. |
 
@@ -119,9 +120,31 @@ looks more accurate in print than it is across seeds. The `rho = 0.5` cell is th
 published 0.900 hides a seed on which the estimate **collapses to 0.000**. The error-rate columns
 are by contrast stable, 19.1% [16.8, 24.5] and 41.6% [37.5, 44.5] at `rho = 1`.
 
-**Consequence for the pass.** `PHASE11` §14, the `rho` pole, attaches to this paragraph.
-Applying it alone would add a fifteenth unwired number to the one paragraph in the section that
-has this problem. **§14 and the seed fix are one edit or neither.**
+**And the two thresholds at lines 70 to 71 are worse than single-seed: one of them does not
+reproduce.** The owner is **not** `d6_regimes.py`, which a first attempt assumed. An unbounded
+search finds the literal at `audit/PHASE2D_FINDINGS.md:150`, so **Phase 2D is the source and `d6`
+is a later re-derivation**. Re-deriving from `d6` at seed 11, cost ratio 1:1:
+
+| `rho` | `tau*/theta` | against the published pair |
+|---|---|---|
+| 1.00 | **0.067** | reproduces the published **+0.07** |
+| 0.50 | **-0.467** | closest to -0.39, and 0.077`theta` away |
+| 0.00 | *escalate none*, no crossing | |
+| -0.25 | *escalate none*, no crossing | |
+
+**The managed threshold reproduces and its sign is stable. The crisis threshold does not
+reproduce at any `rho`.** Reported as a **reproduction failure, not a paper error**: section 0
+records that four Phase 10 disagreements were a reconstruction losing to the paper, and the
+Phase 2D-era code may differ from today's `d6`. It also turns out that **the paper names two
+regimes while `d6` has four rows**, and the mapping requires a choice nobody has recorded, since
+Phase 2D's own text says "the reversal is complete by `rho = 0.5`".
+
+**Consequence for the pass, and it is now larger than a wiring job.** `PHASE11` §14, the `rho`
+pole, attaches to this paragraph. Applying it alone would add a fifteenth unwired number to the
+one paragraph in the section with this problem. **§14, the twelve seed spreads, and the
+resolution of the crisis threshold are one edit or none of them.** The third of those needs
+either the Phase 2D-era code or the author, so **this item now has a decision inside it** and
+belongs in section 3's list rather than section 4's.
 
 ---
 

@@ -538,3 +538,14 @@ prose literals at a single seed**, lines 58 to 61 and 70 to 71, in a section who
 are macro-wired. All four published medians are better than their own twelve-seed mean, and the
 `rho = 0.5` cell's published 0.900 hides a seed on which the estimate collapses to **0.000**.
 `audit/u19_seed_defect.py`, R134.
+
+**(g7) And one of the two thresholds does not reproduce, which is a decision and not a fix.**
+The owner is **Phase 2D**, not `d6_regimes.py` as a first attempt assumed; the literal sits at
+`audit/PHASE2D_FINDINGS.md:150`. Re-deriving at seed 11: `rho = 1` gives **0.067**, reproducing
+the published **+0.07**, while `rho = 0.5` gives **-0.467** and `rho = 0` and `rho = -0.25` give
+**no crossing at all**. None is the published **-0.39**. **Reported as a reproduction failure and
+not as a paper error**, since section 0 records that four Phase 10 disagreements were a
+reconstruction losing to the paper. Two things need settling: **which `rho` "the crisis regime"
+means**, because the paper names two regimes and `d6` has four rows while Phase 2D's own text
+says "the reversal is complete by `rho = 0.5`", and **whether -0.39 still stands** under today's
+code. Needs the Phase 2D-era code or the author. R135.

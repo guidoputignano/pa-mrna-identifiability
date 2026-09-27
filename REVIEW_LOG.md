@@ -5286,3 +5286,47 @@ literals, which is exactly the defect it reports. Rewritten against four new mac
 `rho_pole_q`, `rho_above_fail_pct`, `rho_above_fail_lo`, `rho_above_fail_hi`. Caught here rather
 than carried in, which is the third time this round that writing the objection down is what
 exposed the same error in my own work.
+
+### R135. (g7) One of the two published thresholds does not reproduce, and the owner was not where I first looked
+
+**My first attempt named the wrong owner.** `audit/u19_seed_defect.py` PART C was written against
+`audit/d6_regimes.py`, because that is where the regret-threshold table lives today. An
+**unbounded** search for the literal across `audit/`, `src/`, `paper/` and `results/` finds it at
+**`audit/PHASE2D_FINDINGS.md:150`**: *"Regret-equalised thresholds: managed +0.07 theta at equal
+costs, crisis -0.39 theta"*. So **Phase 2D is the source and `d6` is a later re-derivation of the
+same quantity.** Section 0's "find the owner before recomputing" was followed one level too
+shallow, and the unbounded-search rule from R125 is what corrected it.
+
+Re-deriving from `d6` at seed 11, cost ratio 1:1, 601 points over +/-30000:
+
+| `rho` | `tau*/theta` | against the published pair |
+|---|---|---|
+| 1.00 | **0.067** | reproduces the published **+0.07** |
+| 0.50 | **-0.467** | closest to -0.39, and 0.077 `theta` away |
+| 0.00 | *escalate none*, no crossing | |
+| -0.25 | *escalate none*, no crossing | |
+
+**The managed threshold reproduces. The crisis threshold does not reproduce at any `rho`.**
+
+**Reported as a reproduction failure and NOT as a paper error.** Section 0 records that four
+disagreements in Phase 10 were a reconstruction losing to the paper, and the Phase 2D-era code may
+differ from today's `d6`. What is established is narrow and worth stating exactly: **-0.39 does not
+come back from `d6` at any of its four `rho` rows at seed 11**, the nearest value is -0.467 at
+`rho = 0.5`, and two of the four rows have **no finite threshold at all**, which is a qualitatively
+different statement from a number with a different value.
+
+**A second problem the same check exposed: the mapping is unrecorded.** The paper names **two**
+regimes, managed and crisis. `d6` has **four** rows. Phase 2D's own text one line above the
+thresholds says *"the reversal is complete by `rho = 0.5`"*, which makes `rho = 0.5` a crisis
+regime in that document, so "the crisis regime" is ambiguous between three of the four rows and
+**nobody has recorded which was meant.**
+
+**(g7), and it is a decision rather than a fix.** Which `rho` is "the crisis regime", and does
+-0.39 still stand under today's code? Needs the Phase 2D-era code or the author. It sits in the
+same edit as `PHASE11_PROPOSED_TEXT.md` §14 and the twelve seed spreads, so **that edit now
+contains a decision** and has moved in `audit/LANDING_PLAN.md` from the mechanical list to the
+decision list.
+
+**And one qualitative claim does survive.** The managed threshold's sign is stable across seeds,
+so *"the managed regime wants the boundary earlier"* holds. The crisis half of that sentence is
+what is now unsupported, and it is the half the paragraph's argument rests on.

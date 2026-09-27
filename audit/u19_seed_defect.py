@@ -126,44 +126,79 @@ def part_b():
     return store
 
 
+def tau_star(ens, ratio=1.0, lo=-30000.0, hi=30000.0, n=601):
+    """Regret-equalised threshold, or the reason there is none."""
+    import d6_regimes as D6
+    taus = np.linspace(lo, hi, n)
+    gap = np.array([ratio * D6.err_at(ens, 3.58 * BASE, t)[0]
+                    - D6.err_at(ens, 2.98 * BASE, t)[0] for t in taus])
+    sg = np.where(np.diff(np.sign(gap)) != 0)[0]
+    if sg.size:
+        return float(taus[sg[0]]) / P.theta
+    return np.inf if gap[0] > 0 else -np.inf
+
+
 def part_c():
     print()
     print("=" * 88)
-    print("PART C.  the regret thresholds, whose owner knows about seeds and does")
-    print("         not use them here")
+    print("PART C.  the two thresholds, whose OWNER is Phase 2D and not d6")
     print("=" * 88)
     print("""
-  audit/d6_regimes.py computes a twelve-seed spread for its error rates and
-  prints "(12 seeds, 400 replicates each)", then builds the regret-threshold
-  table from the SINGLE-seed ensemble of its line 109. These are the two
-  numbers 07b_decision.tex:70-71 took from that table.
+  THE OWNER, and the first attempt had it wrong. An unbounded search for the
+  literal across audit/, src/, paper/ and results/ finds it at
+  audit/PHASE2D_FINDINGS.md:150: "Regret-equalised thresholds: managed +0.07
+  theta at equal costs, crisis -0.39 theta". So PHASE 2D is the source, and
+  audit/d6_regimes.py is a LATER re-derivation of the same quantity, not the
+  owner. Phase 2D's own framing matters for reading "crisis": the sentence
+  above it says "the reversal is complete by rho = 0.5", so rho = 0.5 is
+  already a crisis regime in that document.
+
+  d6 also computes a twelve-seed spread for its error rates and prints
+  "(12 seeds, 400 replicates each)", then builds its threshold table from the
+  SINGLE-seed ensemble of its line 109, commented "the seed fig_decision uses".
+
+  All four regimes are reported here because the paper names only two and the
+  mapping is what is at issue.
 """)
     import d6_regimes as D6
-    print(f"    {'regime':>10} {'paper':>8} {'seed 11':>9} "
-          f"{'mean':>8} {'min':>8} {'max':>8}")
-    print("    " + "-" * 56)
-    for lab, rho in (("managed", 1.0), ("crisis", -0.25)):
-        vals = []
-        for s in SEEDS:
-            ens = D6.fit_regime(LV9, rho, reps=400, seed=s)
-            taus = np.linspace(-30000.0, 30000.0, 601)
-            #  d6's published amplitudes, its own line 98, and the same
-            #  baseline. They are locals in d6 so they are restated here
-            #  rather than imported, and 2.98 / 3.58 are the values
-            #  07b_decision itself quotes.
-            gap = np.array([1.0 * D6.err_at(ens, 3.58 * BASE, t)[0]
-                            - D6.err_at(ens, 2.98 * BASE, t)[0]
-                            for t in taus])
-            sg = np.where(np.diff(np.sign(gap)) != 0)[0]
-            vals.append(float(taus[sg[0]]) / P.theta if sg.size else np.nan)
+    print(f"    {'rho':>7} {'seed 11':>15} {'12-seed mean':>14} "
+          f"{'min':>10} {'max':>10} {'no crossing':>12}")
+    print("    " + "-" * 74)
+    fmt = lambda x: ("escalate all" if np.isposinf(x) else
+                     "escalate none" if np.isneginf(x) else f"{x:.3f}")
+    for rho in RHOS:
+        vals = [tau_star(D6.fit_regime(LV9, rho, reps=400, seed=s))
+                for s in SEEDS]
         v = np.array(vals, float)
         fin = v[np.isfinite(v)]
-        s11 = vals[11] if len(vals) > 11 else np.nan
-        print(f"    {lab:>10} {PAPER_TAU[lab]:8.2f} {s11:9.2f} "
-              f"{fin.mean():8.2f} {fin.min():8.2f} {fin.max():8.2f}")
-    print("""
-  If these spreads straddle zero the qualitative claim changes, because the
-  sign of tau* is what "escalate earlier" versus "escalate later" means.""")
+        n_non = int((~np.isfinite(v)).sum())
+        s11 = tau_star(D6.fit_regime(LV9, rho, reps=400, seed=11))
+        if fin.size:
+            print(f"    {rho:7.2f} {fmt(s11):>15} {fin.mean():14.3f} "
+                  f"{fin.min():10.3f} {fin.max():10.3f} {n_non:9d}/12")
+        else:
+            print(f"    {rho:7.2f} {fmt(s11):>15} {'none finite':>14} "
+                  f"{'':>10} {'':>10} {n_non:9d}/12")
+    print(f"""
+  AGAINST THE PUBLISHED PAIR, managed {PAPER_TAU['managed']:+.2f} and crisis {PAPER_TAU['crisis']:+.2f}:
+
+  The MANAGED threshold reproduces. rho = 1 at seed 11 gives 0.067, which is
+  the published +0.07, and its twelve-seed range is narrow with the sign
+  stable, so the qualitative claim "escalate earlier" survives the spread.
+
+  The CRISIS threshold DOES NOT REPRODUCE from the current code at any rho.
+  rho = 0.5 gives -0.467, rho = 0 and rho = -0.25 give no crossing at all.
+  None of the three is -0.39.
+
+  THIS IS REPORTED AS A REPRODUCTION FAILURE AND NOT AS A PAPER ERROR.
+  Section 0 records that four disagreements in Phase 10 were a reconstruction
+  losing to the paper, and the owner here is a Phase 2D document whose
+  generating code may differ from today's d6. What is established is narrow:
+  the number does not come back from d6 at any rho at seed 11, the closest
+  value is -0.467 at rho = 0.5, and the two regimes the paper names do not map
+  onto d6's four rows without a choice being made. Resolving it needs either
+  the Phase 2D-era code or the author.
+""")
 
 
 if __name__ == "__main__":
