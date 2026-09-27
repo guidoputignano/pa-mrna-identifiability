@@ -74,6 +74,17 @@ Set by the author and held throughout. They are not negotiable defaults.
   value (R141). The same weakness makes a search under-report in the other direction: looking for
   a rounded literal misses a generator carrying full precision, which is how `0.209` was missed in
   a file that contains `0.2089`. **One definition fixes both** (R141, R144).
+- **DO NOT CHARACTERISE A METHOD FROM A CLAIM ABOUT IT.** Read the document before ruling on how
+  it works. This is the sibling of the bounded-search rule and it was broken in the same breath as
+  that rule was being applied: I misread one index entry in `audit/PROVENANCE_SWEEP.md` and said
+  its sweep tested only for string presence, and the author took that claim about a document he
+  had not opened and turned it into a verdict on the sweep's methodology. **The escalation is the
+  expensive half, not the misreading.** A misreading costs one wrong sentence and is caught by the
+  next person to open the file. A verdict on a method, taken on trust, propagates: it discredits
+  an instrument that works, and the work it would have done gets rebuilt. Section 3 of that sweep
+  already runs the output test this rule elsewhere demands, and line 202 sits in section 4, whose
+  subject is the 25 claims with **no** owner and no match anywhere. **Whoever escalates owns the
+  reading**, and the cost of opening the file is one minute (R144).
 - **A MACRO IS FOR A NUMBER THAT COULD MOVE, AND WRONG FOR A QUANTITY WHOSE CONTENT IS THAT IT
   DOES NOT.** Wiring a degenerate quantity destroys the finding it was meant to protect: *"with no
   seed-to-seed variation"* is the result, and `\num{lo} to \num{hi}` renders it as *"100.0 to
@@ -187,6 +198,20 @@ load-record requirement and the `k_e` study, both of which are conditional on it
   That route is open for all 109 claims still to wire (R94).
 - **A prose guard has to read English numerals.** 1000 of the 2472 unguarded literals are spelled
   out, and the one error this whole sweep was provoked by was "thirteen" and "eighteen".
+
+> ### The headline figure for the whole provenance effort: 343 against 2472
+>
+> **343 numbers in `paper/` are generated and checked. 2472 are not.** `audit/PROVENANCE_SWEEP.md`
+> lines 65 and 68. That is the number to quote when the question is how far this repository has
+> got, and it should be read next to the **382 keys** `check_artefacts.py` emits across 23 files:
+> the generators already produce **more** keys than the paper cites, so a large part of the gap is
+> prose that declines to use a macro that exists, not prose whose number has no generator. Section
+> 4's own rows say which part: **249 category-1 literals restate a value a generator already owns**
+> and are pure upside, while **109 category-3 claims are genuinely unwired**.
+>
+> **12% coverage is the honest summary, and the blind spot is not random** (that sweep's section
+> 7.1). Phase 11 wired 19 more. The figure is the author's, set at the end of round 6, and it
+> supersedes any smaller count quoted in a phase file as the measure of the effort.
 
 ---
 

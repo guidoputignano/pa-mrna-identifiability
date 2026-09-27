@@ -448,12 +448,37 @@ can act on and a measurement can be judged against.
 | `ke_frontier_600_pct` | 15.7 | `audit/u9_ke_frontier.py` |
 | `ke_frontier_300_pct` | 6.3 | `audit/u9_ke_frontier.py` |
 
-### The margin's size, settled by the author with a principle rather than a taste
+### The margin's size, and the sentence is stronger for having lost an object
 
-**Size it to at least cover the spread among the objects the gate could have been stated
-against.** At the recommended design those are Fisher **0.1695**, simulated sampling spread
-**0.1777** and profile **0.2002**, a spread of **18.1%**. A design should therefore target
-about **0.17 on the profile** rather than 0.20 on the marginal.
+**The earlier version of this section argued the margin from three scattered numbers: Fisher
+0.1695, simulated spread 0.1777 and profile 0.2002.** That was the author's reasoning and the
+author withdrew one of its premises. **0.1777 was the ROBUST spread, `0.7413 x IQR`, and a Fisher
+width is a standard deviation** (R132). Comparing the two put an estimator of one dispersion
+against an estimator of another and then read the difference as disagreement about the design.
+
+**On the standard deviation there are TWO objects, not three, and the second is confirmed twice.**
+
+| object | value | what it is |
+|---|---|---|
+| marginal | **0.1699** | the quadratic width, the paper's committed post-dose footing, `sd_monthly` |
+| non-quadratic width | **0.2005** | the profile, `audit/u23_wire_phase11.py` |
+| the same, independently | **0.2002** | simulated sampling **sd** over seeds, own code path |
+
+**Two objects, and the larger one reached twice by methods sharing no code path, agreeing to
+three parts in two thousand.** That is a stronger sentence than three scattered numbers, because
+the spread is now a property of the posterior rather than of which estimator happened to be
+tabulated: **the quadratic approximation understates the width by
+$\num{object_spread_recommended_pct}\%$ at the recommended design.** The robust spread is still
+computed and still emitted, as `sim_spread_robust_recommended`, but as evidence of non-Gaussianity
+rather than as a candidate footing.
+
+**The target follows arithmetically and is no longer asserted.** The gate is 0.20 on the
+marginal; stating it against the profile means deflating it by the measured spread, so
+$0.20 / 1.1804 = 0.169$. `margin_target` is **computed from
+`object_spread_recommended_pct`** in the generator rather than typed in as the author's
+recommendation rounded, because a macro asserts that a number came from the code, and a judgement
+emitted by a generator is a false claim about its own provenance. The value is unchanged at 0.17;
+what changed is that it now tracks the spread instead of sitting beside it.
 
 That is a floor and not a total. **Drift needs its own allowance on top**, because it is a
 bias and not an object-choice, so it adds in a different way: `audit/u7_drift.py` reports
@@ -463,15 +488,26 @@ a bias the object spread does not contain.
 > \textbf{Sizing the margin.} The target is stated against the profile
 > (Remark~\ref{rem:whichinterval}), and a design sized to meet it exactly carries no
 > allowance for anything outside the model it was sized in. The floor adopted here is the
-> spread among the three objects the same posterior admits, $\num{object_spread_recommended_pct}\%$ at
-> the recommended design, so a design is sized to $\num{margin_target}$ on the profile
-> rather than to $0.20$. Drift is an allowance on top of that floor and not inside it,
-> being a bias rather than a choice of object.
+> gap between the two widths the same posterior admits: the quadratic approximation
+> understates the interval by $\num{object_spread_recommended_pct}\%$ at the recommended
+> design, a figure reached independently by profiling the likelihood
+> ($\num{profile_recommended}$) and by simulating the sampling distribution
+> ($\num{sim_spread_recommended}$). A design is therefore sized to $\num{margin_target}$ on
+> the profile rather than to $0.20$ on the marginal. Drift is an allowance on top of that
+> floor and not inside it, being a bias rather than a choice of object.
 
 | macro | value | owner |
 |---|---|---|
-| `object_spread_recommended_pct` | 18.1 | `audit/u12_prior_quadratic.py`, `audit/u4_recheck_breath.py` |
-| `margin_target` | 0.17 | the author's ruling, on that spread |
+| `object_spread_recommended_pct` | 18.04 | `audit/u23_wire_phase11.py`, on the committed footing |
+| `profile_recommended` | 0.2005 | same |
+| `sim_spread_recommended` | 0.2002 | same, independent code path |
+| `margin_target` | 0.17 | **derived**, `0.20 / (1 + spread)`, same generator |
+
+**The footing is the author's ruling and it is why no ratio here crosses one.** The objects are
+computed on the paper's committed post-dose footing, 0.1699, by building the record with
+`src/design/run.py`'s own `design_record` rather than rebuilding the dose train. The generator
+**asserts** that footing and emits nothing if the marginal misses it, because a number on the
+wrong footing that passes the guard is worse than no number (R142, R145).
 
 ---
 

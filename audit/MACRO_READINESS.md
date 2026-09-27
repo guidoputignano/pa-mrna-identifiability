@@ -27,7 +27,7 @@ for this: `u2`, `u7`, `u9`, `u11`, `u12`, `u13`, **all exit 0**.
 | `drift_cross_pct` | **95.4** | `u7` | `u7` PART C, `r = 0.67`/yr |
 | `drift_premium_lo` | **0.3** | `u7` | `u7` PART D, ratio 1.003 |
 | `drift_premium_hi` | **1.6** | `u7` | `u7` PART D, ratio 1.016 |
-| `margin_target` | **0.17** | author's (g4) decision | not computed, and should not be |
+| `margin_target` | **0.17** | `u23`, **derived** `0.20/(1+spread)` | ~~author's decision, not computed~~ **superseded at R148**: emitting a judgement as a macro is a false claim about its own provenance, so it is now computed from `object_spread_recommended_pct`. Printed value unchanged. |
 | `rho_pole_q` | **0.800** | `u18` | `u18` PART B |
 | `sd_monthly` *(exists)* | **0.1699** | `src/design/run.py` | already generated |
 

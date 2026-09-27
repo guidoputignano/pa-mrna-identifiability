@@ -5837,3 +5837,127 @@ rendered "100.0 to 100.0" and destroyed it.
 **What is still not wired, deliberately.** The breath group, which needs its rows named. The
 `06_excitation.tex:103` pair, which has no generator. And the proposed passages themselves, which
 remain unapplied: **this pass wired the numbers, it did not edit `paper/`.**
+
+---
+
+### R147. The guard now catches value twins, and found four undeclared, none of them mine
+
+**The author's instruction after R146**, which found `sd_recommended_postdose` emitted beside the
+existing `sd_monthly`, both 0.1699 by different code:
+
+> *"The guard checks keys and not values. Make the guard catch the next one: have
+> `check_artefacts` flag any two keys whose emitted values agree to full precision, for a human to
+> confirm as intentional or collapse."*
+
+**`tools/check_artefacts.py` gained `_value_twins()` and `check_value_twins()`.** It **fails
+rather than warns**, because a duplicate that AGREES today is the only kind that can silently
+diverge tomorrow: two names for one number pass a key-comparing guard forever, and the day one of
+them moves the guard still reports a match. Confirming a pair means adding it to
+`DECLARED_VALUE_TWINS` **with a written reason**, which is a thirty-second act that leaves a
+record. The check carries a **self-test** in its own output: it is handed a synthetic 0.1234 twin,
+which it must report, and a synthetic 0.20 pair, which it must not, so a check that silently
+stopped checking cannot pass as green.
+
+**It found four undeclared twins on its first run and not one of them was in the code I had just
+written.** Two are coincidences and two are genuine redundancies:
+
+| pair | value | verdict |
+|---|---|---|
+| `bias_both20` / `bias_loose` | 0.286 | **REDUNDANT.** `audit/t4_bias_vs_scatter.py` assigns both keys the same variable `both`, lines 114 and 119. Exactly the defect the check was written for, and it predates the check by months. |
+| `loadcap_perfect_5pct` / `meas_exact_5pct` | 2.659 | **REDUNDANT.** One quantity from two generators. `PROVENANCE_SWEEP.md` separately records 2.659 appearing three times in the paper "owned by nothing in any of them". |
+| `E_info` / `bias_alone20` | 0.172 | coincidence, an excitation measure against a load-bias offset |
+| `bias_sweep` / `trans_noprior_nominal` | coincidence across two scripts |
+
+**Both redundancies are declared PENDING COLLAPSE rather than collapsed here**, because collapsing
+a key changes what the paper cites and that is a prose decision, not a guard decision.
+
+**Two false-positive modes were characterised rather than handed over as noise.** The first run
+produced 13 reports of which 9 were one cluster: **a median and its seed range are one quantity
+under three keys**, and a tight spread makes `x`, `x_hi` and `x_lo` print the same digits. A
+`_stem()` exemption removed them. Declarations are then matched **by stem**, so one entry covers a
+key and its range variants rather than needing three. The second mode is coincidence at low
+precision, handled by a `min_decimals=3` floor: agreement at four places is worth a human's
+glance, agreement at two is arithmetic.
+
+**The remaining cluster was the interesting one and it is a RESULT, not a redundancy.**
+`sd_load_1pct` (`src/design/run.py:1506`, `load_cv=0.01`) and `sd_load_steady` (`:1508`,
+`load_cv=0.0`) are **different inputs giving the same answer to four places**, 0.1696. That
+insensitivity is precisely what `run.py:1686` states by contrasting 1% against 20%. **A
+value-twin check cannot distinguish a redundant key from a real invariance, and it should not
+try**: it hands both to a human, and here the human's answer is that the coincidence IS the
+finding.
+
+---
+
+### R148. `margin_target` was asserted, not computed, and that is the `rho` case again
+
+**The author's check, in the same message:**
+
+> *"Check `margin_target`. If 0.17 is computed from the spread, it belongs where it is. If it is
+> my recommendation rounded, it is the rho case again."*
+
+**It was the recommendation rounded.** `audit/u23_wire_phase11.py` carried
+`N["margin_target"] = 0.17` with a comment saying so, and `MACRO_READINESS.md:30` listed its owner
+as *"author's (g4) decision, not computed, and should not be"*. **I wrote both and neither
+noticed that emitting it as a macro contradicts the note beside it.** A macro asserts that a
+number came from the code. A judgement emitted by a generator is therefore a false claim about its
+own provenance, which is the same defect as R143's degenerate `rho` macros in the opposite
+direction: there, a macro destroyed a prose finding; here, a macro manufactures a provenance.
+
+**It is not a bare recommendation, which is why the fix is a derivation and not a deletion.** The
+gate is 0.20 on the marginal, and stating it against the profile means deflating it by the
+measured object spread:
+
+```python
+GATE = 0.20
+N["margin_target"] = GATE / (1.0 + N["object_spread_recommended_pct"] / 100.0)
+```
+
+**0.20 / 1.1804 = 0.16944, which renders as 0.17.** The printed value does not move. What moves
+is that it now tracks the spread rather than sitting beside it, so a change in footing or design
+carries the target with it instead of leaving a stale constant that agrees by memory.
+
+---
+
+### R149. The author's escalation, recorded as the author asked for it to be recorded
+
+R144 retracted my claim that `PROVENANCE_SWEEP.md`'s sweep tested only for string presence. The
+author's reply:
+
+> *"My error was worse than the one it corrected. You misread one index entry; I took your claim
+> about a document I had not opened and turned it into a verdict on its methodology. The rule I
+> gave you has a sibling I broke in the same breath: do not characterise a method from a claim
+> about it. Record it that way rather than as my correction of your misreading, because the
+> escalation is the part that would have cost a pass of work."*
+
+**Recorded that way.** The asymmetry is the content: a misreading costs one wrong sentence and is
+caught by the next person to open the file, while a verdict on a method, taken on trust,
+discredits an instrument that works and the work it would have done gets rebuilt. **Section 3 of
+that sweep already runs the output test**, and line 202 sits in section 4, whose subject is the 25
+claims with **no** owner and no match anywhere. The rule is now in `OPEN_QUESTIONS.md` section 0
+as **"do not characterise a method from a claim about it"**, the sibling of the bounded-search
+rule at R125: **whoever escalates owns the reading.**
+
+**The exposure identified in its place is the real number, and it is now the headline.** **343
+numbers in `paper/` are generated and checked, 2472 are not** (`PROVENANCE_SWEEP.md:65,68`),
+against the **382 keys** the generators emit across 23 files. The generators already produce more
+keys than the paper cites, so much of the gap is prose declining to use a macro that exists: 249
+category-1 literals restate a value a generator already owns, 109 category-3 claims are genuinely
+unwired. **12% coverage** is the honest summary and it now sits in `OPEN_QUESTIONS.md` section 4.
+
+---
+
+### R150. A discipline point, the author's, and it is about the promise rather than the order
+
+> *"You have now committed ahead of `make test` twice and said twice that you would report it. It
+> is that 'I will report it when it lands' is a promise the next pass inherits, and it has not
+> landed twice."*
+
+**Both runs did land, 102 passed each time.** That is not the defect. The defect is that a
+promise deferred across a pass boundary is a liability the next session inherits without knowing
+it holds one, and two of them accumulated before either was discharged. **A result reported after
+the commit it was supposed to gate is not a gate.** The ordering exists so that a red test stops
+a commit, and running the suite afterwards converts it from a gate into a note.
+
+**This entry is written before the commit it describes**, and `make test` is run before it rather
+than after. If the suite fails, nothing in this pass is committed.

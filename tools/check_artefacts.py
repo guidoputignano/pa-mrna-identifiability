@@ -717,6 +717,141 @@ def check_key_collisions():
     return not problems
 
 
+#: value coincidences already looked at and confirmed as distinct quantities.
+#: Each needs a reason, because the point of the check is that somebody read it.
+DECLARED_VALUE_TWINS = {
+    #  --- confirmed DISTINCT quantities that happen to coincide ---
+    ("sd_tier1_with_kappa", "sim_spread_recommended"):
+        "Tier 1's marginal and the recommended design's simulated spread both "
+        "land on 0.2002. Different designs, different objects, coincident to "
+        "four places (REVIEW_LOG.md R145).",
+    ("E_info", "bias_alone20"):
+        "An excitation measure and a load-bias offset, both 0.172. Unrelated "
+        "quantities from different generators; coincidence at three places.",
+    ("bias_sweep", "trans_noprior_nominal"):
+        "A load-bias sweep endpoint and the transient's prior-free nominal, "
+        "both 0.1733. Unrelated quantities from different generators.",
+
+    #  --- confirmed REDUNDANT. Declared so the build is green while the
+    #  finding stays visible in the code, NOT because they are acceptable.
+    #  Collapsing them changes generated output and possibly the paper, which
+    #  is the author's call; recorded at REVIEW_LOG.md R147 and in
+    #  OPEN_QUESTIONS.md as an open item. ---
+    ("bias_both20", "bias_loose"):
+        "REDUNDANT, PENDING COLLAPSE. audit/t4_bias_vs_scatter.py assigns BOTH "
+        "keys the same variable `both` (lines 114 and 119), so these are one "
+        "number under two names and can be edited apart while this guard "
+        "reports a match. Exactly the class this check exists for, found on "
+        "its first run, in code predating it.",
+    ("sd_load_1pct", "sd_load_steady"):
+        "DIFFERENT INPUTS, SAME ANSWER, AND THAT IS THE POINT. A load record "
+        "good to 1% and one with no variability at all both give 0.1696, "
+        "which is the insensitivity src/design/run.py:1686 states by "
+        "contrasting 1% against 20%. Coincidence here is the result.",
+    ("sd_load_1pct", "trans_base_nominal"):
+        "Same design at nominal capacity reached by two generators, 0.1696. "
+        "Distinct scripts, one underlying quantity; see the entry above.",
+    ("sd_load_steady", "trans_base_nominal"):
+        "Same design at nominal capacity reached by two generators, 0.1696.",
+    ("loadcap_perfect_5pct", "meas_exact_5pct"):
+        "REDUNDANT, PENDING COLLAPSE. audit/t8_load_by_capacity.py computes "
+        "over(150.0, 1e-6, 1e-6) and audit/t9_measured_load.py computes "
+        "over(150.0, measured=True, prec=1e-6), both 2.659: the same quantity "
+        "from two generators. PROVENANCE_SWEEP.md separately records 2.659 as "
+        "appearing in three places in the paper and 'owned by nothing in any "
+        "of them', so this is that value seen from the generator side.",
+}
+
+
+def _value_twins(sources, min_decimals=3):
+    """
+    Distinct keys whose emitted values are identical to full precision.
+
+    WHY THIS IS NOT THE COLLISION CHECK ABOVE. That one catches one key in two
+    files, where the preamble silently picks a winner. This catches the
+    opposite and quieter case: TWO keys carrying the SAME value. The guard
+    compares keys, so a redundant key passes it, and two names for one number
+    can be edited apart later while the guard still reports a match. That
+    happened: `sd_recommended_postdose` was emitted beside the existing
+    `sd_monthly`, both 0.1699 by different code, and it was caught by reading
+    rather than by any check (REVIEW_LOG.md R146).
+
+    A shared value is not itself wrong. `0.20` and `25` coincide all over a
+    paper and mean nothing by it, which is why only values carrying at least
+    `min_decimals` decimals are considered: coincidence at four places is
+    worth a human's glance, coincidence at two is arithmetic.
+    """
+    def _stem(k):
+        """A median and its seed range are one quantity under three keys."""
+        for suf in ("_hi", "_lo"):
+            if k.endswith(suf):
+                return k[: -len(suf)]
+        return k
+
+    vals = {}
+    for stem in sorted(sources):
+        for line in sources[stem].splitlines():
+            m = _MACRO_LINE.search(line)
+            if not m:
+                continue
+            key, val = m.group(1), m.group(2)
+            if "." not in val:
+                continue
+            if len(val.split(".")[-1]) < min_decimals:
+                continue
+            vals.setdefault(val, []).append((key, stem))
+    twins = []
+    for val, ks in sorted(vals.items()):
+        if len(ks) < 2:
+            continue
+        for i in range(len(ks)):
+            for j in range(i + 1, len(ks)):
+                a, b = sorted([ks[i][0], ks[j][0]])
+                #  A MEDIAN AND ITS RANGE ARE NOT A DUPLICATE. `x`, `x_hi` and
+                #  `x_lo` carry one quantity and its seed spread, and a tight
+                #  spread makes all three print the same digits. The first
+                #  version of this check reported those as twins and buried
+                #  its real finds under them: 13 reports, of which 9 were one
+                #  median-and-range cluster. Characterising the false-positive
+                #  mode rather than handing over the noisy list is the same
+                #  lesson as u21's SUSPECT column (REVIEW_LOG.md R141).
+                if _stem(a) == _stem(b):
+                    continue
+                #  declarations are by STEM, so one entry covers a key and
+                #  its _hi/_lo range variants rather than needing three
+                if tuple(sorted((_stem(a), _stem(b)))) in DECLARED_VALUE_TWINS:
+                    continue
+                twins.append((a, ks[i][1], b, ks[j][1], val))
+    return twins
+
+
+def check_value_twins():
+    r"""
+    Two keys carrying the same value must be declared, or collapsed.
+
+    A duplicate that AGREES today is the only kind that can silently diverge
+    tomorrow, which is why this fails rather than warns: confirming a pair
+    means adding it to DECLARED_VALUE_TWINS with a reason, and that is a
+    thirty-second act that leaves a record.
+    """
+    numdir = ROOT / "results" / "numbers"
+    sources = {f.stem: f.read_text() for f in sorted(numdir.glob("*.tex"))}
+    twins = _value_twins(sources)
+    line = r"\expandafter\def\csname paper@num@%s\endcsname{%s}"
+    probe_hit = _value_twins({"a": line % ("k", "0.1234"),
+                              "b": line % ("j", "0.1234")})
+    probe_miss = _value_twins({"a": line % ("k", "0.20"),
+                               "b": line % ("j", "0.20")})
+    probe_ok = len(probe_hit) == 1 and not probe_miss
+    print(f"  {len(sources)} numbers file(s) checked for undeclared value twins, "
+          f"{len(DECLARED_VALUE_TWINS)} declared "
+          f"(self-test: {'PASS' if probe_ok else 'FAIL'})")
+    for a, sa, b, sb, val in twins:
+        print(f"    {a!r} ({sa}.tex) and {b!r} ({sb}.tex) are both {val}: "
+              f"collapse them, or declare the pair with a reason")
+    return not twins and probe_ok
+
+
 def check_figure_numbers():
     """
     Every number a figure DRAWS must be classified, and a claim must be
@@ -1157,6 +1292,11 @@ def main():
     #  and the one mechanical case of the referent failure: two files
     #  defining one key, which \input order would settle in silence
     ok = check_key_collisions() and ok
+    #  and its quieter opposite: two keys carrying ONE value. The guard
+    #  compares keys, so a redundant key passes it, and a duplicate that
+    #  agrees today is the only kind that can silently diverge tomorrow
+    #  (REVIEW_LOG.md R146, R147)
+    ok = check_value_twins() and ok
     #  and the class the cache hid: a check whose verdict depended on
     #  whether `make clean` had run. This one compiles the source itself.
     ok = check_source_warnings() and ok

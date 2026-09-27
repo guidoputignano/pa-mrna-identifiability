@@ -166,8 +166,16 @@ if __name__ == "__main__":
     N.update(objects_group())
     print("  the width at which the asymmetry closes ...")
     N.update(quad_group())
-    #  the author's (g4) margin: a decision, not a computation, and labelled so
-    N["margin_target"] = 0.17
+    #  (g4)'s margin target, DERIVED rather than asserted. The first version
+    #  hardcoded 0.17 with a comment saying it was a decision, which is the
+    #  rho case again: a macro asserts that a number came from the code, so a
+    #  judgement emitted by a generator is a false claim about its own
+    #  provenance. It is not a bare recommendation: the gate is 0.20 on the
+    #  marginal, and stating it against the profile means deflating it by the
+    #  measured object spread, which is where 0.17 comes from. Now it tracks
+    #  the spread instead of being pinned beside it.
+    GATE = 0.20
+    N["margin_target"] = GATE / (1.0 + N["object_spread_recommended_pct"] / 100.0)
 
     fmt = {k: "{:.2f}" for k in N if k.endswith("_pct")}
     fmt.update({k: "{:.4f}" for k in N if k.startswith(("sd_", "profile_"))
