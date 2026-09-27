@@ -66,6 +66,32 @@ Set by the author and held throughout. They are not negotiable defaults.
   as though it were complete, and between them they account for **five wrong claims from one
   cause**. An absence claim is the one kind of claim a search cannot support without stating its
   own completeness (R125).
+- **AN OWNER IS A VALUE IN A GENERATOR'S OUTPUT, NEVER A STRING IN ITS SOURCE.** To claim a
+  number is owned, RUN the generator and match the value in what it PRINTS, at the generator's
+  precision, rounded for comparison. A text match in a file is not ownership. `d0c_mechanism.py`
+  states `(0.5870 -> 0.2089)` in its docstring, `PROVENANCE_SWEEP.md` indexes
+  `06_excitation.tex:103` as owned on the strength of it, and running the script produces neither
+  value (R141). The same weakness makes a search under-report in the other direction: looking for
+  a rounded literal misses a generator carrying full precision, which is how `0.209` was missed in
+  a file that contains `0.2089`. **One definition fixes both** (R141, R144).
+- **A MACRO IS FOR A NUMBER THAT COULD MOVE, AND WRONG FOR A QUANTITY WHOSE CONTENT IS THAT IT
+  DOES NOT.** Wiring a degenerate quantity destroys the finding it was meant to protect: *"with no
+  seed-to-seed variation"* is the result, and `\num{lo} to \num{hi}` renders it as *"100.0 to
+  100.0"*. Keep such a statement as prose. Mine, at R143.
+- **DESIGN-SPECIFIC MACROS CARRY THEIR DESIGN IN THE NAME.** Wiring freezes names as much as
+  values, so `profile_recommended` and `profile_tier1` rather than `profile_nominal` beside a
+  separate `..._tier1_...` key. The recommended design's profile is 0.2002 and Tier 1's is 0.2270,
+  and one prefix for both invites a conflation that a macro then makes permanent (R143).
+- **A RATIO IS FORMED FROM OBJECTS ON ONE FOOTING.** Two numbers for the same quantity under
+  different conventions are both correct and their ratio is not. The paper is the artefact, so the
+  paper's footing wins and the audit moves to it, rather than the reverse. I formed
+  profile/marginal across a pre-dose profile and a post-dose marginal and reported 1.178; the
+  author caught it (R142, R145).
+- **THE HIGHEST-YIELD CHECK IS USUALLY OUTSIDE THE PASS'S OWN SCOPE, AND ITS TARGET IS SOMETHING
+  ALREADY ACCEPTED ONCE.** Every pass in this effort has found its best result there: the four
+  macros that already existed were the ones assumed safe and carried the footing conflict; the
+  passages assumed pending were already applied; the commit assumed to be one grid change was
+  eight scripts. **Before ending a pass, check one thing it accepted at the start.**
 - **Find the owner before recomputing.** A paper number is either generated and owned by a named
   script, or it is a prose literal. Locate the owner and read what it computes before concluding the
   number is wrong. **Four disagreements in Phase 10 were a reconstruction losing to the paper**, and

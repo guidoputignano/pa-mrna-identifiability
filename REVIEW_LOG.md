@@ -5688,3 +5688,101 @@ rather than guessed.
 **The highest-yield step was not in the plan.** Checking the four macros that **already exist** is
 what found R142's footing conflict. Nothing in the landing plan said to check those, because they
 were the ones assumed safe.
+
+### R144. RETRACTED from R141: the sweep does NOT claim that number is owned, and already applies the test I proposed to add
+
+R141 said *"`PROVENANCE_SWEEP.md:202` already indexes the line as having an owner, which it does
+not."* **That is wrong, and backwards.** I read a table of paper locations as an ownership index. It
+is not one.
+
+**Line 202 sits inside section 4 of the sweep, whose heading is "And 25 claims with no owner and no
+match anywhere."** `06_excitation.tex:103`, with its `0.587, 0.209`, is on that list. **The sweep
+classified it correctly, and before I did.**
+
+**And the sweep already applies exactly the ownership test I proposed to build.** Its section 3 is
+*"The queue: 26 claims whose own generator ran and did not print them"*, with a verdict column whose
+entries read **`NOT IN OUTPUT`**. That is running the generator and checking its output, which is the
+definition R144 was going to introduce as a correction. **The sweep's notion of ownership is a value
+in an output, not a string in a source.** Only two rows in the whole 590-line document name a script
+at all, which is what should have told me the tables were not an owner index.
+
+> **So the inference built on my error does not hold.** The `d0c` finding stands on its own terms,
+> `0.587` and `0.209` have no generator, but it **confirms** the sweep rather than impugning it. My
+> having "found" an unowned number that the sweep already lists as unowned is not a discovery about
+> the sweep's method.
+
+**What the sweep does say about the exposure, in its own words, and it is larger than the framing I
+gave it.** *"343 numbers are generated and checked, 2472 are not."* And its headline: *"Across 130
+claims this sweep found no wrong number in the paper by checking, and five wrong numbers in the
+checker."* Then the amendment it makes against itself: wiring five previously-unrun generators
+**immediately found two genuine paper-against-generator disagreements**, `t3`'s 7% and 32% against
+6.3% and 24.1%, and `t4`'s 0.288 against 0.286, both now corrected. **That is the argument for the
+machinery and the reason wiring precedes rewording**, which is the author's ordering arrived at
+independently.
+
+**This is the section 0 rule firing on me within one pass of my writing it.** The rule says the
+highest-yield check targets something already accepted once, and what I had accepted was **my own
+reading of the sweep at R141**. The correction cost nothing because it was caught before the re-run
+was built; had I built it, I would have reimplemented a test that already exists and reported its
+agreement as a finding.
+
+**The genuine gap, recorded with its size rather than implied.** The 364 generated keys have had the
+guard applied to them, which checks that the paper's macro matches the generator's current output.
+What they have not had is the readiness test of R143, which asks whether the value in the output is
+the one the sentence means. **2472 numbers in the paper are neither generated nor checked**, per the
+sweep. Those two figures are the exposure, and neither is changed by this round.
+
+### R145. The footing moved to the paper's, and three defects in one new script that the guard would have certified
+
+`audit/u22_postdose_footing.py`. The author's ruling: the object spread compares two objects at one
+design, so both must sit on one footing, and **the paper is the artefact so the paper's footing
+wins and the audit moves to it.** My 1.178 divided a post-dose marginal into a pre-dose profile and
+was the very defect this audit exists to catch.
+
+**The footing is obtained rather than reimplemented**, by building the record with
+`src/design/run.py`'s own `design_record`. **PART A is the anchor and it passes exactly:** median
+**0.1699** over 24 seeds with range **[0.1684, 0.1709]**, which is the committed value *and* the
+seed range `PHASE8_SIMULATIONS.md:623` quotes for it.
+
+**All objects on the committed post-dose footing:**
+
+| quantity | value | design |
+|---|---|---|
+| marginal | **0.1699** | recommended, 25 monthly |
+| profile, left / right half-width | **0.2678** / **0.1332**, ratio 0.497 | recommended |
+| profile, mean half-width | **0.2005** | recommended |
+| simulated spread, **standard deviation** | **0.2002** | recommended |
+| simulated spread, robust | 0.1776 | recommended |
+| **object spread** | **18.0%** | recommended |
+| marginal | **0.2002** | Tier 1, 118 monthly, with dose scale |
+| profile | **0.2268** | Tier 1 |
+| **Tier 1 gap** | **13.3%** | Tier 1 |
+
+**A clarification of the (g4) trio that is worth more than the correction.** The old framing was
+three scattered objects, Fisher 0.1695, simulated 0.1777, profile 0.2002. On one footing and with
+R132's statistic, it is **one marginal at 0.1699 and one non-quadratic width confirmed twice**, the
+profile at 0.2005 and the simulated **sd** at 0.2002, agreeing to 0.15%. The 0.1777 was the
+**robust** spread, which R132 established is the wrong comparator against a Fisher. So the spread is
+18.0% and the author's 0.17 target stands with more support than it had.
+
+**A trap to name before wiring:** `sd_tier1` is 0.2002 and `sim_spread_recommended` is 0.2002.
+Different quantities, different designs, identical value.
+
+> **Three defects in this one new script, found in one sitting, and every one would have passed the
+> guard.**
+> 1. The simulated spread used a **bare `lstsq` on the flux residual**, omitting both priors, and
+>    returned **5.37** for a quantity whose Fisher width is 0.17. Absurd enough to catch by eye.
+> 2. PART D added the dose-scale column to the **marginal only**, so Tier 1's marginal came out
+>    0.1542 against the published object's 0.2002. Wrong but plausible.
+> 3. The fix for (2) then compared a five-parameter marginal with a **four-parameter profile**, and
+>    the gap came out **-9.1%**. A negative gap is impossible, since a profile accounting for
+>    non-quadraticity cannot be narrower than the marginal at the same design.
+>
+> **Only the first was absurd on its face.** The second was merely wrong, and the third was
+> self-consistent within the script. **This is the argument for the ordering, made against my own
+> code:** wire any of the three and `check_artefacts` reports `ARTEFACTS MATCH THE CODE`.
+
+**Every reported value has independent corroboration**, which is the standard applied before any of
+them is wired: 0.1699 against the committed macro; 0.2005 against `u12`'s 0.2002 on the other
+footing; 0.2002 simulated against 0.2005 profiled by a different method; 13.3% against `u12`'s
+13.5%.
