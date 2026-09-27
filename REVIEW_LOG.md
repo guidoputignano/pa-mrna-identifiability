@@ -5235,3 +5235,54 @@ way**, and a bowel preparation should be decided on safety, burden and its own o
 because R129 stated a confident mechanism, `k_e`'s share of the relaxation rate falling as the
 marker leaves saturation, and a correct mechanism is not evidence for an effect whose sign two
 methods dispute.
+
+### R134. Fourteen single-seed prose literals in the decision section, and all four medians flatter the estimator
+
+The author called this a paper defect and treated it as one. **It is.** Section 0 requires footing
+and seed spread with every number, and records that a single-seed figure quoted without its range
+has three times been the error in this audit.
+
+**An unbounded search of `07b_decision.tex`**, patterns `num{`, a decimal and an escaped per cent,
+no head limit, 9 matching lines, shows the split cleanly. Lines **37, 40 and 43 are macro-wired**:
+`\num{cohort_fixed}`, `\num{cohort_monthly}`, `\num{kappa_monthly_pct}` with its lo and hi. Lines
+**58 to 61 and 70 to 71 are bare literals**, fourteen numbers, **every one at `seed=11`**. So the
+crisis paragraph is the unwired one in an otherwise wired section, which is why no generator
+carries its spread.
+
+**The owners, located before recomputing.** The twelve error rates and medians:
+`audit/d13_decision_therapy.py:122-129`, `D.fit_ensemble` and `D.sign_error` on the monthly design
+at `seed=11, reps=400`. The two regret thresholds: `audit/d6_regimes.py:109`,
+`fit_regime(lv9, rho, reps=400, seed=11)`, whose own comment reads **"the seed fig_decision
+uses"**.
+
+**And `d6` already knows.** Its lines 122 to 129 compute a twelve-seed spread for the error rates
+and print "(12 seeds, 400 replicates each)". The regret-threshold table then reuses the
+**single-seed** ensemble from line 109. The convention exists in the same file and is not applied
+to the numbers the paper took from it.
+
+Every literal reproduced at its own seed first, which is the anchor: 17.5%, 41.8%, 1.027 against
+the published 1.030, then 0.903, 0.086, 0.009. Then at twelve seeds:
+
+| rho | paper | mean | min | max | max/min |
+|---|---|---|---|---|---|
+| 1.00 | **1.030** | 0.884 | **0.289** | 1.079 | **3.73x** |
+| 0.50 | **0.900** | 0.686 | **0.000** | 0.968 | **7119x** |
+| 0.00 | 0.086 | 0.039 | 0.009 | 0.141 | 15.4x |
+| -0.25 | 0.009 | 0.007 | 0.005 | 0.011 | 2.47x |
+
+**All four published values are closer to the truth than their own twelve-seed mean**, so the
+estimator reads as more accurate in print than it is across seeds. The `rho = 0.5` cell is the
+worst: the published 0.900 hides a seed on which the estimate **collapses to 0.000**. The
+error-rate columns are by contrast stable, 19.1% [16.8, 24.5] and 41.6% [37.5, 44.5] at `rho = 1`,
+so the defect is confined to the median column and to the thresholds.
+
+**Consequence for the round's proposed text.** `PHASE11_PROPOSED_TEXT.md` §14, the `rho` pole,
+attaches to this paragraph. **Applying it alone would add a fifteenth unwired literal to the one
+paragraph in the section with this problem**, so §14 and the seed fix are one edit or neither.
+Recorded in §14.5.
+
+**And a self-catch of the same kind.** The first draft of §14 wrote `q* = 0.80` and `100%` as bare
+literals, which is exactly the defect it reports. Rewritten against four new macros,
+`rho_pole_q`, `rho_above_fail_pct`, `rho_above_fail_lo`, `rho_above_fail_hi`. Caught here rather
+than carried in, which is the third time this round that writing the objection down is what
+exposed the same error in my own work.

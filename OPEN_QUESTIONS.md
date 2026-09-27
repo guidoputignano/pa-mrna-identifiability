@@ -70,8 +70,26 @@ Set by the author and held throughout. They are not negotiable defaults.
   script, or it is a prose literal. Locate the owner and read what it computes before concluding the
   number is wrong. **Four disagreements in Phase 10 were a reconstruction losing to the paper**, and
   `audit/PROVENANCE_SWEEP.md` is the index of which numbers have owners.
-- **A Fisher figure that decides a verdict is confirmed by fitting before it is reported.** Report
-  the robust spread, not RMSE, and quote collapse counts with binomial intervals.
+- **A Fisher figure that decides a verdict is confirmed by fitting before it is reported.** Quote
+  collapse counts with binomial intervals, and never RMSE.
+  **Report BOTH spreads, and compare against a Fisher width on the standard deviation.** A
+  Fisher width *is* a standard deviation, and the robust `0.7413 x IQR` equals one only for a
+  Gaussian, so comparing the robust spread against a Fisher manufactures ratios below one, the
+  direction that is supposed to be impossible. Keep the robust spread to detect collapse, which
+  is what it is for (R132).
+- **When those two spreads diverge materially, THE DIVERGENCE IS A RESULT, not a diagnostic.**
+  This is the one fact that keeps arriving in disguise: **at the paper's own `k_e` prior width of
+  0.8 the posterior is not Gaussian.** It has now produced three symptoms, and each was
+  investigated as a possible defect before being recognised:
+  1. **the profile disagrees with the marginal** by 18% at the recommended design, 0.2002 against
+     0.1695, which is decision (g3) and `audit/PHASE11_TRADE_AND_PRIOR.md`;
+  2. **the profile is asymmetric**, half-widths 0.268 down against 0.133 up, ratio 0.495,
+     reaching 1.000 only by a prior width of 0.1, same document;
+  3. **the robust spread falls below the standard deviation** in Monte Carlo, by 11% to 52%,
+     `audit/PHASE11_GLUCOSE_ARM.md` section 5.5 and R132.
+  **One non-Gaussian posterior, three symptoms.** A fourth should be recognised on sight and
+  reported as evidence of the same thing, not chased as a bug. The direction is the unsafe one in
+  all three.
 - **Conventions:** audit scripts in `audit/`, findings in `audit/PHASE*.md`, constants registered in
   `src/common/params.py` with tests in `tests/test_models.py`, retractions in `REVIEW_LOG.md`, no
   expected result written into a script in advance.
@@ -478,3 +496,45 @@ falls. It joins (G-ASSAY), (g5), the tracer bolus size, and the `V_d`/renal-shar
 median `theta_hat/theta` of **1.03** is a single-seed figure; the eight-seed range is **0.484
 to 1.079**, mean 0.926. Not a wrong number, a single-seed number quoted without its spread in
 the row the section leads with.
+
+---
+
+## 13. Before round 6: the landing plan, and (g6) reclassified
+
+**`audit/LANDING_PLAN.md` answers what it would take to land this**, counted rather than
+estimated. The short form: **the blocker is one mechanical pass and two one-line decisions, not
+judgement and not volume.**
+
+- **16 of 27 proposed passages need no new numbers at all** (all of `PHASE4`, all of `PHASE10`).
+  They need a **staleness re-check** against the current `paper/`, because they were drafted
+  before Phase 10 moved three numbers and wired 22 literals, and a proposal quoting a line that
+  has since moved **applies cleanly and wrongly**. That is the same failure mode as the shallow
+  clone and the bounded search, third instance, so it runs as an explicit pass-or-fail per
+  passage and not as a reading.
+- **11 passages are blocked on 29 macros, 25 of which do not exist.** Every value is already
+  computed by a script in `audit/`; the work is promoting them into `results/numbers/` through
+  generators the build runs. Phase 10 did exactly this for five generators, so the pattern and
+  its cost are known.
+- **Two decisions gate three of those eleven: (g1)** drift term yes or no, and **(g2)** which
+  object "the binding nuisance" means. (g2) is now cheaper than when it was raised, because
+  section 0 records the profile gap, the profile asymmetry and the robust-versus-sd gap as **one
+  non-Gaussian posterior with three symptoms** rather than three separate questions.
+- **(g5) and (g6) gate nothing textual** and must not hold the pass.
+
+**(g6) reclassified from a gate to a warning to be sized.** The author's ruling: `q` decides how
+loudly the hazard is stated, not what the protocol does, because taking the load from the pump
+gives `rho = 1` whichever side of `q* = 0.800` it falls. So it is researched in parallel and
+blocks nothing.
+
+> **Research window, and the expectation is explicitly NOT a citation.** The author's recollection
+> is that glucose and insulin suppress whole-body proteolysis substantially but well short of
+> completely in the clamp literature, which would put `q` **below** the pole and therefore in the
+> escalate-everyone regime rather than the fail-to-treat one. **Recorded as a recollection to be
+> verified, not as a source**, and flagged so that the next session does not promote it by
+> repetition. This container has no egress, so it cannot be checked here.
+
+**One new defect, and it must land with the `rho` text.** `07b_decision.tex` carries **fourteen
+prose literals at a single seed**, lines 58 to 61 and 70 to 71, in a section whose other numbers
+are macro-wired. All four published medians are better than their own twelve-seed mean, and the
+`rho = 0.5` cell's published 0.900 hides a seed on which the estimate collapses to **0.000**.
+`audit/u19_seed_defect.py`, R134.

@@ -496,3 +496,85 @@ is the form the frontier is computed in and the form a prior is specified in.
   belongs in the audit record and in `OPEN_QUESTIONS.md` until one of them is costed
   against a real assay.
 - **No wiring**, as before.
+
+---
+
+## 14. `paper/sections/07b_decision.tex`: the other side of the paper's own qualification
+
+**Status: proposed, unapplied. This is the one passage of the round the author has asked to be
+drafted for print.**
+
+### 14.1 Why it is an extension and not a new result
+
+The existing paragraph already carries the qualification this text completes. Its own words:
+
+> ``The estimator fails towards declaring patients safe'' holds **only while the record tracks
+> the load**; under the protocol a decompensation actually triggers, the same estimator declares
+> every patient unsafe.
+
+That sentence names one departure from `rho = 1` and prices it, `rho <= 0`. It does not name the
+other. **The record can also OVERSTATE the load change**, `rho > 1`, and then the estimator
+returns to declaring patients safe, no longer at the benign cell's rate but at 100%. The paper's
+sweep runs `-0.25, 0, 0.5, 1` and stops, so it never enters that regime.
+
+**And the regime is reachable by a protocol, not by a filing error.** It is what an incompletely
+effective catabolism-suppressing regimen produces: the chart records the full prescribed cut
+while the glucose absorbs most of the catabolic response, so the recorded change exceeds the true
+one. That is standard emergency management, named in `01_biology.tex:160`, run electively.
+
+### 14.2 The coincidence that makes it quotable
+
+Two registered numbers pin the crossing without having been chosen with each other in view.
+Writing `d` for the dietary share withdrawal removes, `F` for the load fold an unsuppressed
+catabolic response would produce, and `q` for the fraction of that response suppressed:
+
+```
+    rho(q) = -d / ((F - 1)(1 - q) - d),        pole at  q* = 1 - d/(F - 1)
+```
+
+`params.py`'s illness row anchors `F = 1.50`, conservatively, from a 227% to 325% rise in
+3-methylhistidine excretion in sepsis and trauma. The paper's own `rho = -0.25` then implies
+`d = 0.100`, a withdrawal removing 10% of the load, **which is what a patient already on a
+protein-restricted diet should show**. Those two together put the crossing at **`q* = 0.800`**.
+
+### 14.3 Proposed text, to follow the existing sentence
+
+> The qualification cuts both ways, and the second direction is reachable by protocol rather
+> than by charting. Write the catabolic response the regimen suppresses as a fraction $q$ of
+> what an unsuppressed fast would release; with the load fold of Table~\ref{tab:params} and the
+> dietary share that $\rho = -0.25$ implies, $\rho$ passes through a pole at
+> $q^\ast = \num{rho_pole_q}$, where suppression exactly cancels the prescribed cut and the true
+> load does not move. Below it the record understates the change and the estimator escalates
+> every patient, as above. Above it the record \emph{overstates} the change, and the estimator
+> returns to declaring patients safe, no longer at the benign rate but at
+> $\num{rho_above_fail_pct}\%$, with a seed-to-seed range of
+> $\num{rho_above_fail_lo}$ to $\num{rho_above_fail_hi}$. A partially
+> effective catabolism-suppressing regimen therefore lands in the more dangerous of the two
+> failures, and the sweep of this paragraph does not reach it because it stops at $\rho = 1$.
+> **The mitigation is a recording choice rather than a physiological one: when the load is
+> delivered and metered rather than recalled, the record is the infusion and $\rho = 1$ by
+> construction, whichever side of $q^\ast$ the suppression falls on.**
+
+### 14.4 What must be true before this is applied
+
+- **The numbers need generating and wiring.** The passage above is written with `\num{}` macros
+  for that reason, and **an earlier draft of it used bare literals**, which is exactly the defect
+  section 14.5 reports in the paragraph it attaches to. Caught and corrected here rather than
+  carried in. Four new macros: `rho_pole_q`, `rho_above_fail_pct`, `rho_above_fail_lo`,
+  `rho_above_fail_hi`.
+- **The excitation channel is not priced.** `src/design/run.py:1071` holds the marker levels fixed
+  and scales only the record, so the 100% figure prices record corruption alone. A physiological
+  `rho` also shrinks the true load deviation, which shrinks the marker excursions; the retained
+  excitation runs 1.00x, 0.37x, 0.02x and then changes sign across the pole. **Near the pole the
+  100% is therefore optimistic**, and the proposed text says "above it" rather than "at it" for
+  that reason. The sign of the effect does not depend on the pole.
+- **`q` itself is unmeasured**, which is gate (g6). It sizes how loudly the hazard is stated and
+  not whether the mitigation works, since the pump gives `rho = 1` either way.
+
+### 14.5 The paragraph this attaches to is entirely prose literals, and single-seed
+
+Established in `audit/u19_seed_defect.py` and recorded at R134. An unbounded search of
+`07b_decision.tex` shows lines 37, 40 and 43 macro-wired and lines 58 to 61 and 70 to 71 as bare
+literals, fourteen numbers in all, every one at `seed=11`. **So this proposal should not be
+applied on its own.** It belongs in one edit with the wiring and the spreads, or the section gains
+a fifteenth unwired number.
