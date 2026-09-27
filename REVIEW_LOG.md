@@ -5650,3 +5650,41 @@ the spread against**, which is (g2) one level deeper than it was asked.
 `profile_nominal` = 0.2002 (`u12`). The drift group is still running and is not reported here.
 
 **Nothing is wired.** The pass stops at the conflict, per the ordering.
+
+### R143. The macro readiness table: 17 ready, 2 blocked, 3 that should not be macros, 7 deferred
+
+`audit/MACRO_READINESS.md`, produced before any wiring. All six owning scripts run for it, `u2`,
+`u7`, `u9`, `u11`, `u12`, `u13`, **all exit 0**, and every value in the READY column comes from a
+script's output rather than from a docstring or a findings file, so **the `d0c` failure of R141 does
+not repeat.**
+
+**17 READY**, among them `ke_frontier_3000_pct` 80.01, `ke_frontier_600_pct` 15.67,
+`ke_frontier_300_pct` 6.33, `ke_frontier_600_factor` 1.170, `ke_frontier_300_factor` 1.065,
+`profile_nominal` 0.2002, `profile_lo_nominal` 0.2679, `profile_hi_nominal` 0.1327,
+`profile_gap_tier1_pct` 13.5, `quad_width` 0.10, `drift_cross_pct` 95.4, `drift_premium_lo` 0.3,
+`drift_premium_hi` 1.6, `rho_pole_q` 0.800.
+
+**A naming hazard worth fixing before wiring, not after.** `profile_nominal` = 0.2002 is the
+**recommended 25-monthly design's** profile; **Tier 1's profile is 0.2270**. `profile_gap_tier1_pct`
+is Tier 1's ratio and `object_spread_pct` is the recommended design's. Two designs, similar keys,
+and a single `profile_...` prefix invites conflation in exactly the way wiring makes permanent.
+
+**2 BLOCKED**, `object_spread_pct` and `sim_spread_nominal`, on R142's footing conflict. One line
+from the author settles both, and (g4)'s 0.17 stands either way.
+
+**3 THAT SHOULD NOT BE MACROS, and this one is mine.** The proposed `rho` sentence reads *"at
+$\num{rho_above_fail_pct}\%$, with a seed-to-seed range of $\num{rho_above_fail_lo}$ to
+$\num{rho_above_fail_hi}$"*. The spread is **zero across all eight seeds**, so it renders as **"a
+range of 100.0 to 100.0"**. **The original prose said "with no seed-to-seed variation" and was
+better.** I macro-ised it at R134 to fix the single-seed defect and replaced a correct English
+statement with a degenerate numeric one. Keep `rho_above_fail_pct`, drop the other two, restore the
+clause. **A macro is right for a number that could move and wrong for a quantity whose content is
+that it does not.**
+
+**7 DEFERRED**, the breath group. Their values are row-selections from tables indexed by breath CV,
+so each needs its row named first, and naming the row is a choice rather than a lookup. Deferred
+rather than guessed.
+
+**The highest-yield step was not in the plan.** Checking the four macros that **already exist** is
+what found R142's footing conflict. Nothing in the landing plan said to check those, because they
+were the ones assumed safe.
