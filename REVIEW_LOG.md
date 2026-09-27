@@ -5608,3 +5608,45 @@ docstring says `0.2089`. `SUSPECT` **over-reports**, catching registered inputs 
 log-prior, `3.5` the half-life, `5\%` and `20\%` the load record, `0.5` the `E` requirement, `95\%`
 a confidence level) and one LaTeX length, `1.0cm`. **The run's value was in directing attention to
 the handful worth reading; the verdicts came from reading them.**
+
+### R142. The per-macro readiness check finds a footing conflict, not a wrong number
+
+Applying the `d0c` test of R141 to the 29 macros: does a generator compute the value **today**,
+and does it agree with what the paper already carries? Four of the 29 already exist, and checking
+those four first is what found the problem.
+
+| macro | value | generator |
+|---|---|---|
+| `disease_factor` | 16 | `audit/n4_theta_scope.py` |
+| `ke_needed_factor` | 2.67 | `src/design/run.py` |
+| **`sd_monthly`** | **0.1699** | `src/design/run.py` |
+| `tier1_visits_at_pub` | 118 | `audit/t2_tier1_margin.py` |
+
+**`sd_monthly` is 0.1699. I have quoted 0.1695 throughout this effort, and so has the (g4)
+reasoning built on it.** `audit/u12_prior_quadratic.py` run today prints marginal **0.1695**,
+profile **0.2002**, ratio **1.182**.
+
+**It is not an error in either place.** `PHASE8_SIMULATIONS.md:623` documents it exactly: the
+quantity is `0.1699` **as committed, with the `t = 0` draw read post-dose inside the settling
+window**, `0.1695` **with that draw read pre-dose**, and `0.1721` with it dropped. So the paper's
+committed value and my audit's value are the same quantity under two documented readings of one
+sample.
+
+> **But it decides a macro.** `object_spread_pct` is the profile against the marginal, and it is
+> **18.2%** on `u12`'s own marginal or **17.8%** anchored on the paper's `sd_monthly`. Both are
+> defensible; **they cannot both be in the paper.** Wiring either without choosing would freeze a
+> footing by accident, and the guard would then certify it. That is the hazard this ordering
+> exists to catch, and it is a footing conflict rather than a wrong number, which is a class the
+> `d0c` test was not looking for.
+
+**This also reaches (g4) and (g2).** The author's margin reasoning was *"Fisher 0.1695, simulated
+0.1777, profile 0.2002 is about eighteen per cent, so target roughly 0.17 on the profile"*. On the
+paper's own committed marginal the spread is 17.8%, and **0.17 remains the right target either
+way**, so the decision stands. What needs settling is narrower: **which marginal the paper states
+the spread against**, which is (g2) one level deeper than it was asked.
+
+**Confirmed READY, computed today and agreeing with their sources:** `ke_frontier_3000_pct` =
+80.01%, `ke_frontier_600_pct` = 15.67%, `ke_frontier_300_pct` = 6.33% (all `u9`, exit 0);
+`profile_nominal` = 0.2002 (`u12`). The drift group is still running and is not reported here.
+
+**Nothing is wired.** The pass stops at the conflict, per the ordering.
