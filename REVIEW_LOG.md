@@ -5532,3 +5532,11 @@ reconciliation against the paper first, which is a reading task and not a wiring
 risk was a proposal quoting a line that has moved, applying cleanly and wrongly. The actual state is
 that much of the work was already done and the to-do list was never updated, so the danger was not
 applying a stale edit but **applying the same edit twice.**
+
+**R138, verified after the fix.** With the grid restored to 3001 points and the crossing
+interpolated, `d6_regimes.py` now returns **+0.0973** for the managed regime at equal costs and
+**-0.3856** for `rho = -0.25` at 10:1, against true crossings of +0.0967 and -0.3853 on a step-1
+grid. So the regression is repaired to better than a thousandth of theta. **The crisis number is
+confirmed at -0.39 and the managed number is confirmed wrong: the corrected pair is +0.10 and
+-0.39, not +0.07 and -0.39.** `d6` writes no artefact and is not in the Makefile, so the change
+cannot reach the build or the guard.
