@@ -6966,3 +6966,106 @@ put them, in the document nobody had read.**
 count the author's prediction holds: the enumeration found two broken promises and a precision
 conflict against the read's one structural observation. **By consequence it does not**: the
 rediscovery cost the most and only reading found it.
+
+---
+
+### R178. The S1.20 contradiction resolved by reading, and the answer supersedes both summaries and mine
+
+**The author stopped the defect list for this and was right: the resolution is a third answer.**
+Resolved by reading `S1.16.6`, equations (S35)-(S39), page 33, **not by recomputing**, per the rule
+that a reconstruction usually loses to the paper.
+
+**What the derivation establishes.** The `Km^2` terms cancel identically, so **the margin is LINEAR
+along the unidentified direction where theta is QUADRATIC in it**, which the paper calls being better
+conditioned *"by one order"*. Therefore *"because mu is linear the sign is constant along the whole
+fibre unless the two endpoints disagree"*, and they disagree only for `speak` inside the window
+(S38). *"Outside that window the decision is determined by the data even though theta is not, and at
+the illustrative values theta is unknown there to a factor of 169."* And: *"**The window is narrow
+where it matters.** At `mtol = 40` it is (3.25, 3.77) times the patient's baseline load, **14.8%
+wide**... and an illness of the amplitude the equilibrium reduction draws... **sits well below it
+with mu > 0 at both ends**"*, the width running **1.2% at `mtol = 15`, 14.8% at 40, 67% at 160**.
+
+**So all three prior statements are wrong in different ways.**
+
+| statement | verdict |
+|---|---|
+| `S1.20` and `01_question`: *"the sign of the margin flips for the same patient with perfect data"* | **true only INSIDE the window, and both state it without the window.** As written it reads unconditional |
+| my margin document: *"the sign of mu is robust in the disease range"* | **conclusion right, argument wrong.** I argued it from `|mu|` being large at low capacity; the paper's reason is the cancellation, and better |
+| the author's proposed retreat to relative decidability only | **not required.** The ordering survives and so does the classification outside the window |
+
+**The claim the evidence supports is stronger than the fallback and weaker than the headline:** the
+sign is determined by the data outside a window in `speak` **14.8% wide at the registered `mtol`**,
+and undetermined inside it, where no width of band settles the decision. **The window's width is the
+result, and it is computable per patient from `(a,b)`**, which is what makes it a specification
+rather than a caveat.
+
+**AND THE FACTOR OF 24 HAS NO DERIVATION IN EITHER DOCUMENT.** Searched exhaustively with fixed
+strings over both extracted texts: `"factor of 24"` occurs **twice in total**, once in
+`01_question` and once in `S1.20`, and **neither derives it**; `01_question` sources it to
+*"(supplement, §S1)"*. Every other `24` is unrelated. The theta_crit sensitivities that **are**
+derived are for the **intrinsic** theta_crit and are far smaller: **1.56** over a 32-fold `Kc` range,
+**1.37** over an eight-fold `Mi` range, **1.6%** for `rho_0`. The figure the window derivation
+reports is **169**, and it is uncertainty in **theta**, not in theta_crit.
+
+**This is the third broken promise and the most serious**, because `S1.20` calls the claim it fails to
+support *"the second of the paper's four claims and the reason it ends in a data specification rather
+than a dosing rule."*
+
+**R163 is marked superseded in place** rather than corrected: the dependence it framed as a condition
+is confined to a computable window and is a property of the fibre's endpoints, not of the
+conventions' ranges. What remains new is the application to `|mu|/sd(mu)`.
+
+---
+
+### R179. The duplication is a merge, not a deletion, and the long set is the original main text
+
+**Three questions asked; the third changes the decision.**
+
+**Which is later: the SHORT set.** The long set is not supplement material at all.
+`paper/sections/A1_supplementary.tex` lines **739-745** input `01_biology`, `02_system`,
+`03_dynamic`, `04_local`, `09_validation`, `10_results` and `A1_open` — **seven original main-text
+section files, none of which `main.tex` inputs**. They keep the original numbering, and commit
+`f328ed4` names the operation: *"Rewrite Section 3 at half length, derivations to the supplement."*
+So lines 1-738 are the later purpose-written supplement and 739-745 pull in the earlier originals.
+
+**Which the pointers land in: neither.** All 19 say `\S S1`, spanning both, so they cannot
+distinguish them. A reader following one meets the short set first, pages 3 to 12.
+
+**Does either contain what the other lacks: BOTH DO, so it is a merge.** The overlap is **four
+subsections, not two sets**: `S1.5`-`S1.8` against `S1.15.7`, `S1.15.8`, `S1.16.5`, `S1.16.8`. Unique
+to the short set: the two published PK/PD models, the excitation derivations, the two conditionings,
+invariance under monotone rescaling, the Saudi context, what separates two channels, why the priors
+are what they are. Unique to the long set: the biology, Table S1's notation, the dynamic model
+including the intrinsic theta_crit, the local model **including the window derivation R178 turns
+on**, the validation protocol, the figures, and `S1.19`-`S1.20`.
+
+**And within the four pairs neither side is a subset.** `S1.7` carries the therapy's forty-two-fold
+excitation and the reach argument that `S1.16.5` lacks; `S1.16.5` carries Proposition 4's
+informational-against-statistical distinction that `S1.7` lacks. **Deleting either loses material.**
+
+So the decision is narrower and harder than which set goes: **four pairs to merge, ~19 subsections to
+leave alone.** The one clean deletion available is the duplicate remark numbering: one argument should
+not be both **Remark 4 and Remark 17**.
+
+---
+
+### R180. Two unkept promises withdrawn, not fixed, on the author's call
+
+**`07_design.tex`**: *"The supplement, \S S1, releases each assumption in turn."* **Removed.**
+**`06_excitation.tex`**: *"The one-line proof is in the supplement, \S S1."* **Removed.**
+
+**Withdrawn rather than fixed, per the author**: a sentence promising material that exists nowhere is
+worse than silence, and writing the material to match the promise would be letting a dangling
+sentence set the agenda. Both are recorded here as **withdrawn**, so the record says the promise was
+retracted and not that the gap was filled.
+
+**`S1.19` and `S1.20` are one item, not two**, and R178 handles them: `S1.19` poses the well-posedness
+question as central and open, `S1.20` answers it in the negative a page later, and **the derivation
+says both summaries overstate it.** The fix is not a pointer between them but a correction to what
+each claims.
+
+**Section 0 gains a search PROCEDURE rather than another principle**, per the author, after eight
+instances of the invisible bound: fixed strings with `grep -oF | wc -l` and never `grep -c`; no regex
+metacharacter against a multibyte character; check a pattern against a known-matching line before
+trusting a zero; normalise whitespace before searching prose; state the corpus and that no limit
+applied.

@@ -274,3 +274,138 @@ and the freeze protects values.**
 author's prediction that the enumeration would be higher yield is right by count, two broken promises
 and a precision conflict against one structural observation. **It is wrong by consequence**: the
 thing worth most was the rediscovery in 1.4, and only reading found it.
+
+---
+
+# Part 4. The contradiction with S1.20, resolved by reading its derivation
+
+**The author stopped the defect list for this, and it was the right call: the resolution is a third
+answer, and it supersedes both documents' summaries as well as mine.**
+
+## 4.1 What the derivation actually establishes
+
+The derivation is `S1.16.6`, page 33, equations (S35)–(S39). Read rather than recomputed.
+
+**Step 1. The margin is better conditioned than the parameter it is built from, by one order.**
+Parametrising the unidentified direction by `Km` and substituting the fitted pair `(a,b)`:
+
+> *"The `Km²` terms cancel identically. The margin is **linear** along the unidentified direction
+> where θ is **quadratic** in it, so the decision quantity is better conditioned than the parameter
+> it is built from, **by one order**."*
+
+**Step 2. Therefore the sign is constant along the fibre unless its endpoints disagree.**
+
+> *"What survives is the sign, and **because µ is linear the sign is constant along the whole fibre
+> unless the two endpoints disagree.** They disagree only for `speak` inside [(S38)]."*
+
+**Step 3. Outside that window the decision is determined by the data even though θ is not.**
+
+> *"Outside that window the decision is determined by the data even though θ is not, and at the
+> illustrative values **θ is unknown there to a factor of 169**."*
+
+**Step 4. And the window is narrow at the registered convention.**
+
+> *"**The window is narrow where it matters.** At `mtol = 40` it is `(3.25, 3.77)` times the
+> patient's baseline load, **14.8% wide** about its centre, and an illness of the amplitude the
+> equilibrium reduction draws..., half again the baseline load, **sits well below it with µ > 0 at
+> both ends**. Its width... closes as that convention approaches the band the patient is actually
+> observed in: **1.2% at `mtol = 15`, 14.8% at 40, 67% at 160**."*
+
+## 4.2 So which claim survives
+
+**The paper's own derivation says the sign is ROBUST outside a narrow window, and that the illness
+amplitude the model draws sits outside it with µ > 0 at both ends.** That is closer to the margin
+document's conclusion than to `S1.20`'s.
+
+| statement | verdict against the derivation |
+|---|---|
+| `S1.20` and `01_question`: *"the sign of the margin flips for the same patient with perfect data"* | **TRUE ONLY INSIDE THE WINDOW, and both state it without the window.** As written it reads unconditional. It is the strongest fair sentence about the 14.8% interior and a misleading one about everything else |
+| my margin document: *"the sign of µ is robust in the disease range"* | **CONCLUSION RIGHT, ARGUMENT WRONG.** I supported it by `|mu|` being large at low capacity. The paper's reason is better and was already in print: `Km²` cancels, µ is linear where θ is quadratic, so the sign is constant along the fibre except in a computable window |
+| the author's proposed retreat to *"relative decidability only"* | **NOT REQUIRED by this derivation.** The ordering survives, and so does the classification outside the window |
+
+**The salvageable claim is therefore stronger than the author's fallback and weaker than S1.20's
+headline:** the sign of µ is determined by the data outside a window in `speak` that is **14.8% wide
+at `mtol = 40`**, and undetermined inside it, where no width of band settles the decision because
+every point of the fibre fits equally well and they disagree on the sign. **The window's width is
+itself the result, and it is computable per patient from `(a,b)`** — which is what makes this a
+specification rather than a caveat.
+
+## 4.3 The factor of 24 has no derivation in either document
+
+**Searched exhaustively, fixed strings, both extracted texts.** `"factor of 24"` occurs **twice
+total**: `01_question` in the main text and `S1.20` in the supplement. **Neither derives it**, and
+`01_question` sources it to *"(supplement, §S1)"*, the 49-page pointer.
+
+Every other `24` in either document is unrelated: 24 intake records, `Km = 124`, 24.5%, 24.1%,
+`24%–647%`. The θcrit sensitivities that **are** derived are much smaller and are for the
+**intrinsic** θcrit: **1.56** over a 32-fold `Kc` range, **1.37** over an eight-fold `Mi` range,
+**1.6%** for `ρ0`. The figure the window derivation reports is **169**, and it is the uncertainty in
+**θ**, not in θcrit.
+
+**This is the third broken promise and the most serious**, because `S1.20` calls the claim it
+supports *"the second of the paper's four claims and the reason it ends in a data specification
+rather than a dosing rule."* **A load-bearing claim, asserted twice, sourced to a section whose
+actual derivation says something different and narrower.**
+
+## 4.4 What this does to R163
+
+**R163's provenance paragraph is superseded by the document it was rediscovering**, and its
+reasoning was weaker. It wrote θcrit's dependence on two conventions as a condition on the
+decidability result. `S1.16.6` had already established the sharper thing: **the dependence is
+confined to a computable window, and is a property of the fibre's endpoints rather than of the
+conventions' ranges.** Recorded as superseded rather than corrected, since applying it to
+`|mu|/sd(mu)` remains new.
+
+---
+
+# Part 5. The duplication, anatomised for the author's decision
+
+**Three questions were asked. The third changes the decision.**
+
+## 5.1 Which set is later: the SHORT one
+
+**The long set is not supplement material at all. It is the original main text, displaced.**
+`paper/sections/A1_supplementary.tex` lines **739–745** input seven files:
+
+```
+\input{sections/01_biology}    \input{sections/02_system}
+\input{sections/03_dynamic}    \input{sections/04_local}
+\input{sections/09_validation} \input{sections/10_results}
+\input{sections/A1_open}
+```
+
+**None of those is inputted by `main.tex`.** They carry the original section numbering, and the
+commit that did it names the operation: `f328ed4`, *"Rewrite Section 3 at half length, derivations to
+the supplement"*.
+
+So `A1_supplementary.tex` lines 1–738 are the **later, purpose-written supplement** (`S1.1`–`S1.12`),
+and lines 739–745 pull in the **earlier originals** (`S1.13`–`S1.20`).
+
+## 5.2 Which the pointers land in: neither, and that is the same finding
+
+All 19 pointers say `\S S1`, which spans both. **The pointers cannot distinguish the sets.** What a
+reader following one actually meets first is the short set, since it occupies pages 3 to 12.
+
+## 5.3 Does either contain what the other lacks: YES, BOTH WAYS. It is a merge, not a deletion
+
+**The overlap is four subsections, not two sets.** `S1.5`–`S1.8` against `S1.15.7`, `S1.15.8`,
+`S1.16.5`, `S1.16.8`. Everything else in each set is unique:
+
+| unique to the short set | unique to the long set |
+|---|---|
+| `S1.2` relation to the two published PK/PD models | `S1.13` biological background (3 subsections) |
+| `S1.3` derivations for the excitation condition | `S1.14` what is known, measured, unknown, and Table S1 (notation) |
+| `S1.4` two conditionings, kept separate | `S1.15` the dynamic model, 8 subsections, including the intrinsic θcrit |
+| `S1.9` invariance under monotone rescaling | `S1.16` the local model, 8 subsections, **including the window derivation of Part 4** |
+| `S1.10` the Saudi context | `S1.17` the validation protocol |
+| `S1.11.1` what separates two channels in general | `S1.18` the figures |
+| `S1.12` why the priors are what they are | `S1.19`, `S1.20` open and answered questions |
+
+**And even within the four overlapping pairs neither side is a subset.** `S1.7` carries the therapy's
+forty-two-fold excitation and the reach argument that `S1.16.5` lacks; `S1.16.5` carries Proposition
+4's informational-versus-statistical distinction and the confounded-by-indication argument that
+`S1.7` lacks. **Deleting either loses material.**
+
+**So the decision is narrower and harder than "which set goes":** four pairs to merge, each losing
+nothing, and the remaining ~19 subsections to leave alone. The one clean deletion available is the
+**duplicate remark numbering** — one argument should not be both Remark 4 and Remark 17.

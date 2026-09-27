@@ -87,6 +87,21 @@ requirement above.**
 
 ### (b) A positive result the paper does not state anywhere, ON A CONDITION STATED FIRST
 
+> ## SUPERSEDED IN PART BY THE DOCUMENT IT WAS REDISCOVERING (R178)
+>
+> **`S1.16.6` of the supplement, equations (S35)-(S39), already establishes the sharper result**, and
+> it was in print before this document was written. The `Km^2` terms cancel identically, so **the
+> margin is LINEAR along the unidentified direction where theta is QUADRATIC in it**, which makes the
+> sign constant along the whole fibre **unless its endpoints disagree**, and they disagree only for
+> `speak` inside a window that is **14.8% wide at `mtol = 40`**, narrowing to 1.2% at `mtol = 15`.
+> Outside it *"the decision is determined by the data even though theta is not"*.
+>
+> **So the conclusion below is right and the argument for it is not the best one available.** Section
+> 1.4's provenance paragraph, which framed theta_crit's dependence on two conventions as a condition
+> on this result, is **superseded**: the dependence is confined to a computable window and is a
+> property of the fibre's endpoints, not of the conventions' ranges. **What remains new here is the
+> application to `|mu|/sd(mu)`.** Full working: `audit/SUPPLEMENT_PASS.md` Part 4.
+
 **THE RESULT IN THE FORM IT SHOULD BE PUBLISHED IN, which is the author's:**
 
 > **Moving either convention moves all three ratios in the same direction, so the ORDERING
