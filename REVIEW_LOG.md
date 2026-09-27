@@ -6835,3 +6835,55 @@ whitespace normalisation missed it. Corrected within the same check by searching
 **Not fixed here.** It is one line in the register's annotation text, which generates supplement
 prose, and the paper is frozen. The fix is to delete the four trailing words. Reported for the
 author.
+
+---
+
+### R175. The supplement has never been read, and that is where this class of defect lives
+
+**The author's observation, and it is worth more than the defect that prompted it.** The doubled
+clause was found **by accident, while checking something else**. Not by a guard, and not by a pass
+looking for it.
+
+**And no guard would have caught it.** A doubled clause in generated prose is not a value, not a
+key, not a missing `\input` and not a broken reference. Every check in `tools/check_artefacts.py`
+would pass it, correctly, because nothing about it is inconsistent: the string is exactly what the
+generator produces. **Writing a check for it would be machinery for a class of one**, and the class
+it belongs to, prose that is well-formed and wrong, is not mechanically detectable in general.
+
+**What catches it is a person reading the document.** The delivery pass did exactly that and found
+the paper's three largest delivery problems in 45 pages. **It read `main.pdf` only.**
+
+**`paper/supplement.pdf` is 64 pages and has never been read end to end by this effort.** It is
+larger than the main document. It carries `A1_supplementary` (the fibre calculation and the channel
+exchange proof), `A2_provenance` (the full parameter register, including the row this defect was
+in), `A2_reproducibility`, and the claim register. **Every provenance annotation in the repository
+renders there**, which means it is also where the largest volume of unread generated prose sits.
+
+**So the natural next pass is a supplement delivery pass**, on the same terms as the first: read
+`supplement.pdf` alone, with `audit/`, the main document and every `.py` closed, and report what a
+reader meets. **Not another guard.** R152 was found by compiling and reading a log; this one was
+found by reading a table. The pattern is that **the unread artefact is where the defects are**, and
+the supplement is the largest unread artefact left.
+
+---
+
+### R176. My own miss is the fourth instance of one shape, not a separate lesson
+
+**The author's framing, and it is the correct generalisation.** I reported that the doubled clause
+rendered in **neither** PDF. It renders in the supplement. The grep failed because the phrase spans
+a line break and I had not normalised whitespace; a second attempt with `tr -s ' '` found it
+immediately.
+
+**That is not a new lesson about `pdftotext`.** It is the fourth instance of the shape section 0
+already names: **a search whose bound is invisible in its output.**
+
+| | the invisible bound |
+|---|---|
+| R125 | a default head limit, so a truncated search and an exhaustive one look identical |
+| R93 | a shallow clone, so history answers confidently and wrongly |
+| R157 | a tau grid that never reached the estimator's distribution |
+| **R176** | line wrapping in extracted text, so a phrase present on the page is absent from the grep |
+
+In every case the output is **well-formed and incomplete**, with nothing in it to signal which. The
+four are now listed together in section 0 under the rule they share, rather than as four rules, and
+this one is recorded as **the rule turned on the searcher rather than on the repository.**
