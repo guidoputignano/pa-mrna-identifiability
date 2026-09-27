@@ -4250,3 +4250,2205 @@ disagreement must be settled on footing evidence instead. **There is no join, so
 argument is available for all 109 claims still to wire**, not only for those after a date. That
 correction matters more than the fact it corrects, because the caveat would otherwise have been
 applied 109 times.
+
+---
+
+# Phase 11. Three computations on an existing footing: the `K_m` bypass, the sampling modality, the constant-capacity assumption
+
+*Working in `audit/PHASE11_KM_BYPASS.md`, `audit/PHASE11_SAMPLING.md`,
+`audit/PHASE11_DRIFT.md`. Proposed wording in `audit/PHASE11_PROPOSED_TEXT.md`, **unapplied**.
+Scripts `audit/u1` to `audit/u8`, each with an independent re-check sharing no code path.
+No literature, no network, no fan-out. Nothing under `paper/` is changed.*
+
+### R95. One external `K_m` closes the fibre exactly, and buys five per cent
+
+**The claim is confirmed and the conclusion drawn from it is not.**
+
+At a constant recorded load the quasi-steady record determines exactly the triple
+`A = (L+b)K_m`, `B = (L+b) - theta - k_e K_m`, `C = k_e`, and
+`theta = A/K_m - B - k_e K_m` is exact. Three `sympy` identities, all `True`
+(`audit/u1_fibre_bypass.py` part A). The record's information matrix has an **exactly
+one-dimensional** null space, relative smallest eigenvalue 4.5e-17 to 1.9e-16, whose
+eigenvector aligns with the fibre tangent to `|cos| = 1.00000000` at every capacity tested.
+The slope has the closed form `-(L + b + k_e K_m)/theta`, confirmed by finite difference to
+3e-10.
+
+**CORRECTION, AND IT IS THIS ENTRY'S OWN. PART A IS A RE-DERIVATION OF A PUBLISHED RESULT
+AND WAS WRITTEN WITHOUT FINDING IT.** `eq:invariants` at `06_excitation.tex:31` already
+publishes
+
+    Delta(m) = A/m + B + C m ,   A = K_m(L+b),  B = L+b-theta-k_e K_m,  C = -k_e
+
+together with the sentence that at a constant recorded load `(A, B, C)` is exactly what the
+data contain, four unknowns against three invariants; and `eq:fibrecl` already publishes the
+fibre. `audit/PHASE4_PI.md` section 3.2 owns the derivation, R26 and R27 extend it, and
+`audit/PHASE10_PROPOSED_TEXT.md` section 1 already drafts an insertion about it.
+**`OPEN_QUESTIONS.md` section 0 says find the owner before recomputing, and this work did
+not.** The cost was small because the re-derivation agreed, but the rule exists for the case
+where it would not have.
+
+**SO THE SIGN WAS NEVER OPEN.** It is `C = -k_e`, in print, and the convention is fixed by
+`eq:invariants`'s own form: the increment written as a function of the level,
+`Delta(m) = A/m + B + Cm`, or cleared, `Delta_i m_i = A + B m_i + C m_i^2`. Nothing needs
+pinning; what needs recording is where it already lives. Writing the residual the other way
+round, `clearance - load`, would give `C = +k_e`, and the closure is the same map either
+way: `K_m = A/(B + k_e u)` and `theta = k_e (u - K_m)` with `u = theta/k_e + K_m`.
+
+**And the two parametrisations of the fibre agree exactly.** This work parametrised it by
+`K_m` and the paper parametrises it by the load bias. Substituting `eq:fibrecl`'s
+`K_m(b) = K_m^0 L/(L+b)` into this work's `theta(K_m) = A/K_m - B - k_e K_m` returns
+`eq:fibrecl`'s `theta(b)` identically, `sympy` residual **`0`**
+(`audit/u1_fibre_bypass.py` part A).
+
+**What survives as new is parts C to E, and they are the numerical half**: that the record's
+null space IS that published fibre to machine precision, and that closing it buys five per
+cent.
+
+**And an exactly known `K_m` is worth a factor of 1.056, 1.037 and 1.058** at
+`theta = 3000, 600, 300`. Restoring rank and buying precision are different things: the
+second eigenvalue is 5.8e-8 to 1.5e-5 of the largest and `K_m` does not touch it. Closing
+the fibre by the other available route, an exact load bias, buys 0.3%.
+
+`k_e` is the load-bearing external quantity: an exact `k_e` is worth 2.09, 6.43 and 7.43,
+which reproduces `tab:keprior`'s "2.1 at nominal and 6.9 in the disease range" from an
+independent construction.
+
+### R96. The breath test does not measure `theta g(m)`, and the ratio determines a different combination
+
+**A correction to the mechanism, not to any number in the paper.**
+
+Derived from the two-channel split rather than assumed: the oxidised fraction of a labelled
+bolus is `F(m) = theta/(theta + k_e(K_m + m))`, and `sympy` reports `F` proportional to
+`theta g(m)`: **`False`**. The unknown recovery factor still cancels in a ratio, which is
+the property that matters and which survives. But a two-level ratio determines
+**`u = theta/k_e + K_m`**, not `K_m`, and capacity follows only through the record's own
+coefficients: `K_m = A/(B + Cu)`, `theta = C(u - K_m)`.
+
+Both amplifications have the same closed form with `u` for `K_m`,
+`(u+m1)(u+m2)/(u(m2-m1))`, each confirmed by finite difference.
+
+**Every figure computed on the assumed functional reproduces**: `sd(ln K_m)` of 1.435,
+0.454 and 0.366 at a 5% breath CV, `sd(ln theta)` of 0.394 and 1.003, a dose-train fold of
+6.68 against a load cut's 2.15, and a load-step-against-dose-cycle comparison of 1.272
+against 0.732 at a 10% CV. On the derived functional the same propagation gives 27.0, 4.06
+and 3.56, and the direction survives for `sd(ln u)` but not for `theta`, which becomes
+non-monotone.
+
+A finite tracer bolus biases the inferred `u` down and the bias does **not** cancel with the
+recovery factor, because one absolute bolus displaces two levels by different relative
+amounts: -0.5% at a hundredth of the pool, -9.5% at a fifth, -21% at a half.
+
+### R97. The joint Fisher: how few breath tests a marker record needs
+
+25 monthly draws plus `k` breath readings alternating the dose train's trough and peak,
+recovery factor carried free. **`k = 1` contributes exactly nothing** at every capacity, the
+recovery factor absorbing it, and that falls out of the construction rather than being
+assumed.
+
+| theta | 5% breath CV | 10% | 14% (the only published figure) |
+|---|---|---|---|
+| 3000 | **0** (the record alone gives 0.170) | 0 | 0 |
+| 600 | **34** | 133 | 261 |
+| 300 | **70** | 279 | 547 |
+
+Lengthening the marker record barely moves it: at `theta = 300` and 5%, the count is 78 at
+thirteen draws and 47 at two hundred. Breath alone is infinite at every capacity, the
+contrasts determining `u` and nothing else.
+
+**The regime complementarity is real and it is not enough.** The breath observable's
+elasticity to capacity **rises** as capacity falls, 0.155 at nominal to 0.837 at a twentieth
+of nominal, exactly against the marker's -0.915 to -0.173, the two crossing near a fifth of
+nominal. `11_scope`'s verdict survives; its stated mechanism, "a quantity the observable has
+stopped responding to", is true of the marker and false of observables in general. Proposed
+wording drafted and **not applied**.
+
+### R98. A Fisher variance is a posterior variance, and a simulation must draw every prior
+
+**Recorded because it produced a two-fold error that read as a finding.**
+
+`audit/u4_recheck_breath.py` first held `k_e` at its prior mean while drawing the load bias
+from its prior, and reported the Fisher as pessimistic by a factor of two at nominal
+capacity: a robust spread of 0.0782 against a predicted 0.1696. It was neither. Holding a
+prior-carrying nuisance at its prior mean **silently simulates the nuisance-known design**,
+and 0.0782 is `audit/u1`'s `k_e`-exact figure of 0.0813, not the paper's.
+
+Drawing every prior-carrying nuisance from its prior, 300 replicates, the ratios of
+simulated robust spread to Fisher run **0.911 to 1.165** at the paper's own `k_e` log-prior
+and 0.879 to 1.175 at a 0.2 control. The gate-relevant row, `theta = 300` at `k = 70`, gives
+0.1819 against 0.1998.
+
+An optimiser fault was found and discarded on the way: Nelder-Mead started at the truth
+stalls in the fibre's flat valley and under-disperses. It is not what caused the two-fold
+error, and replacing it with scaled trust-region least squares did not fix it. The rule is
+the finding, not the optimiser.
+
+### R99. The sampling modality: the split confirmed, the penalty damped, and home sampling priced
+
+**Confirmed on this repository's own footing.** Load-record term **16.1364**, assay term
+**14.8967**, `sigma` 21.9612, assay share 46.01% of `sigma^2`, crossover 1.0832. Measured
+rather than evaluated, from 20000 simulated draws with each error source switched on alone:
+16.0214 and 15.0436, within 1%.
+
+**The sample-count factor** against assay CV is 2.380 at 10% and 4.681 at 15% analytically,
+and **2.091 and 3.909** counted in the design itself. Undamped it would be 4.00 and 9.00, so
+the damping is 1.68 and 1.92, and the load-record term is the floor that creates it.
+
+**The re-check validates the surface and not the count, after two attempts to locate the
+count failed.** Interpolating a gate crossing between simulated grid points reports Monte
+Carlo noise as a count, because at a few hundred replicates the simulated curve is not
+monotone in `n`. Fitting `sd = c n^p` across the grid looked principled and returned
+exponents of -0.29, -0.10 and -0.22 against the -0.5 a count factor assumes, for "factors"
+of 1.60 and 7.32 that estimate nothing. Comparing the simulated spread with the Fisher at
+the same `(n, assay CV)` instead, over nine cells at 400 replicates, gives ratios of
+**0.871 to 1.142**, and the count factor is a deterministic consequence of that surface.
+
+**Tier 1 in calendar time.** 118 monthly clinic draws is 9.82 years and 118 trips. Home
+volumetric microsampling, phase-spread, three per week: 285 draws in **2.11 years** at a 10%
+assay and 567 in **4.25 years** at 15%, with no clinic attendances. One per week does not
+pay: at 15% and worse it is slower than the clinic arm.
+
+**Both placement effects are smaller than expected and one conjecture is refuted.** The
+aliasing cliff is entirely between one reachable phase and two: fortnightly sampling costs a
+factor of 67, weekly costs nothing, and phase-spreading buys nothing at any cadence reaching
+two or more. Weekday-only clinic booking costs 0.1% to 0.5%. The conjecture that a weekly
+home cadence leans on the unsmoothed diet record, prompted by its data rank being 2 of 4 at a
+constant load, is **refuted**: the two priors close both null directions and it returns
+0.1583 with the load held perfectly constant.
+
+**The binding nuisance does change**, from `k_e` to `K_m`, and the crossover sits between a
+5% and a 10% assay CV, which is exactly where the assay share of `sigma^2` goes from 46% to
+77%. **The load bias is never the binding nuisance at any assay CV**, buying 0.0002 to
+0.0004 throughout: the load-record prior `08_specification.tex:367` reports stuck near 1.05
+stays stuck and is not what a protocol should attack.
+
+**One verdict is method-dependent and is reported as such.** Profiling instead of inverting
+puts `K_m` first at every assay CV. Two optimiser faults were found and fixed before this was
+treated as a disagreement, and neither changed it; the control did. Re-running both methods
+at a `k_e` log-prior of 0.2 brings them to within 3% and both then rank `K_m` first. A
+profile is not a marginal, and a log-prior of 0.8 is a factor of 2.2. **The `K_m` verdict at
+high assay CV is robust; the `k_e` verdict at low assay CV is not.**
+
+### R100. The constant-capacity assumption has no margin on the arm that needs a decade
+
+`eq:input` fixes `theta_base` over the whole record and `04_local.tex` warrants constancy
+**over the afebrile range**. Tier 1 spends **9.82 years** of it.
+
+**At nominal capacity the question is moot**: the gate is met at 13 to 25 draws, the
+optimiser shortens the record, and the floor crosses 0.20 only at a drift of 0.67 per year,
+a halving time of one year.
+
+**On the Tier 1 arm it inverts.** With the increment at the published 14.02% the floor
+crosses the gate at about **0.9% a year**, a halving time of 76 years, and at the
+requirement's own 118 draws there is no margin at all, because 118 is by construction the
+count that lands exactly on 0.20: `sd = 0.2000` with no drift, and `rmse = 0.2020` at half a
+per cent a year. The increment's prior floors the variance at 0.174, leaving 0.098 of budget
+for bias, and a decade of any drift exhausts it.
+
+**The fix is nearly free.** A drift column costs between **0.3% and 1.6%** when there is no
+drift to find, and restores the gate at every rate tested. A decade-long record should carry
+one whether or not anyone believes in the drift, and fitting it returns an estimate of the
+drift rate for the price of one parameter.
+
+**This establishes a conditional, not a fact about patients.** Nothing here measures the
+drift rate, and the paper's kinetic argument for constancy is untouched.
+
+### R101. A first-order bias projection is exact and useless past its own validity condition
+
+The linearised bias of a constant-capacity fit is exactly the weighted least squares it
+claims to be, and it has the **wrong sign** from 60 monthly draws onward at a 5% drift. Its
+validity condition is `r` times the record's span, and the Tier 1 record sits at 0.487 of
+it. Every bias reported in Phase 11 is from an exact nonlinear fit instead.
+
+**And the exact fit had a silent bug worth recording.** Written as the difference between
+the model's flux at the model's own root and the data's flux at the data's own root, the
+residual is identically the load: both roots satisfy their own balance, so every dependence
+on `theta` cancels and the fit returns its start point. It produced biases of exactly
+`0.00000` in some cells and nonsense in others, with no error and no warning. The residual
+must evaluate the model clearance **at the observed level**. The same pattern was found and
+fixed a second time in `audit/u6_recheck_sampling.py`, which had converted a level
+difference through the local gain instead of evaluating the flux exactly.
+
+### R102. Three gates reached and reported, none proceeded through
+
+`OPEN_QUESTIONS.md` section 0 says stop at a gate and report. For this run the instruction
+was to stop that line of work, record the gate, and move to the next item. Three were
+reached.
+
+1. **No literature check is possible and none was attempted.** The container has no egress,
+   `OPEN_QUESTIONS.md` section 1 still holds, and the breath test's functional in R96 is
+   derived from *this repository's model*, not from the assay literature. The only external
+   figure used is the 14.02% repeatability, on trust, exactly as `08_specification.tex`
+   already uses it.
+2. **The bolus size relative to the marker pool is unknown**, so R96's bolus table is a
+   sensitivity and not a correction. It is also the place where the paper's
+   observation-model assumption bites hardest: the tracer is propionate, on the substrate
+   side of a map the paper states as an assumption, while the model administers it into the
+   marker pool.
+3. **No assay CV for home volumetric microsampling is available.** R99 sweeps it for that
+   reason, and which column applies is the one external measurement that decides whether the
+   trade is worth making.
+
+---
+
+# Phase 11, round 2. The requirement frontier, the carnitine lever, and a caveat larger than the finding it came from
+
+*Working in `audit/PHASE11_KE_ROUTE.md` and `audit/PHASE11_TRADE_AND_PRIOR.md`. Proposed
+wording extended in `audit/PHASE11_PROPOSED_TEXT.md`, sections 5 to 8, **unapplied**.
+Scripts `audit/u9` to `audit/u12`. No literature, no network, no fan-out, no scheduled
+check-ins. Nothing under `paper/` is changed.*
+
+**Round 1 confirmed independently by the author on a different footing.** At 118 visits an
+exact `K_m` is worth 1.007 / 1.010 / 1.011 and an exact `k_e` 3.96 / 9.36 / 8.70 at
+`theta = 3000 / 600 / 300`, against this work's 1.056 / 1.037 / 1.058 and 2.09 / 6.43 /
+7.43 at 25 visits. Different footing, same direction, same binding quantity.
+
+### R103. The scope limit is a requirement, and the requirement is about six per cent
+
+Bisecting the `k_e` log-prior width at which the record lands on the 0.20 gate, Tier 1
+record, medians over 24 intake records:
+
+| capacity | frontier `sd(ln k_e)` |
+|---|---|
+| 3000 (100%) | **0.8001**, the existing prior exactly |
+| 600 (20%) | **0.1567** |
+| 300 (10%) | **0.0633** |
+| 150 (5%) | **unreachable at any width** |
+
+The author reports 0.8, 0.177 and 0.0665. Reproduced. **The nominal row returning 0.8 to
+four figures is a consistency check and not a finding**: 118 is defined as the count landing
+on 0.20 at a 0.8 prior, so the frontier there must return the prior it was built from.
+
+`theta = 150` has no frontier rather than a large one because the increment's prior floors
+the design above the gate there whatever `k_e` is. **So the limit is two different
+statements at two capacities**: a MEASUREMENT requirement between a fifth and a tenth of
+nominal, and a STRUCTURAL one below it.
+
+### R104. Prescribed carnitine modulation: a real gain, an order of magnitude too small
+
+`eq:input_carn` makes carnitine look like the obvious lever once `k_e` binds, and
+`sec:whoto` does not close the prescribed version: its two arguments are that carnitine
+cannot touch the `theta` sensitivity's first factor, and that the dose is endogenous. **A
+dose a protocol prescribes is exogenous by construction.**
+
+**The gain reproduces the author's 1.00 to 1.04 and the number is capacity-specific.** With
+the mRNA dose scale carried at 0.8, nominal capacity gives 1.007 to 1.018; the disease range
+gives 1.21 to 1.31 under the same reading. Both are right. *"kappa" is ambiguous in this
+repository's own vocabulary*, `t2_tier1_margin.py` using it for the mRNA dose scale, and the
+ambiguity is worth a factor of ten in the gain.
+
+**The negative result is not "the swing buys nothing".** Best case, share 0.8 and amplitude
+50%: 1.249x at nominal, 1.338x at `theta = 600`, 1.311x at 300, 1.297x at 150. What fails is
+the size of the gap: **3.0x, 6.0x and 11.8x still short of the gate.** Stated as "buys
+nothing" a reader would try to stack it with something else; stated this way the number says
+how much that something else must be worth.
+
+**Judged on the frontier, which is the fair test**, the swing is a weak `k_e` measurement:
+at the physical ceiling of amplitude 1.00, a carnitine dose swinging between zero and twice
+the prescribed mean, `sd(ln K)` reaches 0.4687 against a frontier of 0.0633, short by
+**7.4x**.
+
+### R105. A parameterisation error caught by a check the first version did not have
+
+The first carnitine model carried the two unknowns as the non-carnitine baseline and the
+scale, each at the paper's 0.8 prior. At a carnitine share of 0.8 that puts a 0.8 prior on a
+term carrying a fifth of the clearance and another on the term carrying four fifths, which
+constrains the TOTAL better than the paper's single prior on it. **It reported gains up to
+2.97x and the gain was the reparameterisation.**
+
+The honest coordinates are the total and the share, with the total carrying the paper's own
+prior because it is a prior on the same object. **The check that catches it is that at zero
+amplitude the arm must reproduce the paper's design exactly**, and it now does over twelve
+cells to `0.00e+00`: 0.169646, 0.809698, 1.580037, 3.058346. A reparameterisation that
+changes an answer at zero perturbation has changed the model, and nothing else in the run
+would have said so.
+
+### R106. The proposed mechanism for the carnitine result is refuted, and the correction is more useful
+
+The mechanism offered was that modulating an input known up to scale pins the SCALE and not
+the BASELINE. It does not. At `theta = 300` and a share of 0.5, as the amplitude goes from 0
+to 50%, the total `sd(ln K)` goes 0.7228 to 0.5594 and the share `sd(ln f)` goes 0.8000 to
+0.5241: **both improve by almost exactly as much, and neither is preferentially pinned.**
+
+The real mechanism is quantitative rather than structural. The swing does buy information
+about the total alternative clearance, by about a third, and `sd(ln theta)` in the disease
+range is governed by that total, so it improves by about a third too. **Nothing is
+cancelled. The gain is real and small**, and why it is small is the frontier.
+
+### R107. The model's `k_e` is not the urinary clearance a timed collection measures
+
+The modelling question was put before the costing and it decides it. **No, on three counts
+that do not overlap.**
+
+1. **Units.** `k_e = CL/V_d` needs a volume of distribution for 3-HP, which nobody has. The
+   `k_e` row of `src/common/params.py` already performs exactly this conversion for its
+   methylmalonic-acid analogue, 103 mL/min over 0.48 L/kg. **The `V_d` does as much work as
+   the clearance.**
+2. **Channel coverage.** `params.py` registers `k_e` as `kind=LUMPED`, and that file's own
+   taxonomy says a lumped constant **"cannot be checked against a direct measurement even in
+   principle"**. *The register had already answered this about its own constant and the
+   answer had not been carried into the design discussion.*
+3. **Species.** The parent's alternative channel is carnitine conjugation, which makes
+   propionylcarnitine. That is not 3-HP, so a 3-HP collection cannot see the channel the
+   parent says dominates.
+
+`CL_r/V_d` is a **lower bound**, not an estimate. Writing `k_e = CL_r/(V_d f)`, the three
+uncertainties add in quadrature, so each alone must sit under the frontier: **6.3% at
+`theta = 300`, or 3.66% each if all three are equal.** A `V_d` for 3-HP and a renal share
+known to a few per cent are both further from the published record than the clearance is.
+
+**What goes on the gate list is therefore a pair and not a single literature number**: a
+volume of distribution for 3-HP, and the renal share of its non-PCC disposal. The route
+keeps a use it was not proposed for: it bounds `k_e` from BELOW where the analogue bounds it
+from above, and `sec:scopeprec` shows the working band moving across a factor of eight in
+the VALUE of `k_e`.
+
+### R108. The (n, k) trade curve, and why breath tests come in pairs
+
+`u3`'s table fixes the record at 25 draws and so reads as "breath tests instead of a
+design". The decision-relevant object is the curve of pairs that reach the gate.
+**Anchor: the `k = 0` column returns 118 draws with `sd = 0.2000`**, reproducing
+`08_specification.tex:126`, once `t2_tier1_margin.py`'s own record convention is matched.
+`u3`'s convention gives 141 instead, the difference being a dose train taken from the first
+dose rather than at steady state and a lognormal rather than Gaussian intake: **a footing
+difference the size of the whole Tier 1 row.**
+
+At nominal, Tier 1, 5% breath CV: 118, 106, 92, 72, 52, 35, 19 draws at k = 0, 2, 4, 8, 16,
+32, 64. **The first sixteen breath tests are worth five to seven monthly draws each and the
+next forty-eight about one.** Invisible at fixed `n`.
+
+**In the disease range the curve is dashes and then a cliff**, nothing at `k = 16` and 59
+draws at `k = 32` for `theta = 600`. No number of draws helps below the threshold because
+`sd(ln k_e)` is held at 0.8 by its prior. **The trade curve and the frontier are the same
+statement in two coordinates**, and breath tests substitute for the external `k_e`
+measurement rather than adding to the record.
+
+**`k = 1` buys exactly nothing**, tested at three capacities, three record lengths and two
+breath CVs: largest difference from `k = 0` over eighteen cells is **`3.673e-13`**. Not
+close, identical. The free recovery factor is determined by one reading and nothing else.
+**So breath tests are bought two at a time, and a protocol booking an odd number books one
+it cannot use.**
+
+### R109. The profile-marginal caveat attaches to every Fisher figure at this prior width
+
+Round 1 reported the disagreement unresolved and flagged the narrow-prior control as
+pointing at the resolution. **It does, and the consequence is larger than the finding.**
+
+Tested at the paper's own headline designs rather than at the ranking it was found on:
+
+| design | marginal at 0.8 | profile at 0.8 | ratio | ratio at width 0.2 |
+|---|---|---|---|---|
+| recommended, 25 monthly, nominal | **0.1695** | **0.2002** | 1.182 | 1.004 |
+| Tier 1, 118 monthly | **0.2000** | **0.2270** | 1.135 | 1.000 |
+| disease range, 25 monthly, theta=300 | 1.5820 | 3.3936 | 2.145 | 1.145 |
+
+**And measured directly, with no second method**: the profile's left and right one-sigma
+half-widths are equal for a quadratic posterior, and at the recommended design and a 0.8
+prior they are **0.2679 and 0.1327, a ratio of 0.495**, reaching 1.000 by a width of 0.1.
+That measure cannot be an artefact of two implementations disagreeing. In the disease range
+the downward half does not close at all, **independently reproducing `11_scope`'s own
+sentence** that the profile interval does not close below, from a different construction.
+
+**Three objects, and the truth is between them.** At the recommended design: Fisher marginal
+0.1695, simulated MAP sampling spread 0.1777 (R98, 300 replicates), profile 0.2002. They
+coincide for a quadratic posterior and this one is not.
+
+**It overturns no number.** Every figure stands as what it is, a Fisher standard deviation at
+a stated prior width, and `rem:curvature` already warns about the distinction. What is new is
+that the gap is a function of the `k_e` prior width and that at the width the paper carries
+it is large enough to matter at the gate: **the recommended design's 0.170 becomes 0.200
+under a profile of the same posterior, which is the target exactly.** Which object the gate
+is stated against is a question the paper does not answer and now has to.
+
+**The direction is the unsafe one.** The symmetric interval understates how far capacity may
+fall below the estimate and overstates how far it may rise, and whether capacity clears a
+threshold is a question about the lower tail.
+
+### R110. Two more errors of the same family, both caught by an anchor
+
+**A breath row given the marker's own sensitivity to the dose scale.** The marker's flux
+responds to the increment scale directly, `Delta g(m)`, of order 200 in flux units; a breath
+reading responds only through the level, `k_e Delta g/(S J)`, of order `1e-3`. Appending the
+marker column to the breath rows gave two breath tests the leverage of a hundred draws and
+made the Tier 1 record collapse from 185 draws to 11. **Caught because the drop was not
+credible, then fixed by deriving the correct entry.**
+
+**A trade curve on the wrong record convention.** The `k = 0` column read 141 where the
+paper says 118, which is not an error but is not an anchor either. Matching
+`t2_tier1_margin.py` exactly returns 118 and `sd = 0.2000`.
+
+Both belong with R101's family: **the check that catches this class is an anchor to a number
+someone else already owns**, not a re-reading of the code.
+
+---
+
+# Phase 11, round 3. The register's own requirement, and the one route to `k_e` whose obstacle is cost
+
+*Working in `audit/PHASE11_KE_MEASUREMENT.md`. Proposed wording in
+`audit/PHASE11_PROPOSED_TEXT.md` sections 10 to 12, **unapplied**. Scripts `audit/u13` and
+`audit/u14`. No literature, no network, no fan-out, no scheduled check-ins. Nothing under
+`paper/` is changed.*
+
+**Round 2's three corrections all confirmed by the author**: `eq:invariants` is in print so
+the sign never needed pinning, the carnitine mechanism is refuted, and the frontier
+reproduces.
+
+### R111. The register understates its own requirement by 7 to 17 times, and the number is not wrong
+
+`src/common/params.py:206`, the `k_e` row of the register **that generates the paper's
+parameter table**, says of the parameter it calls "the priority gap" that
+`sec:designsec` "needs it within a factor of about three".
+
+**The owner was located before recomputing this time.** `src/design/run.py`
+`spec_numbers()` solves `brentq(sd_of(monthly, ke_prior=x) - 0.20)` at the module default
+`P.theta = 3000`. So the published figure is the **nominal-capacity** requirement on the
+25-draw record. It returns a log sd of **0.9803**, a factor of **2.665**, against
+`audit/u9_ke_frontier.py`'s **0.9815** at the same footing: two code paths, one quantity,
+**0.12% apart**. `07_design.tex:60` is already wired to the macro and prints 2.67. **Nothing
+here is a wrong number, and PHASE7's reading of "2.95" was stale.**
+
+**What is wrong is that the requirement has a capacity axis and is stated without one.** On
+the Tier 1 record the frontier is 0.8001 at nominal, **0.1567 at a fifth of nominal and
+0.0633 at a tenth**, and unreachable at a twentieth. Against the prose "about three"
+(`ln 3 = 1.0986`) that is **7.0x and 17.4x tighter**; against the generated 2.67, 6.3x and
+15.5x.
+
+**The reader this misleads is the one costing the measurement**: "a factor of about three"
+reads as an ask a literature bound might satisfy and a factor of 1.07 does not. And one row
+below the live range the axis changes character, from a measurement requirement to a
+structural limit, which a single unqualified factor cannot express either way.
+
+### R112. `k_e` is a relaxation rate, and the units objection does not reach it
+
+R107 closed the timed urine collection on units, channel coverage and species. **Those close
+a collection, not the object.** `params.py`'s own `k_e` row says `k_e = 5/day` is "a marker
+half-life of `ln2/5 = 0.139 d`, about 3.3 hours". A relaxation rate is read off a
+concentration-time curve: no volume of distribution, no collection completeness, no species
+extrapolation. **R107's first count does not apply to a curve at all**, and R107 should be
+read as closing one instrument rather than the quantity.
+
+**And the local model cannot see it at any density**, confirmed rather than assumed: the
+same 118 samples reallocated from monthly to three-hourly move `sd(ln k_e)` from 0.7971 to
+0.7968 at nominal and 0.5425 to 0.5221 at a tenth of it. `eq:local` is a balance with no
+state, so it has integrated the relaxation away and answers no by construction.
+
+### R113. The dose is the wrong perturbation, and the flux share is the wrong diagnostic
+
+The favourable-looking quantity is `k_e`'s share of the **flux**, 15.5% / 52.8% / 70.8% /
+83.7% as capacity falls. **A relaxation measurement does not depend on it.** It depends on
+`k_e`'s share of the **relaxation rate** `J = (theta + Delta) g'(m) + k_e`, and the dose
+adds the very enzyme term `k_e` competes with in `J`:
+
+| theta | `k_e/J` at the trough | `k_e/J` just after a dose | flux share |
+|---|---|---|---|
+| 600 | 0.438 | 0.072 | 0.510 |
+| 300 | **0.552** | **0.076** | 0.686 |
+| 150 | 0.626 | 0.077 | 0.819 |
+
+**The dose suppresses it by a factor of seven.** And the cost lands exactly there: at
+`theta = 300`, **sixteen inpatient days each spanning a dose move `sd(ln k_e)` from 0.5430
+to 0.5277**, about two per cent. The route is not weak; the placement is wrong. *Two
+quantities that both read as "how much of the elimination is `k_e`" are not the same
+number, and only one of them is the one a relaxation measures.*
+
+### R114. Perturbing at the trough works, and the tolerable level caps it
+
+A prescribed load step at the trough, one 24 h hourly burst on the Tier 1 record, takes
+`sd(ln k_e)` from 0.5430 to **0.2846** at `theta = 300` at a +50% step. **One such day is
+worth what sixteen post-dose days are not.**
+
+**But the direction that helps most raises the marker.** `src/common/params.py` sets
+`m_tol = 40` uM, and the largest step whose whole burst stays under it is **+40% at
+`theta = 600`, +15% at 300 and +5% at 150**, buying 0.4635, 0.4798 and 0.4546 against
+no-burst values of 0.6565, 0.5430 and 0.4721. **The amplitude that would close the gap is
+the one the clinic exists to prevent, and the amplitude that respects the paper's own
+tolerable level buys almost nothing.**
+
+**A fast is the safe direction** and it works: 0.5430 to 0.3685 in one admission at
+`theta = 300`.
+
+**The route is assay-limited, not physics-limited**, which is the favourable half. A 50%
+fast with a 1% burst assay gives, over 1 to 16 admissions, 0.2005 to **0.1121** at
+`theta = 300` against a frontier of 0.0633, and 0.2780 to **0.1683** at 600 against 0.1567.
+
+**So the verdict is neither the yes the route promised nor the no the collection got.** It
+is the only one of the three priced routes whose obstruction is a cost rather than an
+unmeasured constant or a dose nobody would give, and it is still short by a factor of one
+to two at a price of sixteen admissions and an assay no clinic runs today. **A 1% marker
+assay is asserted as plausible in an inpatient series and not sourced; it joins the gate
+list as the input the conclusion is most sensitive to.**
+
+### R115. Two decisions settled by the author, and what the first one costs
+
+**(g3) The gate is stated against the profile.** It is the object that does not assume the
+quadratic approximation R109 shows fails at the paper's own prior width, and the asymmetry
+runs the unsafe way. All three objects are recorded at the recommended design; the gate is
+the profile.
+
+**That has a consequence which should be stated and not absorbed: the recommended design no
+longer passes its own gate.** The profile at the recommended design is **0.2002** against a
+target of 0.20. By two ten-thousandths, but on the object the target is now stated against.
+
+**(g4) Tier 1 is restated with a margin, in the frontier's currency.** A count that solves
+`sd = 0.20` lands on the target by construction and any margin added to it is arbitrary; a
+requirement on an input is a statement about how well something must be known, which a
+protocol can act on and a measurement can be judged against. The margin's size is the
+author's to set and the proposed text leaves it blank rather than inventing one.
+
+**A rounding trap in the new currency, recorded before it bites.** At these widths a factor
+and a log sd diverge: the frontier at a tenth of nominal is a factor of **1.07** and a log
+sd of **6.3%**, and a reader who reads "a factor of 1.07" as "about one" has lost the
+requirement entirely. The register may be better served stating the log sd directly, which
+is the form the frontier is computed in and the form a prior is specified in.
+
+### R116. WITHDRAWN: the fast arm of the burst route, and it contradicts an existing result
+
+R114 priced a 50% fast at the trough as the safe lowering step and reported **0.1121** at a
+tenth of nominal at a 1% assay and sixteen admissions. **In propionic acidemia a fast is not
+a load reduction.** Acute restriction triggers catabolism, which releases the precursor amino
+acids from muscle and raises the load.
+
+**The author raised this and verifying it made it stronger than stated.** The premise offered
+was that the model cannot see catabolism. What the repository shows is that one part of it can
+and already does. `01_biology.tex:151-156` names "infection, **fasting**, surgery, trauma" as
+the triggers and says "the propionate load rises sharply precisely when the patient is eating
+nothing"; `:160` gives intravenous glucose as the management consequence. And
+`07b_decision.tex:55-62` **has already priced a prescribed cut**: with the recorded load as
+`L_base + rho (s_true - L_base)`, `rho <= 0` is "crisis protocol, where prescribed intake is
+cut while catabolic muscle breakdown supplies the load", and at `rho = -0.25` the sign error
+is 100% with a median `theta_hat/theta` of **0.009**.
+
+The fast arm assumed `rho = 1`. So its numbers do not merely lack support, **they contradict
+a published result about the same intervention, and the published one is the pessimistic
+one.** Struck through rather than deleted in `PHASE11_KE_MEASUREMENT.md` section 2.6.
+
+### R117. (g5) A gate: the identification model has no catabolic coupling
+
+`eq:local` carries `L` as a freely dialable input. The catabolic response lives in the prose
+and, as `rho`, in a **recording asymmetry**, which says how faithfully the record tracks the
+true load and not that a prescribed cut *causes* the true load to rise.
+
+**Recorded as a gate rather than a result, per section 0.** The audit's reading, which is not
+the decision: **not needed** for anything in print, whose load variation is spontaneous intake
+at 10% and whose decompensations are already modelled as load spikes; **needed** before any
+prescribed reduction is priced, and `rho` is the hook it would attach to. Nothing that prices
+a prescribed load reduction should proceed until it is settled.
+
+### R118. The substitute priced, and the provenance of its amplitude is load-bearing
+
+Suppressing gut-derived propionate removes substrate at source with no catabolic stress, so it
+has the property the fast lacks, and it is routine management. **The earlier negative does not
+transfer**: `u2` part E closed a load step for a breath **ratio**, which wants the widest
+level contrast; this is the input whose **relaxation** carries `k_e`, at the trough where
+`k_e/J` is 0.552 against 0.076 post-dose (R113).
+
+**Two registered numbers are in play and only one is an amplitude.** `params.py`'s `s_base`
+row gives gut flora "at least 22.2 +/- 8.5%" as a share of **production**, which is what
+bounds a load step. Thompson 1990's 41% (range 12 to 76) is a fall in urinary **metabolites**,
+a different object, and is not a justified step amplitude. The verdict differs between them,
+so the sweep spans both and marks which is which.
+
+**An interior optimum in the onset, at about 3 h, and an ideal step is not the best input.**
+Over a fixed 24 h window an instantaneous step has finished relaxing in about three relaxation
+times and the remaining draws sit on the quasi-steady locus, where R112 found no `k_e`
+information at any density. **And the slow end does not converge to the record-only floor**,
+as an earlier draft asserted: at a one-week onset the 28-day window gives 0.5295 against the
+floor's 0.5430, and the residual 2.5% is 24 extra samples spanning two dose cycles, not a
+relaxation. At that onset the design has stopped being a relaxation measurement.
+
+### R119. A DEFECT in this round's own code, found by the re-check, and it reversed the verdict
+
+`audit/u16_recheck_gut.py` re-derives `sd(ln k_e)` in **level** space by **Monte Carlo** with
+its **own RK4** and its **own quadratic solve**, sharing no code path with `u15`. The weak arms
+came out 1.06 to 1.23 times `u15`'s Fisher, which curvature could explain. The strongest arm
+came out **0.500 times it**, and **a sampling spread cannot beat a correct Fisher**, so that
+direction is a defect.
+
+Three candidates were tested rather than argued. **The declared sigma convention: refuted
+twice**, since substituting `u15`'s own convention made the gap worse (1.324 against 1.232,
+and 0.473 against 0.501). **A prior mixture: refuted by algebra**, since for a linear Gaussian
+model the marginal spread over a truth drawn from the prior equals the posterior sd exactly,
+`s²τ²/(s²+τ²) = σ²`, so drawing from the prior should give a ratio of one. **Dropping the
+record isolated it**: burst-only gave 0.1304 against 0.3538, a ratio of 0.368.
+
+**The defect.** Every sensitivity column against a central finite difference of the level
+trajectory alone: `dln m/dln theta` 3.9e-09, `dln m/dln Km` 2.9e-09, `dln m/dln ke` 3.1e-09,
+and **`dln m/db` 2.2e-01**. `u15` inherited a load-bias forcing of exactly `1.0` from
+`u14.burst_rows`, where it is **correct** for what `u14` models and says it models, a
+prescribed change of known absolute size with the bias added after it. A gut-derived share is
+not that: it removes a **proportion** of the load actually produced, so
+`L(t) = (L_tot + b)(1 - amp f(t))` and `dL/db = 1 - amp f(t)`.
+
+**This is the third time in this audit that a sensitivity disagreed with its own forward
+model** (R101 twice, now this), so the finite-difference check is permanent in `u15.part_f`
+rather than a one-off. After the fix every column agrees to better than 3e-08.
+
+**What it changed.** Burst-only 0.3538 to **0.1365**, against the independent Monte Carlo's
+0.1304. With the record at `theta = 300`, 0.1561 to **0.0588**. The burst is **2.6x more
+informative** than reported, because a smaller `b` column leaves less of the `k_e` signal to
+be explained away along the near-collinear `b` direction.
+
+> **The verdict reversed.** Before: the route reached neither frontier at the defensible
+> amplitude and the amplitude was the obstacle. After: it reaches both at **0.0806** and
+> **0.0588** given a 6 h onset, and the obstacle is the onset, since metronidazole's one-day
+> time constant misses the tighter frontier by 2.0x. **The actionable number is the slowest
+> onset that still reaches the frontier: 16.4 h at a fifth of nominal and 6.6 h at a tenth,
+> at the registered share; 13.6 h at one sd above it; 28.2 h at the top of Thompson's range.**
+> So whether the registered route works is a question about the gut-derived share, which is
+> already on the research list, rather than a call for an intervention nobody has.
+
+**The re-check earned its keep**: its purpose was to confirm a number and it found the number
+wrong, in the direction that mattered, on the one arm that decided the verdict. The weak arms
+would not have raised the question.
+
+### R120. WITHDRAWN: a diagnostic of my own that reintroduced R98's error
+
+While diagnosing R119 I tested whether the gap was a prior mixture by holding `ke_true` at the
+register value across replicates, and read the resulting 0.5047 against the Fisher's 0.5430 as
+confirmation. **That is R98's error**, the one `u16` was built to avoid: holding a
+prior-carrying nuisance at its prior mean is not the conditional object it looks like, because
+the prior residual is then centred exactly on the truth and the estimator gets information for
+free. At nominal capacity the same diagnostic returned `sd(ln k_e) = 0.0557` from a record
+whose Fisher says 0.797, which is what exposed it.
+
+Two corrections to my own reasoning, recorded because the second is the more useful. First,
+the conclusion is withdrawn and the algebra in R119 refutes the candidate outright. Second, I
+initially called the 0.0557 impossible, and it is not: it is exactly what the linear theory
+predicts once the data carry no information and the truth sits at the prior mean, where the
+estimate equals the truth by construction and the spread goes to zero. **The value was
+correct and the object was wrong**, which is the same mistake as R98 rather than a new one,
+and calling it impossible would have sent the next reader looking for a bug that is not there.
+
+### R121. The same convention question does not touch `u14`'s surviving arms
+
+`u14`'s forcing of `1.0` is self-consistent with its stated model, so `u14` is not wrong the
+way `u15` was, and its fast arms are withdrawn on other grounds. What survives and could be
+affected is its safe **raising** step. For a raising step the factor is `(1 + step) > 1`, so
+the `b` column grows and `k_e` should get worse. **Tested rather than asserted:**
+
+| theta | step | peak m | `dL/db = 1` | `dL/db = 1+step` | no burst |
+|---|---|---|---|---|---|
+| 600 | +40% | 38.44 | 0.4635 | 0.4892 | 0.6565 |
+| 300 | +15% | 38.72 | 0.4798 | 0.4860 | 0.5430 |
+| 150 | +5% | 39.96 | 0.4546 | 0.4555 | 0.4721 |
+
+The prediction holds and **the reported conclusion that the safe raising step "buys almost
+nothing" is reinforced, not weakened**. Recorded so that R119 is not read as putting every
+load-step number in the audit in doubt: it puts the proportional ones in doubt, and the
+proportional ones are `u15`'s.
+
+### R122. (G-ASSAY) The two assay gates are one question in two settings
+
+The home-microsampling CV and the 1% inpatient assay were two gates. They are the same
+question, **how precisely can this marker be measured**, and one search answers both, so they
+are merged. Setting one, **home volumetric microsampling**: no CV exists, and it decides
+whether three samples a week finishing Tier 1 in 2.11 years at 10%, or 4.25 at 15%, beats 9.82
+in clinic. Setting two, **an inpatient series from one line in one run**: 1% is asserted and
+unsourced, and it is what puts the burst route in the regime where it reaches a frontier at
+all. The two settings differ in what makes a tight CV plausible, so one source will not answer
+both, but one search will find both.
+
+### R123. "Which input dominates" is not well posed without naming the regime
+
+`u15`'s docstring asserted the onset decides the route. A later revision of the same file
+asserted the opposite and computed a span ratio to support it. **Both are wrong as stated**,
+and both are left in the file so the correction is visible. Each input swept over its
+registered range at a tenth of nominal, as a ratio of largest to smallest:
+
+| regime | amplitude span | onset span | which binds |
+|---|---|---|---|
+| 5% assay, 1 admission | x1.41 | x1.14 | amplitude, by 1.2x |
+| 1% assay, 16 admissions | x4.34 | **x5.94** | **onset**, by 1.4x |
+
+With a clinic assay and one admission the record dominates the posterior and the amplitude
+moves it more. With a 1% assay and sixteen admissions the burst dominates and the onset binds.
+The first claim was right in the regime that decides the verdict and wrong in the cheap one;
+the second was right in the cheap one and wrong in the deciding one. **A span ratio that looks
+like evidence for one input is evidence only at the operating point where it was computed.**
+
+### R124. What the re-check licenses after the fix, and the one claim it refuses
+
+With R119 corrected, `u16` against `u15` at `theta = 300`:
+
+| cell | `u15` Fisher | `u16` Monte Carlo | ratio |
+|---|---|---|---|
+| record only, no burst | 0.5430 | 0.6690 | 1.232 |
+| 22.2%, ideal step | 0.4762 | 0.5688 | 1.194 |
+| 22.2%, 1 day onset | 0.5188 | 0.5645 | 1.088 |
+| 41%, ideal step | 0.3711 | 0.4144 | 1.117 |
+| **22.2%, 6 h, 1%, 16 adm** | **0.0588** | **0.0781** | **1.327** |
+
+**Every ratio now exceeds one, which is the only direction available**: a sampling spread can
+be wider than a local quadratic and cannot be narrower. The impossible direction is gone, and
+it is what located the defect.
+
+**The `theta = 300` headline is therefore withheld.** 0.0588 against a frontier of 0.0633 is a
+**7% margin**, the method spread is **9% to 33%**, and the independent method gives 0.0781 for
+that exact cell, which **misses**. So the honest statement is: **reaches at a fifth of nominal
+with a 1.9x margin that survives the spread; undecided at a tenth.**
+
+**This is (g4)'s own lesson turned on the audit.** (g4) says a count defined to land exactly
+on the gate carries no margin and will fail under any object but the one it was defined
+against. A *verdict* computed to land within 7% of a frontier has the same defect, and the
+fact that it is the audit's verdict rather than the paper's does not exempt it. Recorded
+because the temptation to report "it reaches the frontier" was real and the margin does not
+support it.
+
+### R125. A process defect behind five wrong claims: asserting absence from a bounded search
+
+Five of my claims across this effort were wrong for one reason, **reasoning from a bounded
+search as though it were complete**. Twice it was a shallow clone answering a history question
+confidently and wrongly (R93). Three more times it was a grep truncated at a default head
+limit, where a high-frequency match filled the quota and hid the low-frequency one that
+answered the question: `01_biology.tex:151-160` names fasting and catabolism explicitly, and
+`params.py` registers the gut share with the metronidazole fall attached, while
+`decompensation` matches crowded both out.
+
+**A truncated search and an exhaustive one look identical in the output**, which is exactly
+what a shallow clone does to a history question, and it is why re-reading cannot catch either.
+Added to `OPEN_QUESTIONS.md` section 0: **never assert that something is absent from a bounded
+search**; run it unbounded and state the patterns, the paths, and that no limit was applied.
+
+**It paid on the first use.** The unbounded read of `params.py` for the production partition
+returned the clause *"a protein-restricted diet lowers the first two deliberately"*, which is
+the additivity R129 prices, in the register's own words instead of as an assumption of mine.
+
+### R126. The elective glucose-protected withdrawal reaches the frontier, and settles R124's withheld cell
+
+`01_biology.tex:160` gives intravenous glucose with protein withdrawal as standard emergency
+management. Run **electively**, it is the first candidate with all three properties: a **fast
+onset** (hours, against metronidazole's bacterial turnover over days, R118), **no catabolic
+penalty** (suppressing catabolism is what the glucose is for, which is what withdrew the fast,
+R116), and a **measured load** (infused, not recalled).
+
+Its amplitude anchor is the register's amino-acid catabolism share, **51.7%** (range 24.5 to
+66.4). At a 1% assay, sixteen admissions and a 6 h onset:
+
+| arm | theta | sd(ln k_e) | frontier | margin |
+|---|---|---|---|---|
+| bowel prep alone, 22.2% | 300 | 0.0642 | 0.0633 | 0.99x, undecided |
+| **glucose + withdrawal, 51.7%** | **600** | **0.0548** | 0.1567 | **2.86x** |
+| **glucose + withdrawal, 51.7%** | **300** | **0.0281** | 0.0633 | **2.25x** |
+
+R124 withheld the tenth-of-nominal cell at 0.0588 against 0.0633, a 7% margin inside the 9 to
+33% method spread. **At the catabolism share the margin is 2.25x, which clears it.** The
+anchor for the construction is exact: with the two load biases collapsed back into one, `u17`
+reproduces `u15` to **0.00e+00** across four cells, so the only difference between the files is
+the one change under test.
+
+### R127. NEGATIVE: the burst's load-record term is worth 1.00x to 1.02x, and the reason is structural
+
+The proposal was that `LOAD_FRAC`, the 5% load-record error and half of sigma at the nominal
+footing, might not apply during a burst whose load is infused and measured, which would change
+**sigma** rather than merely the amplitude. Swept from the diet record's 5% to an exactly known
+load, at three amplitudes and two capacities, it never exceeds **1.02x**.
+
+**The premise is right and the consequence is nil, for a structural reason.** `LOAD_FRAC`
+enters the burst in exactly one place, the prior on its load bias, **because a burst
+observation is a marker level with assay noise and carries no load measurement at all**. It is
+the *record* whose per-visit sigma is `hypot(16.14, 14.90)`, and the record is still the
+ordinary outpatient diet record whatever happens during an admission.
+
+**Where the prize does live**, with the glucose burst held fixed and the record's load term
+swept: 0.0548 to **0.0389** at a fifth of nominal and 0.0281 to **0.0226** at a tenth,
+converged at 1e-4 and 1e-6 of the published width. So **1.41x and 1.24x**, real and modest, and
+only if **every one of the 118 routine outpatient visits** has its load measured. The glucose
+protocol changes the admission, not the outpatient record, so it does not buy this.
+
+### R128. An error of mine, caught by its own monotonicity
+
+The first version of the record-side sweep set the load-bias prior **precision** to zero at the
+exact-load limit. That makes `b` a free parameter with no prior, which is **less** information
+and not more, and it showed immediately as a non-monotone column with the exact-load row
+landing *worse* than the 1% row (0.0526 against 0.0416). "Measured exactly" is an infinite
+precision, not an absent prior. Replaced by a vanishing width, shown converged at two
+successive decades. Recorded because the wrong version was self-consistent and only the shape
+of the column exposed it.
+
+### R129. An interior optimum in amplitude, so the register's additivity is the wrong thing to want as design
+
+Sweeping the amplitude finely at a 1% assay and sixteen admissions, the optimum is at **40% at
+a fifth of nominal and 45% at a tenth**. The catabolism share at 51.7% sits just past it and is
+near-optimal; **73.9%, the sum of both arms, is clearly worse** (0.0367 against 0.0281 at a
+tenth of nominal).
+
+**The mechanism is a quantity already in this audit.** Suppressing more load drives the marker
+further off enzyme saturation, which raises the relaxation rate `J` and lowers `k_e`'s share of
+it. That is the same `k_e/J` R113 used to reject the post-dose placement, acting here through
+the amplitude rather than through the increment.
+
+> So the register's *"a protein-restricted diet lowers the first two deliberately"* is true as
+> **biology** and is the wrong target as **design**. **Adding an osmotic bowel preparation to
+> the glucose arm degrades the measurement.** The preparation remains worth an arm on its own,
+> where its 22.2% carries the tightest onset requirement of any candidate.
+
+### R130. A convention correction to `u15`: the burst window is an admission, not four time constants
+
+`u15` let the burst window grow as four onset time constants, which silently hands a slow input
+a free record extension: at a one-week onset that is 28 days and 24 draws spanning two dose
+cycles, a record extension at a better assay rather than a relaxation measurement. **R118
+noticed the symptom** and diagnosed it correctly, that the slow end sat *under* the record-only
+floor instead of converging to it, without fixing it. The window is now fixed at one inpatient
+day.
+
+Slowest onset reaching the frontier, 1% assay, sixteen admissions:
+
+| arm | theta | fixed 1 d | `u15` growing |
+|---|---|---|---|
+| bowel prep, 22.2% | 600 | **14.9 h** | 15.5 h |
+| bowel prep, 22.2% | 300 | **5.8 h** | 5.8 h |
+| glucose, 51.7% | 600 | **50.0 h** | beyond 13 d |
+| glucose, 51.7% | 300 | **30.5 h** | 45.0 h |
+| both, 73.9% | 300 | **48.2 h** | beyond 13 d |
+
+The columns agree where the threshold is near a day and diverge by over an order of magnitude
+where the growing window runs to weeks. **Round 4's 6.6 h and 16.4 h become 5.8 h and 14.9 h**,
+so its conclusions are unaffected and only its long-onset rows were ever contaminated. Glucose
+acting over hours clears 30.5 h comfortably; an osmotic preparation's gut transit is the same
+order as its 5.8 h requirement and is the one onset genuinely in question.
+
+### R131. `rho` is a property of the protocol, and partial glucose protection is a failure mode the paper never samples
+
+`07b_decision.tex` sweeps `rho` as an **exogenous** property of the chart, while its own text
+says `rho <= 0` is crisis protocol "where prescribed intake is cut while **catabolic muscle
+breakdown** supplies the load", and `01_biology.tex:160` names the intervention that suppresses
+catabolism. The paper states both and connects neither. Its sweep is reproduced exactly from
+its owner (1.027 against 1.030, 0.903 against 0.900, 0.086, 0.009).
+
+With `d` the dietary share withdrawn, `F` the catabolic load fold and `q` the suppressed
+fraction, `rho(q) = -d/((F-1)(1-q) - d)`, with a **pole** at `q* = 1 - d/(F-1)`.
+
+**Two registered numbers agree without having been made to.** `params.py`'s illness row anchors
+`F = 1.50` from a 227% to 325% rise in 3-methylhistidine. The paper's `rho = -0.25` then implies
+**d = 0.100**, a withdrawal removing 10% of the load, which is exactly right for a patient
+already on a protein-restricted diet. That puts the pole at **q\* = 0.800**.
+
+**The verdict neither survives nor reverses. It changes which error it makes.** Eight seeds,
+400 replicates:
+
+| q | rho | treat unneeded | fail to treat | median th/th |
+|---|---|---|---|---|
+| 0.70 | -2.00 | 100.0% [100.0, 100.0] | 0.0% [0.0, 0.0] | 0.010 [0.009, 0.011] |
+| 0.90 | +2.00 | 0.0% [0.0, 0.0] | **100.0% [100.0, 100.0]** | 0.812 [0.686, 0.933] |
+| 1.00 | +1.00 | 18.8% [16.8, 21.5] | 40.7% [37.5, 44.0] | 0.926 [0.484, 1.079] |
+
+Below the pole the estimator treats everyone, the paper's published catastrophe. **Above it the
+estimator fails to treat everyone**, the dangerous direction, totally rather than at the benign
+cell's 41.8%. The paper's sweep stops at `rho = 1` and never enters `rho > 1`. Zero spread on
+both sides, so the reversal does not rest on a seed.
+
+**The hazard is specific and avoidable.** `rho > 1` means the record *overstates* the load
+change: the chart records the full prescribed cut while the glucose absorbed most of the
+catabolic response. **Under an infused, measured load that cannot happen**, because the record
+*is* the infusion. So the failure is running glucose protection while still recording intake
+from the diet chart, and the same manoeuvre with the load taken from the pump is benign.
+
+**Two caveats, both measured rather than asserted.** First, the generator holds the marker
+levels **fixed** and scales only the record, so it prices record corruption and not the
+excitation loss; the true deviation runs 1.00x, 0.37x, 0.02x, then changes sign, so the numbers
+near the pole are **optimistic** and are not a verdict there. The sign of the effect does not
+depend on the pole. Second, **the paper's benign-cell median of 1.03 is a single-seed figure**;
+the eight-seed range is **0.484 to 1.079** with a mean of 0.926, so the published value sits
+near the top of its own range and the bottom of that range is a two-fold underestimate of
+capacity rather than a 3% error. Not a wrong number, a single-seed number quoted without its
+spread in the row the section leads with.
+
+**And the two halves of this round meet here.** Past `q*` the true load deviation changes sign,
+which is precisely the elective load reduction R126 prices as a `k_e` burst. One manoeuvre, two
+estimands, opposite requirements on the record: the burst wants the largest true load change it
+can safely get, the decision wants the record to track it.
+
+**The new gate: `q`, the fraction of the catabolic response glucose actually suppresses, is
+nowhere in this repository**, and the verdict turns on which side of 0.8 it falls.
+
+### R132. The impossible direction was the STATISTIC, and it touches a standing rule
+
+`u16`'s glucose re-check returned **0.828** at the `theta = 600` headline, the direction a
+sampling spread cannot go against a correct Fisher, which is exactly the signature that located
+the real defect at R119. **This time it was not a defect. It was a comparison between two
+different statistics.**
+
+Two things were found and fixed before the cause was reached, and both are recorded because
+each was self-consistent on its own. First, `u16` compared against `u17`'s `f_burst = 1`, which
+gives the burst its **own** load bias, when `u16`'s generator builds both trajectories from
+`Lbias = LB + b_true` and therefore **shares** one bias, which is `u17`'s `share_b`. The
+disagreement grew with amplitude because the bias column scales with `(1 - amp f(t))`. Second,
+the sensitivities were checked and are not the cause: they agree with central finite differences
+to **3e-09** at 51.7%, 73.9% and 85%, at both capacities.
+
+**The cause.** `u16` reported `0.7413 x IQR` because section 0 says *"report the robust spread,
+not RMSE"*. **A Fisher width is a standard deviation, and `0.7413 x IQR` equals one only for a
+Gaussian.**
+
+| amplitude | theta | Fisher | robust | **sd** | skew | **sd/Fisher** |
+|---|---|---|---|---|---|---|
+| 22.2% | 300 | 0.0588 | 0.0781 | 0.0869 | -0.46 | 1.477 |
+| 35.0% | 300 | 0.0349 | 0.0476 | 0.0549 | -0.72 | 1.571 |
+| 51.7% | 600 | 0.0553 | 0.0466 | 0.0578 | +0.06 | **1.046** |
+| 51.7% | 300 | 0.0316 | 0.0298 | 0.0387 | -0.61 | **1.224** |
+| 73.9% | 300 | 0.0324 | 0.0241 | 0.0344 | +0.35 | **1.062** |
+| 73.9% | 600 | 0.0589 | 0.0351 | 0.0533 | +1.01 | 0.904 |
+
+The robust spread is below the Fisher at **four of six** cells; the sd is above it at **five of
+six**. The sixth sits at the most extreme amplitude with a skew of 1.01, where no single number
+summarises the distribution, and at an amplitude R133 does not recommend.
+
+**A second candidate tested and refuted, in the direction opposite to the one needed.** An
+inverse Fisher is conditional on `k_e = 5` while the Monte Carlo averages over the prior, and
+R119's algebra showing those coincide assumes constant information, which fails here. But the
+prior-weighted spread comes out **above** the at-the-mean value by 1.19x to 2.34x, so the effect
+predicts a Monte Carlo **wider** than the Fisher, not narrower.
+
+**Consequences, and one reaches backwards in the safe direction.** The two headline cells stand
+on the independent method's own sd: margins of **2.71x** at a fifth of nominal and **1.64x** at
+a tenth, against the Fisher's 2.86x and 2.25x. And **R124's ratios understate**: round 4's
+withheld cell re-checks at 0.0869 rather than 0.0781, a ratio of 1.477 instead of 1.327, so it
+misses by more than was reported and **round 4's decision to withhold it was right and is
+reinforced.**
+
+**Proposed refinement to section 0, the author's to accept or decline.** *Report both, use the
+standard deviation when comparing a sampling spread against a Fisher width, and keep the robust
+spread to detect collapse.* Stated as a proposal and **not applied**, unlike R125's
+unbounded-search rule which the author instructed.
+
+### R133. WITHDRAWN: "adding a bowel preparation degrades the measurement"
+
+R129 reported an interior optimum in amplitude and concluded that the sum of both arms, 73.9%,
+measures `k_e` worse than glucose alone. **The optimum's depth depends on how the burst's load
+bias is treated, and the independent method disagrees on its sign even after R132.**
+
+| amplitude | Fisher, b known | Fisher, shared b | MC sd, shared b |
+|---|---|---|---|
+| theta=300, 51.7% | 0.0281 | **0.0316** | **0.0387** |
+| theta=300, 73.9% | 0.0367 | **0.0324** | **0.0344** |
+| theta=600, 51.7% | 0.0548 | **0.0553** | **0.0578** |
+| theta=600, 73.9% | 0.0698 | **0.0589** | **0.0533** |
+
+With the bias known the gap is 31% in one direction; with it shared, 2.5% in the other; and the
+Monte Carlo puts 73.9% **better** at both capacities, by 11% and 8%. **So the amplitude beyond
+about 50% is indeterminate at this precision** and the claim is withdrawn in both directions.
+What survives from R129 is that the benefit of going past roughly half is small and of uncertain
+sign.
+
+**The decision does not need it resolved.** Glucose with withdrawal alone clears both frontiers
+at 2.71x and 1.64x, so **there is no precision argument for adding a second intervention either
+way**, and a bowel preparation should be decided on safety, burden and its own onset. Recorded
+because R129 stated a confident mechanism, `k_e`'s share of the relaxation rate falling as the
+marker leaves saturation, and a correct mechanism is not evidence for an effect whose sign two
+methods dispute.
+
+### R134. Fourteen single-seed prose literals in the decision section, and all four medians flatter the estimator
+
+The author called this a paper defect and treated it as one. **It is.** Section 0 requires footing
+and seed spread with every number, and records that a single-seed figure quoted without its range
+has three times been the error in this audit.
+
+**An unbounded search of `07b_decision.tex`**, patterns `num{`, a decimal and an escaped per cent,
+no head limit, 9 matching lines, shows the split cleanly. Lines **37, 40 and 43 are macro-wired**:
+`\num{cohort_fixed}`, `\num{cohort_monthly}`, `\num{kappa_monthly_pct}` with its lo and hi. Lines
+**58 to 61 and 70 to 71 are bare literals**, fourteen numbers, **every one at `seed=11`**. So the
+crisis paragraph is the unwired one in an otherwise wired section, which is why no generator
+carries its spread.
+
+**The owners, located before recomputing.** The twelve error rates and medians:
+`audit/d13_decision_therapy.py:122-129`, `D.fit_ensemble` and `D.sign_error` on the monthly design
+at `seed=11, reps=400`. The two regret thresholds: `audit/d6_regimes.py:109`,
+`fit_regime(lv9, rho, reps=400, seed=11)`, whose own comment reads **"the seed fig_decision
+uses"**.
+
+**And `d6` already knows.** Its lines 122 to 129 compute a twelve-seed spread for the error rates
+and print "(12 seeds, 400 replicates each)". The regret-threshold table then reuses the
+**single-seed** ensemble from line 109. The convention exists in the same file and is not applied
+to the numbers the paper took from it.
+
+Every literal reproduced at its own seed first, which is the anchor: 17.5%, 41.8%, 1.027 against
+the published 1.030, then 0.903, 0.086, 0.009. Then at twelve seeds:
+
+| rho | paper | mean | min | max | max/min |
+|---|---|---|---|---|---|
+| 1.00 | **1.030** | 0.884 | **0.289** | 1.079 | **3.73x** |
+| 0.50 | **0.900** | 0.686 | **0.000** | 0.968 | **7119x** |
+| 0.00 | 0.086 | 0.039 | 0.009 | 0.141 | 15.4x |
+| -0.25 | 0.009 | 0.007 | 0.005 | 0.011 | 2.47x |
+
+**All four published values are closer to the truth than their own twelve-seed mean**, so the
+estimator reads as more accurate in print than it is across seeds. The `rho = 0.5` cell is the
+worst: the published 0.900 hides a seed on which the estimate **collapses to 0.000**. The
+error-rate columns are by contrast stable, 19.1% [16.8, 24.5] and 41.6% [37.5, 44.5] at `rho = 1`,
+so the defect is confined to the median column and to the thresholds.
+
+**Consequence for the round's proposed text.** `PHASE11_PROPOSED_TEXT.md` §14, the `rho` pole,
+attaches to this paragraph. **Applying it alone would add a fifteenth unwired literal to the one
+paragraph in the section with this problem**, so §14 and the seed fix are one edit or neither.
+Recorded in §14.5.
+
+**And a self-catch of the same kind.** The first draft of §14 wrote `q* = 0.80` and `100%` as bare
+literals, which is exactly the defect it reports. Rewritten against four new macros,
+`rho_pole_q`, `rho_above_fail_pct`, `rho_above_fail_lo`, `rho_above_fail_hi`. Caught here rather
+than carried in, which is the third time this round that writing the objection down is what
+exposed the same error in my own work.
+
+### R135. (g7) One of the two published thresholds does not reproduce, and the owner was not where I first looked
+
+**My first attempt named the wrong owner.** `audit/u19_seed_defect.py` PART C was written against
+`audit/d6_regimes.py`, because that is where the regret-threshold table lives today. An
+**unbounded** search for the literal across `audit/`, `src/`, `paper/` and `results/` finds it at
+**`audit/PHASE2D_FINDINGS.md:150`**: *"Regret-equalised thresholds: managed +0.07 theta at equal
+costs, crisis -0.39 theta"*. So **Phase 2D is the source and `d6` is a later re-derivation of the
+same quantity.** Section 0's "find the owner before recomputing" was followed one level too
+shallow, and the unbounded-search rule from R125 is what corrected it.
+
+Re-deriving from `d6` at seed 11, cost ratio 1:1, 601 points over +/-30000:
+
+| `rho` | `tau*/theta` | against the published pair |
+|---|---|---|
+| 1.00 | **0.067** | reproduces the published **+0.07** |
+| 0.50 | **-0.467** | closest to -0.39, and 0.077 `theta` away |
+| 0.00 | *escalate none*, no crossing | |
+| -0.25 | *escalate none*, no crossing | |
+
+**The managed threshold reproduces. The crisis threshold does not reproduce at any `rho`.**
+
+**Reported as a reproduction failure and NOT as a paper error.** Section 0 records that four
+disagreements in Phase 10 were a reconstruction losing to the paper, and the Phase 2D-era code may
+differ from today's `d6`. What is established is narrow and worth stating exactly: **-0.39 does not
+come back from `d6` at any of its four `rho` rows at seed 11**, the nearest value is -0.467 at
+`rho = 0.5`, and two of the four rows have **no finite threshold at all**, which is a qualitatively
+different statement from a number with a different value.
+
+**A second problem the same check exposed: the mapping is unrecorded.** The paper names **two**
+regimes, managed and crisis. `d6` has **four** rows. Phase 2D's own text one line above the
+thresholds says *"the reversal is complete by `rho = 0.5`"*, which makes `rho = 0.5` a crisis
+regime in that document, so "the crisis regime" is ambiguous between three of the four rows and
+**nobody has recorded which was meant.**
+
+**(g7), and it is a decision rather than a fix.** Which `rho` is "the crisis regime", and does
+-0.39 still stand under today's code? Needs the Phase 2D-era code or the author. It sits in the
+same edit as `PHASE11_PROPOSED_TEXT.md` §14 and the twelve seed spreads, so **that edit now
+contains a decision** and has moved in `audit/LANDING_PLAN.md` from the mechanical list to the
+decision list.
+
+**And one qualitative claim does survive.** The managed threshold's sign is stable across seeds,
+so *"the managed regime wants the boundary earlier"* holds. The crisis half of that sentence is
+what is now unsupported, and it is the half the paragraph's argument rests on.
+
+### R136. CORRECTION to R135: the crisis threshold DOES reproduce, at a cost ratio the sentence does not claim
+
+R135 reported that the published `-0.39` does not reproduce from `d6` at any `rho`. **That was
+premature.** I had searched only the equal-cost column, because that is the column the paper's
+sentence names. Running `d6_regimes.py`'s own threshold table in full:
+
+| regime | **1:1** | 10:1 | 30:1 | 100:1 |
+|---|---|---|---|---|
+| managed, `rho = 1` | **0.067** | escalate all | escalate all | escalate all |
+| partial recording, `rho = 0.5` | -0.467 | escalate all | escalate all | escalate all |
+| crisis, intake pinned, `rho = 0` | *escalate none* | escalate all | escalate all | escalate all |
+| crisis, protein stopped, `rho = -0.25` | *escalate none* | **-0.400** | **-0.400** | **-0.400** |
+
+**The number is there.** `-0.400` at `rho = -0.25`, within one grid step of the published `-0.39`
+(the grid is 601 points over +/-30000, so 100 units, and `0.39 x 3000 = 1170` is not on it while
+`1200` is, which is consistent with the published figure coming from a finer grid).
+
+**But it is in the wrong column for the sentence.** `07b_decision.tex:70-72` reads:
+
+> **At equal costs** the managed regime wants the boundary at $+0.07\theta$ and the crisis regime
+> wants it at $-0.39\theta$; **at a cost ratio of ten to one or worse every regime wants every
+> patient escalated**.
+
+Against the table, **both clauses fail and they fail in a way that looks like a crossing**:
+
+1. **"At equal costs ... the crisis regime wants it at `-0.39`"**: at equal costs *both* crisis
+   rows want **escalate none**, no finite threshold at all. The `-0.400` appears only at **10:1 and
+   worse**.
+2. **"at ten to one or worse every regime wants every patient escalated"**: three of the four do,
+   and the protein-stopped regime **wants `-0.400`**, which is a finite threshold and not
+   "escalate all". **The exception is the very row the `-0.39` came from.**
+
+So the sentence appears to have taken `-0.39` from the `>= 10:1` columns while attributing it to
+equal costs, and then asserted a universal for those same columns that the same row contradicts.
+
+**Still not asserted as a paper error, but the question is now sharp.** The Phase 2D-era code may
+differ, though a code change would have to have moved both halves of one column consistently. The
+useful form for the author: **is "at equal costs" an error for "at ten to one or worse", and does
+the second clause need its exception?** That is a two-line answer, where R135's version of the
+question was open-ended.
+
+**And R135's substantive point survives intact.** The managed threshold reproduces and is stable
+(seed 11 gives 0.067, twelve-seed range 0.067 to 0.100, no seed without a crossing), while the
+crisis half of the sentence is unsupported as written. What changes is *why*: not an unreproducible
+number, but a number attached to the wrong cost ratio, with a universal claim beside it that has a
+visible exception.
+
+**The lesson, and it is the round's own rule again.** R135 searched one column and reported an
+absence. **That is R125's error in a new place**: the search was bounded, by a column rather than by
+a head limit, and an absence claim was made from it. The rule as written says "run the search
+unbounded and state what was searched", and I stated the seed and the cost ratio without noticing
+that the cost ratio *was* the bound. **Fourth instance of the pattern**, and the first where the
+bound was a modelling choice rather than a tool default.
+
+### R137. The twelve seeds finish it: two candidate provenances, and neither supports the sentence
+
+The full twelve-seed threshold sweep, completing R135 and R136:
+
+| `rho` | seed 11 | 12-seed mean | min | max | no crossing |
+|---|---|---|---|---|---|
+| 1.00 | **0.067** | 0.094 | 0.067 | 0.100 | 0/12 |
+| 0.50 | **-0.467** | -0.450 | **-0.533** | **-0.367** | 0/12 |
+| 0.00 | *escalate none* | none finite | | | **12/12** |
+| -0.25 | *escalate none* | none finite | | | **12/12** |
+
+**The structural fact first.** At equal costs, both rows the paper would most naturally call
+"crisis" have **no finite threshold on all twelve seeds**. That is not a seed accident, so **no
+amount of reseeding produces a `-0.39` from `rho = 0` or `rho = -0.25` at equal costs.**
+
+**A second candidate provenance appears here that R136 did not have**, because R136 only had seed
+11. `rho = 0.5` at **equal costs** has a twelve-seed range of **-0.533 to -0.367, which contains
+the published -0.39**, and Phase 2D's own text licenses calling `rho = 0.5` a crisis regime by
+saying *"the reversal is complete by `rho = 0.5`"*.
+
+**So there are two readings and neither supports the sentence as written:**
+
+| | what it fits | what it breaks |
+|---|---|---|
+| **(a)** `rho = -0.25` at **10:1 and worse**, giving exactly **-0.400** at seed 11 | the **seed**, cleanly, and within one grid step | **"at equal costs"** is then wrong |
+| **(b)** `rho = 0.5` at **equal costs**, range containing -0.39 | the **cost ratio**, and Phase 2D's own wording | -0.39 is **not seed 11's value** there, which is -0.467, while the +0.07 beside it **is** seed 11's. One sentence mixing seeds. |
+
+**(a) is the better provenance and (b) is the better fit to the words**, which is exactly why this
+needs the author rather than more computation. Under either reading the second clause keeps its
+exception: at 10:1 and worse three regimes want every patient escalated and `rho = -0.25` wants
+`-0.400`, which is the row (a) takes the number from.
+
+**What is now settled, and it is enough to act on.** The managed threshold reproduces and is
+stable. The crisis threshold cannot be both "at equal costs" and `-0.39` under today's code, on
+twelve seeds, at any `rho`. The question for the author is two lines: **which regime and which
+cost ratio**, and **does the second clause need its exception.**
+
+`audit/u19_seed_defect.py`'s printed conclusion has been rewritten to carry both readings, since
+its earlier text asserted the R135 version that R136 withdrew.
+
+### R138. (g7) RESOLVED. The grid decides it, one number is a regression and the other is wrong
+
+**The author's argument, verified rather than accepted.** `d6_regimes.py:145` was
+`np.linspace(-30000.0, 30000.0, 601)`, so the step is 100 flux units, `0.033333` theta, and the
+readout is `taus[sgn[0]]`, a grid **point** rather than an interpolated crossing. `-0.39` theta is
+`-1170` flux units, **not a multiple of 100, so that grid cannot return it at any `rho`, cost ratio
+or seed.** `-0.400` is therefore not the published number rounded; it is the bracket a true
+crossing near `-0.39` is reported as.
+
+**That discriminates the two readings of R137, as the author said it would.** Interpolating the
+sign change within its bracket:
+
+| `rho` | ratio | grid readout | **interpolated** | steps from -0.39 |
+|---|---|---|---|---|
+| **-0.25** | **10:1** | -0.4000 | **-0.3950** | **0.15** |
+| 0.50 | 1:1 | -0.4667 | -0.4533 | 1.90 |
+| 1.00 | 1:1 | 0.0667 | 0.0982 | 14.66 |
+
+**Reading (a) is confirmed and reading (b) is refuted**, without needing Phase 2D's wording to
+arbitrate. `rho = 0.5` at equal costs crosses near `-0.453`, two steps away, and cannot be `-0.39`.
+
+**So (g7) is settled as the author directed.** *"At equal costs"* is an error for *"at ten to one
+or worse"*, and the second clause does need its exception, because at 10:1 and worse three regimes
+escalate all and `rho = -0.25` is precisely the one that does not.
+
+### The regression question, answered, and it is a regression
+
+**The original `d6` used a 3001-point grid**, step 20, at commit `9f9b8f9`. Commit `6b353ed`
+coarsened it to 601 points. Both grids, both numbers, seed 11:
+
+| grid | managed, `rho = 1`, 1:1 | crisis, `rho = -0.25`, 10:1 |
+|---|---|---|
+| 3001 points, step 20, **original** | 0.0933 | **-0.3867** |
+| 601 points, step 100, **today** | **0.0667** | -0.4000 |
+| step 1, the true crossing | **0.0967** | **-0.3853** |
+| **published** | **+0.07** | **-0.39** |
+
+**The crisis number is a regression and not a prose error.** `-0.3867` on the original grid is the
+published `-0.39`. The coarsening lost it, so **the fix is to interpolate and restore the
+resolution, not to restate the number.** Done in `d6_regimes.py`, with the history in a comment.
+
+**The managed number is a different matter, and it is wrong.** It fits neither grid: 0.0933 on the
+original, 0.0667 today, and the true crossing is **0.0967**, which is `+0.10` to two places and not
+`+0.07`. **So `+0.07` is not recoverable at any adequate resolution and the published value
+understates the managed threshold by about 45%.** Its own provenance is a separate question, since
+it matches today's coarse readout and today's grid postdates the paper's number; **recorded and not
+pursued**, per the author's instruction not to open a new line of investigation in the landing pass.
+
+**Corrected pair, at the restored resolution: managed `+0.097`, crisis `-0.385`.** To two places,
+**`+0.10` and `-0.39`**. The crisis number survives; the managed one changes.
+
+**And the check was nearly run on a shallow clone.** `git rev-parse --is-shallow-repository`
+returned **true** with 6 graft points, 4 apparent roots and 222 commits against the 236 R93
+recorded. Section 0's rule fired for real and for the third time. Unshallowed to 247 commits and a
+single root before any of the history above was read.
+
+### R139. STEP 1 OF THE LANDING PASS FAILS, and my own landing plan's premise was wrong
+
+`audit/u20_staleness.py`, written as the explicit pass-or-fail the author asked for. **It does not
+pass, and what it found is the opposite of the risk I had named.**
+
+`audit/LANDING_PLAN.md` said 16 passages were "ready as they stand, needing only approval of the
+wording", with staleness as a risk to be checked. **They are not pending. They are a mixture, and
+a large part of `PHASE4_PROPOSED_TEXT.md` has ALREADY BEEN APPLIED.**
+
+**Of 23 passages naming a target, exactly ONE still has its "Current" text in the paper**, so at
+most one applies as drafted: `PHASE11` §1.
+
+**Verified by hand, because the automated probe cannot settle it:**
+
+| passage | state | evidence |
+|---|---|---|
+| `PHASE4` §1 | **APPLIED** | `06_excitation.tex:66-80` carries its proposed text, condensed, with `$1.028$` since wired to `$\num{bias_theta_factor}$` |
+| `PHASE4` §6 | **APPLIED** | probe found verbatim |
+| `PHASE4` §13 | **APPLIED** | `08_specification.tex:157`: *"The cohort is methylmalonic acidemia rather than propionic acidemia, which cuts less deeply"* |
+| `PHASE4` §14 | **STALE** | "mitochondrial substrate" appears nowhere in `paper/sections/`, and both labels it cites are gone |
+| `PHASE11` §1 | **PENDING** | Current text present |
+
+**And four of the remarks these passages target no longer exist**, zero `\label` definitions each:
+**`rem:transient`, `rem:second_order`, `rem:no_delta`, `rem:rankvsprec`**. They are the targets of
+`PHASE4` §14, §2, §4 and §6. **Applying those as drafted would inject dangling cross-references**,
+which is precisely the concrete harm the check existed to prevent.
+
+**Why an automated check cannot finish this job, which is itself worth recording.** A first version
+of the script reported present-or-absent and returned ten absences, which reads as ten stale
+proposals needing a rebase. Classifying by whether the PROPOSED text is present instead showed some
+were already applied. But **applied text keeps being edited**: §1's was condensed and then wired, so
+no verbatim probe of any useful length matches it, and the script still calls it STALE. Short
+probes that skip digits, macros and math recovered §6 and not §1. **"Absent" cannot distinguish
+"already applied and since rewritten" from "the paper moved underneath it", and those call for
+opposite actions**, so the script's role is to say which passages need reading, not to clear them.
+
+> **The consequence for the pass, and it is a stop rather than a slowdown.** Step 5, apply, must not
+> run for `PHASE4`. Applying an already-applied passage duplicates text; applying a passage whose
+> anchor remark has been deleted breaks the build or silently mis-references. **The claim in
+> `OPEN_QUESTIONS.md` and in the PR description that there are "three unapplied sets" is wrong**,
+> and has been wrong for some time.
+
+**What can still proceed**, and it is the part this round actually drafted: `PHASE11`'s passages are
+recent, their state is known (one PENDING, the rest insertions with no anchor to go stale), and they
+are blocked only on the 29 macros. That is the pass worth running. `PHASE4` needs a passage-by-passage
+reconciliation against the paper first, which is a reading task and not a wiring task.
+
+**The risk I wrote down was real and I had its direction backwards.** `LANDING_PLAN.md` §7 said the
+risk was a proposal quoting a line that has moved, applying cleanly and wrongly. The actual state is
+that much of the work was already done and the to-do list was never updated, so the danger was not
+applying a stale edit but **applying the same edit twice.**
+
+**R138, verified after the fix.** With the grid restored to 3001 points and the crossing
+interpolated, `d6_regimes.py` now returns **+0.0973** for the managed regime at equal costs and
+**-0.3856** for `rho = -0.25` at 10:1, against true crossings of +0.0967 and -0.3853 on a step-1
+grid. So the regression is repaired to better than a thousandth of theta. **The crisis number is
+confirmed at -0.39 and the managed number is confirmed wrong: the corrected pair is +0.10 and
+-0.39, not +0.07 and -0.39.** `d6` writes no artefact and is not in the Makefile, so the change
+cannot reach the build or the guard.
+
+**R138, one further thing the coarse grid was hiding.** The repaired table, in full:
+
+| regime | 1:1 | 10:1 | 30:1 | 100:1 |
+|---|---|---|---|---|
+| managed, `rho = 1` | **0.097** | escalate all | escalate all | escalate all |
+| partial, `rho = 0.5` | -0.461 | escalate all | escalate all | escalate all |
+| crisis pinned, `rho = 0` | *escalate none* | escalate all | escalate all | escalate all |
+| crisis stopped, `rho = -0.25` | *escalate none* | **-0.386** | **-0.382** | **-0.380** |
+
+**The crisis threshold MOVES with the cost ratio**, `-0.386` then `-0.382` then `-0.380`, where the
+601-point grid reported a constant `-0.400` in all three columns. **So the constancy was a grid
+artefact too.** It does not change (g7)'s answer, and it sharpens the rewrite: the published `-0.39`
+is the **10:1** column specifically, not a value shared by "ten to one or worse", though the three
+agree to within 0.006 theta. The exception in the second clause is unchanged: `rho = -0.25` is the
+one regime that does not want every patient escalated, at all three ratios.
+
+### R140. CORRECTION to R138's provenance: `+0.07` is a faithful reading of a degraded generator
+
+The author read commit `6b353ed` itself rather than its numbers, and the reading is better than
+mine. **That commit is not merely the one that coarsened `d6`'s tau grid.** In one commit it
+created `PHASE2D_FINDINGS.md`, `d0b_proposition2.py`, `d0c_mechanism.py`, `d0d_generalised_E.py`,
+`d11_priorfree.py`, `d12_minimal_footing.py` and `d9_loadvariation.py`, changed `d6_regimes.py`
+and `src/design/run.py`, edited `06_excitation.tex` by 249 lines and `07_design.tex` by 121, and
+regenerated a table and a figure. **Eight scripts and 370 lines of paper text at once.**
+
+That explains R138's split exactly, and better than either hypothesis I had. **`+0.07` is a
+faithful reading of `d6` AFTER the coarsening**, since 0.0667 is 0.07 at two decimals. **`-0.39`
+is a carryover from before it.** One of the two numbers tracked the generator change in that
+commit and the other did not.
+
+**So my conclusion was right and my provenance was wrong.** `+0.07` is not a mistranscription and
+not "unrecoverable"; it is an accurate reading of a degraded generator. The repair fixes the
+generator, so **both numbers need restating, not one**: the corrected pair is `+0.10` and `-0.39`.
+
+### R141. Auditing every number that commit put in the paper, before wiring anything
+
+**Why before rather than after**, in the author's words: a wrong literal is findable because
+nothing vouches for it, while a wrong number wired to a macro and generated by the script that
+produced it is self-consistent, passes its own guard, and is reported as `ARTEFACTS MATCH THE
+CODE`. **Wiring makes an error permanent and invisible at the same time.**
+
+`audit/u21_commit_audit.py`. The commit added **64 distinct numeric literals and not one
+`\num{}` macro**. Of those, **36 are already GONE from the paper**, superseded by later work,
+which is consistent with R139's finding that much of that era's text has moved on.
+
+**The one genuinely blocking item, and it is neither of the two we predicted.**
+`06_excitation.tex:103` reads *"$\operatorname{sd}(\ln\hat K_m)$ falls from $0.587$ to $0.209$"*.
+**Neither value has a generator.** Their only trace in the repository is a sentence in
+`d0c_mechanism.py`'s **docstring**, hand-written, saying `(0.5870 -> 0.2089)`. Running `d0c`
+produces neither: it exits 0 and its output for the related construction is **0.5885 to 0.0069**,
+a different pair for a different arrangement.
+
+> **This is exactly the failure mode the ordering exists to prevent.** Wire that sentence and
+> `check_artefacts.py` would report `ARTEFACTS MATCH THE CODE` for a number somebody typed into a
+> comment. **It must be derived or withdrawn, not promoted.** `PROVENANCE_SWEEP.md:202` already
+> indexes the line as having an owner, which it does not.
+
+**No second instance of R138's split was found.** The threshold pair remains the only demonstrated
+case of one number tracking the generator change while its neighbour did not.
+
+**And the script's own two columns are not trustworthy unaided, which is worth recording because
+the next reader will want to rerun it.** `NO-OWNER` **under-reports**, because it searches the
+rounded literal while generators carry full precision: `0.209` was missed in `d0c` because the
+docstring says `0.2089`. `SUSPECT` **over-reports**, catching registered inputs (`0.8` the `k_e`
+log-prior, `3.5` the half-life, `5\%` and `20\%` the load record, `0.5` the `E` requirement, `95\%`
+a confidence level) and one LaTeX length, `1.0cm`. **The run's value was in directing attention to
+the handful worth reading; the verdicts came from reading them.**
+
+### R142. The per-macro readiness check finds a footing conflict, not a wrong number
+
+Applying the `d0c` test of R141 to the 29 macros: does a generator compute the value **today**,
+and does it agree with what the paper already carries? Four of the 29 already exist, and checking
+those four first is what found the problem.
+
+| macro | value | generator |
+|---|---|---|
+| `disease_factor` | 16 | `audit/n4_theta_scope.py` |
+| `ke_needed_factor` | 2.67 | `src/design/run.py` |
+| **`sd_monthly`** | **0.1699** | `src/design/run.py` |
+| `tier1_visits_at_pub` | 118 | `audit/t2_tier1_margin.py` |
+
+**`sd_monthly` is 0.1699. I have quoted 0.1695 throughout this effort, and so has the (g4)
+reasoning built on it.** `audit/u12_prior_quadratic.py` run today prints marginal **0.1695**,
+profile **0.2002**, ratio **1.182**.
+
+**It is not an error in either place.** `PHASE8_SIMULATIONS.md:623` documents it exactly: the
+quantity is `0.1699` **as committed, with the `t = 0` draw read post-dose inside the settling
+window**, `0.1695` **with that draw read pre-dose**, and `0.1721` with it dropped. So the paper's
+committed value and my audit's value are the same quantity under two documented readings of one
+sample.
+
+> **But it decides a macro.** `object_spread_pct` is the profile against the marginal, and it is
+> **18.2%** on `u12`'s own marginal or **17.8%** anchored on the paper's `sd_monthly`. Both are
+> defensible; **they cannot both be in the paper.** Wiring either without choosing would freeze a
+> footing by accident, and the guard would then certify it. That is the hazard this ordering
+> exists to catch, and it is a footing conflict rather than a wrong number, which is a class the
+> `d0c` test was not looking for.
+
+**This also reaches (g4) and (g2).** The author's margin reasoning was *"Fisher 0.1695, simulated
+0.1777, profile 0.2002 is about eighteen per cent, so target roughly 0.17 on the profile"*. On the
+paper's own committed marginal the spread is 17.8%, and **0.17 remains the right target either
+way**, so the decision stands. What needs settling is narrower: **which marginal the paper states
+the spread against**, which is (g2) one level deeper than it was asked.
+
+**Confirmed READY, computed today and agreeing with their sources:** `ke_frontier_3000_pct` =
+80.01%, `ke_frontier_600_pct` = 15.67%, `ke_frontier_300_pct` = 6.33% (all `u9`, exit 0);
+`profile_nominal` = 0.2002 (`u12`). The drift group is still running and is not reported here.
+
+**Nothing is wired.** The pass stops at the conflict, per the ordering.
+
+### R143. The macro readiness table: 17 ready, 2 blocked, 3 that should not be macros, 7 deferred
+
+`audit/MACRO_READINESS.md`, produced before any wiring. All six owning scripts run for it, `u2`,
+`u7`, `u9`, `u11`, `u12`, `u13`, **all exit 0**, and every value in the READY column comes from a
+script's output rather than from a docstring or a findings file, so **the `d0c` failure of R141 does
+not repeat.**
+
+**17 READY**, among them `ke_frontier_3000_pct` 80.01, `ke_frontier_600_pct` 15.67,
+`ke_frontier_300_pct` 6.33, `ke_frontier_600_factor` 1.170, `ke_frontier_300_factor` 1.065,
+`profile_nominal` 0.2002, `profile_lo_nominal` 0.2679, `profile_hi_nominal` 0.1327,
+`profile_gap_tier1_pct` 13.5, `quad_width` 0.10, `drift_cross_pct` 95.4, `drift_premium_lo` 0.3,
+`drift_premium_hi` 1.6, `rho_pole_q` 0.800.
+
+**A naming hazard worth fixing before wiring, not after.** `profile_nominal` = 0.2002 is the
+**recommended 25-monthly design's** profile; **Tier 1's profile is 0.2270**. `profile_gap_tier1_pct`
+is Tier 1's ratio and `object_spread_pct` is the recommended design's. Two designs, similar keys,
+and a single `profile_...` prefix invites conflation in exactly the way wiring makes permanent.
+
+**2 BLOCKED**, `object_spread_pct` and `sim_spread_nominal`, on R142's footing conflict. One line
+from the author settles both, and (g4)'s 0.17 stands either way.
+
+**3 THAT SHOULD NOT BE MACROS, and this one is mine.** The proposed `rho` sentence reads *"at
+$\num{rho_above_fail_pct}\%$, with a seed-to-seed range of $\num{rho_above_fail_lo}$ to
+$\num{rho_above_fail_hi}$"*. The spread is **zero across all eight seeds**, so it renders as **"a
+range of 100.0 to 100.0"**. **The original prose said "with no seed-to-seed variation" and was
+better.** I macro-ised it at R134 to fix the single-seed defect and replaced a correct English
+statement with a degenerate numeric one. Keep `rho_above_fail_pct`, drop the other two, restore the
+clause. **A macro is right for a number that could move and wrong for a quantity whose content is
+that it does not.**
+
+**7 DEFERRED**, the breath group. Their values are row-selections from tables indexed by breath CV,
+so each needs its row named first, and naming the row is a choice rather than a lookup. Deferred
+rather than guessed.
+
+**The highest-yield step was not in the plan.** Checking the four macros that **already exist** is
+what found R142's footing conflict. Nothing in the landing plan said to check those, because they
+were the ones assumed safe.
+
+### R144. RETRACTED from R141: the sweep does NOT claim that number is owned, and already applies the test I proposed to add
+
+R141 said *"`PROVENANCE_SWEEP.md:202` already indexes the line as having an owner, which it does
+not."* **That is wrong, and backwards.** I read a table of paper locations as an ownership index. It
+is not one.
+
+**Line 202 sits inside section 4 of the sweep, whose heading is "And 25 claims with no owner and no
+match anywhere."** `06_excitation.tex:103`, with its `0.587, 0.209`, is on that list. **The sweep
+classified it correctly, and before I did.**
+
+**And the sweep already applies exactly the ownership test I proposed to build.** Its section 3 is
+*"The queue: 26 claims whose own generator ran and did not print them"*, with a verdict column whose
+entries read **`NOT IN OUTPUT`**. That is running the generator and checking its output, which is the
+definition R144 was going to introduce as a correction. **The sweep's notion of ownership is a value
+in an output, not a string in a source.** Only two rows in the whole 590-line document name a script
+at all, which is what should have told me the tables were not an owner index.
+
+> **So the inference built on my error does not hold.** The `d0c` finding stands on its own terms,
+> `0.587` and `0.209` have no generator, but it **confirms** the sweep rather than impugning it. My
+> having "found" an unowned number that the sweep already lists as unowned is not a discovery about
+> the sweep's method.
+
+**What the sweep does say about the exposure, in its own words, and it is larger than the framing I
+gave it.** *"343 numbers are generated and checked, 2472 are not."* And its headline: *"Across 130
+claims this sweep found no wrong number in the paper by checking, and five wrong numbers in the
+checker."* Then the amendment it makes against itself: wiring five previously-unrun generators
+**immediately found two genuine paper-against-generator disagreements**, `t3`'s 7% and 32% against
+6.3% and 24.1%, and `t4`'s 0.288 against 0.286, both now corrected. **That is the argument for the
+machinery and the reason wiring precedes rewording**, which is the author's ordering arrived at
+independently.
+
+**This is the section 0 rule firing on me within one pass of my writing it.** The rule says the
+highest-yield check targets something already accepted once, and what I had accepted was **my own
+reading of the sweep at R141**. The correction cost nothing because it was caught before the re-run
+was built; had I built it, I would have reimplemented a test that already exists and reported its
+agreement as a finding.
+
+**The genuine gap, recorded with its size rather than implied.** The 364 generated keys have had the
+guard applied to them, which checks that the paper's macro matches the generator's current output.
+What they have not had is the readiness test of R143, which asks whether the value in the output is
+the one the sentence means. **2472 numbers in the paper are neither generated nor checked**, per the
+sweep. Those two figures are the exposure, and neither is changed by this round.
+
+### R145. The footing moved to the paper's, and three defects in one new script that the guard would have certified
+
+`audit/u22_postdose_footing.py`. The author's ruling: the object spread compares two objects at one
+design, so both must sit on one footing, and **the paper is the artefact so the paper's footing
+wins and the audit moves to it.** My 1.178 divided a post-dose marginal into a pre-dose profile and
+was the very defect this audit exists to catch.
+
+**The footing is obtained rather than reimplemented**, by building the record with
+`src/design/run.py`'s own `design_record`. **PART A is the anchor and it passes exactly:** median
+**0.1699** over 24 seeds with range **[0.1684, 0.1709]**, which is the committed value *and* the
+seed range `PHASE8_SIMULATIONS.md:623` quotes for it.
+
+**All objects on the committed post-dose footing:**
+
+| quantity | value | design |
+|---|---|---|
+| marginal | **0.1699** | recommended, 25 monthly |
+| profile, left / right half-width | **0.2678** / **0.1332**, ratio 0.497 | recommended |
+| profile, mean half-width | **0.2005** | recommended |
+| simulated spread, **standard deviation** | **0.2002** | recommended |
+| simulated spread, robust | 0.1776 | recommended |
+| **object spread** | **18.0%** | recommended |
+| marginal | **0.2002** | Tier 1, 118 monthly, with dose scale |
+| profile | **0.2268** | Tier 1 |
+| **Tier 1 gap** | **13.3%** | Tier 1 |
+
+**A clarification of the (g4) trio that is worth more than the correction.** The old framing was
+three scattered objects, Fisher 0.1695, simulated 0.1777, profile 0.2002. On one footing and with
+R132's statistic, it is **one marginal at 0.1699 and one non-quadratic width confirmed twice**, the
+profile at 0.2005 and the simulated **sd** at 0.2002, agreeing to 0.15%. The 0.1777 was the
+**robust** spread, which R132 established is the wrong comparator against a Fisher. So the spread is
+18.0% and the author's 0.17 target stands with more support than it had.
+
+**A trap to name before wiring:** `sd_tier1` is 0.2002 and `sim_spread_recommended` is 0.2002.
+Different quantities, different designs, identical value.
+
+> **Three defects in this one new script, found in one sitting, and every one would have passed the
+> guard.**
+> 1. The simulated spread used a **bare `lstsq` on the flux residual**, omitting both priors, and
+>    returned **5.37** for a quantity whose Fisher width is 0.17. Absurd enough to catch by eye.
+> 2. PART D added the dose-scale column to the **marginal only**, so Tier 1's marginal came out
+>    0.1542 against the published object's 0.2002. Wrong but plausible.
+> 3. The fix for (2) then compared a five-parameter marginal with a **four-parameter profile**, and
+>    the gap came out **-9.1%**. A negative gap is impossible, since a profile accounting for
+>    non-quadraticity cannot be narrower than the marginal at the same design.
+>
+> **Only the first was absurd on its face.** The second was merely wrong, and the third was
+> self-consistent within the script. **This is the argument for the ordering, made against my own
+> code:** wire any of the three and `check_artefacts` reports `ARTEFACTS MATCH THE CODE`.
+
+**Every reported value has independent corroboration**, which is the standard applied before any of
+them is wired: 0.1699 against the committed macro; 0.2005 against `u12`'s 0.2002 on the other
+footing; 0.2002 simulated against 0.2005 profiled by a different method; 13.3% against `u12`'s
+13.5%.
+
+### R146. The wiring pass ran. 19 macros generated, the guard passes, and two more defects of mine on the way
+
+`audit/u23_wire_phase11.py`, registered in `src/common/numbers.py`'s `GENERATORS` and added to
+`make figures`. **It COMPUTES every value by calling the function that owns it**, which is R141's
+lesson: a generator that tabulated its numbers would make `check_artefacts.py` certify hand-typed
+values, which is worse than leaving them as literals.
+
+**The footing is asserted, not assumed.** `objects_group()` raises rather than emitting if the
+marginal it computes departs from the committed `0.1699` by more than 5e-4, so a number on the wrong
+footing cannot reach the file even if someone later edits the record construction.
+
+**19 keys emitted into `results/numbers/frontier.tex`.** The guard now reports **382 generated keys
+across 23 numbers files**, up from 364 across 22, with the new generator reachable from
+`make figures` and **`ARTEFACTS MATCH THE CODE`**.
+
+| | |
+|---|---|
+| frontier | `ke_frontier_3000_pct` 80.01, `_600_pct` 15.67, `_300_pct` 6.33, the three factors 2.226 / 1.170 / 1.065, `ke_prior_pct` 80 |
+| recommended design | `profile_recommended` 0.2005, `profile_lo_` 0.2678, `profile_hi_` 0.1332, `profile_asym_` 0.497, `sim_spread_recommended` 0.2002, `sim_spread_robust_recommended` 0.1776, `object_spread_recommended_pct` 18.04 |
+| Tier 1 | `sd_tier1_with_kappa` 0.2002, `profile_tier1` 0.2268, `profile_gap_tier1_pct` 13.25 |
+| other | `quad_width` 0.10, `margin_target` 0.17 |
+
+**Names carry their design**, per the author's ruling. `profile_recommended` and `profile_tier1` are
+0.2005 and 0.2268 and a shared prefix invited conflating them.
+
+> **Two further defects of my own, caught before the keys were frozen.**
+> 1. **`quad_width` came out 0.05 and should be 0.10.** Asymmetry falls as the prior narrows, so the
+>    closed widths form a tail and the useful statement is the **loosest** prior that suffices, since
+>    that is what a measurement must reach. My loop overwrote its candidate on every match while
+>    descending and returned the **tightest**, which says a measurement must be twice as good as it
+>    needs to be. **Fourth defect of this kind in one sitting.**
+> 2. **A redundant key.** I emitted `sd_recommended_postdose`, which is the same quantity as the
+>    existing `sd_monthly` on the same footing, by different code. **The guard checks keys, not
+>    values**, so two names for one number would let them diverge while it reported a match.
+>    Dropped; the computed value stays as the footing assertion and the paper keeps quoting
+>    `sd_monthly`. **Fifth.**
+
+**Five defects in my own new code in one sitting, every one of which the guard would have
+certified.** Three in `u22` at R145, two here. Only one was absurd on its face. That is the
+strongest evidence this pass produced for the author's ordering, and it is evidence against my own
+work rather than against the paper's.
+
+**Text updated to match.** `profile_nominal` and friends renamed to their design-carrying keys; and
+the degenerate `rho_above_fail_lo` / `_hi` **dropped in favour of the prose clause "with no
+seed-to-seed variation at all"**, which is the finding, where `\num{lo} to \num{hi}` would have
+rendered "100.0 to 100.0" and destroyed it.
+
+**What is still not wired, deliberately.** The breath group, which needs its rows named. The
+`06_excitation.tex:103` pair, which has no generator. And the proposed passages themselves, which
+remain unapplied: **this pass wired the numbers, it did not edit `paper/`.**
+
+---
+
+### R147. The guard now catches value twins, and found four undeclared, none of them mine
+
+**The author's instruction after R146**, which found `sd_recommended_postdose` emitted beside the
+existing `sd_monthly`, both 0.1699 by different code:
+
+> *"The guard checks keys and not values. Make the guard catch the next one: have
+> `check_artefacts` flag any two keys whose emitted values agree to full precision, for a human to
+> confirm as intentional or collapse."*
+
+**`tools/check_artefacts.py` gained `_value_twins()` and `check_value_twins()`.** It **fails
+rather than warns**, because a duplicate that AGREES today is the only kind that can silently
+diverge tomorrow: two names for one number pass a key-comparing guard forever, and the day one of
+them moves the guard still reports a match. Confirming a pair means adding it to
+`DECLARED_VALUE_TWINS` **with a written reason**, which is a thirty-second act that leaves a
+record. The check carries a **self-test** in its own output: it is handed a synthetic 0.1234 twin,
+which it must report, and a synthetic 0.20 pair, which it must not, so a check that silently
+stopped checking cannot pass as green.
+
+**It found four undeclared twins on its first run and not one of them was in the code I had just
+written.** Two are coincidences and two are genuine redundancies:
+
+| pair | value | verdict |
+|---|---|---|
+| `bias_both20` / `bias_loose` | 0.286 | **REDUNDANT.** `audit/t4_bias_vs_scatter.py` assigns both keys the same variable `both`, lines 114 and 119. Exactly the defect the check was written for, and it predates the check by months. |
+| `loadcap_perfect_5pct` / `meas_exact_5pct` | 2.659 | **REDUNDANT.** One quantity from two generators. `PROVENANCE_SWEEP.md` separately records 2.659 appearing three times in the paper "owned by nothing in any of them". |
+| `E_info` / `bias_alone20` | 0.172 | coincidence, an excitation measure against a load-bias offset |
+| `bias_sweep` / `trans_noprior_nominal` | coincidence across two scripts |
+
+**Both redundancies are declared PENDING COLLAPSE rather than collapsed here**, because collapsing
+a key changes what the paper cites and that is a prose decision, not a guard decision.
+
+**Two false-positive modes were characterised rather than handed over as noise.** The first run
+produced 13 reports of which 9 were one cluster: **a median and its seed range are one quantity
+under three keys**, and a tight spread makes `x`, `x_hi` and `x_lo` print the same digits. A
+`_stem()` exemption removed them. Declarations are then matched **by stem**, so one entry covers a
+key and its range variants rather than needing three. The second mode is coincidence at low
+precision, handled by a `min_decimals=3` floor: agreement at four places is worth a human's
+glance, agreement at two is arithmetic.
+
+**The remaining cluster was the interesting one and it is a RESULT, not a redundancy.**
+`sd_load_1pct` (`src/design/run.py:1506`, `load_cv=0.01`) and `sd_load_steady` (`:1508`,
+`load_cv=0.0`) are **different inputs giving the same answer to four places**, 0.1696. That
+insensitivity is precisely what `run.py:1686` states by contrasting 1% against 20%. **A
+value-twin check cannot distinguish a redundant key from a real invariance, and it should not
+try**: it hands both to a human, and here the human's answer is that the coincidence IS the
+finding.
+
+---
+
+### R148. `margin_target` was asserted, not computed, and that is the `rho` case again
+
+**The author's check, in the same message:**
+
+> *"Check `margin_target`. If 0.17 is computed from the spread, it belongs where it is. If it is
+> my recommendation rounded, it is the rho case again."*
+
+**It was the recommendation rounded.** `audit/u23_wire_phase11.py` carried
+`N["margin_target"] = 0.17` with a comment saying so, and `MACRO_READINESS.md:30` listed its owner
+as *"author's (g4) decision, not computed, and should not be"*. **I wrote both and neither
+noticed that emitting it as a macro contradicts the note beside it.** A macro asserts that a
+number came from the code. A judgement emitted by a generator is therefore a false claim about its
+own provenance, which is the same defect as R143's degenerate `rho` macros in the opposite
+direction: there, a macro destroyed a prose finding; here, a macro manufactures a provenance.
+
+**It is not a bare recommendation, which is why the fix is a derivation and not a deletion.** The
+gate is 0.20 on the marginal, and stating it against the profile means deflating it by the
+measured object spread:
+
+```python
+GATE = 0.20
+N["margin_target"] = GATE / (1.0 + N["object_spread_recommended_pct"] / 100.0)
+```
+
+**0.20 / 1.1804 = 0.16944, which renders as 0.17.** The printed value does not move. What moves
+is that it now tracks the spread rather than sitting beside it, so a change in footing or design
+carries the target with it instead of leaving a stale constant that agrees by memory.
+
+---
+
+### R149. The author's escalation, recorded as the author asked for it to be recorded
+
+R144 retracted my claim that `PROVENANCE_SWEEP.md`'s sweep tested only for string presence. The
+author's reply:
+
+> *"My error was worse than the one it corrected. You misread one index entry; I took your claim
+> about a document I had not opened and turned it into a verdict on its methodology. The rule I
+> gave you has a sibling I broke in the same breath: do not characterise a method from a claim
+> about it. Record it that way rather than as my correction of your misreading, because the
+> escalation is the part that would have cost a pass of work."*
+
+**Recorded that way.** The asymmetry is the content: a misreading costs one wrong sentence and is
+caught by the next person to open the file, while a verdict on a method, taken on trust,
+discredits an instrument that works and the work it would have done gets rebuilt. **Section 3 of
+that sweep already runs the output test**, and line 202 sits in section 4, whose subject is the 25
+claims with **no** owner and no match anywhere. The rule is now in `OPEN_QUESTIONS.md` section 0
+as **"do not characterise a method from a claim about it"**, the sibling of the bounded-search
+rule at R125: **whoever escalates owns the reading.**
+
+**The exposure identified in its place is the real number, and it is now the headline.** **343
+numbers in `paper/` are generated and checked, 2472 are not** (`PROVENANCE_SWEEP.md:65,68`),
+against the **382 keys** the generators emit across 23 files. The generators already produce more
+keys than the paper cites, so much of the gap is prose declining to use a macro that exists: 249
+category-1 literals restate a value a generator already owns, 109 category-3 claims are genuinely
+unwired. **12% coverage** is the honest summary and it now sits in `OPEN_QUESTIONS.md` section 4.
+
+---
+
+### R150. A discipline point, the author's, and it is about the promise rather than the order
+
+> *"You have now committed ahead of `make test` twice and said twice that you would report it. It
+> is that 'I will report it when it lands' is a promise the next pass inherits, and it has not
+> landed twice."*
+
+**Both runs did land, 102 passed each time.** That is not the defect. The defect is that a
+promise deferred across a pass boundary is a liability the next session inherits without knowing
+it holds one, and two of them accumulated before either was discharged. **A result reported after
+the commit it was supposed to gate is not a gate.** The ordering exists so that a red test stops
+a commit, and running the suite afterwards converts it from a gate into a note.
+
+**This entry is written before the commit it describes**, and `make test` is run before it rather
+than after. If the suite fails, nothing in this pass is committed.
+
+---
+
+### R151. `06_excitation.tex:103` cannot be derived, because the sentence does not determine a construction. Both of its claims flip sign inside what it leaves unstated
+
+The author's instruction split the thirty proposed passages by kind and put this one among the
+corrections: *"The 0.587/0.209 pair at 06_excitation.tex:103, which has no generator and must be
+derived or withdrawn rather than wired."*
+
+**Derivation was attempted and it failed in an informative way.** `audit/u24_km_band.py`.
+
+**First, the owner question is settled and the answer is that there is none.** R141 found the pair's
+only trace to be a sentence in `d0c_mechanism.py`'s docstring. **Reading the script confirms it
+computes three constructions and none is the one the paper describes:** the real dose train, the
+same levels with the increment reassigned, and a single marker level at the **median of the
+record**. There is no idealised band at $m/K_m = 0.01$ anywhere in the repository.
+
+**The difficulty is stated before any number, because it is the finding.** *"An idealised band with
+Delta sweeping monotonically with m"* does not name a construction. It leaves the band's width, its
+number of points and the increment's range free. **A script that searched those choices until 0.587
+and 0.209 appeared would not be deriving the claim, it would be reverse-engineering it**, and the
+guard would then certify whatever it found. So `u24` fixes the construction by the most natural
+reading, names every free choice as an argument, and **sweeps each one** to ask whether the claim's
+content survives.
+
+The Fisher matrix, priors and noise are copied from `d0c_mechanism.py` unchanged, so the two are
+comparable rather than two conventions.
+
+**PART A, the stated construction** (centre $m/K_m = 0.01$, half-width 0.5 decades, $n = 365$,
+increment sweeping $0$ to $2\theta$):
+
+| quantity | increment dropped | carried | ratio |
+|---|---|---|---|
+| $\operatorname{sd}(\ln \hat K_m)$ | **0.5766** | **0.1664** | 0.289 |
+| $\operatorname{sd}(\ln\hat\theta)$ | 0.5603 | 0.5127 | 0.915 |
+
+**The paper's literals are not reproduced.** 0.587 against 0.5766 is close, 0.209 against 0.1664 is
+a 20% relative departure. Deterministic Fisher computation, so there is no seed spread to quote and
+that is stated rather than left as a gap.
+
+**PART B is the result, and it is about the sentence rather than about the numbers.** Sweeping each
+free choice:
+
+- **The first clause holds robustly.** Carrying the increment improves
+  $\operatorname{sd}(\ln \hat K_m)$ at **every** setting, the worst ratio over sixteen rows being
+  0.709. That part of the sentence is sound.
+- **The second clause is false as stated.** *"$\operatorname{sd}(\ln\hat\theta)$ does not improve at
+  all"* is contradicted at the stated construction, where it improves by 8.5%, and badly
+  contradicted elsewhere: **ratio 0.585 at $m/K_m = 0.03$, 0.539 at $m/K_m = 0.1$, 0.698 at
+  $n = 1000$.**
+- **And its SIGN is not determined by the sentence.** At half-width 0.25 decades
+  $\operatorname{sd}(\ln\hat\theta)$ gets **worse** (ratio 1.081), at 0.5 it gets **better** (0.915),
+  at 1.5 worse again (1.215). `d0c`'s docstring reports it getting worse, my construction has it
+  getting better, and **both are readings of the same English sentence.**
+
+**So the correction is not a new pair of digits.** The sentence rests on a construction it does not
+state, and one of its two claims changes sign inside what it leaves open. Replacing 0.587 and 0.209
+with 0.577 and 0.166 would preserve the defect while making it look generated, which is precisely
+the failure R141 identified and the reason wiring was ordered after derivation.
+
+**Two ways out, and only one of them is mine to take.** Withdraw the pair and the absolute clause,
+keeping the robust qualitative statement that the low end gives back $K_m$ and not $\theta$; or
+state the construction in the paper and quote what it gives. **The second changes what the paper
+claims and needs the author.** The withdrawal is prepared as the default, because it removes claims
+and adds none.
+
+**What this cost to find: one script and one sweep.** What it would have cost unfound: a wired
+macro, a guard reporting `ARTEFACTS MATCH THE CODE`, and a clause whose truth value depends on a
+band width nobody wrote down.
+
+---
+
+### R152. Six generated numbers files were never loaded by the document, 24 keys the paper prints were undefined, and the guard called it a match
+
+**Found by compiling the paper**, which the author's delivery-pass instruction required and which
+nothing in this audit had done before. It is the largest defect this effort has found, and it was
+invisible to every check in `tools/check_artefacts.py`.
+
+`paper/preamble.tex` `\input`s **17** of the **23** files in `results/numbers/`. Never loaded:
+**`bias`, `tier1`, `loadcap`, `diet`, `measured`, `frontier`.**
+
+**The consequence is not cosmetic.** `pdflatex` raised **29 `\PackageError`s** on **24 distinct
+keys**, every one of them living in one of those six files, and not one error coming from a loaded
+file. The correspondence is exact. Those numbers do not render: the paper prints an error where a
+measured quantity should be.
+
+**And `frontier` is Phase 11's own wiring.** The pass at R146 computed nineteen macros, registered
+the generator in `GENERATORS`, added it to `make figures`, confirmed 382 keys across 23 files, and
+shipped them into a file the document does not open. **The guard reported
+`ARTEFACTS MATCH THE CODE` throughout.**
+
+**Why every existing check missed it, which is the part worth keeping.** They each stop one level
+too early:
+
+| check | what it establishes | why it cannot see this |
+|---|---|---|
+| `check_regenerated` | the file's contents match the generator | the file is correct; nobody reads it |
+| `check_generators_reachable` | `make figures` runs the generator | it does, and writes the file |
+| `check_key_collisions` | no two files define one key | one file defining it is enough to pass |
+| `check_value_twins` | no two keys share a value | same |
+| `check_inputs_reachable` | every **section** file is `\input` | it asks this of prose and never of numbers |
+
+**The last row is the sharpest.** The guard already contained the idea, applied to sections, and the
+numbers half was simply never written. A check that asks "does anything read this?" of one artefact
+class and not of the neighbouring one is the kind of gap that survives indefinitely, because every
+individual check passes and the suite looks complete.
+
+**Fixed both ways.** The six `\input` lines are added and the error count goes **29 to 0**. And
+`check_numbers_loaded()` now asserts that every generated numbers file is `\input` by some document
+in `paper/`, that every file the document inputs is actually generated, and that no cited `\num{}`
+key lives in an unloaded file. Its self-test is real: removing the `frontier` line makes it fail
+and name the file, its nineteen keys and the zero of them the paper currently cites.
+
+**The standing lesson, and it is the author's from an earlier round**: the highest-yield check
+targets what has already been accepted once. Six of these files had been generated and guarded for
+weeks. What found them was not a cleverer check, it was **running the build and reading its log**,
+which no amount of checking the inputs to the build can substitute for.
+
+---
+
+### R153. The threshold correction I was about to land was wrong, and the paper's `+0.07` was right all along
+
+**I reported to the author, in this session, that `+0.07` should become `+0.10`.** That was wrong and
+it is withdrawn here.
+
+`d6_regimes.py` builds its threshold table on `lv9 = geomspace(M_BAR, 5 * M_BAR, 9)`, a **nine-level
+geometric ladder at seed 11**. `u19` and `u25` use `design_record` over `arange(0, 730, 30.4)`, the
+**twenty-five-point monthly dose train**. **Two different designs**, and the paragraph's own subject
+sentence says *"On the monthly design"*. I read a threshold off the ladder and proposed it as a
+correction to a sentence about the record. **That is the footing defect for the fourth time, and the
+first time it would have put a wrong number INTO the paper rather than into a report.**
+
+`audit/u25_threshold_spread.py`, on the monthly design, twelve seeds, on R138's repaired grid of
+3001 points with the crossing interpolated:
+
+| cell | result |
+|---|---|
+| managed $\rho = 1$, equal costs | median **+0.0730**, $[+0.0533, +0.0852]$, finite **12/12** |
+| crisis $\rho = 0$, equal costs | **no crossing 12/12**, falling to **escalate all** |
+| crisis $\rho = -0.25$, equal costs | **no crossing 12/12**, falling to **escalate all** |
+| crisis $\rho = -0.25$, ten to one | **no crossing 12/12**, falling to **escalate all** |
+
+**So the published `+0.07` is correct**, and R138 remains true about `d6` while saying nothing about
+this sentence. **And `-0.39` has no home on the monthly design at all**, at any cost ratio tested,
+on any seed. It exists on the ladder. The sentence paired a ladder number with a record number and
+called both "the monthly design".
+
+The corrected sentence keeps `+0.07`, adds its twelve-seed range, and replaces `-0.39` with what is
+true on this design: the crisis regimes have **no** finite boundary and fail towards escalating
+everyone, already at equal costs, which is a stronger form of the claim the second clause was
+reaching for.
+
+**Two further defects of mine inside the script that found this.** `over_seeds` computed whether a
+non-crossing means "escalate none" or "escalate all" and then **discarded which** before printing,
+although that distinction is exactly what decides the second clause. And the summary line
+**hard-coded "escalate nobody"**, a conclusion I typed before the run could produce one, against
+this repository's own rule that no expected result is written into a script in advance. The answer
+was the opposite. **Seven defects in my own checking code this sitting**, which continues to be a
+richer source of error than the paper.
+
+---
+
+### R154. The non-crossing direction was inverted in one script, the design was mixed in another, and the grid does not span the estimator
+
+The author's instruction was to settle `-0.39` from `PHASE2D_FINDINGS.md`, which `u19` established
+is the owner, rather than from `d6`. Doing so found three separate things, only one of which is about
+the paper.
+
+**What Phase 2D settles.** Its section 5 table names the designs explicitly: *"fixed operating point,
+n=9 (old)"* at 6.9% +/- 1.7 and 44.0% +/- 3.2, and *"monthly across dose cycles, n=25"* at 19.1%
++/- 2.1 and 41.6% +/- 2.5. **The first reproduces `d6`'s nine-level ladder exactly and the second
+reproduces `u19`'s monthly record exactly**, so the two designs are identified beyond doubt. The
+crisis-reversal table is headed *"on the therapy-channel design"*, which section 5 identifies as the
+monthly one. **So the paragraph names the right design.** What it does not do is quote that design's
+numbers: its 17.5% / 41.8% / 1.027 are one seed, against the twelve-seed 19.1% / 41.6% / 0.88 that
+Phase 2D itself prints two tables earlier. The correction already applied is right for a deeper
+reason than the one it was made for.
+
+**And `-0.39` still does not reproduce on it.** No regime the paper calls crisis, `rho <= 0`, has a
+finite threshold on the monthly design at any cost ratio or seed. Where a value near it appears is
+`rho = 0.5`, which the paper's own line 56 excludes from "crisis", on the nine-level ladder, which
+the paragraph does not name. **Doubly mismatched with the sentence it appeared in**, which vindicates
+removing it rather than restating it.
+
+**MY FIRST DEFECT: `u19` mixes two designs under one heading.** `part_a` computes error rates on
+`LV_M`, the monthly record. `part_c` computes thresholds on `LV9`, the nine-level ladder. One script,
+one heading, two designs, and I read its rows against each other for a full pass. That is the footing
+defect inside the very script written to catch a footing defect.
+
+**MY SECOND DEFECT: the non-crossing labels were inverted, and reasoning could not settle it.** `u19`
+mapped `gap[0] <= 0` to *"escalate none"* and `u25` mapped it to *"escalate all"*. I tried to resolve
+it from the limits and went in circles, because both limits are consistent with a grid that is too
+narrow at either end. **The probe settled it in one run by looking at the distribution instead:**
+
+| rho | median `mu_hat` | min | gap at the grid's lowest tau |
+|---|---|---|---|
+| 0 | **-100,677** | -2.1e12 | -0.450, with 69.8% already escalated |
+| -0.25 | **-3.7e11** | -2.1e12 | -0.890, with 93.5% already escalated |
+
+**The search grid is +/-30,000 and the estimator's own distribution runs to -2e12.** At the *lowest*
+tau the grid offers, most patients are already being escalated, so `gap[0] <= 0` means the grid cannot
+go low enough to stop escalating. **`u25` was right and `u19` was inverted.** `u19` is fixed and both
+defects are annotated in the file.
+
+**The larger point, which is the one worth keeping.** In the crisis regimes the regret curve does not
+fail to cross because no threshold exists; it fails to cross because **the estimator has collapsed so
+far that the search range is nowhere near it.** Any threshold quoted for those regimes on a grid of
++/-10 theta is meaningless, in either direction. The corrected sentence says the comparison does not
+cross and fails towards escalating everyone, which is what the numbers show, and it is now confirmed
+empirically rather than inferred.
+
+---
+
+### R155. The title declared the wrong paper, and the most actionable sentence was a subsection heading
+
+**The author's ruling, from the delivery pass:** a design and identifiability paper with no patient
+data is ordinary and publishable; an estimation paper with no patient data is not; and *"the title
+promises the second while the content delivers the first."*
+
+**Retitled.** The subtitle *"Estimating Residual Enzymatic Capacity in Propionic Acidemia"* named the
+one thing Section 7 concludes cannot be done in propionic acidemia, and promised an estimation study
+containing no observation from any patient. It becomes **"Design Rules and Limits of Recoverability
+for Enzymatic Capacity in Propionic Acidemia"**, so the first thing a reader meets is the
+contribution rather than the thing the paper withdraws. The change is one line and it decides which
+objection the paper has to answer.
+
+**The Monday sentence is added.** The delivery pass found that the paper's single most actionable
+statement, that Tier 1 is one blood draw and that it gates everything else, existed only as a
+subsection heading two pages into the specification. A reader could finish the paper without being
+told what to do first. It is now a lead paragraph in Section 6: run Tier 1 before committing to
+either tier below it, because it is the only measurement that changes what the other two **mean**
+rather than how precisely they answer.
+
+**Both are consequences of the same finding** and neither adds a claim: the retitling restates
+Section 8.1's own sentence in the place a reader meets first, and the Monday paragraph restates
+Section 6.2's.
+
+---
+
+### R156. Order B is not a file move, and the reason is invisible to both the guard and the compiler
+
+The author chose order B: the recoverable band first, `k_e` gathered as the constant that places it,
+model and methods to the back. **Checking what the move would break, before making it, found that the
+mechanical version of B is unsafe in a way nothing in this repository can detect.**
+
+`paper/sections/11_scope.tex` carries thirteen cross-references. **Eight of them point outside
+itself**, into `07_design` (`sec:collapse`, `sec:designsec`, `rem:curvature`, `rem:kmrecovered`),
+`08_specification` (`sec:tierstruct`, `sec:tierload`, `sec:whoto`), `06_excitation`
+(`sec:excitation`) and `02_model` (`eq:local`, `tab:params`). Its opening sentence is *"This section
+is a scope limit on everything above."*
+
+**Move it to position two and LaTeX still resolves every one of them**, because references resolve
+regardless of order. The build stays green at 0 errors and 0 unresolved references. **What breaks is
+only the prose**: eight forward references to material the reader has not met, and an opening
+sentence that is now false.
+
+**That is R152's failure class one level up.** There, a check verified everything about a numbers file
+except whether the document read it. Here, the compiler verifies everything about a reference except
+whether it points backwards. *"The build passes"* was never evidence about the thing neither the
+build nor the guard inspects, which is the section 0 rule the author just added, arriving again from
+a different direction within one pass of being written.
+
+**So B's spine was taken without the move.** The author's reason for B was precise: *"a precision
+quoted before its range is meaningless, so the band comes first."* That is achieved by stating the
+band where the reader meets it first rather than by relocating the section that derives it. The
+introduction's scope paragraph, which already said the target is *"not recoverable in the patients
+the question matters most for"* without saying where, now carries the numbers:
+`\num{band_lo_pct}` to `\num{band_hi_pct}` per cent of normal, with the disease a factor of
+`\num{disease_factor}` below, all three already generated and guarded. **No precision appears
+anywhere in the paper before the range it holds over.** Section 7 remains the derivation.
+
+**What B still asks for and has not had**, stated so it is not mistaken for done: relocating
+Section 7 with its connective tissue rewritten, gathering `k_e` from Sections 6.3, 6.5 and Table 11
+into one section, and moving model and methods to the back. **Each is prose work rather than a file
+operation**, each needs the eight references re-pointed or re-worded, and the paper is frozen for
+prose. Recorded as the author's call, with the blocking detail now specific rather than a warning
+that it would be large.
+
+---
+
+### R157. The probe undid the cell it was checking: `mu_hat`'s magnitude is `K_m`'s error, not capacity's
+
+**The author's reading of R154's probe, and it is the correct one:** a search grid of $\pm 30{,}000$
+against an estimator whose `mu_hat` has median $-100{,}677$ is not a grid that failed to find a
+crossing, it is a grid that never reached the distribution, so *"escalate all"* reports **where the
+grid ends, not where the decision flips**. R154 concluded the correction stood because it says
+escalate all. **It does not stand as a finding, because the finding it states was never computed.**
+
+**The tension the author required resolved first, because that is where the defect was.** The crisis
+rows report `theta_hat/theta` of 0.086 published and 0.039 over twelve seeds, a **bounded** collapse
+toward zero, against a median `mu_hat` of $-100{,}677$, which is thirty-four theta below zero. Since
+`margin()` is linear in theta, both cannot describe the same estimator unless something else in the
+margin is large. **Something else is.**
+
+`design.run.margin_and_gradient` computes `mu = theta - (s_peak - ke*m_tol)*(Km + m_tol)/m_tol`. The
+subtracted term is **linear in `K_m`** and divided by `m_tol = 40`, so it inherits every error in
+`K_m_hat` amplified by `(Km + m_tol)/m_tol`, which is 3.50 at the true `K_m` and unbounded above.
+`audit/u26_margin_decomposition.py` measures the split:
+
+| rho | `theta_hat/theta` | **`Km_hat/Km`** | `theta_crit_hat` (true 3343.8) | `mu_hat` | share of `mu_hat` from `theta_crit` |
+|---|---|---|---|---|---|
+| +1.00 | 1.0071 | 0.9992 | 3389 | -167 | 52.9% |
+| +0.50 | 0.8815 | 2.06 | 6020 | -3520 | 69.5% |
+| 0.00 | 0.0271 | **35.79** | 1.02e5 | -1.007e5 | **99.9%** |
+| -0.25 | 0.0071 | **1.29e8** | 3.73e11 | -3.73e11 | **100.0%** |
+
+**`theta_hat`'s collapse is bounded and `K_m_hat`'s excursion is not.** In the crisis rows `mu_hat`
+is reporting `K_m_hat`'s divergence, by 99.9% and 100% of its magnitude.
+
+**What survives and what does not, and the distinction decides the edit.**
+**The sign survives.** Hold `K_m_hat` at truth and `theta_crit` is 3343.8 while `theta_hat` is a few
+per cent of 3000, so `mu_hat` stays negative and every patient still reads as needing escalation.
+The reversal is real and is driven by `theta_hat`. **So the error rates, which are signs, may be
+quoted.**
+**The magnitude does not.** Any threshold on the `mu_hat` scale is on a scale set by `K_m_hat`, so it
+measures the degeneracy rather than the decision. **The thresholds, which are magnitudes, may not be
+quoted.**
+
+**So the cells are removed rather than relabelled**, per the author, and the paragraph is stronger for
+it: `07b` already states that `theta_hat` collapses by two orders of magnitude under crisis protocol,
+and the crisis threshold rows are downstream of exactly that collapse. **They were the same fact
+arriving a second time through a grid**, on a scale set by a different parameter. The text now says
+the fit has collapsed, says why `mu_hat` stops being a comparison of capacities, gives the `K_m_hat`
+factors, and quotes **no threshold** for those regimes.
+
+**The managed row is kept.** At `rho = 1` the `theta_crit` term contributes 52.9% rather than 99.9%,
+`K_m_hat/Km` is 0.9992, and the crossing is finite on all twelve seeds well inside the grid. It is
+the one row the sweep actually measured.
+
+---
+
+### R158. `tab_S_admissible`: the paper already promised the evidence column and did not deliver it
+
+`check_generated_artefacts_used` found the full three-column admissibility table generated by
+`audit/h1_admissibility.py:450` and never `\input` anywhere. R152's declaration recorded it as an
+open question. **It was not one, and the author's answer was already in the main document's own
+caption:** Table~\ref{tab:admissible} says *"The evidence for each row is in the supplement,
+\S S1"*, and that evidence was not in the supplement. **The compact table dropped the column and the
+caption kept pointing at it.**
+
+The full table now has a section in the supplement, which grows from 63 to 64 pages, and the compact
+layout stays in the main document. **This adds no claim**: it delivers a cross-reference the paper
+already made. The declaration is removed from `DECLARED_UNUSED_ARTEFACTS`, which is now empty, and
+the check passes because the table is used rather than because it is excused.
+
+---
+
+### R159. Order B is DONE in substance, recorded as done rather than deferred
+
+**The author's ruling:** B's spine was achieved at a fraction of its cost, and the rest should not be
+spent. *"The reason for B was that a precision quoted before its range is meaningless, and the band
+now sits in the introduction where the reader meets it first."*
+
+**The argument that closes it is that B's remainder answers none of the three referee objections the
+delivery pass found.** The title answered the first, that the paper presents as an estimation study.
+The band in the introduction answers the second, that every precision is quoted at a capacity no
+patient has. **The third, that there is not one patient observation in the document, is not something
+section order can fix.** Relocating Section 7, gathering `k_e` and moving methods to the back are
+large prose edits with eight cross-references to re-point and no referee objection behind them.
+
+**Recorded as done so it stops appearing on the list.** What remains after it: the twenty-one
+insertions, now scoped by the A/B answer; the PHASE4 reconciliation; the literature verification,
+which needs a session with network egress and starts with R4; and the merge.
+
+---
+
+### R160. The PHASE4 reconciliation: 9 applied, 0 stale, 4 orphaned, and two of my own false orphans caught first
+
+`audit/u27_phase4_reconcile.py`. The author's framing was that this is *"yours to do, and it is a
+reading, not a decision"*, and that he decides only the orphans. **It is computed rather than
+asserted**, because a reading of fifteen passages against a 45-page document is where an assertion
+drifts from what the files say.
+
+**Method.** Each passage's `Current` and `Proposed` blockquotes are matched against the live section
+files, reduced to lowercase alphanumeric words, on the longest run of consecutive words present.
+`MIN_RUN = 12` is stated rather than tuned: twelve consecutive words is far beyond coincidence in this
+corpus and far below any quoted block's length. **The run length is printed with every verdict**, so a
+weak match shows as weak instead of being rounded into a category.
+
+| verdict | n | passages |
+|---|---|---|
+| **APPLIED**, the proposed text is in the paper | **9** | 1, 2, 5, 6, 7, 9, 12, 13, 15 |
+| **STALE**, the target is still there and the passage still applies | **0** | none |
+| **ORPHANED**, neither text is in the paper | **4** | **3, 4, 11, 14** |
+| REGISTER, targets `src/common/params.py` | 1 | 8 |
+| NO-BLOCKS, no `Current`/`Proposed` pair to match | 1 | 10 |
+
+**STALE is zero, which is the headline.** Nothing in PHASE4 is actionable as written. Nine passages
+were applied at some point without the document recording it, and the rest have lost their targets.
+That is consistent with R139, which found much of PHASE4 already applied, and it settles it with a
+per-passage verdict instead of a sample.
+
+**The four orphans corroborate an independent finding.** An earlier pass established by unbounded
+search that `rem:transient`, `rem:second_order`, `rem:no_delta` and `rem:rankvsprec` no longer exist
+anywhere in `paper/`. This table, computed on text rather than labels, orphans `rem:no_delta` (4) and
+`rem:transient` (14) while marking `rem:second_order` (2) and `rem:rankvsprec` (6) **applied**. Both
+results hold together: those two edits landed and their remark labels went with the rewrite. **Two
+methods sharing no code path, agreeing.**
+
+**TWO FALSE ORPHANS OF MINE, CAUGHT BEFORE THE NUMBER WAS REPORTED.** The first version searched every
+passage against `paper/sections` and reported **six** orphans. Two of them do not target the paper at
+all: passage 8 rewrites the `D` row's justification in `src/common/params.py`, and passage 10 is five
+annotation rows whose own text says *"`tab_params.tex` is generated from `params.py`"*. **Their text is
+absent from the paper because it was never meant to be there.** Reporting them as orphaned would have
+handed the author two decisions that are not his to make on this table.
+
+**A wrong haystack gives a confident wrong verdict**, which is R153 again in a new place: there I read
+a threshold off the wrong design, here I searched the wrong file. Both produced a clean-looking answer
+with no internal sign of error. Passage 10 needed a second fix as well, because it has no quoted
+blocks at all, and calling an empty search orphaned reports an absence the script never looked for.
+It is now its own category.
+
+**What the author decides: passages 3, 4, 11 and 14.** Whether each point still needs making now that
+its target is gone. Nothing is withdrawn here, because withdrawing is not a reading.
+
+---
+
+### R161. The binding nuisance for the decision is `K_m`, where the binding nuisance for the estimate is `k_e`
+
+**The author's derivatives, checked first because they carry the argument, and they hold three ways**
+(analytic, central differences, and `margin_and_gradient`'s own `grad`): `d mu/d ln theta = +3000.00`,
+`d mu/d ln K_m = -2388.41`, ratio **0.796**. A one per cent error in `K_m` moves the margin 79.6% as
+much as a one per cent error in capacity.
+
+**One refinement: the ratio carries `s_peak`.** 0.796 at the unsafe amplitude, 0.635 at the safe one,
+0.237 at the default. The unsafe side is the costly error so the large figure is the right one, but it
+belongs with its amplitude.
+
+**The gradient cannot settle it, because the cancellation is large.** `theta` and `K_m` enter `mu`
+with opposite signs and are Fisher-correlated. Diagonal contributions to `var(mu)` are 455%, 48% and
+552% against cross terms of **-955%**: `sd(mu)` from diagonals alone would be **774.0** and is
+**238.3**, a factor of **3.25**. So `audit/u28_margin_frontier.py` propagates the full covariance.
+
+**The result, on `u9`'s own Fisher so there is one convention:**
+
+| `theta` | `sd(mu)` | `|mu|/sd` | `k_e` width for `0.20 theta` | `K_m` width for `0.20 theta` | `k_e` width for `sd(ln theta) <= 0.20` |
+|---|---|---|---|---|---|
+| 3000 | 183.4 | 1.87 | 4.408, looser than published | already suffices | 0.8001 |
+| 600 | 145.8 | 18.81 | **unreachable, even exact** | **0.0566** | 0.1567 |
+| 300 | 140.8 | 21.62 | **unreachable, even exact** | **0.0169** | 0.0633 |
+
+**THE INVERSION IS CONFIRMED.** In the disease range an exactly known `k_e` cannot bring the margin to
+the gate and `K_m` can, while the estimate's frontier is the mirror image. Both of this repository's
+earlier statements were right and neither settled the other: **`mu` is a different function of the
+parameters than `theta` is, and a sensitivity ranking does not transfer between them.** "K_m does not
+bind" has been carried for five rounds as though it settled both.
+
+**What it says about the specification, which is the finding rather than either number.** Tier 2 and
+the `k_e` companion are sized for identifying capacity. **If the deliverable is the decision, the
+measurement to buy is `K_m`**, and `K_m` is the quantity the paper says the record already determines
+to 6-7% at every capacity, which in log terms is 1.065x and **tighter than either requirement above.**
+
+**AND A POSITIVE RESULT THE PAPER STATES NOWHERE.** `|mu|/sd(mu)` rises from **1.87** at nominal to
+**18.81** and **21.62** in the disease range, because `theta_crit` is fixed so `|mu|` grows while
+`sd(mu)` shrinks slightly. **The margin becomes more decidable as capacity falls.** Section 5 states
+its negative result as though decidability failed everywhere; on this calculation it fails near normal
+capacity and not in the disease range. Section 7's scope limit is about recovering `theta` and does not
+carry over to the sign of `mu`.
+
+**What is conditional on what, so neither is over-read.** Finding (b) depends on no gate: it is a
+ratio of computed quantities. Finding (a) depends on the comparable gate `0.20 theta`, **which is my
+construction**, since `mu` has no inherited gate; on the decidable gate the published priors already
+suffice everywhere, so no frontier exists there. Both are marginal Fisher widths at the true
+parameters and inherit the three non-Gaussianity symptoms already recorded in section 0.
+
+**My eighth defect of this kind this sitting, caught before anything was read.** The first run
+hardcoded the decidable gate at `|mu|` for `theta = 3000` and applied it at 600 and 300 where the true
+gate is eight times looser, so both disease-range rows read "the existing prior already suffices"
+against the wrong number. **A gate that does not move with the quantity it judges is the footing
+defect wearing a different hat.**
+
+Full working: `audit/PHASE11_MARGIN_NUISANCE.md`.
+
+---
+
+### R162. Passages 3, 4, 11 and 14 as one reading: three withdrawn on evidence, one kept
+
+The author's instruction: turn four decisions into one reading, say what each point is and whether the
+paper states it anywhere, **give the evidence rather than the question**, default to withdrawal, and
+the exception is a passage saying something the document now says nowhere.
+
+| # | the point in one sentence | evidence from the built PDF | verdict |
+|---|---|---|---|
+| **3** | The design's difficulty is start dependence, not that "the gradient is third order", which is true of the line and silent about the fibre. | `"gradient is third order"` **0 hits**, `"third order"` **0 hits**: the erroneous clause is gone. `"second order"` **3 hits**, used correctly, including *"leaves the fibre at second order"*. `"start depend"` 0 hits, but the fibre itself is treated at length: curved in `(theta, Km)`, an exact two-point set, a live constraint on the record. | **WITHDRAW.** The error it corrected no longer exists and the order question is handled correctly elsewhere. Its residue is a numerical-methods observation about the fitter, not a claim the document is missing. |
+| **4** | The cross-reference claiming the two linearisation failures "point the same way" is exactly inverted. | Every phrase absent: `"point the same way"` 0, `"linearisation failures"` 0, `"curvature-held"` 0, `"prior-held"` 0. The false parallel went with `rem:second_order`, and passage 2's replacement content **is applied**. | **WITHDRAW.** A false parallel cannot survive the removal of both things it paralleled. |
+| **11** | The published "1% or 20%" rows sweep the record's *variation* and never touch the *recording error*, which enters only through sigma; the requirement is on per-visit scatter, not the mean offset. | **Made, with numbers.** Abstract: *"a requirement on the record's accuracy, not its variability."* Body: *"runs 0.159 at a 1% recording error to 0.286 at 20%, so the target holds only below about 10%"*, *"98% of that is the per-visit scatter"*, *"on the per-visit scatter and not the mean offset"*. | **WITHDRAW.** The largest change this file proposed is fully in the paper. |
+| **14** | That capacity is constant across a two-year record is an untested assumption, and the review's conclusion that capacity changes act over days does not follow from its own evidence. | `"over days"` 0, `"act over"` 0. `dialysis` appears **only inside a reference title**. The one `drift` hit is between-visit **assay** drift, a different quantity. **No statement anywhere that theta's constancy over the record is assumed.** | **KEEP.** This is the exception. Every precision in the paper is computed on a 730-day record under an assumption the document never states, and `audit/u7_drift.py` has the working. |
+
+**Three of four were made or made moot by the rewrite that removed their anchors**, which is the
+author's prior exactly. **The fourth is not a wording fix**: it is an unstated assumption underneath
+every number in the paper, and losing its anchor is why it went unnoticed.

@@ -77,6 +77,19 @@
 \input{../results/numbers/decision}
 \input{../results/numbers/profile}
 \input{../results/numbers/transient}
+%  THE SIX BELOW WERE GENERATED, GUARDED, AND NEVER LOADED (REVIEW_LOG.md R152).
+%  check_artefacts.py verified that every \num{} key is produced by a reachable
+%  generator, which they were, and that no key collides. It did NOT verify that
+%  the preamble inputs the file the key lives in, so 24 keys the paper prints
+%  were undefined at compile time and raised \PackageError, while the guard
+%  reported ARTEFACTS MATCH THE CODE. `frontier` is Phase 11's own wiring and
+%  was in the same state.
+\input{../results/numbers/bias}
+\input{../results/numbers/tier1}
+\input{../results/numbers/loadcap}
+\input{../results/numbers/diet}
+\input{../results/numbers/measured}
+\input{../results/numbers/frontier}
 
 \usepackage{enumitem}
 \usepackage{xcolor}

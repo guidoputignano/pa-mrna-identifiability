@@ -66,6 +66,10 @@ GENERATORS = {
     "bias": "audit/t4_bias_vs_scatter.py",
     "loadcap": "audit/t8_load_by_capacity.py",
     "measured": "audit/t9_measured_load.py",
+    #  Phase 11's frontier and posterior-shape numbers. Its generator COMPUTES
+    #  them, which R141 is the reason for: a hardcoded generator would make the
+    #  guard certify hand-typed values.
+    "frontier": "audit/u23_wire_phase11.py",
 }
 
 

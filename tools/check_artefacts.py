@@ -717,6 +717,303 @@ def check_key_collisions():
     return not problems
 
 
+#: value coincidences already looked at and confirmed as distinct quantities.
+#: Each needs a reason, because the point of the check is that somebody read it.
+DECLARED_VALUE_TWINS = {
+    #  --- confirmed DISTINCT quantities that happen to coincide ---
+    ("sd_tier1_with_kappa", "sim_spread_recommended"):
+        "Tier 1's marginal and the recommended design's simulated spread both "
+        "land on 0.2002. Different designs, different objects, coincident to "
+        "four places (REVIEW_LOG.md R145).",
+    ("E_info", "bias_alone20"):
+        "An excitation measure and a load-bias offset, both 0.172. Unrelated "
+        "quantities from different generators; coincidence at three places.",
+    ("bias_sweep", "trans_noprior_nominal"):
+        "A load-bias sweep endpoint and the transient's prior-free nominal, "
+        "both 0.1733. Unrelated quantities from different generators.",
+
+    #  --- confirmed REDUNDANT. Declared so the build is green while the
+    #  finding stays visible in the code, NOT because they are acceptable.
+    #  Collapsing them changes generated output and possibly the paper, which
+    #  is the author's call; recorded at REVIEW_LOG.md R147 and in
+    #  OPEN_QUESTIONS.md as an open item. ---
+    ("bias_both20", "bias_loose"):
+        "REDUNDANT, PENDING COLLAPSE. audit/t4_bias_vs_scatter.py assigns BOTH "
+        "keys the same variable `both` (lines 114 and 119), so these are one "
+        "number under two names and can be edited apart while this guard "
+        "reports a match. Exactly the class this check exists for, found on "
+        "its first run, in code predating it.",
+    ("sd_load_1pct", "sd_load_steady"):
+        "DIFFERENT INPUTS, SAME ANSWER, AND THAT IS THE POINT. A load record "
+        "good to 1% and one with no variability at all both give 0.1696, "
+        "which is the insensitivity src/design/run.py:1686 states by "
+        "contrasting 1% against 20%. Coincidence here is the result.",
+    ("sd_load_1pct", "trans_base_nominal"):
+        "Same design at nominal capacity reached by two generators, 0.1696. "
+        "Distinct scripts, one underlying quantity; see the entry above.",
+    ("sd_load_steady", "trans_base_nominal"):
+        "Same design at nominal capacity reached by two generators, 0.1696.",
+    ("loadcap_perfect_5pct", "meas_exact_5pct"):
+        "REDUNDANT, PENDING COLLAPSE. audit/t8_load_by_capacity.py computes "
+        "over(150.0, 1e-6, 1e-6) and audit/t9_measured_load.py computes "
+        "over(150.0, measured=True, prec=1e-6), both 2.659: the same quantity "
+        "from two generators. PROVENANCE_SWEEP.md separately records 2.659 as "
+        "appearing in three places in the paper and 'owned by nothing in any "
+        "of them', so this is that value seen from the generator side.",
+}
+
+
+def _value_twins(sources, min_decimals=3):
+    """
+    Distinct keys whose emitted values are identical to full precision.
+
+    WHY THIS IS NOT THE COLLISION CHECK ABOVE. That one catches one key in two
+    files, where the preamble silently picks a winner. This catches the
+    opposite and quieter case: TWO keys carrying the SAME value. The guard
+    compares keys, so a redundant key passes it, and two names for one number
+    can be edited apart later while the guard still reports a match. That
+    happened: `sd_recommended_postdose` was emitted beside the existing
+    `sd_monthly`, both 0.1699 by different code, and it was caught by reading
+    rather than by any check (REVIEW_LOG.md R146).
+
+    A shared value is not itself wrong. `0.20` and `25` coincide all over a
+    paper and mean nothing by it, which is why only values carrying at least
+    `min_decimals` decimals are considered: coincidence at four places is
+    worth a human's glance, coincidence at two is arithmetic.
+
+    AND THE CHECK MUST NOT TRY TO DECIDE, because the two cases it separates
+    look identical from here. `sd_load_1pct` and `sd_load_steady` agree to four
+    places, and they are a load record good to 1% against one with no
+    variability at all: TWO DIFFERENT INPUTS GIVING THE SAME ANSWER, which is
+    an invariance `src/design/run.py:1686` already states by contrasting 1%
+    against 20%. A redundant key and a real invariance are the same bytes in
+    this file. So the check reports both and adjudicates neither, and the
+    declaration carries a human's reason: for a redundancy, that it is pending
+    collapse; for an invariance, that the coincidence IS the result. A check
+    that guessed between them would suppress findings half the time and
+    manufacture them the other half.
+    """
+    def _stem(k):
+        """A median and its seed range are one quantity under three keys."""
+        for suf in ("_hi", "_lo"):
+            if k.endswith(suf):
+                return k[: -len(suf)]
+        return k
+
+    vals = {}
+    for stem in sorted(sources):
+        for line in sources[stem].splitlines():
+            m = _MACRO_LINE.search(line)
+            if not m:
+                continue
+            key, val = m.group(1), m.group(2)
+            if "." not in val:
+                continue
+            if len(val.split(".")[-1]) < min_decimals:
+                continue
+            vals.setdefault(val, []).append((key, stem))
+    twins = []
+    for val, ks in sorted(vals.items()):
+        if len(ks) < 2:
+            continue
+        for i in range(len(ks)):
+            for j in range(i + 1, len(ks)):
+                a, b = sorted([ks[i][0], ks[j][0]])
+                #  A MEDIAN AND ITS RANGE ARE NOT A DUPLICATE. `x`, `x_hi` and
+                #  `x_lo` carry one quantity and its seed spread, and a tight
+                #  spread makes all three print the same digits. The first
+                #  version of this check reported those as twins and buried
+                #  its real finds under them: 13 reports, of which 9 were one
+                #  median-and-range cluster. Characterising the false-positive
+                #  mode rather than handing over the noisy list is the same
+                #  lesson as u21's SUSPECT column (REVIEW_LOG.md R141).
+                if _stem(a) == _stem(b):
+                    continue
+                #  declarations are by STEM, so one entry covers a key and
+                #  its _hi/_lo range variants rather than needing three
+                if tuple(sorted((_stem(a), _stem(b)))) in DECLARED_VALUE_TWINS:
+                    continue
+                twins.append((a, ks[i][1], b, ks[j][1], val))
+    return twins
+
+
+def check_value_twins():
+    r"""
+    Two keys carrying the same value must be declared, or collapsed.
+
+    A duplicate that AGREES today is the only kind that can silently diverge
+    tomorrow, which is why this fails rather than warns: confirming a pair
+    means adding it to DECLARED_VALUE_TWINS with a reason, and that is a
+    thirty-second act that leaves a record.
+    """
+    numdir = ROOT / "results" / "numbers"
+    sources = {f.stem: f.read_text() for f in sorted(numdir.glob("*.tex"))}
+    twins = _value_twins(sources)
+    line = r"\expandafter\def\csname paper@num@%s\endcsname{%s}"
+    probe_hit = _value_twins({"a": line % ("k", "0.1234"),
+                              "b": line % ("j", "0.1234")})
+    probe_miss = _value_twins({"a": line % ("k", "0.20"),
+                               "b": line % ("j", "0.20")})
+    probe_ok = len(probe_hit) == 1 and not probe_miss
+    print(f"  {len(sources)} numbers file(s) checked for undeclared value twins, "
+          f"{len(DECLARED_VALUE_TWINS)} declared "
+          f"(self-test: {'PASS' if probe_ok else 'FAIL'})")
+    for a, sa, b, sb, val in twins:
+        print(f"    {a!r} ({sa}.tex) and {b!r} ({sb}.tex) are both {val}: "
+              f"collapse them, or declare the pair with a reason")
+    return not twins and probe_ok
+
+
+def check_numbers_loaded():
+    r"""
+    Every generated numbers file must be \input by the document, and every
+    \num{} key the paper uses must live in a file that IS.
+
+    THE GAP THIS CLOSES, AND IT WAS OPEN THE WHOLE TIME (REVIEW_LOG.md R152).
+    The other checks establish that a key is produced by a generator the build
+    reaches, and that no two files define one key. **None of them asks whether
+    the preamble loads the file the key lives in.** It did not, for six files:
+    `bias`, `tier1`, `loadcap`, `diet`, `measured` and `frontier`. Twenty-four
+    keys the paper prints were therefore undefined at compile time and raised
+    \PackageError, twenty-nine times, while this script reported
+    ARTEFACTS MATCH THE CODE.
+
+    **It is the exact failure mode the guard exists to prevent, one level up.**
+    A number with no generator is what `check_regenerated` catches. A number
+    with a generator nobody loads is invisible to every check here, because
+    each one stops at the generated file and never asks whether LaTeX reads it.
+    `frontier` is Phase 11's own wiring, so the pass that added nineteen
+    macros shipped them into a file the document does not open, and the guard
+    certified that too.
+
+    Two directions, because they fail differently. An unloaded file whose keys
+    the paper never cites is silent today and a trap tomorrow; an unloaded file
+    whose keys it does cite is already broken. Both are reported.
+    """
+    numdir = ROOT / "results" / "numbers"
+    generated = {f.stem for f in sorted(numdir.glob("*.tex"))}
+    #  which files the document actually opens, read from every .tex in paper/
+    loaded = set()
+    for tex in sorted((ROOT / "paper").rglob("*.tex")):
+        for m in re.finditer(r"\\input\{[^}]*results/numbers/([A-Za-z0-9_]+)\}",
+                             tex.read_text(errors="replace")):
+            loaded.add(m.group(1))
+    unloaded = sorted(generated - loaded)
+    missing_files = sorted(loaded - generated)
+
+    #  which keys the paper cites, and where each one lives
+    cited = set()
+    for tex in sorted((ROOT / "paper").rglob("*.tex")):
+        cited |= set(re.findall(r"\\num\{([A-Za-z0-9_]+)\}",
+                                tex.read_text(errors="replace")))
+    home = {}
+    for stem in generated:
+        for line in (numdir / f"{stem}.tex").read_text(errors="replace").splitlines():
+            m = _MACRO_LINE.search(line)
+            if m:
+                home[m.group(1)] = stem
+    undefined = sorted(k for k in cited
+                       if home.get(k) is not None and home[k] not in loaded)
+
+    print(f"  {len(generated)} numbers file(s) generated, {len(loaded)} loaded "
+          f"by the document, {len(cited)} \\num{{}} key(s) cited")
+    for stem in unloaded:
+        n = sum(1 for k, v in home.items() if v == stem)
+        cites = sum(1 for k in cited if home.get(k) == stem)
+        print(f"    results/numbers/{stem}.tex is GENERATED BUT NEVER \\input "
+              f"({n} keys, {cites} of them cited by the paper): add it to "
+              f"paper/preamble.tex")
+    for stem in missing_files:
+        print(f"    paper/ inputs results/numbers/{stem}, which no generator "
+              f"writes")
+    for k in undefined:
+        print(f"    \\num{{{k}}} is cited but lives in the unloaded "
+              f"{home[k]}.tex, so it raises \\PackageError at compile time")
+    return not unloaded and not missing_files and not undefined
+
+
+#: generated artefacts the document deliberately does not use, each with the
+#: reason a human wrote. Same discipline as DECLARED_VALUE_TWINS: an unused
+#: artefact is not always a defect, but the difference is a judgement and the
+#: judgement belongs in the file rather than in whoever last looked.
+DECLARED_UNUSED_ARTEFACTS = {
+}
+
+
+def check_generated_artefacts_used():
+    r"""
+    The same question as `check_numbers_loaded`, asked of the other two things
+    `results/` generates: is every generated TABLE \input somewhere, and is
+    every generated FIGURE actually included.
+
+    WHY THIS EXISTS, and it is the author's instruction after R152: the defect
+    found there is one file type over. `check_inputs_reachable` asks "does the
+    document read this?" of section files, `check_numbers_loaded` asks it of
+    numbers files, and nothing asked it of tables or figures. **A generated
+    artefact nobody reads is the same failure whatever its extension**, and the
+    reason R152 went unnoticed for weeks is that the question was being asked
+    of one artefact class at a time, as each one happened to cause trouble,
+    rather than of all of them at once.
+
+    Both directions, because they fail differently and only one is loud.
+      GENERATED BUT UNUSED  costs a build step and misleads a reader of
+        `make figures` into thinking the paper shows it. Silent.
+      USED BUT NOT GENERATED  is a broken `\input` or a missing image, which
+        LaTeX reports, but only once someone compiles. Since nothing in this
+        repository compiled the paper for the whole of this audit, "LaTeX would
+        catch it" was not a defence (R152).
+
+    Figures are matched on basename without extension, because the document
+    cites `fig_x.pdf` while `make figures` writes both `.pdf` and `.png`, and
+    a check keyed on the exact filename would report every `.png` as unused.
+    """
+    texts = {}
+    for tex in sorted((ROOT / "paper").rglob("*.tex")):
+        texts[tex] = tex.read_text(errors="replace")
+    blob = "\n".join(texts.values())
+
+    #  ---- tables -------------------------------------------------------
+    tdir = ROOT / "results" / "tables"
+    gen_t = {f.stem for f in sorted(tdir.glob("*.tex"))} if tdir.is_dir() else set()
+    used_t = set(re.findall(r"\\input\{[^}]*tables/([A-Za-z0-9_]+)\}", blob))
+    t_unused = sorted(gen_t - used_t - set(DECLARED_UNUSED_ARTEFACTS))
+    t_missing = sorted(used_t - gen_t)
+
+    #  ---- figures ------------------------------------------------------
+    fdir = ROOT / "results" / "figures"
+    gen_f = ({f.stem for f in fdir.glob("*.pdf")} |
+             {f.stem for f in fdir.glob("*.png")}) if fdir.is_dir() else set()
+    used_f = {Path(m).stem for m in
+              re.findall(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]*)\}", blob)}
+    #  only judge names that look like this repository's generated artefacts,
+    #  so a logo or an externally supplied image is not reported as missing
+    f_unused = sorted(n for n in gen_f - used_f
+                      if n.startswith(("fig_", "tab_"))
+                      and n not in DECLARED_UNUSED_ARTEFACTS)
+    f_missing = sorted(n for n in used_f - gen_f
+                       if n.startswith(("fig_", "tab_")))
+
+    #  a self-test, because a check that silently stopped checking is the
+    #  failure mode R152 was: feed it a name nothing uses and it must report it
+    probe = sorted({"tab_probe_unused"} - used_t - set(DECLARED_UNUSED_ARTEFACTS))
+    print(f"  {len(DECLARED_UNUSED_ARTEFACTS)} declared unused "
+          f"(self-test: {'PASS' if probe else 'FAIL'})")
+    print(f"  {len(gen_t)} generated table(s), {len(t_unused)} unused; "
+          f"{len(gen_f)} generated figure file(s) covering "
+          f"{len({n for n in gen_f})} name(s), {len(f_unused)} unused")
+    for n in t_unused:
+        print(f"    results/tables/{n}.tex is GENERATED BUT NEVER \\input: "
+              f"use it, or stop generating it")
+    for n in t_missing:
+        print(f"    paper/ inputs results/tables/{n}, which no generator writes")
+    for n in f_unused:
+        print(f"    results/figures/{n} is GENERATED BUT NEVER INCLUDED: "
+              f"use it, or stop generating it")
+    for n in f_missing:
+        print(f"    paper/ includes {n}, which no generator writes")
+    return not (t_unused or t_missing or f_unused or f_missing)
+
+
 def check_figure_numbers():
     """
     Every number a figure DRAWS must be classified, and a claim must be
@@ -1157,6 +1454,22 @@ def main():
     #  and the one mechanical case of the referent failure: two files
     #  defining one key, which \input order would settle in silence
     ok = check_key_collisions() and ok
+    #  and its quieter opposite: two keys carrying ONE value. The guard
+    #  compares keys, so a redundant key passes it, and a duplicate that
+    #  agrees today is the only kind that can silently diverge tomorrow
+    #  (REVIEW_LOG.md R146, R147)
+    ok = check_value_twins() and ok
+    #  and the level none of the above reached: a key can be generated,
+    #  reachable, collision-free and STILL undefined in the document, because
+    #  nothing here asked whether the preamble inputs the file it lives in.
+    #  Six files were in that state and the paper raised 29 LaTeX errors while
+    #  this script printed ARTEFACTS MATCH THE CODE (REVIEW_LOG.md R152)
+    ok = check_numbers_loaded() and ok
+    #  and the same question one file type over, which is where R152's defect
+    #  would have been found earlier: a generated table nobody inputs and a
+    #  generated figure nobody includes are the same failure as a numbers file
+    #  nobody loads (the author's instruction after R152)
+    ok = check_generated_artefacts_used() and ok
     #  and the class the cache hid: a check whose verdict depended on
     #  whether `make clean` had run. This one compiles the source itself.
     ok = check_source_warnings() and ok
