@@ -6375,3 +6375,80 @@ It is now its own category.
 
 **What the author decides: passages 3, 4, 11 and 14.** Whether each point still needs making now that
 its target is gone. Nothing is withdrawn here, because withdrawing is not a reading.
+
+---
+
+### R161. The binding nuisance for the decision is `K_m`, where the binding nuisance for the estimate is `k_e`
+
+**The author's derivatives, checked first because they carry the argument, and they hold three ways**
+(analytic, central differences, and `margin_and_gradient`'s own `grad`): `d mu/d ln theta = +3000.00`,
+`d mu/d ln K_m = -2388.41`, ratio **0.796**. A one per cent error in `K_m` moves the margin 79.6% as
+much as a one per cent error in capacity.
+
+**One refinement: the ratio carries `s_peak`.** 0.796 at the unsafe amplitude, 0.635 at the safe one,
+0.237 at the default. The unsafe side is the costly error so the large figure is the right one, but it
+belongs with its amplitude.
+
+**The gradient cannot settle it, because the cancellation is large.** `theta` and `K_m` enter `mu`
+with opposite signs and are Fisher-correlated. Diagonal contributions to `var(mu)` are 455%, 48% and
+552% against cross terms of **-955%**: `sd(mu)` from diagonals alone would be **774.0** and is
+**238.3**, a factor of **3.25**. So `audit/u28_margin_frontier.py` propagates the full covariance.
+
+**The result, on `u9`'s own Fisher so there is one convention:**
+
+| `theta` | `sd(mu)` | `|mu|/sd` | `k_e` width for `0.20 theta` | `K_m` width for `0.20 theta` | `k_e` width for `sd(ln theta) <= 0.20` |
+|---|---|---|---|---|---|
+| 3000 | 183.4 | 1.87 | 4.408, looser than published | already suffices | 0.8001 |
+| 600 | 145.8 | 18.81 | **unreachable, even exact** | **0.0566** | 0.1567 |
+| 300 | 140.8 | 21.62 | **unreachable, even exact** | **0.0169** | 0.0633 |
+
+**THE INVERSION IS CONFIRMED.** In the disease range an exactly known `k_e` cannot bring the margin to
+the gate and `K_m` can, while the estimate's frontier is the mirror image. Both of this repository's
+earlier statements were right and neither settled the other: **`mu` is a different function of the
+parameters than `theta` is, and a sensitivity ranking does not transfer between them.** "K_m does not
+bind" has been carried for five rounds as though it settled both.
+
+**What it says about the specification, which is the finding rather than either number.** Tier 2 and
+the `k_e` companion are sized for identifying capacity. **If the deliverable is the decision, the
+measurement to buy is `K_m`**, and `K_m` is the quantity the paper says the record already determines
+to 6-7% at every capacity, which in log terms is 1.065x and **tighter than either requirement above.**
+
+**AND A POSITIVE RESULT THE PAPER STATES NOWHERE.** `|mu|/sd(mu)` rises from **1.87** at nominal to
+**18.81** and **21.62** in the disease range, because `theta_crit` is fixed so `|mu|` grows while
+`sd(mu)` shrinks slightly. **The margin becomes more decidable as capacity falls.** Section 5 states
+its negative result as though decidability failed everywhere; on this calculation it fails near normal
+capacity and not in the disease range. Section 7's scope limit is about recovering `theta` and does not
+carry over to the sign of `mu`.
+
+**What is conditional on what, so neither is over-read.** Finding (b) depends on no gate: it is a
+ratio of computed quantities. Finding (a) depends on the comparable gate `0.20 theta`, **which is my
+construction**, since `mu` has no inherited gate; on the decidable gate the published priors already
+suffice everywhere, so no frontier exists there. Both are marginal Fisher widths at the true
+parameters and inherit the three non-Gaussianity symptoms already recorded in section 0.
+
+**My eighth defect of this kind this sitting, caught before anything was read.** The first run
+hardcoded the decidable gate at `|mu|` for `theta = 3000` and applied it at 600 and 300 where the true
+gate is eight times looser, so both disease-range rows read "the existing prior already suffices"
+against the wrong number. **A gate that does not move with the quantity it judges is the footing
+defect wearing a different hat.**
+
+Full working: `audit/PHASE11_MARGIN_NUISANCE.md`.
+
+---
+
+### R162. Passages 3, 4, 11 and 14 as one reading: three withdrawn on evidence, one kept
+
+The author's instruction: turn four decisions into one reading, say what each point is and whether the
+paper states it anywhere, **give the evidence rather than the question**, default to withdrawal, and
+the exception is a passage saying something the document now says nowhere.
+
+| # | the point in one sentence | evidence from the built PDF | verdict |
+|---|---|---|---|
+| **3** | The design's difficulty is start dependence, not that "the gradient is third order", which is true of the line and silent about the fibre. | `"gradient is third order"` **0 hits**, `"third order"` **0 hits**: the erroneous clause is gone. `"second order"` **3 hits**, used correctly, including *"leaves the fibre at second order"*. `"start depend"` 0 hits, but the fibre itself is treated at length: curved in `(theta, Km)`, an exact two-point set, a live constraint on the record. | **WITHDRAW.** The error it corrected no longer exists and the order question is handled correctly elsewhere. Its residue is a numerical-methods observation about the fitter, not a claim the document is missing. |
+| **4** | The cross-reference claiming the two linearisation failures "point the same way" is exactly inverted. | Every phrase absent: `"point the same way"` 0, `"linearisation failures"` 0, `"curvature-held"` 0, `"prior-held"` 0. The false parallel went with `rem:second_order`, and passage 2's replacement content **is applied**. | **WITHDRAW.** A false parallel cannot survive the removal of both things it paralleled. |
+| **11** | The published "1% or 20%" rows sweep the record's *variation* and never touch the *recording error*, which enters only through sigma; the requirement is on per-visit scatter, not the mean offset. | **Made, with numbers.** Abstract: *"a requirement on the record's accuracy, not its variability."* Body: *"runs 0.159 at a 1% recording error to 0.286 at 20%, so the target holds only below about 10%"*, *"98% of that is the per-visit scatter"*, *"on the per-visit scatter and not the mean offset"*. | **WITHDRAW.** The largest change this file proposed is fully in the paper. |
+| **14** | That capacity is constant across a two-year record is an untested assumption, and the review's conclusion that capacity changes act over days does not follow from its own evidence. | `"over days"` 0, `"act over"` 0. `dialysis` appears **only inside a reference title**. The one `drift` hit is between-visit **assay** drift, a different quantity. **No statement anywhere that theta's constancy over the record is assumed.** | **KEEP.** This is the exception. Every precision in the paper is computed on a 730-day record under an assumption the document never states, and `audit/u7_drift.py` has the working. |
+
+**Three of four were made or made moot by the rewrite that removed their anchors**, which is the
+author's prior exactly. **The fourth is not a wording fix**: it is an unstated assumption underneath
+every number in the paper, and losing its anchor is why it went unnoticed.
