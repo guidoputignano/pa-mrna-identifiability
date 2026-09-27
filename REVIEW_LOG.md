@@ -6698,3 +6698,64 @@ bias is set by the span without running anything.
 Registered in `GENERATORS` and `make figures`, and the preamble loads `drift.tex` **now rather than
 when the passage lands**, so R152's invariant that every generated numbers file is read stays true.
 The guard reports **24 of 24 loaded**.
+
+---
+
+### R170. The genotype document repeats the retracted breath-test CV, and the failure mode is specific
+
+**First verification finding against the new research document, per the author.** It states
+Manoli's test-retest CV as *"6.9% (controls)/12.8% (patients)"*. **That is the abstract's figure,
+retracted at R4 and confirmed retracted at R59.** The Results give **14.02 +/- 12.86%**, range 0.39
+to 50.84, and the abstract reports the SD as though it were the mean.
+
+**Third encounter, second import from outside.** `refs/reviews_2026-09/README.md` counts the same
+error among the September pack's seven citation errors; `08_specification.tex` already prints the
+correction; `PHASE7_TABLE2_PROVENANCE.md` D10 records that `params.py:133-134` and
+`tab_params.tex` **still carry the retracted figure**, which remains live.
+
+**What it is evidence of, and it is narrower than "unreliable".** The document's Manoli paragraph is
+otherwise accurate: it correctly identifies the study as **MMA not PA**, the enzyme as **MUT not
+PCC**, gives the right n, and draws the right conclusion that no PA study pairs in-vitro activity
+with in-vivo flux. **The error is a copy from the abstract where the Results were needed.** So the
+rule for reading the rest is specific rather than general: **check every figure against its source's
+Results section**; its findings of absence, which are its main contribution, are untouched by this.
+
+---
+
+### R171. What 118 rests on: corroborated but not primary-verified, and where R4's quotations came from is unrecorded
+
+**The author's question, and it is load-bearing**: `u30`'s footing assertion established that Tier 1
+needs 118 draws **because `kappa_cv = 0.1402`**, so the specification's headline count is sized by
+Manoli's increment CV. The repository reports that figure's status two ways.
+
+**SYNTHESIS is not stale. It is right.** `SYNTHESIS.md:122` and `:255` mark the 14.02% unverified,
+and **R59 says so in terms**: *"The argument rests on two quotations this repository has not
+verified... because outbound access to publisher and index records is denied in this container."*
+**This repository has never read Manoli's Results**, and an unbounded search finds no supplied copy.
+The primaries the author did supply (`k1_sources.py`, Phase 5 step 0) cover `LAMBDA` and `D_AMP`,
+not the breath test.
+
+**But the author's second branch, that the 14.02 and the retraction rest on the same weak footing, is
+too pessimistic.** There are **two independent arrivals**. `PHASE2D_CHECKS.md` carries three verbatim
+Results passages plus subject-level causes (eGFR 57 to 43, VCO2 146.0 to 159.2) and a check of the
+published Correction. `refs/reviews_2026-09/05`, supplied **later**, carries the same sentence with
+section pointers, the controls figure, the Correction's DOI and PMID, and **independently flags the
+discrepancy** — as that file's own header in this repository records.
+
+**And the retraction's direction is internally checkable**, which is R59's argument: 12.8 is not a
+rounding of 14.02, it is a rounding of 12.86, and the abstract's two figures come from different
+columns of one table. That needs only the Results numbers both secondaries agree on.
+
+**So: CORROBORATED BUT NOT PRIMARY-VERIFIED.** Stronger than one unverified quotation, weaker than a
+primary read. **SYNTHESIS's label is correct and should not be relaxed.**
+
+**THE GENUINE GAP IS ELSEWHERE, and it is in this audit's own files rather than the paper's.**
+**Where R4 obtained its quotations is recorded nowhere.** R4 predates the September pack, the
+container has no egress, and no supplied copy exists. `PHASE2D_CHECKS.md` presents them under *"I
+take the primary source over the repo's register"* with no statement of how the primary was
+obtained. **A quotation presented as primary with no record of its retrieval is exactly the
+provenance failure this audit exists to catch.** It does not make the number wrong, and the
+corroboration above is why, but the provenance line must not read as a primary check.
+
+**First item for the R4 queue when egress exists**, ahead of the rest, because one retrieval settles
+the figure that sizes the headline count. Full working: `audit/PHASE12_GENOTYPE_REVIEW.md`.
