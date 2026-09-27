@@ -180,24 +180,41 @@ def part_c():
             print(f"    {rho:7.2f} {fmt(s11):>15} {'none finite':>14} "
                   f"{'':>10} {'':>10} {n_non:9d}/12")
     print(f"""
-  AGAINST THE PUBLISHED PAIR, managed {PAPER_TAU['managed']:+.2f} and crisis {PAPER_TAU['crisis']:+.2f}:
+  AGAINST THE PUBLISHED PAIR, managed {PAPER_TAU['managed']:+.2f} and crisis {PAPER_TAU['crisis']:+.2f}.
 
-  The MANAGED threshold reproduces. rho = 1 at seed 11 gives 0.067, which is
-  the published +0.07, and its twelve-seed range is narrow with the sign
-  stable, so the qualitative claim "escalate earlier" survives the spread.
+  THE MANAGED THRESHOLD REPRODUCES. rho = 1 at seed 11 gives 0.067, the
+  published +0.07, and the twelve-seed range is narrow with the sign stable at
+  0/12 non-crossings, so "escalate earlier" survives the spread.
 
-  The CRISIS threshold DOES NOT REPRODUCE from the current code at any rho.
-  rho = 0.5 gives -0.467, rho = 0 and rho = -0.25 give no crossing at all.
-  None of the three is -0.39.
+  THE CRISIS THRESHOLD HAS TWO CANDIDATE PROVENANCES AND NEITHER SUPPORTS THE
+  SENTENCE AS WRITTEN. An earlier version of this file concluded it simply did
+  not reproduce; that was drawn from the equal-cost column alone and is
+  withdrawn at R136.
 
-  THIS IS REPORTED AS A REPRODUCTION FAILURE AND NOT AS A PAPER ERROR.
-  Section 0 records that four disagreements in Phase 10 were a reconstruction
-  losing to the paper, and the owner here is a Phase 2D document whose
-  generating code may differ from today's d6. What is established is narrow:
-  the number does not come back from d6 at any rho at seed 11, the closest
-  value is -0.467 at rho = 0.5, and the two regimes the paper names do not map
-  onto d6's four rows without a choice being made. Resolving it needs either
-  the Phase 2D-era code or the author.
+    (a) rho = -0.25 at cost ratios of 10:1 and worse gives exactly -0.400 at
+        seed 11, within one grid step of -0.39 (the grid is 100 units, so 1170
+        is off it and 1200 is on it). This matches the SEED cleanly and
+        requires "at equal costs" in the sentence to be wrong.
+    (b) rho = 0.5 AT equal costs has a twelve-seed range of -0.533 to -0.367,
+        which CONTAINS -0.39, and Phase 2D's own text licenses calling
+        rho = 0.5 a crisis regime by saying "the reversal is complete by
+        rho = 0.5". This preserves the cost ratio but -0.39 is then NOT seed
+        11's value, which is -0.467, while the +0.07 beside it IS seed 11's.
+        One sentence would be mixing seeds.
+
+  AND AT EQUAL COSTS BOTH ROWS THE PAPER WOULD MOST NATURALLY CALL "CRISIS"
+  HAVE NO FINITE THRESHOLD ON ALL TWELVE SEEDS, 12/12 non-crossings. That is
+  structural rather than a seed accident, so no amount of reseeding produces a
+  -0.39 from rho = 0 or rho = -0.25 at equal costs.
+
+  SEPARATELY, the sentence's second clause has a visible exception under both
+  readings: at 10:1 and worse, three regimes want every patient escalated and
+  rho = -0.25 wants -0.400, which is the row reading (a) takes the number from.
+
+  Reported as a question for the author and not as a paper error, since the
+  Phase 2D-era code may differ from today's d6. The question is now specific:
+  which regime and which cost ratio was meant, and does the second clause need
+  its exception.
 """)
 
 

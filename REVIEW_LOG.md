@@ -5384,3 +5384,43 @@ a head limit, and an absence claim was made from it. The rule as written says "r
 unbounded and state what was searched", and I stated the seed and the cost ratio without noticing
 that the cost ratio *was* the bound. **Fourth instance of the pattern**, and the first where the
 bound was a modelling choice rather than a tool default.
+
+### R137. The twelve seeds finish it: two candidate provenances, and neither supports the sentence
+
+The full twelve-seed threshold sweep, completing R135 and R136:
+
+| `rho` | seed 11 | 12-seed mean | min | max | no crossing |
+|---|---|---|---|---|---|
+| 1.00 | **0.067** | 0.094 | 0.067 | 0.100 | 0/12 |
+| 0.50 | **-0.467** | -0.450 | **-0.533** | **-0.367** | 0/12 |
+| 0.00 | *escalate none* | none finite | | | **12/12** |
+| -0.25 | *escalate none* | none finite | | | **12/12** |
+
+**The structural fact first.** At equal costs, both rows the paper would most naturally call
+"crisis" have **no finite threshold on all twelve seeds**. That is not a seed accident, so **no
+amount of reseeding produces a `-0.39` from `rho = 0` or `rho = -0.25` at equal costs.**
+
+**A second candidate provenance appears here that R136 did not have**, because R136 only had seed
+11. `rho = 0.5` at **equal costs** has a twelve-seed range of **-0.533 to -0.367, which contains
+the published -0.39**, and Phase 2D's own text licenses calling `rho = 0.5` a crisis regime by
+saying *"the reversal is complete by `rho = 0.5`"*.
+
+**So there are two readings and neither supports the sentence as written:**
+
+| | what it fits | what it breaks |
+|---|---|---|
+| **(a)** `rho = -0.25` at **10:1 and worse**, giving exactly **-0.400** at seed 11 | the **seed**, cleanly, and within one grid step | **"at equal costs"** is then wrong |
+| **(b)** `rho = 0.5` at **equal costs**, range containing -0.39 | the **cost ratio**, and Phase 2D's own wording | -0.39 is **not seed 11's value** there, which is -0.467, while the +0.07 beside it **is** seed 11's. One sentence mixing seeds. |
+
+**(a) is the better provenance and (b) is the better fit to the words**, which is exactly why this
+needs the author rather than more computation. Under either reading the second clause keeps its
+exception: at 10:1 and worse three regimes want every patient escalated and `rho = -0.25` wants
+`-0.400`, which is the row (a) takes the number from.
+
+**What is now settled, and it is enough to act on.** The managed threshold reproduces and is
+stable. The crisis threshold cannot be both "at equal costs" and `-0.39` under today's code, on
+twelve seeds, at any `rho`. The question for the author is two lines: **which regime and which
+cost ratio**, and **does the second clause need its exception.**
+
+`audit/u19_seed_defect.py`'s printed conclusion has been rewritten to carry both readings, since
+its earlier text asserted the R135 version that R136 withdrew.
