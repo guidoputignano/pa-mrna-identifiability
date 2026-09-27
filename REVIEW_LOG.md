@@ -6120,3 +6120,80 @@ although that distinction is exactly what decides the second clause. And the sum
 this repository's own rule that no expected result is written into a script in advance. The answer
 was the opposite. **Seven defects in my own checking code this sitting**, which continues to be a
 richer source of error than the paper.
+
+---
+
+### R154. The non-crossing direction was inverted in one script, the design was mixed in another, and the grid does not span the estimator
+
+The author's instruction was to settle `-0.39` from `PHASE2D_FINDINGS.md`, which `u19` established
+is the owner, rather than from `d6`. Doing so found three separate things, only one of which is about
+the paper.
+
+**What Phase 2D settles.** Its section 5 table names the designs explicitly: *"fixed operating point,
+n=9 (old)"* at 6.9% +/- 1.7 and 44.0% +/- 3.2, and *"monthly across dose cycles, n=25"* at 19.1%
++/- 2.1 and 41.6% +/- 2.5. **The first reproduces `d6`'s nine-level ladder exactly and the second
+reproduces `u19`'s monthly record exactly**, so the two designs are identified beyond doubt. The
+crisis-reversal table is headed *"on the therapy-channel design"*, which section 5 identifies as the
+monthly one. **So the paragraph names the right design.** What it does not do is quote that design's
+numbers: its 17.5% / 41.8% / 1.027 are one seed, against the twelve-seed 19.1% / 41.6% / 0.88 that
+Phase 2D itself prints two tables earlier. The correction already applied is right for a deeper
+reason than the one it was made for.
+
+**And `-0.39` still does not reproduce on it.** No regime the paper calls crisis, `rho <= 0`, has a
+finite threshold on the monthly design at any cost ratio or seed. Where a value near it appears is
+`rho = 0.5`, which the paper's own line 56 excludes from "crisis", on the nine-level ladder, which
+the paragraph does not name. **Doubly mismatched with the sentence it appeared in**, which vindicates
+removing it rather than restating it.
+
+**MY FIRST DEFECT: `u19` mixes two designs under one heading.** `part_a` computes error rates on
+`LV_M`, the monthly record. `part_c` computes thresholds on `LV9`, the nine-level ladder. One script,
+one heading, two designs, and I read its rows against each other for a full pass. That is the footing
+defect inside the very script written to catch a footing defect.
+
+**MY SECOND DEFECT: the non-crossing labels were inverted, and reasoning could not settle it.** `u19`
+mapped `gap[0] <= 0` to *"escalate none"* and `u25` mapped it to *"escalate all"*. I tried to resolve
+it from the limits and went in circles, because both limits are consistent with a grid that is too
+narrow at either end. **The probe settled it in one run by looking at the distribution instead:**
+
+| rho | median `mu_hat` | min | gap at the grid's lowest tau |
+|---|---|---|---|
+| 0 | **-100,677** | -2.1e12 | -0.450, with 69.8% already escalated |
+| -0.25 | **-3.7e11** | -2.1e12 | -0.890, with 93.5% already escalated |
+
+**The search grid is +/-30,000 and the estimator's own distribution runs to -2e12.** At the *lowest*
+tau the grid offers, most patients are already being escalated, so `gap[0] <= 0` means the grid cannot
+go low enough to stop escalating. **`u25` was right and `u19` was inverted.** `u19` is fixed and both
+defects are annotated in the file.
+
+**The larger point, which is the one worth keeping.** In the crisis regimes the regret curve does not
+fail to cross because no threshold exists; it fails to cross because **the estimator has collapsed so
+far that the search range is nowhere near it.** Any threshold quoted for those regimes on a grid of
++/-10 theta is meaningless, in either direction. The corrected sentence says the comparison does not
+cross and fails towards escalating everyone, which is what the numbers show, and it is now confirmed
+empirically rather than inferred.
+
+---
+
+### R155. The title declared the wrong paper, and the most actionable sentence was a subsection heading
+
+**The author's ruling, from the delivery pass:** a design and identifiability paper with no patient
+data is ordinary and publishable; an estimation paper with no patient data is not; and *"the title
+promises the second while the content delivers the first."*
+
+**Retitled.** The subtitle *"Estimating Residual Enzymatic Capacity in Propionic Acidemia"* named the
+one thing Section 7 concludes cannot be done in propionic acidemia, and promised an estimation study
+containing no observation from any patient. It becomes **"Design Rules and Limits of Recoverability
+for Enzymatic Capacity in Propionic Acidemia"**, so the first thing a reader meets is the
+contribution rather than the thing the paper withdraws. The change is one line and it decides which
+objection the paper has to answer.
+
+**The Monday sentence is added.** The delivery pass found that the paper's single most actionable
+statement, that Tier 1 is one blood draw and that it gates everything else, existed only as a
+subsection heading two pages into the specification. A reader could finish the paper without being
+told what to do first. It is now a lead paragraph in Section 6: run Tier 1 before committing to
+either tier below it, because it is the only measurement that changes what the other two **mean**
+rather than how precisely they answer.
+
+**Both are consequences of the same finding** and neither adds a claim: the retitling restates
+Section 8.1's own sentence in the place a reader meets first, and the Monday paragraph restates
+Section 6.2's.

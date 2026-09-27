@@ -85,6 +85,20 @@ Set by the author and held throughout. They are not negotiable defaults.
   already runs the output test this rule elsewhere demands, and line 202 sits in section 4, whose
   subject is the 25 claims with **no** owner and no match anywhere. **Whoever escalates owns the
   reading**, and the cost of opening the file is one minute (R144).
+- **A CHECK THAT CANNOT RUN LEAVES ITS SUBJECT UNVERIFIED, NOT FINE.** This is the inverse of the
+  bounded-search rule above, and it cost more. For weeks every CI report on this branch concluded
+  *"not this PR's, no runner was assigned, nothing ran, no fix exists to port"*. **Every clause was
+  true and the conclusion was wrong.** The `paper` job would have failed for a real reason: six
+  generated numbers files were never `\input`, so `pdflatex` exited 1 on 24 undefined keys (R152).
+  The runner-allocation failure was not merely unrelated to that, it was **hiding** it, and the
+  more confidently the redness was explained away the longer it stayed hidden.
+  **The author endorsed that reading as often as it was written**, so this is not one party's
+  error; it is what a shared, correct-sounding explanation does to a question nobody then asks.
+  **The rule: a check whose infrastructure failed tells you NOTHING about its subject.** Record it
+  as unverified and verify it another way, by hand if necessary. Never let "the failure is not
+  ours" become "the thing it would have checked is fine". Where the bounded-search rule says an
+  absence of evidence is not evidence of absence, this one says **an absence of a VERDICT is not a
+  passing verdict**, and the tell is identical in both: an output that looks complete and is not.
 - **A CHECK THAT CANNOT DISTINGUISH TWO CASES MUST REPORT BOTH AND DECIDE NEITHER.** Two keys
   carrying the same value are either a redundancy pending collapse or an invariance worth
   stating, and from inside the generated file those are the same bytes. `sd_load_1pct` and

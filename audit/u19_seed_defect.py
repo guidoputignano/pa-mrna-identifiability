@@ -139,6 +139,16 @@ def tau_star(ens, ratio=1.0, lo=-30000.0, hi=30000.0, n=601):
 
 
 def part_c():
+    """
+    THE DESIGN THIS PART USES IS NOT THE ONE PART A USES, and that is a defect
+    of mine rather than a choice (REVIEW_LOG.md R154). PART A computes error
+    rates on `LV_M`, the 25-point monthly record, which is the design the
+    paper's paragraph names. The threshold rows below call `fit_regime(LV9,
+    ...)`, the nine-level geometric ladder. **One script reporting two designs
+    under one heading is exactly the footing defect this audit exists to
+    catch**, and it is why the thresholds here must not be read against PART
+    A's rows. `audit/u25_threshold_spread.py` recomputes them on `LV_M`.
+    """
     print()
     print("=" * 88)
     print("PART C.  the two thresholds, whose OWNER is Phase 2D and not d6")
@@ -164,8 +174,16 @@ def part_c():
     print(f"    {'rho':>7} {'seed 11':>15} {'12-seed mean':>14} "
           f"{'min':>10} {'max':>10} {'no crossing':>12}")
     print("    " + "-" * 74)
-    fmt = lambda x: ("escalate all" if np.isposinf(x) else
-                     "escalate none" if np.isneginf(x) else f"{x:.3f}")
+    #  THE LABELS WERE INVERTED AND ARE FIXED HERE (REVIEW_LOG.md R154).
+    #  `tau_star` returns +inf when gap[0] > 0 and -inf otherwise, and this
+    #  mapped -inf to "escalate none". The probe settled it empirically rather
+    #  than by reasoning about limits: at rho = 0 on the monthly design the
+    #  estimator's mu_hat has median -100677 against a search grid of +/-30000,
+    #  so at the LOWEST tau on the grid 69.8% of patients are already escalated
+    #  and the gap is -0.450. gap[0] <= 0 therefore means the grid cannot go
+    #  low enough to STOP escalating, which is "escalate all", not "none".
+    fmt = lambda x: ("escalate none" if np.isposinf(x) else
+                     "escalate all" if np.isneginf(x) else f"{x:.3f}")
     for rho in RHOS:
         vals = [tau_star(D6.fit_regime(LV9, rho, reps=400, seed=s))
                 for s in SEEDS]

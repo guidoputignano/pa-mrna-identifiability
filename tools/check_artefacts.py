@@ -932,6 +932,96 @@ def check_numbers_loaded():
     return not unloaded and not missing_files and not undefined
 
 
+#: generated artefacts the document deliberately does not use, each with the
+#: reason a human wrote. Same discipline as DECLARED_VALUE_TWINS: an unused
+#: artefact is not always a defect, but the difference is a judgement and the
+#: judgement belongs in the file rather than in whoever last looked.
+DECLARED_UNUSED_ARTEFACTS = {
+    "tab_S_admissible":
+        "The FULL admissibility table, three columns including an EVIDENCE "
+        "column. The supplement inputs tab_S_admissible_compact instead, which "
+        "fits two constraint/verdict pairs across and drops that column. Both "
+        "come from audit/h1_admissibility.py:440,450. Kept generated because "
+        "the evidence column is the part a reader would want and the compact "
+        "table is the space-constrained choice, not the better one. OPEN FOR "
+        "THE AUTHOR: whether the supplement should carry the full version.",
+}
+
+
+def check_generated_artefacts_used():
+    r"""
+    The same question as `check_numbers_loaded`, asked of the other two things
+    `results/` generates: is every generated TABLE \input somewhere, and is
+    every generated FIGURE actually included.
+
+    WHY THIS EXISTS, and it is the author's instruction after R152: the defect
+    found there is one file type over. `check_inputs_reachable` asks "does the
+    document read this?" of section files, `check_numbers_loaded` asks it of
+    numbers files, and nothing asked it of tables or figures. **A generated
+    artefact nobody reads is the same failure whatever its extension**, and the
+    reason R152 went unnoticed for weeks is that the question was being asked
+    of one artefact class at a time, as each one happened to cause trouble,
+    rather than of all of them at once.
+
+    Both directions, because they fail differently and only one is loud.
+      GENERATED BUT UNUSED  costs a build step and misleads a reader of
+        `make figures` into thinking the paper shows it. Silent.
+      USED BUT NOT GENERATED  is a broken `\input` or a missing image, which
+        LaTeX reports, but only once someone compiles. Since nothing in this
+        repository compiled the paper for the whole of this audit, "LaTeX would
+        catch it" was not a defence (R152).
+
+    Figures are matched on basename without extension, because the document
+    cites `fig_x.pdf` while `make figures` writes both `.pdf` and `.png`, and
+    a check keyed on the exact filename would report every `.png` as unused.
+    """
+    texts = {}
+    for tex in sorted((ROOT / "paper").rglob("*.tex")):
+        texts[tex] = tex.read_text(errors="replace")
+    blob = "\n".join(texts.values())
+
+    #  ---- tables -------------------------------------------------------
+    tdir = ROOT / "results" / "tables"
+    gen_t = {f.stem for f in sorted(tdir.glob("*.tex"))} if tdir.is_dir() else set()
+    used_t = set(re.findall(r"\\input\{[^}]*tables/([A-Za-z0-9_]+)\}", blob))
+    t_unused = sorted(gen_t - used_t - set(DECLARED_UNUSED_ARTEFACTS))
+    t_missing = sorted(used_t - gen_t)
+
+    #  ---- figures ------------------------------------------------------
+    fdir = ROOT / "results" / "figures"
+    gen_f = ({f.stem for f in fdir.glob("*.pdf")} |
+             {f.stem for f in fdir.glob("*.png")}) if fdir.is_dir() else set()
+    used_f = {Path(m).stem for m in
+              re.findall(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]*)\}", blob)}
+    #  only judge names that look like this repository's generated artefacts,
+    #  so a logo or an externally supplied image is not reported as missing
+    f_unused = sorted(n for n in gen_f - used_f
+                      if n.startswith(("fig_", "tab_"))
+                      and n not in DECLARED_UNUSED_ARTEFACTS)
+    f_missing = sorted(n for n in used_f - gen_f
+                       if n.startswith(("fig_", "tab_")))
+
+    #  a self-test, because a check that silently stopped checking is the
+    #  failure mode R152 was: feed it a name nothing uses and it must report it
+    probe = sorted({"tab_probe_unused"} - used_t - set(DECLARED_UNUSED_ARTEFACTS))
+    print(f"  {len(DECLARED_UNUSED_ARTEFACTS)} declared unused "
+          f"(self-test: {'PASS' if probe else 'FAIL'})")
+    print(f"  {len(gen_t)} generated table(s), {len(t_unused)} unused; "
+          f"{len(gen_f)} generated figure file(s) covering "
+          f"{len({n for n in gen_f})} name(s), {len(f_unused)} unused")
+    for n in t_unused:
+        print(f"    results/tables/{n}.tex is GENERATED BUT NEVER \\input: "
+              f"use it, or stop generating it")
+    for n in t_missing:
+        print(f"    paper/ inputs results/tables/{n}, which no generator writes")
+    for n in f_unused:
+        print(f"    results/figures/{n} is GENERATED BUT NEVER INCLUDED: "
+              f"use it, or stop generating it")
+    for n in f_missing:
+        print(f"    paper/ includes {n}, which no generator writes")
+    return not (t_unused or t_missing or f_unused or f_missing)
+
+
 def check_figure_numbers():
     """
     Every number a figure DRAWS must be classified, and a claim must be
@@ -1383,6 +1473,11 @@ def main():
     #  Six files were in that state and the paper raised 29 LaTeX errors while
     #  this script printed ARTEFACTS MATCH THE CODE (REVIEW_LOG.md R152)
     ok = check_numbers_loaded() and ok
+    #  and the same question one file type over, which is where R152's defect
+    #  would have been found earlier: a generated table nobody inputs and a
+    #  generated figure nobody includes are the same failure as a numbers file
+    #  nobody loads (the author's instruction after R152)
+    ok = check_generated_artefacts_used() and ok
     #  and the class the cache hid: a check whose verdict depended on
     #  whether `make clean` had run. This one compiles the source itself.
     ok = check_source_warnings() and ok
