@@ -937,14 +937,6 @@ def check_numbers_loaded():
 #: artefact is not always a defect, but the difference is a judgement and the
 #: judgement belongs in the file rather than in whoever last looked.
 DECLARED_UNUSED_ARTEFACTS = {
-    "tab_S_admissible":
-        "The FULL admissibility table, three columns including an EVIDENCE "
-        "column. The supplement inputs tab_S_admissible_compact instead, which "
-        "fits two constraint/verdict pairs across and drops that column. Both "
-        "come from audit/h1_admissibility.py:440,450. Kept generated because "
-        "the evidence column is the part a reader would want and the compact "
-        "table is the space-constrained choice, not the better one. OPEN FOR "
-        "THE AUTHOR: whether the supplement should carry the full version.",
 }
 
 

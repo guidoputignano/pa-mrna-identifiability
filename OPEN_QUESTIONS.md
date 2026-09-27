@@ -85,6 +85,23 @@ Set by the author and held throughout. They are not negotiable defaults.
   already runs the output test this rule elsewhere demands, and line 202 sits in section 4, whose
   subject is the 25 claims with **no** owner and no match anywhere. **Whoever escalates owns the
   reading**, and the cost of opening the file is one minute (R144).
+- **EVERY CHECK HAS A LAST STEP IT DOES NOT TAKE, AND THAT STEP IS WHERE THE DEFECTS ARE.**
+  **State this once, at the level it holds, rather than once per artefact type.** A check
+  establishes a property of its subject and then stops; whatever lies one step beyond that stop is
+  invisible to it, and *passing* says nothing about it. Three instances arrived within one hour of
+  each other, which is why the rule is written at this level and not as three rules:
+  1. `check_regenerated` proves a numbers file matches its generator and stops before asking
+     whether the document loads it. Six files did not load; 24 keys were undefined; 29 LaTeX
+     errors; the guard said `ARTEFACTS MATCH THE CODE` (R152).
+  2. `pdflatex` proves every reference resolves and stops before asking whether it points
+     **backwards**. Move a section forward and the build stays green while eight forward
+     references and one false opening sentence appear in the prose (R156).
+  3. A regret sweep proves whether a curve crosses **on its grid** and stops before asking
+     whether the grid reaches the distribution. It did not, by seven orders of magnitude, so "no
+     crossing" reported where the grid ended (R154, R157).
+  **The discipline: name the step your check stops at, in the check, and say what is therefore
+  still unverified.** Adding a fourth check per artefact type is not the lesson; asking "what does
+  this not inspect?" before trusting a green result is.
 - **A CHECK THAT CANNOT RUN LEAVES ITS SUBJECT UNVERIFIED, NOT FINE.** This is the inverse of the
   bounded-search rule above, and it cost more. For weeks every CI report on this branch concluded
   *"not this PR's, no runner was assigned, nothing ran, no fix exists to port"*. **Every clause was
@@ -154,6 +171,24 @@ Set by the author and held throughout. They are not negotiable defaults.
   `src/common/params.py` with tests in `tests/test_models.py`, retractions in `REVIEW_LOG.md`, no
   expected result written into a script in advance.
 - **Style:** no em-dashes. A full stop to start a new sentence or a comma to continue one.
+
+---
+
+## 0b. What is actually left, set by the author at the end of Phase 11 round 7
+
+**This supersedes every other list of remaining work in this file.** Items closed earlier in the
+effort are not repeated, and three things that were on the list are now off it.
+
+| what | state |
+|---|---|
+| **The twenty-one insertions** | Open. Now **scoped** by the A/B answer: the paper is a design and identifiability paper, so an insertion earns its place by supporting the design rules or the scope condition, not the capacity estimate. Still under the prose freeze, passage by passage. |
+| **The PHASE4 reconciliation** | Open. The three-way table of applied, stale and orphaned. Nine STALE and twelve NO-ANCHOR as `audit/u20_staleness.py` last reported. The four orphans are the author's call; the rest is a reading. |
+| **The literature verification** | Open and **blocked on the environment**. Needs a session with network egress, because DOI and PMID resolution is what the `audit` CI job does and what this container cannot reach. **Starts with R4**, on which the deferred breath group also rests. |
+| **The merge** | Open. Last. |
+| **The GitHub Actions setting** | **The author's**, and the reason it is on this list is that it is the difference between a check and a decoration. Until it is fixed, CI reports nothing about its subject and every check must be run locally and said to have been (section 0). |
+| ~~Order B's reorganisation~~ | **DONE in substance** (R159). Its purpose was that no precision precede its range, and the band is now in the introduction. Its remainder answers none of the three referee objections the delivery pass found, and the third of those cannot be fixed by section order at all. Do not reopen it as a structural task. |
+| ~~`tab_S_admissible`~~ | **DONE** (R158). The full table with its evidence column is in the supplement, which the main document's caption already pointed to; the compact layout stays in the main text. |
+| ~~The three corrections~~ | **DONE.** The seed spreads, the threshold sentence and the withdrawn `K_m` pair. |
 
 ---
 

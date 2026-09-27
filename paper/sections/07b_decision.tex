@@ -73,11 +73,17 @@ and neither is a bug to be fixed by weighting: they are one estimator meeting tw
 data-generating processes, and which one a record came from is a fact about the chart
 rather than about the patient. Nor does a regret-equalised threshold repair it. At equal
 costs the managed regime wants the boundary at $+0.07\,\theta$, a twelve-seed median of
-$+0.073$ over $[+0.053, +0.085]$ with a finite crossing on every seed. The crisis regimes
-have no such boundary on this design: at $\rho = 0$ and at $\rho = -0.25$ the regret
-comparison does not cross on any of the twelve, and it fails on the side of escalating
-every patient. Raising the cost ratio to ten to one or worse leaves that unchanged, which
-is the decision-theoretic way of saying the test has stopped contributing.
+$+0.073$ over $[+0.053, +0.085]$ with a finite crossing on every seed. \textbf{No
+threshold is quoted for the crisis regimes, because there is nothing there for a threshold
+to find.} Once the fit has collapsed, $\hat\mu$ has stopped being a comparison of
+capacities: the quantity it subtracts is linear in $\hat K_m$, and in these regimes
+$\hat K_m$ departs from its true value by factors running from about thirty at
+$\rho = 0$ to more than $10^{8}$ at $\rho = -0.25$, so $\hat\mu$ is reporting that
+departure rather than the decision. Every patient reads as needing escalation, and that
+follows from the collapse of $\hat\theta$ already described rather than adding to it: a
+threshold table built on $\hat\mu$ in these regimes is the same fact arriving a second
+time on a scale set by a different parameter. No boundary on any usable scale alters it,
+which is the decision-theoretic way of saying the test has stopped contributing.
 
 These error rates are simulated rather than propagated, and the difference matters. The
 design's near-null direction is very nearly the direction along which $\mu$ is monotone
