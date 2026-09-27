@@ -140,44 +140,90 @@ if __name__ == "__main__":
         print()
 
     print("=" * 104)
-    print("PART B. WHAT ACTUALLY HOLDS THE DESIGN TOGETHER AT A CONSTANT LOAD")
+    print("PART B. WHICH MECHANISM BREAKS THE FIBRE? ONE AT A TIME, NOT BOTH AT ONCE")
     print("=" * 104)
     print("""
-  The sweep above shows both quantities converging rather than diverging, which
-  raises its own question: if the fibre is exactly null at a constant recorded
-  load, why is anything finite there? Two candidates, and they are separable.
-  The dose increment still varies the LEVELS at a constant load, and the
-  load-bias column carries a PRIOR at LOAD_FRAC. Removing the prior isolates
-  which one breaks the degeneracy.
+  AN EARLIER VERSION OF THIS SECTION GOT THIS WRONG AND THE ERROR IS INSTRUCTIVE
+  (REVIEW_LOG.md R167). It removed the load variation AND the load-bias prior
+  together, found the matrix singular, and concluded that the prior is what holds
+  the design together. **That does not follow from that test**, and this file's
+  own table already refuted it: at load_cv = 0.10 with no prior the matrix is
+  non-singular, and at a constant load with the prior it is non-singular too.
+  Only removing BOTH gives the null. A both-at-once experiment cannot attribute
+  an effect to one factor, which is the oldest mistake in design of experiments
+  and was made here inside a file about experimental design.
+
+  So: each mechanism is swept alone, with the other left in place.
 """)
-    print(f"  {'theta':>7} {'load_cv':>9} {'b prior':>12} {'min/max eig':>14} "
-          f"{'level spread':>14}")
-    for theta in (3000.0, 300.0):
-        sig = U9.sigma_at(theta)
-        for cv in (0.10, 0.0):
-            m, inc = levels(theta, U9.TIER1_N, 0, cv)
-            gm = m / (KM + m)
-            Q = np.stack([theta * gm, -(theta + inc) * KM * m / (KM + m) ** 2,
-                          np.ones_like(m), KE * m], axis=1)
-            for plab, pri in (("present", [np.inf, np.inf,
-                                           (U9.LOAD_FRAC * LB) ** 2,
-                                           U9.KE_PRIOR ** 2]),
-                              ("REMOVED", [np.inf, np.inf, np.inf,
-                                           U9.KE_PRIOR ** 2])):
+    print(f"  {'theta':>7} {'b prior 5%':>12} {'b prior 1%':>12} {'NO b prior':>12} "
+          f"{'5->1 buys':>11} {'removal costs':>14}")
+    for theta in (3000.0, 600.0, 300.0):
+        def sdt(bp):
+            out = []
+            for sd in U9.SEEDS:
+                m, inc = levels(theta, U9.TIER1_N, sd, 0.10)
+                sig = U9.sigma_at(theta)
+                gm = m / (KM + m)
+                Q = np.stack([theta * gm,
+                              -(theta + inc) * KM * m / (KM + m) ** 2,
+                              np.ones_like(m), KE * m], axis=1)
+                pri = [np.inf, np.inf,
+                       np.inf if bp is None else bp ** 2, U9.KE_PRIOR ** 2]
                 F = np.diag([0.0 if np.isinf(x) else 1.0 / x for x in pri]) \
                     + Q.T @ Q / sig ** 2
                 w = np.linalg.eigvalsh(F)
-                print(f"  {theta:7.0f} {cv:9.2f} {plab:>12} {w[0]/w[-1]:14.3e} "
-                      f"{100*(m.max()/m.min()-1):13.1f}%")
+                out.append(np.inf if (w[0] <= 0 or w[0] <= 1e-18 * w[-1])
+                           else float(np.sqrt(np.linalg.inv(F)[0, 0])))
+            return float(np.median(out))
+        a, b, c = sdt(U9.LOAD_FRAC * LB), sdt(0.01 * LB), sdt(None)
+        print(f"  {theta:7.0f} {a:12.4f} {b:12.4f} {c:12.4f} "
+              f"{100*(1-b/a):10.1f}% {100*(c/a-1):13.1f}%")
     print("""
-  The reading: at a constant load, with the load-bias prior removed, the matrix
-  is singular to machine precision. The dose train varies the levels by hundreds
-  of per cent and does NOT break the fibre, because the fibre is a direction in
-  parameter space that level variation alone does not separate. So what keeps
-  the constant-load design finite is the PRIOR on the load bias, and the load
-  variation is what makes the design prior-free rather than what makes it
-  possible. The dependence to state is on LOAD_FRAC, a registered constant, and
-  not on LOAD_CV.
+  THE CORRECTED READING, AND IT IS A BETTER RESULT THAN THE ONE IT REPLACES.
+  At the real load variation, dropping the load-bias prior ENTIRELY leaves the
+  design non-singular and costs single-digit per cent. Tightening the diet record
+  from 5% to 1% buys single-digit per cent the other way. And PART A showed the
+  mirror case: with the prior in place, taking the load variation to zero costs
+  1.15x to 1.27x on sd(mu) and CONVERGES.
+
+  **Each mechanism alone suffices. Only removing both gives the null. The fibre
+  is broken REDUNDANTLY.** The design does not rest on LOAD_FRAC and it does not
+  rest on LOAD_CV; it rests on either, which is a robustness statement rather
+  than a fragility one.
+
+  And it explains a standing observation. 08_specification records that the
+  load-record prior sits near 1.05 and does not move. **It does not move because
+  the load variation has already done the work**, so the prior is buying a margin
+  on something the record already determines.
+""")
+    print("=" * 104)
+    print("PART C. THE NULL EIGENVECTOR, WHICH CLOSES A LOOP WITH THE MARGIN FRONTIER")
+    print("=" * 104)
+    print(f"\n  {'theta':>7}   (ln theta, ln K_m, b, ln k_e), scaled to max 1"
+          f"      {'min/max eig':>12} {'|k_e|':>10}")
+    for theta in (3000.0, 600.0, 300.0):
+        m, inc = levels(theta, U9.TIER1_N, 0, 0.0)
+        sig = U9.sigma_at(theta)
+        gm = m / (KM + m)
+        Q = np.stack([theta * gm, -(theta + inc) * KM * m / (KM + m) ** 2,
+                      np.ones_like(m), KE * m], axis=1)
+        F = np.diag([0.0, 0.0, 0.0, 1.0 / U9.KE_PRIOR ** 2]) + Q.T @ Q / sig ** 2
+        w, V = np.linalg.eigh(F)
+        v = V[:, 0] / np.abs(V[:, 0]).max()
+        print(f"  {theta:7.0f}   ({v[0]:+.4f}, {v[1]:+.4f}, {v[2]:+.4f}, "
+              f"{v[3]:+.4f})   {w[0]/w[-1]:12.2e} {abs(v[3]):10.2e}")
+    print("""
+  THE k_e COMPONENT IS ZERO TO MACHINE PRECISION AT EVERY CAPACITY. That is
+  eq:fibrecl's "k_e unchanged" read straight out of the eigenvector rather than
+  taken from the algebra, and it is an independent confirmation of the published
+  fibre.
+
+  AND IT EXPLAINS A RESULT THAT LOOKED UNRELATED. u28's margin frontier reports
+  that an exactly known k_e is UNREACHABLE for the decision at any prior width in
+  the disease range. **The reason is here: k_e is orthogonal to the degeneracy.**
+  No amount of knowledge about k_e moves the direction mu is exposed along,
+  because that direction has no k_e component. Two results that looked unrelated
+  are one fact.
 """)
     print("=" * 104)
     print("""  READ THE TWO GROWTH FACTORS AGAINST EACH OTHER, NOT SEPARATELY.

@@ -6605,3 +6605,96 @@ it that way.
 Seven macros are named with their owners, and the draft states that **a generator must be written or
 extended before any is cited** (R141): `u7_drift.py` computes all five drift figures today and emits
 no numbers file.
+
+---
+
+### R167. RETRACTED from R165: the fibre is broken REDUNDANTLY, and my test could not have shown otherwise
+
+**The author removed the two mechanisms separately. I had removed them together.** R165 concluded
+that *"what keeps the constant-load design finite is the prior on the load bias"* and that *"the
+dependence to state is on `LOAD_FRAC` and not on `LOAD_CV`"*. **That does not follow from the test
+that produced it, and it is withdrawn.**
+
+**The refutation was already inside my own table**, which is the part worth recording. R165 printed
+`load_cv = 0.10` with no prior at **7.08e-08** and constant load with the prior at **1.45e-07**,
+both non-singular, and only both-removed at 1.41e-19. **Each single removal was already shown
+harmless and I still attributed the null to one of them.** A both-at-once experiment cannot
+apportion an effect between two factors. That is the oldest mistake in design of experiments and I
+made it inside a file about experimental design.
+
+**One at a time, at the real `load_cv = 0.10`, median over seeds:**
+
+| `theta` | b prior 5% | b prior 1% | **no b prior** | 5%→1% buys | removal costs |
+|---|---|---|---|---|---|
+| 3000 | 0.1543 | 0.1533 | **0.1562** | 0.6% | **1.2%** |
+| 600 | 0.6988 | 0.6800 | **0.7401** | 2.7% | **5.9%** |
+| 300 | 1.2062 | 1.1649 | **1.3008** | 3.4% | **7.8%** |
+
+**Dropping the load-bias prior entirely leaves the design non-singular and costs single-digit per
+cent.** And PART A already showed the mirror case: with the prior in place, taking the load
+variation to zero costs 1.15x to 1.27x and converges.
+
+**So each mechanism alone suffices, and only removing both gives the null. The fibre is broken
+redundantly.** The design does not rest on `LOAD_FRAC` and does not rest on `LOAD_CV`; it rests on
+**either**. **That is a robustness statement where R165 wrote a fragility one**, and it is the
+better result.
+
+**AND IT EXPLAINS A STANDING OBSERVATION.** `08_specification` records that the load-record prior
+sits near 1.05 and does not move. **It does not move because the load variation has already done
+the work.** The prior is buying margin on something the record already determines, which is why
+tightening the diet record from 5% to 1% buys under four per cent everywhere.
+
+---
+
+### R168. The null eigenvector closes a loop: `k_e` is orthogonal to the degeneracy
+
+From the same run, at constant load with no load-bias prior, the null eigenvector in
+`(ln theta, ln K_m, b, ln k_e)`:
+
+| `theta` | eigenvector | `|k_e|` component |
+|---|---|---|
+| 3000 | (+0.0008, −0.0031, **−1.0000**, +0.0000) | **9.25e-15** |
+| 600 | (+0.0042, −0.0031, **−1.0000**, −0.0000) | 3.43e-14 |
+| 300 | (+0.0085, −0.0031, **−1.0000**, +0.0000) | 3.20e-14 |
+
+**The `k_e` component is zero to machine precision at every capacity.** That is `eq:fibrecl`'s
+*"`k_e` unchanged"* read straight out of the eigenvector rather than taken from the algebra, so the
+published fibre now has an independent numerical confirmation.
+
+**And it explains a result that looked unrelated.** `u28`'s margin frontier reports that an exactly
+known `k_e` is **unreachable** for the decision at any prior width in the disease range, which read
+as a curiosity. **The reason is that `k_e` is orthogonal to the degeneracy**: no amount of knowledge
+about `k_e` moves the direction `mu` is exposed along, because that direction has no `k_e`
+component. **Two results that looked unrelated are one fact**, and it is now stated once where both
+are used.
+
+---
+
+### R169. The drift generator, written before its macros are cited, and its own assertion caught a footing error
+
+`audit/u30_wire_drift.py`, per R141 and the author's instruction. `u7_drift.py` computed every
+figure the constancy remark quotes and emitted no numbers file, so the passage's macros would have
+had no generator. **The generator comes first and the passage cites it.**
+
+Every value is obtained by calling `u7_drift.sd_bias`, the function that owns it, rather than
+tabulated from `PHASE11_DRIFT.md`, which is a findings document and not a source.
+
+**THE GENERATOR ASSERTS ITS OWN FOOTING AND THAT IMMEDIATELY CAUGHT A DEFECT.** `drift_rmse_nodrift`
+must return the gate, because 118 is *defined* as the count landing on it. The first version called
+`med_rmse` without `kappa_cv` and the anchor came back **0.1543** instead of 0.20. **Tier 1 needs 118
+draws precisely BECAUSE the delivered increment is characterised only to the published 14.02%**, and
+`PHASE11_DRIFT.md`'s Tier 1 table carries that throughout. The figures without it were entirely
+plausible and computed on a design that is not Tier 1. With `kappa_cv = 0.1402` the anchor returns
+**0.2000** and every other figure matches the published table: sd **0.2006**, bias **-0.0241**, rmse
+**0.2020** over [0.2015, 0.2027].
+
+**This is the u23 assertion pattern paying for itself a second time**, and it is the ninth defect of
+mine this effort caught before anything was published rather than after.
+
+The generator also emits `drift_bias_span_pred`, the ceiling argument's own check: `-r T/2` at the
+record's 9.82-year span is **-0.0246** against the computed **-0.0241**, so a reader sees that the
+bias is set by the span without running anything.
+
+Registered in `GENERATORS` and `make figures`, and the preamble loads `drift.tex` **now rather than
+when the passage lands**, so R152's invariant that every generated numbers file is read stays true.
+The guard reports **24 of 24 loaded**.

@@ -40,6 +40,7 @@ figures:
 	@echo ">> the dose calibration table (slow)";                           $(PYW) audit/k4_admissibility.py
 	@echo ">> Phase 11: the k_e frontier and the posterior-shape objects (slow)"
 	$(PYW) audit/u23_wire_phase11.py
+	$(PYW) audit/u30_wire_drift.py
 	@echo ">> the K_m sweep and the profile interval, which the text quotes"
 	$(PYW) audit/n1_km_cost.py
 	$(PYW) audit/n6_profile_vs_crb.py
