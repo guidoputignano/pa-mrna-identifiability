@@ -5159,3 +5159,79 @@ can safely get, the decision wants the record to track it.
 
 **The new gate: `q`, the fraction of the catabolic response glucose actually suppresses, is
 nowhere in this repository**, and the verdict turns on which side of 0.8 it falls.
+
+### R132. The impossible direction was the STATISTIC, and it touches a standing rule
+
+`u16`'s glucose re-check returned **0.828** at the `theta = 600` headline, the direction a
+sampling spread cannot go against a correct Fisher, which is exactly the signature that located
+the real defect at R119. **This time it was not a defect. It was a comparison between two
+different statistics.**
+
+Two things were found and fixed before the cause was reached, and both are recorded because
+each was self-consistent on its own. First, `u16` compared against `u17`'s `f_burst = 1`, which
+gives the burst its **own** load bias, when `u16`'s generator builds both trajectories from
+`Lbias = LB + b_true` and therefore **shares** one bias, which is `u17`'s `share_b`. The
+disagreement grew with amplitude because the bias column scales with `(1 - amp f(t))`. Second,
+the sensitivities were checked and are not the cause: they agree with central finite differences
+to **3e-09** at 51.7%, 73.9% and 85%, at both capacities.
+
+**The cause.** `u16` reported `0.7413 x IQR` because section 0 says *"report the robust spread,
+not RMSE"*. **A Fisher width is a standard deviation, and `0.7413 x IQR` equals one only for a
+Gaussian.**
+
+| amplitude | theta | Fisher | robust | **sd** | skew | **sd/Fisher** |
+|---|---|---|---|---|---|---|
+| 22.2% | 300 | 0.0588 | 0.0781 | 0.0869 | -0.46 | 1.477 |
+| 35.0% | 300 | 0.0349 | 0.0476 | 0.0549 | -0.72 | 1.571 |
+| 51.7% | 600 | 0.0553 | 0.0466 | 0.0578 | +0.06 | **1.046** |
+| 51.7% | 300 | 0.0316 | 0.0298 | 0.0387 | -0.61 | **1.224** |
+| 73.9% | 300 | 0.0324 | 0.0241 | 0.0344 | +0.35 | **1.062** |
+| 73.9% | 600 | 0.0589 | 0.0351 | 0.0533 | +1.01 | 0.904 |
+
+The robust spread is below the Fisher at **four of six** cells; the sd is above it at **five of
+six**. The sixth sits at the most extreme amplitude with a skew of 1.01, where no single number
+summarises the distribution, and at an amplitude R133 does not recommend.
+
+**A second candidate tested and refuted, in the direction opposite to the one needed.** An
+inverse Fisher is conditional on `k_e = 5` while the Monte Carlo averages over the prior, and
+R119's algebra showing those coincide assumes constant information, which fails here. But the
+prior-weighted spread comes out **above** the at-the-mean value by 1.19x to 2.34x, so the effect
+predicts a Monte Carlo **wider** than the Fisher, not narrower.
+
+**Consequences, and one reaches backwards in the safe direction.** The two headline cells stand
+on the independent method's own sd: margins of **2.71x** at a fifth of nominal and **1.64x** at
+a tenth, against the Fisher's 2.86x and 2.25x. And **R124's ratios understate**: round 4's
+withheld cell re-checks at 0.0869 rather than 0.0781, a ratio of 1.477 instead of 1.327, so it
+misses by more than was reported and **round 4's decision to withhold it was right and is
+reinforced.**
+
+**Proposed refinement to section 0, the author's to accept or decline.** *Report both, use the
+standard deviation when comparing a sampling spread against a Fisher width, and keep the robust
+spread to detect collapse.* Stated as a proposal and **not applied**, unlike R125's
+unbounded-search rule which the author instructed.
+
+### R133. WITHDRAWN: "adding a bowel preparation degrades the measurement"
+
+R129 reported an interior optimum in amplitude and concluded that the sum of both arms, 73.9%,
+measures `k_e` worse than glucose alone. **The optimum's depth depends on how the burst's load
+bias is treated, and the independent method disagrees on its sign even after R132.**
+
+| amplitude | Fisher, b known | Fisher, shared b | MC sd, shared b |
+|---|---|---|---|
+| theta=300, 51.7% | 0.0281 | **0.0316** | **0.0387** |
+| theta=300, 73.9% | 0.0367 | **0.0324** | **0.0344** |
+| theta=600, 51.7% | 0.0548 | **0.0553** | **0.0578** |
+| theta=600, 73.9% | 0.0698 | **0.0589** | **0.0533** |
+
+With the bias known the gap is 31% in one direction; with it shared, 2.5% in the other; and the
+Monte Carlo puts 73.9% **better** at both capacities, by 11% and 8%. **So the amplitude beyond
+about 50% is indeterminate at this precision** and the claim is withdrawn in both directions.
+What survives from R129 is that the benefit of going past roughly half is small and of uncertain
+sign.
+
+**The decision does not need it resolved.** Glucose with withdrawal alone clears both frontiers
+at 2.71x and 1.64x, so **there is no precision argument for adding a second intervention either
+way**, and a bowel preparation should be decided on safety, burden and its own onset. Recorded
+because R129 stated a confident mechanism, `k_e`'s share of the relaxation rate falling as the
+marker leaves saturation, and a correct mechanism is not evidence for an effect whose sign two
+methods dispute.

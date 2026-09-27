@@ -79,20 +79,23 @@ about **1.33x is not a result**.
 > undecided. At the catabolism share the margin is **2.25x**, which clears the spread with room
 > to spare. **That is the round's result, SUBJECT TO the re-check flagged immediately below.**
 
-> ### UNRESOLVED AT TIME OF WRITING, and flagged rather than omitted
+> ### RESOLVED: the re-check was comparing the wrong statistic, and both cells stand
 >
-> The independent Monte Carlo re-check (`u16` PART GLUCOSE) returns ratios of 1.069 and 1.184
-> on the two lower-amplitude cells, which is the expected direction, and **0.828 at the 51.7%,
-> `theta = 600` headline cell**, which is the direction a sampling spread cannot go against a
-> correct Fisher. **That is the same signature that located the R119 defect**, and it is not
-> explained by estimator shrinkage: at a posterior width of 0.056 against a 0.8 prior the
-> shrinkage factor is 0.995.
+> The independent Monte Carlo initially returned **0.828** at the `theta = 600` headline, the
+> direction a sampling spread cannot go against a correct Fisher, which is the signature that
+> located the R119 defect. **It was not a defect this time. It was me comparing a robust
+> spread with a standard deviation.** Full diagnosis in section 5.5 and at R132.
 >
-> **Until it is resolved, the `theta = 600` margin of 2.86x is not a result.** The
-> `theta = 300` cell re-checks at 0.947, within this Monte Carlo's own precision, so the
-> **2.25x margin at a tenth of nominal, which is the cell that matters and the one R124
-> withheld, is the claim that currently stands.** The resolution is recorded at R132 when it
-> is found, and this block is replaced rather than deleted.
+> Re-checked with the standard deviation, which is what a Fisher width is:
+>
+> | arm | `theta` | Fisher | MC sd | frontier | **margin on the MC sd** |
+> |---|---|---|---|---|---|
+> | glucose + withdrawal, 51.7% | 600 | 0.0553 | 0.0578 | 0.1567 | **2.71x** ✓ |
+> | glucose + withdrawal, 51.7% | 300 | 0.0316 | 0.0387 | 0.0633 | **1.64x** ✓ |
+>
+> **Both clear the 1.33x method spread on the independent method's own number.** The
+> conservative figures to quote are therefore **2.71x and 1.64x**, not the Fisher's 2.86x and
+> 2.25x, and the cell R124 withheld is settled at 1.64x rather than 2.25x.
 
 ---
 
@@ -161,28 +164,33 @@ here through the amplitude instead of through the increment.
 > lowers both lands at 73.9%, past the optimum, and measures `k_e` **worse** than glucose alone.
 > **Adding a bowel preparation to the glucose arm degrades the measurement.**
 
-> ### UNRESOLVED, and this claim is WEAKER than the table above makes it look
+> ### WITHDRAWN as stated: the two methods disagree on the SIGN of a small effect
 >
 > The optimum's depth depends on how the burst's load bias is treated, and the independent
-> re-check does not reproduce it.
+> method does not reproduce it even after the statistic is corrected.
 >
-> | amplitude | `theta=600` b known | `theta=600` shared b | `theta=300` b known | `theta=300` shared b |
-> |---|---|---|---|---|
-> | 35.0% | 0.0489 | 0.0542 | 0.0307 | 0.0349 |
-> | 51.7% | 0.0548 | 0.0553 | 0.0281 | **0.0316** |
-> | 73.9% | 0.0698 | 0.0589 | 0.0367 | **0.0324** |
+> | amplitude | Fisher, b known | Fisher, shared b | **MC sd**, shared b |
+> |---|---|---|---|
+> | `theta = 300`, 35.0% | 0.0307 | 0.0349 | 0.0549 |
+> | `theta = 300`, 51.7% | 0.0281 | **0.0316** | **0.0387** |
+> | `theta = 300`, 73.9% | 0.0367 | **0.0324** | **0.0344** |
+> | `theta = 600`, 51.7% | 0.0548 | **0.0553** | **0.0578** |
+> | `theta = 600`, 73.9% | 0.0698 | **0.0589** | **0.0533** |
 >
 > With the bias known the 51.7% to 73.9% gap is **31%** at a tenth of nominal, which is the
-> table above. With one bias shared between record and burst it is **2.5%**, which is nothing.
-> And `u16`'s Monte Carlo, which shares the bias, puts 73.9% **better** than 51.7% (0.0241
-> against 0.0298), the opposite sign.
+> table above. With one bias shared it is **2.5% the other way**. And the Monte Carlo, on the
+> standard deviation, puts 73.9% **better** at both capacities, by 11% and 8%.
 >
-> **So "adding a bowel preparation degrades the measurement" is not established.** What is
-> established is that the benefit of going past about 50% is at most small and may be
-> negative, which is enough to say the second arm is **not worth adding for precision**, and
-> not enough to say it costs precision. The sensitivities are not the problem: they agree with
-> finite differences to 3e-09 at every amplitude tested including 85%. The open question is
-> statistical and is in section 5.5.
+> **So "adding a bowel preparation degrades the measurement" is withdrawn.** The two methods
+> disagree on the sign of an effect of a few per cent, which is inside their disagreement
+> elsewhere, so **the amplitude beyond about 50% is indeterminate at this precision**. The
+> sensitivities are not the cause: they agree with finite differences to 3e-09 at every
+> amplitude tested, including 85%.
+>
+> **The decision does not need this resolved.** Glucose with withdrawal alone already clears
+> both frontiers at 2.71x and 1.64x, so there is **no precision argument for adding a second
+> intervention**, in either direction. A bowel preparation should be decided on safety, burden
+> and its own onset, not on `k_e` precision. R133.
 
 An osmotic preparation remains worth an arm **on its own**, where its 22.2% needs the tightest
 onset of any candidate, and section 5 gives that number.
@@ -220,6 +228,52 @@ osmotic preparation acts over a gut transit, which is the same order as its 5.8 
 and is therefore the one arm whose onset is genuinely in question. Metronidazole acts over
 days and clears none of them, and R118 established that this is a property of bacterial
 turnover rather than of the drug, so no change of formulation or route reaches it.
+
+### 5.5 The re-check's own statistic was wrong, and it touches a standing rule
+
+`u16` reported **0.7413 x IQR**, the robust spread, because `OPEN_QUESTIONS.md` section 0 says
+*"report the robust spread, not RMSE"*. That rule exists so that collapsed fits do not dominate
+a reported spread, and for that purpose it is right. **A Fisher width is a standard deviation,
+and 0.7413 x IQR equals a standard deviation only for a Gaussian.** Where the sampling
+distribution is heavy tailed the robust spread sits below the sd, and comparing it with a
+Fisher manufactures ratios below one, **the direction that is supposed to be impossible and
+that correctly located the real defect at R119.**
+
+Both statistics, at six cells, with the skew of the pooled draws:
+
+| amplitude | `theta` | Fisher | robust | **sd** | sd of mid 98% | skew | **sd/Fisher** |
+|---|---|---|---|---|---|---|---|
+| 22.2% | 300 | 0.0588 | 0.0781 | 0.0869 | 0.0740 | -0.46 | 1.477 |
+| 35.0% | 300 | 0.0349 | 0.0476 | 0.0549 | 0.0455 | -0.72 | 1.571 |
+| 51.7% | 600 | 0.0553 | 0.0466 | 0.0578 | 0.0452 | +0.06 | **1.046** |
+| 51.7% | 300 | 0.0316 | 0.0298 | 0.0387 | 0.0315 | -0.61 | **1.224** |
+| 73.9% | 300 | 0.0324 | 0.0241 | 0.0344 | 0.0270 | +0.35 | **1.062** |
+| 73.9% | 600 | 0.0589 | 0.0351 | 0.0533 | 0.0418 | +1.01 | 0.904 |
+
+**The robust spread is below the Fisher at four of six cells; the sd is above it at five of
+six.** The sixth, at the most extreme amplitude, is 0.904 with a skew of 1.01, where no single
+number summarises the distribution well and which is an amplitude section 4 does not recommend
+anyway. **The apparent impossible direction was the statistic throughout.**
+
+**A second candidate was tested and refuted, in the direction opposite to the one needed.** An
+inverse Fisher is conditional on `k_e = 5` while the Monte Carlo averages over a 0.8-wide
+prior, and the R119 algebra showing those coincide assumes the information is the same for
+every truth, which here it is not. But the prior-weighted spread comes out **above** the
+at-the-mean value, by 1.19x to 2.34x, so this effect predicts a Monte Carlo **wider** than the
+Fisher and cannot produce one narrower.
+
+**This reaches backwards, and in the safe direction.** R124's ratios of 1.088 to 1.327 were
+robust against Fisher, so they **understate**. Round 4's withheld cell, 0.0588 against a
+frontier of 0.0633, re-checks at 0.0869 on the sd rather than 0.0781, a ratio of 1.477 instead
+of 1.327. **It misses by more than reported, so round 4's decision to withhold it was right and
+is reinforced.**
+
+**Proposed refinement to a section 0 rule, which is the author's to accept or decline.** The
+rule as written, *"report the robust spread, not RMSE"*, is sound for reporting and unsound for
+comparison against a Fisher. Suggested wording: *report both, use the standard deviation when
+comparing a sampling spread against a Fisher width, and use the robust spread to detect
+collapse.* Stated as a proposal and **not applied to section 0**, unlike the unbounded-search
+rule, which the author instructed.
 
 ---
 

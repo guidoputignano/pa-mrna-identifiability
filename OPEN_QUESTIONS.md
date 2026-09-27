@@ -411,16 +411,26 @@ unbounded and state the patterns, the paths, and that no limit was applied. It p
 use: the unbounded read of `params.py` returned *"a protein-restricted diet lowers the first two
 deliberately"*, which is the additivity below, in the register's own words.
 
-**The route is settled at both capacities.** An **elective glucose-protected protein
+**The route is settled at both capacities, on the independent method's own numbers.** An **elective glucose-protected protein
 withdrawal** is the first candidate with all three needed properties: a fast onset (hours, not
 metronidazole's bacterial turnover over days), no catabolic penalty (suppressing catabolism is
 what the glucose is for, which is what withdrew the fast), and a measured load. At the
 register's amino-acid catabolism share of **51.7%**, with a 1% assay and sixteen admissions, it
-reaches **0.0548 against a frontier of 0.1567** at a fifth of nominal and **0.0281 against
-0.0633** at a tenth, margins of **2.86x and 2.25x**. **That settles the cell R124 had to
-withhold**, where the metronidazole arm's 7% margin sat inside the method spread. The
-requirement on the onset is **50.0 h and 30.5 h**, which glucose acting over hours clears
-comfortably.
+reaches margins of **2.71x at a fifth of nominal and 1.64x at a tenth**, measured on the
+independent Monte Carlo's standard deviation (the Fisher gives 2.86x and 2.25x). Both clear the
+1.33x method spread. **That settles the cell R124 had to withhold**, where the metronidazole
+arm's 7% margin sat inside the spread. The requirement on the onset is **50.0 h and 30.5 h**,
+which glucose acting over hours clears comfortably.
+
+**A methodological correction that reaches backwards.** The re-check first returned a ratio of
+0.828, the direction a sampling spread cannot go against a correct Fisher, which is the
+signature that found the R119 defect. **This time it was the statistic, not a defect**: `u16`
+reported `0.7413 x IQR` per section 0's rule while a Fisher width is a standard deviation, and
+the two coincide only for a Gaussian. On the sd, five of six cells sit above the Fisher. **R124's
+ratios therefore understate, so round 4's withheld cell misses by more than reported and the
+decision to withhold it is reinforced** (R132). A refinement to the section 0 rule is
+**proposed and not applied**: report both, compare on the sd, keep the robust spread to detect
+collapse.
 
 **NEGATIVE, and the reasoning behind the proposal was right.** The burst's load-record term is
 worth **1.00x to 1.02x**, not because the 5% is small but because **a burst observation is a
@@ -430,12 +440,15 @@ through a prior and never through its sigma. It is the **record's** sigma that i
 only if all 118 routine outpatient visits have their loads measured, which an admission
 protocol does not do.
 
-**NEGATIVE, and it reverses an attractive idea.** The amplitude has an **interior optimum**, at
-40% at a fifth of nominal and 45% at a tenth. The catabolism share at 51.7% is near-optimal;
-the sum of both arms at 73.9% is **worse** (0.0367 against 0.0281). Driving the marker further
-off enzyme saturation raises `J` and lowers `k_e`'s share of it, the same quantity R113 used.
-**So adding an osmotic bowel preparation to the glucose arm degrades the measurement.** The
-preparation is still worth an arm on its own, where its 22.2% carries the tightest onset
+**INDETERMINATE, and an attractive idea that cannot be settled either way here.** The Fisher
+shows an interior optimum in amplitude near 40 to 45%, which would make the sum of both arms at
+73.9% worse than glucose alone. **The independent method disagrees on the sign**, putting 73.9%
+better by 8 to 11%, and the Fisher's own answer flips with how the burst's load bias is treated
+(31% one way with it known, 2.5% the other way with it shared). **So the amplitude beyond about
+half is indeterminate at this precision and the claim is withdrawn in both directions** (R133).
+The decision does not need it: glucose alone already clears both frontiers, so there is **no
+precision argument for adding a second intervention either way**, and a bowel preparation should
+be decided on safety, burden and its own onset. On its own it carries the tightest onset
 requirement of any candidate, **5.8 h** at a tenth of nominal, which a gut transit may or may
 not meet.
 

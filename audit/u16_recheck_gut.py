@@ -178,18 +178,37 @@ def one_fit(theta, rng, burst_t, amp, tau_in, burst_cv, n_bursts):
     return float(s.x[3] - np.log(ke_true))
 
 
-def cell(theta, burst_t, amp=0.0, tau_in=0.0, burst_cv=CV_T, n_bursts=1):
-    """Median over record seeds of the per-seed Monte Carlo sd of ln k_e."""
-    per = []
+def cell(theta, burst_t, amp=0.0, tau_in=0.0, burst_cv=CV_T, n_bursts=1,
+         stat="sd"):
+    """
+    Median over record seeds of the per-seed Monte Carlo spread of ln k_e.
+
+    WHICH STATISTIC, and this mattered. This audit's standing rule is to
+    report the ROBUST spread, 0.7413 x IQR, so that collapsed fits do not
+    dominate. That rule is right for reporting a spread on its own and WRONG
+    for comparing one against a Fisher width, because a Fisher width is a
+    STANDARD DEVIATION and 0.7413 x IQR equals an sd only for a Gaussian.
+    Where the sampling distribution is heavy tailed the robust spread sits
+    BELOW the sd, here by 11% to 52%, and comparing it with a Fisher
+    manufactures ratios below one, which is the direction that is supposed to
+    be impossible and which located the real defect at R119. R132 records the
+    diagnosis. Both are returned so the comparison uses the sd while the
+    robust value still flags collapse.
+    """
+    rob, sds = [], []
     for s in SEEDS:
         rng = np.random.default_rng(90000 + 7919 * s)
         v = np.array([one_fit(theta, rng, burst_t, amp, tau_in,
                               burst_cv, n_bursts) for _ in range(REPS)])
         v = v[np.isfinite(v)]
         if v.size > 10:
-            #  robust: 0.7413 x IQR, as elsewhere in this audit
-            per.append(0.7413 * float(np.subtract(*np.percentile(v, [75, 25]))))
-    return float(np.median(per)) if per else np.nan
+            rob.append(0.7413 * float(np.subtract(*np.percentile(v, [75, 25]))))
+            sds.append(float(np.std(v, ddof=1)))
+    if not rob:
+        return np.nan
+    if stat == "both":
+        return float(np.median(rob)), float(np.median(sds))
+    return float(np.median(sds if stat == "sd" else rob))
 
 
 def part_glucose():
@@ -224,8 +243,8 @@ def part_glucose():
     print("=" * 86)
     print()
     print(f"    {'amplitude':>10} {'theta':>6} {'u17 shared':>10} "
-          f"{'this (MC)':>10} {'ratio':>7}  what it is")
-    print("    " + "-" * 72)
+          f"{'MC sd':>10} {'ratio':>7} {'MC robust':>9}  what it is")
+    print("    " + "-" * 82)
     rows = [(0.222, 300.0, "gut share alone"),
             (0.350, 300.0, "near the claimed optimum"),
             (0.517, 600.0, "catabolism mean, the headline"),
@@ -235,10 +254,10 @@ def part_glucose():
     for amp, th, note in rows:
         ref = U17.sd_ke(th, bt, amp, 6 * hour, 0.01, 16, 1.0,
                          share_b=True)
-        mc = cell(th, bt, amp, 6 * hour, 0.01, 16)
+        rob, mc = cell(th, bt, amp, 6 * hour, 0.01, 16, stat="both")
         got[(amp, th)] = mc
         print(f"    {amp:10.1%} {th:6.0f} {ref:10.4f} {mc:10.4f} "
-              f"{mc / ref:7.3f}  {note}")
+              f"{mc / ref:7.3f} {rob:9.4f}  {note}")
     print()
     a, b, c = got[(0.350, 300.0)], got[(0.517, 300.0)], got[(0.739, 300.0)]
     print(f"  THE SHAPE. At theta = 300 this method gives {a:.4f} at 35%, "
@@ -277,12 +296,12 @@ if __name__ == "__main__":
          6 * hour, 0.01, 16, 0.0588),
     ]
     print(f"    {'cell':>24} {'theta':>6} {'u15 (Fisher)':>13} "
-          f"{'this (MC)':>10} {'ratio':>7}")
-    print("    " + "-" * 66)
+          f"{'MC sd':>10} {'ratio':>7} {'MC robust':>9}")
+    print("    " + "-" * 76)
     for lab, th, bt, amp, tau, cv, nb, ref in cases:
-        got = cell(th, bt, amp, tau, cv, nb)
-        print(f"    {lab:>24} {th:6.0f} {ref:13.4f} {got:10.4f} "
-              f"{got / ref:7.3f}")
+        rob, sd = cell(th, bt, amp, tau, cv, nb, stat="both")
+        print(f"    {lab:>24} {th:6.0f} {ref:13.4f} {sd:10.4f} "
+              f"{sd / ref:7.3f} {rob:9.4f}")
     print()
     print("  READING. Every ratio now EXCEEDS one, which is the only direction")
     print("  available to an honest sampling spread against a local quadratic:")
