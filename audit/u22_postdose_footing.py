@@ -45,6 +45,7 @@ KE_PRIOR = 0.8
 
 #: the recommended design and Tier 1, in the paper's own time grids
 MONTHLY = np.arange(0.0, 730.0, 30.4)
+U_MONTHLY = MONTHLY
 TIER1 = 30.4 * np.arange(118, dtype=float)
 
 #: the committed value this file must reproduce before anything else counts
@@ -200,6 +201,51 @@ def part_b(marg):
   design_record, so the ratio is a comparison of two objects at one design
   rather than a comparison of two footings.""")
     return lo, hi, prof
+
+
+def sim_spreads(times=None, draws=40):
+    """
+    (robust, sd) of ln theta-hat by refitting, on the committed footing.
+
+    Factored out of part_c so the generator can call it rather than reproduce
+    it. Both statistics are returned because R132 established that the robust
+    spread is the wrong comparator against a Fisher width and the right one
+    for detecting collapse.
+    """
+    from scipy.optimize import least_squares
+    times = U_MONTHLY if times is None else times
+    sig = sigma_of(P.theta)
+    est = []
+    for s_ in D.SEEDS:
+        lv, inc, Ls = build(times, s_)
+        rng = np.random.default_rng(10000 + s_)
+        for _ in range(draws):
+            b_true = SB * rng.standard_normal()
+            ke_true = KE * float(np.exp(KE_PRIOR * rng.standard_normal()))
+            fl = ((P.theta + inc) * lv / (KM + lv) + ke_true * lv)
+            y = fl + sig * rng.standard_normal(lv.size)
+
+            def res(q):
+                th, Km, bs, ke = (np.exp(q[0]), KM * np.exp(q[1]),
+                                  q[2], KE * np.exp(q[3]))
+                pred = (th + inc) * lv / (Km + lv) + ke * lv
+                return np.concatenate([(pred - y - bs * SB) / sig,
+                                       [q[2], q[3] / KE_PRIOR]])
+
+            try:
+                r = least_squares(res,
+                                  np.array([np.log(P.theta), 0.0,
+                                            b_true / SB,
+                                            np.log(ke_true / KE)]),
+                                  method="trf", xtol=1e-12, ftol=1e-12,
+                                  max_nfev=400)
+                est.append(float(r.x[0]) - float(np.log(P.theta)))
+            except Exception:
+                continue
+    e = np.array(est, float)
+    e = e[np.isfinite(e)]
+    return (0.7413 * float(np.subtract(*np.percentile(e, [75, 25]))),
+            float(np.std(e, ddof=1)))
 
 
 def part_c(marg, prof):

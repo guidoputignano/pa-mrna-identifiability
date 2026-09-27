@@ -5786,3 +5786,54 @@ Different quantities, different designs, identical value.
 them is wired: 0.1699 against the committed macro; 0.2005 against `u12`'s 0.2002 on the other
 footing; 0.2002 simulated against 0.2005 profiled by a different method; 13.3% against `u12`'s
 13.5%.
+
+### R146. The wiring pass ran. 19 macros generated, the guard passes, and two more defects of mine on the way
+
+`audit/u23_wire_phase11.py`, registered in `src/common/numbers.py`'s `GENERATORS` and added to
+`make figures`. **It COMPUTES every value by calling the function that owns it**, which is R141's
+lesson: a generator that tabulated its numbers would make `check_artefacts.py` certify hand-typed
+values, which is worse than leaving them as literals.
+
+**The footing is asserted, not assumed.** `objects_group()` raises rather than emitting if the
+marginal it computes departs from the committed `0.1699` by more than 5e-4, so a number on the wrong
+footing cannot reach the file even if someone later edits the record construction.
+
+**19 keys emitted into `results/numbers/frontier.tex`.** The guard now reports **382 generated keys
+across 23 numbers files**, up from 364 across 22, with the new generator reachable from
+`make figures` and **`ARTEFACTS MATCH THE CODE`**.
+
+| | |
+|---|---|
+| frontier | `ke_frontier_3000_pct` 80.01, `_600_pct` 15.67, `_300_pct` 6.33, the three factors 2.226 / 1.170 / 1.065, `ke_prior_pct` 80 |
+| recommended design | `profile_recommended` 0.2005, `profile_lo_` 0.2678, `profile_hi_` 0.1332, `profile_asym_` 0.497, `sim_spread_recommended` 0.2002, `sim_spread_robust_recommended` 0.1776, `object_spread_recommended_pct` 18.04 |
+| Tier 1 | `sd_tier1_with_kappa` 0.2002, `profile_tier1` 0.2268, `profile_gap_tier1_pct` 13.25 |
+| other | `quad_width` 0.10, `margin_target` 0.17 |
+
+**Names carry their design**, per the author's ruling. `profile_recommended` and `profile_tier1` are
+0.2005 and 0.2268 and a shared prefix invited conflating them.
+
+> **Two further defects of my own, caught before the keys were frozen.**
+> 1. **`quad_width` came out 0.05 and should be 0.10.** Asymmetry falls as the prior narrows, so the
+>    closed widths form a tail and the useful statement is the **loosest** prior that suffices, since
+>    that is what a measurement must reach. My loop overwrote its candidate on every match while
+>    descending and returned the **tightest**, which says a measurement must be twice as good as it
+>    needs to be. **Fourth defect of this kind in one sitting.**
+> 2. **A redundant key.** I emitted `sd_recommended_postdose`, which is the same quantity as the
+>    existing `sd_monthly` on the same footing, by different code. **The guard checks keys, not
+>    values**, so two names for one number would let them diverge while it reported a match.
+>    Dropped; the computed value stays as the footing assertion and the paper keeps quoting
+>    `sd_monthly`. **Fifth.**
+
+**Five defects in my own new code in one sitting, every one of which the guard would have
+certified.** Three in `u22` at R145, two here. Only one was absurd on its face. That is the
+strongest evidence this pass produced for the author's ordering, and it is evidence against my own
+work rather than against the paper's.
+
+**Text updated to match.** `profile_nominal` and friends renamed to their design-carrying keys; and
+the degenerate `rho_above_fail_lo` / `_hi` **dropped in favour of the prose clause "with no
+seed-to-seed variation at all"**, which is the finding, where `\num{lo} to \num{hi}` would have
+rendered "100.0 to 100.0" and destroyed it.
+
+**What is still not wired, deliberately.** The breath group, which needs its rows named. The
+`06_excitation.tex:103` pair, which has no generator. And the proposed passages themselves, which
+remain unapplied: **this pass wired the numbers, it did not edit `paper/`.**

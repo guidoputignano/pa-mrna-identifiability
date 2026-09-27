@@ -175,6 +175,24 @@ away.
 
 ---
 
+### The breath group's structure, settled by the author and not yet wired
+
+The seven breath macros are **deferred rather than guessed** (R143): their values are
+row-selections from tables indexed by breath CV, and naming the row is a choice rather than a
+lookup. **The author has now made that choice, and it is the structure the rest of the paper
+already uses:**
+
+> **Quote the PUBLISHED repeatability as the headline and $5\%$ as the requirement.** The sourced
+> instrument is what a reader must plan against, so its figure leads; the tighter one belongs
+> beside it as what a dedicated assay would have to reach.
+
+So `breath_k_*_pub` is the headline in each sentence and `breath_k_*` at $5\%$ is the requirement
+stated next to it, rather than the reverse. **The values are still not wired**, because the
+published repeatability itself rests on R4, whose own width the sweep flagged, and the rows cannot
+be promoted until which published figure is meant is settled.
+
+---
+
 ## 4. What is deliberately NOT proposed
 
 - **No change to any of the four claims, the specification table, or any existing number.**
@@ -287,7 +305,7 @@ interval is about twice as wide as its spread.
 > deviation, and a likelihood interval's half-width, only when the log-posterior is
 > quadratic, and at the $k_e$ log-prior of $\num{ke_prior_pct}\%$ carried throughout it is
 > not. Profiling the same posterior over $\ln\theta$ gives half-widths of
-> $\num{profile_lo_nominal}$ below and $\num{profile_hi_nominal}$ above at the recommended
+> $\num{profile_lo_recommended}$ below and $\num{profile_hi_recommended}$ above at the recommended
 > design, against a quoted $\num{sd_monthly}$: the interval is asymmetric, it is wider
 > downward, and its mean half-width crosses the $0.20$ target. The asymmetry is a function
 > of the prior width and not of the design, disappearing by a width of
@@ -301,8 +319,8 @@ interval is about twice as wide as its spread.
 
 | macro | value | owner |
 |---|---|---|
-| `profile_lo_nominal` | 0.268 | `audit/u12_prior_quadratic.py` |
-| `profile_hi_nominal` | 0.133 | `audit/u12_prior_quadratic.py` |
+| `profile_lo_recommended` | 0.268 | `audit/u12_prior_quadratic.py` |
+| `profile_hi_recommended` | 0.133 | `audit/u12_prior_quadratic.py` |
 | `quad_width` | 0.1 | `audit/u12_prior_quadratic.py` |
 
 ---
@@ -365,16 +383,16 @@ consequence of the ruling and it should be stated as such rather than absorbed.
 > information matrix: a curvature at the optimum. That equals a likelihood interval's
 > half-width only when the log-posterior is quadratic, and at the $k_e$ log-prior of
 > $\num{ke_prior_pct}\%$ carried throughout it is not. Profiling the same posterior over
-> $\ln\theta$ at the recommended design gives half-widths of $\num{profile_lo_nominal}$
-> below and $\num{profile_hi_nominal}$ above, against a Fisher $\num{sd_monthly}$ and a
-> simulated sampling spread of $\num{sim_spread_nominal}$. The asymmetry is a function of
+> $\ln\theta$ at the recommended design gives half-widths of $\num{profile_lo_recommended}$
+> below and $\num{profile_hi_recommended}$ above, against a Fisher $\num{sd_monthly}$ and a
+> simulated sampling spread of $\num{sim_spread_recommended}$. The asymmetry is a function of
 > the prior width and not of the design, disappearing by a width of $\num{quad_width}$, so
 > it attaches to every figure computed at the width this paper uses.
 > \textbf{The target of $0.20$ is stated against the profile}, because it is the object
 > that does not assume the approximation just shown to fail, and because a symmetric
 > interval understates how far capacity may fall below the estimate, which is the tail a
 > threshold decision turns on. On that reading the recommended design returns
-> $\num{profile_nominal}$ and does not meet the target; the Fisher figure quoted elsewhere
+> $\num{profile_recommended}$ and does not meet the target; the Fisher figure quoted elsewhere
 > in this paper is retained as the design quantity it is, and is not the gate.
 >
 > \textbf{That failure is not a new defect, and the two facts belong in one sentence.} A
@@ -388,8 +406,8 @@ consequence of the ruling and it should be stated as such rather than absorbed.
 
 | macro | value | owner |
 |---|---|---|
-| `profile_nominal` | 0.2002 | `audit/u12_prior_quadratic.py` |
-| `sim_spread_nominal` | 0.1777 | `audit/u4_recheck_breath.py` |
+| `profile_recommended` | 0.2002 | `audit/u12_prior_quadratic.py` |
+| `sim_spread_recommended` | 0.1777 | `audit/u4_recheck_breath.py` |
 
 ---
 
@@ -445,14 +463,14 @@ a bias the object spread does not contain.
 > \textbf{Sizing the margin.} The target is stated against the profile
 > (Remark~\ref{rem:whichinterval}), and a design sized to meet it exactly carries no
 > allowance for anything outside the model it was sized in. The floor adopted here is the
-> spread among the three objects the same posterior admits, $\num{object_spread_pct}\%$ at
+> spread among the three objects the same posterior admits, $\num{object_spread_recommended_pct}\%$ at
 > the recommended design, so a design is sized to $\num{margin_target}$ on the profile
 > rather than to $0.20$. Drift is an allowance on top of that floor and not inside it,
 > being a bias rather than a choice of object.
 
 | macro | value | owner |
 |---|---|---|
-| `object_spread_pct` | 18.1 | `audit/u12_prior_quadratic.py`, `audit/u4_recheck_breath.py` |
+| `object_spread_recommended_pct` | 18.1 | `audit/u12_prior_quadratic.py`, `audit/u4_recheck_breath.py` |
 | `margin_target` | 0.17 | the author's ruling, on that spread |
 
 ---
@@ -547,8 +565,7 @@ protein-restricted diet should show**. Those two together put the crossing at **
 > load does not move. Below it the record understates the change and the estimator escalates
 > every patient, as above. Above it the record \emph{overstates} the change, and the estimator
 > returns to declaring patients safe, no longer at the benign rate but at
-> $\num{rho_above_fail_pct}\%$, with a seed-to-seed range of
-> $\num{rho_above_fail_lo}$ to $\num{rho_above_fail_hi}$. A partially
+> $\num{rho_above_fail_pct}\%$, \textbf{with no seed-to-seed variation at all}. A partially
 > effective catabolism-suppressing regimen therefore lands in the more dangerous of the two
 > failures, and the sweep of this paragraph does not reach it because it stops at $\rho = 1$.
 > **The mitigation is a recording choice rather than a physiological one: when the load is
@@ -560,8 +577,10 @@ protein-restricted diet should show**. Those two together put the crossing at **
 - **The numbers need generating and wiring.** The passage above is written with `\num{}` macros
   for that reason, and **an earlier draft of it used bare literals**, which is exactly the defect
   section 14.5 reports in the paragraph it attaches to. Caught and corrected here rather than
-  carried in. Four new macros: `rho_pole_q`, `rho_above_fail_pct`, `rho_above_fail_lo`,
-  `rho_above_fail_hi`.
+  carried in. **Two** new macros, `rho_pole_q` and `rho_above_fail_pct`, and not four: the
+  seed range is **zero across all eight seeds**, so `\num{lo} to \num{hi}` would render as
+  "100.0 to 100.0" and destroy the finding it was meant to protect. That clause stays prose,
+  per the section 0 rule added at R143.
 - **The excitation channel is not priced.** `src/design/run.py:1071` holds the marker levels fixed
   and scales only the record, so the 100% figure prices record corruption alone. A physiological
   `rho` also shrinks the true load deviation, which shrinks the marker excursions; the retained
