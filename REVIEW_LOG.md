@@ -6324,3 +6324,54 @@ large prose edits with eight cross-references to re-point and no referee objecti
 **Recorded as done so it stops appearing on the list.** What remains after it: the twenty-one
 insertions, now scoped by the A/B answer; the PHASE4 reconciliation; the literature verification,
 which needs a session with network egress and starts with R4; and the merge.
+
+---
+
+### R160. The PHASE4 reconciliation: 9 applied, 0 stale, 4 orphaned, and two of my own false orphans caught first
+
+`audit/u27_phase4_reconcile.py`. The author's framing was that this is *"yours to do, and it is a
+reading, not a decision"*, and that he decides only the orphans. **It is computed rather than
+asserted**, because a reading of fifteen passages against a 45-page document is where an assertion
+drifts from what the files say.
+
+**Method.** Each passage's `Current` and `Proposed` blockquotes are matched against the live section
+files, reduced to lowercase alphanumeric words, on the longest run of consecutive words present.
+`MIN_RUN = 12` is stated rather than tuned: twelve consecutive words is far beyond coincidence in this
+corpus and far below any quoted block's length. **The run length is printed with every verdict**, so a
+weak match shows as weak instead of being rounded into a category.
+
+| verdict | n | passages |
+|---|---|---|
+| **APPLIED**, the proposed text is in the paper | **9** | 1, 2, 5, 6, 7, 9, 12, 13, 15 |
+| **STALE**, the target is still there and the passage still applies | **0** | none |
+| **ORPHANED**, neither text is in the paper | **4** | **3, 4, 11, 14** |
+| REGISTER, targets `src/common/params.py` | 1 | 8 |
+| NO-BLOCKS, no `Current`/`Proposed` pair to match | 1 | 10 |
+
+**STALE is zero, which is the headline.** Nothing in PHASE4 is actionable as written. Nine passages
+were applied at some point without the document recording it, and the rest have lost their targets.
+That is consistent with R139, which found much of PHASE4 already applied, and it settles it with a
+per-passage verdict instead of a sample.
+
+**The four orphans corroborate an independent finding.** An earlier pass established by unbounded
+search that `rem:transient`, `rem:second_order`, `rem:no_delta` and `rem:rankvsprec` no longer exist
+anywhere in `paper/`. This table, computed on text rather than labels, orphans `rem:no_delta` (4) and
+`rem:transient` (14) while marking `rem:second_order` (2) and `rem:rankvsprec` (6) **applied**. Both
+results hold together: those two edits landed and their remark labels went with the rewrite. **Two
+methods sharing no code path, agreeing.**
+
+**TWO FALSE ORPHANS OF MINE, CAUGHT BEFORE THE NUMBER WAS REPORTED.** The first version searched every
+passage against `paper/sections` and reported **six** orphans. Two of them do not target the paper at
+all: passage 8 rewrites the `D` row's justification in `src/common/params.py`, and passage 10 is five
+annotation rows whose own text says *"`tab_params.tex` is generated from `params.py`"*. **Their text is
+absent from the paper because it was never meant to be there.** Reporting them as orphaned would have
+handed the author two decisions that are not his to make on this table.
+
+**A wrong haystack gives a confident wrong verdict**, which is R153 again in a new place: there I read
+a threshold off the wrong design, here I searched the wrong file. Both produced a clean-looking answer
+with no internal sign of error. Passage 10 needed a second fix as well, because it has no quoted
+blocks at all, and calling an empty search orphaned reports an absence the script never looked for.
+It is now its own category.
+
+**What the author decides: passages 3, 4, 11 and 14.** Whether each point still needs making now that
+its target is gone. Nothing is withdrawn here, because withdrawing is not a reading.

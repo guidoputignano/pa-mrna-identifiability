@@ -182,7 +182,7 @@ effort are not repeated, and three things that were on the list are now off it.
 | what | state |
 |---|---|
 | **The twenty-one insertions** | Open. Now **scoped** by the A/B answer: the paper is a design and identifiability paper, so an insertion earns its place by supporting the design rules or the scope condition, not the capacity estimate. Still under the prose freeze, passage by passage. |
-| **The PHASE4 reconciliation** | Open. The three-way table of applied, stale and orphaned. Nine STALE and twelve NO-ANCHOR as `audit/u20_staleness.py` last reported. The four orphans are the author's call; the rest is a reading. |
+| **The PHASE4 reconciliation** | **The reading is DONE** (R160, `audit/u27_phase4_reconcile.py`): **9 applied, 0 stale, 4 orphaned**. Nothing is actionable as written. **What is open is the author's decision on the four orphans, passages 3, 4, 11 and 14**, whose targets no longer exist: whether each point still needs making. `u20_staleness.py`'s earlier nine-STALE count classified by line anchor; this classifies by text, which is the right test, and supersedes it. |
 | **The literature verification** | Open and **blocked on the environment**. Needs a session with network egress, because DOI and PMID resolution is what the `audit` CI job does and what this container cannot reach. **Starts with R4**, on which the deferred breath group also rests. |
 | **The merge** | Open. Last. |
 | **The GitHub Actions setting** | **The author's**, and the reason it is on this list is that it is the difference between a check and a decoration. Until it is fixed, CI reports nothing about its subject and every check must be run locally and said to have been (section 0). |
