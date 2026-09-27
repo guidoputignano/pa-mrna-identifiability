@@ -66,10 +66,17 @@ the therapy and to no one else (Section~\ref{sec:whoto}).
 $\theta$ is worth doing on its own terms; deciding the interval needs something the marker
 record cannot supply. The decision is usually posed as the sign of $\mu = \theta - \thc$
 against a critical capacity, and that threshold is not a measured quantity but a convention
-defined through two chosen constants; across their defensible range it moves by a factor of
-$24$ and the sign flips for the same patient with perfect data (supplement, \S S1.20).
-Section~\ref{sec:decision} shows that even with $\theta$ identified the sign is not
-reliably decidable.
+defined through two chosen constants. What the record settles is the \emph{sign}, and it
+settles it everywhere except inside one window in the illness amplitude: the margin is linear
+along the direction the data cannot resolve, so its sign is constant along that direction
+unless the two ends disagree, and they disagree only on an interval whose width is set by the
+tolerable level. That width is $\num{mtol_window_lo_pct}\%$ of its centre at $\mtol = 15$,
+$\num{mtol_window_pct}\%$ at $40$ and $\num{mtol_window_hi_pct}\%$ at $160$, and unlike a
+tolerance on $\theta$ it is computable per patient from the fitted pair $(a, b)$
+(supplement, \S S1.16.6). Inside the window no width of band settles the decision, because
+every capacity consistent with the record disagrees about the sign, and $\theta$ is unknown
+there to a factor of $169$. Section~\ref{sec:decision} shows that even with $\theta$
+identified the sign is not reliably decidable.
 \item \textbf{The endpoint evidence favours a smooth dose--response over a threshold.} The
 only endpoint evidence available reports no threshold at all. This paper records that as a
 finding rather than adopting a replacement estimand, for reasons given in

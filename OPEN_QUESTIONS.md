@@ -118,6 +118,21 @@ Set by the author and held throughout. They are not negotiable defaults.
   **The four instances in the supplement pass alone were: a pattern list missing one form; `.`
   against `§`; `grep -c` on a single-line file; and an unnormalised `pdftotext` grep. Every one
   produced a confident undercount** (R177).
+
+  **A PROCEDURE APPLIES TO A FIGURE ALREADY IN HAND, NOT ONLY TO A SEARCH ABOUT TO BE RUN.** R181
+  is the reason this has to be said separately. The count was built twice, the broken table was
+  discarded, and **the published finding was taken from the discard**: step 1 of the procedure
+  above, `never grep -c`, would have caught it, and the procedure had been written one commit
+  earlier. It did not catch it because it was read as a rule for the next search rather than as a
+  test for the number already written down. **The only error this whole effort has put into a
+  committed document did not come from an unchecked search. It came from an unchecked result.**
+  Before a figure is published, re-derive it or name the run it came from.
+
+  **AND IT WORKED THE OTHER WAY ONCE, WHICH IS WORTH RECORDING BESIDE THE RULE.** R183 applied step
+  3, the positive control on a zero, to its own clean sweep: the check for remaining bare `\S S1`
+  pointers returned zero, and the pattern was run against a string known to contain one before the
+  zero was believed. That is the first time in this run a rule was used **before** it was needed
+  rather than after a failure, and the sweep it certified was the one the author accepted.
 - **A RECORDED DEFECT NEEDS RE-VERIFICATION BEFORE IT IS RE-REPORTED, on the same footing as a
   recorded claim.** **A record is evidence that something WAS true, not that it IS.** A defect
   record outlives its defect unless someone strikes it, and **three records of a fixed defect look
@@ -215,6 +230,23 @@ Set by the author and held throughout. They are not negotiable defaults.
 **This supersedes every other list of remaining work in this file.** Items closed earlier in the
 effort are not repeated, and three things that were on the list are now off it.
 
+**WHAT IS NOT URGENT, said here so the rows below stop being reread as though they were** (the
+author's ruling at the end of Phase 12). **Three items are waiting on something other than work,
+and nothing should be spent on them until it arrives.**
+
+  **The supplement duplication** waits on the author, who will take it with the subsection
+  inventory in front of him. It is a merge of seven displaced main-text files, not a deletion.
+  Everything that can be established without him has been: which set is later, where the pointers
+  land, and that no pointer constrains the four overlapping pairs.
+
+  **`kappa_cv = 0.1402` and the genotype document's figures** wait on a session with network
+  egress. No amount of local work substitutes for one retrieval of Manoli's Results.
+
+  **The twenty-one insertions** wait on the prose freeze being lifted. They are scoped and they are
+  not blocked on analysis.
+
+**What is live is the row immediately below it and nothing else.**
+
 | what | state |
 |---|---|
 | **The twenty-one insertions** | Open. Now **scoped** by the A/B answer: the paper is a design and identifiability paper, so an insertion earns its place by supporting the design rules or the scope condition, not the capacity estimate. Still under the prose freeze, passage by passage. |
@@ -225,8 +257,8 @@ effort are not repeated, and three things that were on the list are now off it.
 | **`kappa_cv = 0.1402`, which sizes 118** | **NEW and first in the R4 queue** (R171). `u30`'s footing assertion showed Tier 1 needs 118 draws *because* of this figure, so the specification's headline count rests on it. Status: **corroborated but not primary-verified.** Two independent secondaries agree on Manoli's Results text and the retraction's direction is internally checkable, but this repository has never read the source and **where R4 obtained its quotations is recorded nowhere**. One retrieval settles it. |
 | **The genotype-prior document** | **Its first checked figure is wrong** (R170): it repeats the abstract's 12.8% that R4 retracted and R59 confirmed. The failure mode is specific, an abstract quoted where the Results were needed, so **every figure in it needs checking against its source's Results**; its findings of absence are untouched. Nothing from it is imported. |
 | ~~A duplicated clause in the supplement~~ | **FIXED** (R174, `471925d`). Four words deleted from `params.py`, table regenerated, and the two statements of the correction now agree **word for word** with `08_specification.tex`. Zero occurrences in the rebuilt supplement. |
-| **The paper's second claim has no derivation** | **NEW, and the most serious thing this pass found** (R178). *"theta_crit moves by a factor of 24 and the sign flips for the same patient with perfect data"* appears in `01_question` and in `S1.20` and **is derived in neither**; `01_question` sources it to `\S S1`, whose actual derivation (`S1.16.6`, S35-S39) says the sign is **determined outside a window 14.8% wide at `mtol = 40`** and undetermined inside it. `S1.20` calls this *"the second of the paper's four claims"*. **Either derive the 24 or restate the claim as the window result.** The window result is the stronger sentence and is already in print. |
-| **The supplement duplication** | **ANATOMISED for the decision** (R179). The long set is the **original main text**, displaced: `A1_supplementary.tex:739-745` inputs seven original section files that `main.tex` does not. The short set is the later purpose-written one. **But it is a merge, not a deletion**: the overlap is four subsections, not two sets, and within each pair neither side is a subset. ~19 subsections are unique to one or the other. The one clean deletion is the duplicate remark numbering, one argument being both Remark 4 and Remark 17. |
+| ~~The paper's second claim has no derivation~~ | **SETTLED, and the claim is WITHDRAWN** (R184, `audit/u31_factor24.py`). The author's third outcome, and it is stronger than "no derivation": the factor of 24 is **not recoverable** from the ranges this repository states. Of the **181** pairs of stated endpoints for `m_tol` and the illness fold that keep `theta_crit` positive, **none** gives a factor between 23.5 and 24.5; both conventions at their own stated ranges give **4.96**. And over the `m_tol` range the registry itself quotes, 15 to 160, a factor is the wrong statistic: S34's threshold vanishes at `m_tol = s_peak/k_e = 96.82`, inside that range, so `theta_crit` runs 3136 at 15, 994 at 40 and **-513** at 160. It changes **sign**. Verified on four independent paths plus a closed form. `01_question` and `S1.20` now carry `S1.16.6`'s window (1.2%, 14.8%, 67%) through its existing macros, and `S1.20` records the withdrawal with its evidence rather than letting a claim of the paper's four quietly disappear. |
+| **The supplement duplication** | **WAITING ON THE AUTHOR, and not urgent.** He will take it with the subsection inventory in front of him, not before. **Anatomised** (R179): the long set is the original main text, displaced, `A1_supplementary.tex:739-745` inputting seven section files `main.tex` does not; the short set is the later purpose-written one; and it is a **merge, not a deletion**, the overlap being four subsections with neither side a subset within any pair and ~19 unique to one or the other. **What the repointing added** (R183): the main text's pointers now land **16 in the long set against 11 in the short**, so the displaced original carries more of the load, and **not one of the four overlapping pairs is cited from the main document at all**, from either side (`S1.5`/`S1.15.7`, `S1.6`/`S1.15.8`, `S1.7`/`S1.16.5`, `S1.8`/`S1.16.8`, all zero, against positive controls of 4, 3 and 1 on `S1.3`, `S1.11.1` and `S1.20`). **So no pointer constrains the merge on the four pairs**, and the decision is about content alone. The one clean deletion remains the duplicate remark numbering, one argument being both Remark 4 and Remark 17. |
 | ~~From the supplement pass, the mechanical five~~ | **ALL FIVE DONE** (R177 through R183). The **eighteen** `\S S1` pointers, not nineteen, repointed one at a time at the subsection holding the promised material, and **guarded**: `check_supplement_pointers()` fails on a pointer to a number that does not exist and on a pointer to a section that has subsections, since the number is literal text that no LaTeX run can resolve or invalidate. It caught two of my own new pointers immediately, and the `.toc` cross-check caught a defect in the guard (a `\ifshowregister` section counted that LaTeX does not number). The **ten self-references** deleted or repointed, with the five in `params.py` checked first because that table generates into **both** documents and the compact variant truncates the notes away. The **four** `0.170`s wired to `\num{sd_monthly}`. The **contents collision** fixed by widening the `\numberline` boxes. The **caption** repointed at `\S S4`. The two unkept promises **withdrawn** at R180. **Nothing mechanical is left.** |
 | **`08_specification:381`'s `1.05` has no owner** | **NEW, found while repointing** (R183). The paragraph says *"the load-record prior holds about `1.05` there and does not move"* and cites the supplement. The only `1.05` in the supplement is `04_local.tex:116`, which is **a different quantity**: the factor by which a two-marker panel cuts `sigma` at a load recorded to 10%. The claim's mechanism is in `S1.12` and the pointer now goes there, but **the number itself is generated nowhere and derived nowhere**. It is the same class as `06_excitation:103`'s withdrawn pair: a value in print with no provenance. Either wire it or withdraw it.
 | ~~Nobody has read the supplement~~ | **NEW, and it is the companion to the delivery pass rather than another guard** (R175). The doubled clause was found by accident while checking something else. **No guard could reliably catch a doubled clause in generated prose**, and building one would be machinery for a class of one. What catches it is a person reading the document, and the delivery pass read `main.pdf` only. **The supplement is 64 pages and has never been read end to end.** That is where this class of defect lives. |
