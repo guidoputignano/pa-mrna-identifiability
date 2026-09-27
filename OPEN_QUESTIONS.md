@@ -197,7 +197,7 @@ Three computations on the existing footing, no literature and no network. Workin
 
 | # | gate | what it blocks |
 |---|---|---|
-| **(g)** | **No assay CV exists for home volumetric microsampling.** | It is the single input deciding whether the trade in `PHASE11_SAMPLING.md` section 3 is worth making: three home samples a week finishes Tier 1 in 2.11 years at a 10% assay and 4.25 at 15%, against 9.82 in clinic, and one a week does not pay at 15% or worse. The sweep is a sweep because nothing here can supply the number. |
+| **(g)** | **No assay CV exists for home volumetric microsampling.** *Superseded by (G-ASSAY) in section 11, which merges it with the inpatient setting.* | It is the single input deciding whether the trade in `PHASE11_SAMPLING.md` section 3 is worth making: three home samples a week finishes Tier 1 in 2.11 years at a 10% assay and 4.25 at 15%, against 9.82 in clinic, and one a week does not pay at 15% or worse. The sweep is a sweep because nothing here can supply the number. |
 | **(h)** | **The tracer bolus size relative to the marker pool is unknown.** | It sets whether the bolus bias on the breath ratio (-0.5% at a hundredth of the pool, -21% at a half) is a correction or a nuisance. It is also where the paper's observation-model assumption bites hardest: the tracer is propionate, on the substrate side of a map the paper states as an assumption. |
 | **(i)** | **The plausible magnitude of a drift in capacity is unquantified.** | Growth, hepatic progression and the therapy's own effect on endogenous expression all act over Tier 1's decade and none is quantified anywhere in this repository. `PHASE11_DRIFT.md` establishes a conditional, not a fact about patients. |
 
@@ -301,3 +301,86 @@ nothing; the safe direction is a fast.
 **One gate added.** A **1% marker assay in an inpatient series** is asserted as plausible
 and not sourced. It is the input the burst route's verdict is most sensitive to, and it
 joins the home-microsampling CV, the tracer bolus size, and the `V_d`/renal-share pair.
+
+---
+
+## 11. Round 4 of Phase 11: one route withdrawn, its substitute priced, two gates merged
+
+Working in `audit/PHASE11_CATABOLIC_GATE.md`; `REVIEW_LOG.md` R116 to R124. Scripts
+`audit/u15_gut_suppression.py` and `audit/u16_recheck_gut.py`.
+
+> **The independent re-check found a defect in this round's own code and the verdict
+> reversed** (R119). Everything below is post-correction. The pre-correction figures are kept
+> in `PHASE11_CATABOLIC_GATE.md` section 5 rather than deleted.
+
+**A result is WITHDRAWN, and it is the audit's own.** Round 3 priced a 50% fast as the safe
+load reduction for a relaxation burst and reported `sd(ln k_e) = 0.1121` at a tenth of
+nominal. In propionic acidemia a fast is not a load reduction: acute restriction triggers
+catabolism, which releases the precursor amino acids from muscle and raises the load. The
+paper says so in its own words at `01_biology.tex:151-156` and gives the management
+consequence at `:160`, and **`07b_decision.tex:55-62` has already priced a prescribed cut**:
+at `rho = -0.25` the sign error is 100% and the median `theta_hat/theta` is 0.009. So the
+fast numbers do not merely lack support, they contradict an existing paper result about the
+same intervention. They are withdrawn and are not carried forward.
+
+**(g5) Does the identification model need a catabolic coupling? RECORDED AS A GATE, NOT A
+RESULT.** `eq:local` carries `L` as an input dialable in either direction. The catabolic
+response lives in the prose and, as `rho`, in a *recording* asymmetry; it is not a
+physiological coupling from a prescribed cut to a rise in the true load. The audit's reading,
+which is not a decision: **not needed for anything the paper currently claims**, whose load
+variation is spontaneous intake at 10% and whose decompensations are already modelled as
+load spikes; **needed before any prescribed reduction can be priced**, and `rho` is the hook
+it would attach to. Nothing that prices a prescribed load reduction should proceed until
+this is settled.
+
+**The substitute is priced, it REACHES the frontier, and what blocks it is a time constant.**
+Suppressing gut-derived propionate removes substrate at source with no catabolic stress and
+is routine management, so it has the property the fast lacks. Its amplitude is capped by the
+gut-derived share of *production*, which `params.py`'s s_base row gives as "at least 22.2 +/-
+8.5%"; Thompson 1990's 41% is a fall in urinary *metabolites*, a different object, and is not
+a justified step amplitude. **At the defensible 22.2%, with a 1% burst assay and sixteen
+admissions, the route reaches 0.0806 against a frontier of 0.1567 at a fifth of nominal,
+given a 6 h onset.** At metronidazole's one-day time constant the same best case gives 0.1833
+and misses. **At a tenth of nominal the result is undecided at this precision**: the Fisher
+gives 0.0588 against a frontier of 0.0633, a 7% margin, and the independent method gives
+0.0781, which misses. That is (g4)'s own lesson turned on the audit: a number landing within
+7% of a gate carries no margin and fails under any object but the one it was computed
+against.
+
+**So the actionable number is the slowest onset that still reaches the frontier**, since the
+amplitude is capped by biology while the onset is a property of the agent chosen: **16.4 h at
+a fifth of nominal and 6.6 h at a tenth** at the registered share, 38.8 h and 13.6 h at one
+standard deviation above it, 60.5 h and 28.2 h at the top of Thompson's range. **Whether the
+already-registered route works is therefore a question about the gut-derived share, which is
+already on the research list**, rather than a call for an intervention nobody has.
+
+**Two readings of the audit's own, both wrong as stated, and the lesson kept.** `u15` first
+asserted that the onset decides the route, then asserted the opposite with a span ratio to
+support it. Each holds in one regime only: at a 5% assay and one admission the record
+dominates and the amplitude moves it more (x1.41 against x1.14), while at a 1% assay and
+sixteen admissions the burst dominates and the **onset** binds (x5.94 against x4.34). **A
+"which input dominates" claim is not well posed without naming the regime**, and a span ratio
+is evidence only at the operating point where it was computed. R123.
+
+**(G-ASSAY), replacing gate (g) and the 1% inpatient gate: how precisely can this marker be
+measured, in two settings?** These were two gates and are one question, and one search answers
+both. Setting one, **home volumetric microsampling**: no CV exists, and it decides whether
+three samples a week finishing Tier 1 in 2.11 years at 10% or 4.25 at 15% beats 9.82 in
+clinic. Setting two, **an inpatient series from one line in one run**: a 1% CV is asserted
+and unsourced, and it decides the burst route's verdict. Both verdicts turn on it.
+
+**The independent re-check found a defect in this round's own code, and the finite-difference
+guard is now permanent.** `audit/u16` re-derives the quantity in level space, by Monte Carlo,
+with its own integrator and its own quadratic solve. Its strongest arm came out **0.50 times**
+u15's inverse Fisher, and a sampling spread cannot beat a correct Fisher. Three candidates
+were tested: the declared sigma convention (refuted twice, substituting u15's own made the gap
+worse), a prior mixture (refuted by algebra, the marginal spread over a truth drawn from the
+prior equals the posterior sd exactly), and dropping the record, which isolated it.
+**`u15` inherited a load-bias forcing of `1.0` from `u14`, where it is correct for a
+prescribed change of known absolute size, and a gut-derived share removes a PROPORTION of the
+load, so `dL/db = 1 - amp f(t)`.** Three sensitivity columns agreed with finite differences to
+3e-09 and that one to 2.2e-01; the correction makes the burst **2.6x more informative** and
+reversed the verdict. **This is the third sensitivity in this audit to disagree with its own
+forward model** (R101 twice, now R119), so the check is now a permanent part of the script.
+One diagnostic run while chasing it reintroduced R98's own error; withdrawn at R120, together
+with a correction to my own reasoning about why.

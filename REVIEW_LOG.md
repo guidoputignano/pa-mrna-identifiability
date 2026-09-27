@@ -4799,3 +4799,196 @@ and a log sd diverge: the frontier at a tenth of nominal is a factor of **1.07**
 sd of **6.3%**, and a reader who reads "a factor of 1.07" as "about one" has lost the
 requirement entirely. The register may be better served stating the log sd directly, which
 is the form the frontier is computed in and the form a prior is specified in.
+
+### R116. WITHDRAWN: the fast arm of the burst route, and it contradicts an existing result
+
+R114 priced a 50% fast at the trough as the safe lowering step and reported **0.1121** at a
+tenth of nominal at a 1% assay and sixteen admissions. **In propionic acidemia a fast is not
+a load reduction.** Acute restriction triggers catabolism, which releases the precursor amino
+acids from muscle and raises the load.
+
+**The author raised this and verifying it made it stronger than stated.** The premise offered
+was that the model cannot see catabolism. What the repository shows is that one part of it can
+and already does. `01_biology.tex:151-156` names "infection, **fasting**, surgery, trauma" as
+the triggers and says "the propionate load rises sharply precisely when the patient is eating
+nothing"; `:160` gives intravenous glucose as the management consequence. And
+`07b_decision.tex:55-62` **has already priced a prescribed cut**: with the recorded load as
+`L_base + rho (s_true - L_base)`, `rho <= 0` is "crisis protocol, where prescribed intake is
+cut while catabolic muscle breakdown supplies the load", and at `rho = -0.25` the sign error
+is 100% with a median `theta_hat/theta` of **0.009**.
+
+The fast arm assumed `rho = 1`. So its numbers do not merely lack support, **they contradict
+a published result about the same intervention, and the published one is the pessimistic
+one.** Struck through rather than deleted in `PHASE11_KE_MEASUREMENT.md` section 2.6.
+
+### R117. (g5) A gate: the identification model has no catabolic coupling
+
+`eq:local` carries `L` as a freely dialable input. The catabolic response lives in the prose
+and, as `rho`, in a **recording asymmetry**, which says how faithfully the record tracks the
+true load and not that a prescribed cut *causes* the true load to rise.
+
+**Recorded as a gate rather than a result, per section 0.** The audit's reading, which is not
+the decision: **not needed** for anything in print, whose load variation is spontaneous intake
+at 10% and whose decompensations are already modelled as load spikes; **needed** before any
+prescribed reduction is priced, and `rho` is the hook it would attach to. Nothing that prices
+a prescribed load reduction should proceed until it is settled.
+
+### R118. The substitute priced, and the provenance of its amplitude is load-bearing
+
+Suppressing gut-derived propionate removes substrate at source with no catabolic stress, so it
+has the property the fast lacks, and it is routine management. **The earlier negative does not
+transfer**: `u2` part E closed a load step for a breath **ratio**, which wants the widest
+level contrast; this is the input whose **relaxation** carries `k_e`, at the trough where
+`k_e/J` is 0.552 against 0.076 post-dose (R113).
+
+**Two registered numbers are in play and only one is an amplitude.** `params.py`'s `s_base`
+row gives gut flora "at least 22.2 +/- 8.5%" as a share of **production**, which is what
+bounds a load step. Thompson 1990's 41% (range 12 to 76) is a fall in urinary **metabolites**,
+a different object, and is not a justified step amplitude. The verdict differs between them,
+so the sweep spans both and marks which is which.
+
+**An interior optimum in the onset, at about 3 h, and an ideal step is not the best input.**
+Over a fixed 24 h window an instantaneous step has finished relaxing in about three relaxation
+times and the remaining draws sit on the quasi-steady locus, where R112 found no `k_e`
+information at any density. **And the slow end does not converge to the record-only floor**,
+as an earlier draft asserted: at a one-week onset the 28-day window gives 0.5295 against the
+floor's 0.5430, and the residual 2.5% is 24 extra samples spanning two dose cycles, not a
+relaxation. At that onset the design has stopped being a relaxation measurement.
+
+### R119. A DEFECT in this round's own code, found by the re-check, and it reversed the verdict
+
+`audit/u16_recheck_gut.py` re-derives `sd(ln k_e)` in **level** space by **Monte Carlo** with
+its **own RK4** and its **own quadratic solve**, sharing no code path with `u15`. The weak arms
+came out 1.06 to 1.23 times `u15`'s Fisher, which curvature could explain. The strongest arm
+came out **0.500 times it**, and **a sampling spread cannot beat a correct Fisher**, so that
+direction is a defect.
+
+Three candidates were tested rather than argued. **The declared sigma convention: refuted
+twice**, since substituting `u15`'s own convention made the gap worse (1.324 against 1.232,
+and 0.473 against 0.501). **A prior mixture: refuted by algebra**, since for a linear Gaussian
+model the marginal spread over a truth drawn from the prior equals the posterior sd exactly,
+`s²τ²/(s²+τ²) = σ²`, so drawing from the prior should give a ratio of one. **Dropping the
+record isolated it**: burst-only gave 0.1304 against 0.3538, a ratio of 0.368.
+
+**The defect.** Every sensitivity column against a central finite difference of the level
+trajectory alone: `dln m/dln theta` 3.9e-09, `dln m/dln Km` 2.9e-09, `dln m/dln ke` 3.1e-09,
+and **`dln m/db` 2.2e-01**. `u15` inherited a load-bias forcing of exactly `1.0` from
+`u14.burst_rows`, where it is **correct** for what `u14` models and says it models, a
+prescribed change of known absolute size with the bias added after it. A gut-derived share is
+not that: it removes a **proportion** of the load actually produced, so
+`L(t) = (L_tot + b)(1 - amp f(t))` and `dL/db = 1 - amp f(t)`.
+
+**This is the third time in this audit that a sensitivity disagreed with its own forward
+model** (R101 twice, now this), so the finite-difference check is permanent in `u15.part_f`
+rather than a one-off. After the fix every column agrees to better than 3e-08.
+
+**What it changed.** Burst-only 0.3538 to **0.1365**, against the independent Monte Carlo's
+0.1304. With the record at `theta = 300`, 0.1561 to **0.0588**. The burst is **2.6x more
+informative** than reported, because a smaller `b` column leaves less of the `k_e` signal to
+be explained away along the near-collinear `b` direction.
+
+> **The verdict reversed.** Before: the route reached neither frontier at the defensible
+> amplitude and the amplitude was the obstacle. After: it reaches both at **0.0806** and
+> **0.0588** given a 6 h onset, and the obstacle is the onset, since metronidazole's one-day
+> time constant misses the tighter frontier by 2.0x. **The actionable number is the slowest
+> onset that still reaches the frontier: 16.4 h at a fifth of nominal and 6.6 h at a tenth,
+> at the registered share; 13.6 h at one sd above it; 28.2 h at the top of Thompson's range.**
+> So whether the registered route works is a question about the gut-derived share, which is
+> already on the research list, rather than a call for an intervention nobody has.
+
+**The re-check earned its keep**: its purpose was to confirm a number and it found the number
+wrong, in the direction that mattered, on the one arm that decided the verdict. The weak arms
+would not have raised the question.
+
+### R120. WITHDRAWN: a diagnostic of my own that reintroduced R98's error
+
+While diagnosing R119 I tested whether the gap was a prior mixture by holding `ke_true` at the
+register value across replicates, and read the resulting 0.5047 against the Fisher's 0.5430 as
+confirmation. **That is R98's error**, the one `u16` was built to avoid: holding a
+prior-carrying nuisance at its prior mean is not the conditional object it looks like, because
+the prior residual is then centred exactly on the truth and the estimator gets information for
+free. At nominal capacity the same diagnostic returned `sd(ln k_e) = 0.0557` from a record
+whose Fisher says 0.797, which is what exposed it.
+
+Two corrections to my own reasoning, recorded because the second is the more useful. First,
+the conclusion is withdrawn and the algebra in R119 refutes the candidate outright. Second, I
+initially called the 0.0557 impossible, and it is not: it is exactly what the linear theory
+predicts once the data carry no information and the truth sits at the prior mean, where the
+estimate equals the truth by construction and the spread goes to zero. **The value was
+correct and the object was wrong**, which is the same mistake as R98 rather than a new one,
+and calling it impossible would have sent the next reader looking for a bug that is not there.
+
+### R121. The same convention question does not touch `u14`'s surviving arms
+
+`u14`'s forcing of `1.0` is self-consistent with its stated model, so `u14` is not wrong the
+way `u15` was, and its fast arms are withdrawn on other grounds. What survives and could be
+affected is its safe **raising** step. For a raising step the factor is `(1 + step) > 1`, so
+the `b` column grows and `k_e` should get worse. **Tested rather than asserted:**
+
+| theta | step | peak m | `dL/db = 1` | `dL/db = 1+step` | no burst |
+|---|---|---|---|---|---|
+| 600 | +40% | 38.44 | 0.4635 | 0.4892 | 0.6565 |
+| 300 | +15% | 38.72 | 0.4798 | 0.4860 | 0.5430 |
+| 150 | +5% | 39.96 | 0.4546 | 0.4555 | 0.4721 |
+
+The prediction holds and **the reported conclusion that the safe raising step "buys almost
+nothing" is reinforced, not weakened**. Recorded so that R119 is not read as putting every
+load-step number in the audit in doubt: it puts the proportional ones in doubt, and the
+proportional ones are `u15`'s.
+
+### R122. (G-ASSAY) The two assay gates are one question in two settings
+
+The home-microsampling CV and the 1% inpatient assay were two gates. They are the same
+question, **how precisely can this marker be measured**, and one search answers both, so they
+are merged. Setting one, **home volumetric microsampling**: no CV exists, and it decides
+whether three samples a week finishing Tier 1 in 2.11 years at 10%, or 4.25 at 15%, beats 9.82
+in clinic. Setting two, **an inpatient series from one line in one run**: 1% is asserted and
+unsourced, and it is what puts the burst route in the regime where it reaches a frontier at
+all. The two settings differ in what makes a tight CV plausible, so one source will not answer
+both, but one search will find both.
+
+### R123. "Which input dominates" is not well posed without naming the regime
+
+`u15`'s docstring asserted the onset decides the route. A later revision of the same file
+asserted the opposite and computed a span ratio to support it. **Both are wrong as stated**,
+and both are left in the file so the correction is visible. Each input swept over its
+registered range at a tenth of nominal, as a ratio of largest to smallest:
+
+| regime | amplitude span | onset span | which binds |
+|---|---|---|---|
+| 5% assay, 1 admission | x1.41 | x1.14 | amplitude, by 1.2x |
+| 1% assay, 16 admissions | x4.34 | **x5.94** | **onset**, by 1.4x |
+
+With a clinic assay and one admission the record dominates the posterior and the amplitude
+moves it more. With a 1% assay and sixteen admissions the burst dominates and the onset binds.
+The first claim was right in the regime that decides the verdict and wrong in the cheap one;
+the second was right in the cheap one and wrong in the deciding one. **A span ratio that looks
+like evidence for one input is evidence only at the operating point where it was computed.**
+
+### R124. What the re-check licenses after the fix, and the one claim it refuses
+
+With R119 corrected, `u16` against `u15` at `theta = 300`:
+
+| cell | `u15` Fisher | `u16` Monte Carlo | ratio |
+|---|---|---|---|
+| record only, no burst | 0.5430 | 0.6690 | 1.232 |
+| 22.2%, ideal step | 0.4762 | 0.5688 | 1.194 |
+| 22.2%, 1 day onset | 0.5188 | 0.5645 | 1.088 |
+| 41%, ideal step | 0.3711 | 0.4144 | 1.117 |
+| **22.2%, 6 h, 1%, 16 adm** | **0.0588** | **0.0781** | **1.327** |
+
+**Every ratio now exceeds one, which is the only direction available**: a sampling spread can
+be wider than a local quadratic and cannot be narrower. The impossible direction is gone, and
+it is what located the defect.
+
+**The `theta = 300` headline is therefore withheld.** 0.0588 against a frontier of 0.0633 is a
+**7% margin**, the method spread is **9% to 33%**, and the independent method gives 0.0781 for
+that exact cell, which **misses**. So the honest statement is: **reaches at a fifth of nominal
+with a 1.9x margin that survives the spread; undecided at a tenth.**
+
+**This is (g4)'s own lesson turned on the audit.** (g4) says a count defined to land exactly
+on the gate carries no margin and will fail under any object but the one it was defined
+against. A *verdict* computed to land within 7% of a frontier has the same defect, and the
+fact that it is the audit's verdict rather than the paper's does not exempt it. Recorded
+because the temptation to report "it reaches the frontier" was real and the margin does not
+support it.

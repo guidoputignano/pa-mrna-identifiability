@@ -376,6 +376,14 @@ consequence of the ruling and it should be stated as such rather than absorbed.
 > threshold decision turns on. On that reading the recommended design returns
 > $\num{profile_nominal}$ and does not meet the target; the Fisher figure quoted elsewhere
 > in this paper is retained as the design quantity it is, and is not the gate.
+>
+> \textbf{That failure is not a new defect, and the two facts belong in one sentence.} A
+> design whose size is solved from $\operatorname{sd} = 0.20$ lands on the target by
+> construction, so it carries no margin and will fail under \emph{any} object but the one
+> it was solved against. The recommended record and the Tier~1 count are both solved that
+> way. So what the stricter object exposes is the missing margin of
+> Section~\ref{sec:spec}, not a separate problem with the estimate, and the repair is the
+> one stated there: size the design against a target with room in it.
 > \end{remark}
 
 | macro | value | owner |
@@ -419,13 +427,33 @@ can act on and a measurement can be judged against.
 | macro | value | owner |
 |---|---|---|
 | `ke_frontier_3000_pct` | 80.0 | `audit/u9_ke_frontier.py` |
-| `ke_spec_3000_pct` | *author's choice of margin* | — |
 | `ke_frontier_600_pct` | 15.7 | `audit/u9_ke_frontier.py` |
 | `ke_frontier_300_pct` | 6.3 | `audit/u9_ke_frontier.py` |
 
-**The margin's size is the author's to set and is deliberately left blank.** This work can
-say what each candidate margin costs in draws; it cannot say how much margin the study
-should buy.
+### The margin's size, settled by the author with a principle rather than a taste
+
+**Size it to at least cover the spread among the objects the gate could have been stated
+against.** At the recommended design those are Fisher **0.1695**, simulated sampling spread
+**0.1777** and profile **0.2002**, a spread of **18.1%**. A design should therefore target
+about **0.17 on the profile** rather than 0.20 on the marginal.
+
+That is a floor and not a total. **Drift needs its own allowance on top**, because it is a
+bias and not an object-choice, so it adds in a different way: `audit/u7_drift.py` reports
+`rmse = hypot(sd, bias)`, and a drift of order one per cent a year over a decade contributes
+a bias the object spread does not contain.
+
+> \textbf{Sizing the margin.} The target is stated against the profile
+> (Remark~\ref{rem:whichinterval}), and a design sized to meet it exactly carries no
+> allowance for anything outside the model it was sized in. The floor adopted here is the
+> spread among the three objects the same posterior admits, $\num{object_spread_pct}\%$ at
+> the recommended design, so a design is sized to $\num{margin_target}$ on the profile
+> rather than to $0.20$. Drift is an allowance on top of that floor and not inside it,
+> being a bias rather than a choice of object.
+
+| macro | value | owner |
+|---|---|---|
+| `object_spread_pct` | 18.1 | `audit/u12_prior_quadratic.py`, `audit/u4_recheck_breath.py` |
+| `margin_target` | 0.17 | the author's ruling, on that spread |
 
 ---
 

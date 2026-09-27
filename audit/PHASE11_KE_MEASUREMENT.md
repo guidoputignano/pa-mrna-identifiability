@@ -136,34 +136,41 @@ The direction that helps most raises the marker, and `src/common/params.py` sets
 amplitude that respects the paper's own tolerable level buys almost nothing.** At a tenth of
 nominal the safe raising step takes 0.5430 to 0.4798.
 
-What is left is the other direction. **A fast lowers the marker and is safe.**
+What is left is the other direction, a step that lowers the marker.
 
-### 2.6 The safe route, and what it actually reaches
+### 2.6 WITHDRAWN. The lowering step was priced as a fast, and a fast is not one
 
-A 50% fast at the trough, 24 hourly draws per admission. The burst's assay CV is separated
-from the record's because an inpatient series drawn from one line and analysed in one run is
-where a tighter assay is plausible if it is plausible anywhere.
+> **This section's numbers are withdrawn.** They priced a 50% **fast** as the safe lowering
+> step and reported `sd(ln k_e) = 0.1121` at a tenth of nominal at a 1% assay and sixteen
+> admissions. In propionic acidemia a fast is not a load reduction: acute restriction
+> triggers catabolism, which releases the precursor amino acids from muscle and raises the
+> load. `01_biology.tex:151-156` says so in the paper's own words, `:160` gives the
+> management consequence, and **`07b_decision.tex:55-62` has already priced a prescribed
+> cut**: at `rho = -0.25` the sign error is 100% and the median `theta_hat/theta` is 0.009.
+> So these numbers do not merely lack support, they contradict an existing paper result
+> about the same intervention.
+>
+> The withdrawn figures were: at `theta = 600`, 0.5046 to 0.1683 across 1 to 16 admissions
+> and 5% to 1% assay; at `theta = 300`, 0.3685 to 0.1121. **They are recorded here struck
+> through rather than deleted so that the correction is visible**, and nothing downstream
+> carries 0.1121 as a safe number. `REVIEW_LOG.md` R116.
+>
+> **What replaces the intervention, and what does not replace the numbers.** The property
+> needed is a load reduction that does not provoke catabolism. Suppressing gut-derived
+> propionate is one, and it is routine management; it is priced in
+> `audit/PHASE11_CATABOLIC_GATE.md` and `audit/u15_gut_suppression.py`. **It does not
+> rescue the figures above**, because its amplitude is capped by the gut-derived share of
+> production, 22.2% rather than 50%, and at that share the best case reaches 0.1561 against
+> the 0.0633 frontier.
+>
+> **A gate stands in front of any further work on prescribed load reduction.** `eq:local`
+> treats `L` as dialable in either direction and has no catabolic coupling. See (g5) in
+> `OPEN_QUESTIONS.md` section 11.
 
-**theta = 600, frontier 0.1567**
-
-| burst assay CV | 1 admission | 2 | 4 | 8 | 16 |
-|---|---|---|---|---|---|
-| 5% | 0.5046 | 0.4456 | 0.3874 | 0.3377 | 0.2993 |
-| 2% | 0.3539 | 0.3121 | 0.2780 | 0.2481 | 0.2192 |
-| **1%** | 0.2780 | 0.2481 | 0.2192 | 0.1922 | **0.1683** |
-
-**theta = 300, frontier 0.0633**
-
-| burst assay CV | 1 admission | 2 | 4 | 8 | 16 |
-|---|---|---|---|---|---|
-| 5% | 0.3685 | 0.3181 | 0.2751 | 0.2416 | 0.2158 |
-| 2% | 0.2523 | 0.2246 | 0.2005 | 0.1769 | 0.1534 |
-| **1%** | 0.2005 | 0.1769 | 0.1534 | 0.1313 | **0.1121** |
-
-**The route is assay-limited, not physics-limited.** That is the favourable half of the
-answer: the single input that moves it most is the one an inpatient setting is best placed
-to improve. At a 1% burst assay one admission already beats the frontier at `theta = 600`
-when the step is a +50% load rather than a fast, and the safe version needs sixteen.
+What survives from this section is the structural point, which does not depend on the
+mechanism: **the route is assay-limited rather than physics-limited**, so the single input
+that moves it most is the one an inpatient setting is best placed to improve. That is why
+the 1% assay became a gate, now merged as (G-ASSAY).
 
 ---
 
@@ -173,7 +180,8 @@ when the step is a +50% load rather than a fast, and the safe version needs sixt
 |---|---|---|
 | timed urine collection | **blocked** | not precision: a `V_d` for 3-HP and the renal share of non-PCC disposal, each to a few per cent (R107) |
 | prescribed carnitine modulation | **open but weak** | at the physical ceiling, `sd(ln k_e) = 0.469` against 0.063 (R104) |
-| **sub-daily burst on a load step** | **open, short by 1.1 to 1.8** | a 1% assay and sixteen inpatient days |
+| sub-daily burst on a **fast** | **WITHDRAWN** | not a load reduction in PA; contradicts `07b_decision.tex`'s own `rho < 0` result (R116) |
+| **sub-daily burst on gut-derived suppression** | **open, short by 1.3 to 2.5** | the gut-derived share caps the amplitude at 22.2%, plus a 1% assay and sixteen inpatient days |
 
 **The burst is the only one of the three whose obstruction is a cost rather than an
 unmeasured quantity or a dose nobody would give**, and the only one for which the units
