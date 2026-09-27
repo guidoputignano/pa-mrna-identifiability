@@ -5540,3 +5540,19 @@ grid. So the regression is repaired to better than a thousandth of theta. **The 
 confirmed at -0.39 and the managed number is confirmed wrong: the corrected pair is +0.10 and
 -0.39, not +0.07 and -0.39.** `d6` writes no artefact and is not in the Makefile, so the change
 cannot reach the build or the guard.
+
+**R138, one further thing the coarse grid was hiding.** The repaired table, in full:
+
+| regime | 1:1 | 10:1 | 30:1 | 100:1 |
+|---|---|---|---|---|
+| managed, `rho = 1` | **0.097** | escalate all | escalate all | escalate all |
+| partial, `rho = 0.5` | -0.461 | escalate all | escalate all | escalate all |
+| crisis pinned, `rho = 0` | *escalate none* | escalate all | escalate all | escalate all |
+| crisis stopped, `rho = -0.25` | *escalate none* | **-0.386** | **-0.382** | **-0.380** |
+
+**The crisis threshold MOVES with the cost ratio**, `-0.386` then `-0.382` then `-0.380`, where the
+601-point grid reported a constant `-0.400` in all three columns. **So the constancy was a grid
+artefact too.** It does not change (g7)'s answer, and it sharpens the rewrite: the published `-0.39`
+is the **10:1** column specifically, not a value shared by "ten to one or worse", though the three
+agree to within 0.006 theta. The exception in the second clause is unchanged: `rho = -0.25` is the
+one regime that does not want every patient escalated, at all three ratios.
