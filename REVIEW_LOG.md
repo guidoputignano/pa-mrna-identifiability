@@ -5424,3 +5424,111 @@ cost ratio**, and **does the second clause need its exception.**
 
 `audit/u19_seed_defect.py`'s printed conclusion has been rewritten to carry both readings, since
 its earlier text asserted the R135 version that R136 withdrew.
+
+### R138. (g7) RESOLVED. The grid decides it, one number is a regression and the other is wrong
+
+**The author's argument, verified rather than accepted.** `d6_regimes.py:145` was
+`np.linspace(-30000.0, 30000.0, 601)`, so the step is 100 flux units, `0.033333` theta, and the
+readout is `taus[sgn[0]]`, a grid **point** rather than an interpolated crossing. `-0.39` theta is
+`-1170` flux units, **not a multiple of 100, so that grid cannot return it at any `rho`, cost ratio
+or seed.** `-0.400` is therefore not the published number rounded; it is the bracket a true
+crossing near `-0.39` is reported as.
+
+**That discriminates the two readings of R137, as the author said it would.** Interpolating the
+sign change within its bracket:
+
+| `rho` | ratio | grid readout | **interpolated** | steps from -0.39 |
+|---|---|---|---|---|
+| **-0.25** | **10:1** | -0.4000 | **-0.3950** | **0.15** |
+| 0.50 | 1:1 | -0.4667 | -0.4533 | 1.90 |
+| 1.00 | 1:1 | 0.0667 | 0.0982 | 14.66 |
+
+**Reading (a) is confirmed and reading (b) is refuted**, without needing Phase 2D's wording to
+arbitrate. `rho = 0.5` at equal costs crosses near `-0.453`, two steps away, and cannot be `-0.39`.
+
+**So (g7) is settled as the author directed.** *"At equal costs"* is an error for *"at ten to one
+or worse"*, and the second clause does need its exception, because at 10:1 and worse three regimes
+escalate all and `rho = -0.25` is precisely the one that does not.
+
+### The regression question, answered, and it is a regression
+
+**The original `d6` used a 3001-point grid**, step 20, at commit `9f9b8f9`. Commit `6b353ed`
+coarsened it to 601 points. Both grids, both numbers, seed 11:
+
+| grid | managed, `rho = 1`, 1:1 | crisis, `rho = -0.25`, 10:1 |
+|---|---|---|
+| 3001 points, step 20, **original** | 0.0933 | **-0.3867** |
+| 601 points, step 100, **today** | **0.0667** | -0.4000 |
+| step 1, the true crossing | **0.0967** | **-0.3853** |
+| **published** | **+0.07** | **-0.39** |
+
+**The crisis number is a regression and not a prose error.** `-0.3867` on the original grid is the
+published `-0.39`. The coarsening lost it, so **the fix is to interpolate and restore the
+resolution, not to restate the number.** Done in `d6_regimes.py`, with the history in a comment.
+
+**The managed number is a different matter, and it is wrong.** It fits neither grid: 0.0933 on the
+original, 0.0667 today, and the true crossing is **0.0967**, which is `+0.10` to two places and not
+`+0.07`. **So `+0.07` is not recoverable at any adequate resolution and the published value
+understates the managed threshold by about 45%.** Its own provenance is a separate question, since
+it matches today's coarse readout and today's grid postdates the paper's number; **recorded and not
+pursued**, per the author's instruction not to open a new line of investigation in the landing pass.
+
+**Corrected pair, at the restored resolution: managed `+0.097`, crisis `-0.385`.** To two places,
+**`+0.10` and `-0.39`**. The crisis number survives; the managed one changes.
+
+**And the check was nearly run on a shallow clone.** `git rev-parse --is-shallow-repository`
+returned **true** with 6 graft points, 4 apparent roots and 222 commits against the 236 R93
+recorded. Section 0's rule fired for real and for the third time. Unshallowed to 247 commits and a
+single root before any of the history above was read.
+
+### R139. STEP 1 OF THE LANDING PASS FAILS, and my own landing plan's premise was wrong
+
+`audit/u20_staleness.py`, written as the explicit pass-or-fail the author asked for. **It does not
+pass, and what it found is the opposite of the risk I had named.**
+
+`audit/LANDING_PLAN.md` said 16 passages were "ready as they stand, needing only approval of the
+wording", with staleness as a risk to be checked. **They are not pending. They are a mixture, and
+a large part of `PHASE4_PROPOSED_TEXT.md` has ALREADY BEEN APPLIED.**
+
+**Of 23 passages naming a target, exactly ONE still has its "Current" text in the paper**, so at
+most one applies as drafted: `PHASE11` §1.
+
+**Verified by hand, because the automated probe cannot settle it:**
+
+| passage | state | evidence |
+|---|---|---|
+| `PHASE4` §1 | **APPLIED** | `06_excitation.tex:66-80` carries its proposed text, condensed, with `$1.028$` since wired to `$\num{bias_theta_factor}$` |
+| `PHASE4` §6 | **APPLIED** | probe found verbatim |
+| `PHASE4` §13 | **APPLIED** | `08_specification.tex:157`: *"The cohort is methylmalonic acidemia rather than propionic acidemia, which cuts less deeply"* |
+| `PHASE4` §14 | **STALE** | "mitochondrial substrate" appears nowhere in `paper/sections/`, and both labels it cites are gone |
+| `PHASE11` §1 | **PENDING** | Current text present |
+
+**And four of the remarks these passages target no longer exist**, zero `\label` definitions each:
+**`rem:transient`, `rem:second_order`, `rem:no_delta`, `rem:rankvsprec`**. They are the targets of
+`PHASE4` §14, §2, §4 and §6. **Applying those as drafted would inject dangling cross-references**,
+which is precisely the concrete harm the check existed to prevent.
+
+**Why an automated check cannot finish this job, which is itself worth recording.** A first version
+of the script reported present-or-absent and returned ten absences, which reads as ten stale
+proposals needing a rebase. Classifying by whether the PROPOSED text is present instead showed some
+were already applied. But **applied text keeps being edited**: §1's was condensed and then wired, so
+no verbatim probe of any useful length matches it, and the script still calls it STALE. Short
+probes that skip digits, macros and math recovered §6 and not §1. **"Absent" cannot distinguish
+"already applied and since rewritten" from "the paper moved underneath it", and those call for
+opposite actions**, so the script's role is to say which passages need reading, not to clear them.
+
+> **The consequence for the pass, and it is a stop rather than a slowdown.** Step 5, apply, must not
+> run for `PHASE4`. Applying an already-applied passage duplicates text; applying a passage whose
+> anchor remark has been deleted breaks the build or silently mis-references. **The claim in
+> `OPEN_QUESTIONS.md` and in the PR description that there are "three unapplied sets" is wrong**,
+> and has been wrong for some time.
+
+**What can still proceed**, and it is the part this round actually drafted: `PHASE11`'s passages are
+recent, their state is known (one PENDING, the rest insertions with no anchor to go stale), and they
+are blocked only on the 29 macros. That is the pass worth running. `PHASE4` needs a passage-by-passage
+reconciliation against the paper first, which is a reading task and not a wiring task.
+
+**The risk I wrote down was real and I had its direction backwards.** `LANDING_PLAN.md` §7 said the
+risk was a proposal quoting a line that has moved, applying cleanly and wrongly. The actual state is
+that much of the work was already done and the to-do list was never updated, so the danger was not
+applying a stale edit but **applying the same edit twice.**

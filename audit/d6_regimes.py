@@ -142,12 +142,27 @@ def main():
     for lab, (rho, ens, _, _) in rows.items():
         cells = []
         for R in (1.0, 10.0, 30.0, 100.0):
-            taus = np.linspace(-30000.0, 30000.0, 601)
+            #  A GRID REGRESSION, fixed here and recorded at R138. This grid
+            #  was 3001 points when the threshold numbers were first reported
+            #  (commit 9f9b8f9) and was coarsened to 601 in 6b353ed, which
+            #  changed the step from 20 to 100 flux units, or 0.0333 theta.
+            #  The readout below takes taus[sgn[0]], a grid POINT, so a true
+            #  crossing is reported as the left edge of the interval holding
+            #  it: the published -0.39 theta is -1170 flux units and is not a
+            #  point on EITHER grid, so at step 100 it reads as -0.4000 and
+            #  at step 20 as -0.3867. Both the finer grid and the linear
+            #  interpolation are restored, so the value reported is the
+            #  crossing rather than a bracket around it.
+            taus = np.linspace(-30000.0, 30000.0, 3001)
             gap = np.array([R * err_at(ens, f_hi * base, tau)[0]
                             - err_at(ens, f_lo * base, tau)[0] for tau in taus])
             sgn = np.where(np.diff(np.sign(gap)) != 0)[0]
             if sgn.size:
-                cells.append(float(taus[sgn[0]]) / P.theta)
+                i = int(sgn[0])
+                t0, t1, g0, g1 = taus[i], taus[i + 1], gap[i], gap[i + 1]
+                tau_star = (t0 if g1 == g0
+                            else t0 - g0 * (t1 - t0) / (g1 - g0))
+                cells.append(float(tau_star) / P.theta)
             elif gap[0] > 0:
                 cells.append(np.inf)     # fail-to-treat regret always dominates
             else:

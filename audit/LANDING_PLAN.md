@@ -24,7 +24,18 @@ all of them are blocked by the same mechanical thing.
 
 ---
 
-## 2. Ready as they stand: 16 passages, needing only approval of the wording
+## 2. WITHDRAWN BY MEASUREMENT. These 16 are not pending, and several are already applied
+
+> **Section 2 as first written is wrong and is kept for the record.** `audit/u20_staleness.py` ran
+> the pass-or-fail this plan asked for and found that **of 23 passages naming a target, exactly one
+> still has its "Current" text in the paper.** `PHASE4` §1, §6 and §13 are **already applied**, §14
+> is genuinely **stale**, and **four of the remarks these passages target no longer exist at all**
+> (`rem:transient`, `rem:second_order`, `rem:no_delta`, `rem:rankvsprec`, zero `\label`
+> definitions each). Applying them as drafted would duplicate text and inject dangling
+> cross-references. **Step 5 must not run for `PHASE4`.** R139 has the detail. What follows in this
+> section is the superseded claim.
+
+## 2. Superseded: "ready as they stand: 16 passages, needing only approval of the wording"
 
 All of `PHASE4` §1 to §15 and `PHASE10` §1. They change prose, cite existing results, and
 introduce no macro. Under section 0 the paper is frozen for prose, so the only gate is the
@@ -196,3 +207,16 @@ an explicit pass or fail per passage rather than as a reading.
 
 **The risk in NOT landing** is that `PROPOSED_TEXT` has now grown for five rounds against a
 moving paper, and every round makes step 1 more expensive.
+
+---
+
+## 8. What step 1 actually returned, and the direction I had wrong
+
+Section 7 said the concentrated risk was a proposal quoting a line that has moved, applying cleanly
+and wrongly. **The measurement says the risk is the reverse: much of `PHASE4` was already applied
+and the to-do list was never updated, so the danger is applying the same edit twice.** R139.
+
+**Revised sequence.** `PHASE11` is the pass worth running: its passages are recent, one is PENDING
+and the rest are insertions with no anchor to go stale, and they are blocked only on the 29 macros.
+`PHASE4` needs a passage-by-passage reconciliation against the paper first, which is a reading task
+rather than a wiring task, and four of its targets need new anchors before they mean anything.
