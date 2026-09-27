@@ -5330,3 +5330,57 @@ decision list.
 **And one qualitative claim does survive.** The managed threshold's sign is stable across seeds,
 so *"the managed regime wants the boundary earlier"* holds. The crisis half of that sentence is
 what is now unsupported, and it is the half the paragraph's argument rests on.
+
+### R136. CORRECTION to R135: the crisis threshold DOES reproduce, at a cost ratio the sentence does not claim
+
+R135 reported that the published `-0.39` does not reproduce from `d6` at any `rho`. **That was
+premature.** I had searched only the equal-cost column, because that is the column the paper's
+sentence names. Running `d6_regimes.py`'s own threshold table in full:
+
+| regime | **1:1** | 10:1 | 30:1 | 100:1 |
+|---|---|---|---|---|
+| managed, `rho = 1` | **0.067** | escalate all | escalate all | escalate all |
+| partial recording, `rho = 0.5` | -0.467 | escalate all | escalate all | escalate all |
+| crisis, intake pinned, `rho = 0` | *escalate none* | escalate all | escalate all | escalate all |
+| crisis, protein stopped, `rho = -0.25` | *escalate none* | **-0.400** | **-0.400** | **-0.400** |
+
+**The number is there.** `-0.400` at `rho = -0.25`, within one grid step of the published `-0.39`
+(the grid is 601 points over +/-30000, so 100 units, and `0.39 x 3000 = 1170` is not on it while
+`1200` is, which is consistent with the published figure coming from a finer grid).
+
+**But it is in the wrong column for the sentence.** `07b_decision.tex:70-72` reads:
+
+> **At equal costs** the managed regime wants the boundary at $+0.07\theta$ and the crisis regime
+> wants it at $-0.39\theta$; **at a cost ratio of ten to one or worse every regime wants every
+> patient escalated**.
+
+Against the table, **both clauses fail and they fail in a way that looks like a crossing**:
+
+1. **"At equal costs ... the crisis regime wants it at `-0.39`"**: at equal costs *both* crisis
+   rows want **escalate none**, no finite threshold at all. The `-0.400` appears only at **10:1 and
+   worse**.
+2. **"at ten to one or worse every regime wants every patient escalated"**: three of the four do,
+   and the protein-stopped regime **wants `-0.400`**, which is a finite threshold and not
+   "escalate all". **The exception is the very row the `-0.39` came from.**
+
+So the sentence appears to have taken `-0.39` from the `>= 10:1` columns while attributing it to
+equal costs, and then asserted a universal for those same columns that the same row contradicts.
+
+**Still not asserted as a paper error, but the question is now sharp.** The Phase 2D-era code may
+differ, though a code change would have to have moved both halves of one column consistently. The
+useful form for the author: **is "at equal costs" an error for "at ten to one or worse", and does
+the second clause need its exception?** That is a two-line answer, where R135's version of the
+question was open-ended.
+
+**And R135's substantive point survives intact.** The managed threshold reproduces and is stable
+(seed 11 gives 0.067, twelve-seed range 0.067 to 0.100, no seed without a crossing), while the
+crisis half of the sentence is unsupported as written. What changes is *why*: not an unreproducible
+number, but a number attached to the wrong cost ratio, with a universal claim beside it that has a
+visible exception.
+
+**The lesson, and it is the round's own rule again.** R135 searched one column and reported an
+absence. **That is R125's error in a new place**: the search was bounded, by a column rather than by
+a head limit, and an absence claim was made from it. The rule as written says "run the search
+unbounded and state what was searched", and I stated the seed and the cost ratio without noticing
+that the cost ratio *was* the bound. **Fourth instance of the pattern**, and the first where the
+bound was a modelling choice rather than a tool default.

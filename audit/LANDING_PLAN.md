@@ -125,19 +125,25 @@ reproduce.** The owner is **not** `d6_regimes.py`, which a first attempt assumed
 search finds the literal at `audit/PHASE2D_FINDINGS.md:150`, so **Phase 2D is the source and `d6`
 is a later re-derivation**. Re-deriving from `d6` at seed 11, cost ratio 1:1:
 
-| `rho` | `tau*/theta` | against the published pair |
-|---|---|---|
-| 1.00 | **0.067** | reproduces the published **+0.07** |
-| 0.50 | **-0.467** | closest to -0.39, and 0.077`theta` away |
-| 0.00 | *escalate none*, no crossing | |
-| -0.25 | *escalate none*, no crossing | |
+| regime | **1:1** | 10:1 | 30:1 | 100:1 |
+|---|---|---|---|---|
+| managed, `rho = 1` | **0.067** | escalate all | escalate all | escalate all |
+| partial, `rho = 0.5` | -0.467 | escalate all | escalate all | escalate all |
+| crisis pinned, `rho = 0` | *escalate none* | escalate all | escalate all | escalate all |
+| crisis stopped, `rho = -0.25` | *escalate none* | **-0.400** | **-0.400** | **-0.400** |
 
-**The managed threshold reproduces and its sign is stable. The crisis threshold does not
-reproduce at any `rho`.** Reported as a **reproduction failure, not a paper error**: section 0
-records that four Phase 10 disagreements were a reconstruction losing to the paper, and the
-Phase 2D-era code may differ from today's `d6`. It also turns out that **the paper names two
-regimes while `d6` has four rows**, and the mapping requires a choice nobody has recorded, since
-Phase 2D's own text says "the reversal is complete by `rho = 0.5`".
+**The number is there and it is in the wrong column for the sentence.** `-0.400` sits at
+`rho = -0.25` and at **10:1 and worse**, within one grid step of the published `-0.39`. The
+sentence says *"at equal costs ... the crisis regime wants it at $-0.39\theta$; at a cost ratio of
+ten to one or worse every regime wants every patient escalated"*, and **both clauses fail in a way
+that looks like a crossing**: at equal costs both crisis rows want *escalate none*, and at 10:1 the
+protein-stopped row wants `-0.400` rather than "escalate all", which is the very row the `-0.39`
+came from.
+
+Still **not asserted as a paper error**, since the Phase 2D-era code may differ, but the question
+is now a two-line one for the author: **is "at equal costs" an error for "at ten to one or worse",
+and does the second clause need its exception?** Details and the correction to my own first reading
+at R135 and R136.
 
 **Consequence for the pass, and it is now larger than a wiring job.** `PHASE11` §14, the `rho`
 pole, attaches to this paragraph. Applying it alone would add a fifteenth unwired number to the

@@ -539,13 +539,20 @@ are macro-wired. All four published medians are better than their own twelve-see
 `rho = 0.5` cell's published 0.900 hides a seed on which the estimate collapses to **0.000**.
 `audit/u19_seed_defect.py`, R134.
 
-**(g7) And one of the two thresholds does not reproduce, which is a decision and not a fix.**
-The owner is **Phase 2D**, not `d6_regimes.py` as a first attempt assumed; the literal sits at
-`audit/PHASE2D_FINDINGS.md:150`. Re-deriving at seed 11: `rho = 1` gives **0.067**, reproducing
-the published **+0.07**, while `rho = 0.5` gives **-0.467** and `rho = 0` and `rho = -0.25` give
-**no crossing at all**. None is the published **-0.39**. **Reported as a reproduction failure and
-not as a paper error**, since section 0 records that four Phase 10 disagreements were a
-reconstruction losing to the paper. Two things need settling: **which `rho` "the crisis regime"
-means**, because the paper names two regimes and `d6` has four rows while Phase 2D's own text
-says "the reversal is complete by `rho = 0.5`", and **whether -0.39 still stands** under today's
-code. Needs the Phase 2D-era code or the author. R135.
+**(g7) And the threshold sentence attaches its number to the wrong cost ratio.** The owner is
+**Phase 2D**, not `d6_regimes.py` as a first attempt assumed; the literal sits at
+`audit/PHASE2D_FINDINGS.md:150`. The published `-0.39` **does** reproduce, as **-0.400** at
+`rho = -0.25`, but only at cost ratios of **10:1 and worse**. At equal costs, which is what the
+sentence claims, **both crisis rows want *escalate none***, no finite threshold. And the same
+sentence's next clause, that at 10:1 or worse *every* regime wants every patient escalated, has a
+visible exception: the protein-stopped row wants `-0.400` there, and that is the very row the
+number came from. **Both clauses fail in a way that looks like a crossing.** Still not asserted as
+a paper error, since the Phase 2D-era code may differ, but the question for the author is now two
+lines: **is "at equal costs" an error for "at ten to one or worse", and does the second clause need
+its exception?** R135, corrected at R136.
+
+> **My first report of this was itself a bounded-search error**, the fourth instance of the
+> pattern and the first where the bound was a modelling choice rather than a tool default: R135
+> searched only the equal-cost column, because that is the column the sentence names, and reported
+> an absence from it. The rule says state what was searched; I stated the seed and the cost ratio
+> without noticing that the cost ratio *was* the bound.
