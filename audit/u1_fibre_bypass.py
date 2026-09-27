@@ -1,9 +1,18 @@
 """
 Does ONE external K_m close the quasi-steady fibre exactly?
 
-The claim under test, in the author's own notation. Write the quasi-steady
-balance of eq:local with a constant recorded load L and an unknown additive
-load bias b,
+THE CLAIM UNDER TEST IS THE PAPER'S OWN, AND THAT WAS FOUND ONLY AFTER
+WRITING THIS FILE. eq:invariants at 06_excitation.tex:31 already publishes
+A, B and C with these definitions and with C = -k_e, and eq:fibrecl already
+publishes the fibre, parametrised by the load bias rather than by K_m.
+audit/PHASE4_PI.md section 3.2 owns the derivation and REVIEW_LOG R26 and
+R27 extend it. Part A is therefore a re-derivation by a second route and a
+check that the two parametrisations agree, not a new result;
+OPEN_QUESTIONS.md section 0 says find the owner before recomputing, and this
+file did not. What IS new is parts C to E.
+
+Write the quasi-steady balance of eq:local with a constant recorded load L
+and an unknown additive load bias b,
 
     (theta + Delta) m/(K_m + m) + k_e m = L + b,
 
@@ -140,7 +149,37 @@ def part_a():
             {Km: KM, L: LB, b: 0.0, th: TH, ke: KE, K: Kv}))
         print(f"    K_m = {Kv:7.1f}  ->  theta = {num:10.2f}")
 
-    return ok_coeffs and ok_theta and ok_slope
+    #  AND THE PAPER ALREADY HAS THIS. eq:invariants of 06_excitation.tex:31
+    #  publishes A, B and C with exactly these definitions and C = -k_e, and
+    #  eq:fibrecl publishes the same one-parameter family parametrised by the
+    #  LOAD BIAS instead of by K_m. The two parametrisations must agree.
+    print()
+    print("  AGAINST eq:fibrecl, the paper's own parametrisation of the same")
+    print("  fibre by the load bias b rather than by K_m:")
+    print("      K_m(b) = K_m^0 L/(L+b),  theta(b) = theta^0 + b + k_e(K_m^0 - K_m(b))")
+    bs = sp.Symbol("b_s", real=True)
+    K0, th0 = sp.Symbol("K_0", positive=True), sp.Symbol("theta_0", positive=True)
+    #  the paper's curve
+    Km_of_b = K0 * L / (L + bs)
+    th_of_b = th0 + bs + ke * (K0 - Km_of_b)
+    #  this script's curve, with (A, B, C) evaluated at the truth b = 0
+    A0 = (K0 * L)
+    B0 = (L - th0 - ke * K0)
+    th_of_K = A0 / K - B0 - ke * K
+    #  substitute the paper's K_m(b) into this script's theta(K_m)
+    gap = sp.simplify(sp.expand(th_of_K.subs(K, Km_of_b) - th_of_b))
+    print("\n  theta(K_m(b)) from this script minus theta(b) from the paper:")
+    print("   ", gap)
+    ok_paper = (sp.simplify(gap) == 0)
+    print("  the two parametrisations are the same curve:", ok_paper)
+    print()
+    print("  SO PART A IS A RE-DERIVATION, NOT A DISCOVERY. The invariants,")
+    print("  their signs and the fibre are all published. What this file")
+    print("  adds is parts C to E: that the record's null space IS that")
+    print("  fibre to machine precision, and that closing it buys five per")
+    print("  cent because a SECOND, nearly-null direction is what binds.")
+
+    return ok_coeffs and ok_theta and ok_slope and ok_paper
 
 
 # ======================================================================

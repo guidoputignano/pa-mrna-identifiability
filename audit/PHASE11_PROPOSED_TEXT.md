@@ -188,3 +188,147 @@ away.
 - **No wiring.** Every macro named above would have to be generated before the passages
   could be built, and that is a separate pass with its own guard, exactly as
   `audit/q22_wire_macros.py` did for the twenty-two conversions already made.
+
+---
+
+## 5. `paper/sections/11_scope.tex`: the scope limit as a requirement, not a verdict
+
+**Round 2's principal proposal.** The section currently states a verdict a reader can only
+accept. The same computation states a requirement a reader can cost, and the requirement is
+the more useful object because it names what would have to be true.
+
+### Current, the opening of `sec:scopeprec`'s closing argument
+
+> \textbf{The disease sits a factor of $\num{disease_factor}$ below the lower edge of the
+> band the design works in.}
+
+### Proposed, adding a sentence after it
+
+> \textbf{The disease sits a factor of $\num{disease_factor}$ below the lower edge of the
+> band the design works in.} \textbf{That edge is a function of how well the alternative
+> clearance is known, and saying so turns the limit into a requirement.} On the Tier~1
+> record the gate is met at a tenth of nominal if and only if $k_e$ is known to
+> $\num{ke_frontier_300_pct}\%$, and at a fifth of nominal to
+> $\num{ke_frontier_600_pct}\%$, against the $\num{ke_prior_pct}\%$ the literature
+> supplies; at a twentieth of nominal no precision on $k_e$ suffices, because the
+> increment's own prior already floors the design above the gate there. So the limit is
+> two different statements at two capacities: a \emph{measurement} requirement between a
+> fifth and a tenth of nominal, and a \emph{structural} one below it.
+
+### Numbers, and their owners
+
+| macro | value | owner |
+|---|---|---|
+| `ke_frontier_300_pct` | 6.3 | `audit/u9_ke_frontier.py` |
+| `ke_frontier_600_pct` | 15.7 | `audit/u9_ke_frontier.py` |
+| `ke_prior_pct` | 80 | `src/common/params.py`, `KE_PRIOR_LOG` |
+
+---
+
+## 6. `paper/sections/08_specification.tex`: 118 carries no margin, promoted from an open question
+
+**This belongs in the paper and not only in `OPEN_QUESTIONS.md` section 8.** It is a
+criticism of how the specification is CONSTRUCTED, and it will outlive the drift number
+that provoked it: drift is merely the first unmodelled thing to exhaust a margin that was
+never there.
+
+### Current, at `:126`
+
+> and reaches the gate only at $\num{tier1_visits_at_pub}$ monthly draws, which is nearly
+> ten years of follow-up, against eleven with the increment known exactly.
+
+### Proposed, replacing section 3's earlier draft of this passage
+
+> and reaches the gate only at $\num{tier1_visits_at_pub}$ monthly draws, which is nearly
+> ten years of follow-up, against eleven with the increment known exactly.
+> \textbf{That count is defined as the one that lands on the target, so it carries no
+> margin against anything the model leaves out.} A design solved to meet a bound exactly
+> meets it only under the model it was solved in, and three things this paper does not
+> model each exhaust it on their own: a drift in capacity of
+> $\num{drift_cross_pct}\%$ a year over the decade the record spans
+> (Appendix~\ref{sec:supp}); the difference between a Fisher standard deviation and a
+> likelihood interval of the same posterior, which at the prior widths carried here is
+> $\num{profile_gap_tier1_pct}\%$; and the span assumption itself, since
+> Section~\ref{sec:local} warrants $\theta$ constant over the afebrile range and this row
+> spends ten years of it. \textbf{The requirement should be stated with a margin, or
+> stated as the boundary it is.}
+
+### Numbers, and their owners
+
+| macro | value | owner |
+|---|---|---|
+| `drift_cross_pct` | of order 1 | `audit/u7_drift.py`, `audit/u8_recheck_drift.py` |
+| `profile_gap_tier1_pct` | 13.5 | `audit/u12_prior_quadratic.py` |
+
+**This supersedes section 3 above**, which proposed the same passage with the drift finding
+alone. Section 3's caution on quoting 0.92 rather than "of order one per cent" still stands.
+
+---
+
+## 7. A caveat that attaches to every Fisher figure, and where it should live
+
+`audit/PHASE11_TRADE_AND_PRIOR.md` section 3 establishes that the gap between a Fisher
+standard deviation and a likelihood interval of the same posterior is a function of the
+$k_e$ prior width, and that at the 0.8 the paper carries it is 13 to 18 per cent at the
+headline designs. The recommended record's $0.170$ becomes $0.200$ under a profile, which
+is the target exactly.
+
+**This does not belong in `11_scope`, and it does not belong beside any one number.** It is
+a property of the whole method, so the proposal is a single remark in
+`04_local.tex` beside `rem:curvature`, which already tells a reader the marker side's
+interval is about twice as wide as its spread.
+
+### Proposed, new, beside `rem:curvature`
+
+> \begin{remark}[Which interval, and how much it matters at this prior width]
+> \label{rem:whichinterval}
+> Every precision in this paper is the square root of a diagonal entry of an inverse
+> information matrix: a curvature at the optimum. That equals the posterior's standard
+> deviation, and a likelihood interval's half-width, only when the log-posterior is
+> quadratic, and at the $k_e$ log-prior of $\num{ke_prior_pct}\%$ carried throughout it is
+> not. Profiling the same posterior over $\ln\theta$ gives half-widths of
+> $\num{profile_lo_nominal}$ below and $\num{profile_hi_nominal}$ above at the recommended
+> design, against a quoted $\num{sd_monthly}$: the interval is asymmetric, it is wider
+> downward, and its mean half-width crosses the $0.20$ target. The asymmetry is a function
+> of the prior width and not of the design, disappearing by a width of
+> $\num{quad_width}$, and it therefore attaches to every figure computed at the width this
+> paper uses, the Tier~1 count included. \textbf{The direction matters for a decision.} A
+> symmetric interval understates how far capacity may fall below the estimate, and whether
+> capacity clears a threshold is a question about the lower tail.
+> \end{remark}
+
+### Numbers, and their owners
+
+| macro | value | owner |
+|---|---|---|
+| `profile_lo_nominal` | 0.268 | `audit/u12_prior_quadratic.py` |
+| `profile_hi_nominal` | 0.133 | `audit/u12_prior_quadratic.py` |
+| `quad_width` | 0.1 | `audit/u12_prior_quadratic.py` |
+
+---
+
+## 8. `paper/sections/09_validation.tex`: breath tests come in pairs
+
+One sentence, because it is a protocol fact with an exact justification.
+
+### Proposed, appending to the "Data per patient" paragraph
+
+> \textbf{Breath measurements are booked in pairs.} The subject's tracer recovery is an
+> unknown of its own and a single reading determines it and nothing else, so the first
+> reading of a pair carries exactly zero information about capacity: the joint information
+> matrix at $k=1$ equals the one at $k=0$ to machine precision
+> (audit/\texttt{u11\_trade\_curve.py}, largest difference $3.7\times10^{-13}$ over
+> eighteen designs). An odd number books one measurement that cannot be used.
+
+---
+
+## 9. Still NOT proposed
+
+- **No change to any existing number**, as in round 1.
+- **No change to the $0.20$ gate**, though section 7 makes which object it is stated
+  against a question the author owes an answer to.
+- **No wiring.** Every macro named above has to be generated before these passages build.
+- **Nothing about carnitine reaches the paper.** `audit/PHASE11_KE_ROUTE.md` section 2 is a
+  negative result about a lever the paper never proposes, so it belongs in the audit record
+  and in `OPEN_QUESTIONS.md`, not in `sec:whoto`, whose existing carnitine argument is
+  untouched and correct on its own ground.

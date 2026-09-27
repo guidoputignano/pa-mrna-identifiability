@@ -217,3 +217,43 @@ cadence reaches only two of the fourteen dose-cycle phases and its data rank is 
 constant load, which looks like it should make the unsmoothed diet record load-bearing. It
 does not: the two priors close both null directions and the precision is within one per cent
 of monthly, with the load held perfectly constant. Only a cadence reaching ONE phase fails.
+
+---
+
+## 9. Round 2 of Phase 11: what it settled and what it opened
+
+Working in `audit/PHASE11_KE_ROUTE.md` and `audit/PHASE11_TRADE_AND_PRIOR.md`;
+`REVIEW_LOG.md` R103 to R110. Proposed wording in `audit/PHASE11_PROPOSED_TEXT.md`
+sections 5 to 8, **unapplied**.
+
+**Settled.**
+
+- **The scope limit is a requirement, not a verdict.** Capacity is recoverable at a tenth of
+  nominal iff `k_e` is known to about 6%, at a fifth to about 16%, and at a twentieth not at
+  any precision because the increment's prior floors the design above the gate there.
+- **Prescribed carnitine modulation is closed**, and closed with a number rather than an
+  argument: it buys up to 1.34x where a factor of 6 is needed, and at the physical ceiling
+  it reaches `sd(ln k_e) = 0.47` against a frontier of 0.063.
+- **`k_e` is not the urinary clearance of the marker**, on units, channel coverage and
+  species. `params.py` had already said so by registering it `LUMPED`.
+- **Breath tests come in pairs**, exactly: `k = 1` equals `k = 0` to `3.7e-13`.
+- **Section 8's item (i)** is superseded: the drift rate is still unquantified, but the
+  larger point is now R109's, that 118 carries no margin against anything unmodelled.
+
+**Opened, and both are decisions the author owes.**
+
+| # | question | what turns on it |
+|---|---|---|
+| **(g3)** | **Which object is the 0.20 gate stated against?** | A Fisher standard deviation, a sampling spread and a likelihood interval of the same posterior are 0.170, 0.178 and 0.200 at the recommended design. The gate is 0.20. The design passes on the first two and lands exactly on the third, so the answer decides whether the headline claim holds. The paper does not say, and until R109 nothing made it matter. |
+| **(g4)** | **Should the Tier 1 requirement be restated with a margin?** | 118 is defined as the count landing on the target, so it has none. Three unmodelled things each exhaust it on their own: drift of order 1% a year, the 13.5% profile-marginal gap, and the span assumption itself. This is a criticism of how the specification is CONSTRUCTED and it outlives any one of them. |
+
+**And one gate is added to the list in section 8**, replacing the vaguer form round 1 gave
+it: what is needed to price the timed-collection route is not "the achievable precision on a
+collection" but **a volume of distribution for 3-HP and the renal share of its non-PCC
+disposal**, each to a few per cent. Neither was located and this container cannot check.
+
+**A process note worth keeping.** Round 2 found that round 1's part A had re-derived
+`eq:invariants`, which the paper already publishes at `06_excitation.tex:31` with the same
+signs, and which `audit/PHASE4_PI.md` section 3.2 owns. Section 0's "find the owner before
+recomputing" was not followed. The cost was small because the re-derivation agreed; the rule
+exists for the case where it would not have.

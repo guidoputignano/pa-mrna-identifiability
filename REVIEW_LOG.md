@@ -4273,6 +4273,37 @@ eigenvector aligns with the fibre tangent to `|cos| = 1.00000000` at every capac
 The slope has the closed form `-(L + b + k_e K_m)/theta`, confirmed by finite difference to
 3e-10.
 
+**CORRECTION, AND IT IS THIS ENTRY'S OWN. PART A IS A RE-DERIVATION OF A PUBLISHED RESULT
+AND WAS WRITTEN WITHOUT FINDING IT.** `eq:invariants` at `06_excitation.tex:31` already
+publishes
+
+    Delta(m) = A/m + B + C m ,   A = K_m(L+b),  B = L+b-theta-k_e K_m,  C = -k_e
+
+together with the sentence that at a constant recorded load `(A, B, C)` is exactly what the
+data contain, four unknowns against three invariants; and `eq:fibrecl` already publishes the
+fibre. `audit/PHASE4_PI.md` section 3.2 owns the derivation, R26 and R27 extend it, and
+`audit/PHASE10_PROPOSED_TEXT.md` section 1 already drafts an insertion about it.
+**`OPEN_QUESTIONS.md` section 0 says find the owner before recomputing, and this work did
+not.** The cost was small because the re-derivation agreed, but the rule exists for the case
+where it would not have.
+
+**SO THE SIGN WAS NEVER OPEN.** It is `C = -k_e`, in print, and the convention is fixed by
+`eq:invariants`'s own form: the increment written as a function of the level,
+`Delta(m) = A/m + B + Cm`, or cleared, `Delta_i m_i = A + B m_i + C m_i^2`. Nothing needs
+pinning; what needs recording is where it already lives. Writing the residual the other way
+round, `clearance - load`, would give `C = +k_e`, and the closure is the same map either
+way: `K_m = A/(B + k_e u)` and `theta = k_e (u - K_m)` with `u = theta/k_e + K_m`.
+
+**And the two parametrisations of the fibre agree exactly.** This work parametrised it by
+`K_m` and the paper parametrises it by the load bias. Substituting `eq:fibrecl`'s
+`K_m(b) = K_m^0 L/(L+b)` into this work's `theta(K_m) = A/K_m - B - k_e K_m` returns
+`eq:fibrecl`'s `theta(b)` identically, `sympy` residual **`0`**
+(`audit/u1_fibre_bypass.py` part A).
+
+**What survives as new is parts C to E, and they are the numerical half**: that the record's
+null space IS that published fibre to machine precision, and that closing it buys five per
+cent.
+
 **And an exactly known `K_m` is worth a factor of 1.056, 1.037 and 1.058** at
 `theta = 3000, 600, 300`. Restoring rank and buying precision are different things: the
 second eigenvalue is 5.8e-8 to 1.5e-5 of the largest and `K_m` does not touch it. Closing
@@ -4456,3 +4487,194 @@ reached.
 3. **No assay CV for home volumetric microsampling is available.** R99 sweeps it for that
    reason, and which column applies is the one external measurement that decides whether the
    trade is worth making.
+
+---
+
+# Phase 11, round 2. The requirement frontier, the carnitine lever, and a caveat larger than the finding it came from
+
+*Working in `audit/PHASE11_KE_ROUTE.md` and `audit/PHASE11_TRADE_AND_PRIOR.md`. Proposed
+wording extended in `audit/PHASE11_PROPOSED_TEXT.md`, sections 5 to 8, **unapplied**.
+Scripts `audit/u9` to `audit/u12`. No literature, no network, no fan-out, no scheduled
+check-ins. Nothing under `paper/` is changed.*
+
+**Round 1 confirmed independently by the author on a different footing.** At 118 visits an
+exact `K_m` is worth 1.007 / 1.010 / 1.011 and an exact `k_e` 3.96 / 9.36 / 8.70 at
+`theta = 3000 / 600 / 300`, against this work's 1.056 / 1.037 / 1.058 and 2.09 / 6.43 /
+7.43 at 25 visits. Different footing, same direction, same binding quantity.
+
+### R103. The scope limit is a requirement, and the requirement is about six per cent
+
+Bisecting the `k_e` log-prior width at which the record lands on the 0.20 gate, Tier 1
+record, medians over 24 intake records:
+
+| capacity | frontier `sd(ln k_e)` |
+|---|---|
+| 3000 (100%) | **0.8001**, the existing prior exactly |
+| 600 (20%) | **0.1567** |
+| 300 (10%) | **0.0633** |
+| 150 (5%) | **unreachable at any width** |
+
+The author reports 0.8, 0.177 and 0.0665. Reproduced. **The nominal row returning 0.8 to
+four figures is a consistency check and not a finding**: 118 is defined as the count landing
+on 0.20 at a 0.8 prior, so the frontier there must return the prior it was built from.
+
+`theta = 150` has no frontier rather than a large one because the increment's prior floors
+the design above the gate there whatever `k_e` is. **So the limit is two different
+statements at two capacities**: a MEASUREMENT requirement between a fifth and a tenth of
+nominal, and a STRUCTURAL one below it.
+
+### R104. Prescribed carnitine modulation: a real gain, an order of magnitude too small
+
+`eq:input_carn` makes carnitine look like the obvious lever once `k_e` binds, and
+`sec:whoto` does not close the prescribed version: its two arguments are that carnitine
+cannot touch the `theta` sensitivity's first factor, and that the dose is endogenous. **A
+dose a protocol prescribes is exogenous by construction.**
+
+**The gain reproduces the author's 1.00 to 1.04 and the number is capacity-specific.** With
+the mRNA dose scale carried at 0.8, nominal capacity gives 1.007 to 1.018; the disease range
+gives 1.21 to 1.31 under the same reading. Both are right. *"kappa" is ambiguous in this
+repository's own vocabulary*, `t2_tier1_margin.py` using it for the mRNA dose scale, and the
+ambiguity is worth a factor of ten in the gain.
+
+**The negative result is not "the swing buys nothing".** Best case, share 0.8 and amplitude
+50%: 1.249x at nominal, 1.338x at `theta = 600`, 1.311x at 300, 1.297x at 150. What fails is
+the size of the gap: **3.0x, 6.0x and 11.8x still short of the gate.** Stated as "buys
+nothing" a reader would try to stack it with something else; stated this way the number says
+how much that something else must be worth.
+
+**Judged on the frontier, which is the fair test**, the swing is a weak `k_e` measurement:
+at the physical ceiling of amplitude 1.00, a carnitine dose swinging between zero and twice
+the prescribed mean, `sd(ln K)` reaches 0.4687 against a frontier of 0.0633, short by
+**7.4x**.
+
+### R105. A parameterisation error caught by a check the first version did not have
+
+The first carnitine model carried the two unknowns as the non-carnitine baseline and the
+scale, each at the paper's 0.8 prior. At a carnitine share of 0.8 that puts a 0.8 prior on a
+term carrying a fifth of the clearance and another on the term carrying four fifths, which
+constrains the TOTAL better than the paper's single prior on it. **It reported gains up to
+2.97x and the gain was the reparameterisation.**
+
+The honest coordinates are the total and the share, with the total carrying the paper's own
+prior because it is a prior on the same object. **The check that catches it is that at zero
+amplitude the arm must reproduce the paper's design exactly**, and it now does over twelve
+cells to `0.00e+00`: 0.169646, 0.809698, 1.580037, 3.058346. A reparameterisation that
+changes an answer at zero perturbation has changed the model, and nothing else in the run
+would have said so.
+
+### R106. The proposed mechanism for the carnitine result is refuted, and the correction is more useful
+
+The mechanism offered was that modulating an input known up to scale pins the SCALE and not
+the BASELINE. It does not. At `theta = 300` and a share of 0.5, as the amplitude goes from 0
+to 50%, the total `sd(ln K)` goes 0.7228 to 0.5594 and the share `sd(ln f)` goes 0.8000 to
+0.5241: **both improve by almost exactly as much, and neither is preferentially pinned.**
+
+The real mechanism is quantitative rather than structural. The swing does buy information
+about the total alternative clearance, by about a third, and `sd(ln theta)` in the disease
+range is governed by that total, so it improves by about a third too. **Nothing is
+cancelled. The gain is real and small**, and why it is small is the frontier.
+
+### R107. The model's `k_e` is not the urinary clearance a timed collection measures
+
+The modelling question was put before the costing and it decides it. **No, on three counts
+that do not overlap.**
+
+1. **Units.** `k_e = CL/V_d` needs a volume of distribution for 3-HP, which nobody has. The
+   `k_e` row of `src/common/params.py` already performs exactly this conversion for its
+   methylmalonic-acid analogue, 103 mL/min over 0.48 L/kg. **The `V_d` does as much work as
+   the clearance.**
+2. **Channel coverage.** `params.py` registers `k_e` as `kind=LUMPED`, and that file's own
+   taxonomy says a lumped constant **"cannot be checked against a direct measurement even in
+   principle"**. *The register had already answered this about its own constant and the
+   answer had not been carried into the design discussion.*
+3. **Species.** The parent's alternative channel is carnitine conjugation, which makes
+   propionylcarnitine. That is not 3-HP, so a 3-HP collection cannot see the channel the
+   parent says dominates.
+
+`CL_r/V_d` is a **lower bound**, not an estimate. Writing `k_e = CL_r/(V_d f)`, the three
+uncertainties add in quadrature, so each alone must sit under the frontier: **6.3% at
+`theta = 300`, or 3.66% each if all three are equal.** A `V_d` for 3-HP and a renal share
+known to a few per cent are both further from the published record than the clearance is.
+
+**What goes on the gate list is therefore a pair and not a single literature number**: a
+volume of distribution for 3-HP, and the renal share of its non-PCC disposal. The route
+keeps a use it was not proposed for: it bounds `k_e` from BELOW where the analogue bounds it
+from above, and `sec:scopeprec` shows the working band moving across a factor of eight in
+the VALUE of `k_e`.
+
+### R108. The (n, k) trade curve, and why breath tests come in pairs
+
+`u3`'s table fixes the record at 25 draws and so reads as "breath tests instead of a
+design". The decision-relevant object is the curve of pairs that reach the gate.
+**Anchor: the `k = 0` column returns 118 draws with `sd = 0.2000`**, reproducing
+`08_specification.tex:126`, once `t2_tier1_margin.py`'s own record convention is matched.
+`u3`'s convention gives 141 instead, the difference being a dose train taken from the first
+dose rather than at steady state and a lognormal rather than Gaussian intake: **a footing
+difference the size of the whole Tier 1 row.**
+
+At nominal, Tier 1, 5% breath CV: 118, 106, 92, 72, 52, 35, 19 draws at k = 0, 2, 4, 8, 16,
+32, 64. **The first sixteen breath tests are worth five to seven monthly draws each and the
+next forty-eight about one.** Invisible at fixed `n`.
+
+**In the disease range the curve is dashes and then a cliff**, nothing at `k = 16` and 59
+draws at `k = 32` for `theta = 600`. No number of draws helps below the threshold because
+`sd(ln k_e)` is held at 0.8 by its prior. **The trade curve and the frontier are the same
+statement in two coordinates**, and breath tests substitute for the external `k_e`
+measurement rather than adding to the record.
+
+**`k = 1` buys exactly nothing**, tested at three capacities, three record lengths and two
+breath CVs: largest difference from `k = 0` over eighteen cells is **`3.673e-13`**. Not
+close, identical. The free recovery factor is determined by one reading and nothing else.
+**So breath tests are bought two at a time, and a protocol booking an odd number books one
+it cannot use.**
+
+### R109. The profile-marginal caveat attaches to every Fisher figure at this prior width
+
+Round 1 reported the disagreement unresolved and flagged the narrow-prior control as
+pointing at the resolution. **It does, and the consequence is larger than the finding.**
+
+Tested at the paper's own headline designs rather than at the ranking it was found on:
+
+| design | marginal at 0.8 | profile at 0.8 | ratio | ratio at width 0.2 |
+|---|---|---|---|---|
+| recommended, 25 monthly, nominal | **0.1695** | **0.2002** | 1.182 | 1.004 |
+| Tier 1, 118 monthly | **0.2000** | **0.2270** | 1.135 | 1.000 |
+| disease range, 25 monthly, theta=300 | 1.5820 | 3.3936 | 2.145 | 1.145 |
+
+**And measured directly, with no second method**: the profile's left and right one-sigma
+half-widths are equal for a quadratic posterior, and at the recommended design and a 0.8
+prior they are **0.2679 and 0.1327, a ratio of 0.495**, reaching 1.000 by a width of 0.1.
+That measure cannot be an artefact of two implementations disagreeing. In the disease range
+the downward half does not close at all, **independently reproducing `11_scope`'s own
+sentence** that the profile interval does not close below, from a different construction.
+
+**Three objects, and the truth is between them.** At the recommended design: Fisher marginal
+0.1695, simulated MAP sampling spread 0.1777 (R98, 300 replicates), profile 0.2002. They
+coincide for a quadratic posterior and this one is not.
+
+**It overturns no number.** Every figure stands as what it is, a Fisher standard deviation at
+a stated prior width, and `rem:curvature` already warns about the distinction. What is new is
+that the gap is a function of the `k_e` prior width and that at the width the paper carries
+it is large enough to matter at the gate: **the recommended design's 0.170 becomes 0.200
+under a profile of the same posterior, which is the target exactly.** Which object the gate
+is stated against is a question the paper does not answer and now has to.
+
+**The direction is the unsafe one.** The symmetric interval understates how far capacity may
+fall below the estimate and overstates how far it may rise, and whether capacity clears a
+threshold is a question about the lower tail.
+
+### R110. Two more errors of the same family, both caught by an anchor
+
+**A breath row given the marker's own sensitivity to the dose scale.** The marker's flux
+responds to the increment scale directly, `Delta g(m)`, of order 200 in flux units; a breath
+reading responds only through the level, `k_e Delta g/(S J)`, of order `1e-3`. Appending the
+marker column to the breath rows gave two breath tests the leverage of a hundred draws and
+made the Tier 1 record collapse from 185 draws to 11. **Caught because the drop was not
+credible, then fixed by deriving the correct entry.**
+
+**A trade curve on the wrong record convention.** The `k = 0` column read 141 where the
+paper says 118, which is not an error but is not an anchor either. Matching
+`t2_tier1_margin.py` exactly returns 118 and `sd = 0.2000`.
+
+Both belong with R101's family: **the check that catches this class is an anchor to a number
+someone else already owns**, not a re-reading of the code.

@@ -29,6 +29,21 @@ two are the same design, not two designs that happen to agree.
 
 ## 1. The fibre bypass is exactly right, and it is worth about five per cent
 
+### 1.0 CORRECTION: the algebra is the paper's own, and this work re-derived it
+
+**`eq:invariants` at `06_excitation.tex:31` already publishes `A`, `B` and `C` with these
+definitions and with `C = -k_e`**, together with the sentence that at a constant recorded
+load `(A,B,C)` is exactly what the data contain; `eq:fibrecl` already publishes the fibre,
+parametrised by the load bias. `audit/PHASE4_PI.md` section 3.2 owns the derivation and
+`REVIEW_LOG` R26 and R27 extend it. Section 1.1 below is therefore a **re-derivation by a
+second route**, not a discovery, and `OPEN_QUESTIONS.md` section 0's "find the owner before
+recomputing" was not followed. The two parametrisations are verified to be the same curve:
+substituting `eq:fibrecl`'s `K_m(b)` into this work's `theta(K_m)` returns `eq:fibrecl`'s
+`theta(b)` with a `sympy` residual of **`0`**.
+
+**What is new is sections 1.2 and 1.3**, which are numerical: that the record's null space
+IS that fibre to machine precision, and that closing it buys five per cent.
+
 ### 1.1 The algebra holds, symbolically
 
 Clearing the denominator in the quasi-steady balance gives a quadratic in `m` whose
