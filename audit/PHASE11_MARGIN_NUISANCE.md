@@ -85,7 +85,50 @@ decision, the measurement to buy is `K_m`** — and `K_m` is the one quantity th
 already determines, to 6–7% at every capacity, which is 1.065× in log terms and **tighter than either
 requirement above.**
 
-### (b) A positive result the paper does not state anywhere
+### (b) A positive result the paper does not state anywhere, ON A CONDITION STATED FIRST
+
+**THE CONDITION, BEFORE THE RESULT, BECAUSE THE RESULT IS ONLY AS GOOD AS IT.** The whole of
+finding (b) is distance to a fixed boundary. The author verified that it reproduces from
+`theta_crit` alone, and it does, exactly:
+
+| `theta` | `mu = theta - 3343.8` | `sd(mu)` | `|mu|/sd` |
+|---|---|---|---|
+| 3000 | −343.8 | 183.4 | **1.87** |
+| 600 | −2743.8 | 145.8 | **18.82** |
+| 300 | −3043.8 | 140.8 | **21.62** |
+
+**So there is no subtle mechanism here and the finding should not be dressed as one.** A patient
+two thousand seven hundred units below the critical capacity does not need a precise estimate to
+be classified. That is the entire content, and it is worth stating plainly rather than as a
+property of the information matrix.
+
+**Which makes `theta_crit`'s provenance the condition on the result.**
+`theta_crit = (s_peak − k_e·m_tol)(K_m + m_tol)/m_tol`, and its three inputs are:
+
+| input | what it is | status |
+|---|---|---|
+| `m_tol = 40` | *"tolerable metabolite level, a clinical convention"*, `src/model_A/run.py:35` | **a convention, and the paper calls it the more troubling of the two** |
+| `s_peak` | the amplitude of an illness | **a convention, never measured** |
+| `K_m` | the half-saturation | **the parameter that diverges by eight orders of magnitude under crisis protocol** (R157) |
+
+**The paper already owns this and says it more sharply than a caveat would.**
+`03_dynamic.tex:376-378`: the local reduction *"imports two quantities that are never measured:
+`m_tol`, a clinical convention about what metabolite level is tolerable, and `s_peak`, the
+amplitude of an illness. **The convention is the more troubling of the two, because it is not a
+fact about the patient at all.**"* It then notes that the equilibrium reduction does not need it.
+
+**One attribution corrected**, because the argument should not carry it wrong: the paper applies
+"more troubling" to **`m_tol`**, not to `s_peak`. Both are conventions and neither is measured,
+which is the point that survives, but `m_tol` is the one the paper singles out.
+
+**So the result reads:** *conditional on a boundary whose position is set by two clinical
+conventions and one parameter this audit has shown to be unstable, the sign of `mu` is robust in
+the disease range and fragile near nominal capacity.* **The sign is robust; the position of the
+line it is measured from is not.** Moving `m_tol` or `s_peak` moves `theta_crit` and moves every
+ratio in the table with it, in the same direction for all three capacities, so the ORDERING
+survives any single convention and the MAGNITUDES do not.
+
+### The result itself
 
 **`|mu|/sd(mu)` rises from 1.87 at nominal capacity to 18.81 at `theta = 600` and 21.62 at 300.** The
 margin becomes **more** decidable as capacity falls, because `|mu|` grows while `sd(mu)` slightly

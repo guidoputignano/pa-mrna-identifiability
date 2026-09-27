@@ -6452,3 +6452,79 @@ the exception is a passage saying something the document now says nowhere.
 **Three of four were made or made moot by the rewrite that removed their anchors**, which is the
 author's prior exactly. **The fourth is not a wording fix**: it is an unstated assumption underneath
 every number in the paper, and losing its anchor is why it went unnoticed.
+
+---
+
+### R163. `theta_crit`'s provenance written as the condition on the decidability result, and two attributions corrected
+
+**The author's check reproduces exactly**, and that is the point rather than a detail. `|mu|/sd`
+recomputed from `theta_crit = 3343.8` alone gives **1.87, 18.82, 21.62** at `theta = 3000, 600, 300`,
+matching `u28`'s table to two places. **So the mechanism is distance to a fixed boundary and nothing
+subtler**, and the finding should be written that way: a patient two thousand seven hundred units
+below the critical capacity does not need a precise estimate to be classified.
+
+**The provenance is therefore a precondition and not a caveat**, and
+`audit/PHASE11_MARGIN_NUISANCE.md` now states it before the result:
+
+| input to `theta_crit` | what it is | status |
+|---|---|---|
+| `m_tol = 40` | *"tolerable metabolite level, a clinical convention"*, `src/model_A/run.py:35` | a convention |
+| `s_peak` | the amplitude of an illness | a convention, never measured |
+| `K_m` | the half-saturation | **diverges by eight orders of magnitude under crisis protocol** (R157) |
+
+**The paper already owns this, and more sharply than a caveat would.** `03_dynamic.tex:376-378` says
+the local reduction *"imports two quantities that are never measured"* and that the equilibrium
+reduction does not need them.
+
+**FIRST CORRECTION, to the author's statement, because the argument should not carry it wrong.** The
+author attributed *"the more troubling of the two conventions"* to `s_peak`. **The paper applies it
+to `m_tol`**: *"The convention is the more troubling of the two, because it is not a fact about the
+patient at all."* Both are conventions and neither is measured, which is the surviving point, but
+`m_tol` is the one the paper singles out and for a stated reason.
+
+**The result as it now reads**: conditional on a boundary set by two clinical conventions and one
+parameter this audit has shown unstable, **the sign of `mu` is robust in the disease range and the
+position of the line it is measured from is not.** Moving either convention moves all three ratios in
+the same direction, so the **ordering** survives any single convention and the **magnitudes** do not.
+The flag that the `0.20 theta` gate is mine rather than inherited stays where it was.
+
+---
+
+### R164. The constancy passage drafted, with its failure threshold attached and the two arms kept apart
+
+`audit/PHASE11_PROPOSED_CONSTANCY.md`. **Drafted, not applied**, since `paper/` is frozen for prose.
+
+This is PHASE4 passage 14's surviving content, the one orphan R162 kept. The searches that kept it:
+`"over days"` **0 hits**, `"act over"` **0 hits**, `dialysis` only inside a reference title, and the
+single `drift` hit being between-visit **assay** drift, a different quantity. **Every precision in the
+paper is computed on a 730-day record and nothing in the document says capacity is assumed not to
+move over it.**
+
+**The author's instruction was to attach the drift result, because an unstated assumption with a known
+failure threshold is worth more than an unstated assumption alone.** Attaching it needs two numbers
+kept apart, and `PHASE11_DRIFT.md` has both:
+
+| arm | crossing |
+|---|---|
+| **Tier 1 as written, `n = 118`** | **fails at `r = 0.005`**, 0.5% a year, rmse **0.2020** against 0.20 |
+| schedule re-optimised, `n*` free to 240 | `r ~ 0.009`, and the re-check says read it as *"of order one per cent a year, not as a sharp threshold at 0.0091"* |
+
+**SECOND CORRECTION, and it is a distinction rather than an error.** The author's *"Tier 1 fails at
+half a per cent of drift a year"* is **right for the requirement as written**, which is the row that
+belongs in the paper, because 118 is *defined* as the count landing exactly on the gate and so carries
+no margin. The `~1%` figure answers a different question, whether any monthly schedule recovers it.
+Quoting one for the other would misstate the result in either direction, so the draft carries both
+with their arms named.
+
+**At `r = 0.005` the standard deviation is still 0.2006 and it is the BIAS, `-0.0241`, that carries
+the rmse over.** That is the substance: drift biases rather than merely widens, so no number of draws
+reduces the second term. The halving time at that rate is **138.6 years**, which is what makes the
+sentence land: the requirement fails on a drift slower than a century's halving.
+
+**What the draft does not claim.** `PHASE11_DRIFT.md` §6, quoted in it: *"It does not establish that
+capacity drifts. Nothing here measures `r`, and the paper's own kinetic argument for constancy is
+untouched."* The passage is a conditional and says so in its own last paragraph.
+
+Three decisions are left to the author and listed in the file: whether it lands, whether it sits
+beside the Tier 1 requirement or with the other scope conditions, and whether its three numbers are
+wired or left as prose under R143's rule.
