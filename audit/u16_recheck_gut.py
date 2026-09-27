@@ -192,6 +192,65 @@ def cell(theta, burst_t, amp=0.0, tau_in=0.0, burst_cv=CV_T, n_bursts=1):
     return float(np.median(per)) if per else np.nan
 
 
+def part_glucose():
+    """
+    Independent re-check of u17's glucose-arm headline.
+
+    WHICH u17 CONFIGURATION THIS CHECKS, and a correction. This file's
+    generator gives the record and the burst ONE shared load bias, because
+    both trajectories are built from Lbias = LB + b_true. That is u17's
+    share_b = True, NOT its f_burst = 1, which gives the burst its own
+    independent bias at the same prior width. The first version of this
+    function compared against f_burst = 1 and so compared two different
+    models; the disagreement grew with amplitude because the bias column
+    scales with (1 - amp f(t)). Corrected to share_b = True, which PART F of
+    u17 shows reproduces u15 exactly.
+
+    u17's headline cells are computed with the bias KNOWN, which this
+    generator cannot express, so the shared-bias column is what is compared
+    and the difference between the two is reported by u17 PART B and PART H
+    rather than here.
+
+    It also re-checks the INTERIOR OPTIMUM in amplitude, which is a claim
+    about the shape of a curve rather than about one number, and a shape is
+    what an independent method is best placed to confirm or break.
+    """
+    import u17_glucose_burst as U17
+    hour = 1.0 / 24.0
+    bt = np.linspace(0.0, 1.0, 25)
+    print()
+    print("=" * 86)
+    print("Independent re-check of u17's glucose arm, same level-space method")
+    print("=" * 86)
+    print()
+    print(f"    {'amplitude':>10} {'theta':>6} {'u17 shared':>10} "
+          f"{'this (MC)':>10} {'ratio':>7}  what it is")
+    print("    " + "-" * 72)
+    rows = [(0.222, 300.0, "gut share alone"),
+            (0.350, 300.0, "near the claimed optimum"),
+            (0.517, 600.0, "catabolism mean, the headline"),
+            (0.517, 300.0, "catabolism mean, the headline"),
+            (0.739, 300.0, "both arms, claimed WORSE than 51.7%")]
+    got = {}
+    for amp, th, note in rows:
+        ref = U17.sd_ke(th, bt, amp, 6 * hour, 0.01, 16, 1.0,
+                         share_b=True)
+        mc = cell(th, bt, amp, 6 * hour, 0.01, 16)
+        got[(amp, th)] = mc
+        print(f"    {amp:10.1%} {th:6.0f} {ref:10.4f} {mc:10.4f} "
+              f"{mc / ref:7.3f}  {note}")
+    print()
+    a, b, c = got[(0.350, 300.0)], got[(0.517, 300.0)], got[(0.739, 300.0)]
+    print(f"  THE SHAPE. At theta = 300 this method gives {a:.4f} at 35%, "
+          f"{b:.4f} at 51.7%")
+    print(f"  and {c:.4f} at 73.9%. An interior optimum requires the middle "
+          f"value to be")
+    print(f"  the smallest: {'CONFIRMED' if b < a and b < c else 'NOT CONFIRMED'}.")
+    print("  That is the claim that decides whether adding bowel preparation")
+    print("  to the glucose arm helps or hurts, so it is the one worth")
+    print("  breaking if it is breakable.")
+
+
 if __name__ == "__main__":
     print("=" * 86)
     print("Independent re-check of u15: LEVEL space, own RK4, Monte Carlo")
@@ -246,3 +305,4 @@ if __name__ == "__main__":
     print()
     print("  It confirms neither the physical model, which both files share,")
     print("  nor the amplitude's provenance, which is what u15 PART D turns on.")
+    part_glucose()

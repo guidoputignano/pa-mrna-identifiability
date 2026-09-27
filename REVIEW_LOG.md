@@ -4992,3 +4992,170 @@ against. A *verdict* computed to land within 7% of a frontier has the same defec
 fact that it is the audit's verdict rather than the paper's does not exempt it. Recorded
 because the temptation to report "it reaches the frontier" was real and the margin does not
 support it.
+
+### R125. A process defect behind five wrong claims: asserting absence from a bounded search
+
+Five of my claims across this effort were wrong for one reason, **reasoning from a bounded
+search as though it were complete**. Twice it was a shallow clone answering a history question
+confidently and wrongly (R93). Three more times it was a grep truncated at a default head
+limit, where a high-frequency match filled the quota and hid the low-frequency one that
+answered the question: `01_biology.tex:151-160` names fasting and catabolism explicitly, and
+`params.py` registers the gut share with the metronidazole fall attached, while
+`decompensation` matches crowded both out.
+
+**A truncated search and an exhaustive one look identical in the output**, which is exactly
+what a shallow clone does to a history question, and it is why re-reading cannot catch either.
+Added to `OPEN_QUESTIONS.md` section 0: **never assert that something is absent from a bounded
+search**; run it unbounded and state the patterns, the paths, and that no limit was applied.
+
+**It paid on the first use.** The unbounded read of `params.py` for the production partition
+returned the clause *"a protein-restricted diet lowers the first two deliberately"*, which is
+the additivity R129 prices, in the register's own words instead of as an assumption of mine.
+
+### R126. The elective glucose-protected withdrawal reaches the frontier, and settles R124's withheld cell
+
+`01_biology.tex:160` gives intravenous glucose with protein withdrawal as standard emergency
+management. Run **electively**, it is the first candidate with all three properties: a **fast
+onset** (hours, against metronidazole's bacterial turnover over days, R118), **no catabolic
+penalty** (suppressing catabolism is what the glucose is for, which is what withdrew the fast,
+R116), and a **measured load** (infused, not recalled).
+
+Its amplitude anchor is the register's amino-acid catabolism share, **51.7%** (range 24.5 to
+66.4). At a 1% assay, sixteen admissions and a 6 h onset:
+
+| arm | theta | sd(ln k_e) | frontier | margin |
+|---|---|---|---|---|
+| bowel prep alone, 22.2% | 300 | 0.0642 | 0.0633 | 0.99x, undecided |
+| **glucose + withdrawal, 51.7%** | **600** | **0.0548** | 0.1567 | **2.86x** |
+| **glucose + withdrawal, 51.7%** | **300** | **0.0281** | 0.0633 | **2.25x** |
+
+R124 withheld the tenth-of-nominal cell at 0.0588 against 0.0633, a 7% margin inside the 9 to
+33% method spread. **At the catabolism share the margin is 2.25x, which clears it.** The
+anchor for the construction is exact: with the two load biases collapsed back into one, `u17`
+reproduces `u15` to **0.00e+00** across four cells, so the only difference between the files is
+the one change under test.
+
+### R127. NEGATIVE: the burst's load-record term is worth 1.00x to 1.02x, and the reason is structural
+
+The proposal was that `LOAD_FRAC`, the 5% load-record error and half of sigma at the nominal
+footing, might not apply during a burst whose load is infused and measured, which would change
+**sigma** rather than merely the amplitude. Swept from the diet record's 5% to an exactly known
+load, at three amplitudes and two capacities, it never exceeds **1.02x**.
+
+**The premise is right and the consequence is nil, for a structural reason.** `LOAD_FRAC`
+enters the burst in exactly one place, the prior on its load bias, **because a burst
+observation is a marker level with assay noise and carries no load measurement at all**. It is
+the *record* whose per-visit sigma is `hypot(16.14, 14.90)`, and the record is still the
+ordinary outpatient diet record whatever happens during an admission.
+
+**Where the prize does live**, with the glucose burst held fixed and the record's load term
+swept: 0.0548 to **0.0389** at a fifth of nominal and 0.0281 to **0.0226** at a tenth,
+converged at 1e-4 and 1e-6 of the published width. So **1.41x and 1.24x**, real and modest, and
+only if **every one of the 118 routine outpatient visits** has its load measured. The glucose
+protocol changes the admission, not the outpatient record, so it does not buy this.
+
+### R128. An error of mine, caught by its own monotonicity
+
+The first version of the record-side sweep set the load-bias prior **precision** to zero at the
+exact-load limit. That makes `b` a free parameter with no prior, which is **less** information
+and not more, and it showed immediately as a non-monotone column with the exact-load row
+landing *worse* than the 1% row (0.0526 against 0.0416). "Measured exactly" is an infinite
+precision, not an absent prior. Replaced by a vanishing width, shown converged at two
+successive decades. Recorded because the wrong version was self-consistent and only the shape
+of the column exposed it.
+
+### R129. An interior optimum in amplitude, so the register's additivity is the wrong thing to want as design
+
+Sweeping the amplitude finely at a 1% assay and sixteen admissions, the optimum is at **40% at
+a fifth of nominal and 45% at a tenth**. The catabolism share at 51.7% sits just past it and is
+near-optimal; **73.9%, the sum of both arms, is clearly worse** (0.0367 against 0.0281 at a
+tenth of nominal).
+
+**The mechanism is a quantity already in this audit.** Suppressing more load drives the marker
+further off enzyme saturation, which raises the relaxation rate `J` and lowers `k_e`'s share of
+it. That is the same `k_e/J` R113 used to reject the post-dose placement, acting here through
+the amplitude rather than through the increment.
+
+> So the register's *"a protein-restricted diet lowers the first two deliberately"* is true as
+> **biology** and is the wrong target as **design**. **Adding an osmotic bowel preparation to
+> the glucose arm degrades the measurement.** The preparation remains worth an arm on its own,
+> where its 22.2% carries the tightest onset requirement of any candidate.
+
+### R130. A convention correction to `u15`: the burst window is an admission, not four time constants
+
+`u15` let the burst window grow as four onset time constants, which silently hands a slow input
+a free record extension: at a one-week onset that is 28 days and 24 draws spanning two dose
+cycles, a record extension at a better assay rather than a relaxation measurement. **R118
+noticed the symptom** and diagnosed it correctly, that the slow end sat *under* the record-only
+floor instead of converging to it, without fixing it. The window is now fixed at one inpatient
+day.
+
+Slowest onset reaching the frontier, 1% assay, sixteen admissions:
+
+| arm | theta | fixed 1 d | `u15` growing |
+|---|---|---|---|
+| bowel prep, 22.2% | 600 | **14.9 h** | 15.5 h |
+| bowel prep, 22.2% | 300 | **5.8 h** | 5.8 h |
+| glucose, 51.7% | 600 | **50.0 h** | beyond 13 d |
+| glucose, 51.7% | 300 | **30.5 h** | 45.0 h |
+| both, 73.9% | 300 | **48.2 h** | beyond 13 d |
+
+The columns agree where the threshold is near a day and diverge by over an order of magnitude
+where the growing window runs to weeks. **Round 4's 6.6 h and 16.4 h become 5.8 h and 14.9 h**,
+so its conclusions are unaffected and only its long-onset rows were ever contaminated. Glucose
+acting over hours clears 30.5 h comfortably; an osmotic preparation's gut transit is the same
+order as its 5.8 h requirement and is the one onset genuinely in question.
+
+### R131. `rho` is a property of the protocol, and partial glucose protection is a failure mode the paper never samples
+
+`07b_decision.tex` sweeps `rho` as an **exogenous** property of the chart, while its own text
+says `rho <= 0` is crisis protocol "where prescribed intake is cut while **catabolic muscle
+breakdown** supplies the load", and `01_biology.tex:160` names the intervention that suppresses
+catabolism. The paper states both and connects neither. Its sweep is reproduced exactly from
+its owner (1.027 against 1.030, 0.903 against 0.900, 0.086, 0.009).
+
+With `d` the dietary share withdrawn, `F` the catabolic load fold and `q` the suppressed
+fraction, `rho(q) = -d/((F-1)(1-q) - d)`, with a **pole** at `q* = 1 - d/(F-1)`.
+
+**Two registered numbers agree without having been made to.** `params.py`'s illness row anchors
+`F = 1.50` from a 227% to 325% rise in 3-methylhistidine. The paper's `rho = -0.25` then implies
+**d = 0.100**, a withdrawal removing 10% of the load, which is exactly right for a patient
+already on a protein-restricted diet. That puts the pole at **q\* = 0.800**.
+
+**The verdict neither survives nor reverses. It changes which error it makes.** Eight seeds,
+400 replicates:
+
+| q | rho | treat unneeded | fail to treat | median th/th |
+|---|---|---|---|---|
+| 0.70 | -2.00 | 100.0% [100.0, 100.0] | 0.0% [0.0, 0.0] | 0.010 [0.009, 0.011] |
+| 0.90 | +2.00 | 0.0% [0.0, 0.0] | **100.0% [100.0, 100.0]** | 0.812 [0.686, 0.933] |
+| 1.00 | +1.00 | 18.8% [16.8, 21.5] | 40.7% [37.5, 44.0] | 0.926 [0.484, 1.079] |
+
+Below the pole the estimator treats everyone, the paper's published catastrophe. **Above it the
+estimator fails to treat everyone**, the dangerous direction, totally rather than at the benign
+cell's 41.8%. The paper's sweep stops at `rho = 1` and never enters `rho > 1`. Zero spread on
+both sides, so the reversal does not rest on a seed.
+
+**The hazard is specific and avoidable.** `rho > 1` means the record *overstates* the load
+change: the chart records the full prescribed cut while the glucose absorbed most of the
+catabolic response. **Under an infused, measured load that cannot happen**, because the record
+*is* the infusion. So the failure is running glucose protection while still recording intake
+from the diet chart, and the same manoeuvre with the load taken from the pump is benign.
+
+**Two caveats, both measured rather than asserted.** First, the generator holds the marker
+levels **fixed** and scales only the record, so it prices record corruption and not the
+excitation loss; the true deviation runs 1.00x, 0.37x, 0.02x, then changes sign, so the numbers
+near the pole are **optimistic** and are not a verdict there. The sign of the effect does not
+depend on the pole. Second, **the paper's benign-cell median of 1.03 is a single-seed figure**;
+the eight-seed range is **0.484 to 1.079** with a mean of 0.926, so the published value sits
+near the top of its own range and the bottom of that range is a two-fold underestimate of
+capacity rather than a 3% error. Not a wrong number, a single-seed number quoted without its
+spread in the row the section leads with.
+
+**And the two halves of this round meet here.** Past `q*` the true load deviation changes sign,
+which is precisely the elective load reduction R126 prices as a `k_e` burst. One manoeuvre, two
+estimands, opposite requirements on the record: the burst wants the largest true load change it
+can safely get, the decision wants the record to track it.
+
+**The new gate: `q`, the fraction of the catabolic response glucose actually suppresses, is
+nowhere in this repository**, and the verdict turns on which side of 0.8 it falls.

@@ -55,6 +55,17 @@ Set by the author and held throughout. They are not negotiable defaults.
   cause, twice, in two differently truncated clones of the same repository, each checked by its
   author** (R93).
 
+- **Never assert that something is ABSENT from a bounded search.** Before claiming the repository
+  lacks a term, a concept or a treatment, run the search **unbounded** and **state what was
+  searched**: the patterns, the paths, and the fact that no result limit was applied. A default
+  head limit is not visible in the output, so a truncated search and an exhaustive one look
+  identical, and a high-frequency match fills the quota and hides the low-frequency one that
+  answers the question. That is what happened with fasting and catabolism: `decompensation`
+  matches filled a six-hit quota while `01_biology.tex:151-160` named both explicitly.
+  **This is the same failure as the shallow clone one row above**, reasoning from bounded evidence
+  as though it were complete, and between them they account for **five wrong claims from one
+  cause**. An absence claim is the one kind of claim a search cannot support without stating its
+  own completeness (R125).
 - **Find the owner before recomputing.** A paper number is either generated and owned by a named
   script, or it is a prose literal. Locate the owner and read what it computes before concluding the
   number is wrong. **Four disagreements in Phase 10 were a reconstruction losing to the paper**, and
@@ -384,3 +395,73 @@ reversed the verdict. **This is the third sensitivity in this audit to disagree 
 forward model** (R101 twice, now R119), so the check is now a permanent part of the script.
 One diagnostic run while chasing it reintroduced R98's own error; withdrawn at R120, together
 with a correction to my own reasoning about why.
+
+---
+
+## 12. Round 5 of Phase 11: the manoeuvre that works, and the one gate it leaves
+
+Working in `audit/PHASE11_GLUCOSE_ARM.md`; `REVIEW_LOG.md` R125 to R131. Scripts
+`audit/u17_glucose_burst.py` and `audit/u18_rho_glucose.py`, re-checked in `audit/u16`.
+
+**A standing rule added to section 0, after five wrong claims from one cause.** Never assert
+that something is **absent** from a bounded search. A truncated grep and an exhaustive one look
+identical in the output, which is the same property that makes a shallow clone answer a history
+question confidently and wrongly (R93), and it is why re-reading catches neither. Run it
+unbounded and state the patterns, the paths, and that no limit was applied. It paid on first
+use: the unbounded read of `params.py` returned *"a protein-restricted diet lowers the first two
+deliberately"*, which is the additivity below, in the register's own words.
+
+**The route is settled at both capacities.** An **elective glucose-protected protein
+withdrawal** is the first candidate with all three needed properties: a fast onset (hours, not
+metronidazole's bacterial turnover over days), no catabolic penalty (suppressing catabolism is
+what the glucose is for, which is what withdrew the fast), and a measured load. At the
+register's amino-acid catabolism share of **51.7%**, with a 1% assay and sixteen admissions, it
+reaches **0.0548 against a frontier of 0.1567** at a fifth of nominal and **0.0281 against
+0.0633** at a tenth, margins of **2.86x and 2.25x**. **That settles the cell R124 had to
+withhold**, where the metronidazole arm's 7% margin sat inside the method spread. The
+requirement on the onset is **50.0 h and 30.5 h**, which glucose acting over hours clears
+comfortably.
+
+**NEGATIVE, and the reasoning behind the proposal was right.** The burst's load-record term is
+worth **1.00x to 1.02x**, not because the 5% is small but because **a burst observation is a
+marker level and carries no load measurement at all**, so `LOAD_FRAC` enters the burst only
+through a prior and never through its sigma. It is the **record's** sigma that is
+`hypot(16.14, 14.90)`. Removing it *where it lives* is worth **1.41x and 1.24x**, and buys that
+only if all 118 routine outpatient visits have their loads measured, which an admission
+protocol does not do.
+
+**NEGATIVE, and it reverses an attractive idea.** The amplitude has an **interior optimum**, at
+40% at a fifth of nominal and 45% at a tenth. The catabolism share at 51.7% is near-optimal;
+the sum of both arms at 73.9% is **worse** (0.0367 against 0.0281). Driving the marker further
+off enzyme saturation raises `J` and lowers `k_e`'s share of it, the same quantity R113 used.
+**So adding an osmotic bowel preparation to the glucose arm degrades the measurement.** The
+preparation is still worth an arm on its own, where its 22.2% carries the tightest onset
+requirement of any candidate, **5.8 h** at a tenth of nominal, which a gut transit may or may
+not meet.
+
+**A correction to round 4's own convention.** `u15` let the burst window grow as four onset
+time constants, handing a slow input a free record extension. R118 noticed the symptom and did
+not fix it. With the window fixed at one admission, round 4's 6.6 h and 16.4 h become **5.8 h
+and 14.9 h**, so its conclusions stand and only its long-onset rows were contaminated.
+
+**(g6) `rho` is a property of the PROTOCOL, and partial glucose protection is a failure mode
+the paper never samples.** `07b_decision.tex` sweeps `rho` as exogenous while its own text says
+`rho <= 0` is driven by catabolism and `01_biology.tex:160` names the drug that suppresses it.
+Deriving `rho(q)`, two registered numbers agree without having been made to: the illness row's
+catabolic fold `F = 1.50` and the paper's `rho = -0.25` together imply a dietary share of
+**10.0%**, right for a patient already protein-restricted. That puts a **pole at q\* = 0.800**.
+Below it the estimator treats everyone (the published catastrophe); **above it, it fails to
+treat everyone**, the dangerous direction, at 100% with zero spread over eight seeds. The
+paper's sweep stops at `rho = 1` and never enters `rho > 1`.
+
+> **The hazard is specific and avoidable: running glucose protection while still recording
+> intake from the diet chart.** With the load taken from the pump, `rho = 1` by construction.
+
+**The new gate, (g6).** `q`, the fraction of the catabolic response glucose actually
+suppresses, **is nowhere in this repository**, and the verdict turns on which side of 0.8 it
+falls. It joins (G-ASSAY), (g5), the tracer bolus size, and the `V_d`/renal-share pair.
+
+**One number of the paper's, flagged by the seed-spread rule.** `07b_decision`'s benign-cell
+median `theta_hat/theta` of **1.03** is a single-seed figure; the eight-seed range is **0.484
+to 1.079**, mean 0.926. Not a wrong number, a single-seed number quoted without its spread in
+the row the section leads with.
