@@ -6887,3 +6887,82 @@ already names: **a search whose bound is invisible in its output.**
 In every case the output is **well-formed and incomplete**, with nothing in it to signal which. The
 four are now listed together in section 0 under the rule they share, rather than as four rules, and
 this one is recorded as **the rule turned on the searcher rather than on the repository.**
+
+---
+
+### R177. The supplement pass: ten self-pointers, two broken promises, one of mine, and a rediscovery
+
+`audit/SUPPLEMENT_PASS.md`. Three parts in the order the author set, the cold read written before
+`main.pdf` was opened. **Not fanned out**: the author's standing rule forbids fan-out for judgement,
+and reading a document for me would destroy the thing the read measures.
+
+**PART 1, the cold read. The supplement is two documents bound as one.** `S1` carries a short set at
+`S1.1`-`S1.12` and a long set at `S1.13`-`S1.20` covering the same material, with **two verbatim
+identical headings** (`S1.7` and `S1.16.5`, both *"What the accessible input costs"*) and two
+near-identical ones. The pairs checked against their bodies are the same argument twice, carrying the
+same figures, numbered as **Remark 4 and Remark 17**.
+
+**Ten pointers send the reader to the document they are holding**, counted with fixed strings:
+`"Appendix S1"` **6**, `"supplement §S1"` **3**, `"the supplement's local-model section"` **1**.
+**Every one is inside Appendix S1.** Three sit in Table S5's last column, the column that discharges
+every assumed constant, so a reader consulting one row for its cost bound is sent to the document in
+their hands, forty pages earlier, with no subsection named. The cause is visible in `S1`'s own title:
+these read correctly before the block was moved into the appendix.
+
+Also: **58 unqualified cross-document references** against 5 that name the main text; the **contents
+page collides from `S1.10` onward** (*"S1.10The Saudi context"*), which is the first page a reference
+reader sees; `S1.1` repeats its heading as its opening words; and `S1.19` poses as **the central open
+question** what `S1.20` answers **in the negative** one page later, with no pointer between them.
+
+**`S2` and `S3` are the strongest writing in the project**, and `S1.20` already does, unprompted,
+what this audit has spent eleven phases enforcing: it preserves superseded text verbatim and states
+item by item what replaced it.
+
+**PART 2, the pointers. 29, enumerated unbounded.** 19 say `\S S1`, which is **49 pages**; 6 say
+`\S S2`; 2 name content; 2 are loose. **Not one names a subsection.** So all 19 resolve to a section
+that exists and holds the material and **locates nothing**, which is why per-pointer verdicts would
+be 19 identical rows, and why a sentence inside `S1` saying *"set out in Appendix S1"* did not read as
+circular to anyone writing it.
+
+**Seven specific promises are kept. Three are not:**
+
+- **`07_design:451`**, *"releases each assumption in turn"*. `S1.16.2` **states** the three
+  assumptions and opens *"stated here and warranted in Appendix S1"*. Searched unbounded for
+  `releases each`, `release each`, `relaxed`, `relaxing`, `released`, `one at a time`,
+  `each assumption`: **all zero**. **The path is main text → \S S1 → "Appendix S1" → nothing.**
+- **`06_excitation:146`**, *"The one-line proof is in the supplement, \S S1"*, of `prop:straddle`.
+  The supplement's three `straddl` hits are a dependency **diagram** cell, a design row name, and an
+  unrelated phrase. **Referred to, not proved.**
+- **`07_design:504`**, *"The evidence for each row is in the supplement, \S S1"*. **MINE, created one
+  pass ago.** R158 found this caption promising absent evidence and fixed it by adding the full
+  admissibility table, **to `\S S4`**, leaving the caption pointing at `\S S1`. Repointed here, on
+  the footing the author granted for the doubled clause: a section number that is factually wrong is
+  neither a claim nor a value, and leaving a pointer I broke is worse than fixing it.
+
+**PART 3, agreement. Five shared figures agree and one does not**, and it is the paper's central
+number. **The main document writes the headline result `0.1699` sixteen times and never `0.170`. The
+supplement writes `0.1699` five times and `0.170` three times**, the three being in the two
+duplicated carnitine remarks and one other place. No number is wrong, `0.170` being a correct
+rounding, **but R142 was a footing conflict decided at the fourth digit** and this session settled
+the profile-marginal question there. **Reported, not fixed: a rounding of a headline value is a
+value.**
+
+**FOUR TIMES IN THIS PASS MY OWN SEARCH HAD AN INVISIBLE BOUND**, which is the shape section 0
+names, and I record the count rather than each instance: a pattern list missing `"supplement §S1"`;
+a regex using `.` against the multibyte `§`; `grep -c` on a whitespace-normalised single-line file,
+which returns 1 however many matches there are; and the first `pdftotext` grep at R174. **Every one
+produced a confident undercount.** The self-pointer total of ten and the `0.1699` counts are the
+figures after switching to fixed strings and `grep -o | wc -l`, and they are the ones to trust.
+
+**WHAT THE PASS IS WORTH, and it is not the defect list.** `S1.19` names `mtol`, `speak` and the
+substrate-to-biomarker map as the three unmeasured quantities making θcrit an operational definition,
+and `S1.20` quantifies the consequence: **θcrit moves by a factor of 24 across their defensible
+range, and the sign of the margin flips for the same patient with perfect data.** R163 wrote θcrit's
+provenance as a precondition on the decidability result as though it were new. **Applied to
+`|mu|/sd(mu)` it is. The arbitrariness and its size were already in print, quantified better than I
+put them, in the document nobody had read.**
+
+**The read and the enumeration found different classes and neither substitutes for the other.** By
+count the author's prediction holds: the enumeration found two broken promises and a precision
+conflict against the read's one structural observation. **By consequence it does not**: the
+rediscovery cost the most and only reading found it.
