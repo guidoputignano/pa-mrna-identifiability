@@ -56,7 +56,7 @@ $\num{sd_dense_flat_hi}$), a factor of $\num{ke_prior_worth}$ taken record by re
 ($6.9$ to $7.9$). That the two priors divide this way is the null vector
 \eqref{eq:nullvec} showing itself: it has a zero in its $k_e$ slot, so $K_m$ moves
 \emph{along} the degeneracy, where a prior would have to be implausibly tight to bind,
-and $k_e$ lies just outside it, where a modest one does all the work (supplement, \S S1).
+and $k_e$ lies just outside it, where a modest one does all the work (supplement, \S S1.12).
 The gate needs $k_e$ within a factor of $\num{ke_needed_factor}$ ($\num{ke_needed_factor_lo}$ to $\num{ke_needed_factor_hi}$), which is the one thing
 this paper asks the literature for and, by the $k_e$ row of Table~\ref{tab:params}, the
 one thing the literature does not supply.
@@ -95,8 +95,8 @@ much of the dose cycle they see, not how many samples they take.}
 \caption{\label{tab:designs}What each design delivers, as a median over twenty-four
 simulated intake records with its range beneath. Bold is inside the $20\%$ target. The
 fourth column is the range of the therapeutic increment the design actually sees, and it,
-rather than $n$, is what orders the table. The supplement, \S S1, repeats the table with
-one further column: the same design evaluated with the increment dropped from the
+rather than $n$, is what orders the table. The supplement, \S S1.17.2, repeats the table
+with one further column: the same design evaluated with the increment dropped from the
 sensitivity while still being used to generate the levels.}
 %  the widening has to be INSIDE the float: a float sets its contents at
 %  \textwidth whatever the surrounding text block is doing, so an
@@ -262,7 +262,7 @@ $\num{sd_one_cycle}$ ($\num{sd_one_cycle_lo}$ to $\num{sd_one_cycle_hi}$) and ha
 there, because what limits it is the design and not
 how well the increment is known. Third, the same design evaluated on a footing this paper does not use, with the
 increment dropped from the sensitivity while still generating the levels (supplement,
-\S S1): it lands between $\num{dropped_lo}$ and $\num{dropped_hi}$ and never collapses, which is why an error
+\S S1.17.2): it lands between $\num{dropped_lo}$ and $\num{dropped_hi}$ and never collapses, which is why an error
 of that kind is invisible from inside the arithmetic and has to be caught by finite
 difference against the integrated dynamics (supplement, \S S2).
 
@@ -447,8 +447,7 @@ $\operatorname{sd}(\ln\hat\theta)$ against the number of visits, with the
 $0.20$ target marked. \textbf{These curves are prior-conditional and assume the
 dose scale is known exactly}: the $5\%$ prior on the load bias is what closes
 the constant-load fibre of Proposition~\ref{prop:rank}, so the near-identity of
-the three rows is a statement about that prior and not about the design. The
-supplement, \S S1, releases each assumption in turn. Fitting
+the three rows is a statement about that prior and not about the design. Fitting
 $\operatorname{sd}(n) = \sqrt{\mathrm{floor}^2 + c^2/n}$ separates what visits
 buy from what they cannot: on the monthly schedule at the published prior and
 a $10\%$ day-to-day variability the floor is $0.150$ and the target is reached
@@ -502,7 +501,7 @@ verdicts on the recommended design. The capacity-ceiling row infers normal
 capacity from $\theta$ and the residual-activity reference, so $\theta$ cancels
 from it and it cannot report a breach in this disease; the paragraph above and
 Section~\ref{sec:scopeprec} give the other reading. The evidence for each row
-is in the supplement, \S S1.}
+is in the supplement, \S S4.}
 \input{../results/tables/tab_S_admissible_compact}
 \end{table}
 
@@ -617,7 +616,7 @@ at least moves towards $K_m$. The excitation the decision needs is available onl
 event the treatment exists to prevent, and even then not in full. The one designed source,
 a labelled-propionate bolus, is small at $E = 0.076$ for a doubling of the marker; its
 value is not the excitation it supplies but that it measures capacity on a different axis
-entirely, which is the validation protocol of the supplement, \S S1.
+entirely, which is the validation protocol of the supplement, \S S1.17.2.
 
 \vspace{0.5em}
 \hrule

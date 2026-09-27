@@ -21,8 +21,12 @@
 \renewcommand{\thetable}{S\arabic{table}}
 
 \title{\textbf{Supplementary material}\\[0.3em]
+%  RETITLED TO MATCH THE MAIN DOCUMENT (REVIEW_LOG.md R182). R155 changed the
+%  paper's subtitle and did not change this one, so the supplement carried the
+%  old title, which named the one thing Section 7 concludes cannot be done.
 \large for \emph{The Dose Train is the Identification Experiment:
-Estimating Residual Enzymatic Capacity in Propionic Acidemia}}
+Design Rules and Limits of Recoverability for Enzymatic Capacity
+in Propionic Acidemia}}
 \author{Guido Putignano}
 \date{\today}
 
@@ -38,6 +42,16 @@ the paper; it was moved, and every cross-reference into the paper still resolves
 
 \emph{Section numbers in this document carry an} S. \emph{References to numbered results
 without an} S \emph{point into the paper.}
+
+%  THE CONTENTS NUMBERS COLLIDE WITH THEIR TITLES FROM S1.10 ONWARD
+%  (REVIEW_LOG.md R182). article's \numberline boxes are 2.3em for subsections
+%  and 3.2em for subsubsections, which fit "1.10" but not "S1.10", and nothing
+%  fits "S1.15.7". Widened here rather than in preamble.tex because the main
+%  document has no table of contents.
+\makeatletter
+\renewcommand*\l@subsection{\@dottedtocline{2}{1.5em}{3.6em}}
+\renewcommand*\l@subsubsection{\@dottedtocline{3}{5.1em}{4.8em}}
+\makeatother
 
 \tableofcontents
 \clearpage

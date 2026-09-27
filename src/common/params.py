@@ -142,7 +142,7 @@ LOCAL = [
                  r"sits at $\theta \le 150$, which is the row below. "
                  r"\textbf{Some conclusions do depend on this value}: "
                  r"the identifiability results do not, but the "
-                 r"supplement's local-model section (\S S1) flips a qualitative conclusion "
+                 r"local-model section (\S S1) flips a qualitative conclusion "
                  r"across it, the anchor attenuating at $3000$ and amplifying at the "
                  r"parent's $300$, and by Section~\ref{sec:scope} the design's own "
                  r"precision does too. It "
@@ -274,7 +274,7 @@ LOCAL = [
     Row(r"$\kappa$", "not assigned", "gain from recorded carnitine dose onto $k_e$",
         ASSUMED, r"never assigned a value. Only the product $\kappa u_c$ enters, as a lumped "
                  r"increment on $k_e$, and every figure varies that product directly. "
-                 r"The ill-conditioning result of supplement \S S1 is conditional on it: an "
+                 r"The ill-conditioning result of \S S1 is conditional on it: an "
                  r"unknown $\kappa$ leaves the carnitine route two equations in four unknowns. "
                  r"The \emph{direction} is established, carnitine administration raising "
                  r"short-chain acylcarnitine excretion~\cite{coa_sequestration}, but no "
@@ -356,8 +356,8 @@ LOCAL = [
                  r"$1$-$^{13}$C-propionate breath test, whose Results give "
                  r"$14.02 \pm 12.86\%$ in patients and $6.9\%$ in "
                  r"controls~\cite{breath_test_mma}; \textbf{the widely quoted $12.8\%$ is the "
-                 r"standard deviation of the per-subject coefficients and not their mean, and "
-                 r"is not their mean}. That figure is also "
+                 r"standard deviation of the per-subject coefficients and not their mean}. "
+                 r"That figure is also "
                  r"\emph{between-visit}, over two months to four years, so it bounds the "
                  r"same-day repeatability Tier~1 asks for from above rather than measuring "
                  r"it, and the cohort is methylmalonic acidemia. Biological variability is far "
@@ -428,7 +428,7 @@ PARENT = [
         kind=EFFECTIVE, species="human, in vitro"),
     Row(r"$K_c$", rf"${_C.Kc:.0f}$~$\mu$M", "half-saturation of the conjugation step",
         ASSUMED, r"no measurement, and no reason a conjugation reaction should share an "
-                 r"enzyme's half-saturation. Cost bounded in supplement \S S1: over $K_c$ "
+                 r"enzyme's half-saturation. Cost bounded in \S S1: over $K_c$ "
                  r"from $25$ to $800$, a $32$-fold range, $\thc$ spans $186$ to $120$, a "
                  r"factor of $1.56$. The nearest measured analogue is the renal carnitine "
                  r"transporter, $K_m$ $0.08$ mM external and $1.2$ mM "
@@ -441,7 +441,7 @@ PARENT = [
         ASSUMED, r"no measurement. Previously not written down anywhere, which is why "
                  r"the margin figure could not be reproduced from the paper. \textbf{Its cost "
                  r"is bounded for the threshold and not for the margin}, and the two differ: "
-                 r"over an eightfold range of $M_i$ supplement \S S1 moves $\thc$ by $1.37$ "
+                 r"over an eightfold range of $M_i$ \S S1 moves $\thc$ by $1.37$ "
                  r"but the \emph{margin} by $6.44$, running $509$ to $3275$ where Figure~16 "
                  r"quotes $954$. The mechanism is measured, acylcarnitines being the most "
                  r"effective inhibitors of that transporter~\cite{octn2_renal_transport}, "
@@ -506,7 +506,7 @@ PARENT = [
         kind=LUMPED, species="human"),
     Row(r"$k$", r"$1$~d$^{-1}$",
         "conjugation rate constant, which cancels from the reduced curve",
-        ASSUMED, r"drops out of the quasi-steady reduction of supplement \S S1 exactly, so the "
+        ASSUMED, r"drops out of the quasi-steady reduction of \S S1 exactly, so the "
                  r"reduced clearance does not depend on it. \textbf{It is not therefore a "
                  r"free scale, which is what this row concluded from that, and which is "
                  r"why it was previously classed as derived rather than assumed}: $k$ "

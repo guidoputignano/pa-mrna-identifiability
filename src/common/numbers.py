@@ -70,6 +70,7 @@ GENERATORS = {
     #  them, which R141 is the reason for: a hardcoded generator would make the
     #  guard certify hand-typed values.
     "frontier": "audit/u23_wire_phase11.py",
+    "drift": "audit/u30_wire_drift.py",
 }
 
 

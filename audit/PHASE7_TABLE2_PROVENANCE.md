@@ -217,8 +217,15 @@ reported at one `sigma`, not as a function of it. R17 corrects the specification
 does not touch the `sigma` row, which makes the same claim in the table that generates into the
 paper.**
 
-**D10. The `CV` row prints a retracted figure, and so does the generated table. HIGH, and
-trivially fixable.** `src/common/params.py:133-134`:
+**D10. ~~The `CV` row prints a retracted figure, and so does the generated table.~~ FIXED, AND
+STRUCK AT R172.** Verified on the current tree: `src/common/params.py:357-358` carries the
+correction in full, and `results/tables/tab_params.tex` reproduces it verbatim. The **only**
+occurrence of `12.8` in that table is inside the correction sentence itself. **This record was
+re-reported as live twice after it had been fixed**, which is why `OPEN_QUESTIONS.md` section 0
+now requires a recorded defect to be re-verified before it is re-cited. The original text is kept
+below, struck, rather than deleted.
+
+~~**D10 as written:**~~ `src/common/params.py:133-134`:
 
 > "the breath test reports repeatability of `6.9\%` in controls and `12.8\%` in patients"
 

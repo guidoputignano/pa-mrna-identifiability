@@ -6452,3 +6452,794 @@ the exception is a passage saying something the document now says nowhere.
 **Three of four were made or made moot by the rewrite that removed their anchors**, which is the
 author's prior exactly. **The fourth is not a wording fix**: it is an unstated assumption underneath
 every number in the paper, and losing its anchor is why it went unnoticed.
+
+---
+
+### R163. `theta_crit`'s provenance written as the condition on the decidability result, and two attributions corrected
+
+**The author's check reproduces exactly**, and that is the point rather than a detail. `|mu|/sd`
+recomputed from `theta_crit = 3343.8` alone gives **1.87, 18.82, 21.62** at `theta = 3000, 600, 300`,
+matching `u28`'s table to two places. **So the mechanism is distance to a fixed boundary and nothing
+subtler**, and the finding should be written that way: a patient two thousand seven hundred units
+below the critical capacity does not need a precise estimate to be classified.
+
+**The provenance is therefore a precondition and not a caveat**, and
+`audit/PHASE11_MARGIN_NUISANCE.md` now states it before the result:
+
+| input to `theta_crit` | what it is | status |
+|---|---|---|
+| `m_tol = 40` | *"tolerable metabolite level, a clinical convention"*, `src/model_A/run.py:35` | a convention |
+| `s_peak` | the amplitude of an illness | a convention, never measured |
+| `K_m` | the half-saturation | **diverges by eight orders of magnitude under crisis protocol** (R157) |
+
+**The paper already owns this, and more sharply than a caveat would.** `03_dynamic.tex:376-378` says
+the local reduction *"imports two quantities that are never measured"* and that the equilibrium
+reduction does not need them.
+
+**FIRST CORRECTION, to the author's statement, because the argument should not carry it wrong.** The
+author attributed *"the more troubling of the two conventions"* to `s_peak`. **The paper applies it
+to `m_tol`**: *"The convention is the more troubling of the two, because it is not a fact about the
+patient at all."* Both are conventions and neither is measured, which is the surviving point, but
+`m_tol` is the one the paper singles out and for a stated reason.
+
+**The result as it now reads**: conditional on a boundary set by two clinical conventions and one
+parameter this audit has shown unstable, **the sign of `mu` is robust in the disease range and the
+position of the line it is measured from is not.** Moving either convention moves all three ratios in
+the same direction, so the **ordering** survives any single convention and the **magnitudes** do not.
+The flag that the `0.20 theta` gate is mine rather than inherited stays where it was.
+
+---
+
+### R164. The constancy passage drafted, with its failure threshold attached and the two arms kept apart
+
+`audit/PHASE11_PROPOSED_CONSTANCY.md`. **Drafted, not applied**, since `paper/` is frozen for prose.
+
+This is PHASE4 passage 14's surviving content, the one orphan R162 kept. The searches that kept it:
+`"over days"` **0 hits**, `"act over"` **0 hits**, `dialysis` only inside a reference title, and the
+single `drift` hit being between-visit **assay** drift, a different quantity. **Every precision in the
+paper is computed on a 730-day record and nothing in the document says capacity is assumed not to
+move over it.**
+
+**The author's instruction was to attach the drift result, because an unstated assumption with a known
+failure threshold is worth more than an unstated assumption alone.** Attaching it needs two numbers
+kept apart, and `PHASE11_DRIFT.md` has both:
+
+| arm | crossing |
+|---|---|
+| **Tier 1 as written, `n = 118`** | **fails at `r = 0.005`**, 0.5% a year, rmse **0.2020** against 0.20 |
+| schedule re-optimised, `n*` free to 240 | `r ~ 0.009`, and the re-check says read it as *"of order one per cent a year, not as a sharp threshold at 0.0091"* |
+
+**SECOND CORRECTION, and it is a distinction rather than an error.** The author's *"Tier 1 fails at
+half a per cent of drift a year"* is **right for the requirement as written**, which is the row that
+belongs in the paper, because 118 is *defined* as the count landing exactly on the gate and so carries
+no margin. The `~1%` figure answers a different question, whether any monthly schedule recovers it.
+Quoting one for the other would misstate the result in either direction, so the draft carries both
+with their arms named.
+
+**At `r = 0.005` the standard deviation is still 0.2006 and it is the BIAS, `-0.0241`, that carries
+the rmse over.** That is the substance: drift biases rather than merely widens, so no number of draws
+reduces the second term. The halving time at that rate is **138.6 years**, which is what makes the
+sentence land: the requirement fails on a drift slower than a century's halving.
+
+**What the draft does not claim.** `PHASE11_DRIFT.md` §6, quoted in it: *"It does not establish that
+capacity drifts. Nothing here measures `r`, and the paper's own kinetic argument for constancy is
+untouched."* The passage is a conditional and says so in its own last paragraph.
+
+Three decisions are left to the author and listed in the file: whether it lands, whether it sits
+beside the Tier 1 requirement or with the other scope conditions, and whether its three numbers are
+wired or left as prose under R143's rule.
+
+---
+
+### R165. The decidability result tested against the null-fibre limit: it holds, degraded and bounded, and the sweep found what actually holds the design together
+
+**The author's challenge, and it was the right one to put.** Along the exact fibre,
+`d mu/db = 9.9500` against `d theta/db = 2.5493`, **confirmed analytically and by central
+differences at every capacity, ratio 3.903.** So the margin is nearly four times more exposed to the
+unidentified direction than capacity is, while `sd(mu)` comes out small and small only through a
+3.25x cancellation. **A quantity more exposed to the fibre emerging better determined, by a
+cancellation, is the shape of a result that depends on something incidental.**
+
+`audit/u29_fibre_limit.py` sweeps `LOAD_CV` from the register's 0.10 to zero:
+
+| `theta` | `sd(ln theta)` growth | `sd(mu)` growth | `|mu|/sd` | cancellation |
+|---|---|---|---|---|
+| 3000 | **x1.00** | **x1.15** | 1.87 to 1.63 | 4.00 to 3.51 |
+| 600 | **x1.05** | **x1.27** | 18.81 to 14.79 | 4.31 to 3.61 |
+| 300 | **x1.07** | **x1.27** | 21.62 to 17.01 | 3.81 to 3.26 |
+
+**THE RESULT HOLDS.** `sd(mu)` is the more exposed of the two and the dependence is real, so it is
+stated. But **neither diverges**: both converge by `load_cv ~ 0.002`, `|mu|/sd` degrades by at most
+**21%** and plateaus, the cancellation weakens by 12 to 16% rather than by orders, and **the ordering
+across capacities is untouched.** So the answer sits between the two branches the author framed: not
+independent of the load variation, and not dependent on it in the way that would undermine it.
+
+**AND THE SWEEP FOUND SOMETHING NEITHER BRANCH ANTICIPATED.** Removing the load-bias prior at a
+constant load gives a minimum-to-maximum eigenvalue ratio of **1.41e-19** at nominal and
+**-1.20e-18** at a tenth: **singular to machine precision**, confirming Proposition 4 directly. With
+the prior present it is 1.45e-07. Meanwhile the dose train varies the levels by **162%** at nominal
+and **550%** at a twentieth and **does not break the fibre**, because the fibre is a direction in
+parameter space that level variation alone does not separate.
+
+**So the dependence to state is on `LOAD_FRAC`, a registered constant, and not on `LOAD_CV`.** What
+keeps the constant-load design finite is the prior on the load bias. The load variation is what makes
+the design **prior-free** rather than what makes it possible. That is more useful than the sentence
+the challenge anticipated, because `LOAD_FRAC = 0.05` is a number the specification already asks a
+study to achieve.
+
+**The result is now led by the author's own framing**, which is better than mine was: *moving either
+convention moves all three ratios in the same direction, so the ordering survives any single
+convention and the magnitudes do not.*
+
+**And the `m_tol` correction's REASON is carried, not just its attribution.** The paper's ground for
+calling it the more troubling convention is *"because it is not a fact about the patient at all"*.
+`s_peak` is at least a claim about how ill someone gets; `m_tol` is a claim about what a clinic will
+tolerate. **So the boundary decidability is measured from is partly set by a quantity that describes
+nobody**, which is sharper than "both are conventions" and is what the proposed text should carry.
+
+---
+
+### R166. The constancy passage: all three decisions taken, and the bias argument sharpened from a cost to a ceiling
+
+**The author's rulings.** It lands. It sits **beside the Tier 1 requirement**, not with the scope
+conditions, because the finding is specific to that number and because the delivery pass found this
+paper's characteristic weakness to be qualifications that are present, correct and late. And its
+numbers are **wired**, since they are computed, they can move, and R143's degenerate-macro exception
+does not apply.
+
+**The sharpening, which is the author's and is the strongest sentence available from the result.**
+The excess over the gate at `r = 0.005` decomposes in variance as **0.000240 from the sd and
+0.000581 from the bias, so the bias is 70.7% of it** (verified). That says drift dominates. It does
+not yet say the requirement cannot buy its way out.
+
+**What makes it a ceiling is where the bias comes from.** Round 1 established `bias ~ -r T / 2`, and
+at `r = 0.005` over 118 monthly draws the span is 3587 days, 9.82 years, giving **-0.02455 against
+the reported -0.0241** (verified). **The bias is set by the record's SPAN, not by its COUNT.** So
+more draws inside a fixed window shrink the variance and leave the bias exactly where it was, and
+lengthening the window to fit more draws makes it worse.
+
+**The sentence is therefore not that no number of draws reduces the second term, it is that no
+SCHEDULE reduces it.** That is what makes 118 a boundary rather than a price, and the draft now says
+it that way.
+
+Seven macros are named with their owners, and the draft states that **a generator must be written or
+extended before any is cited** (R141): `u7_drift.py` computes all five drift figures today and emits
+no numbers file.
+
+---
+
+### R167. RETRACTED from R165: the fibre is broken REDUNDANTLY, and my test could not have shown otherwise
+
+**The author removed the two mechanisms separately. I had removed them together.** R165 concluded
+that *"what keeps the constant-load design finite is the prior on the load bias"* and that *"the
+dependence to state is on `LOAD_FRAC` and not on `LOAD_CV`"*. **That does not follow from the test
+that produced it, and it is withdrawn.**
+
+**The refutation was already inside my own table**, which is the part worth recording. R165 printed
+`load_cv = 0.10` with no prior at **7.08e-08** and constant load with the prior at **1.45e-07**,
+both non-singular, and only both-removed at 1.41e-19. **Each single removal was already shown
+harmless and I still attributed the null to one of them.** A both-at-once experiment cannot
+apportion an effect between two factors. That is the oldest mistake in design of experiments and I
+made it inside a file about experimental design.
+
+**One at a time, at the real `load_cv = 0.10`, median over seeds:**
+
+| `theta` | b prior 5% | b prior 1% | **no b prior** | 5%→1% buys | removal costs |
+|---|---|---|---|---|---|
+| 3000 | 0.1543 | 0.1533 | **0.1562** | 0.6% | **1.2%** |
+| 600 | 0.6988 | 0.6800 | **0.7401** | 2.7% | **5.9%** |
+| 300 | 1.2062 | 1.1649 | **1.3008** | 3.4% | **7.8%** |
+
+**Dropping the load-bias prior entirely leaves the design non-singular and costs single-digit per
+cent.** And PART A already showed the mirror case: with the prior in place, taking the load
+variation to zero costs 1.15x to 1.27x and converges.
+
+**So each mechanism alone suffices, and only removing both gives the null. The fibre is broken
+redundantly.** The design does not rest on `LOAD_FRAC` and does not rest on `LOAD_CV`; it rests on
+**either**. **That is a robustness statement where R165 wrote a fragility one**, and it is the
+better result.
+
+**AND IT EXPLAINS A STANDING OBSERVATION.** `08_specification` records that the load-record prior
+sits near 1.05 and does not move. **It does not move because the load variation has already done
+the work.** The prior is buying margin on something the record already determines, which is why
+tightening the diet record from 5% to 1% buys under four per cent everywhere.
+
+---
+
+### R168. The null eigenvector closes a loop: `k_e` is orthogonal to the degeneracy
+
+From the same run, at constant load with no load-bias prior, the null eigenvector in
+`(ln theta, ln K_m, b, ln k_e)`:
+
+| `theta` | eigenvector | `|k_e|` component |
+|---|---|---|
+| 3000 | (+0.0008, −0.0031, **−1.0000**, +0.0000) | **9.25e-15** |
+| 600 | (+0.0042, −0.0031, **−1.0000**, −0.0000) | 3.43e-14 |
+| 300 | (+0.0085, −0.0031, **−1.0000**, +0.0000) | 3.20e-14 |
+
+**The `k_e` component is zero to machine precision at every capacity.** That is `eq:fibrecl`'s
+*"`k_e` unchanged"* read straight out of the eigenvector rather than taken from the algebra, so the
+published fibre now has an independent numerical confirmation.
+
+**And it explains a result that looked unrelated.** `u28`'s margin frontier reports that an exactly
+known `k_e` is **unreachable** for the decision at any prior width in the disease range, which read
+as a curiosity. **The reason is that `k_e` is orthogonal to the degeneracy**: no amount of knowledge
+about `k_e` moves the direction `mu` is exposed along, because that direction has no `k_e`
+component. **Two results that looked unrelated are one fact**, and it is now stated once where both
+are used.
+
+---
+
+### R169. The drift generator, written before its macros are cited, and its own assertion caught a footing error
+
+`audit/u30_wire_drift.py`, per R141 and the author's instruction. `u7_drift.py` computed every
+figure the constancy remark quotes and emitted no numbers file, so the passage's macros would have
+had no generator. **The generator comes first and the passage cites it.**
+
+Every value is obtained by calling `u7_drift.sd_bias`, the function that owns it, rather than
+tabulated from `PHASE11_DRIFT.md`, which is a findings document and not a source.
+
+**THE GENERATOR ASSERTS ITS OWN FOOTING AND THAT IMMEDIATELY CAUGHT A DEFECT.** `drift_rmse_nodrift`
+must return the gate, because 118 is *defined* as the count landing on it. The first version called
+`med_rmse` without `kappa_cv` and the anchor came back **0.1543** instead of 0.20. **Tier 1 needs 118
+draws precisely BECAUSE the delivered increment is characterised only to the published 14.02%**, and
+`PHASE11_DRIFT.md`'s Tier 1 table carries that throughout. The figures without it were entirely
+plausible and computed on a design that is not Tier 1. With `kappa_cv = 0.1402` the anchor returns
+**0.2000** and every other figure matches the published table: sd **0.2006**, bias **-0.0241**, rmse
+**0.2020** over [0.2015, 0.2027].
+
+**This is the u23 assertion pattern paying for itself a second time**, and it is the ninth defect of
+mine this effort caught before anything was published rather than after.
+
+The generator also emits `drift_bias_span_pred`, the ceiling argument's own check: `-r T/2` at the
+record's 9.82-year span is **-0.0246** against the computed **-0.0241**, so a reader sees that the
+bias is set by the span without running anything.
+
+Registered in `GENERATORS` and `make figures`, and the preamble loads `drift.tex` **now rather than
+when the passage lands**, so R152's invariant that every generated numbers file is read stays true.
+The guard reports **24 of 24 loaded**.
+
+---
+
+### R170. The genotype document repeats the retracted breath-test CV, and the failure mode is specific
+
+**First verification finding against the new research document, per the author.** It states
+Manoli's test-retest CV as *"6.9% (controls)/12.8% (patients)"*. **That is the abstract's figure,
+retracted at R4 and confirmed retracted at R59.** The Results give **14.02 +/- 12.86%**, range 0.39
+to 50.84, and the abstract reports the SD as though it were the mean.
+
+**Third encounter, second import from outside.** `refs/reviews_2026-09/README.md` counts the same
+error among the September pack's seven citation errors; `08_specification.tex` already prints the
+correction; `PHASE7_TABLE2_PROVENANCE.md` D10 records that `params.py:133-134` and
+`tab_params.tex` **still carry the retracted figure**, which remains live.
+
+**What it is evidence of, and it is narrower than "unreliable".** The document's Manoli paragraph is
+otherwise accurate: it correctly identifies the study as **MMA not PA**, the enzyme as **MUT not
+PCC**, gives the right n, and draws the right conclusion that no PA study pairs in-vitro activity
+with in-vivo flux. **The error is a copy from the abstract where the Results were needed.** So the
+rule for reading the rest is specific rather than general: **check every figure against its source's
+Results section**; its findings of absence, which are its main contribution, are untouched by this.
+
+---
+
+### R171. What 118 rests on: corroborated but not primary-verified, and where R4's quotations came from is unrecorded
+
+**The author's question, and it is load-bearing**: `u30`'s footing assertion established that Tier 1
+needs 118 draws **because `kappa_cv = 0.1402`**, so the specification's headline count is sized by
+Manoli's increment CV. The repository reports that figure's status two ways.
+
+**SYNTHESIS is not stale. It is right.** `SYNTHESIS.md:122` and `:255` mark the 14.02% unverified,
+and **R59 says so in terms**: *"The argument rests on two quotations this repository has not
+verified... because outbound access to publisher and index records is denied in this container."*
+**This repository has never read Manoli's Results**, and an unbounded search finds no supplied copy.
+The primaries the author did supply (`k1_sources.py`, Phase 5 step 0) cover `LAMBDA` and `D_AMP`,
+not the breath test.
+
+**But the author's second branch, that the 14.02 and the retraction rest on the same weak footing, is
+too pessimistic.** There are **two independent arrivals**. `PHASE2D_CHECKS.md` carries three verbatim
+Results passages plus subject-level causes (eGFR 57 to 43, VCO2 146.0 to 159.2) and a check of the
+published Correction. `refs/reviews_2026-09/05`, supplied **later**, carries the same sentence with
+section pointers, the controls figure, the Correction's DOI and PMID, and **independently flags the
+discrepancy** — as that file's own header in this repository records.
+
+**And the retraction's direction is internally checkable**, which is R59's argument: 12.8 is not a
+rounding of 14.02, it is a rounding of 12.86, and the abstract's two figures come from different
+columns of one table. That needs only the Results numbers both secondaries agree on.
+
+**So: CORROBORATED BUT NOT PRIMARY-VERIFIED.** Stronger than one unverified quotation, weaker than a
+primary read. **SYNTHESIS's label is correct and should not be relaxed.**
+
+**THE GENUINE GAP IS ELSEWHERE, and it is in this audit's own files rather than the paper's.**
+**Where R4 obtained its quotations is recorded nowhere.** R4 predates the September pack, the
+container has no egress, and no supplied copy exists. `PHASE2D_CHECKS.md` presents them under *"I
+take the primary source over the repo's register"* with no statement of how the primary was
+obtained. **A quotation presented as primary with no record of its retrieval is exactly the
+provenance failure this audit exists to catch.** It does not make the number wrong, and the
+corroboration above is why, but the provenance line must not read as a primary check.
+
+**First item for the R4 queue when egress exists**, ahead of the rest, because one retrieval settles
+the figure that sizes the headline count. Full working: `audit/PHASE12_GENOTYPE_REVIEW.md`.
+
+---
+
+### R172. D10 was fixed long ago and I re-reported it as live. A record is evidence that something WAS true
+
+**The author checked `main` before correcting me, and the correction holds on every point.**
+`src/common/params.py:357-358` reads *"the Results give $14.02 \pm 12.86\%$ in patients and $6.9\%$
+in controls; the widely quoted $12.8\%$ is the standard deviation of the per-subject coefficients
+and not their mean"*, and `results/tables/tab_params.tex` reproduces it verbatim. **The only
+occurrence of `12.8` in that table is inside the correction sentence.** The lines I cited,
+`params.py:133-134`, are the **theta row about capacity** and have nothing to do with the breath
+test.
+
+**I carried `PHASE7_TABLE2_PROVENANCE.md` D10 forward without opening the file it names.** D10 is
+struck at its source rather than deleted.
+
+**THE SHAPE, WHICH IS THE PART WORTH KEEPING, AND IT IS THE THIRD INSTANCE.** A defect record
+outlives its defect unless someone strikes it, and **three records of a fixed defect look exactly
+like three records of a live one**. Each time, the record was trusted **because it was written
+down**:
+
+| | the stale record | what checking found |
+|---|---|---|
+| R139 | three unapplied proposed-text sets | much of PHASE4 was already applied |
+| R160 | `u20_staleness.py`'s **nine STALE** passages | the text-based classifier scored **zero** |
+| **R172** | D10's *"`params.py` still prints the retracted 12.8%"* | it has printed the correction for some time |
+
+`OPEN_QUESTIONS.md` section 0 now states it once: **a recorded defect needs re-verification before
+it is re-reported, on the same footing as a recorded claim. A record is evidence that something WAS
+true, not that it IS.** A stale defect is more dangerous than a stale claim, because nobody
+re-checks a problem.
+
+---
+
+### R173. The internal argument for the retraction is suggestive, not arithmetic, and R59 and I both overstated it
+
+**The author's correction, and it is right.** R59 and `PHASE12` both wrote that the abstract's 12.8
+is *"a rounding of 12.86"*. **It is not. 12.86 to one decimal is 12.9.** So the abstract's figure is
+a truncation, or a differently computed number, and not a correct rounding of the Results SD.
+
+**The direction still looks right**: 12.8 is 0.06 from 12.86 and 1.22 from 14.02, and the
+SD-as-mean story explains the confusion where nothing explains 12.8 as a mean of the per-subject
+CVs. **But that is a plausibility argument rather than an identity**, so it does not settle the
+question by itself, and the claim that the retraction's direction is internally checkable **does not
+hold as stated**.
+
+**This makes the retrieval more necessary, not less**, and `kappa_cv = 0.1402` stays first in the R4
+queue. One retrieval of Manoli's Results now settles three things at once: the number that sizes
+118, the provenance of R4's quotations, and whether 12.8 is a truncation or a separate computation.
+
+---
+
+### R174. A live duplicated clause in the supplement, found while verifying the struck record
+
+**Found by the re-verification the author's rule requires**, which is the rule paying for itself in
+the same pass it was written.
+
+`src/common/params.py:358-359`, and therefore `results/tables/tab_params.tex`, reads:
+
+> *"the widely quoted $12.8\%$ is the standard deviation of the per-subject coefficients and not
+> their mean, **and is not their mean**"*
+
+**The clause is doubled.** `08_specification.tex:133-134` carries the same sentence correctly and
+without the repetition, so the two places in the paper that state the correction do not match.
+
+**It renders.** `A2_provenance.tex:45` inputs `tab_params`, so it is in the built supplement, and
+the phrase reads *"...coefficients and not their mean, and is not their mean"* on the page.
+
+**And a check of my own failed first.** I initially reported that the duplication rendered in
+neither PDF. That was wrong: the phrase spans a line break, and a `pdftotext` grep without
+whitespace normalisation missed it. Corrected within the same check by searching again with
+`tr -s`, which is the bounded-search rule applied to my own output rather than to the repository's.
+
+**Not fixed here.** It is one line in the register's annotation text, which generates supplement
+prose, and the paper is frozen. The fix is to delete the four trailing words. Reported for the
+author.
+
+---
+
+### R175. The supplement has never been read, and that is where this class of defect lives
+
+**The author's observation, and it is worth more than the defect that prompted it.** The doubled
+clause was found **by accident, while checking something else**. Not by a guard, and not by a pass
+looking for it.
+
+**And no guard would have caught it.** A doubled clause in generated prose is not a value, not a
+key, not a missing `\input` and not a broken reference. Every check in `tools/check_artefacts.py`
+would pass it, correctly, because nothing about it is inconsistent: the string is exactly what the
+generator produces. **Writing a check for it would be machinery for a class of one**, and the class
+it belongs to, prose that is well-formed and wrong, is not mechanically detectable in general.
+
+**What catches it is a person reading the document.** The delivery pass did exactly that and found
+the paper's three largest delivery problems in 45 pages. **It read `main.pdf` only.**
+
+**`paper/supplement.pdf` is 64 pages and has never been read end to end by this effort.** It is
+larger than the main document. It carries `A1_supplementary` (the fibre calculation and the channel
+exchange proof), `A2_provenance` (the full parameter register, including the row this defect was
+in), `A2_reproducibility`, and the claim register. **Every provenance annotation in the repository
+renders there**, which means it is also where the largest volume of unread generated prose sits.
+
+**So the natural next pass is a supplement delivery pass**, on the same terms as the first: read
+`supplement.pdf` alone, with `audit/`, the main document and every `.py` closed, and report what a
+reader meets. **Not another guard.** R152 was found by compiling and reading a log; this one was
+found by reading a table. The pattern is that **the unread artefact is where the defects are**, and
+the supplement is the largest unread artefact left.
+
+---
+
+### R176. My own miss is the fourth instance of one shape, not a separate lesson
+
+**The author's framing, and it is the correct generalisation.** I reported that the doubled clause
+rendered in **neither** PDF. It renders in the supplement. The grep failed because the phrase spans
+a line break and I had not normalised whitespace; a second attempt with `tr -s ' '` found it
+immediately.
+
+**That is not a new lesson about `pdftotext`.** It is the fourth instance of the shape section 0
+already names: **a search whose bound is invisible in its output.**
+
+| | the invisible bound |
+|---|---|
+| R125 | a default head limit, so a truncated search and an exhaustive one look identical |
+| R93 | a shallow clone, so history answers confidently and wrongly |
+| R157 | a tau grid that never reached the estimator's distribution |
+| **R176** | line wrapping in extracted text, so a phrase present on the page is absent from the grep |
+
+In every case the output is **well-formed and incomplete**, with nothing in it to signal which. The
+four are now listed together in section 0 under the rule they share, rather than as four rules, and
+this one is recorded as **the rule turned on the searcher rather than on the repository.**
+
+---
+
+### R177. The supplement pass: ten self-pointers, two broken promises, one of mine, and a rediscovery
+
+`audit/SUPPLEMENT_PASS.md`. Three parts in the order the author set, the cold read written before
+`main.pdf` was opened. **Not fanned out**: the author's standing rule forbids fan-out for judgement,
+and reading a document for me would destroy the thing the read measures.
+
+**PART 1, the cold read. The supplement is two documents bound as one.** `S1` carries a short set at
+`S1.1`-`S1.12` and a long set at `S1.13`-`S1.20` covering the same material, with **two verbatim
+identical headings** (`S1.7` and `S1.16.5`, both *"What the accessible input costs"*) and two
+near-identical ones. The pairs checked against their bodies are the same argument twice, carrying the
+same figures, numbered as **Remark 4 and Remark 17**.
+
+**Ten pointers send the reader to the document they are holding**, counted with fixed strings:
+`"Appendix S1"` **6**, `"supplement §S1"` **3**, `"the supplement's local-model section"` **1**.
+**Every one is inside Appendix S1.** Three sit in Table S5's last column, the column that discharges
+every assumed constant, so a reader consulting one row for its cost bound is sent to the document in
+their hands, forty pages earlier, with no subsection named. The cause is visible in `S1`'s own title:
+these read correctly before the block was moved into the appendix.
+
+Also: **58 unqualified cross-document references** against 5 that name the main text; the **contents
+page collides from `S1.10` onward** (*"S1.10The Saudi context"*), which is the first page a reference
+reader sees; `S1.1` repeats its heading as its opening words; and `S1.19` poses as **the central open
+question** what `S1.20` answers **in the negative** one page later, with no pointer between them.
+
+**`S2` and `S3` are the strongest writing in the project**, and `S1.20` already does, unprompted,
+what this audit has spent eleven phases enforcing: it preserves superseded text verbatim and states
+item by item what replaced it.
+
+**PART 2, the pointers. 29, enumerated unbounded.** 19 say `\S S1`, which is **49 pages**; 6 say
+`\S S2`; 2 name content; 2 are loose. **Not one names a subsection.** So all 19 resolve to a section
+that exists and holds the material and **locates nothing**, which is why per-pointer verdicts would
+be 19 identical rows, and why a sentence inside `S1` saying *"set out in Appendix S1"* did not read as
+circular to anyone writing it.
+
+**Seven specific promises are kept. Three are not:**
+
+- **`07_design:451`**, *"releases each assumption in turn"*. `S1.16.2` **states** the three
+  assumptions and opens *"stated here and warranted in Appendix S1"*. Searched unbounded for
+  `releases each`, `release each`, `relaxed`, `relaxing`, `released`, `one at a time`,
+  `each assumption`: **all zero**. **The path is main text → \S S1 → "Appendix S1" → nothing.**
+- **`06_excitation:146`**, *"The one-line proof is in the supplement, \S S1"*, of `prop:straddle`.
+  The supplement's three `straddl` hits are a dependency **diagram** cell, a design row name, and an
+  unrelated phrase. **Referred to, not proved.**
+- **`07_design:504`**, *"The evidence for each row is in the supplement, \S S1"*. **MINE, created one
+  pass ago.** R158 found this caption promising absent evidence and fixed it by adding the full
+  admissibility table, **to `\S S4`**, leaving the caption pointing at `\S S1`. Repointed here, on
+  the footing the author granted for the doubled clause: a section number that is factually wrong is
+  neither a claim nor a value, and leaving a pointer I broke is worse than fixing it.
+
+**PART 3, agreement. Five shared figures agree and one does not**, and it is the paper's central
+number. **The main document writes the headline result `0.1699` sixteen times and never `0.170`. The
+supplement writes `0.1699` five times and `0.170` three times**, the three being in the two
+duplicated carnitine remarks and one other place. No number is wrong, `0.170` being a correct
+rounding, **but R142 was a footing conflict decided at the fourth digit** and this session settled
+the profile-marginal question there. **Reported, not fixed: a rounding of a headline value is a
+value.**
+
+**FOUR TIMES IN THIS PASS MY OWN SEARCH HAD AN INVISIBLE BOUND**, which is the shape section 0
+names, and I record the count rather than each instance: a pattern list missing `"supplement §S1"`;
+a regex using `.` against the multibyte `§`; `grep -c` on a whitespace-normalised single-line file,
+which returns 1 however many matches there are; and the first `pdftotext` grep at R174. **Every one
+produced a confident undercount.** The self-pointer total of ten and the `0.1699` counts are the
+figures after switching to fixed strings and `grep -o | wc -l`, and they are the ones to trust.
+
+**WHAT THE PASS IS WORTH, and it is not the defect list.** `S1.19` names `mtol`, `speak` and the
+substrate-to-biomarker map as the three unmeasured quantities making θcrit an operational definition,
+and `S1.20` quantifies the consequence: **θcrit moves by a factor of 24 across their defensible
+range, and the sign of the margin flips for the same patient with perfect data.** R163 wrote θcrit's
+provenance as a precondition on the decidability result as though it were new. **Applied to
+`|mu|/sd(mu)` it is. The arbitrariness and its size were already in print, quantified better than I
+put them, in the document nobody had read.**
+
+**The read and the enumeration found different classes and neither substitutes for the other.** By
+count the author's prediction holds: the enumeration found two broken promises and a precision
+conflict against the read's one structural observation. **By consequence it does not**: the
+rediscovery cost the most and only reading found it.
+
+---
+
+### R178. The S1.20 contradiction resolved by reading, and the answer supersedes both summaries and mine
+
+**The author stopped the defect list for this and was right: the resolution is a third answer.**
+Resolved by reading `S1.16.6`, equations (S35)-(S39), page 33, **not by recomputing**, per the rule
+that a reconstruction usually loses to the paper.
+
+**What the derivation establishes.** The `Km^2` terms cancel identically, so **the margin is LINEAR
+along the unidentified direction where theta is QUADRATIC in it**, which the paper calls being better
+conditioned *"by one order"*. Therefore *"because mu is linear the sign is constant along the whole
+fibre unless the two endpoints disagree"*, and they disagree only for `speak` inside the window
+(S38). *"Outside that window the decision is determined by the data even though theta is not, and at
+the illustrative values theta is unknown there to a factor of 169."* And: *"**The window is narrow
+where it matters.** At `mtol = 40` it is (3.25, 3.77) times the patient's baseline load, **14.8%
+wide**... and an illness of the amplitude the equilibrium reduction draws... **sits well below it
+with mu > 0 at both ends**"*, the width running **1.2% at `mtol = 15`, 14.8% at 40, 67% at 160**.
+
+**So all three prior statements are wrong in different ways.**
+
+| statement | verdict |
+|---|---|
+| `S1.20` and `01_question`: *"the sign of the margin flips for the same patient with perfect data"* | **true only INSIDE the window, and both state it without the window.** As written it reads unconditional |
+| my margin document: *"the sign of mu is robust in the disease range"* | **conclusion right, argument wrong.** I argued it from `|mu|` being large at low capacity; the paper's reason is the cancellation, and better |
+| the author's proposed retreat to relative decidability only | **not required.** The ordering survives and so does the classification outside the window |
+
+**The claim the evidence supports is stronger than the fallback and weaker than the headline:** the
+sign is determined by the data outside a window in `speak` **14.8% wide at the registered `mtol`**,
+and undetermined inside it, where no width of band settles the decision. **The window's width is the
+result, and it is computable per patient from `(a,b)`**, which is what makes it a specification
+rather than a caveat.
+
+**AND THE FACTOR OF 24 HAS NO DERIVATION IN EITHER DOCUMENT.** Searched exhaustively with fixed
+strings over both extracted texts: `"factor of 24"` occurs **twice in total**, once in
+`01_question` and once in `S1.20`, and **neither derives it**; `01_question` sources it to
+*"(supplement, §S1)"*. Every other `24` is unrelated. The theta_crit sensitivities that **are**
+derived are for the **intrinsic** theta_crit and are far smaller: **1.56** over a 32-fold `Kc` range,
+**1.37** over an eight-fold `Mi` range, **1.6%** for `rho_0`. The figure the window derivation
+reports is **169**, and it is uncertainty in **theta**, not in theta_crit.
+
+**This is the third broken promise and the most serious**, because `S1.20` calls the claim it fails to
+support *"the second of the paper's four claims and the reason it ends in a data specification rather
+than a dosing rule."*
+
+**R163 is marked superseded in place** rather than corrected: the dependence it framed as a condition
+is confined to a computable window and is a property of the fibre's endpoints, not of the
+conventions' ranges. What remains new is the application to `|mu|/sd(mu)`.
+
+---
+
+### R179. The duplication is a merge, not a deletion, and the long set is the original main text
+
+**Three questions asked; the third changes the decision.**
+
+**Which is later: the SHORT set.** The long set is not supplement material at all.
+`paper/sections/A1_supplementary.tex` lines **739-745** input `01_biology`, `02_system`,
+`03_dynamic`, `04_local`, `09_validation`, `10_results` and `A1_open` — **seven original main-text
+section files, none of which `main.tex` inputs**. They keep the original numbering, and commit
+`f328ed4` names the operation: *"Rewrite Section 3 at half length, derivations to the supplement."*
+So lines 1-738 are the later purpose-written supplement and 739-745 pull in the earlier originals.
+
+**Which the pointers land in: neither.** All 19 say `\S S1`, spanning both, so they cannot
+distinguish them. A reader following one meets the short set first, pages 3 to 12.
+
+**Does either contain what the other lacks: BOTH DO, so it is a merge.** The overlap is **four
+subsections, not two sets**: `S1.5`-`S1.8` against `S1.15.7`, `S1.15.8`, `S1.16.5`, `S1.16.8`. Unique
+to the short set: the two published PK/PD models, the excitation derivations, the two conditionings,
+invariance under monotone rescaling, the Saudi context, what separates two channels, why the priors
+are what they are. Unique to the long set: the biology, Table S1's notation, the dynamic model
+including the intrinsic theta_crit, the local model **including the window derivation R178 turns
+on**, the validation protocol, the figures, and `S1.19`-`S1.20`.
+
+**And within the four pairs neither side is a subset.** `S1.7` carries the therapy's forty-two-fold
+excitation and the reach argument that `S1.16.5` lacks; `S1.16.5` carries Proposition 4's
+informational-against-statistical distinction that `S1.7` lacks. **Deleting either loses material.**
+
+So the decision is narrower and harder than which set goes: **four pairs to merge, ~19 subsections to
+leave alone.** The one clean deletion available is the duplicate remark numbering: one argument should
+not be both **Remark 4 and Remark 17**.
+
+---
+
+### R180. Two unkept promises withdrawn, not fixed, on the author's call
+
+**`07_design.tex`**: *"The supplement, \S S1, releases each assumption in turn."* **Removed.**
+**`06_excitation.tex`**: *"The one-line proof is in the supplement, \S S1."* **Removed.**
+
+**Withdrawn rather than fixed, per the author**: a sentence promising material that exists nowhere is
+worse than silence, and writing the material to match the promise would be letting a dangling
+sentence set the agenda. Both are recorded here as **withdrawn**, so the record says the promise was
+retracted and not that the gap was filled.
+
+**`S1.19` and `S1.20` are one item, not two**, and R178 handles them: `S1.19` poses the well-posedness
+question as central and open, `S1.20` answers it in the negative a page later, and **the derivation
+says both summaries overstate it.** The fix is not a pointer between them but a correction to what
+each claims.
+
+**Section 0 gains a search PROCEDURE rather than another principle**, per the author, after eight
+instances of the invisible bound: fixed strings with `grep -oF | wc -l` and never `grep -c`; no regex
+metacharacter against a multibyte character; check a pattern against a known-matching line before
+trusting a zero; normalise whitespace before searching prose; state the corpus and that no limit
+applied.
+
+---
+
+### R181. A wrong count in a committed finding, and it is the fifth invisible bound of the pass
+
+**R177's Part 3 published *"main 0, supplement 3"* for the headline result written as `0.170`. Both
+figures are wrong.** Corrected here, and the corrected finding is **sharper** than the wrong one.
+
+**How the error happened, because it is the point.** The Part 3 table was built twice. The first
+attempt used `grep -c`, which counts matching LINES and therefore returns 1 on a whitespace-normalised
+single-line file however many matches exist; I caught that, rebuilt the table with
+`grep -oF | wc -l`, and **the corrected table did not contain a `0.170` row at all.** The `0/3` I
+published came from the discarded broken table, where the pattern also carried a trailing space.
+**So the number reached a committed document from a table I had already thrown away.**
+
+**And `-F` alone would not have saved it either**, because `0.170` is a prefix of `0.1701` and
+`0.1709`: `grep -oF "0.170"` returns **9 in the main text and 7 in the supplement**. The count needs a
+boundary: `grep -oE "0\.170([^0-9]|$)"`.
+
+**The true counts: main 3, supplement 4.**
+
+| | `0.1699` | `0.170` | what the `0.170`s are |
+|---|---|---|---|
+| main | **16** | **3** | a *"0.170 baseline"* in an offset comparison; the low end of *"between 0.170 and 0.177"*; another design's value. **None is the headline result** |
+| supplement | **5** | **4** | **all four are the headline result**, including one that hand-types the point estimate while wiring its own range |
+
+**The finding survives and improves.** The disagreement is real, one-sided, and four places rather
+than three: the supplement writes the paper's central figure at three digits four times and the main
+document never does. **The wrong count had hidden that main's three are different quantities**, which
+is exactly what would have made a naive fix wrong.
+
+**FIXED on the author's instruction** that a wired value should not also exist as a rounding. All four
+supplement-side occurrences are now `\num{sd_monthly}`: `04_local.tex:525`, `:690`,
+`A1_supplementary.tex:389` and `09_validation.tex:103`. Standalone `0.170` in the built supplement
+goes **4 to 0**, `0.1699` goes **5 to 9**, and it rebuilds at 64 pages with 0 errors and 0 unresolved
+references. **The main document's three are left alone.**
+
+**Five instances in one pass, and this is the one that matters**: the other four cost a re-run, this
+one cost a wrong number in a committed findings document. The section 0 procedure written one commit
+ago would have caught it at step 1, `never grep -c`, and at step 3, **check the pattern against a line
+you know matches before trusting a zero**. I wrote the procedure and then did not apply it to a figure
+already in hand.
+
+---
+
+### R182. The supplement carried the pre-R155 title, the contents collision is fixed, and my finding (b) overstated
+
+**Three things, found while fixing the contents page, and one is mine from two passes ago.**
+
+**(a) THE SUPPLEMENT'S TITLE WAS STALE AND I MADE IT SO.** `paper/supplement.tex` read *"for The Dose
+Train is the Identification Experiment: **Estimating Residual Enzymatic Capacity in Propionic
+Acidemia**"*. **R155 retitled the main document and did not touch this**, so for two passes the
+supplement carried the old subtitle, which names the one thing Section 7 concludes cannot be done and
+which R155 changed precisely because it promised an estimation study containing no patient data.
+**Matched to the main document here.**
+
+**It is also a Part 3 miss.** Part 3 compared shared **figures** between the documents and found one
+disagreement. It did not compare **titles**, and the largest cross-document disagreement in the
+project was on the front page of both.
+
+**(b) THE CONTENTS COLLISION IS FIXED.** `article`'s `\numberline` boxes are 2.3em for subsections and
+3.2em for subsubsections, which fit `1.10` but not `S1.10`, and nothing fits `S1.15.7`. Widened to
+3.6em and 4.8em in `supplement.tex` rather than in `preamble.tex`, because the main document has no
+contents page. *"S1.10The Saudi context"* now reads *"S1.10 The Saudi context"*, and `S1.13.1` and
+`S1.15.7` separate cleanly. Rebuilds at 64 pages, 0 errors.
+
+**(c) MY COLD-READ FINDING (b) OVERSTATED, AND IS SOFTENED.** I wrote that 58 cross-document
+references *"do not say they are cross-document"*. **The supplement does state the convention**, once,
+on the page before the contents: *"Section numbers in this document carry an S. References to numbered
+results without an S point into the paper."* **I missed it**, which is the cold read's own
+bounded-search failure and the sixth of the pass.
+
+**What survives is narrower and still real**: the rule is stated once, at the front, and never
+repeated, which is right for a read-through and wrong for a reference. A reader arriving at `S1.16.3`
+from a main-text pointer has not passed the front matter. **The defect is placement, not absence**, and
+the fix is a running reminder rather than 58 edits.
+
+**The pattern across (a) and (c) is the same one this pass keeps producing**: a claim about a document
+made without checking the one page that settles it. (a) is a change I made and did not propagate;
+(c) is a page I did not read before asserting what it lacked.
+
+---
+
+### R183. The eighteen pointers repointed, and a guard so they cannot rot, which caught two of my own
+
+**The last of the author's five mechanical items, and it was not mechanical.** *"Repoint the 19
+section-S1 pointers at subsections"* sounds like a substitution. It is not one: `\S S1` is a single
+string with eighteen different correct replacements, and each one has to be found by reading where the
+promised material actually sits.
+
+**FIRST, THE COUNT WAS WRONG, AND IT WAS MINE.** Eighteen, not nineteen. The nineteenth was
+`07_design.tex`'s caption, which R181 had already repointed at `\S S4`. **A recorded count needs
+re-verification before it is re-used**, which is the rule R172 put in section 0, applied here to my own
+figure rather than to a defect.
+
+**THE EIGHTEEN, AND WHERE EACH LANDED.** Located by reading the supplement, one at a time.
+
+| Pointer | What it promises | Target |
+|---|---|---|
+| `01_question:70` | $\thc$ a convention, factor of $24$, sign flips | `S1.20` |
+| `01_question:99` | background, clinical course, $\theta$ as decision variable | `S1.13.1` to `S1.13.3` |
+| `02_model:8` | derivations, rejected alternatives, the checks | `S1.3`, `S1.18.2`, `S1.15.5` |
+| `02_model:93` | block diagram, positive feedback | `S1.15.1`, `S1.15.2` |
+| `02_model:177` | intrinsic $\thc$, the fold, the ceiling comparison | `S1.15.6`, `S1.18.3`, `S1.18.2` |
+| `02_model:232` | with $K_m$ free the channels are not interchangeable | `S1.11.1` |
+| `06_excitation:98` | the argument behind `eq:columns` | `S1.3` |
+| `06_excitation:231` | channel exchange, proof and cost | `S1.11.1` |
+| `06_excitation:254` | the null vector's derivation | `S1.3` |
+| `07_design:59` | why the two priors divide as they do | `S1.12` |
+| `07_design:98` | the design table with the dropped-increment column | `S1.17.2` |
+| `07_design:265` | the same footing | `S1.17.2` |
+| `07_design:619` | the validation protocol | `S1.17.2` |
+| `07b_decision:94` | the margin theorem's fibre calculation | `S1.16.6` |
+| `08_specification:381` | the load-record prior holding the weak direction | `S1.12` |
+| `08_specification:472` | the null-genotype anchor | `S1.16.7` |
+| `11_scope:306` | both marker structures worked through | `S1.2` |
+| `12_discussion:164` | the channel-exchange result | `S1.11.1` |
+
+**TWO CANDIDATE TARGETS FAILED ON READING, AND BOTH WOULD HAVE PASSED ON PLAUSIBILITY.**
+
+`08_specification:381` promises *"the load-record prior holds about $1.05$ there"*. The only `1.05` in
+the supplement is `04_local.tex:116`, and it is **a different quantity**: the factor by which a
+two-marker panel cuts $\sigma$ at a load recorded to $10\%$. Matching on the number would have produced
+a confident pointer to unrelated arithmetic. The claim's *mechanism* is in `S1.12`, which is where it
+now points. **The `1.05` itself has no owner in either document** and is a candidate finding, not
+something this round fixed.
+
+`11_scope:306` promises both marker structures worked through. `S1.6`, *"The testable discriminant"*,
+is the obvious guess and is **the wrong discriminant**: it separates the ceiling from the fold, not an
+algebraic marker from a marker that is a state. The right target is `S1.2`, which names the difference
+and says what to look for *"in any third structure"*, which is exactly the sentence's claim.
+
+**ONE POINTER WAS AIMED AT THE WRONG DOCUMENT ENTIRELY.** `01_question:99` promised *"the full constant
+registry"* in `\S S1`. The registry is `\S S2`, *"Provenance of every constant"*. A pointer can be
+wrong by section and also by **document**, and nothing in the pass before this one asked that question.
+
+**THE FIX CREATES THE HAZARD, SO THE GUARD CLOSES IT.** `\S S1.16.6` is literal text. The two documents
+compile separately and neither loads the other's `.aux`, so `\ref` is not available and the number
+cannot resolve. A literal number is correct until the supplement is reordered, at which point it
+**silently names the wrong subsection**, which is worse than naming nothing: an unresolved reference
+prints `??` and a stale one prints a plausible number. LaTeX cannot see this, because there is nothing
+for it to resolve, which is why eighteen of them survived every build and every test.
+
+`check_supplement_pointers()` derives the supplement's numbering from the `.tex` sources and fails on
+two things: a pointer to a number that does not exist, and **a pointer to a section that has numbered
+subsections**, which is R179's original defect. `DECLARED_COARSE_POINTERS` is the escape hatch and it
+is empty, because the alternative is to let the defect back in one pointer at a time.
+
+**IT CAUGHT TWO OF MINE ON FIRST RUN.** `\S S1.13` and `\S S1.17` both have children, and in both cases
+the more precise target is the right one: `S1.13`'s three subsections are exactly the three things that
+sentence names, in order, and the validation protocol proper is `S1.17.2` rather than `S1.17`, which
+also contains the objection. **A check written for eighteen old pointers failed two new ones written
+minutes earlier.**
+
+**AND THE INDEPENDENT RE-CHECK CAUGHT A DEFECT IN THE GUARD.** The rule is one re-check sharing no code
+path, so the source walk was compared against `supplement.toc`, which LaTeX writes from its own
+counters. **They disagreed: 50 against 49.** The walk counted `\section{Claim register}`, which sits
+inside `\ifshowregister`, a flag `preamble.tex` declares false and sets true only when `\overfullrule`
+is positive. A static parse cannot evaluate `\ifdim`, so `_drop_conditionals()` now treats a
+conditional block as absent from the default build, fails safe on unbalanced nesting and reports which
+files it left alone. **The two paths now agree on all 49 numbers and their kinds.**
+
+Had the comparison been skipped, the guard would have shipped reporting a number that was wrong by one
+and would have kept reporting `ARTEFACTS MATCH THE CODE`. The consequence is bounded here only by
+accident: the conditional section is the **last** one, so excluding it shifts no number a pointer names.
+
+**State.** 36 pointers checked against 49 numbered sections, self-test PASS. No bare `§S1` anywhere in
+the rebuilt `main.pdf`. Both documents 0 errors, 0 unresolved, 45 and 64 pages. 102 tests pass and the
+guard reports `ARTEFACTS MATCH THE CODE`.
+
+**What this round says about the method.** The item the author called mechanical produced two wrong
+targets that plausibility would have accepted, one pointer aimed at the wrong document, a miscount of
+my own figure, and a defect in the check written to prevent all of it. **Mechanical was the wrong
+word, and the way that became visible was reading the destination rather than the pointer.**
