@@ -257,3 +257,47 @@ disposal**, each to a few per cent. Neither was located and this container canno
 signs, and which `audit/PHASE4_PI.md` section 3.2 owns. Section 0's "find the owner before
 recomputing" was not followed. The cost was small because the re-derivation agreed; the rule
 exists for the case where it would not have.
+
+---
+
+## 10. Round 3 of Phase 11, and the two decisions now closed
+
+Working in `audit/PHASE11_KE_MEASUREMENT.md`; `REVIEW_LOG.md` R111 to R115. Proposed
+wording in `audit/PHASE11_PROPOSED_TEXT.md` sections 10 to 12, **unapplied**.
+
+**(g3) and (g4) are CLOSED by the author.** The gate is stated against the profile, and
+Tier 1 is restated with a margin in the frontier's currency. Two things follow that the
+decisions themselves do not say:
+
+- **The recommended design no longer passes its own gate.** Its profile is 0.2002 against
+  0.20. By two ten-thousandths, but on the object the target is now stated against, and
+  that should be stated rather than absorbed.
+- **The margin's size in (g4) is left blank in the proposed text.** This work can price
+  each candidate margin in draws; it cannot say how much margin the study should buy. That
+  is the one thing (g4) still needs.
+
+**A correction to the paper, not to the audit.** `src/common/params.py:206` says the design
+needs `k_e` "within a factor of about three". The number is right and its macro is wired;
+what it lacks is the capacity qualifier. The same requirement is **7.0x tighter at a fifth
+of nominal and 17.4x tighter at a tenth**, and unreachable at a twentieth for a different
+reason. Proposed wording in `PHASE11_PROPOSED_TEXT.md` section 12.
+
+**The `k_e` measurement question is reopened and not closed.** R107 closed the timed urine
+collection, not the object: `k_e` is a relaxation rate and a rate is read off a curve, so
+the units objection never arises. Three routes are now priced against one frontier:
+
+| route | verdict |
+|---|---|
+| timed urine collection | blocked, and not on precision |
+| prescribed carnitine modulation | open but weak, 0.469 against 0.063 |
+| **sub-daily burst on a prescribed load step** | **open, short by 1.1 to 1.8 at sixteen admissions and a 1% assay** |
+
+**Two traps recorded so they are not re-run.** The dose is the wrong perturbation: it
+suppresses `k_e`'s share of the relaxation rate from 0.55 to 0.08, and sixteen post-dose
+inpatient days buy two per cent. And the load step that would close the gap takes the
+marker above the paper's own `m_tol`, while the step that respects `m_tol` buys almost
+nothing; the safe direction is a fast.
+
+**One gate added.** A **1% marker assay in an inpatient series** is asserted as plausible
+and not sourced. It is the input the burst route's verdict is most sensitive to, and it
+joins the home-microsampling CV, the tracer bolus size, and the `V_d`/renal-share pair.

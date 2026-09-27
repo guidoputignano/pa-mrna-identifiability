@@ -332,3 +332,139 @@ One sentence, because it is a protocol fact with an exact justification.
   negative result about a lever the paper never proposes, so it belongs in the audit record
   and in `OPEN_QUESTIONS.md`, not in `sec:whoto`, whose existing carnitine argument is
   untouched and correct on its own ground.
+
+---
+
+## 10. DECISION (g3), SETTLED BY THE AUTHOR: the gate is stated against the profile
+
+**The author's ruling**, recorded here because it changes what several numbers mean: *the
+gate is the profile.* It is the object that does not assume the quadratic approximation
+`audit/u12_prior_quadratic.py` part B shows fails at the paper's own prior width, and the
+asymmetry runs the unsafe way, so a symmetric interval understates the lower tail. All
+three objects are to be recorded at the recommended design; the **gate** is the profile.
+
+**This supersedes section 7 above**, which proposed the caveat as a remark without
+resolving which object the gate means. The remark is still wanted; what changes is that it
+now states an answer rather than opening a question.
+
+### What it does to the headline claim, stated plainly because it is not small
+
+| design | Fisher marginal | simulated spread | **profile, the gate** | verdict against 0.20 |
+|---|---|---|---|---|
+| recommended, 25 monthly, nominal | 0.1695 | 0.1777 | **0.2002** | **does not meet it** |
+| Tier 1, 118 monthly | 0.2000 | — | **0.2270** | does not meet it |
+
+**The recommended design no longer passes its own gate**, by 0.0002. That is the
+consequence of the ruling and it should be stated as such rather than absorbed.
+
+### Proposed, replacing section 7's remark
+
+> \begin{remark}[Which interval the target is stated against]
+> \label{rem:whichinterval}
+> Every precision in this paper is the square root of a diagonal entry of an inverse
+> information matrix: a curvature at the optimum. That equals a likelihood interval's
+> half-width only when the log-posterior is quadratic, and at the $k_e$ log-prior of
+> $\num{ke_prior_pct}\%$ carried throughout it is not. Profiling the same posterior over
+> $\ln\theta$ at the recommended design gives half-widths of $\num{profile_lo_nominal}$
+> below and $\num{profile_hi_nominal}$ above, against a Fisher $\num{sd_monthly}$ and a
+> simulated sampling spread of $\num{sim_spread_nominal}$. The asymmetry is a function of
+> the prior width and not of the design, disappearing by a width of $\num{quad_width}$, so
+> it attaches to every figure computed at the width this paper uses.
+> \textbf{The target of $0.20$ is stated against the profile}, because it is the object
+> that does not assume the approximation just shown to fail, and because a symmetric
+> interval understates how far capacity may fall below the estimate, which is the tail a
+> threshold decision turns on. On that reading the recommended design returns
+> $\num{profile_nominal}$ and does not meet the target; the Fisher figure quoted elsewhere
+> in this paper is retained as the design quantity it is, and is not the gate.
+> \end{remark}
+
+| macro | value | owner |
+|---|---|---|
+| `profile_nominal` | 0.2002 | `audit/u12_prior_quadratic.py` |
+| `sim_spread_nominal` | 0.1777 | `audit/u4_recheck_breath.py` |
+
+---
+
+## 11. DECISION (g4), SETTLED BY THE AUTHOR: Tier 1 restated with a margin
+
+**The author's ruling**: restate Tier 1 with a margin rather than as the boundary, and use
+the frontier as the currency, since a count defined to land exactly on the target has no
+way to express one.
+
+**Why the frontier is the right currency.** "118 draws" is the solution of an equation, so
+any margin added to it is arbitrary. The frontier is a requirement on an input, so a margin
+on it is a statement about how well something must be known, which is the form a protocol
+can act on and a measurement can be judged against.
+
+### Proposed, replacing section 6 above
+
+> \paragraph{Stated as a requirement rather than as a boundary.} The count above is the
+> solution of $\operatorname{sd}(\ln\hat\theta) = 0.20$, so it lands on the target by
+> construction and carries no margin against anything this model leaves out. Three such
+> things are known and each exhausts it alone: a drift in capacity of order one per cent a
+> year over the decade the record spans; the gap between a Fisher standard deviation and
+> the profile the target is now stated against, $\num{profile_gap_tier1_pct}\%$ at this
+> footing (Remark~\ref{rem:whichinterval}); and the constancy assumption itself, since
+> Section~\ref{sec:local} warrants $\theta$ constant over the afebrile range and this row
+> spends ten years of it.
+>
+> \textbf{The requirement is therefore stated on the input rather than on the count.} At
+> nominal capacity the design reaches the target when $k_e$ is known to
+> $\num{ke_frontier_3000_pct}\%$; specifying it to $\num{ke_spec_3000_pct}\%$ leaves the
+> margin the count cannot express. At a fifth and a tenth of nominal the same requirement
+> is $\num{ke_frontier_600_pct}\%$ and $\num{ke_frontier_300_pct}\%$, and at a twentieth
+> no precision on $k_e$ suffices at all. A protocol should carry the input requirement and
+> derive the count, not the reverse.
+
+| macro | value | owner |
+|---|---|---|
+| `ke_frontier_3000_pct` | 80.0 | `audit/u9_ke_frontier.py` |
+| `ke_spec_3000_pct` | *author's choice of margin* | — |
+| `ke_frontier_600_pct` | 15.7 | `audit/u9_ke_frontier.py` |
+| `ke_frontier_300_pct` | 6.3 | `audit/u9_ke_frontier.py` |
+
+**The margin's size is the author's to set and is deliberately left blank.** This work can
+say what each candidate margin costs in draws; it cannot say how much margin the study
+should buy.
+
+---
+
+## 12. `src/common/params.py`, the `k_e` row: the capacity qualifier
+
+The only change proposed to the register, and it is the one `audit/u13` establishes.
+
+### Current, at `:206`
+
+> Section~\ref{sec:designsec} needs it within a factor of about three, and \textbf{no
+> independent measurement in humans supplies it}.
+
+### Proposed
+
+> Section~\ref{sec:designsec} needs it within a factor of $\num{ke_needed_factor}$
+> \emph{at nominal capacity}, and within $\num{ke_frontier_600_factor}$ and
+> $\num{ke_frontier_300_factor}$ at a fifth and a tenth of it, which is where the clinical
+> question is; below that no precision on this constant suffices, because the increment's
+> own prior floors the design above the target. \textbf{No independent measurement in
+> humans supplies any of them.}
+
+| macro | value | owner |
+|---|---|---|
+| `ke_needed_factor` | 2.67 | `src/design/run.py`, already wired |
+| `ke_frontier_600_factor` | 1.17 | `audit/u9_ke_frontier.py` |
+| `ke_frontier_300_factor` | 1.07 | `audit/u9_ke_frontier.py` |
+
+**Note the rounding trap.** At these widths a factor and a log-sd diverge: 1.07 as a factor
+is 6.3% as a log-sd, and a reader who reads "a factor of 1.07" as "about one" has lost the
+requirement entirely. The register may be better served stating the log-sd directly, which
+is the form the frontier is computed in and the form a prior is specified in.
+
+---
+
+## 13. Still NOT proposed
+
+- **No change to any existing number.** §12 adds qualifiers to a correct figure.
+- **Nothing about the `k_e` measurement routes reaches the paper.**
+  `audit/PHASE11_KE_MEASUREMENT.md` §2 prices three of them and closes none cleanly; that
+  belongs in the audit record and in `OPEN_QUESTIONS.md` until one of them is costed
+  against a real assay.
+- **No wiring**, as before.

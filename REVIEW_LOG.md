@@ -4678,3 +4678,124 @@ paper says 118, which is not an error but is not an anchor either. Matching
 
 Both belong with R101's family: **the check that catches this class is an anchor to a number
 someone else already owns**, not a re-reading of the code.
+
+---
+
+# Phase 11, round 3. The register's own requirement, and the one route to `k_e` whose obstacle is cost
+
+*Working in `audit/PHASE11_KE_MEASUREMENT.md`. Proposed wording in
+`audit/PHASE11_PROPOSED_TEXT.md` sections 10 to 12, **unapplied**. Scripts `audit/u13` and
+`audit/u14`. No literature, no network, no fan-out, no scheduled check-ins. Nothing under
+`paper/` is changed.*
+
+**Round 2's three corrections all confirmed by the author**: `eq:invariants` is in print so
+the sign never needed pinning, the carnitine mechanism is refuted, and the frontier
+reproduces.
+
+### R111. The register understates its own requirement by 7 to 17 times, and the number is not wrong
+
+`src/common/params.py:206`, the `k_e` row of the register **that generates the paper's
+parameter table**, says of the parameter it calls "the priority gap" that
+`sec:designsec` "needs it within a factor of about three".
+
+**The owner was located before recomputing this time.** `src/design/run.py`
+`spec_numbers()` solves `brentq(sd_of(monthly, ke_prior=x) - 0.20)` at the module default
+`P.theta = 3000`. So the published figure is the **nominal-capacity** requirement on the
+25-draw record. It returns a log sd of **0.9803**, a factor of **2.665**, against
+`audit/u9_ke_frontier.py`'s **0.9815** at the same footing: two code paths, one quantity,
+**0.12% apart**. `07_design.tex:60` is already wired to the macro and prints 2.67. **Nothing
+here is a wrong number, and PHASE7's reading of "2.95" was stale.**
+
+**What is wrong is that the requirement has a capacity axis and is stated without one.** On
+the Tier 1 record the frontier is 0.8001 at nominal, **0.1567 at a fifth of nominal and
+0.0633 at a tenth**, and unreachable at a twentieth. Against the prose "about three"
+(`ln 3 = 1.0986`) that is **7.0x and 17.4x tighter**; against the generated 2.67, 6.3x and
+15.5x.
+
+**The reader this misleads is the one costing the measurement**: "a factor of about three"
+reads as an ask a literature bound might satisfy and a factor of 1.07 does not. And one row
+below the live range the axis changes character, from a measurement requirement to a
+structural limit, which a single unqualified factor cannot express either way.
+
+### R112. `k_e` is a relaxation rate, and the units objection does not reach it
+
+R107 closed the timed urine collection on units, channel coverage and species. **Those close
+a collection, not the object.** `params.py`'s own `k_e` row says `k_e = 5/day` is "a marker
+half-life of `ln2/5 = 0.139 d`, about 3.3 hours". A relaxation rate is read off a
+concentration-time curve: no volume of distribution, no collection completeness, no species
+extrapolation. **R107's first count does not apply to a curve at all**, and R107 should be
+read as closing one instrument rather than the quantity.
+
+**And the local model cannot see it at any density**, confirmed rather than assumed: the
+same 118 samples reallocated from monthly to three-hourly move `sd(ln k_e)` from 0.7971 to
+0.7968 at nominal and 0.5425 to 0.5221 at a tenth of it. `eq:local` is a balance with no
+state, so it has integrated the relaxation away and answers no by construction.
+
+### R113. The dose is the wrong perturbation, and the flux share is the wrong diagnostic
+
+The favourable-looking quantity is `k_e`'s share of the **flux**, 15.5% / 52.8% / 70.8% /
+83.7% as capacity falls. **A relaxation measurement does not depend on it.** It depends on
+`k_e`'s share of the **relaxation rate** `J = (theta + Delta) g'(m) + k_e`, and the dose
+adds the very enzyme term `k_e` competes with in `J`:
+
+| theta | `k_e/J` at the trough | `k_e/J` just after a dose | flux share |
+|---|---|---|---|
+| 600 | 0.438 | 0.072 | 0.510 |
+| 300 | **0.552** | **0.076** | 0.686 |
+| 150 | 0.626 | 0.077 | 0.819 |
+
+**The dose suppresses it by a factor of seven.** And the cost lands exactly there: at
+`theta = 300`, **sixteen inpatient days each spanning a dose move `sd(ln k_e)` from 0.5430
+to 0.5277**, about two per cent. The route is not weak; the placement is wrong. *Two
+quantities that both read as "how much of the elimination is `k_e`" are not the same
+number, and only one of them is the one a relaxation measures.*
+
+### R114. Perturbing at the trough works, and the tolerable level caps it
+
+A prescribed load step at the trough, one 24 h hourly burst on the Tier 1 record, takes
+`sd(ln k_e)` from 0.5430 to **0.2846** at `theta = 300` at a +50% step. **One such day is
+worth what sixteen post-dose days are not.**
+
+**But the direction that helps most raises the marker.** `src/common/params.py` sets
+`m_tol = 40` uM, and the largest step whose whole burst stays under it is **+40% at
+`theta = 600`, +15% at 300 and +5% at 150**, buying 0.4635, 0.4798 and 0.4546 against
+no-burst values of 0.6565, 0.5430 and 0.4721. **The amplitude that would close the gap is
+the one the clinic exists to prevent, and the amplitude that respects the paper's own
+tolerable level buys almost nothing.**
+
+**A fast is the safe direction** and it works: 0.5430 to 0.3685 in one admission at
+`theta = 300`.
+
+**The route is assay-limited, not physics-limited**, which is the favourable half. A 50%
+fast with a 1% burst assay gives, over 1 to 16 admissions, 0.2005 to **0.1121** at
+`theta = 300` against a frontier of 0.0633, and 0.2780 to **0.1683** at 600 against 0.1567.
+
+**So the verdict is neither the yes the route promised nor the no the collection got.** It
+is the only one of the three priced routes whose obstruction is a cost rather than an
+unmeasured constant or a dose nobody would give, and it is still short by a factor of one
+to two at a price of sixteen admissions and an assay no clinic runs today. **A 1% marker
+assay is asserted as plausible in an inpatient series and not sourced; it joins the gate
+list as the input the conclusion is most sensitive to.**
+
+### R115. Two decisions settled by the author, and what the first one costs
+
+**(g3) The gate is stated against the profile.** It is the object that does not assume the
+quadratic approximation R109 shows fails at the paper's own prior width, and the asymmetry
+runs the unsafe way. All three objects are recorded at the recommended design; the gate is
+the profile.
+
+**That has a consequence which should be stated and not absorbed: the recommended design no
+longer passes its own gate.** The profile at the recommended design is **0.2002** against a
+target of 0.20. By two ten-thousandths, but on the object the target is now stated against.
+
+**(g4) Tier 1 is restated with a margin, in the frontier's currency.** A count that solves
+`sd = 0.20` lands on the target by construction and any margin added to it is arbitrary; a
+requirement on an input is a statement about how well something must be known, which a
+protocol can act on and a measurement can be judged against. The margin's size is the
+author's to set and the proposed text leaves it blank rather than inventing one.
+
+**A rounding trap in the new currency, recorded before it bites.** At these widths a factor
+and a log sd diverge: the frontier at a tenth of nominal is a factor of **1.07** and a log
+sd of **6.3%**, and a reader who reads "a factor of 1.07" as "about one" has lost the
+requirement entirely. The register may be better served stating the log sd directly, which
+is the form the frontier is computed in and the form a prior is specified in.
