@@ -1,94 +1,93 @@
 % ---------------------------------------------------------------------
 \section{$A$, $B$, $C$ and what they mean (new figures)}
 
-\Q What does each invariant of equation (5) mean physically, and why is the capacity the one
-that disappears?
+\Q What does each invariant mean, and why is the capacity the one that disappears?
 
-\D Both figures are drawn by \texttt{fig\_abc.py} from the repository's model code at the
-Table 2 constants: $\theta=\rn{calc.theta}$, $K_m=\rn{calc.Km}$, $k_e=\rn{calc.ke}$,
-$\bar m=\rn{calc.mbar}$, $D=\rn{calc.D}$, $T=\rn{calc.T}$~d, $t_{1/2}=\rn{calc.thalf}$~d and
-$L=\theta g(\bar m)+k_e\bar m=\rn{calc.L}$. The increment that holds the marker at $m$ follows
-from the steady-state balance $L+b=(\theta+\Delta)\,m/(K_m+m)+k_e m$, giving
-$\Delta(m)=A/m+B+Cm$ with $A=K_m(L+b)$, $B=L+b-\theta-k_eK_m$ and $C=-k_e$.
+\D Both figures come from \texttt{fig\_abc.py} and the repository's model code at the
+Table~\rn{new.tab.params} constants $\theta=\rn{calc.theta}$, $K_m=\rn{calc.Km}$,
+$k_e=\rn{calc.ke}$, $\bar m=\rn{calc.mbar}$, $D=\rn{calc.D}$, $T=\rn{calc.T}$~d,
+$t_{1/2}=\rn{calc.thalf}$~d, $L=\theta g(\bar m)+k_e\bar m=\rn{calc.L}$. The balance
+$L+b=(\theta+\Delta)m/(K_m+m)+k_e m$ gives $\Delta(m)=A/m+B+Cm$, $A=K_m(L+b)$,
+$B=L+b-\theta-k_eK_m$, $C=-k_e$.
 
 \F Every check value reproduces: $A=\rn{calc.A}$, $B=\rn{calc.B}$, $C=\rn{calc.C}$, untreated
-$m=\rn{calc.m_untreated}$, and $\Delta(\rn{calc.mwf})=\rn{calc.delta6}$.\footnote{The request
-gave $\Delta(6)=2171$; the repository's value is $\rn{calc.delta6}$, and that is what is
-printed here. Where a check value and the repository disagree, the repository wins and the
-list at the end records it.} At $\theta=\rn{calc.theta_dis}$: $B=\rn{calc.B_dis}$ and untreated
-$m=\rn{calc.m_untreated_dis}$, a ratio of $\rn{calc.m_ratio_dis}$ against normal capacity,
-matching the $\rn{lnew.scope_5pct_ratio}\times$ of Table 13. The twin at
-$b=\rn{calc.twin_b_last}$ has $\theta=\rn{calc.twin400_theta}$ and $K_m=\rn{calc.twin400_km}$,
-with relaxation $\rn{calc.relax_b400}$ against $\rn{calc.relax_b0}$~d$^{-1}$, which are the
-paper's own two values in §4.1 ($\rn{lnew.relax_b400}$ and $\rn{lnew.relax_b0}$).
+$m=\rn{calc.m_untreated}$, $\Delta(\rn{calc.mwf})=\rn{calc.delta6}$.\footnote{The check value
+supplied for $\Delta(\rn{calc.mwf})$ disagrees with the repository; the repository's value is
+printed, and the closing list records it.} At $\theta=\rn{calc.theta_dis}$:
+$B=\rn{calc.B_dis}$, untreated $m=\rn{calc.m_untreated_dis}$, a ratio of
+$\rn{calc.m_ratio_dis}$, matching the $\rn{lnew.scope_5pct_ratio}\times$ of
+Table~\rn{new.tab.scope}. The twin at $b=\rn{calc.twin_b_last}$: $\theta=\rn{calc.twin400_theta}$,
+$K_m=\rn{calc.twin400_km}$, relaxation $\rn{calc.relax_b400}$ against
+$\rn{calc.relax_b0}$~d$^{-1}$, the paper's own two values in \S\rn{new.sec.collapse}
+($\rn{lnew.relax_b400}$, $\rn{lnew.relax_b0}$).
 
-\begin{center}\small
+\begingroup\footnotesize\centering
+\begin{minipage}[t]{0.38\textwidth}
+\centering
 \begin{tabular}{@{}lcccl@{}}
 \toprule
-parameter & in $A=K_m(L+b)$ & in $B=L+b-\theta-k_eK_m$ & in $C=-k_e$ & physical reading \\
+parameter & $A$ & $B$ & $C$ & reading \\
 \midrule
-$\theta$ & & $\bullet$ & & the patient's own enzyme \\
+$\theta$ & & $\bullet$ & & own enzyme \\
 $K_m$ & $\bullet$ & $\bullet$ & & half-saturation \\
-$k_e$ & & $\bullet$ & $\bullet$ & the backup route \\
-$b$ & $\bullet$ & $\bullet$ & & the diary error \\
+$k_e$ & & $\bullet$ & $\bullet$ & backup route \\
+$b$ & $\bullet$ & $\bullet$ & & diary error \\
 \bottomrule
 \end{tabular}
-\end{center}
-\begin{itemize}
-\item \textbf{$A$ is load times half-saturation.} It sets how steeply the enzyme requirement
-rises as the marker is pushed down. At $m=\rn{calc.mwf}$ that saturation cost is
-$+\rn{calc.A_over_6}$, the largest single term in the balance.
-\item \textbf{$B$ is the only place $\theta$ appears}, beside the load and the backup route's
-fixed saving. At $\theta=\rn{calc.theta_dis}$ it is the smallest of $B$'s three pieces:
-$+\rn{calc.Bp_load}$, $-\rn{calc.theta_dis}$ and $-\rn{calc.keKm}$. That is the scope limit of
-§7.1, seen through one invariant.
-\item \textbf{$C=-k_e$ is the backup route.} Across the marker range the dose train produces,
-$m=\rn{calc.m_lo}$ to $\rn{calc.m_hi}$, its bend in $\Delta m$ is about $\rn{calc.bend}$. A
-diary error of $\rn{calc.unit_b}\,\mu$M/d moves a point by $\rn{calc.diary_move}$, so the
-curvature that would identify $k_e$ is small against the noise on the same axis, and $k_e$ has
-to come from a prior.
-\end{itemize}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.59\textwidth}
+\begin{tabularx}{\textwidth}{@{}lL@{}}
+\toprule
+invariant & what it is, and its size \\
+\midrule
+$A=K_m(L+b)$ & load $\times$ half-saturation: $+\rn{calc.A_over_6}$ at
+$m=\rn{calc.mwf}$, the largest term \\
+$B=L+b-\theta-k_eK_m$ & the only place $\theta$ appears: at $\theta=\rn{calc.theta_dis}$ the
+smallest of $+\rn{calc.Bp_load}$, $-\rn{calc.theta_dis}$, $-\rn{calc.keKm}$, the scope limit of
+\S\rn{new.sec.scopeprec} \\
+$C=-k_e$ & the backup route: bend $\rn{calc.bend}$ over $m=\rn{calc.m_lo}$ to
+$\rn{calc.m_hi}$ against $\rn{calc.diary_move}$ per $\rn{calc.unit_b}\,\mu$M/d of diary error,
+so $k_e$ comes from a prior \\
+\bottomrule
+\end{tabularx}
+\end{minipage}\par\endgroup
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{fig5a_abc}
-\caption{$\Delta(m)$ decomposed, at $\theta=\rn{calc.theta}$ (left) and
-$\theta=\rn{calc.theta_dis}$ (right). Green marks the marker range the dose train produces,
-with $\Delta$ running from $\rn{calc.trough}$ at the trough to $\rn{calc.peak}$ at the peak.
-The lower row is a waterfall at $m=\rn{calc.mwf}$, coloured by invariant: $A$ in blue, the
-three pieces of $B$ in purple, red and pink, and $C$ in amber. At normal capacity $-\theta$ is
-the largest piece of $B$; at $\rn{calc.dis_pct}\%$ of normal it is the smallest.}
+\includegraphics[width=0.80\textwidth]{fig5a_abc}
+\caption{$\Delta(m)$ decomposed at $\theta=\rn{calc.theta}$ (left) and $\rn{calc.theta_dis}$
+(right). Green: the dose train's range, $\Delta$ from $\rn{calc.trough}$ to $\rn{calc.peak}$.
+Below, a waterfall at $m=\rn{calc.mwf}$: $A$ blue, $B$'s pieces purple, red, pink, $C$ amber.
+$-\theta$ is $B$'s largest piece at normal capacity, its smallest at $\rn{calc.dis_pct}\%$.}
 \label{fig:abc}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{fig5b_fibre}
+\includegraphics[width=0.80\textwidth]{fig5b_fibre}
 \caption{Left: the record as a parabola, $\Delta m = A+Bm+Cm^2$. The \rn{calc.n_monthly}
-monthly visits and the twins at $b\in\{\rn{calc.twin_bs}\}$ all draw one curve; moving $\theta$
-alone by $\rn{calc.nontwin_dtheta}$, without compensating $K_m$ and $b$, does not. The insets
-are the two aliased designs: every $\rn{calc.T}$~d is a single point, every
-$\rn{new.near_step}$~d a short cluster. Right: the fibre of equation (6) is curved, but the
-locus of estimates under a constant diary error, $\hat K_m=K_m(1+b/L)$ and
-$\hat\theta=\theta-b(1+K_mk_e/L)$, is a straight line of slope $\rn{calc.locus_slope}$, tangent
-to the fibre at the truth. That direction is Proposition 4's null vector,
-$(\rn{calc.null_theta},\rn{calc.null_km})$. Shaded is the $\pm\rn{calc.diary_b}$ bound the
-$\rn{calc.load_pct}\%$ diary record gives, a factor of $\rn{calc.diary_factor}$ on $\theta$.}
+monthly visits and the twins at $b\in\{\rn{calc.twin_bs}\}$ draw one curve; moving $\theta$
+alone by $\rn{calc.nontwin_dtheta}$ does not. Insets: the aliased designs, one point every
+$\rn{calc.T}$~d, a cluster every $\rn{new.near_step}$~d. Right: the fibre is curved, but
+estimates under a constant diary error, $\hat K_m=K_m(1+b/L)$,
+$\hat\theta=\theta-b(1+K_mk_e/L)$, lie on a line of slope $\rn{calc.locus_slope}$, tangent at
+the truth along the rank proposition's null vector
+$(\rn{calc.null_theta},\rn{calc.null_km})$. Shaded: the $\pm\rn{calc.diary_b}$ bound from the
+$\rn{calc.load_pct}\%$ diary record, a factor of $\rn{calc.diary_factor}$ on $\theta$.}
 \label{fig:fibre}
 \end{figure}
 
-\W Nothing: equation (5), equation (6) and the invariants read the same in both drafts. The
-27 Sept §3.1 adds the affine map $\hat\theta=\theta-\rn{new.bias_slope}\,b$ and the Vandermonde
-reading of the three invariants. \textbf{The tangent reading is not in either draft.} It comes
-from Figure~\ref{fig:fibre} and states that the estimates a constant diary error produces lie
-on the fibre's tangent at the truth, along Proposition 4's null direction. One sentence for
-§3.1, after the affine map:
+\W Nothing: the increment law, the fibre and the invariants read the same in both drafts. The
+27 Sept \S\rn{new.sec.destroys} adds the affine map $\hat\theta=\theta-\rn{new.bias_slope}\,b$
+and the Vandermonde reading of the invariants. \textbf{The tangent reading is in neither
+draft:} Figure~\ref{fig:fibre} puts estimates under a constant diary error on the fibre's
+tangent at the truth, the rank proposition's null direction. One sentence for
+\S\rn{new.sec.destroys}:
 \begin{quote}\small
-``The fibre is curved in $(K_m,\theta)$, but the estimates a constant load bias produces lie
-on a straight line, its tangent at the truth, whose direction is Proposition~\textbackslash ref\{prop:rank\}'s
-null vector; a bound on $b$ therefore leaves open a segment of that tangent, and the factor it
-leaves on $\theta$ is exact rather than linearised.''
+``The fibre is curved in $(K_m,\theta)$, but a constant load bias moves the estimate along its
+tangent at the truth, Proposition~\textbackslash ref\{prop:rank\}'s null direction, so a bound
+on $b$ leaves a segment of that tangent and the factor on $\theta$ is exact, not linearised.''
 \end{quote}
 
-\Out{$\theta$ lives in one invariant only, beside two larger terms in the disease range. That
-is the scope limit in a line of algebra.}
+\Out{$\theta$ lives in one invariant, beside two larger terms in the disease range: the scope
+limit in a line of algebra.}

@@ -1,34 +1,27 @@
 % ---------------------------------------------------------------------
 \section{Was a genetic prior helpful?}
 
-\Q Can genotype supply what the marker record cannot, either as a prior on $\theta$ itself
-or as an anchor for $k_e$?
+\Q Can genotype supply what the record cannot, as a prior on $\theta$ or an anchor for $k_e$?
 
-\D Read §S1.10, Proposition 6 (§S1.18.1), Remark 14 (§S1.16.3), Remarks 21 and 22
-(§S1.16.7) and Table 11 (§6.3). Recomputed the anchor's crossing from the model constants.
-Searched the repository for a genotype-informed prior on $\theta$.
+\D Read §S1.10, Proposition 6 (§S1.18.1), Remark 14 (§S1.16.3), Remarks 21 and 22 (§S1.16.7),
+Table~\rn{new.tab.keprior} (§\rn{new.sec.tier2}); recomputed the crossing from the model
+constants; searched for a genotype prior on $\theta$.
 
-\F \textbf{What the paper says.} Three findings, all identical in both drafts.
+\F \textbf{What the paper says}, identical in both drafts.
 \begin{itemize}
-\item \textbf{The founder population is ideal for the map and closed to the design}
-(§S1.10). \emph{PCCA} c.425G$>$A accounts for $\rn{lnew.saudi_founder}\%$ of families, with
-one compound-heterozygous family, so genotype to capacity is unconfounded. The series is
-$\rn{lnew.saudi_pcca}\%$ \emph{PCCA} (\rn{lnew.saudi_pcca_n} patients), and §6.5 requires a
-therapeutic increment that varies, which no patient outside the trial receives. The two
-criteria select different cohorts, and the paper leaves the genotype argument as a property
-of the literature rather than a recommendation.
-\item \textbf{The null-genotype anchor inverts with severity} (Remarks 21 and 22). A patient
-with $\theta = 0$ gives $s = k_e m$, which fixes $k_e$ and collapses the fibre to a point. Its
-amplification of a load error crosses one at $\theta = 2k_e(K_m+\bar m)$, which the model
-constants put at $\rn{calc.null_cross}$ (the paper writes $\approx\rn{lnew.null_cross}$), and
-reaches $\rn{calc.null_amp300}$ at the parent model's $\theta = \rn{lnew.theta_parent}$ (paper:
-$\rn{lnew.null_amp}$). The anchor attenuates the error for mild patients and amplifies it for
-severe ones.
-\item \textbf{Knowing $k_e$, which is what such an anchor supplies, does not close the gate}
-(Table 11). Tightening from the published prior to $\rn{lnew.ke_tight}\%$ is worth
-$\rn{lnew.ke_gain_nom}\times$ at nominal capacity and $\rn{lnew.ke_gain_dis}\times$ at
-$\rn{calc.dis_pct}\%$ of it, but an exact $k_e$ still leaves $\rn{lnew.ke_exact_left}$ against
-the $\rn{calc.gate}$ gate.
+\item \textbf{Ideal for the map, closed to the design} (§S1.10). \emph{PCCA} c.425G$>$A in
+$\rn{lnew.saudi_founder}\%$ of families, one compound-heterozygous, so genotype to capacity is
+unconfounded; series $\rn{lnew.saudi_pcca}\%$ \emph{PCCA}, \rn{lnew.saudi_pcca_n} patients.
+But §\rn{new.sec.applic} needs a varying increment, which no patient outside the trial gets.
+\item \textbf{The null-genotype anchor inverts with severity} (Remarks 21 and 22). $\theta =
+0$ gives $s = k_e m$, which collapses the fibre to a point. Its load-error amplification
+crosses one at $\theta = 2k_e(K_m+\bar m)$, $\rn{calc.null_cross}$ here (paper:
+$\approx\rn{lnew.null_cross}$), and is $\rn{calc.null_amp300}$ at the parent's
+$\theta = \rn{lnew.theta_parent}$ (paper: $\rn{lnew.null_amp}$).
+\item \textbf{A known $k_e$ does not close the gate} (Table~\rn{new.tab.keprior}). Tightening
+the published prior to $\rn{lnew.ke_tight}\%$ buys $\rn{lnew.ke_gain_nom}\times$ at nominal
+capacity and $\rn{lnew.ke_gain_dis}\times$ at $\rn{calc.dis_pct}\%$ of it; an exact one leaves
+$\rn{lnew.ke_exact_left}$ against the $\rn{calc.gate}$ gate.
 \end{itemize}
 \noindent A genotype-informed prior on $\theta$ itself: \nf, in either draft.
 
@@ -39,42 +32,38 @@ the $\rn{calc.gate}$ gate.
 \toprule
 item & what it establishes & the limit it states \\
 \midrule
-ex vivo assay as a prior on $\theta$, \texttt{q5\_exvivo\_prior.py} (\rn{git.q5_added})
- & An assay on the patient's own cells is carried as a log-normal prior of width
- $\rn{audit.r58_width_lo}$ to $\rn{audit.r58_width_hi}$. It adds to the record in exact
- quadrature, proven from the Schur complement and confirmed in all $\rn{audit.r58_cells}$
- cells, so assay and record cannot spoil each other. With $k_e$ measured it changes
- \rn{audit.r58_verdicts_n} verdicts, all at a prior of $\rn{audit.r58_verdicts_w}$, the
- practical one turning monthly sampling at $\rn{fus.cap10}\%$ of normal from
- $\rn{audit.r58_10pct_frm}$ into $\rn{audit.r58_10pct_to}$.
- & Without a $k_e$ measurement the combined figure sits at $\rn{audit.r58_dom_comb}$ against
- the assay's own $\rn{audit.r58_dom_width}$ at $\rn{calc.dis_pct}\%$, so the record adds under
- one per cent and the answer is the assay's. The risk sits where the benefit does: at
- $\rn{calc.dis_pct}\%$, $\rn{audit.r58_centring_lo}$ to $\rn{audit.r58_centring_hi}\%$ of a
- centring error passes into $\hat\theta$; at $\rn{fus.cap10}\%$ a prior wrong by a factor of
- two is worth nothing, RMSE $\rn{audit.r58_rmse_w}$ with it against
- $\rn{audit.r58_rmse_wo}$ without. \\
+ex vivo assay prior on $\theta$, \texttt{q5\_\allowbreak exvivo\_\allowbreak prior.py}
+(\rn{git.q5_added})
+ & Log-normal prior, width $\rn{audit.r58_width_lo}$ to $\rn{audit.r58_width_hi}$, on the
+ patient's cells, in exact quadrature with the record (Schur complement, all
+ $\rn{audit.r58_cells}$ cells). With $k_e$ measured it moves \rn{audit.r58_verdicts_n}
+ verdicts, all at prior $\rn{audit.r58_verdicts_w}$: monthly at $\rn{fus.cap10}\%$ capacity,
+ $\rn{audit.r58_10pct_frm}$ to $\rn{audit.r58_10pct_to}$.
+ & Without a measured $k_e$ the assay dominates: combined $\rn{audit.r58_dom_comb}$ against
+ its own $\rn{audit.r58_dom_width}$ at $\rn{calc.dis_pct}\%$. Risk follows benefit: there,
+ $\rn{audit.r58_centring_lo}$ to $\rn{audit.r58_centring_hi}\%$ of a centring error reaches
+ $\hat\theta$; at $\rn{fus.cap10}\%$ a prior wrong by two buys nothing, RMSE
+ $\rn{audit.r58_rmse_w}$ against $\rn{audit.r58_rmse_wo}$. \\
 \addlinespace
-review of an external genotype-prior document, \texttt{PHASE12\_GENOTYPE\_REVIEW.md}
- (\rn{git.phase12_added})
- & The document's breath-test figure, $\rn{audit.p12_imported_ctrl}\%$ controls and
- $\rn{audit.p12_imported_pat}\%$ patients, is the retracted one and is not imported. The
- repository's own $\rn{audit.p12_kappa}$, which sizes Tier 2 and with it the
- $\rn{audit.p12_draws}$-draw count, is graded
- \textsc{\rn{audit.p12_status_label}}: two independent secondary readings agree and no primary
- read has been made here.
- & Nothing from the document enters the repository, and the grading is a status label rather
- than a new number. It changes no value in either draft. \\
+external genotype-prior review,
+\texttt{PHASE12\_\allowbreak GENOTYPE\_\allowbreak REVIEW.md} (\rn{git.phase12_added})
+ & Breath-test figure, $\rn{audit.p12_imported_ctrl}\%$ controls and
+ $\rn{audit.p12_imported_pat}\%$ patients: the retracted one, not imported. The repository's
+ own $\rn{audit.p12_kappa}$, which sizes Tier~2 and the $\rn{audit.p12_draws}$-draw count, is
+ graded \textsc{\rn{audit.p12_status_label}}.
+ & Two secondary readings agree, no primary read here. Nothing enters the repository, and a
+ status label is not a number: it changes no value in either draft. \\
 \bottomrule
 \end{tabularx}
 \end{center}
 \vspace{-0.4em}
-{\small \textbf{Table D.} Genotype-adjacent analysis in the repository at 27 Sept, in neither
-draft. Sources: \texttt{REVIEW\_LOG.md} R58 and \texttt{audit/PHASE12\_GENOTYPE\_REVIEW.md}.}
+{\small \textbf{Table D.} Repository genotype analysis at 27 Sept, in neither draft. Sources:
+\texttt{REVIEW\_LOG.md} R58 and \texttt{audit/\allowbreak PHASE12\_\allowbreak
+GENOTYPE\_\allowbreak REVIEW.md}.}
 
-\W Nowhere in the paper. §S1.10, Remarks 21 and 22 and Table 11 are unchanged between the
-drafts. The only edit anywhere near this material is a pointer in §6.6, where ``supplement,
-\S S1'' became ``\S S1.16.7''.
+\W Nowhere in the paper: §S1.10, Remarks 21 and 22 and Table~\rn{new.tab.keprior} are
+unchanged. The only nearby edit is a pointer in §\rn{new.sec.howmany}, ``supplement, \S S1''
+to ``\S S1.16.7''.
 
 \Out{A genetic prior helps most where it is needed least: the anchor attenuates a load error
 for the mild patient and amplifies it for the severe one.}
