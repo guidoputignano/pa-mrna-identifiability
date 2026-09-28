@@ -4,25 +4,26 @@
 \Q Which observables to use, request or exclude, and does combining them open the disease
 range?
 
-\D \emph{Sensor}, \emph{fusion}, \emph{readout} and \emph{score} occur in neither draft, and
-\emph{fusion} matches only \emph{infusion}. The readouts are scored only in
+\D \emph{Sensor} and \emph{score} occur in neither draft, and \emph{fusion} only inside
+\emph{infusion}. \emph{Readout} occurs in both, always for the model's observation map and
+never for an observable to be scored. The readouts are scored only in
 \texttt{audit/PHASE10\_SENSORS.md} (\rn{git.phase10_added}) and
 \texttt{audit/q15\_sensors.py} (\rn{git.q15_added}).
 
 \F \textbf{What the paper says}, identical in both drafts but for ``Where it changed''.
 \vspace{-0.55em}
-\begin{center}\scriptsize\setlength{\tabcolsep}{3.5pt}\renewcommand{\arraystretch}{1.0}
-\begin{tabularx}{\textwidth}{@{}p{1.85cm}p{1.5cm}Lp{1.05cm}p{2.0cm}L@{}}
+\begin{wide}
+\begin{xltabular}{\linewidth}{@{}p{1.85cm}p{1.5cm}Lp{1.25cm}p{1.85cm}L@{}}
 \toprule
 readout & measures & literature evidence & verdict & role & key number \\
 \midrule
 plasma 3-HP & $m$ itself & rate ratio $\rn{lnew.rr_3hp}$ ($\rn{lnew.rr_3hp_ci_lo}$ to
  $\rn{lnew.rr_3hp_ci_hi}$) per $\rn{lnew.rr_per}\%$ lower; not a carnitine conjugate & used
- & the marker (Remark 2) & --- \\
-C3 & propionyl\-carnitine & rate ratio $\rn{lnew.rr_c3}$, $p=\rn{lnew.p_c3}$ & excluded & ---
+ & the marker (Remark 2) & \\
+C3 & propionyl\-carnitine & rate ratio $\rn{lnew.rr_c3}$, $p=\rn{lnew.p_c3}$ & excluded & none
  & co-treatment raises C3 as organic acids fall (§S1.16.2) \\
 2-MC & 2-methyl\-citrate & rate ratio $\rn{lnew.rr_2mc}$, $p=\rn{lnew.p_2mc}$; tracks ammonia
- in events & excluded & --- & no endpoint association \\
+ in events & excluded & none & no endpoint association \\
 $1$-$^{13}$C-propionate breath & increment $\Delta$ & between-visit CV
  $\rn{lnew.breath_mean}\pm\rn{lnew.breath_sd}\%$ (range $\rn{lnew.breath_lo}$ to
  $\rn{lnew.breath_hi}\%$), \rn{lnew.breath_n} \emph{mut} MMA patients & requested
@@ -38,12 +39,12 @@ IV $^{13}$C$_3$-3-HP bolus & $k_e$ & none in PA; tracer catalogued & requested &
  $\rn{lnew.ke_exact_left}$ \\
 isotope-dilution turnover & $L+b$ & measurable in principle & closed & route 6, §\rn{new.sec.scopeprec}
  & \rn{lnew.turnover_n} visits match \rn{lnew.turnover_vs}; opens nothing below nominal \\
-as-eaten diet record & $L$ & --- & used & closes the fibre, Table \rn{new.tab.loadprec}
+as-eaten diet record & $L$ & none & used & closes the fibre, Table \rn{new.tab.loadprec}
  & per-visit error $\lesssim\rn{lnew.diet_gate}\%$; at $\rn{lnew.bias_row}\%$ error,
  $\rn{new.bias_scatter_share}\%$ scatter, $\rn{new.bias_offset_share}\%$ offset \\
 \bottomrule
-\end{tabularx}
-\end{center}
+\end{xltabular}
+\end{wide}
 \vspace{-0.85em}
 {\small \textbf{Table A.} The paper's readouts. Sources: Remark 2, Table \rn{new.tab.require}
 (§\rn{new.sec.spec}), §§\rn{new.sec.tier1} to \rn{new.sec.tier2}, §\rn{new.sec.scopeprec},
@@ -53,8 +54,8 @@ supplement §S1.14 and §S1.16.2.}
 \noindent\textbf{What the repository has that the paper does not} (\unpub,
 \rn{git.phase10_added}).
 \vspace{-0.55em}
-\begin{center}\scriptsize\setlength{\tabcolsep}{3.5pt}\renewcommand{\arraystretch}{1.0}
-\begin{tabularx}{\textwidth}{@{}p{1.85cm}p{1.5cm}Lp{1.05cm}p{2.0cm}L@{}}
+\begin{wide}
+\begin{xltabular}{\linewidth}{@{}p{1.85cm}p{1.5cm}Lp{1.25cm}p{1.85cm}L@{}}
 \toprule
 readout & measures & literature evidence & verdict & role & key number \\
 \midrule
@@ -68,27 +69,25 @@ ex vivo PCC activity (c2) & $\theta$ directly & in vivo mapping never measured i
  $\rn{audit.p10_pair_hi}$ in the disease range; collapse mode gone,
  \rn{audit.p10_collapse_c2} against $\rn{audit.p10_collapse_lo}$ to
  $\rn{audit.p10_collapse_hi}$ of $\rn{audit.p10_collapse_n}$ \\
-IV bolus (c8) & $k_e$ & as Table A & schedule first & anchor on $k_e$ & misses the gate even
- with exact $k_e$: $\rn{audit.p10_ke_exact5}$ at $\rn{calc.dis_pct}\%$,
+IV bolus (c8) & $k_e$ & as Table A & schedule first & anchor on $k_e$ & the monthly record
+ misses the gate even with exact $k_e$: $\rn{audit.p10_ke_exact5}$ at $\rn{calc.dis_pct}\%$,
  $\rn{audit.p10_ke_exact10}$ at $\rn{fus.cap10}\%$ \\
-turnover (c9) & $L+b$ & as Table A & dropped on size & --- & buys $\rn{audit.p10_c9_lo}$ to
+turnover (c9) & $L+b$ & as Table A & dropped on size & none & an exact load buys $\rn{audit.p10_c9_lo}$ to
  $\rn{audit.p10_c9_hi}\%$; at $\rn{calc.dis_pct}\%$, $\rn{audit.p10_c9_5pct_frm}$ to
- $\rn{audit.p10_c9_5pct_to}$. Route 6 rechecked: \rn{audit.p10_r6_nom_audit} visits at nominal
- (paper \rn{audit.p10_r6_nom_paper}); below nominal \rn{audit.p10_r6_below_audit} and flat, not
- the paper's \rn{audit.p10_r6_below_paper} \\
-timed urine (c10) & $f_{\mathrm{renal}}k_e$ & no renal fraction for 3-HP & dominated by c8
- & bound only & needs $f_{\mathrm{renal}}$ to about $\rn{audit.p10_frenal}\%$ \\
+ $\rn{audit.p10_c9_5pct_to}$. Its recheck of route 6 is in \S6.2 \\
+timed urine (c10) & $f_{\mathrm{renal}}k_e$ & no renal fraction for 3-HP & dominated
+ & a bound only & needs $f_{\mathrm{renal}}$ to about $\rn{audit.p10_frenal}\%$ \\
 \bottomrule
-\end{tabularx}
-\end{center}
+\end{xltabular}
+\end{wide}
 \vspace{-0.85em}
-{\small \textbf{Table B.} \unpub: \texttt{PHASE10\_SENSORS.md} step 1, §§S.1 to S.3. In
+{\small \textbf{Table B.} \unpub: \texttt{PHASE10\_SENSORS.md} step 1, §§S.1 to S.6. In
 neither draft.}
 
 \vspace{2pt}
 \noindent\textbf{Combination, the nearest thing to fusion} (\unpub).
 \texttt{q15\_sensors.py} adds each sensor's precision to one diagonal of the record's Fisher
-block. Rerun on its own seeds ($\rn{fus.seed_lo}$ to $\rn{fus.seed_hi}$); c2 log-sd
+block. Rerun on the record's seeds ($\rn{fus.seed_lo}$ to $\rn{fus.seed_hi}$); c2 log-sd
 $\rn{fus.p2_frac}$, c8 $\rn{fus.p8}\%$, c9 $\rn{fus.p9}\%$; entries sd$(\ln\hat\theta)$
 against the $\rn{calc.gate}$ gate.
 \vspace{-0.55em}
@@ -112,22 +111,25 @@ paper's \rn{calc.n_monthly}; the two are therefore not directly comparable to Ta
 
 \vspace{2pt}
 \noindent Only c2+c8 is worth buying, by $\rn{audit.p10_c2c8_lo}$ to
-$\rn{audit.p10_c2c8_hi}\%$ over c2 alone; c9 adds nothing. Table C overstates c2: supported
-width about $\rn{audit.p10_width_w}$, not $\rn{fus.p2_frac}$. The scatter's between-patient
+$\rn{audit.p10_c2c8_hi}\%$ over c2 alone; c9 adds nothing. Table C ranks correctly but
+overstates every entry containing c2: supported width about $\rn{audit.p10_width_w}$, not
+$\rn{fus.p2_frac}$. The scatter's between-patient
 spread decides the rest, measurable in \rn{audit.p10_repeat_pts} patients at
 \rn{audit.p10_repeat_draws} draws each. \textbf{The paper has no fusion step:} Tier 1 fixes
 the structure Tiers 2 and 3 calibrate, and Tier 3 holds only if Tier 2's increment does.
 \rn{lnew.six_routes} routes in §\rn{new.sec.scopeprec} are each tested and closed.
 
-\W \textbf{Unchanged}: Remark 2, the §S1.14 table and §S1.16.2 read the same in both drafts;
-the C3 correction predates this window (§6.2). \emph{Tier 1, §\rn{new.sec.tier1}:} the 27 Sept
-draft opens with ``What to run first, and it is one blood draw''
-(main \rn{git.main_tier1first}) and calls Tier 1 a \emph{structure} test, not a fit threshold.
+\W \textbf{Unchanged}: Remark 2, the §S1.14 marker table and the readout passages of §S1.16.2
+read the same in both drafts; the C3 correction predates this window (§6.1). \emph{Tier 1:} the
+27 Sept draft opens §\rn{new.sec.spec} with ``What to run first, and it is one blood draw''
+(main \rn{git.main_tier1first}), and §\rn{new.sec.tier1} now calls Tier 1 a \emph{structure}
+test, not a fit threshold.
 \emph{Tier 2, §\rn{new.sec.tier2}:} the Table \rn{new.tab.incfloor} floors and the
 $\rn{new.tier1_visits_at_pub}$-draw count are now generated (\texttt{\rn{gen.tier1}}), values
 unchanged; Table \rn{new.tab.keprior} unchanged. \emph{§\rn{new.sec.scopeprec}:} the diet
-values moved (§6.3); route 6 keeps the below-nominal clause Table B could not reproduce.
+values moved (§6); route 6 keeps the below-nominal clause Table B could not reproduce.
 
 \Out{Three readouts are used or requested, gated in sequence. The combination analysis exists
-only in the audit, and no combination brings the monthly record inside the gate at
-$\rn{calc.dis_pct}\%$ capacity.}
+only in the audit, and the combinations that reach the gate in Table C do so only at an assay
+width nobody can currently deliver: at the supported width the best pair still runs
+$\rn{audit.p10_pair_lo}$ to $\rn{audit.p10_pair_hi}$ across the disease range.}

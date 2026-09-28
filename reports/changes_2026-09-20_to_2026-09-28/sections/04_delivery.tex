@@ -4,18 +4,18 @@
 \Q Should the dosing schedule, and not only the sampling schedule, be designed for
 identification?
 
-\D Every case was priced on 20 Sept: amplitude alternation, a longer and a shorter interval,
-continuous delivery at the same rate, a $D$ sweep from $\rn{lnew.dsweep_range_lo}$ to
-$\rn{lnew.dsweep_range_hi}$, and \rn{lnew.dosesens_n} readings of the dose calibration in
-Table~\rn{new.tab.dosesens}. New this week: the exposure sweep to the continuous limit
+\D Every case was priced on 20 Sept and stands unchanged on 27 Sept: amplitude alternation,
+a longer and a shorter interval, continuous delivery at the same rate, a $D$ sweep from
+$\rn{lnew.dsweep_range_lo}$ to $\rn{lnew.dsweep_range_hi}$, and \rn{lnew.dosesens_n}
+readings of the dose calibration in Table~\rn{new.tab.dosesens}. New this week: the exposure sweep to the continuous limit
 (\texttt{\rn{gen.therapy}}, on main \rn{git.main_exposure}) and the three named readings of
 the admissibility bound (\rn{git.main_readings}).
 
-\F Every case below stands in both drafts at the same value; the last two rows are the
-conclusions now drawn from them.
+\F Every case above the rule stands in both drafts at the same value. The rows below it
+are new.
 \vspace{-2pt}
-\begin{center}\footnotesize
-\begin{tabularx}{\textwidth}{@{}p{3.0cm}Lp{2.45cm}@{}}
+\begin{wide}
+\begin{tabularx}{\linewidth}{@{}p{3.0cm}Lp{2.45cm}@{}}
 \toprule
 case & result & status \\
 \midrule
@@ -44,17 +44,19 @@ largest admissible $D$ at $\rn{calc.dis_pct}\%$ & $\rn{lnew.dmax_5pct}$, where t
  $\rn{new.exp_cont_disease}$). Peak marker and admissibility ratio fall with it
  & \textbf{new}, \S\rn{new.sec.route} \\
 \textbf{three readings of the bound} & R1 (inferred normal, dose scaled with $\theta$):
- constant $\rn{new.adm_r1}$, cannot report a breach. R2 (inferred normal, booked dose):
- breaches at $\rn{fus.cap10}\%$ and below. R3 (normal fixed at $\rn{calc.theta}$): breaches
- everywhere, $\rn{new.adm_r3_100}$ at normal capacity. The three coincide only at
- $\theta=\rn{calc.theta}$ and $\theta=\rn{calc.theta_dis}$, where both anchor numbers sit.
- The paper reports on R2 & \textbf{new}, \S\rn{new.sec.scopeprec} \\
+ constant $\rn{new.adm_r1}$, blind to a breach below $\rn{new.ceiling_blind_pct}\%$
+ residual. R2 (inferred normal, booked dose): $\rn{new.adm_r2_20}$ rising to
+ $\rn{new.adm_r2_10}$ as capacity halves, the one reading that crosses the bound. R3
+ (normal fixed at $\rn{calc.theta}$): breaches at every capacity, $\rn{new.adm_r3_100}$ at
+ normal. The readings coincide only at $\theta=\rn{calc.theta}$ and
+ $\theta=\rn{calc.theta_dis}$; both anchor numbers sit on the latter. The paper reports on
+ R2 & \textbf{new}, \S\rn{new.sec.scopeprec} \\
 \bottomrule
 \end{tabularx}
-\end{center}
+\end{wide}
 
-\W \emph{\S\rn{new.sec.route}:} one new paragraph, on the absence of an interior optimum; the
-rest, all four delivery cases included, is the 20 Sept text. \emph{\S\rn{new.sec.scopeprec}:}
+\W \emph{\S\rn{new.sec.route}:} new text inside the administration-route paragraph, on the
+absence of an interior optimum; the rest, the delivery cases included, is the 20 Sept text. \emph{\S\rn{new.sec.scopeprec}:}
 the bound gained the R1/R2/R3 table and the paragraph naming where the readings coincide; the
 $D$ sweep and its two values carry over. \emph{Table \rn{new.tab.dosesens}}
 (\S\rn{new.sec.admiss}, the dose calibration) is unchanged.

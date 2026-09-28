@@ -7,7 +7,7 @@ cannot still defeat it?
 \D The rule was restated as the lap condition $n\varepsilon \ge T$ for a step
 $h = T + \varepsilon$, partial laps were priced at fixed $n$, and a schedule sought that avoids
 every multiple of $T$ and still fails (\texttt{\rn{gen.lattice}}).
-Figure~\rn{new.fig.phaseclock} was redrawn to separate phases reached from phases available (\texttt{\rn{gen.phaseclock}}). This text reached main on
+Figure~\rn{new.fig.phaseclock} was redrawn to separate phases reached from phases available (\texttt{\rn{gen.phaseclock}}). The lap wording reached main on
 \rn{git.main_lap}.
 
 \F
@@ -27,7 +27,8 @@ cost & $\rn{new.lap_cost_04}\times$ & $\rn{new.lap_cost_10}\times$ & $\rn{new.la
 \end{tabular}
 \end{center}
 \item \textbf{The counterexample.} A step of $\rn{new.near_step}$~d avoids every multiple of
-$T$ and reaches $\rn{new.near_phases}$ phases, more than any other, but packs them
+$T$ and reaches $\rn{new.near_phases}$ phases, more than any other schedule the paper compares, but packs
+them
 into $\rn{new.near_span_h}$~h of the dial: sd $= \rn{new.near_sd}$, against
 $\rn{new.sd_monthly}$ monthly.
 \item \textbf{Hours on the step buy back lost visits.} At $\rn{lnew.n20_n}$ visits a lap needs
@@ -50,7 +51,8 @@ lattice binds only on the fortnightly step.
 \includegraphics[width=\linewidth]{phaseclock_0927}\\[-1pt]
 {\footnotesize (b) 27 Sept: increment and marker folded onto the cycle}
 \end{minipage}
-\caption{Figure~\rn{new.fig.phaseclock} of the paper (\S\rn{new.sec.protocol}) in each draft.
+\caption{Figure~\rn{new.fig.phaseclock} of the paper in each draft; it keeps its number and
+its subsection, \S\rn{new.sec.protocol}, across both.
 Both load the same \texttt{fig\_E1\_phaseclock.pdf}, overwritten \rn{git.fig6_commits} times
 after 20 Sept, first in \texttt{\rn{git.fig6_first}} (\rn{git.fig6_first_date}); each panel
 is regenerated here from its own draft by \texttt{fig\_phaseclock.py}. In (b) the $\rn{lnew.step_off_v}$~d
@@ -74,7 +76,7 @@ Aliasing remark, \S\rn{new.sec.collapse} & ``\rn{lold.remark4_title}''; aliasing
 Figure~\rn{new.fig.phaseclock}, \S\rn{new.sec.protocol} & polar dial, radius $=$ visit order, one spoke at $\rn{calc.T}$~d & two rows (increment, marker); headers give reached of available \\
 Tier 3, \S\rn{new.sec.tier3} & ``one hard exclusion'': no sampling on dosing days
  & ``one hard requirement'': complete one lap; gap in ``avoid multiples'' stated \\
-generated numbers & no lattice or phase-clock keys & \texttt{lattice.tex},
+generated numbers & no lattice or phase-clock file & \texttt{lattice.tex},
  \texttt{phaseclock.tex}, both new \\
 \bottomrule
 \end{tabularx}

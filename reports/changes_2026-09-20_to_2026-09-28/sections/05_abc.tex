@@ -10,7 +10,8 @@ $t_{1/2}=\rn{calc.thalf}$~d, $L=\theta g(\bar m)+k_e\bar m=\rn{calc.L}$. The bal
 $L+b=(\theta+\Delta)m/(K_m+m)+k_e m$ gives $\Delta(m)=A/m+B+Cm$, $A=K_m(L+b)$,
 $B=L+b-\theta-k_eK_m$, $C=-k_e$.
 
-\F Every check value reproduces: $A=\rn{calc.A}$, $B=\rn{calc.B}$, $C=\rn{calc.C}$, untreated
+\F Every check value reproduces except the last, which the repository corrects:
+$A=\rn{calc.A}$, $B=\rn{calc.B}$, $C=\rn{calc.C}$, untreated
 $m=\rn{calc.m_untreated}$, $\Delta(\rn{calc.mwf})=\rn{calc.delta6}$.\footnote{The check value
 supplied for $\Delta(\rn{calc.mwf})$ disagrees with the repository; the repository's value is
 printed, and the closing list records it.} At $\theta=\rn{calc.theta_dis}$:
@@ -54,7 +55,7 @@ so $k_e$ comes from a prior \\
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.80\textwidth]{fig5a_abc}
+\includegraphics[width=0.70\textwidth]{fig5a_abc}
 \caption{$\Delta(m)$ decomposed at $\theta=\rn{calc.theta}$ (left) and $\rn{calc.theta_dis}$
 (right). Green: the dose train's range, $\Delta$ from $\rn{calc.trough}$ to $\rn{calc.peak}$.
 Below, a waterfall at $m=\rn{calc.mwf}$: $A$ blue, $B$'s pieces purple, red, pink, $C$ amber.
@@ -64,7 +65,7 @@ $-\theta$ is $B$'s largest piece at normal capacity, its smallest at $\rn{calc.d
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.80\textwidth]{fig5b_fibre}
+\includegraphics[width=0.72\textwidth]{fig5b_fibre}
 \caption{Left: the record as a parabola, $\Delta m = A+Bm+Cm^2$. The \rn{calc.n_monthly}
 monthly visits and the twins at $b\in\{\rn{calc.twin_bs}\}$ draw one curve; moving $\theta$
 alone by $\rn{calc.nontwin_dtheta}$ does not. Insets: the aliased designs, one point every
@@ -78,16 +79,13 @@ $\rn{calc.load_pct}\%$ diary record, a factor of $\rn{calc.diary_factor}$ on $\t
 \end{figure}
 
 \W Nothing: the increment law, the fibre and the invariants read the same in both drafts. The
-27 Sept \S\rn{new.sec.destroys} adds the affine map $\hat\theta=\theta-\rn{new.bias_slope}\,b$
-and the Vandermonde reading of the invariants. \textbf{The tangent reading is in neither
-draft:} Figure~\ref{fig:fibre} puts estimates under a constant diary error on the fibre's
-tangent at the truth, the rank proposition's null direction. One sentence for
-\S\rn{new.sec.destroys}:
-\begin{quote}\small
-``The fibre is curved in $(K_m,\theta)$, but a constant load bias moves the estimate along its
-tangent at the truth, Proposition~\textbackslash ref\{prop:rank\}'s null direction, so a bound
-on $b$ leaves a segment of that tangent and the factor on $\theta$ is exact, not linearised.''
-\end{quote}
+27 Sept \S\rn{new.sec.destroys} adds the Vandermonde reading of the invariants and the affine
+map $\hat\theta=\theta-\rn{new.bias_slope}\,b$, exact at every $b$, calling what a bound on the
+diary error leaves open in $\theta$ arithmetic rather than a linearisation. The tangent reading
+is not new: both drafts already make the rank proposition's null vector the fibre's tangent at
+$b=0$. What Figure~\ref{fig:fibre} adds is the picture, and two numbers neither draft prints,
+the locus slope $\rn{calc.locus_slope}$ and the null direction
+$(\rn{calc.null_theta},\rn{calc.null_km})$, which the paper carries only in symbols.
 
 \Out{$\theta$ lives in one invariant, beside two larger terms in the disease range: the scope
 limit in a line of algebra.}

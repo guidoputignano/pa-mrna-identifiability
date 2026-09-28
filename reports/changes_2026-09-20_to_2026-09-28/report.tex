@@ -4,7 +4,7 @@
 %  Every number is \rn{KEY} from numbers.tex (make_numbers.py); every
 %  figure is drawn by fig_phaseclock.py or fig_abc.py. Build: make.
 % =====================================================================
-\documentclass[11pt,a4paper]{article}
+\documentclass[10pt,a4paper]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
@@ -13,6 +13,8 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{tabularx}
+\usepackage{changepage}
+\usepackage{xltabular}   % tabularx that may break across pages
 \usepackage{graphicx}
 \graphicspath{{fig/}}
 \usepackage[font=small,labelfont=bf]{caption}
@@ -38,6 +40,9 @@
 \newcommand{\F}{\paragraph{What we found.}}
 \newcommand{\W}{\paragraph{Where it changed.}}
 \newcommand{\Out}[1]{\par\smallskip\noindent\textcolor{accent}{\textbf{Outcome.}} \emph{#1}\par}
+%  the paper sets its widest tables into the margins the same way
+\newenvironment{wide}{\begin{adjustwidth}{-0.9cm}{-0.9cm}\scriptsize
+  \setlength{\tabcolsep}{3.5pt}\renewcommand{\arraystretch}{1.0}}{\end{adjustwidth}}
 \newcommand{\unpub}{\textcolor{accent}{\textsc{unpublished}}}
 \newcommand{\nf}{\emph{not found in repo}}
 \newcolumntype{L}{>{\raggedright\arraybackslash}X}
