@@ -1,0 +1,136 @@
+% ---------------------------------------------------------------------
+\section{Readouts (``sensors''): scoring table, and fusion}
+
+\Q Which observables should the design use, request or exclude? And does combining them
+open the disease range?
+
+\D The repository was searched for \emph{sensor}, \emph{fusion}, \emph{readout} and
+\emph{score}. None of these words occurs in either draft. \emph{Fusion} and \emph{score}
+occur in no analysis at all; \emph{fusion} matches only \emph{infusion}. A separate scoring
+of the readouts does exist: \texttt{audit/PHASE10\_SENSORS.md} (\rn{git.phase10_added}),
+with \texttt{audit/q15\_sensors.py} (\rn{git.q15_added}). Table A is built from the paper;
+Table B is built from that audit.
+
+\F \textbf{What the paper says} (identical in both drafts except where §2 ``Where it changed''
+says otherwise).
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{2.0cm}p{1.75cm}Lp{1.3cm}p{1.75cm}L@{}}
+\toprule
+readout & measures & literature evidence & verdict & role & key number \\
+\midrule
+plasma 3-HP & $m$ itself & rate ratio $\rn{lnew.rr_3hp}$ ($\rn{lnew.rr_3hp_ci_lo}$ to
+ $\rn{lnew.rr_3hp_ci_hi}$) per $\rn{lnew.rr_per}\%$ lower; not a carnitine conjugate & used
+ & the marker (Remark 2) & --- \\
+C3 & propionyl\-carnitine & rate ratio $\rn{lnew.rr_c3}$, $p=\rn{lnew.p_c3}$ & excluded & ---
+ & co-treatment with carnitine raises C3 while the organic acids fall (§S1.16.2) \\
+2-MC & 2-methyl\-citrate & rate ratio $\rn{lnew.rr_2mc}$, $p=\rn{lnew.p_2mc}$; correlates with
+ ammonia during events & excluded & --- & no endpoint association \\
+$1$-$^{13}$C-propionate breath test & increment $\Delta$ & between-visit CV
+ $\rn{lnew.breath_mean}\pm\rn{lnew.breath_sd}\%$, range $\rn{lnew.breath_lo}$ to
+ $\rn{lnew.breath_hi}\%$, in \rn{lnew.breath_n} \emph{mut} (MMA) patients & requested
+ & Tier 2, §6.3 & must reach $\le\rn{new.kappa_monthly_pct}\%$; floor crosses target at
+ $\rn{new.cv_floor_pct}\%$ (Table 10) \\
+post-dose draw & which structure & none published & requested & Tier 1, §6.2
+ & $\rn{new.struct_sigma_3min}\sigma$ at \rn{lnew.t_struct_t3} min,
+ $\rn{new.struct_sigma_15min}$ at \rn{lnew.t_struct_t15} min, $\rn{new.struct_sigma_1h}$ at
+ \rn{lnew.t_struct1h} \\
+IV $^{13}$C$_3$-3-HP micro-bolus & $k_e$ & none in PA; tracer catalogued & requested
+ & second anchor, Table 11 & to $\rn{lnew.ke_tight}\%$: $\rn{lnew.ke_gain_nom}\times$ nominal,
+ $\rn{lnew.ke_gain_dis}\times$ at $\rn{calc.dis_pct}\%$; exact $k_e$ leaves
+ $\rn{lnew.ke_exact_left}$ \\
+isotope-dilution turnover & $L+b$ & measurable by isotope dilution & closed & route 6 of §7.1
+ & \rn{lnew.turnover_n} visits match \rn{lnew.turnover_vs}; opens nothing below nominal \\
+as-eaten diet record & $L$ & --- & used & its variation closes the fibre; Table 12 &
+ per-visit error $\lesssim\rn{lnew.diet_gate}\%$; at $\rn{lnew.bias_row}\%$ error, $\rn{new.bias_scatter_share}\%$
+ scatter, $\rn{new.bias_offset_share}\%$ offset \\
+\bottomrule
+\end{tabularx}
+\end{center}
+\vspace{-0.6em}
+{\small \textbf{Table A.} Readouts as the paper treats them. Sources: Remark 2 (§2.5), Table 9
+(§6), §§6.2 to 6.3, §7.1, and supplement §S1.14 and §S1.16.2.}
+
+\medskip
+\noindent\textbf{What the repository has that the paper does not} (\unpub; the audit of
+\rn{git.phase10_added}).
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{2.0cm}p{1.75cm}Lp{1.3cm}p{1.75cm}L@{}}
+\toprule
+readout & measures & literature evidence & verdict & role & key number \\
+\midrule
+breath test, 2-MC, C3, C3/C2, propionyl\-glycine & the propionyl-CoA pool & as Table A
+ & not expressible & none in this model & \rn{audit.p10_screen_drop} of
+ \rn{audit.p10_screen_total} candidates dropped: the model has no propionyl-CoA state \\
+ex vivo PCC activity (c2) & $\theta$ directly & ex vivo to in vivo mapping never measured in
+ humans; supported log-sd about $\rn{audit.p10_width_w}$ & weak partner & anchor on $\theta$
+ & record supplies $\rn{audit.p10_share_nom}\%$ of joint precision at nominal,
+ $\rn{audit.p10_share_cap20}\%$ at $\rn{audit.p10_share_capv}\%$; pair still $\rn{audit.p10_pair_lo}$ to
+ $\rn{audit.p10_pair_hi}$ in the disease range; removes collapse mode,
+ \rn{audit.p10_collapse_c2} against $\rn{audit.p10_collapse_lo}$ to
+ $\rn{audit.p10_collapse_hi}$ of $\rn{audit.p10_collapse_n}$ \\
+IV bolus (c8) & $k_e$ & as Table A & schedule first & anchor on $k_e$ & monthly record misses
+ the gate even with exact $k_e$: $\rn{audit.p10_ke_exact5}$ at $\rn{calc.dis_pct}\%$,
+ $\rn{audit.p10_ke_exact10}$ at $\rn{fus.cap10}\%$ \\
+turnover (c9) & $L+b$ & as Table A & dropped on size & --- & buys $\rn{audit.p10_c9_lo}$ to
+ $\rn{audit.p10_c9_hi}\%$; at $\rn{calc.dis_pct}\%$ moves $\rn{audit.p10_c9_5pct_frm}$ to
+ $\rn{audit.p10_c9_5pct_to}$. Route 6 rechecked: \rn{audit.p10_r6_nom_audit} visits (paper
+ \rn{audit.p10_r6_nom_paper}) at nominal; below nominal \rn{audit.p10_r6_below_audit} and flat,
+ not the paper's \rn{audit.p10_r6_below_paper} \\
+timed urine (c10) & $f_{\mathrm{renal}}k_e$ & no renal fraction for 3-HP & dominated by c8
+ & bound only & would need $f_{\mathrm{renal}}$ to about $\rn{audit.p10_frenal}\%$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+\vspace{-0.6em}
+{\small \textbf{Table B.} \unpub: \texttt{audit/PHASE10\_SENSORS.md}, step 1 and §§S.1 to S.3.
+Reached neither draft.}
+
+\medskip
+\noindent\textbf{Combination, which is the nearest thing the repository has to fusion}
+(\unpub). \texttt{q15\_sensors.py} adds each sensor's precision to one diagonal entry of the
+record's Fisher block. The table below reruns it here on the script's own seeds
+($\rn{fus.seed_lo}$ to $\rn{fus.seed_hi}$). c2 is taken at log-sd $\rn{fus.p2_frac}$, c8 at
+$\rn{fus.p8}\%$ and c9 at $\rn{fus.p9}\%$. Entries are sd$(\ln\hat\theta)$ against the
+$\rn{calc.gate}$ gate.
+\begin{center}\small
+\begin{tabular}{lcccccccc}
+\toprule
+capacity & record & c2 & c8 & c9 & c2+c8 & c2+c9 & c8+c9 & all \\
+\midrule
+$\rn{fus.cap5}\%$ & \rn{fus.rec_5} & \rn{fus.c2_5} & \rn{fus.c8_5} & \rn{fus.c9_5} & \textbf{\rn{fus.c2c8_5}}
+ & \rn{fus.c2c9_5} & \rn{fus.c8c9_5} & \rn{fus.all_5} \\
+$\rn{fus.cap10}\%$ & \rn{fus.rec_10} & \rn{fus.c2_10} & \rn{fus.c8_10} & \rn{fus.c9_10} & \textbf{\rn{fus.c2c8_10}}
+ & \rn{fus.c2c9_10} & \rn{fus.c8c9_10} & \rn{fus.all_10} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{-0.6em}
+{\small \textbf{Table C.} Sensor combinations, monthly record. The rerun uses
+\rn{fus.n_monthly} monthly draws, because \texttt{q15} drops the draw at $t=0$; the paper's
+monthly design has \rn{calc.n_monthly}. The two are therefore not directly comparable to
+Table 4 of the paper.}
+
+\smallskip
+\noindent The audit's own verdicts are these. Only c2+c8 is worth buying, and it improves on
+c2 alone by $\rn{audit.p10_c2c8_lo}$ to $\rn{audit.p10_c2c8_hi}\%$. c9 adds nothing in any
+combination. Table C overstates c2, because the supported width is about
+$\rn{audit.p10_width_w}$, not $\rn{fus.p2_frac}$. The between-patient spread of the scatter
+decides the remaining routes; it could be measured in \rn{audit.p10_repeat_pts} patients at
+\rn{audit.p10_repeat_draws} draws each.
+\textbf{The paper has no fusion step.} Its three tiers form a dependency chain. Tier 1
+decides which structure Tiers 2 and 3 calibrate, and nothing Tier 3 buys holds unless
+Tier 2's increment measurement does. No external anchor, alone or combined with others,
+opens the disease range: §7.1 lists \rn{lnew.six_routes} routes, each tested and closed.
+
+\W The readout passages are \textbf{unchanged}: Remark 2, the §S1.14 table and §S1.16.2
+read the same in both drafts. The C3 correction predates this window (see §6.3).
+\emph{Tier 1, §6.2:} the 27 Sept draft opens with ``What to run first, and it is one blood
+draw'' (on main \rn{git.main_tier1first}). It also states that Tier 1 is a \emph{structure}
+test, not a goodness-of-fit threshold. \emph{Tier 2, §6.3:} the Table 10 floors and the
+$\rn{new.tier1_visits_at_pub}$-draw count are now generated (\texttt{\rn{gen.tier1}}); their
+values are unchanged. Table 11 is unchanged. \emph{§7.1:} the diet values moved (§6.2).
+Route 6 still carries the below-nominal clause that Table B could not reproduce.
+
+\Out{Three readouts are used or requested, and they are gated in sequence. The combination
+analysis exists only in the audit, and no combination brings the monthly record inside the
+gate at $\rn{calc.dis_pct}\%$ capacity.}

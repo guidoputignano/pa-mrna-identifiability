@@ -1,0 +1,70 @@
+% ---------------------------------------------------------------------
+\section{Delivery and administration: the analysis was there, the conclusion is new}
+
+\Q Should the dosing schedule, and not only the sampling schedule, be designed for
+identification?
+
+\D The cases were already priced on 20 Sept: amplitude alternation, a longer and a shorter
+interval, continuous delivery at the same delivered rate, a sweep of $D$ from
+$\rn{lnew.dsweep_range_lo}$ to $\rn{lnew.dsweep_range_hi}$, and \rn{lnew.dosesens_n}
+readings of the dose calibration in Table 5. What this week added is the sweep of marker
+exposure down to the continuous limit (\texttt{\rn{gen.therapy}}, on main
+\rn{git.main_exposure}) and the three named readings of the admissibility bound
+(\rn{git.main_readings}).
+
+\F \textbf{Every case below stands in both drafts with the same value.} The last two rows
+are the new conclusions drawn from them.
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}p{3.5cm}Lp{2.5cm}@{}}
+\toprule
+case & result & status \\
+\midrule
+$\pm\rn{lnew.alt_amp}\%$ amplitude alternation & buys $\rn{lnew.alt_gain}\%$ of precision for a
+ $\rn{lnew.alt_cut}\%$ cut in the trough & both drafts, §4.2 \\
+a \rn{lnew.h28_word}-day interval & buys $\rn{lnew.h28_gain}\%$ for an $\rn{lnew.h28_cut}\%$ cut
+ & both drafts, §4.2 \\
+a \rn{lnew.h7_word}-day interval & doubles the trough and costs $\rn{lnew.h7_cost}\%$
+ & both drafts, §4.2 \\
+continuous infusion & no trough, and no excitation: the identification stops existing
+ & both drafts, §4.2 and §S1.11 \\
+booked $D = \rn{calc.D}$ at nominal capacity & $\rn{new.sd_monthly}$ against a sweep best of
+ $\rn{lnew.dsweep_nom_best}$, so within \rn{lnew.dsweep_within} per cent of optimal for
+ identification & both drafts, §7.1 \\
+best $D$ in the disease range & $\rn{lnew.dsweep_dis_best}$ at
+ $D\approx\rn{lnew.dsweep_dis_d}$, against $\rn{lnew.dsweep_dis_booked}$ at the booked dose:
+ no dose opens a window & both drafts, §7.1 \\
+largest admissible $D$ at $\rn{calc.dis_pct}\%$ & $\rn{lnew.dmax_5pct}$, where the booked
+ increment drives the enzyme to $\rn{lnew.enzyme_x_normal}$ times normal; at that dose the
+ monthly design still returns $\rn{lnew.d2672_sd}$ & value in both drafts; the reading it
+ belongs to is new \\
+\midrule
+\textbf{no interior optimum} & marker exposure falls monotonically all the way to the
+ continuous limit, where $\Delta\to\rn{new.delta_cont}$: by $\rn{new.exp_fall_nominal}\times$ at
+ nominal ($\rn{new.exp_h28_nominal}$ to $\rn{new.exp_cont_nominal}$) and
+ $\rn{new.exp_fall_disease}\times$ at $\rn{calc.dis_pct}\%$ ($\rn{new.exp_h28_disease}$ to
+ $\rn{new.exp_cont_disease}$). The peak marker and the admissibility ratio fall with it
+ & \textbf{new}, §4.2 \\
+\textbf{three readings of the bound} & R1 (inferred normal, dose scaled with $\theta$) is a
+ constant $\rn{new.adm_r1}$ and cannot report a breach; R2 (inferred normal, booked dose)
+ breaches at $\rn{fus.cap10}\%$ and below; R3 (normal fixed at $\rn{calc.theta}$) breaches
+ everywhere, reading $\rn{new.adm_r3_100}$ at normal capacity. They coincide at exactly two
+ points, $\theta=\rn{calc.theta}$ and $\theta=\rn{calc.theta_dis}$, and both anchor numbers sit
+ on one of them. The paper reports on R2 & \textbf{new}, §7.1 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\noindent The two new paragraphs matter because they close the obvious compromise. Every
+therapeutic quantity the paper can compute improves as the interval shortens, and the only
+two that worsen are the patient's burden and the excitation. So the therapeutically optimal
+route is the one that removes the design outright, and there is no interval at which the two
+are balanced.
+
+\W \emph{§4.2:} one new paragraph, on the absence of an interior optimum. The rest of the
+subsection, including all four delivery cases, is the 20 Sept text unchanged. \emph{§7.1:}
+the admissibility bound gained the R1/R2/R3 table and the paragraph naming where the readings
+coincide; the $D$ sweep and its two values are carried over unchanged. \emph{Table 5} (§4.4,
+the dose calibration) and \emph{§S1.11} (the constant-infusion case) are unchanged.
+
+\Out{Optimise the sampling schedule, which is free. Leave the dosing schedule to therapeutic
+judgment, and check identifiability before any move to continuous delivery.}

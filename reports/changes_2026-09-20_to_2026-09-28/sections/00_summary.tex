@@ -1,0 +1,49 @@
+% ---------------------------------------------------------------------
+\section*{Summary}
+
+\textbf{The paper stopped promising an estimate. It now delivers design rules and a scope
+condition.} The subtitle went from ``\rn{lold.title} Enzymatic Capacity'' to
+``\rn{lnew.title} Enzymatic Capacity''. The rules are now conditions a protocol can be
+checked against. The limit is stated before any precision is quoted: $\theta$ is
+recoverable only between $\rn{new.band_lo_pct}\%$ and $\rn{new.band_hi_pct}\%$ of normal
+capacity, and propionic acidemia sits a factor of $\rn{new.disease_factor}$ below that band.
+The band was already in the abstract and in §7.1 on 20 Sept. What is new is that §1 states
+it ahead of the first precision (the band's endpoints were already generated numbers on 20 Sept,
+$\rn{old.band_lo_pct}\%$ and $\rn{old.band_hi_pct}\%$). \textbf{The abstract is unchanged}: \texttt{git diff} on
+\texttt{00\_abstract.tex} has \rn{git.abstract_diff_lines} lines. The week's work was on
+whether the claims under that abstract survive. It spans \rn{git.ncommits} commits, with
+\rn{git.ins} lines of paper source inserted and \rn{git.del} deleted.
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}p{4.9cm}LL@{}}
+\toprule
+ & \textbf{20 Sept} & \textbf{27 Sept} \\
+\midrule
+pages, main / supplement & \rn{git.old_main_pp} / \rn{git.old_supplement_pp}
+  & \rn{git.new_main_pp} / \rn{git.new_supplement_pp} \\
+sampling rule, Remark 4 & a prohibition & a coverage condition (the lap) \\
+\emph{As corrected} / \emph{withdrawn} passages & \rn{git.old_as_corrected} / \rn{git.old_withdrawn}
+  & \rn{git.new_as_corrected} / \rn{git.new_withdrawn} \\
+decompensation route & excluded \rn{lold.excluded_twice} over & excluded \rn{lnew.excluded_three} over \\
+new sections & --- & §8.3 (two misspecifications); §S4 (admissibility evidence) \\
+generated numbers available to \texttt{\textbackslash num} & \rn{git.old_keys} & \rn{git.new_keys} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\noindent\textbf{Two scope notes.} (i) \emph{Sensors} and \emph{fusion} appear nowhere in
+either draft. The readout table of §2 is therefore assembled from the paper: Remark 2,
+Table 9, §§6.2 to 6.3, §7.1 and supplement §S1.16.2. The repository's own scoring,
+\texttt{audit/PHASE10\_SENSORS.md}, is shown alongside it and marked \unpub.
+(ii) \textbf{Three of the five topics have analysis in the repository that reached neither
+draft}: the readout screen and its combinations (\rn{git.phase10_added}), the ex vivo prior on
+$\theta$ (\rn{git.q5_added}) and the genotype-document review (\rn{git.phase12_added}). This
+is a finding about the week's work, not a gap in this report; §6.4 lists what each item
+establishes.
+
+\noindent\textbf{How the numbers were obtained.} Every number here is a generated key. It
+comes from one of five sources: \texttt{results/numbers} at either commit, a regex match on
+either draft's source or on an audit file (with file and line), the model code, or a rerun
+of a repository function. \texttt{provenance.csv} gives the source of every key. Where a
+value in the request differs from the repository's, the repository's value is printed, and
+the list at the end records the difference.

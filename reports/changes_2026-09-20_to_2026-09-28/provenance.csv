@@ -1,4 +1,51 @@
 key,value,source
+audit.p10_c2c8_hi,22,audit/PHASE10_SENSORS.md:790 @ 1aa26ca
+audit.p10_c2c8_lo,8,audit/PHASE10_SENSORS.md:790 @ 1aa26ca
+audit.p10_c9_5pct_frm,3.068,audit/PHASE10_SENSORS.md:644 @ 1aa26ca
+audit.p10_c9_5pct_to,2.62,audit/PHASE10_SENSORS.md:644 @ 1aa26ca
+audit.p10_c9_hi,15,audit/PHASE10_SENSORS.md:621 @ 1aa26ca
+audit.p10_c9_lo,7,audit/PHASE10_SENSORS.md:621 @ 1aa26ca
+audit.p10_collapse_c2,0/96,audit/PHASE10_SENSORS.md:839 @ 1aa26ca
+audit.p10_collapse_hi,29,audit/PHASE10_SENSORS.md:839 @ 1aa26ca
+audit.p10_collapse_lo,20,audit/PHASE10_SENSORS.md:839 @ 1aa26ca
+audit.p10_collapse_n,96,audit/PHASE10_SENSORS.md:839 @ 1aa26ca
+audit.p10_frenal,5,audit/PHASE10_SENSORS.md:720 @ 1aa26ca
+audit.p10_ke_exact10,0.213,audit/PHASE10_SENSORS.md:699 @ 1aa26ca
+audit.p10_ke_exact5,0.395,audit/PHASE10_SENSORS.md:697 @ 1aa26ca
+audit.p10_pair_hi,0.951,audit/PHASE10_SENSORS.md:838 @ 1aa26ca
+audit.p10_pair_lo,0.630,audit/PHASE10_SENSORS.md:838 @ 1aa26ca
+audit.p10_r6_below_audit,12,audit/PHASE10_SENSORS.md:671 @ 1aa26ca
+audit.p10_r6_below_paper,18,audit/PHASE10_SENSORS.md:671 @ 1aa26ca
+audit.p10_r6_nom_audit,12,audit/PHASE10_SENSORS.md:668 @ 1aa26ca
+audit.p10_r6_nom_paper,13,audit/PHASE10_SENSORS.md:668 @ 1aa26ca
+audit.p10_repeat_draws,12,audit/PHASE10_SENSORS.md:869 @ 1aa26ca
+audit.p10_repeat_pts,10,audit/PHASE10_SENSORS.md:869 @ 1aa26ca
+audit.p10_repeat_total,120,audit/PHASE10_SENSORS.md:870 @ 1aa26ca
+audit.p10_screen_drop,Five,audit/PHASE10_SENSORS.md:229 @ 1aa26ca
+audit.p10_screen_total,ten,audit/PHASE10_SENSORS.md:229 @ 1aa26ca
+audit.p10_share_cap20,37,audit/PHASE10_SENSORS.md:751 @ 1aa26ca
+audit.p10_share_capv,20,audit/PHASE10_SENSORS.md:751 @ 1aa26ca
+audit.p10_share_nom,83,audit/PHASE10_SENSORS.md:750 @ 1aa26ca
+audit.p10_width_w,1.0,audit/PHASE10_SENSORS.md:836 @ 1aa26ca
+audit.p12_draws,118,audit/PHASE12_GENOTYPE_REVIEW.md:38 @ 1aa26ca
+audit.p12_imported_ctrl,6.9,audit/PHASE12_GENOTYPE_REVIEW.md:10 @ 1aa26ca
+audit.p12_imported_pat,12.8,audit/PHASE12_GENOTYPE_REVIEW.md:10 @ 1aa26ca
+audit.p12_kappa,0.1402,audit/PHASE12_GENOTYPE_REVIEW.md:39 @ 1aa26ca
+audit.p12_status_cv,14.02,audit/PHASE12_GENOTYPE_REVIEW.md:84 @ 1aa26ca
+audit.p12_status_label,CORROBORATED BUT NOT PRIMARY-VERIFIED,audit/PHASE12_GENOTYPE_REVIEW.md:84 @ 1aa26ca
+audit.r58_10pct_frm,0.243,REVIEW_LOG.md:3064 @ 1aa26ca
+audit.r58_10pct_to,0.189,REVIEW_LOG.md:3064 @ 1aa26ca
+audit.r58_cells,48,REVIEW_LOG.md:3053 @ 1aa26ca
+audit.r58_centring_hi,60,REVIEW_LOG.md:3068 @ 1aa26ca
+audit.r58_centring_lo,54,REVIEW_LOG.md:3067 @ 1aa26ca
+audit.r58_dom_comb,0.299,REVIEW_LOG.md:3059 @ 1aa26ca
+audit.r58_dom_width,0.300,REVIEW_LOG.md:3060 @ 1aa26ca
+audit.r58_rmse_w,0.249,REVIEW_LOG.md:3069 @ 1aa26ca
+audit.r58_rmse_wo,0.249,REVIEW_LOG.md:3069 @ 1aa26ca
+audit.r58_verdicts_n,three,REVIEW_LOG.md:3063 @ 1aa26ca
+audit.r58_verdicts_w,0.3,REVIEW_LOG.md:3063 @ 1aa26ca
+audit.r58_width_hi,1.0,REVIEW_LOG.md:3048 @ 1aa26ca
+audit.r58_width_lo,0.3,REVIEW_LOG.md:3048 @ 1aa26ca
 calc.A,"32{,}273",model_abc.invariants
 calc.A_over_6,"5{,}378.8",A/6
 calc.B,"-3{,}177",model_abc.invariants
@@ -9,6 +56,7 @@ calc.D,"6{,}000",design.run.D_AMP
 calc.Km,100,common.models.ParamsA().Km
 calc.L,322.73,"common.models.clearance_A(M_BAR, ParamsA())"
 calc.T,14,design.run.DOSE_INTERVAL
+calc.assay_pct,5,design.run.ASSAY_CV
 calc.b_admissible,-322.7,twin K_m diverges at b = -L
 calc.bend,38,largest gap between C m^2 and its chord over the dose-train range
 calc.bias_slope,2.549,1 + K_m k_e / L
@@ -17,10 +65,13 @@ calc.delta6_dis,"5{,}021.5","delta_of_m(6, theta=150)"
 calc.diary_b,16.1,design.run.LOAD_FRAC * L
 calc.diary_factor,1.028,theta_hat(-b) / theta_hat(+b)
 calc.diary_move,106,"d(Delta m)/db = K_m + m at m = 6, for a 1 umol/L/d diary error"
+calc.dis_pct,5,THETA_DISEASE / THETA
+calc.gate,0.20,q2_requirement_map.GATE
 calc.h1401_span_h,12.5,"(n - 1) x 0.01 d, in hours"
 calc.ke,5,common.models.ParamsA().ke
 calc.keKm,500,k_e K_m
 calc.kem6,30,k_e m at m = 6
+calc.load_pct,5,design.run.LOAD_FRAC
 calc.locus_slope,-8.227,d theta_hat / d K_m_hat
 calc.m_hi,8.91,level_of_delta(trough)
 calc.m_hi_dis,35.64,"level_of_delta(trough, 150)"
@@ -30,6 +81,7 @@ calc.m_ratio_dis,5.40,untreated level ratio 150 : 3000
 calc.m_untreated,10.0,model_abc.untreated_level
 calc.m_untreated_dis,54.0,model_abc.untreated_level(150)
 calc.mbar,10,design.run.M_BAR
+calc.monthly_step,30.4,q2_requirement_map.SCHED['monthly'] step
 calc.mwf,6,model_abc.M_WATERFALL
 calc.n_h14,53,"np.arange(0, 730, 14.0)"
 calc.n_h1401,53,"np.arange(0, 730, 14.01)"
@@ -51,6 +103,7 @@ calc.twin400_km,44.65,model_abc.twin(400)
 calc.twin400_theta,"3{,}676.7",model_abc.twin(400)
 calc.twin_b_last,400,model_abc.TWIN_BS
 calc.twin_bs,"-200, 0, +200, +400",model_abc.TWIN_BS
+calc.unit_b,1,"a unit diary error, 1 umol/L/day, in d(Delta m)/db"
 fus.all_10,0.153,"q15_sensors.cell, monthly, 10%, seeds 0..23 (q2_requirement_map.SEEDS)"
 fus.all_5,0.183,"q15_sensors.cell, monthly, 5%, seeds 0..23 (q2_requirement_map.SEEDS)"
 fus.c2_10,0.198,"q15_sensors.cell, monthly, 10%, seeds 0..23 (q2_requirement_map.SEEDS)"
@@ -65,13 +118,18 @@ fus.c8c9_10,0.237,"q15_sensors.cell, monthly, 10%, seeds 0..23 (q2_requirement_m
 fus.c8c9_5,0.449,"q15_sensors.cell, monthly, 5%, seeds 0..23 (q2_requirement_map.SEEDS)"
 fus.c9_10,1.577,"q15_sensors.cell, monthly, 10%, seeds 0..23 (q2_requirement_map.SEEDS)"
 fus.c9_5,3.060,"q15_sensors.cell, monthly, 5%, seeds 0..23 (q2_requirement_map.SEEDS)"
+fus.cap10,10,the capacities q15.step_3 prices
+fus.cap5,5,the capacities q15.step_3 prices
 fus.n_monthly,24,"q2 SCHED monthly, no baseline"
 fus.nseeds,24,q2_requirement_map.SEEDS
 fus.p2,20,q15.step_3
+fus.p2_frac,0.20,q15.step_3 candidate 2 log-sd
 fus.p8,5.4,q15.step_3
 fus.p9,10,q15.step_3
 fus.rec_10,1.581,"q15_sensors.cell, monthly, 10%, seeds 0..23 (q2_requirement_map.SEEDS)"
 fus.rec_5,3.068,"q15_sensors.cell, monthly, 5%, seeds 0..23 (q2_requirement_map.SEEDS)"
+fus.seed_hi,23,q2_requirement_map.SEEDS
+fus.seed_lo,0,q2_requirement_map.SEEDS
 gen.bias,audit/t4\_bias\_vs\_scatter.py,results/numbers/bias.tex:1 @ 1aa26ca
 gen.boundary,src/model\_C/run.py,results/numbers/boundary.tex:1 @ 1aa26ca
 gen.cohort,audit/t6\_cohort\_with\_kappa.py,results/numbers/cohort.tex:1 @ 1aa26ca
@@ -111,19 +169,61 @@ git.has_R158,yes,REVIEW_LOG.md
 git.has_R182,yes,REVIEW_LOG.md
 git.has_R22,yes,REVIEW_LOG.md
 git.ins,684,git diff --shortstat (paper sources)
+git.main_boundary,2026-09-22,git log --first-parent -S 'The fit lands on the boundary of admissibility' (458038b)
+git.main_carn,2026-09-22,"git log --first-parent -S 'way round, asserting that' (810daa6)"
+git.main_crisis,2026-09-27,git log --first-parent -S 'nothing there for a threshold' (0cccbf9)
+git.main_exposure,2026-09-22,git log --first-parent -S 'no interior optimum on any therapeutic' (458038b)
+git.main_factor24,2026-09-27,git log --first-parent -S 'stood here and in Section' (1aa26ca)
+git.main_lap,2026-09-22,git log --first-parent -S 'complete one lap of' (458038b)
+git.main_numerics,2026-09-22,git log --first-parent -S 'said that the closed form' (810daa6)
+git.main_pattern2,2026-09-22,"git log --first-parent -S 'A second pattern, across the two misspecification' (458038b)"
+git.main_readings,2026-09-22,git log --first-parent -S 'Everything this paper reports about' (458038b)
+git.main_s4,2026-09-27,"git log --first-parent -S 'Admissibility, with the evidence for each verdict' (0cccbf9)"
+git.main_separatrix,2026-09-22,git log --first-parent -S 'main branch and is recorded in R22' (810daa6)
+git.main_tier1first,2026-09-27,"git log --first-parent -S 'What to run first, and it is one blood draw' (0cccbf9)"
+git.main_verified,2026-09-22,git log --first-parent -S 'offered that agreement as' (810daa6)
 git.ncommits,195,git rev-list --count
-git.new,1aa26ca,git rev-parse HEAD
+git.new,1aa26ca,git rev-list -1 --before=2026-09-27T23:59:59Z HEAD
 git.new_as_corrected,5,paper/sections/*.tex @ 1aa26ca
 git.new_date,2026-09-27 21:35 UTC,git show
+git.new_keys,393,count of \num keys in results/numbers/*.tex @ new
 git.new_main_pp,45,"git show 1aa26ca:paper/main.pdf, page count"
 git.new_supplement_pp,65,"git show 1aa26ca:paper/supplement.pdf, page count"
 git.new_withdrawn,6,paper/sections/*.tex @ 1aa26ca
 git.old,1b226f5,git rev-list -1 --before=2026-09-20T23:59:59Z HEAD
 git.old_as_corrected,1,paper/sections/*.tex @ 1b226f5
 git.old_date,2026-09-20 20:07 UTC,git show
+git.old_keys,211,count of \num keys in results/numbers/*.tex @ old
 git.old_main_pp,39,"git show 1b226f5:paper/main.pdf, page count"
 git.old_supplement_pp,61,"git show 1b226f5:paper/supplement.pdf, page count"
 git.old_withdrawn,0,paper/sections/*.tex @ 1b226f5
+git.orig_boundary,2026-09-21,git log -S 'The fit lands on the boundary of admissibility' (c585d84)
+git.orig_carn,2026-09-22,"git log -S 'way round, asserting that' (ea25f4f)"
+git.orig_crisis,2026-09-27,git log -S 'nothing there for a threshold' (0cccbf9)
+git.orig_exposure,2026-09-21,git log -S 'no interior optimum on any therapeutic' (d811ea8)
+git.orig_factor24,2026-09-27,git log -S 'stood here and in Section' (5a9cd22)
+git.orig_lap,2026-09-21,git log -S 'complete one lap of' (855e377)
+git.orig_numerics,2026-09-14,git log -S 'said that the closed form' (c6e7a20)
+git.orig_pattern2,2026-09-21,"git log -S 'A second pattern, across the two misspecification' (b1aebd7)"
+git.orig_readings,2026-09-21,git log -S 'Everything this paper reports about' (c778d08)
+git.orig_s4,2026-09-27,"git log -S 'Admissibility, with the evidence for each verdict' (0cccbf9)"
+git.orig_separatrix,2026-09-22,git log -S 'main branch and is recorded in R22' (ea25f4f)
+git.orig_tier1first,2026-09-27,"git log -S 'What to run first, and it is one blood draw' (0cccbf9)"
+git.orig_verified,2026-09-14,git log -S 'offered that agreement as' (c6e7a20)
+git.origc_boundary,c585d84,git log -S 'The fit lands on the boundary of admissibility'
+git.origc_carn,ea25f4f,"git log -S 'way round, asserting that'"
+git.origc_crisis,0cccbf9,git log -S 'nothing there for a threshold'
+git.origc_exposure,d811ea8,git log -S 'no interior optimum on any therapeutic'
+git.origc_factor24,5a9cd22,git log -S 'stood here and in Section'
+git.origc_lap,855e377,git log -S 'complete one lap of'
+git.origc_numerics,c6e7a20,git log -S 'said that the closed form'
+git.origc_pattern2,b1aebd7,"git log -S 'A second pattern, across the two misspecification'"
+git.origc_readings,c778d08,git log -S 'Everything this paper reports about'
+git.origc_s4,0cccbf9,"git log -S 'Admissibility, with the evidence for each verdict'"
+git.origc_separatrix,ea25f4f,git log -S 'main branch and is recorded in R22'
+git.origc_tier1first,0cccbf9,"git log -S 'What to run first, and it is one blood draw'"
+git.origc_verified,c6e7a20,git log -S 'offered that agreement as'
+git.paper_untouched_after_new,0,files under paper/ changed after the 27 Sept commit
 git.phase10_added,2026-09-26,git log --diff-filter=A -- audit/PHASE10_SENSORS.md (b1be9c4)
 git.phase10_commit,b1be9c4,git log --diff-filter=A -- audit/PHASE10_SENSORS.md
 git.phase12_added,2026-09-27,git log --diff-filter=A -- audit/PHASE12_GENOTYPE_REVIEW.md (16224c3)
@@ -132,12 +232,14 @@ git.q15_added,2026-09-26,git log --diff-filter=A -- audit/q15_sensors.py (827a5a
 git.q15_commit,827a5ad,git log --diff-filter=A -- audit/q15_sensors.py
 git.q5_added,2026-09-26,git log --diff-filter=A -- audit/q5_exvivo_prior.py (45b2c68)
 git.q5_commit,45b2c68,git log --diff-filter=A -- audit/q5_exvivo_prior.py
+lnew.alt_amp,75,paper/sections/07_design.tex:327 @ 1aa26ca
 lnew.alt_cut,65,paper/sections/07_design.tex:328 @ 1aa26ca
 lnew.alt_gain,4.8,paper/sections/07_design.tex:328 @ 1aa26ca
 lnew.assay_vs_load_assay,14.9,paper/sections/04_local.tex:746 @ 1aa26ca
 lnew.assay_vs_load_load,6.5,paper/sections/04_local.tex:746 @ 1aa26ca
 lnew.b_admissible,-272.7,paper/sections/06_excitation.tex:66 @ 1aa26ca
 lnew.basin_max,49.6,paper/sections/12_discussion.tex:116 @ 1aa26ca
+lnew.bias_row,20,paper/sections/08_specification.tex:268 @ 1aa26ca
 lnew.breath_cv_pub,14.0,paper/sections/08_specification.tex:139 @ 1aa26ca
 lnew.breath_hi,50.84,paper/sections/08_specification.tex:133 @ 1aa26ca
 lnew.breath_lo,0.39,paper/sections/08_specification.tex:133 @ 1aa26ca
@@ -148,6 +250,7 @@ lnew.c3_corrected,As corrected.,paper/sections/04_local.tex:74 @ 1aa26ca
 lnew.carn_old_claim,the carnitine state is fast relative to the metabolite,paper/sections/02_model.tex:128 @ 1aa26ca
 lnew.crisis039_count,0,paper/sections/07b_decision.tex @ 1aa26ca
 lnew.crisis_km_lo,thirty,paper/sections/07b_decision.tex:80 @ 1aa26ca
+lnew.d2672_sd,2.96,paper/sections/11_scope.tex:166 @ 1aa26ca
 lnew.dec_rho1_err,19.1,paper/sections/07b_decision.tex:59 @ 1aa26ca
 lnew.dec_rho1_med,0.88,paper/sections/07b_decision.tex:60 @ 1aa26ca
 lnew.diet_gate,10,paper/sections/08_specification.tex:265 @ 1aa26ca
@@ -157,22 +260,37 @@ lnew.dsweep_dis_best,2.75,paper/sections/11_scope.tex:172 @ 1aa26ca
 lnew.dsweep_dis_booked,3.07,paper/sections/11_scope.tex:172 @ 1aa26ca
 lnew.dsweep_dis_d,100,paper/sections/11_scope.tex:172 @ 1aa26ca
 lnew.dsweep_nom_best,0.165,paper/sections/11_scope.tex:176 @ 1aa26ca
+lnew.dsweep_range_hi,30000,paper/sections/11_scope.tex:171 @ 1aa26ca
+lnew.dsweep_range_lo,10,paper/sections/11_scope.tex:171 @ 1aa26ca
 lnew.dsweep_within,three,paper/sections/11_scope.tex:176 @ 1aa26ca
+lnew.enzyme_x_normal,2.18,paper/sections/11_scope.tex:157 @ 1aa26ca
 lnew.excluded_three,three times,paper/sections/12_discussion.tex:105 @ 1aa26ca
 lnew.factor24_count,0,paper/sections/01_question.tex @ 1aa26ca
 lnew.factor24_old,24,paper/sections/A1_open.tex:135 @ 1aa26ca
 lnew.h28_cut,87,paper/sections/07_design.tex:329 @ 1aa26ca
 lnew.h28_gain,6.5,paper/sections/07_design.tex:329 @ 1aa26ca
+lnew.h28_word,twenty-eight,paper/sections/07_design.tex:328 @ 1aa26ca
 lnew.h7_cost,29,paper/sections/07_design.tex:333 @ 1aa26ca
+lnew.h7_word,seven,paper/sections/07_design.tex:333 @ 1aa26ca
 lnew.ke_exact_left,0.388,paper/sections/08_specification.tex:194 @ 1aa26ca
 lnew.ke_gain_dis,6.9,paper/sections/08_specification.tex:193 @ 1aa26ca
 lnew.ke_gain_nom,2.1,paper/sections/08_specification.tex:192 @ 1aa26ca
+lnew.ke_tight,5,paper/sections/08_specification.tex:192 @ 1aa26ca
+lnew.lapfrac_a,4,paper/sections/07_design.tex:150 @ 1aa26ca
+lnew.lapfrac_b,10,paper/sections/07_design.tex:150 @ 1aa26ca
+lnew.lapfrac_c,25,paper/sections/07_design.tex:150 @ 1aa26ca
+lnew.lapfrac_d,50,paper/sections/07_design.tex:150 @ 1aa26ca
+lnew.lapfrac_e,75,paper/sections/07_design.tex:150 @ 1aa26ca
 lnew.margin_hi,9,paper/sections/12_discussion.tex:82 @ 1aa26ca
 lnew.margin_lo,-4,paper/sections/12_discussion.tex:82 @ 1aa26ca
 lnew.misspec_high_hi,2.0,paper/sections/12_discussion.tex:193 @ 1aa26ca
 lnew.misspec_high_lo,1.3,paper/sections/12_discussion.tex:193 @ 1aa26ca
+lnew.mtol_a,15,paper/sections/01_question.tex:73 @ 1aa26ca
+lnew.mtol_b,40,paper/sections/01_question.tex:74 @ 1aa26ca
+lnew.mtol_c,160,paper/sections/01_question.tex:74 @ 1aa26ca
 lnew.mtolwin_in_abstract,0,paper/sections/00_abstract.tex @ 1aa26ca
 lnew.mtolwin_in_question,3,paper/sections/01_question.tex @ 1aa26ca
+lnew.n20_n,20,paper/sections/07_design.tex:170 @ 1aa26ca
 lnew.null_amp,3.7,paper/sections/04_local.tex:839 @ 1aa26ca
 lnew.null_cross,1100,paper/sections/04_local.tex:839 @ 1aa26ca
 lnew.p_2mc,0.84,paper/sections/04_local.tex:62 @ 1aa26ca
@@ -184,16 +302,20 @@ lnew.reduction_gap_lo,3.4,paper/sections/12_discussion.tex:115 @ 1aa26ca
 lnew.relax_b0,29.79,paper/sections/07_design.tex:286 @ 1aa26ca
 lnew.relax_b400,59.96,paper/sections/07_design.tex:287 @ 1aa26ca
 lnew.remark4_title,The sampling schedule must complete one lap of the dose cycle.,paper/sections/07_design.tex:125 @ 1aa26ca
+lnew.route6_below,eighteen,paper/sections/11_scope.tex:216 @ 1aa26ca
 lnew.rr_2mc,1.0,paper/sections/04_local.tex:62 @ 1aa26ca
 lnew.rr_3hp,0.7,paper/sections/04_local.tex:60 @ 1aa26ca
 lnew.rr_3hp_ci_hi,0.9,paper/sections/04_local.tex:60 @ 1aa26ca
 lnew.rr_3hp_ci_lo,0.6,paper/sections/04_local.tex:60 @ 1aa26ca
 lnew.rr_c3,0.6,paper/sections/04_local.tex:61 @ 1aa26ca
+lnew.rr_per,50,paper/sections/04_local.tex:59 @ 1aa26ca
 lnew.s4_title,"Admissibility, with the evidence for each verdict",paper/supplement.tex:74 @ 1aa26ca
 lnew.saudi_founder,70.2,paper/sections/A1_supplementary.tex:525 @ 1aa26ca
 lnew.saudi_pcca,81,paper/sections/A1_supplementary.tex:538 @ 1aa26ca
 lnew.saudi_pcca_n,68 of 84,paper/sections/A1_supplementary.tex:539 @ 1aa26ca
 lnew.scope_5pct_ratio,5.40,results/tables/tab_S_scope.tex:9 @ 1aa26ca
+lnew.seeds_n,twelve,paper/sections/07b_decision.tex:58 @ 1aa26ca
+lnew.seeds_reps,four hundred,paper/sections/07b_decision.tex:58 @ 1aa26ca
 lnew.sep_depleted_a,1.9,paper/sections/02_model.tex:167 @ 1aa26ca
 lnew.sep_depleted_b,4.8,paper/sections/02_model.tex:167 @ 1aa26ca
 lnew.sep_depleted_c,7.3,paper/sections/02_model.tex:168 @ 1aa26ca
@@ -201,18 +323,25 @@ lnew.sep_depleted_fill,0.8,paper/sections/02_model.tex:167 @ 1aa26ca
 lnew.sep_parent_basin_hi,18,paper/sections/02_model.tex:161 @ 1aa26ca
 lnew.sep_parent_basin_lo,10,paper/sections/02_model.tex:161 @ 1aa26ca
 lnew.six_routes,Six,paper/sections/11_scope.tex @ 1aa26ca
+lnew.step_off_v,14.5,paper/sections/07_design.tex:172 @ 1aa26ca
+lnew.t_struct1h,one hour,paper/sections/08_specification.tex:94 @ 1aa26ca
+lnew.t_struct_t15,fifteen,paper/sections/08_specification.tex:79 @ 1aa26ca
+lnew.t_struct_t3,three,paper/sections/08_specification.tex:78 @ 1aa26ca
 lnew.tauc_ratio_hi,55,paper/sections/02_model.tex:136 @ 1aa26ca
 lnew.tauc_ratio_lo,0.52,paper/sections/02_model.tex:136 @ 1aa26ca
+lnew.theta_parent,300,paper/sections/12_discussion.tex:196 @ 1aa26ca
 lnew.title,Design Rules and Limits of Recoverability for,paper/main.tex:16 @ 1aa26ca
 lnew.turnover_n,thirteen,paper/sections/11_scope.tex:213 @ 1aa26ca
 lnew.turnover_vs,twenty-five,paper/sections/11_scope.tex:214 @ 1aa26ca
 lnew.verified_old_claim,the reduction is verified rather than asserted,paper/sections/02_model.tex:148 @ 1aa26ca
+lold.alt_amp,75,paper/sections/07_design.tex:257 @ 1b226f5
 lold.alt_cut,65,paper/sections/07_design.tex:258 @ 1b226f5
 lold.alt_gain,4.8,paper/sections/07_design.tex:258 @ 1b226f5
 lold.assay_vs_load_assay,14.9,paper/sections/04_local.tex:745 @ 1b226f5
 lold.assay_vs_load_load,6.5,paper/sections/04_local.tex:745 @ 1b226f5
 lold.b_admissible,-272.7,paper/sections/06_excitation.tex:52 @ 1b226f5
 lold.bias_both20,0.288,paper/sections/06_excitation.tex:270 @ 1b226f5
+lold.bias_row,20,paper/sections/08_specification.tex:232 @ 1b226f5
 lold.bias_theta_factor,1.028,paper/sections/06_excitation.tex:53 @ 1b226f5
 lold.breath_cv_pub,14.0,paper/sections/08_specification.tex:120 @ 1b226f5
 lold.breath_hi,50.84,paper/sections/08_specification.tex:114 @ 1b226f5
@@ -223,6 +352,7 @@ lold.breath_sd,12.86,paper/sections/08_specification.tex:114 @ 1b226f5
 lold.c3_corrected,As corrected.,paper/sections/04_local.tex:74 @ 1b226f5
 lold.crisis039_count,1,paper/sections/07b_decision.tex @ 1b226f5
 lold.crisis_threshold,-0.39,paper/sections/07b_decision.tex:71 @ 1b226f5
+lold.d2672_sd,2.96,paper/sections/11_scope.tex:134 @ 1b226f5
 lold.dec_rho1_err,17.5,paper/sections/07b_decision.tex:58 @ 1b226f5
 lold.dec_rho1_med,1.03,paper/sections/07b_decision.tex:59 @ 1b226f5
 lold.diet_gain15_pct,7,paper/sections/08_specification.tex:348 @ 1b226f5
@@ -233,7 +363,10 @@ lold.dsweep_dis_best,2.75,paper/sections/11_scope.tex:140 @ 1b226f5
 lold.dsweep_dis_booked,3.07,paper/sections/11_scope.tex:140 @ 1b226f5
 lold.dsweep_dis_d,100,paper/sections/11_scope.tex:140 @ 1b226f5
 lold.dsweep_nom_best,0.165,paper/sections/11_scope.tex:144 @ 1b226f5
+lold.dsweep_range_hi,30000,paper/sections/11_scope.tex:139 @ 1b226f5
+lold.dsweep_range_lo,10,paper/sections/11_scope.tex:139 @ 1b226f5
 lold.dsweep_within,three,paper/sections/11_scope.tex:144 @ 1b226f5
+lold.enzyme_x_normal,2.18,paper/sections/11_scope.tex:131 @ 1b226f5
 lold.excluded_twice,twice,paper/sections/12_discussion.tex:23 @ 1b226f5
 lold.factor24_count,1,paper/sections/01_question.tex @ 1b226f5
 lold.factor24_old,24,paper/sections/A1_open.tex:126 @ 1b226f5
@@ -242,10 +375,13 @@ lold.fit_margin_true,149,paper/sections/12_discussion.tex:22 @ 1b226f5
 lold.fit_theta_hat,151,paper/sections/12_discussion.tex:20 @ 1b226f5
 lold.h28_cut,87,paper/sections/07_design.tex:259 @ 1b226f5
 lold.h28_gain,6.5,paper/sections/07_design.tex:259 @ 1b226f5
+lold.h28_word,twenty-eight,paper/sections/07_design.tex:258 @ 1b226f5
 lold.h7_cost,29,paper/sections/07_design.tex:263 @ 1b226f5
+lold.h7_word,seven,paper/sections/07_design.tex:263 @ 1b226f5
 lold.ke_exact_left,0.388,paper/sections/08_specification.tex:175 @ 1b226f5
 lold.ke_gain_dis,6.9,paper/sections/08_specification.tex:174 @ 1b226f5
 lold.ke_gain_nom,2.1,paper/sections/08_specification.tex:173 @ 1b226f5
+lold.ke_tight,5,paper/sections/08_specification.tex:173 @ 1b226f5
 lold.null_amp,3.7,paper/sections/04_local.tex:838 @ 1b226f5
 lold.null_cross,1100,paper/sections/04_local.tex:838 @ 1b226f5
 lold.p_2mc,0.84,paper/sections/04_local.tex:62 @ 1b226f5
@@ -253,11 +389,13 @@ lold.p_c3,0.017,paper/sections/04_local.tex:61 @ 1b226f5
 lold.relax_b0,29.79,paper/sections/07_design.tex:216 @ 1b226f5
 lold.relax_b400,59.96,paper/sections/07_design.tex:217 @ 1b226f5
 lold.remark4_title,Do not sample at the dose interval.,paper/sections/07_design.tex:125 @ 1b226f5
+lold.route6_below,eighteen,paper/sections/11_scope.tex:184 @ 1b226f5
 lold.rr_2mc,1.0,paper/sections/04_local.tex:62 @ 1b226f5
 lold.rr_3hp,0.7,paper/sections/04_local.tex:60 @ 1b226f5
 lold.rr_3hp_ci_hi,0.9,paper/sections/04_local.tex:60 @ 1b226f5
 lold.rr_3hp_ci_lo,0.6,paper/sections/04_local.tex:60 @ 1b226f5
 lold.rr_c3,0.6,paper/sections/04_local.tex:61 @ 1b226f5
+lold.rr_per,50,paper/sections/04_local.tex:59 @ 1b226f5
 lold.saudi_founder,70.2,paper/sections/A1_supplementary.tex:525 @ 1b226f5
 lold.saudi_pcca,81,paper/sections/A1_supplementary.tex:538 @ 1b226f5
 lold.saudi_pcca_n,68 of 84,paper/sections/A1_supplementary.tex:539 @ 1b226f5
@@ -369,6 +507,15 @@ new.exp_fall_nominal,1.20,results/numbers/therapy.tex:7 @ 1aa26ca
 new.exp_h28_disease,26.59,results/numbers/therapy.tex:8 @ 1aa26ca
 new.exp_h28_nominal,7.23,results/numbers/therapy.tex:9 @ 1aa26ca
 new.fibre_theta_fold,169,results/numbers/fibre.tex:5 @ 1aa26ca
+new.fig.blockA,1,"paper/main.pdf @ 1aa26ca, caption"
+new.fig.channels,2,"paper/main.pdf @ 1aa26ca, caption"
+new.fig.designs,5,"paper/main.pdf @ 1aa26ca, caption"
+new.fig.excitation,3,"paper/main.pdf @ 1aa26ca, caption"
+new.fig.inverse,8,"paper/main.pdf @ 1aa26ca, caption"
+new.fig.phaseclock,6,"paper/main.pdf @ 1aa26ca, caption"
+new.fig.signerr,9,"paper/main.pdf @ 1aa26ca, caption"
+new.fig.trial,4,"paper/main.pdf @ 1aa26ca, caption"
+new.fig.visits,7,"paper/main.pdf @ 1aa26ca, caption"
 new.fit_band_top,8,results/numbers/boundary.tex:7 @ 1aa26ca
 new.fit_ke_hat,0.00,results/numbers/boundary.tex:8 @ 1aa26ca
 new.fit_ke_hat_free,-0.36,results/numbers/boundary.tex:9 @ 1aa26ca
@@ -590,6 +737,31 @@ new.sd_tier1_with_kappa,0.2002,results/numbers/frontier.tex:19 @ 1aa26ca
 new.sd_two_monthly,0.1876,results/numbers/design.tex:102 @ 1aa26ca
 new.sd_two_monthly_hi,0.1939,results/numbers/design.tex:103 @ 1aa26ca
 new.sd_two_monthly_lo,0.1839,results/numbers/design.tex:104 @ 1aa26ca
+new.sec.admiss,4.4,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.applic,6.5,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.collapse,4.1,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.decision,5,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.designsec,4,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.destroys,3.1,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.discussion,8,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.excitation,3,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.fiveresults,8.1,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.howmany,6.6,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.intro,1,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.localmodel,2.4,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.model,2,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.numerics,2.6,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.pattern2,8.3,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.protocol,4.3,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.reduction,2.3,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.route,4.2,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.scope,7,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.scopeprec,7.1,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.sources,4.5,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.spec,6,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.tier1,6.2,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.tier2,6.3,"paper/main.pdf @ 1aa26ca, contents"
+new.sec.tier3,6.4,"paper/main.pdf @ 1aa26ca, contents"
 new.sep_over_mbar,12.6,results/numbers/boundary.tex:30 @ 1aa26ca
 new.settle_hours,0.91,results/numbers/design.tex:105 @ 1aa26ca
 new.settle_hours_1pct,1.30,results/numbers/design.tex:106 @ 1aa26ca
@@ -614,6 +786,20 @@ new.struct_sigma_1h,0.68,results/numbers/structure.tex:6 @ 1aa26ca
 new.struct_sigma_2h,0.01,results/numbers/structure.tex:7 @ 1aa26ca
 new.struct_sigma_30min,4.4,results/numbers/structure.tex:8 @ 1aa26ca
 new.struct_sigma_3min,16.3,results/numbers/structure.tex:9 @ 1aa26ca
+new.tab.admissible,5,"paper/main.pdf @ 1aa26ca, caption"
+new.tab.decision,8,"paper/main.pdf @ 1aa26ca, caption"
+new.tab.designs,4,"paper/main.pdf @ 1aa26ca, caption"
+new.tab.dosesens,6,"paper/main.pdf @ 1aa26ca, caption"
+new.tab.excursion,7,"paper/main.pdf @ 1aa26ca, caption"
+new.tab.factors,3,"paper/main.pdf @ 1aa26ca, caption"
+new.tab.incfloor,10,"paper/main.pdf @ 1aa26ca, caption"
+new.tab.instruments,13,"paper/main.pdf @ 1aa26ca, caption"
+new.tab.keprior,11,"paper/main.pdf @ 1aa26ca, caption"
+new.tab.loadprec,12,"paper/main.pdf @ 1aa26ca, caption"
+new.tab.notation,1,"paper/main.pdf @ 1aa26ca, caption"
+new.tab.params,2,"paper/main.pdf @ 1aa26ca, caption"
+new.tab.require,9,"paper/main.pdf @ 1aa26ca, caption"
+new.tab.scope,14,"paper/main.pdf @ 1aa26ca, caption"
 new.tau_frozen_h,0.555,results/numbers/structure.tex:10 @ 1aa26ca
 new.tau_hours,0.81,results/numbers/design.tex:110 @ 1aa26ca
 new.tau_reduced_h,0.587,results/numbers/structure.tex:11 @ 1aa26ca
@@ -705,6 +891,15 @@ old.disease_factor,16,results/numbers/scope.tex:13 @ 1b226f5
 old.dropped_hi,10.6,results/numbers/design.tex:15 @ 1b226f5
 old.dropped_lo,1.05,results/numbers/design.tex:16 @ 1b226f5
 old.excitation_ratio,42,results/numbers/design.tex:17 @ 1b226f5
+old.fig.blockA,1,"paper/main.pdf @ 1b226f5, caption"
+old.fig.channels,2,"paper/main.pdf @ 1b226f5, caption"
+old.fig.designs,5,"paper/main.pdf @ 1b226f5, caption"
+old.fig.excitation,3,"paper/main.pdf @ 1b226f5, caption"
+old.fig.inverse,8,"paper/main.pdf @ 1b226f5, caption"
+old.fig.phaseclock,6,"paper/main.pdf @ 1b226f5, caption"
+old.fig.signerr,9,"paper/main.pdf @ 1b226f5, caption"
+old.fig.trial,4,"paper/main.pdf @ 1b226f5, caption"
+old.fig.visits,7,"paper/main.pdf @ 1b226f5, caption"
 old.free_cv10,0.1735,results/numbers/design.tex:18 @ 1b226f5
 old.free_cv10_hi,0.1873,results/numbers/design.tex:19 @ 1b226f5
 old.free_cv10_lo,0.1705,results/numbers/design.tex:20 @ 1b226f5
@@ -823,6 +1018,30 @@ old.sd_straddle_lo,0.0157,results/numbers/design.tex:97 @ 1b226f5
 old.sd_two_monthly,0.1876,results/numbers/design.tex:98 @ 1b226f5
 old.sd_two_monthly_hi,0.1939,results/numbers/design.tex:99 @ 1b226f5
 old.sd_two_monthly_lo,0.1839,results/numbers/design.tex:100 @ 1b226f5
+old.sec.admiss,4.4,"paper/main.pdf @ 1b226f5, contents"
+old.sec.applic,6.5,"paper/main.pdf @ 1b226f5, contents"
+old.sec.collapse,4.1,"paper/main.pdf @ 1b226f5, contents"
+old.sec.decision,5,"paper/main.pdf @ 1b226f5, contents"
+old.sec.designsec,4,"paper/main.pdf @ 1b226f5, contents"
+old.sec.destroys,3.1,"paper/main.pdf @ 1b226f5, contents"
+old.sec.discussion,8,"paper/main.pdf @ 1b226f5, contents"
+old.sec.excitation,3,"paper/main.pdf @ 1b226f5, contents"
+old.sec.fiveresults,8.1,"paper/main.pdf @ 1b226f5, contents"
+old.sec.howmany,6.6,"paper/main.pdf @ 1b226f5, contents"
+old.sec.intro,1,"paper/main.pdf @ 1b226f5, contents"
+old.sec.localmodel,2.4,"paper/main.pdf @ 1b226f5, contents"
+old.sec.model,2,"paper/main.pdf @ 1b226f5, contents"
+old.sec.numerics,2.6,"paper/main.pdf @ 1b226f5, contents"
+old.sec.protocol,4.3,"paper/main.pdf @ 1b226f5, contents"
+old.sec.reduction,2.3,"paper/main.pdf @ 1b226f5, contents"
+old.sec.route,4.2,"paper/main.pdf @ 1b226f5, contents"
+old.sec.scope,7,"paper/main.pdf @ 1b226f5, contents"
+old.sec.scopeprec,7.1,"paper/main.pdf @ 1b226f5, contents"
+old.sec.sources,4.5,"paper/main.pdf @ 1b226f5, contents"
+old.sec.spec,6,"paper/main.pdf @ 1b226f5, contents"
+old.sec.tier1,6.2,"paper/main.pdf @ 1b226f5, contents"
+old.sec.tier2,6.3,"paper/main.pdf @ 1b226f5, contents"
+old.sec.tier3,6.4,"paper/main.pdf @ 1b226f5, contents"
 old.settle_hours,0.91,results/numbers/design.tex:101 @ 1b226f5
 old.settle_hours_1pct,1.30,results/numbers/design.tex:102 @ 1b226f5
 old.share_10pct,29.2,results/numbers/scope.tex:16 @ 1b226f5
@@ -838,6 +1057,20 @@ old.struct_sigma_1h,0.68,results/numbers/structure.tex:6 @ 1b226f5
 old.struct_sigma_2h,0.01,results/numbers/structure.tex:7 @ 1b226f5
 old.struct_sigma_30min,4.4,results/numbers/structure.tex:8 @ 1b226f5
 old.struct_sigma_3min,16.3,results/numbers/structure.tex:9 @ 1b226f5
+old.tab.admissible,5,"paper/main.pdf @ 1b226f5, caption"
+old.tab.decision,8,"paper/main.pdf @ 1b226f5, caption"
+old.tab.designs,4,"paper/main.pdf @ 1b226f5, caption"
+old.tab.dosesens,6,"paper/main.pdf @ 1b226f5, caption"
+old.tab.excursion,7,"paper/main.pdf @ 1b226f5, caption"
+old.tab.factors,3,"paper/main.pdf @ 1b226f5, caption"
+old.tab.incfloor,10,"paper/main.pdf @ 1b226f5, caption"
+old.tab.instruments,13,"paper/main.pdf @ 1b226f5, caption"
+old.tab.keprior,11,"paper/main.pdf @ 1b226f5, caption"
+old.tab.loadprec,12,"paper/main.pdf @ 1b226f5, caption"
+old.tab.notation,1,"paper/main.pdf @ 1b226f5, caption"
+old.tab.params,2,"paper/main.pdf @ 1b226f5, caption"
+old.tab.require,9,"paper/main.pdf @ 1b226f5, caption"
+old.tab.scope,14,"paper/main.pdf @ 1b226f5, caption"
 old.tau_frozen_h,0.555,results/numbers/structure.tex:10 @ 1b226f5
 old.tau_hours,0.81,results/numbers/design.tex:105 @ 1b226f5
 old.tau_reduced_h,0.587,results/numbers/structure.tex:11 @ 1b226f5

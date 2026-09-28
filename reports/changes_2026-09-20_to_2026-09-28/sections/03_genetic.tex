@@ -1,0 +1,80 @@
+% ---------------------------------------------------------------------
+\section{Was a genetic prior helpful?}
+
+\Q Can genotype supply what the marker record cannot, either as a prior on $\theta$ itself
+or as an anchor for $k_e$?
+
+\D Read §S1.10, Proposition 6 (§S1.18.1), Remark 14 (§S1.16.3), Remarks 21 and 22
+(§S1.16.7) and Table 11 (§6.3). Recomputed the anchor's crossing from the model constants.
+Searched the repository for a genotype-informed prior on $\theta$.
+
+\F \textbf{What the paper says.} Three findings, all identical in both drafts.
+\begin{itemize}
+\item \textbf{The founder population is ideal for the map and closed to the design}
+(§S1.10). \emph{PCCA} c.425G$>$A accounts for $\rn{lnew.saudi_founder}\%$ of families, with
+one compound-heterozygous family, so genotype to capacity is unconfounded. The series is
+$\rn{lnew.saudi_pcca}\%$ \emph{PCCA} (\rn{lnew.saudi_pcca_n} patients), and §6.5 requires a
+therapeutic increment that varies, which no patient outside the trial receives. The two
+criteria select different cohorts, and the paper leaves the genotype argument as a property
+of the literature rather than a recommendation.
+\item \textbf{The null-genotype anchor inverts with severity} (Remarks 21 and 22). A patient
+with $\theta = 0$ gives $s = k_e m$, which fixes $k_e$ and collapses the fibre to a point. Its
+amplification of a load error crosses one at $\theta = 2k_e(K_m+\bar m)$, which the model
+constants put at $\rn{calc.null_cross}$ (the paper writes $\approx\rn{lnew.null_cross}$), and
+reaches $\rn{calc.null_amp300}$ at the parent model's $\theta = \rn{lnew.theta_parent}$ (paper:
+$\rn{lnew.null_amp}$). The anchor attenuates the error for mild patients and amplifies it for
+severe ones.
+\item \textbf{Knowing $k_e$, which is what such an anchor supplies, does not close the gate}
+(Table 11). Tightening from the published prior to $\rn{lnew.ke_tight}\%$ is worth
+$\rn{lnew.ke_gain_nom}\times$ at nominal capacity and $\rn{lnew.ke_gain_dis}\times$ at
+$\rn{calc.dis_pct}\%$ of it, but an exact $k_e$ still leaves $\rn{lnew.ke_exact_left}$ against
+the $\rn{calc.gate}$ gate.
+\end{itemize}
+\noindent A genotype-informed prior on $\theta$ itself: \nf, in either draft.
+
+\medskip
+\noindent\textbf{What the repository has that the paper does not} (\unpub).
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{3.0cm}LL@{}}
+\toprule
+item & what it establishes & the limit it states \\
+\midrule
+ex vivo assay as a prior on $\theta$, \texttt{q5\_exvivo\_prior.py} (\rn{git.q5_added})
+ & An assay on the patient's own cells is carried as a log-normal prior of width
+ $\rn{audit.r58_width_lo}$ to $\rn{audit.r58_width_hi}$. It adds to the record in exact
+ quadrature, proven from the Schur complement and confirmed in all $\rn{audit.r58_cells}$
+ cells, so assay and record cannot spoil each other. With $k_e$ measured it changes
+ \rn{audit.r58_verdicts_n} verdicts, all at a prior of $\rn{audit.r58_verdicts_w}$, the
+ practical one turning monthly sampling at $\rn{fus.cap10}\%$ of normal from
+ $\rn{audit.r58_10pct_frm}$ into $\rn{audit.r58_10pct_to}$.
+ & Without a $k_e$ measurement the combined figure sits at $\rn{audit.r58_dom_comb}$ against
+ the assay's own $\rn{audit.r58_dom_width}$ at $\rn{calc.dis_pct}\%$, so the record adds under
+ one per cent and the answer is the assay's. The risk sits where the benefit does: at
+ $\rn{calc.dis_pct}\%$, $\rn{audit.r58_centring_lo}$ to $\rn{audit.r58_centring_hi}\%$ of a
+ centring error passes into $\hat\theta$; at $\rn{fus.cap10}\%$ a prior wrong by a factor of
+ two is worth nothing, RMSE $\rn{audit.r58_rmse_w}$ with it against
+ $\rn{audit.r58_rmse_wo}$ without. \\
+\addlinespace
+review of an external genotype-prior document, \texttt{PHASE12\_GENOTYPE\_REVIEW.md}
+ (\rn{git.phase12_added})
+ & The document's breath-test figure, $\rn{audit.p12_imported_ctrl}\%$ controls and
+ $\rn{audit.p12_imported_pat}\%$ patients, is the retracted one and is not imported. The
+ repository's own $\rn{audit.p12_kappa}$, which sizes Tier 2 and with it the
+ $\rn{audit.p12_draws}$-draw count, is graded
+ \textsc{\rn{audit.p12_status_label}}: two independent secondary readings agree and no primary
+ read has been made here.
+ & Nothing from the document enters the repository, and the grading is a status label rather
+ than a new number. It changes no value in either draft. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+\vspace{-0.4em}
+{\small \textbf{Table D.} Genotype-adjacent analysis in the repository at 27 Sept, in neither
+draft. Sources: \texttt{REVIEW\_LOG.md} R58 and \texttt{audit/PHASE12\_GENOTYPE\_REVIEW.md}.}
+
+\W Nowhere in the paper. §S1.10, Remarks 21 and 22 and Table 11 are unchanged between the
+drafts. The only edit anywhere near this material is a pointer in §6.6, where ``supplement,
+\S S1'' became ``\S S1.16.7''.
+
+\Out{A genetic prior helps most where it is needed least: the anchor attenuates a load error
+for the mild patient and amplifies it for the severe one.}

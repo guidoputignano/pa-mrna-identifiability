@@ -5,7 +5,8 @@ Both drafts include results/figures/fig_E1_phaseclock.pdf as Figure 6 (the
 20 Sept source at paper/sections/07_design.tex:300, the 27 Sept one at :386).
 The file was overwritten after 20 Sept, so the 20 Sept panel cannot be read off
 the working tree. This script regenerates each version with its own generator,
-audit/g1_phase_clock.py as committed at that revision, in a throwaway git
+audit/g1_phase_clock.py as committed at that revision (the last commits on or
+before 20 and 27 Sept, UTC), in a throwaway git
 worktree, and copies the result here. Nothing in the main working tree is
 touched.
 
@@ -28,7 +29,7 @@ def git(*args, cwd=ROOT):
 
 
 OLD = git("rev-list", "-1", "--before=2026-09-20T23:59:59Z", "HEAD")
-NEW = git("rev-parse", "HEAD")
+NEW = git("rev-list", "-1", "--before=2026-09-27T23:59:59Z", "HEAD")
 
 
 def build(rev, name):

@@ -1,0 +1,68 @@
+% =====================================================================
+%  What changed between the 20 and 27 September drafts.
+%  Thin preamble; each section is its own file under sections/.
+%  Every number is \rn{KEY} from numbers.tex (make_numbers.py); every
+%  figure is drawn by fig_phaseclock.py or fig_abc.py. Build: make.
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=2.1cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\graphicspath{{fig/}}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
+\definecolor{accent}{RGB}{122,47,47}
+
+%  the paper's \num, renamed so a report key can never shadow a paper key
+\makeatletter
+\newcommand{\rn}[1]{%
+  \ifcsname rep@num@#1\endcsname
+    \csname rep@num@#1\endcsname
+  \else
+    \PackageError{report}{No generated number named '#1'}{Run make_numbers.py.}%
+  \fi}
+\makeatother
+\input{numbers}
+
+%  the five parts every section carries
+\newcommand{\Q}{\paragraph{Question.}}
+\newcommand{\D}{\paragraph{What we did.}}
+\newcommand{\F}{\paragraph{What we found.}}
+\newcommand{\W}{\paragraph{Where it changed.}}
+\newcommand{\Out}[1]{\par\smallskip\noindent\textcolor{accent}{\textbf{Outcome.}} \emph{#1}\par}
+\newcommand{\unpub}{\textcolor{accent}{\textsc{unpublished}}}
+\newcommand{\nf}{\emph{not found in repo}}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\setlist{leftmargin=*, itemsep=0pt, topsep=1pt}
+\setlength{\parskip}{1.5pt}
+\renewcommand{\arraystretch}{1.05}
+\setlength{\textfloatsep}{8pt plus 2pt}
+\setlength{\floatsep}{6pt plus 2pt}
+
+\title{\vspace{-1.6em}\textbf{What changed between the 20 and 27 September drafts}\\[1pt]
+\large\emph{The Dose Train is the Identification Experiment}}
+\author{}
+\date{\vspace{-2.2em}\small 20 Sept $=$ \texttt{\rn{git.old}} (\rn{git.old_date}) \qquad
+      27 Sept $=$ \texttt{\rn{git.new}} (\rn{git.new_date})}
+
+\begin{document}
+\maketitle
+
+\input{sections/00_summary}
+\input{sections/01_sampling}
+\input{sections/02_readouts}
+\input{sections/03_genetic}
+\input{sections/04_delivery}
+\input{sections/05_abc}
+\input{sections/06_other}
+\input{sections/07_untraced}
+
+\end{document}

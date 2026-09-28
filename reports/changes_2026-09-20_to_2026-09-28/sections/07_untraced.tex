@@ -1,0 +1,47 @@
+% ---------------------------------------------------------------------
+\section*{What this report could not trace, and what it checked and rejected}
+\addcontentsline{toc}{section}{Untraced}
+
+\noindent\textbf{Asserted here without a source in the repository.} One item.
+\begin{itemize}
+\item The proposed sentence for §3.1 in §5 is this report's own wording. The reading behind
+it, that the estimate locus is the fibre's tangent along Proposition 4's null direction, is
+computed by \texttt{fig\_abc.py} from the model code, but no passage in either draft states
+it.
+\end{itemize}
+
+\noindent\textbf{Checked against the repository and rejected.} Six claims in the request did
+not survive; the repository's reading is used above.
+\begin{enumerate}
+\item \emph{The C3 correction is new on 27 Sept.} It is not. Both drafts carry the passage
+word for word, from \texttt{\rn{git.c3_commit}} on \rn{git.c3_date}.
+\item \emph{The assay-versus-load correction is new on 27 Sept.} It is not. Both drafts print
+$\rn{lold.assay_vs_load_assay}$ against $\rn{lold.assay_vs_load_load}$, and the review log
+records it from \rn{git.assay_date}.
+\item \emph{Supplement §S1.16.7 carries a correction.} It carries no \emph{As corrected} or
+\emph{withdrawn} passage in either draft. Its only edit in the window is the wiring of
+$\rn{new.sd_monthly}$, which the 20 Sept text printed as $\rn{lold.sd_monthly_lit}$.
+\item \emph{$\Delta(6)=2171$.} The repository gives $\rn{calc.delta6}$.
+\item \emph{The delivery results are new.} The $\pm\rn{lnew.alt_amp}\%$ alternation, the
+\rn{lnew.h28_word}- and \rn{lnew.h7_word}-day intervals, the $D$ sweep and
+$D=\rn{lnew.dmax_5pct}$ are all in the 20 Sept draft at the same values. Only the
+interior-optimum paragraph and the R1/R2/R3 reading are new.
+\item \emph{A separate readout scoring underlies the paper.} \emph{Sensor}, \emph{fusion},
+\emph{readout} and \emph{score} appear nowhere in either draft. The scoring exists only in
+\texttt{audit/PHASE10\_SENSORS.md} (\rn{git.phase10_added}), after the 20 Sept snapshot and
+in neither document.
+\end{enumerate}
+
+\noindent\textbf{Searched for and not found.} A genotype-informed prior on $\theta$: \nf. The
+nearest items are the ex vivo assay prior and the genotype-document review of §3, neither of
+which is in either draft.
+
+\medskip
+\noindent\rule{\textwidth}{0.4pt}\\[2pt]
+{\footnotesize The two states compared are \texttt{\rn{git.old}} (\rn{git.old_date}) and
+\texttt{\rn{git.new}} (\rn{git.new_date}), each the last commit on or before its date. No
+file under \texttt{paper/} changed after the later of these
+(\rn{git.paper_untouched_after_new} files), so this report's own commits do not affect the
+comparison. Numbers: \texttt{make\_numbers.py}, with \texttt{provenance.csv} giving the source
+of each. Figures: \texttt{fig\_phaseclock.py} and \texttt{fig\_abc.py}. Nothing in
+\texttt{paper/} was edited.}

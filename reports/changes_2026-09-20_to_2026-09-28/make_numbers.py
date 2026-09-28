@@ -15,6 +15,7 @@ Five sources, and each key's prefix says which:
   calc.KEY   computed here from the repository's model code (model_abc.py)
   fus.KEY    audit/q15_sensors.py's combination cells, recomputed (Fisher, fast;
              seeds are q2_requirement_map.SEEDS = 0..23, the repo's own)
+  audit.KEY  a literal in an audit file or the review log at HEAD, file:line
   git.KEY    a fact about the history (commit ids, dates, counts)
 
 The 20 Sept state is the last commit on or before 2026-09-20 on this branch.
@@ -46,7 +47,9 @@ def git(*args):
 
 
 OLD = git("rev-list", "-1", "--before=2026-09-20T23:59:59Z", "HEAD").strip()
-NEW = git("rev-parse", "HEAD").strip()
+#: the 27 Sept state is the last commit on or before 2026-09-27 (UTC); commits
+#: after it, this report's own among them, do not touch the paper
+NEW = git("rev-list", "-1", "--before=2026-09-27T23:59:59Z", "HEAD").strip()
 
 
 def put(key, value, source):
@@ -181,7 +184,94 @@ ONLY_NEW = [
 ]
 
 
+A10, RLOG, A12 = "audit/PHASE10_SENSORS.md", "REVIEW_LOG.md", "audit/PHASE12_GENOTYPE_REVIEW.md"
+#: results that exist in the repository at 27 Sept and in neither draft
+AUDIT = [
+    ("p10_screen", A10, r"\*\*(?P<drop>Five) of (?P<total>ten) candidates are dropped"),
+    ("p10_c9", A10, r"### S\.1 Candidate 9 buys (?P<lo>\d+) to (?P<hi>\d+)%"),
+    ("p10_c9_5pct", A10, r"at 5% capacity it moves (?P<frm>[0-9.]+) to (?P<to>[0-9.]+),"),
+    ("p10_r6_nom", A10, r"\| visits matching 25, nominal \| (?P<paper>\d+) \| \*\*(?P<audit>\d+)\*\*"),
+    ("p10_r6_below", A10, r"\| visits matching 25, below nominal \| \*\*(?P<paper>\d+)\*\* \| \*\*(?P<audit>\d+), and flat\*\*"),
+    ("p10_ke_exact5", A10, r"\| 5% \| monthly \| [0-9.]+ \| [0-9.]+ \| [0-9.]+ \| [0-9.]+ \| \*\*([0-9.]+)\*\*"),
+    ("p10_ke_exact10", A10, r"\| 10% \| monthly \| [0-9.]+ \| [0-9.]+ \| [0-9.]+ \| [0-9.]+ \| \*\*([0-9.]+)\*\*"),
+    ("p10_width", A10, r"At the supported\s+width\s+of\s+about\s+(?P<w>[0-9.]+)\s+the\s+record"),
+    ("p10_share", A10, r"At nominal the record supplies (?P<nom>\d+)% of the joint\s+precision; even at (?P<capv>\d+)% capacity it supplies (?P<cap20>\d+)%"),
+    ("p10_frenal", A10, r"the renal fraction would have to\s+be known to about (\d+)%"),
+    ("p10_pair", A10, r"misses the gate everywhere in the disease range\*\*, (?P<lo>\d+\.\d+) to (?P<hi>\d+\.\d+)"),
+    ("p10_collapse", A10, r"collapse mode, (?P<c2>\d+/\d+) against (?P<lo>\d+) to (?P<hi>\d+) of (?P<n>\d+)"),
+    ("p10_c2c8", A10, r"improves on `c2` alone by (?P<lo>\d+) to (?P<hi>\d+)%"),
+    ("p10_repeat", A10, r"\*\*(?P<pts>\d+) patients at (?P<draws>\d+) draws\s+each, (?P<total>\d+) draws\*\*"),
+    ("r58_width", RLOG, r"log-normal prior on θ of swept width (?P<lo>[0-9.]+) to (?P<hi>[0-9.]+)"),
+    ("r58_cells", RLOG, r"confirmed at 1\.000 in all (\d+) cells"),
+    ("r58_dom", RLOG, r"\((?P<comb>[0-9.]+)\s+against (?P<width>[0-9.]+) at 5% of normal\)"),
+    ("r58_verdicts", RLOG, r"changes exactly (?P<n>\w+) verdicts, all at a prior of (?P<w>\d+\.\d+)"),
+    ("r58_10pct", RLOG, r"monthly sampling at 10% of normal from (?P<frm>[0-9.]+) into (?P<to>[0-9.]+)"),
+    ("r58_centring", RLOG, r"(?P<lo>\d+)\s+to (?P<hi>\d+)% of a mapping centring error passes"),
+    ("r58_rmse", RLOG, r"RMSE (?P<w>[0-9.]+) with it and (?P<wo>[0-9.]+)\s+without"),
+    ("p12_draws", A12, r"Tier 1 needs (\d+) draws"),
+    ("p12_kappa", A12, r"\*\*because `kappa_cv = ([0-9.]+)`\*\*"),
+    ("p12_status", A12, r"\*\*The (?P<cv>[0-9.]+)% is (?P<label>CORROBORATED BUT NOT PRIMARY-VERIFIED)"),
+    ("p12_imported", A12, r"test–retest CV (?P<ctrl>[0-9.]+)% \(controls\)/(?P<pat>[0-9.]+)% \(patients\)"),
+]
+BOTH += [
+    ("enzyme_x_normal", S + "11_scope.tex", r"drive\w* the enzyme to \$([0-9.]+)\$"),
+    ("d2672_sd", S + "11_scope.tex", r"monthly design\s+returns \$([0-9.]+)\$, but"),
+    ("route6_below", S + "11_scope.tex", r"from thirteen visits to (\w+)\."),
+]
+ONLY_NEW += [
+    ("lapfrac", S + "07_design.tex", r"fraction of a lap swept, \$n\\varepsilon/T\$ & \$(?P<a>\d+)\\%\$ & \$(?P<b>\d+)\\%\$ & \$(?P<c>\d+)\\%\$ & \$(?P<d>\d+)\\%\$ & \$(?P<e>\d+)\\%\$"),
+    ("n20", S + "07_design.tex", r"At \$(?P<n>\d+)\$ visits a lap needs"),
+    ("step_off", S + "07_design.tex", r"\\num\{lap_step_n20\}\$~days instead of \$(?P<v>[0-9.]+)\$"),
+    ("seeds", S + "07b_decision.tex", r"over (?P<n>\w+) seeds at (?P<reps>[\w ]+?) replicates each"),
+    ("mtol", S + "01_question.tex", r"centre at \$\\mtol = (?P<a>\d+)\$,\s+\$\\num\{mtol_window_pct\}\\%\$ at \$(?P<b>\d+)\$ and \$\\num\{mtol_window_hi_pct\}\\%\$ at \$(?P<c>\d+)\$"),
+    ("theta_parent", S + "12_discussion.tex", r"against a true\s+\$(\d+)\$"),
+    ("t_struct", S + "08_specification.tex", r"from \\emph\{one\} draw (?P<t3>\w+)\s+minutes after an infusion, \$\\num\{struct_sigma_15min\}\$ at (?P<t15>\w+) minutes"),
+    ("t_struct1h", S + "08_specification.tex", r"\\num\{struct_sigma_1h\}\$ standard deviations at (\w+ hour)"),
+]
+BOTH += [
+    ("alt_amp", S + "07_design.tex", r"alternating the amplitude by \$\\pm(\d+)\\%\$"),
+    ("h28_word", S + "07_design.tex", r"a ([\w-]+)-day interval at\s+the same delivered rate"),
+    ("h7_word", S + "07_design.tex", r"Shortening the interval to (\w+) days"),
+    ("dsweep_range", S + "11_scope.tex", r"Sweeping \$D\$ from \$(?P<lo>\d+)\$ to \$(?P<hi>\d+)\$"),
+    ("ke_tight", S + "08_specification.tex", r"from the published width to \$(\d+)\\%\$"),
+    ("rr_per", S + "04_local.tex", r"a \$(\d+)\\%\$ \\emph\{lower\}"),
+    ("bias_row", S + "08_specification.tex", r"Separating them at the \$(\d+)\\%\$ row"),
+]
+#: one phrase per ledger or new-result passage, each on a single source line
+LEDGER = {
+    "carn": "way round, asserting that", "verified": "offered that agreement as",
+    "separatrix": "main branch and is recorded in R22", "numerics": "said that the closed form",
+    "factor24": "stood here and in Section", "crisis": "nothing there for a threshold",
+    "exposure": "no interior optimum on any therapeutic", "readings": "Everything this paper reports about",
+    "pattern2": "A second pattern, across the two misspecification",
+    "boundary": "The fit lands on the boundary of admissibility",
+    "s4": "Admissibility, with the evidence for each verdict", "lap": "complete one lap of",
+    "tier1first": "What to run first, and it is one blood draw",
+}
+
+
+def load_ledger_dates():
+    """When each passage reached main (first-parent), and when it was first written."""
+    for key, phrase in LEDGER.items():
+        fp = git("log", "--first-parent", "--format=%h %cd", "--date=format-local:%Y-%m-%d",
+                 "-S", phrase, f"{OLD}..{NEW}", "--", "paper").strip().splitlines()
+        #  -m: a phrase first written in a merge's conflict resolution has no
+        #  non-merge commit to find
+        orig = git("log", "-m", "--format=%h %ad", "--date=format-local:%Y-%m-%d",
+                   "-S", phrase, f"{OLD}..{NEW}", "--", "paper").strip().splitlines()
+        if not fp or not orig:
+            FAILED.append(f"ledger {key}: '{phrase}' not found between {OLD[:7]} and {NEW[:7]}")
+            continue
+        h, d = fp[-1].split()
+        put(f"git.main_{key}", d, f"git log --first-parent -S '{phrase}' ({h})")
+        h, d = orig[-1].split()
+        put(f"git.orig_{key}", d, f"git log -S '{phrase}' ({h})")
+        put(f"git.origc_{key}", h, f"git log -S '{phrase}'")
+
+
 def load_literals():
+    for key, path, pat in AUDIT:
+        lit("audit", NEW, key, path, pat)
     for key, path, pat in BOTH:
         lit("lold", OLD, key, path, pat)
         lit("lnew", NEW, key, path, pat)
@@ -214,10 +304,104 @@ def load_literals():
         put(f"git.{tag}_withdrawn", str(len(re.findall(r"[Ww]ithdrawn", text))), f"paper/sections/*.tex @ {rev[:7]}")
 
 
+# ------------------------------------------------- cross-references
+#: a caption's opening words, and the key the report cites it by. Taken from
+#: the COMPILED documents, so a reference is the number a reader sees.
+CAPTIONS = {
+    "Notation, once": "tab.notation",
+    "The constants this paper": "tab.params",
+    "The two factors of the excitation": "tab.factors",
+    "What each design delivers": "tab.designs",
+    "The twenty admissibility constraints": "tab.admissible",
+    "The dose calibration": "tab.dosesens",
+    "Excitation available from each source": "tab.excursion",
+    "The decision characteristic": "tab.decision",
+    "What a record would have to contain": "tab.require",
+    "The precision no number of visits": "tab.incfloor",
+    "What tightening the prior on": "tab.keprior",
+    "What the load record": "tab.loadprec",
+    "Three sources of excitation on one footing": "tab.instruments",
+    "What the marker and the estimate do": "tab.scope",
+    "The local identification model": "fig.blockA",
+    "Left: the two elimination channels": "fig.channels",
+    "The excitation condition": "fig.excitation",
+    "The experiment the trial is already running": "fig.trial",
+    "Three sampling designs under the biweekly": "fig.designs",
+    "Where each schedule lands in the dose cycle": "fig.phaseclock",
+    "What visits buy": "fig.visits",
+    "The inverse map": "fig.inverse",
+    "The probability of getting the sign": "fig.signerr",
+}
+#: a section title as the table of contents prints it, and its key
+SECTIONS = {
+    "Introduction": "sec.intro",
+    "Model and methods": "sec.model",
+    "The equilibrium reduction": "sec.reduction",
+    "The local identification model": "sec.localmodel",
+    "Numerical methods": "sec.numerics",
+    "The excitation condition": "sec.excitation",
+    "What the sampling regime destroys": "sec.destroys",
+    "The sampling design": "sec.designsec",
+    "Which parameters collapse, and which do not": "sec.collapse",
+    "What the therapy schedule can be asked to do": "sec.route",
+    "The schedule a protocol would write": "sec.protocol",
+    "Physical admissibility": "sec.admiss",
+    "Candidate sources of excitation": "sec.sources",
+    "The decision estimand": "sec.decision",
+    "The data specification": "sec.spec",
+    "Tier 1: which family of structures, and it is one blood draw": "sec.tier1",
+    "Tier 2: the increment measurement": "sec.tier2",
+    "Tier 3: the identification study": "sec.tier3",
+    "Applicability": "sec.applic",
+    "How many patients, and for how many it works": "sec.howmany",
+    "Limits of recoverability": "sec.scope",
+    "What the estimate's own precision does across that range": "sec.scopeprec",
+    "Discussion": "sec.discussion",
+    "What the five results amount to": "sec.fiveresults",
+    "A second pattern, across the two misspecification results": "sec.pattern2",
+}
+
+
+def load_xrefs():
+    """Table, figure and section numbers, read off the COMPILED documents at
+    both commits. A reference the report prints is the number a reader sees,
+    and a number that moved between drafts is caught here rather than typed."""
+    import pymupdf
+    for tag, rev in (("old", OLD), ("new", NEW)):
+        raw = subprocess.run(["git", "show", f"{rev}:paper/main.pdf"], cwd=ROOT,
+                             check=True, capture_output=True).stdout
+        doc = pymupdf.open(stream=raw, filetype="pdf")
+        text = "\n".join(pg.get_text() for pg in doc)
+        seen = {}
+        for m in re.finditer(r"^(Table|Figure) (\d+): (.{0,60})", text, re.M):
+            for opening, key in CAPTIONS.items():
+                if m.group(3).startswith(opening) and key.split(".")[0][0] == m.group(1)[0].lower():
+                    seen[key] = m.group(2)
+        for key, num in seen.items():
+            put(f"{tag}.{key}", num, f"paper/main.pdf @ {rev[:7]}, caption")
+        missing = set(CAPTIONS.values()) - set(seen)
+        if missing:
+            FAILED.append(f"{tag}: no caption matched for {sorted(missing)}")
+        #  section numbers from the document's own table of contents
+        nums, lvl = [], {}
+        for level, title, _ in doc.get_toc():
+            lvl[level] = lvl.get(level, 0) + 1
+            for deeper in [k for k in lvl if k > level]:
+                lvl.pop(deeper)
+            nums.append((title.strip(), ".".join(str(lvl[k]) for k in sorted(lvl))))
+        table = dict(nums)
+        for title, key in SECTIONS.items():
+            if title in table:
+                put(f"{tag}.{key}", table[title], f"paper/main.pdf @ {rev[:7]}, contents")
+            elif tag == "new":
+                FAILED.append(f"{tag}: no contents entry titled {title!r}")
+
+
 # ---------------------------------------------------------------- history
 def load_history():
     put("git.old", OLD[:7], "git rev-list -1 --before=2026-09-20T23:59:59Z HEAD")
-    put("git.new", NEW[:7], "git rev-parse HEAD")
+    put("git.new", NEW[:7], "git rev-list -1 --before=2026-09-27T23:59:59Z HEAD")
+    put("git.paper_untouched_after_new", str(len(git("diff", "--name-only", NEW, "HEAD", "--", "paper").split())), "files under paper/ changed after the 27 Sept commit")
     put("git.old_date", git("show", "-s", "--format=%ad", "--date=format-local:%Y-%m-%d %H:%M UTC", OLD).strip(), "git show")
     put("git.new_date", git("show", "-s", "--format=%ad", "--date=format-local:%Y-%m-%d %H:%M UTC", NEW).strip(), "git show")
     put("git.ncommits", git("rev-list", "--count", f"{OLD}..{NEW}").strip(), "git rev-list --count")
@@ -328,6 +512,14 @@ def load_calc():
     span = (t.size - 1) * 0.01 * 24.0
     put("calc.h1401_span_h", f(span, 1), "(n - 1) x 0.01 d, in hours")
     put("calc.D", f(M.D_AMP, 0), "design.run.D_AMP")
+    import q2_requirement_map as S2
+    put("calc.gate", f(S2.GATE, 2), "q2_requirement_map.GATE")
+    mo = S2.SCHED["monthly"]
+    put("calc.monthly_step", f(mo[1] - mo[0], 1), "q2_requirement_map.SCHED['monthly'] step")
+    put("calc.dis_pct", f(100 * M.THETA_DISEASE / M.THETA, 0), "THETA_DISEASE / THETA")
+    put("calc.unit_b", "1", "a unit diary error, 1 umol/L/day, in d(Delta m)/db")
+    put("calc.assay_pct", f(100 * M.DR.ASSAY_CV, 0), "design.run.ASSAY_CV")
+    put("calc.load_pct", f(100 * M.LOAD_FRAC, 0), "design.run.LOAD_FRAC")
     put("calc.theta", f(M.THETA, 0), "common.models.ParamsA().theta")
     put("calc.Km", f(M.KM, 0), "common.models.ParamsA().Km")
     put("calc.ke", f(M.KE, 0), "common.models.ParamsA().ke")
@@ -358,12 +550,21 @@ def load_fusion():
     put("fus.p2", f"{100*P2:.0f}", "q15.step_3"); put("fus.p8", f"{100*P8:.1f}", "q15.step_3")
     put("fus.p9", f"{100*P9:.0f}", "q15.step_3")
     put("fus.nseeds", str(len(S2.SEEDS)), "q2_requirement_map.SEEDS")
+    put("fus.p2_frac", f"{P2:.2f}", "q15.step_3 candidate 2 log-sd")
+    put("fus.seed_lo", str(S2.SEEDS[0]), "q2_requirement_map.SEEDS"); put("fus.seed_hi", str(S2.SEEDS[-1]), "q2_requirement_map.SEEDS")
+    for cap, ck in ((0.05, "5"), (0.10, "10")):
+        put(f"fus.cap{ck}", f"{100*cap:.0f}", "the capacities q15.step_3 prices")
 
 
 def main():
     load_generated(NEW, "new")
     load_generated(OLD, "old")
+    for tag in ("old", "new"):
+        put(f"git.{tag}_keys", str(sum(k.startswith(tag + ".") for k in VALUES)),
+            f"count of \\num keys in results/numbers/*.tex @ {tag}")
     load_literals()
+    load_ledger_dates()
+    load_xrefs()
     if FAILED:
         raise SystemExit("\n".join(FAILED))
     load_history()
