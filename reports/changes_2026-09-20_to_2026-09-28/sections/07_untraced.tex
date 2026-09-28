@@ -1,0 +1,46 @@
+% ---------------------------------------------------------------------
+\section*{What this report could not trace, and what it checked and rejected}
+\addcontentsline{toc}{section}{Untraced}
+
+\noindent\textbf{Asserted here without a source in the repository.} No number. Table A has no
+counterpart in either draft, neither of which sets its readouts side by side: its rows,
+columns and verdicts are this report's assembly of the passages its caption names. The
+reading given each invariant in §5's table is this report's wording, as is every
+\textbf{Outcome} line.
+
+\noindent\textbf{Checked against the repository and rejected.}
+{\small\begin{enumerate}
+\item \emph{The C3 correction is new on 27 Sept.} Word for word in both drafts,
+\texttt{\rn{git.c3_commit}} (\rn{git.c3_date}).
+\item \emph{The assay-versus-load correction is new on 27 Sept.} Both drafts print
+$\rn{lold.assay_vs_load_assay}$ against $\rn{lold.assay_vs_load_load}$; the review log records
+it from \rn{git.assay_date}.
+\item \emph{Supplement §S1.16.7 carries a new correction.} Its correction is item 2's, in both
+drafts; its only edit in the window is the wiring of $\rn{new.sd_monthly}$, printed as
+$\rn{lold.sd_monthly_lit}$ on 20 Sept.
+\item \emph{The supplied check value for $\Delta(\rn{calc.mwf})$.} The repository gives
+$\rn{calc.delta6}$, which §5 prints.
+\item \emph{The delivery results are new.} The $\pm\rn{lold.alt_amp}\%$ alternation, the
+\rn{lold.h28_word}- and \rn{lold.h7_word}-day intervals, the $D$ sweep and
+$D=\rn{lold.dmax_5pct}$ stand unchanged on 20 Sept; only §4's two conclusions are new.
+\item \emph{A separate readout scoring underlies the paper.} \emph{Sensor}, \emph{fusion} and
+\emph{score} appear in neither draft; the scoring is \texttt{audit/PHASE10\_SENSORS.md} alone
+(\rn{git.phase10_added}).
+\item \emph{The tangent reading is not yet in the paper, so §5 should propose a sentence for
+it.} Both drafts already make the rank proposition's null vector the fibre's tangent at $b=0$,
+in the same words, so no sentence is proposed. §5 records only what the figure adds, which is
+the picture and the two numbers the paper carries in symbols.
+\end{enumerate}}
+
+\noindent\textbf{Searched for and not found.} A genotype-informed prior on $\theta$: \nf. The
+nearest are the ex vivo assay prior and the genotype-document review of §3, neither of them in
+a draft.
+
+\medskip
+\noindent\rule{\textwidth}{0.4pt}\\[2pt]
+{\footnotesize Compared: \texttt{\rn{git.old}} (\rn{git.old_date}) against
+\texttt{\rn{git.new}} (\rn{git.new_date}), each the last commit on or before its date;
+\rn{git.paper_untouched_after_new} files under \texttt{paper/} changed after the later, so this
+report's own commits cannot affect the comparison. Numbers and figures:
+\texttt{make\_numbers.py}, \texttt{fig\_phaseclock.py}, \texttt{fig\_abc.py}, with every key
+sourced in \texttt{provenance.csv}.}

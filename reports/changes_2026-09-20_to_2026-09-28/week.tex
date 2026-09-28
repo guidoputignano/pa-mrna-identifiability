@@ -1,0 +1,149 @@
+% =====================================================================
+%  Weekly update, one page, two figures. Numbers are generated keys.
+%  Build: make what_i_did_this_week.pdf
+% =====================================================================
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1.2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\graphicspath{{fig/}}
+\usepackage[font=footnotesize,labelfont=bf,skip=2pt]{caption}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\definecolor{yes}{RGB}{20,110,75}
+\definecolor{no}{RGB}{150,50,50}
+\definecolor{ask}{RGB}{122,47,47}
+
+\makeatletter
+\newcommand{\rn}[1]{%
+  \ifcsname rep@num@#1\endcsname\csname rep@num@#1\endcsname
+  \else\PackageError{update}{no generated number for this key}{}\fi}
+\makeatother
+\input{numbers}
+
+\newcommand{\Used}{\textcolor{yes}{using}}
+\newcommand{\Want}{\textcolor{ask}{want}}
+\newcommand{\Not}{\textcolor{no}{not using}}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\setlist{leftmargin=1em, itemsep=0pt, topsep=1pt, parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\pagestyle{empty}
+\renewcommand{\arraystretch}{1.0}
+\newcommand{\hd}[1]{\vspace{0.5pt}\textbf{#1}\par\vspace{-2.5pt}}
+\newcommand{\hdi}[1]{\textbf{#1}\ }
+
+\begin{document}
+
+{\large\textbf{Update, week to 28 September}}\\[1pt]
+We are trying to work out how much of their own enzyme a patient still has, from blood tests
+taken over two years while they are on infusions every fortnight. Most of this week went on
+when to take the blood and which measurements are worth paying for. I also went back over
+older claims, and five of them did not survive.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.47\textwidth]{week_cycle}\hfill
+\includegraphics[width=0.47\textwidth]{week_band}
+\caption{Left: \rn{new.visits} draws over one fortnight, booked two ways, the second putting
+each visit half a day after the last. Right: how tightly the enzyme level can be pinned down,
+against how much of it the patient has. Median over \rn{fus.nseeds} simulated diet records.}
+\end{figure}
+
+\vspace{-7pt}
+\hd{When to take the blood}
+Each infusion peaks and then decays over the fortnight. Draw on dosing days and every sample
+catches the same point of that rise and fall. Spread the draws out and you see the marker move
+in response to something whose size and timing you already know, and that response is where
+the enzyme level comes from. The difference is a factor of about \rn{new.alias_cost}.
+
+I had been writing this as ``do not draw on dosing days'', which turns out to be too weak.
+Every \rn{new.near_step} days avoids dosing days and still fails: over two years it creeps
+only \rn{new.near_span_h} hours round the cycle. The visits have to cover the cycle, not just
+miss the dose. Each one sits slightly later in it than the last, and they need to get the
+whole way round before the study ends, which for \rn{new.lap_n} fortnightly visits works out
+at \rn{new.lap_eps_h} hours of slip per visit. One useful side effect: a clinic that can only
+manage \rn{lnew.n20_n} visits gets within \rn{week.n20_vs_n25_pct}\,\% of \rn{new.visits}
+if it spaces them this way.
+
+\hd{Who it works for}
+The right-hand plot is the part I am least happy about. The estimate is usable between
+\rn{week.band_lo_round}\,\% and \rn{new.band_hi_pct}\,\% of normal capacity, and these
+patients sit at or below \rn{week.dis_pct}\,\%, roughly \rn{new.disease_factor} times under
+it. Two years of monthly draws give \rn{week.sd_nominal} at normal capacity and
+\rn{week.sd_disease} at \rn{week.dis_pct}\,\%, where we would want \rn{calc.gate}. The
+precision figures we quote are really the rules working in a healthy person, and I have moved
+that to the top of the document.
+
+\hd{Which measurements}
+\vspace{1pt}
+{\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabularx}{\textwidth}{@{}p{3.3cm}p{1.35cm}L@{}}
+\toprule
+3-HP in blood & \Used & carnitine lowers it along with the other disease markers, so it moves
+ the right way. Half the level goes with about \rn{lnew.rr_3hp} times the decompensation rate \\
+C3 & \Not & actually the stronger link to decompensation (\rn{lnew.rr_c3}), but every patient
+ takes carnitine, and carnitine raises C3 while the disease markers fall. The signal would be
+ about the supplement rather than the patient \\
+2-methylcitrate & \Not & no link to decompensation at all (\rn{lnew.rr_2mc} means no
+ difference) \\
+breath test, for the size of each dose's effect & \Want & the design assumes we know this and
+ nobody has measured it. It needs to repeat to \rn{new.kappa_monthly_pct}\,\%, and the only
+ published figure, \rn{lnew.breath_mean}\,\% from a different disease, already fails \\
+one sample minutes after an infusion & \Want & cheap, and it has to go first. It rules out
+ one published account of the marker, under which the level could never be read at all \\
+tracer injection, for the clearance rate & \Want & \rn{lnew.ke_gain_nom}$\times$ at normal
+ capacity, \rn{lnew.ke_gain_dis}$\times$ lower down. It helps, but it will not rescue the
+ disease range: even an exact value leaves \rn{lnew.ke_exact_left} at \rn{week.dis_pct}\,\% \\
+measuring the diet rather than recording it & \Not & \rn{lnew.turnover_n} measured visits do
+ the work of \rn{lnew.turnover_vs} recorded ones at normal capacity. Below that it buys
+ nothing \\
+the food diary & \Used & the day-to-day variation is what makes the estimate work, so
+ averaging the diary to a weekly figure ruins it. Each entry needs to be right to about
+ \rn{lnew.diet_gate}\,\%; the long-run average matters much less \\
+\bottomrule
+\end{tabularx}}
+
+\vspace{2pt}
+They go in order: the post-infusion sample, then the breath test, then the record itself. The
+tracer is not part of that chain and can come whenever.
+
+\hd{The dosing schedule}
+I checked whether changing the therapy would make measuring easier. It is not worth it.
+Alternating the dose by \rn{lnew.alt_amp}\,\% sharpens the answer by \rn{lnew.alt_gain}\,\%
+and cuts the trough between doses by \rn{lnew.alt_cut}\,\%, and that trough is what protects
+the patient. Stretching to \rn{lnew.h28_word} days gives \rn{lnew.h28_gain}\,\% for
+\rn{lnew.h28_cut}\,\%. Cutting to \rn{lnew.h7_word} days is better for the patient and costs
+\rn{lnew.h7_cost}\,\%, and continuous infusion is better still but leaves nothing varying to
+measure. The blood schedule is the one to optimise; the dosing should stay clinical. Worth
+watching: if the therapy ever moves to continuous, this approach stops working.
+
+\hd{What did not hold up}
+\begin{multicols}{2}\raggedcolumns
+\begin{itemize}
+\item The timescale argument I used to justify a modelling shortcut is backwards. The shortcut
+is still fine, but for a different reason, and only while the patient is steady.
+\item One of my checks cannot come out wrong whatever the model is, so it does not confirm
+anything. Still useful for catching arithmetic slips.
+\item A claim about how big a disturbance a patient can absorb only holds while the carnitine
+pool is full. In a depleted patient it reverses, and calls a dangerous state safe.
+\item A factor of \rn{lnew.factor24_old} for how far a threshold moves. No derivation, and
+none of the \rn{lnew.pairs_181} endpoint pairs we state gives it. There is a window a
+clinician can compute instead.
+\item A decision rule for patients in crisis. It was tracking another parameter falling over
+rather than the decision itself.
+\end{itemize}
+
+\textbf{Next.} The breath-test repeatability figure sizes the whole study and I have only seen
+it second hand, so I want to read the source. Then three finished pieces need writing up.
+\end{multicols}
+
+\end{document}
