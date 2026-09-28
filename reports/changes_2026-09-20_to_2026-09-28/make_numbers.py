@@ -569,6 +569,8 @@ def load_week():
     put("week.lap_eps_h_round", f"{v('new.lap_eps_h'):.0f}", "new.lap_eps_h, to the hour")
     put("week.band_lo_round", f"{v('new.band_lo_pct'):.0f}", "new.band_lo_pct")
     put("week.dis_pct", f"{v('calc.dis_pct'):.0f}", "calc.dis_pct")
+    put("week.sd_nominal", f"{v('new.sd_monthly'):.2f}", "new.sd_monthly, to two decimals")
+    put("week.sd_disease", f"{v('new.sd_5pct'):.2f}", "new.sd_5pct, to two decimals")
 
 
 def main():

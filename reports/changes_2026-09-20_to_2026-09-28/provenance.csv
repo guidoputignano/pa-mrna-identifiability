@@ -1108,4 +1108,6 @@ week.dis_pct,5,calc.dis_pct
 week.lap_eps_h_round,6,"new.lap_eps_h, to the hour"
 week.n20_vs_n25_pct,1,"new.n20_vs_n25, as a percentage"
 week.near_step_extra_min,14,"new.near_step - the dose interval, in minutes"
+week.sd_disease,3.07,"new.sd_5pct, to two decimals"
+week.sd_nominal,0.17,"new.sd_monthly, to two decimals"
 week.trough_fold,16,calc.peak / calc.trough: the dose train's peak over its trough
