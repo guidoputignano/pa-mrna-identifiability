@@ -6,7 +6,7 @@
 PY ?= python
 TEX = pdflatex -interaction=nonstopmode -halt-on-error
 
-all: report.pdf what_i_did_this_week.pdf pairfig.pdf
+all: report.pdf what_i_did_this_week.pdf pairfig.pdf pairclock.pdf
 
 numbers: numbers.tex
 numbers.tex provenance.csv: make_numbers.py model_abc.py
@@ -30,6 +30,9 @@ what_i_did_this_week.pdf: week.tex numbers.tex fig/week_cycle.pdf
 
 pairfig.pdf: pairfig.tex numbers.tex fig/week_cycle.pdf fig/week_band.pdf
 	$(TEX) pairfig.tex >/dev/null && $(PY) -c "import pymupdf; d=pymupdf.open('pairfig.pdf'); d[0].get_pixmap(dpi=300).save('pairfig.png'); print('pairfig.pdf and pairfig.png,', round(d[0].rect.width), 'x', round(d[0].rect.height), 'pt')"
+
+pairclock.pdf: pairclock.tex fig/phaseclock_0920.pdf fig/phaseclock_0927.pdf
+	$(TEX) pairclock.tex >/dev/null && $(PY) -c "import pymupdf; d=pymupdf.open('pairclock.pdf'); d[0].get_pixmap(dpi=300).save('pairclock.png'); print('pairclock.pdf and pairclock.png,', round(d[0].rect.width), 'x', round(d[0].rect.height), 'pt')"
 
 #  one section alone, so a failure in it costs nothing elsewhere
 section: numbers.tex
