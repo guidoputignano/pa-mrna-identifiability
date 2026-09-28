@@ -5,156 +5,151 @@
 
 \D Listed every \emph{As corrected} and \emph{withdrawn} passage in both main texts and in
 supplement §§S1.15, S1.16.2 and S1.20, and every new result, from \texttt{git diff} between
-the two commits. Each row is dated twice: when the passage was first written, and when it
-reached main.
+the two commits. The date in the first column is when the passage reached main.
 
 \F \textbf{Corrections ledger, 20 to 28 September.}
-\begin{center}\footnotesize
-\begin{tabularx}{\textwidth}{@{}p{2.6cm}LLp{3.1cm}@{}}
+
+{\footnotesize\renewcommand{\arraystretch}{1.0}
+\begin{tabularx}{\textwidth}{@{}p{2.45cm}LLp{2.95cm}@{}}
 \toprule
 change & 20 Sept & 27 Sept & outcome \\
 \midrule
-carnitine timescale, \S\rn{new.sec.reduction} and §S1.15 (main \rn{git.main_carn})
+carnitine timescale, \S\rn{new.sec.reduction}, §S1.15 (\rn{git.main_carn})
  & ``\rn{lnew.carn_old_claim}'' & withdrawn: $\tau_c/\tau_m$ spans
- $\rn{lnew.tauc_ratio_lo}$ to $\rn{lnew.tauc_ratio_hi}$ over the sampled region, so carnitine
- is the slower state & an identity at equilibrium, not a timescale argument \\
-the reduction ``verified'', \S\rn{new.sec.reduction} and \S\rn{new.sec.numerics}
- (main \rn{git.main_verified})
- & ``\rn{lnew.verified_old_claim}'' & withdrawn: the agreement is the identity
- $\dot c = 0$ at a fixed point, so it cannot fail at any parameter value & the tests are kept
- as regression tests on the arithmetic, none as evidence for the premise \\
-separatrix as a lower bound, \S\rn{new.sec.reduction} (main \rn{git.main_separatrix})
- & a lower bound on the true basin, as recorded in \rn{lnew.r22} of the review log
- & withdrawn: it bounds the manifold from above only. From a pool depleted to
+ $\rn{lnew.tauc_ratio_lo}$ to $\rn{lnew.tauc_ratio_hi}$, so carnitine is the slower state
+ & an identity at equilibrium, not a timescale argument \\
+reduction ``verified'', \S\rn{new.sec.reduction}, \S\rn{new.sec.numerics}
+ (\rn{git.main_verified})
+ & ``\rn{lnew.verified_old_claim}'' & withdrawn: the agreement is $\dot c = 0$ at a fixed
+ point, so it cannot fail & the tests stay regression tests on the arithmetic, not evidence \\
+separatrix as a lower bound, \S\rn{new.sec.reduction} (\rn{git.main_separatrix})
+ & a lower bound on the basin, \rn{lnew.r22} of the review log
+ & withdrawn: it bounds the manifold from above only. Depleted to
  $\rn{lnew.sep_depleted_fill}$ of $c^{\ast}(m)$ and below, the boundary falls
- $\rn{lnew.sep_depleted_a}\%$, $\rn{lnew.sep_depleted_b}\%$ and $\rn{lnew.sep_depleted_c}\%$
- \emph{below} it & the basin boundary is a curve in $(m,c)$, and the reduced separatrix is one
- point on it, not a bound either way \\
-the closed form's validity, \S\rn{new.sec.numerics} (main \rn{git.main_numerics})
+ $\rn{lnew.sep_depleted_a}$, $\rn{lnew.sep_depleted_b}$ and $\rn{lnew.sep_depleted_c}\%$
+ \emph{below} it & the basin boundary is a curve in $(m,c)$, the reduced separatrix one point
+ on it \\
+closed form ``validated'', \S\rn{new.sec.numerics} (\rn{git.main_numerics})
  & ``measured rather than assumed'' & withdrawn: neither test touches the two-state system
- & the premise's cost is bounded in the $k$ row of §S2 instead \\
-factor of $\rn{lnew.factor24_old}$ on $\theta_{\mathrm{crit}}$, \S\rn{new.sec.intro} and
- §S1.20 (main \rn{git.main_factor24}) & stood in both places; count in
- \S\rn{new.sec.intro}: \rn{lold.factor24_count} & withdrawn: no derivation, and none of the
- $\rn{lnew.pairs_181}$ pairs of stated endpoints reproduces it; count:
- \rn{lnew.factor24_count} & replaced by the margin window, $\rn{new.mtol_window_lo_pct}\%$ of
- its centre at $m_{\mathrm{tol}}=\rn{lnew.mtol_a}$, $\rn{new.mtol_window_pct}\%$ at
- $\rn{lnew.mtol_b}$ and $\rn{new.mtol_window_hi_pct}\%$ at $\rn{lnew.mtol_c}$, computable per
- patient \\
-crisis-regime threshold, \S\rn{new.sec.decision} (main \rn{git.main_crisis})
- & a regret-equalised boundary at $\rn{lold.crisis_threshold}\,\theta$; count:
- \rn{lold.crisis039_count} & withdrawn: once the fit collapses, $\hat\mu$ reports how far
- $\hat K_m$ has departed, by factors from about \rn{lnew.crisis_km_lo} upwards, not the
- decision; count: \rn{lnew.crisis039_count} & no threshold is quoted for the crisis regimes,
- because there is nothing there to find \\
-decision error rates, \S\rn{new.sec.decision} & $\rho=1$ errs at
- $\rn{lold.dec_rho1_err}\%$, median $\hat\theta/\theta$ of $\rn{lold.dec_rho1_med}$
- & recomputed over \rn{lnew.seeds_n} seeds at \rn{lnew.seeds_reps} replicates each:
- $\rn{lnew.dec_rho1_err}\%$, median $\rn{lnew.dec_rho1_med}$, each with its range & the seed
- spread is reported, and the partial-recording cell is named the least stable of the four \\
+ & the premise's cost is bounded in the $k$ row of §S2 \\
+factor $\rn{lnew.factor24_old}$ on $\theta_{\mathrm{crit}}$, \S\rn{new.sec.intro}, §S1.20
+ (\rn{git.main_factor24}) & in both places; count in \S\rn{new.sec.intro}:
+ \rn{lold.factor24_count} & withdrawn: no derivation, and none of $\rn{lnew.pairs_181}$ stated
+ endpoint pairs gives it; count \rn{lnew.factor24_count} & replaced by the margin window,
+ $\rn{new.mtol_window_lo_pct}$, $\rn{new.mtol_window_pct}$ and
+ $\rn{new.mtol_window_hi_pct}\%$ of centre at $m_{\mathrm{tol}}=\rn{lnew.mtol_a}$,
+ $\rn{lnew.mtol_b}$, $\rn{lnew.mtol_c}$, computable per patient \\
+crisis-regime threshold, \S\rn{new.sec.decision} (\rn{git.main_crisis})
+ & regret-equalised at $\rn{lold.crisis_threshold}\,\theta$; count \rn{lold.crisis039_count}
+ & withdrawn: past collapse $\hat\mu$ reports $\hat K_m$'s departure, by factors from about
+ \rn{lnew.crisis_km_lo} up, not the decision; count \rn{lnew.crisis039_count}
+ & no threshold for the crisis regimes: there is nothing there to find \\
+decision error rates, \S\rn{new.sec.decision} & $\rho=1$ errs at $\rn{lold.dec_rho1_err}\%$,
+ median $\hat\theta/\theta$ $\rn{lold.dec_rho1_med}$ & \rn{lnew.seeds_n} seeds $\times$
+ \rn{lnew.seeds_reps} replicates: $\rn{lnew.dec_rho1_err}\%$, median
+ $\rn{lnew.dec_rho1_med}$, each with its range & seed spread reported, partial recording named
+ least stable of the four \\
 \bottomrule
-\end{tabularx}
-\end{center}
+\end{tabularx}}
 
+\smallskip
 \noindent\textbf{New results.}
-\begin{center}\footnotesize
-\begin{tabularx}{\textwidth}{@{}p{2.6cm}LLp{3.1cm}@{}}
+
+{\footnotesize\renewcommand{\arraystretch}{1.0}
+\begin{tabularx}{\textwidth}{@{}p{2.45cm}LLp{2.95cm}@{}}
 \toprule
 result & 20 Sept & 27 Sept & outcome \\
 \midrule
 affine load-bias map, \S\rn{new.sec.destroys} & the factor $\rn{lold.bias_theta_factor}$ is
- quoted & $\hat\theta=\theta-\rn{new.bias_slope}\,b$ exactly, at every $b$ and with no
- higher-order term & what a bound on $b$ leaves open in $\theta$ is arithmetic, not a
- linearisation: $\rn{new.bias_theta_factor}$ \\
-admissibility readings, \S\rn{new.sec.scopeprec} (main \rn{git.main_readings})
- & one bound, its reading implicit & R1, R2, R3 named and tabulated, with the points where
- they coincide & every verdict names its reading, and the paper reports on R2 \\
-the \S\rn{new.sec.discussion} boundary fit (main \rn{git.main_boundary})
+ quoted & $\hat\theta=\theta-\rn{new.bias_slope}\,b$ exactly, at every $b$, no higher-order
+ term & a bound on $b$ gives $\theta$ by arithmetic, not linearisation:
+ $\rn{new.bias_theta_factor}$ \\
+admissibility readings, \S\rn{new.sec.scopeprec} (\rn{git.main_readings})
+ & one bound, its reading implicit & R1, R2, R3 named and tabulated, with their coincidences
+ & every verdict names its reading, and the paper reports on R2 \\
+boundary fit, \S\rn{new.sec.discussion} (\rn{git.main_boundary})
  & $\hat\theta=\rn{lold.fit_theta_hat}$ against a true $\rn{lnew.theta_parent}$; margin
  $+\rn{lold.fit_margin_true}$ to $+\rn{lold.fit_margin_est}$
- & $\rn{new.fit_theta_hat}$ is a \emph{boundary} solution, with $\hat k_e$ on its bound at
- $\rn{new.fit_ke_hat}$; released it goes to $\rn{new.fit_ke_hat_free}$ and $\hat\theta$ to
- $\rn{new.fit_theta_hat_free_ke}$. Across fit definitions the margin spans
- $\rn{lnew.margin_lo}$ to $+\rn{lnew.margin_hi}$ & a boundary solution is not a point
- estimate, so the gap is not a margin. The design's operating points are bounded away:
+ & $\rn{new.fit_theta_hat}$ is a \emph{boundary} solution, $\hat k_e$ on its bound at
+ $\rn{new.fit_ke_hat}$; released, $\rn{new.fit_ke_hat_free}$ and
+ $\hat\theta=\rn{new.fit_theta_hat_free_ke}$. Across fit definitions the margin spans
+ $\rn{lnew.margin_lo}$ to $+\rn{lnew.margin_hi}$ & a boundary solution is no point estimate,
+ so the gap is no margin. The operating points are clear of it:
  $L/k_e=\rn{new.local_ceiling}$ against $\sqrt{K_cM_i}=\rn{new.peak_floor}$ \\
-\S\rn{new.sec.pattern2}, new (main \rn{git.main_pattern2}) & absent & misspecifications with
- opposite signs: one returns $\theta$ too high by $\rn{lnew.misspec_high_lo}$ to
- $\rn{lnew.misspec_high_hi}\times$, the other too low ($\rn{new.fit_theta_hat}$ against
- $\rn{lnew.theta_parent}$), and both leave a residual inside the noise the specification
- already asks for ($\rn{new.fit_resid_sigma}\sigma$) & residual size does not bound structural
- error, so Tier 1 is a structure test and not a goodness-of-fit threshold \\
+\S\rn{new.sec.pattern2}, new (\rn{git.main_pattern2}) & absent & opposite-signed
+ misspecifications: $\theta$ too high by $\rn{lnew.misspec_high_lo}$ to
+ $\rn{lnew.misspec_high_hi}\times$, and too low ($\rn{new.fit_theta_hat}$ against
+ $\rn{lnew.theta_parent}$), both residuals inside the specified noise
+ ($\rn{new.fit_resid_sigma}\sigma$) & residual size does not bound structural error, so Tier 1
+ is a structure test, not a fit threshold \\
 decompensation route, \S\rn{new.sec.discussion} & excluded \rn{lold.excluded_twice} over
- & \rn{lnew.excluded_three}: the excursion is not observed at the magnitude required, the
- model does not hold there, and the reduction carries no warrant there either, the two
- formulations differing by $\rn{lnew.reduction_gap_lo}$ to $\rn{lnew.reduction_gap_hi}\%$ and
- the basin by up to $\rn{lnew.basin_max}\%$ & excluded on independent grounds, not narrowly
- missed \\
-§S4, new (main \rn{git.main_s4}) & the evidence column was generated and never input
- & ``\rn{lnew.s4_title}'' & the promise in Table~\rn{new.tab.admissible}'s caption is kept \\
-wired literals & diet gains printed as $\rn{lold.diet_gain15_pct}\%$ and
- $\rn{lold.diet_gain50_pct}\%$ & generated: $\rn{new.diet_gain15_pct}\%$ and
- $\rn{new.diet_gain50_pct}\%$ & printed values moved when they were wired to their generator \\
+ & \rn{lnew.excluded_three}: the excursion is unobserved at the magnitude required, the model
+ fails there, and the reduction has no warrant there, the formulations differing by
+ $\rn{lnew.reduction_gap_lo}$ to $\rn{lnew.reduction_gap_hi}\%$ and the basin by up to
+ $\rn{lnew.basin_max}\%$ & excluded on independent grounds, not narrowly missed \\
+§S4, new (\rn{git.main_s4}) & evidence column generated, never input
+ & ``\rn{lnew.s4_title}'' & Table~\rn{new.tab.admissible}'s caption keeps its promise \\
+wired literals & diet gains printed $\rn{lold.diet_gain15_pct}$ and
+ $\rn{lold.diet_gain50_pct}\%$ & generated: $\rn{new.diet_gain15_pct}$ and
+ $\rn{new.diet_gain50_pct}\%$ & both printed values moved on wiring \\
 \bottomrule
-\end{tabularx}
-\end{center}
+\end{tabularx}}
 
 \W The margin window landed in \S\rn{new.sec.intro}, which carries
 \rn{lnew.mtolwin_in_question} of its generated keys, and not in the abstract, which carries
-\rn{lnew.mtolwin_in_abstract}: the abstract has no replacement for the withdrawn factor. The
-window's values were already generated on 20 Sept ($\rn{old.mtol_window_pct}\%$ at
-$\rn{lnew.mtol_b}$) and simply not printed.
+\rn{lnew.mtolwin_in_abstract}, so the abstract has no replacement for the withdrawn factor.
+Its values were generated on 20 Sept already ($\rn{old.mtol_window_pct}\%$ at
+$\rn{lnew.mtol_b}$) and not printed.
 
 \subsection{Recent corrections outside the window}
-Both are already in the 20 Sept draft, word for word.
+Both stand in the 20 Sept draft word for word.
 \begin{itemize}
-\item \textbf{C3's exclusion rests on the co-treatment ground alone} (§S1.16.2): entered
-\rn{git.c3_date} in \texttt{\rn{git.c3_commit}}, a day before the 20 Sept snapshot.
+\item \textbf{C3's exclusion rests on the co-treatment ground alone} (§S1.16.2):
+\rn{git.c3_date}, \texttt{\rn{git.c3_commit}}, a day before the 20 Sept snapshot.
 \item \textbf{The assay term dominates the load term in $\sigma$} wherever the load is
 recorded better than about the assay's own CV, $\rn{lnew.assay_vs_load_assay}$ against
-$\rn{lnew.assay_vs_load_load}$ at a tight load record (§S1.16.7): recorded in the review log
-\rn{git.assay_date} in \texttt{\rn{git.assay_commit}}.
+$\rn{lnew.assay_vs_load_load}$ (§S1.16.7): review log, \rn{git.assay_date},
+\texttt{\rn{git.assay_commit}}.
 \end{itemize}
 
 \subsection{Audit results not in the paper}
-\begin{center}\footnotesize
-\begin{tabularx}{\textwidth}{@{}p{2.9cm}LLp{2.6cm}@{}}
+
+{\footnotesize\renewcommand{\arraystretch}{1.0}
+\begin{tabularx}{\textwidth}{@{}p{2.7cm}LLp{2.5cm}@{}}
 \toprule
 item & what it establishes & what publishing it would change & where it would go \\
 \midrule
 readout screen, \texttt{PHASE10\_SENSORS.md} step 1 (\rn{git.phase10_added})
  & \rn{audit.p10_screen_drop} of \rn{audit.p10_screen_total} candidate observables cannot be
- expressed in this model at all, which has no propionyl-CoA state
- & a second and structural reason for excluding C3 and 2-MC, and a bound on what any future
- marker panel could add without a new state & Remark 2, or §S1.14 beside the table of what is
- known \\
+ expressed in this model, which has no propionyl-CoA state & a structural second reason to
+ exclude C3 and 2-MC, and a bound on what a marker panel could add without a new state
+ & Remark 2, or §S1.14 beside the table of what is known \\
 sensor pricing and combinations, §§S.1 to S.4 (same file)
  & only c2+c8 is worth buying, by $\rn{audit.p10_c2c8_lo}$ to $\rn{audit.p10_c2c8_hi}\%$ over
- c2 alone; c9 is redundant in every combination; the monthly record misses the gate at
- $\rn{calc.dis_pct}\%$ even with exact $k_e$ ($\rn{audit.p10_ke_exact5}$)
- & it prices the anchors jointly, where \S\rn{new.sec.scopeprec} closes them one at a time,
- and puts the schedule decision before the sensor decision & \S\rn{new.sec.scopeprec}, as a
- joint row under the \rn{lnew.six_routes} closed routes \\
-route 6 recheck (same file, §S.1b)
- & at nominal, \rn{audit.p10_r6_nom_audit} measured-load visits match the record against the
- paper's \rn{audit.p10_r6_nom_paper}; below nominal the count is
+ c2; c9 is redundant in every combination; the monthly record misses the gate at
+ $\rn{calc.dis_pct}\%$ even with exact $k_e$ ($\rn{audit.p10_ke_exact5}$) & it prices the
+ anchors jointly, where \S\rn{new.sec.scopeprec} closes them one at a time, and puts the
+ schedule decision before the sensor decision & \S\rn{new.sec.scopeprec}, a joint row under
+ the \rn{lnew.six_routes} closed routes \\
+route 6 recheck (same file, §S.1b) & at nominal, \rn{audit.p10_r6_nom_audit} measured-load
+ visits match the record against the paper's \rn{audit.p10_r6_nom_paper}; below nominal
  \rn{audit.p10_r6_below_audit} and flat, not \rn{audit.p10_r6_below_paper}
  & one supporting number in route 6; the finding it supports, that the route opens nothing
  below nominal, is unaffected & \S\rn{new.sec.scopeprec}, route 6 \\
 ex vivo prior on $\theta$, \texttt{q5\_exvivo\_prior.py} (\rn{git.q5_added})
  & prior and record add in exact quadrature; at $\rn{calc.dis_pct}\%$ a tight prior transmits
  $\rn{audit.r58_centring_lo}$ to $\rn{audit.r58_centring_hi}\%$ of any centring error, and at
- $\rn{fus.cap10}\%$ a badly wrong prior is worth nothing
- & a stated position on whether a direct enzyme assay may enter the estimator, which neither
- draft takes & \S\rn{new.sec.tier2}, beside Table~\rn{new.tab.keprior}'s second anchor \\
+ $\rn{fus.cap10}\%$ a badly wrong prior is worth nothing & a stated position on whether a
+ direct enzyme assay may enter the estimator, which neither draft takes
+ & \S\rn{new.sec.tier2}, beside Table~\rn{new.tab.keprior}'s second anchor \\
 genotype-document review, \texttt{PHASE12\_GENOTYPE\_REVIEW.md} (\rn{git.phase12_added})
  & $\rn{audit.p12_kappa}$, which sizes Tier 2 and the $\rn{audit.p12_draws}$-draw count, is
- \textsc{\rn{audit.p12_status_label}}
- & a verification status on the one literature figure the specification's headline count rests
- on & \S\rn{new.sec.tier2}, or the $\kappa$ row of §S2 \\
+ \textsc{\rn{audit.p12_status_label}} & a verification status on the one literature figure the
+ specification's headline count rests on & \S\rn{new.sec.tier2}, or the $\kappa$ row of §S2 \\
 \bottomrule
-\end{tabularx}
-\end{center}
+\end{tabularx}}
+
+\smallskip
 \noindent Nothing here is a recommendation to publish.
 
 \Out{Every claim withdrawn in this window left a narrower statement a reader can check, and
