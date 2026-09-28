@@ -1,0 +1,872 @@
+key,value,source
+calc.A,"32{,}273",model_abc.invariants
+calc.A_over_6,"5{,}378.8",A/6
+calc.B,"-3{,}177",model_abc.invariants
+calc.B_dis,-327,model_abc.invariants(theta=150)
+calc.Bp_load,323,B piece: L + b
+calc.C,-5,model_abc.invariants
+calc.D,"6{,}000",design.run.D_AMP
+calc.Km,100,common.models.ParamsA().Km
+calc.L,322.73,"common.models.clearance_A(M_BAR, ParamsA())"
+calc.T,14,design.run.DOSE_INTERVAL
+calc.b_admissible,-322.7,twin K_m diverges at b = -L
+calc.bend,38,largest gap between C m^2 and its chord over the dose-train range
+calc.bias_slope,2.549,1 + K_m k_e / L
+calc.delta6,"2{,}171.5",model_abc.delta_of_m(6)
+calc.delta6_dis,"5{,}021.5","delta_of_m(6, theta=150)"
+calc.diary_b,16.1,design.run.LOAD_FRAC * L
+calc.diary_factor,1.028,theta_hat(-b) / theta_hat(+b)
+calc.diary_move,106,"d(Delta m)/db = K_m + m at m = 6, for a 1 umol/L/d diary error"
+calc.h1401_span_h,12.5,"(n - 1) x 0.01 d, in hours"
+calc.ke,5,common.models.ParamsA().ke
+calc.keKm,500,k_e K_m
+calc.kem6,30,k_e m at m = 6
+calc.locus_slope,-8.227,d theta_hat / d K_m_hat
+calc.m_hi,8.91,level_of_delta(trough)
+calc.m_hi_dis,35.64,"level_of_delta(trough, 150)"
+calc.m_lo,3.36,level_of_delta(peak)
+calc.m_lo_dis,4.78,"level_of_delta(peak, 150)"
+calc.m_ratio_dis,5.40,untreated level ratio 150 : 3000
+calc.m_untreated,10.0,model_abc.untreated_level
+calc.m_untreated_dis,54.0,model_abc.untreated_level(150)
+calc.mbar,10,design.run.M_BAR
+calc.mwf,6,model_abc.M_WATERFALL
+calc.n_h14,53,"np.arange(0, 730, 14.0)"
+calc.n_h1401,53,"np.arange(0, 730, 14.01)"
+calc.n_monthly,25,"np.arange(0, 730, 30.4)"
+calc.nontwin_dtheta,400,model_abc.NONTWIN_DTHETA
+calc.null_amp300,3.7,2 k_e (K_m + m_bar) / 300
+calc.null_cross,"1{,}100","2 k_e (K_m + m_bar), supplement (S43)"
+calc.null_km,-100,-K_m
+calc.null_slope,-8.227,theta over K_m component
+calc.null_theta,822.7,(L + b + k_e K_m) at b = 0
+calc.peak,"6{,}400",periodic steady state of design.run's train
+calc.relax_b0,29.79,"relaxation_rate(10, truth)"
+calc.relax_b400,59.96,"relaxation_rate(10, twin 400)"
+calc.thalf,3.5,ln 2 / design.run.LAMBDA
+calc.theta,"3{,}000",common.models.ParamsA().theta
+calc.theta_dis,150,5% of ParamsA().theta
+calc.trough,400,periodic steady state of design.run's train
+calc.twin400_km,44.65,model_abc.twin(400)
+calc.twin400_theta,"3{,}676.7",model_abc.twin(400)
+calc.twin_b_last,400,model_abc.TWIN_BS
+calc.twin_bs,"-200, 0, +200, +400",model_abc.TWIN_BS
+fus.all_10,0.153,"q15_sensors.cell, monthly, 10%, seeds 0..23 (q2_requirement_map.SEEDS)"
+fus.all_5,0.183,"q15_sensors.cell, monthly, 5%, seeds 0..23 (q2_requirement_map.SEEDS)"
+fus.c2_10,0.198,"q15_sensors.cell, monthly, 10%, seeds 0..23 (q2_requirement_map.SEEDS)"
+fus.c2_5,0.200,"q15_sensors.cell, monthly, 5%, seeds 0..23 (q2_requirement_map.SEEDS)"
+fus.c2c8_10,0.154,"q15_sensors.cell, monthly, 10%, seeds 0..23 (q2_requirement_map.SEEDS)"
+fus.c2c8_5,0.184,"q15_sensors.cell, monthly, 5%, seeds 0..23 (q2_requirement_map.SEEDS)"
+fus.c2c9_10,0.198,"q15_sensors.cell, monthly, 10%, seeds 0..23 (q2_requirement_map.SEEDS)"
+fus.c2c9_5,0.200,"q15_sensors.cell, monthly, 5%, seeds 0..23 (q2_requirement_map.SEEDS)"
+fus.c8_10,0.243,"q15_sensors.cell, monthly, 10%, seeds 0..23 (q2_requirement_map.SEEDS)"
+fus.c8_5,0.463,"q15_sensors.cell, monthly, 5%, seeds 0..23 (q2_requirement_map.SEEDS)"
+fus.c8c9_10,0.237,"q15_sensors.cell, monthly, 10%, seeds 0..23 (q2_requirement_map.SEEDS)"
+fus.c8c9_5,0.449,"q15_sensors.cell, monthly, 5%, seeds 0..23 (q2_requirement_map.SEEDS)"
+fus.c9_10,1.577,"q15_sensors.cell, monthly, 10%, seeds 0..23 (q2_requirement_map.SEEDS)"
+fus.c9_5,3.060,"q15_sensors.cell, monthly, 5%, seeds 0..23 (q2_requirement_map.SEEDS)"
+fus.n_monthly,24,"q2 SCHED monthly, no baseline"
+fus.nseeds,24,q2_requirement_map.SEEDS
+fus.p2,20,q15.step_3
+fus.p8,5.4,q15.step_3
+fus.p9,10,q15.step_3
+fus.rec_10,1.581,"q15_sensors.cell, monthly, 10%, seeds 0..23 (q2_requirement_map.SEEDS)"
+fus.rec_5,3.068,"q15_sensors.cell, monthly, 5%, seeds 0..23 (q2_requirement_map.SEEDS)"
+gen.bias,audit/t4\_bias\_vs\_scatter.py,results/numbers/bias.tex:1 @ 1aa26ca
+gen.boundary,src/model\_C/run.py,results/numbers/boundary.tex:1 @ 1aa26ca
+gen.cohort,audit/t6\_cohort\_with\_kappa.py,results/numbers/cohort.tex:1 @ 1aa26ca
+gen.decision,audit/d13\_decision\_therapy.py,results/numbers/decision.tex:1 @ 1aa26ca
+gen.design,src/design/run.py,results/numbers/design.tex:1 @ 1aa26ca
+gen.diet,audit/t3\_diet\_modulation.py,results/numbers/diet.tex:1 @ 1aa26ca
+gen.drift,an,results/numbers/drift.tex:1 @ 1aa26ca
+gen.fibre,src/model\_A/run.py,results/numbers/fibre.tex:1 @ 1aa26ca
+gen.frontier,audit/u23\_wire\_phase11.py,results/numbers/frontier.tex:1 @ 1aa26ca
+gen.kesweep,audit/t5\_band\_vs\_ke.py,results/numbers/kesweep.tex:1 @ 1aa26ca
+gen.kmcost,audit/n1\_km\_cost.py,results/numbers/kmcost.tex:1 @ 1aa26ca
+gen.lattice,audit/t11\_phase\_lattice.py,results/numbers/lattice.tex:1 @ 1aa26ca
+gen.loadcap,audit/t8\_load\_by\_capacity.py,results/numbers/loadcap.tex:1 @ 1aa26ca
+gen.local,src/model\_A/run.py,results/numbers/local.tex:1 @ 1aa26ca
+gen.margin,src/model\_C/run.py,results/numbers/margin.tex:1 @ 1aa26ca
+gen.measured,audit/t9\_measured\_load.py,results/numbers/measured.tex:1 @ 1aa26ca
+gen.phaseclock,audit/g1\_phase\_clock.py,results/numbers/phaseclock.tex:1 @ 1aa26ca
+gen.profile,audit/n6\_profile\_vs\_crb.py,results/numbers/profile.tex:1 @ 1aa26ca
+gen.reduction,src/model\_C/run.py,results/numbers/reduction.tex:1 @ 1aa26ca
+gen.scope,audit/n4\_theta\_scope.py,results/numbers/scope.tex:1 @ 1aa26ca
+gen.structure,audit/t7\_structure\_transient.py,results/numbers/structure.tex:1 @ 1aa26ca
+gen.therapy,audit/t13\_therapy\_forward.py,results/numbers/therapy.tex:1 @ 1aa26ca
+gen.tier1,audit/t2\_tier1\_margin.py,results/numbers/tier1.tex:1 @ 1aa26ca
+gen.transient,audit/t1\_transient\_worth.py,results/numbers/transient.tex:1 @ 1aa26ca
+git.abstract_diff_lines,0,git diff 1b226f5 1aa26ca -- 00_abstract.tex
+git.assay_commit,4669c03,git log -S 'the assay term dominates' -- REVIEW_LOG.md
+git.assay_date,2026-09-13,git log -S 'the assay term dominates' -- REVIEW_LOG.md
+git.c3_commit,f328ed4,git log -S (first appearance of the C3 correction)
+git.c3_date,2026-09-19,git log -S (first appearance of the C3 correction)
+git.del,170,git diff --shortstat (paper sources)
+git.fig6_commits,4,git log -- results/figures/fig_E1_phaseclock.pdf
+git.fig6_first,293816b,git log -- results/figures/fig_E1_phaseclock.pdf
+git.fig6_first_date,2026-09-21,git log -- results/figures/fig_E1_phaseclock.pdf
+git.has_R152,yes,REVIEW_LOG.md
+git.has_R155,yes,REVIEW_LOG.md
+git.has_R158,yes,REVIEW_LOG.md
+git.has_R182,yes,REVIEW_LOG.md
+git.has_R22,yes,REVIEW_LOG.md
+git.ins,684,git diff --shortstat (paper sources)
+git.ncommits,195,git rev-list --count
+git.new,1aa26ca,git rev-parse HEAD
+git.new_as_corrected,5,paper/sections/*.tex @ 1aa26ca
+git.new_date,2026-09-27 21:35 UTC,git show
+git.new_main_pp,45,"git show 1aa26ca:paper/main.pdf, page count"
+git.new_supplement_pp,65,"git show 1aa26ca:paper/supplement.pdf, page count"
+git.new_withdrawn,6,paper/sections/*.tex @ 1aa26ca
+git.old,1b226f5,git rev-list -1 --before=2026-09-20T23:59:59Z HEAD
+git.old_as_corrected,1,paper/sections/*.tex @ 1b226f5
+git.old_date,2026-09-20 20:07 UTC,git show
+git.old_main_pp,39,"git show 1b226f5:paper/main.pdf, page count"
+git.old_supplement_pp,61,"git show 1b226f5:paper/supplement.pdf, page count"
+git.old_withdrawn,0,paper/sections/*.tex @ 1b226f5
+git.phase10_added,2026-09-26,git log --diff-filter=A -- audit/PHASE10_SENSORS.md (b1be9c4)
+git.phase10_commit,b1be9c4,git log --diff-filter=A -- audit/PHASE10_SENSORS.md
+git.phase12_added,2026-09-27,git log --diff-filter=A -- audit/PHASE12_GENOTYPE_REVIEW.md (16224c3)
+git.phase12_commit,16224c3,git log --diff-filter=A -- audit/PHASE12_GENOTYPE_REVIEW.md
+git.q15_added,2026-09-26,git log --diff-filter=A -- audit/q15_sensors.py (827a5ad)
+git.q15_commit,827a5ad,git log --diff-filter=A -- audit/q15_sensors.py
+git.q5_added,2026-09-26,git log --diff-filter=A -- audit/q5_exvivo_prior.py (45b2c68)
+git.q5_commit,45b2c68,git log --diff-filter=A -- audit/q5_exvivo_prior.py
+lnew.alt_cut,65,paper/sections/07_design.tex:328 @ 1aa26ca
+lnew.alt_gain,4.8,paper/sections/07_design.tex:328 @ 1aa26ca
+lnew.assay_vs_load_assay,14.9,paper/sections/04_local.tex:746 @ 1aa26ca
+lnew.assay_vs_load_load,6.5,paper/sections/04_local.tex:746 @ 1aa26ca
+lnew.b_admissible,-272.7,paper/sections/06_excitation.tex:66 @ 1aa26ca
+lnew.basin_max,49.6,paper/sections/12_discussion.tex:116 @ 1aa26ca
+lnew.breath_cv_pub,14.0,paper/sections/08_specification.tex:139 @ 1aa26ca
+lnew.breath_hi,50.84,paper/sections/08_specification.tex:133 @ 1aa26ca
+lnew.breath_lo,0.39,paper/sections/08_specification.tex:133 @ 1aa26ca
+lnew.breath_mean,14.02,paper/sections/08_specification.tex:133 @ 1aa26ca
+lnew.breath_n,fifteen,paper/sections/08_specification.tex:132 @ 1aa26ca
+lnew.breath_sd,12.86,paper/sections/08_specification.tex:133 @ 1aa26ca
+lnew.c3_corrected,As corrected.,paper/sections/04_local.tex:74 @ 1aa26ca
+lnew.carn_old_claim,the carnitine state is fast relative to the metabolite,paper/sections/02_model.tex:128 @ 1aa26ca
+lnew.crisis039_count,0,paper/sections/07b_decision.tex @ 1aa26ca
+lnew.crisis_km_lo,thirty,paper/sections/07b_decision.tex:80 @ 1aa26ca
+lnew.dec_rho1_err,19.1,paper/sections/07b_decision.tex:59 @ 1aa26ca
+lnew.dec_rho1_med,0.88,paper/sections/07b_decision.tex:60 @ 1aa26ca
+lnew.diet_gate,10,paper/sections/08_specification.tex:265 @ 1aa26ca
+lnew.dmax_5pct,2672,paper/sections/11_scope.tex:158 @ 1aa26ca
+lnew.dosesens_n,10,results/tables/tab_S_dosesens.tex:4 @ 1aa26ca
+lnew.dsweep_dis_best,2.75,paper/sections/11_scope.tex:172 @ 1aa26ca
+lnew.dsweep_dis_booked,3.07,paper/sections/11_scope.tex:172 @ 1aa26ca
+lnew.dsweep_dis_d,100,paper/sections/11_scope.tex:172 @ 1aa26ca
+lnew.dsweep_nom_best,0.165,paper/sections/11_scope.tex:176 @ 1aa26ca
+lnew.dsweep_within,three,paper/sections/11_scope.tex:176 @ 1aa26ca
+lnew.excluded_three,three times,paper/sections/12_discussion.tex:105 @ 1aa26ca
+lnew.factor24_count,0,paper/sections/01_question.tex @ 1aa26ca
+lnew.factor24_old,24,paper/sections/A1_open.tex:135 @ 1aa26ca
+lnew.h28_cut,87,paper/sections/07_design.tex:329 @ 1aa26ca
+lnew.h28_gain,6.5,paper/sections/07_design.tex:329 @ 1aa26ca
+lnew.h7_cost,29,paper/sections/07_design.tex:333 @ 1aa26ca
+lnew.ke_exact_left,0.388,paper/sections/08_specification.tex:194 @ 1aa26ca
+lnew.ke_gain_dis,6.9,paper/sections/08_specification.tex:193 @ 1aa26ca
+lnew.ke_gain_nom,2.1,paper/sections/08_specification.tex:192 @ 1aa26ca
+lnew.margin_hi,9,paper/sections/12_discussion.tex:82 @ 1aa26ca
+lnew.margin_lo,-4,paper/sections/12_discussion.tex:82 @ 1aa26ca
+lnew.misspec_high_hi,2.0,paper/sections/12_discussion.tex:193 @ 1aa26ca
+lnew.misspec_high_lo,1.3,paper/sections/12_discussion.tex:193 @ 1aa26ca
+lnew.mtolwin_in_abstract,0,paper/sections/00_abstract.tex @ 1aa26ca
+lnew.mtolwin_in_question,3,paper/sections/01_question.tex @ 1aa26ca
+lnew.null_amp,3.7,paper/sections/04_local.tex:839 @ 1aa26ca
+lnew.null_cross,1100,paper/sections/04_local.tex:839 @ 1aa26ca
+lnew.p_2mc,0.84,paper/sections/04_local.tex:62 @ 1aa26ca
+lnew.p_c3,0.017,paper/sections/04_local.tex:61 @ 1aa26ca
+lnew.pairs_181,181,paper/sections/A1_open.tex:137 @ 1aa26ca
+lnew.r22,R22,paper/sections/02_model.tex:174 @ 1aa26ca
+lnew.reduction_gap_hi,25.4,paper/sections/12_discussion.tex:115 @ 1aa26ca
+lnew.reduction_gap_lo,3.4,paper/sections/12_discussion.tex:115 @ 1aa26ca
+lnew.relax_b0,29.79,paper/sections/07_design.tex:286 @ 1aa26ca
+lnew.relax_b400,59.96,paper/sections/07_design.tex:287 @ 1aa26ca
+lnew.remark4_title,The sampling schedule must complete one lap of the dose cycle.,paper/sections/07_design.tex:125 @ 1aa26ca
+lnew.rr_2mc,1.0,paper/sections/04_local.tex:62 @ 1aa26ca
+lnew.rr_3hp,0.7,paper/sections/04_local.tex:60 @ 1aa26ca
+lnew.rr_3hp_ci_hi,0.9,paper/sections/04_local.tex:60 @ 1aa26ca
+lnew.rr_3hp_ci_lo,0.6,paper/sections/04_local.tex:60 @ 1aa26ca
+lnew.rr_c3,0.6,paper/sections/04_local.tex:61 @ 1aa26ca
+lnew.s4_title,"Admissibility, with the evidence for each verdict",paper/supplement.tex:74 @ 1aa26ca
+lnew.saudi_founder,70.2,paper/sections/A1_supplementary.tex:525 @ 1aa26ca
+lnew.saudi_pcca,81,paper/sections/A1_supplementary.tex:538 @ 1aa26ca
+lnew.saudi_pcca_n,68 of 84,paper/sections/A1_supplementary.tex:539 @ 1aa26ca
+lnew.scope_5pct_ratio,5.40,results/tables/tab_S_scope.tex:9 @ 1aa26ca
+lnew.sep_depleted_a,1.9,paper/sections/02_model.tex:167 @ 1aa26ca
+lnew.sep_depleted_b,4.8,paper/sections/02_model.tex:167 @ 1aa26ca
+lnew.sep_depleted_c,7.3,paper/sections/02_model.tex:168 @ 1aa26ca
+lnew.sep_depleted_fill,0.8,paper/sections/02_model.tex:167 @ 1aa26ca
+lnew.sep_parent_basin_hi,18,paper/sections/02_model.tex:161 @ 1aa26ca
+lnew.sep_parent_basin_lo,10,paper/sections/02_model.tex:161 @ 1aa26ca
+lnew.six_routes,Six,paper/sections/11_scope.tex @ 1aa26ca
+lnew.tauc_ratio_hi,55,paper/sections/02_model.tex:136 @ 1aa26ca
+lnew.tauc_ratio_lo,0.52,paper/sections/02_model.tex:136 @ 1aa26ca
+lnew.title,Design Rules and Limits of Recoverability for,paper/main.tex:16 @ 1aa26ca
+lnew.turnover_n,thirteen,paper/sections/11_scope.tex:213 @ 1aa26ca
+lnew.turnover_vs,twenty-five,paper/sections/11_scope.tex:214 @ 1aa26ca
+lnew.verified_old_claim,the reduction is verified rather than asserted,paper/sections/02_model.tex:148 @ 1aa26ca
+lold.alt_cut,65,paper/sections/07_design.tex:258 @ 1b226f5
+lold.alt_gain,4.8,paper/sections/07_design.tex:258 @ 1b226f5
+lold.assay_vs_load_assay,14.9,paper/sections/04_local.tex:745 @ 1b226f5
+lold.assay_vs_load_load,6.5,paper/sections/04_local.tex:745 @ 1b226f5
+lold.b_admissible,-272.7,paper/sections/06_excitation.tex:52 @ 1b226f5
+lold.bias_both20,0.288,paper/sections/06_excitation.tex:270 @ 1b226f5
+lold.bias_theta_factor,1.028,paper/sections/06_excitation.tex:53 @ 1b226f5
+lold.breath_cv_pub,14.0,paper/sections/08_specification.tex:120 @ 1b226f5
+lold.breath_hi,50.84,paper/sections/08_specification.tex:114 @ 1b226f5
+lold.breath_lo,0.39,paper/sections/08_specification.tex:114 @ 1b226f5
+lold.breath_mean,14.02,paper/sections/08_specification.tex:114 @ 1b226f5
+lold.breath_n,fifteen,paper/sections/08_specification.tex:113 @ 1b226f5
+lold.breath_sd,12.86,paper/sections/08_specification.tex:114 @ 1b226f5
+lold.c3_corrected,As corrected.,paper/sections/04_local.tex:74 @ 1b226f5
+lold.crisis039_count,1,paper/sections/07b_decision.tex @ 1b226f5
+lold.crisis_threshold,-0.39,paper/sections/07b_decision.tex:71 @ 1b226f5
+lold.dec_rho1_err,17.5,paper/sections/07b_decision.tex:58 @ 1b226f5
+lold.dec_rho1_med,1.03,paper/sections/07b_decision.tex:59 @ 1b226f5
+lold.diet_gain15_pct,7,paper/sections/08_specification.tex:348 @ 1b226f5
+lold.diet_gain50_pct,32,paper/sections/08_specification.tex:349 @ 1b226f5
+lold.diet_gate,10,paper/sections/08_specification.tex:229 @ 1b226f5
+lold.dmax_5pct,2672,paper/sections/11_scope.tex:132 @ 1b226f5
+lold.dsweep_dis_best,2.75,paper/sections/11_scope.tex:140 @ 1b226f5
+lold.dsweep_dis_booked,3.07,paper/sections/11_scope.tex:140 @ 1b226f5
+lold.dsweep_dis_d,100,paper/sections/11_scope.tex:140 @ 1b226f5
+lold.dsweep_nom_best,0.165,paper/sections/11_scope.tex:144 @ 1b226f5
+lold.dsweep_within,three,paper/sections/11_scope.tex:144 @ 1b226f5
+lold.excluded_twice,twice,paper/sections/12_discussion.tex:23 @ 1b226f5
+lold.factor24_count,1,paper/sections/01_question.tex @ 1b226f5
+lold.factor24_old,24,paper/sections/A1_open.tex:126 @ 1b226f5
+lold.fit_margin_est,0.2,paper/sections/12_discussion.tex:22 @ 1b226f5
+lold.fit_margin_true,149,paper/sections/12_discussion.tex:22 @ 1b226f5
+lold.fit_theta_hat,151,paper/sections/12_discussion.tex:20 @ 1b226f5
+lold.h28_cut,87,paper/sections/07_design.tex:259 @ 1b226f5
+lold.h28_gain,6.5,paper/sections/07_design.tex:259 @ 1b226f5
+lold.h7_cost,29,paper/sections/07_design.tex:263 @ 1b226f5
+lold.ke_exact_left,0.388,paper/sections/08_specification.tex:175 @ 1b226f5
+lold.ke_gain_dis,6.9,paper/sections/08_specification.tex:174 @ 1b226f5
+lold.ke_gain_nom,2.1,paper/sections/08_specification.tex:173 @ 1b226f5
+lold.null_amp,3.7,paper/sections/04_local.tex:838 @ 1b226f5
+lold.null_cross,1100,paper/sections/04_local.tex:838 @ 1b226f5
+lold.p_2mc,0.84,paper/sections/04_local.tex:62 @ 1b226f5
+lold.p_c3,0.017,paper/sections/04_local.tex:61 @ 1b226f5
+lold.relax_b0,29.79,paper/sections/07_design.tex:216 @ 1b226f5
+lold.relax_b400,59.96,paper/sections/07_design.tex:217 @ 1b226f5
+lold.remark4_title,Do not sample at the dose interval.,paper/sections/07_design.tex:125 @ 1b226f5
+lold.rr_2mc,1.0,paper/sections/04_local.tex:62 @ 1b226f5
+lold.rr_3hp,0.7,paper/sections/04_local.tex:60 @ 1b226f5
+lold.rr_3hp_ci_hi,0.9,paper/sections/04_local.tex:60 @ 1b226f5
+lold.rr_3hp_ci_lo,0.6,paper/sections/04_local.tex:60 @ 1b226f5
+lold.rr_c3,0.6,paper/sections/04_local.tex:61 @ 1b226f5
+lold.saudi_founder,70.2,paper/sections/A1_supplementary.tex:525 @ 1b226f5
+lold.saudi_pcca,81,paper/sections/A1_supplementary.tex:538 @ 1b226f5
+lold.saudi_pcca_n,68 of 84,paper/sections/A1_supplementary.tex:539 @ 1b226f5
+lold.sd_monthly_lit,0.170,paper/sections/09_validation.tex:103 @ 1b226f5
+lold.six_routes,Six,paper/sections/11_scope.tex @ 1b226f5
+lold.title,Estimating Residual,paper/main.tex:9 @ 1b226f5
+lold.turnover_n,thirteen,paper/sections/11_scope.tex:181 @ 1b226f5
+lold.turnover_vs,twenty-five,paper/sections/11_scope.tex:182 @ 1b226f5
+new.E_held,0.058,results/numbers/design.tex:3 @ 1aa26ca
+new.E_info,0.172,results/numbers/design.tex:4 @ 1aa26ca
+new.above_floor_pct,20.1,results/numbers/cohort.tex:3 @ 1aa26ca
+new.adm_r1,0.16,results/numbers/scope.tex:3 @ 1aa26ca
+new.adm_r2_10,1.12,results/numbers/scope.tex:4 @ 1aa26ca
+new.adm_r2_20,0.58,results/numbers/scope.tex:5 @ 1aa26ca
+new.adm_r3_10,2.23,results/numbers/scope.tex:6 @ 1aa26ca
+new.adm_r3_100,3.13,results/numbers/scope.tex:7 @ 1aa26ca
+new.adm_r3_20,2.33,results/numbers/scope.tex:8 @ 1aa26ca
+new.alias_cost,27,results/numbers/design.tex:5 @ 1aa26ca
+new.alias_cost_hi,33,results/numbers/design.tex:6 @ 1aa26ca
+new.alias_cost_lo,21,results/numbers/design.tex:7 @ 1aa26ca
+new.available_fortnightly,1,results/numbers/phaseclock.tex:3 @ 1aa26ca
+new.available_fortnightly_steady,1,results/numbers/phaseclock.tex:4 @ 1aa26ca
+new.available_monthly,35,results/numbers/phaseclock.tex:5 @ 1aa26ca
+new.available_off,28,results/numbers/phaseclock.tex:6 @ 1aa26ca
+new.available_spread,28,results/numbers/phaseclock.tex:7 @ 1aa26ca
+new.band_best,0.123,results/numbers/scope.tex:9 @ 1aa26ca
+new.band_best_pct,193,results/numbers/scope.tex:10 @ 1aa26ca
+new.band_beyond_pct,42,results/numbers/boundary.tex:3 @ 1aa26ca
+new.band_dense_gain_pct,9,results/numbers/scope.tex:11 @ 1aa26ca
+new.band_fold,7.6,results/numbers/scope.tex:12 @ 1aa26ca
+new.band_hi,18814,results/numbers/scope.tex:13 @ 1aa26ca
+new.band_hi_dbl_pct,589,results/numbers/kesweep.tex:3 @ 1aa26ca
+new.band_hi_mma_pct,631,results/numbers/kesweep.tex:4 @ 1aa26ca
+new.band_hi_pct,627,results/numbers/scope.tex:14 @ 1aa26ca
+new.band_hi_qtr_pct,647,results/numbers/kesweep.tex:5 @ 1aa26ca
+new.band_lo,2472,results/numbers/scope.tex:15 @ 1aa26ca
+new.band_lo_dbl_pct,166,results/numbers/kesweep.tex:6 @ 1aa26ca
+new.band_lo_dense_pct,75,results/numbers/scope.tex:16 @ 1aa26ca
+new.band_lo_mma_pct,73,results/numbers/kesweep.tex:7 @ 1aa26ca
+new.band_lo_pct,82,results/numbers/scope.tex:17 @ 1aa26ca
+new.band_lo_qtr_pct,24,results/numbers/kesweep.tex:8 @ 1aa26ca
+new.band_local,80,results/numbers/boundary.tex:4 @ 1aa26ca
+new.band_parent,655,results/numbers/boundary.tex:5 @ 1aa26ca
+new.bias_alone20,0.172,results/numbers/bias.tex:3 @ 1aa26ca
+new.bias_base,0.170,results/numbers/bias.tex:4 @ 1aa26ca
+new.bias_both20,0.286,results/numbers/bias.tex:5 @ 1aa26ca
+new.bias_loose,0.286,results/numbers/bias.tex:6 @ 1aa26ca
+new.bias_offset_share,2,results/numbers/bias.tex:7 @ 1aa26ca
+new.bias_scatter20,0.283,results/numbers/bias.tex:8 @ 1aa26ca
+new.bias_scatter_share,98,results/numbers/bias.tex:9 @ 1aa26ca
+new.bias_slope,2.549,results/numbers/fibre.tex:3 @ 1aa26ca
+new.bias_sweep_hi,0.1733,results/numbers/bias.tex:10 @ 1aa26ca
+new.bias_sweep_lo,0.1691,results/numbers/bias.tex:11 @ 1aa26ca
+new.bias_theta_factor,1.028,results/numbers/fibre.tex:4 @ 1aa26ca
+new.bias_tight,0.159,results/numbers/bias.tex:12 @ 1aa26ca
+new.carn_travel_pct,2.9,results/numbers/structure.tex:3 @ 1aa26ca
+new.ceiling_blind_pct,32,results/numbers/scope.tex:18 @ 1aa26ca
+new.clear_ratio,4.6,results/numbers/boundary.tex:6 @ 1aa26ca
+new.cohort_fixed,4900,results/numbers/decision.tex:3 @ 1aa26ca
+new.cohort_med_drawn,0.241,results/numbers/cohort.tex:4 @ 1aa26ca
+new.cohort_med_exact,0.192,results/numbers/cohort.tex:5 @ 1aa26ca
+new.cohort_monthly,2200,results/numbers/decision.tex:4 @ 1aa26ca
+new.cohort_n,4000,results/numbers/cohort.tex:6 @ 1aa26ca
+new.cohort_q1_drawn,0.158,results/numbers/cohort.tex:7 @ 1aa26ca
+new.cohort_q3_drawn,0.390,results/numbers/cohort.tex:8 @ 1aa26ca
+new.cov_drawn_pct,39.2,results/numbers/cohort.tex:9 @ 1aa26ca
+new.cov_exact_pct,52.5,results/numbers/cohort.tex:10 @ 1aa26ca
+new.crb_factor,1.95,results/numbers/profile.tex:3 @ 1aa26ca
+new.cv_floor_pct,18.7,results/numbers/cohort.tex:11 @ 1aa26ca
+new.cv_hi_pct,50.8,results/numbers/cohort.tex:12 @ 1aa26ca
+new.dceil_r2_10,5344,results/numbers/scope.tex:19 @ 1aa26ca
+new.dceil_r3_10,2531,results/numbers/scope.tex:20 @ 1aa26ca
+new.decomp_E,0.35,results/numbers/design.tex:8 @ 1aa26ca
+new.decomp_frac_pct,74,results/numbers/design.tex:9 @ 1aa26ca
+new.delta_cont,2164,results/numbers/therapy.tex:3 @ 1aa26ca
+new.delta_range_aliased,0.13,results/numbers/design.tex:10 @ 1aa26ca
+new.delta_range_dense,1.95,results/numbers/design.tex:11 @ 1aa26ca
+new.delta_range_monthly,1.84,results/numbers/design.tex:12 @ 1aa26ca
+new.delta_range_off,1.99,results/numbers/design.tex:13 @ 1aa26ca
+new.delta_range_one_cycle,1.81,results/numbers/design.tex:14 @ 1aa26ca
+new.delta_range_six_monthly,0.45,results/numbers/design.tex:15 @ 1aa26ca
+new.delta_range_two_monthly,1.94,results/numbers/design.tex:16 @ 1aa26ca
+new.diet_gain15_pct,6.3,results/numbers/diet.tex:3 @ 1aa26ca
+new.diet_gain50_pct,24.1,results/numbers/diet.tex:4 @ 1aa26ca
+new.diet_sd50_disease,2.32,results/numbers/diet.tex:5 @ 1aa26ca
+new.disease_factor,16,results/numbers/scope.tex:21 @ 1aa26ca
+new.drift_bias,-0.0241,results/numbers/drift.tex:3 @ 1aa26ca
+new.drift_bias_span_pred,-0.0246,results/numbers/drift.tex:4 @ 1aa26ca
+new.drift_halflife,138.6,results/numbers/drift.tex:5 @ 1aa26ca
+new.drift_r_pct,0.5,results/numbers/drift.tex:6 @ 1aa26ca
+new.drift_rmse,0.2020,results/numbers/drift.tex:7 @ 1aa26ca
+new.drift_rmse_hi,0.2027,results/numbers/drift.tex:8 @ 1aa26ca
+new.drift_rmse_lo,0.2015,results/numbers/drift.tex:9 @ 1aa26ca
+new.drift_rmse_nodrift,0.2000,results/numbers/drift.tex:10 @ 1aa26ca
+new.drift_sd,0.2006,results/numbers/drift.tex:11 @ 1aa26ca
+new.drift_span_yr,9.82,results/numbers/drift.tex:12 @ 1aa26ca
+new.drop_lap,1.06,results/numbers/lattice.tex:3 @ 1aa26ca
+new.drop_total,1.09,results/numbers/lattice.tex:4 @ 1aa26ca
+new.drop_visits,1.03,results/numbers/lattice.tex:5 @ 1aa26ca
+new.dropped_hi,10.6,results/numbers/design.tex:17 @ 1aa26ca
+new.dropped_lo,1.05,results/numbers/design.tex:18 @ 1aa26ca
+new.eps_monthly_d,2.4,results/numbers/phaseclock.tex:8 @ 1aa26ca
+new.eps_off_d,0.5,results/numbers/phaseclock.tex:9 @ 1aa26ca
+new.excitation_ratio,42,results/numbers/design.tex:19 @ 1aa26ca
+new.exp_cont_disease,12.63,results/numbers/therapy.tex:4 @ 1aa26ca
+new.exp_cont_nominal,6.01,results/numbers/therapy.tex:5 @ 1aa26ca
+new.exp_fall_disease,2.10,results/numbers/therapy.tex:6 @ 1aa26ca
+new.exp_fall_nominal,1.20,results/numbers/therapy.tex:7 @ 1aa26ca
+new.exp_h28_disease,26.59,results/numbers/therapy.tex:8 @ 1aa26ca
+new.exp_h28_nominal,7.23,results/numbers/therapy.tex:9 @ 1aa26ca
+new.fibre_theta_fold,169,results/numbers/fibre.tex:5 @ 1aa26ca
+new.fit_band_top,8,results/numbers/boundary.tex:7 @ 1aa26ca
+new.fit_ke_hat,0.00,results/numbers/boundary.tex:8 @ 1aa26ca
+new.fit_ke_hat_free,-0.36,results/numbers/boundary.tex:9 @ 1aa26ca
+new.fit_levels,9,results/numbers/boundary.tex:10 @ 1aa26ca
+new.fit_margin_eaten_pct,99.8,results/numbers/boundary.tex:11 @ 1aa26ca
+new.fit_margin_est,0.24,results/numbers/boundary.tex:12 @ 1aa26ca
+new.fit_margin_true,149.2,results/numbers/boundary.tex:13 @ 1aa26ca
+new.fit_resid_sigma,0.77,results/numbers/boundary.tex:14 @ 1aa26ca
+new.fit_theta_hat,151.0,results/numbers/boundary.tex:15 @ 1aa26ca
+new.fit_theta_hat_dense,147,results/numbers/boundary.tex:16 @ 1aa26ca
+new.fit_theta_hat_free_ke,604,results/numbers/boundary.tex:17 @ 1aa26ca
+new.fit_theta_hat_lin,129,results/numbers/boundary.tex:18 @ 1aa26ca
+new.fit_theta_hat_rel,159,results/numbers/boundary.tex:19 @ 1aa26ca
+new.fold_load,706.4,results/numbers/boundary.tex:20 @ 1aa26ca
+new.fold_load_ratio,1.177,results/numbers/boundary.tex:21 @ 1aa26ca
+new.fold_m,276,results/numbers/boundary.tex:22 @ 1aa26ca
+new.free_cv10,0.1735,results/numbers/design.tex:20 @ 1aa26ca
+new.free_cv10_hi,0.1873,results/numbers/design.tex:21 @ 1aa26ca
+new.free_cv10_lo,0.1705,results/numbers/design.tex:22 @ 1aa26ca
+new.free_cv2,0.264,results/numbers/design.tex:23 @ 1aa26ca
+new.free_cv20,0.1713,results/numbers/design.tex:24 @ 1aa26ca
+new.free_cv20_hi,0.1779,results/numbers/design.tex:25 @ 1aa26ca
+new.free_cv20_lo,0.1692,results/numbers/design.tex:26 @ 1aa26ca
+new.free_cv2_hi,0.3553,results/numbers/design.tex:27 @ 1aa26ca
+new.free_cv2_lo,0.2286,results/numbers/design.tex:28 @ 1aa26ca
+new.free_steady,\infty,results/numbers/design.tex:29 @ 1aa26ca
+new.free_steady_hi,\infty,results/numbers/design.tex:30 @ 1aa26ca
+new.free_steady_lo,\infty,results/numbers/design.tex:31 @ 1aa26ca
+new.hold8_ratio,5.37,results/numbers/boundary.tex:23 @ 1aa26ca
+new.illness_fold,1.50,results/numbers/reduction.tex:3 @ 1aa26ca
+new.kappa_monthly,0.1162,results/numbers/design.tex:32 @ 1aa26ca
+new.kappa_monthly_hi,0.1187,results/numbers/design.tex:33 @ 1aa26ca
+new.kappa_monthly_lo,0.1136,results/numbers/design.tex:34 @ 1aa26ca
+new.kappa_monthly_pct,11.6,results/numbers/design.tex:35 @ 1aa26ca
+new.kappa_monthly_pct_hi,11.9,results/numbers/design.tex:36 @ 1aa26ca
+new.kappa_monthly_pct_lo,11.4,results/numbers/design.tex:37 @ 1aa26ca
+new.kappa_two_monthly,0.0765,results/numbers/design.tex:38 @ 1aa26ca
+new.kappa_two_monthly_hi,0.0871,results/numbers/design.tex:39 @ 1aa26ca
+new.kappa_two_monthly_lo,0.0525,results/numbers/design.tex:40 @ 1aa26ca
+new.ke_for_disease,0.0999,results/numbers/kesweep.tex:9 @ 1aa26ca
+new.ke_frontier_3000_factor,2.226,results/numbers/frontier.tex:3 @ 1aa26ca
+new.ke_frontier_3000_pct,80.01,results/numbers/frontier.tex:4 @ 1aa26ca
+new.ke_frontier_300_factor,1.065,results/numbers/frontier.tex:5 @ 1aa26ca
+new.ke_frontier_300_pct,6.33,results/numbers/frontier.tex:6 @ 1aa26ca
+new.ke_frontier_600_factor,1.170,results/numbers/frontier.tex:7 @ 1aa26ca
+new.ke_frontier_600_pct,15.67,results/numbers/frontier.tex:8 @ 1aa26ca
+new.ke_mma,4.41,results/numbers/kesweep.tex:10 @ 1aa26ca
+new.ke_mma_bw,70,results/numbers/kesweep.tex:11 @ 1aa26ca
+new.ke_mma_cross_bw,62,results/numbers/kesweep.tex:12 @ 1aa26ca
+new.ke_mma_half_h,3.8,results/numbers/kesweep.tex:13 @ 1aa26ca
+new.ke_mma_vs_carried_pct,13,results/numbers/kesweep.tex:14 @ 1aa26ca
+new.ke_needed,0.9803,results/numbers/design.tex:41 @ 1aa26ca
+new.ke_needed_factor,2.67,results/numbers/design.tex:42 @ 1aa26ca
+new.ke_needed_factor_hi,2.68,results/numbers/design.tex:43 @ 1aa26ca
+new.ke_needed_factor_lo,2.65,results/numbers/design.tex:44 @ 1aa26ca
+new.ke_needed_hi,0.9865,results/numbers/design.tex:45 @ 1aa26ca
+new.ke_needed_lo,0.9761,results/numbers/design.tex:46 @ 1aa26ca
+new.ke_prior_pct,80,results/numbers/frontier.tex:9 @ 1aa26ca
+new.ke_prior_worth,7.4,results/numbers/design.tex:47 @ 1aa26ca
+new.km_crossing,124,results/numbers/kmcost.tex:3 @ 1aa26ca
+new.km_crossing_sd_hi,0.2009,results/numbers/kmcost.tex:4 @ 1aa26ca
+new.km_crossing_sd_lo,0.1986,results/numbers/kmcost.tex:5 @ 1aa26ca
+new.km_headroom,1.24,results/numbers/kmcost.tex:6 @ 1aa26ca
+new.km_invitro_sd,0.4158,results/numbers/kmcost.tex:7 @ 1aa26ca
+new.km_sweep_fold,26.8,results/numbers/kmcost.tex:8 @ 1aa26ca
+new.km_sweep_hi,1.3608,results/numbers/kmcost.tex:9 @ 1aa26ca
+new.km_sweep_lo,0.0507,results/numbers/kmcost.tex:10 @ 1aa26ca
+new.lap_cost_04,8.6,results/numbers/lattice.tex:6 @ 1aa26ca
+new.lap_cost_10,3.4,results/numbers/lattice.tex:7 @ 1aa26ca
+new.lap_cost_25,1.6,results/numbers/lattice.tex:8 @ 1aa26ca
+new.lap_cost_50,1.1,results/numbers/lattice.tex:9 @ 1aa26ca
+new.lap_cost_75,1.0,results/numbers/lattice.tex:10 @ 1aa26ca
+new.lap_eps_h,6.3,results/numbers/lattice.tex:11 @ 1aa26ca
+new.lap_eps_h_n20,16.8,results/numbers/lattice.tex:12 @ 1aa26ca
+new.lap_frac_n12,43,results/numbers/lattice.tex:13 @ 1aa26ca
+new.lap_frac_n16,57,results/numbers/lattice.tex:14 @ 1aa26ca
+new.lap_frac_n20,71,results/numbers/lattice.tex:15 @ 1aa26ca
+new.lap_frac_n25,89,results/numbers/lattice.tex:16 @ 1aa26ca
+new.lap_horizon_y,2,results/numbers/lattice.tex:17 @ 1aa26ca
+new.lap_n,53,results/numbers/lattice.tex:18 @ 1aa26ca
+new.lap_n_off,28,results/numbers/lattice.tex:19 @ 1aa26ca
+new.lap_pct_off,89,results/numbers/phaseclock.tex:10 @ 1aa26ca
+new.lap_pen_n12,1.51,results/numbers/lattice.tex:20 @ 1aa26ca
+new.lap_pen_n16,1.20,results/numbers/lattice.tex:21 @ 1aa26ca
+new.lap_pen_n20,1.08,results/numbers/lattice.tex:22 @ 1aa26ca
+new.lap_pen_n25,1.02,results/numbers/lattice.tex:23 @ 1aa26ca
+new.lap_step_n20,14.7,results/numbers/lattice.tex:24 @ 1aa26ca
+new.lap_visits_off,28,results/numbers/phaseclock.tex:11 @ 1aa26ca
+new.laps_aliased_off,1.8,results/numbers/design.tex:48 @ 1aa26ca
+new.laps_monthly,4.3,results/numbers/phaseclock.tex:12 @ 1aa26ca
+new.load_accuracy_gate,10,results/numbers/design.tex:49 @ 1aa26ca
+new.load_error_factor,1.40,results/numbers/fibre.tex:6 @ 1aa26ca
+new.loadcap_perfect_5pct,2.659,results/numbers/loadcap.tex:3 @ 1aa26ca
+new.loadcap_ratio_dis_hi,1.46,results/numbers/loadcap.tex:4 @ 1aa26ca
+new.loadcap_ratio_dis_lo,1.22,results/numbers/loadcap.tex:5 @ 1aa26ca
+new.loadcap_ratio_nominal,1.81,results/numbers/loadcap.tex:6 @ 1aa26ca
+new.loadcap_share_fifth,26.2,results/numbers/loadcap.tex:7 @ 1aa26ca
+new.loadcap_share_half,9.9,results/numbers/loadcap.tex:8 @ 1aa26ca
+new.loadcap_share_nominal,1.8,results/numbers/loadcap.tex:9 @ 1aa26ca
+new.local_ceiling,64.5,results/numbers/boundary.tex:24 @ 1aa26ca
+new.margin_band_hi,3285,results/numbers/margin.tex:3 @ 1aa26ca
+new.margin_band_lo,511,results/numbers/margin.tex:4 @ 1aa26ca
+new.margin_nominal,954,results/numbers/margin.tex:5 @ 1aa26ca
+new.margin_target,0.17,results/numbers/frontier.tex:10 @ 1aa26ca
+new.marker_high,8.9708,results/numbers/design.tex:50 @ 1aa26ca
+new.marker_low,3.3646,results/numbers/design.tex:51 @ 1aa26ca
+new.meas_b_only_gain_pct,0.33,results/numbers/measured.tex:3 @ 1aa26ca
+new.meas_exact_5pct,2.659,results/numbers/measured.tex:4 @ 1aa26ca
+new.meas_gate_nominal,6,results/numbers/measured.tex:5 @ 1aa26ca
+new.meas_match_2pct,18,results/numbers/measured.tex:6 @ 1aa26ca
+new.meas_match_nominal,13,results/numbers/measured.tex:7 @ 1aa26ca
+new.monthly_days_to_exhaust,1064,results/numbers/lattice.tex:25 @ 1aa26ca
+new.monthly_unreached,10,results/numbers/lattice.tex:26 @ 1aa26ca
+new.mtol_window_hi_pct,67,results/numbers/local.tex:3 @ 1aa26ca
+new.mtol_window_lo_pct,1.2,results/numbers/local.tex:4 @ 1aa26ca
+new.mtol_window_pct,14.8,results/numbers/local.tex:5 @ 1aa26ca
+new.n20_vs_n25,1.013,results/numbers/lattice.tex:27 @ 1aa26ca
+new.n_aliased_off,51,results/numbers/design.tex:52 @ 1aa26ca
+new.n_monthly,25,results/numbers/lattice.tex:28 @ 1aa26ca
+new.near_phases,53,results/numbers/lattice.tex:29 @ 1aa26ca
+new.near_q,1400,results/numbers/lattice.tex:30 @ 1aa26ca
+new.near_sd,1.4565,results/numbers/lattice.tex:31 @ 1aa26ca
+new.near_span_h,12.5,results/numbers/lattice.tex:32 @ 1aa26ca
+new.near_step,14.01,results/numbers/lattice.tex:33 @ 1aa26ca
+new.object_spread_recommended_pct,18.04,results/numbers/frontier.tex:11 @ 1aa26ca
+new.parent_mbar,81.9,results/numbers/boundary.tex:25 @ 1aa26ca
+new.peak_floor,173,results/numbers/boundary.tex:26 @ 1aa26ca
+new.peak_margin,2.68,results/numbers/boundary.tex:27 @ 1aa26ca
+new.peak_over_mbar,3.36,results/numbers/boundary.tex:28 @ 1aa26ca
+new.phase_gap_monthly,0.0857,results/numbers/design.tex:53 @ 1aa26ca
+new.phase_spread_fortnightly,0.0000,results/numbers/design.tex:54 @ 1aa26ca
+new.phi_drop,0.0462,results/numbers/design.tex:55 @ 1aa26ca
+new.prior_floor_pct,1.5,results/numbers/boundary.tex:29 @ 1aa26ca
+new.profile_asym_recommended,0.497,results/numbers/frontier.tex:12 @ 1aa26ca
+new.profile_factor,3.76,results/numbers/profile.tex:4 @ 1aa26ca
+new.profile_factor_hi,5.08,results/numbers/profile.tex:5 @ 1aa26ca
+new.profile_factor_lo,2.86,results/numbers/profile.tex:6 @ 1aa26ca
+new.profile_gap_tier1_pct,13.25,results/numbers/frontier.tex:13 @ 1aa26ca
+new.profile_hi_recommended,0.1332,results/numbers/frontier.tex:14 @ 1aa26ca
+new.profile_lo_recommended,0.2678,results/numbers/frontier.tex:15 @ 1aa26ca
+new.profile_recommended,0.2005,results/numbers/frontier.tex:16 @ 1aa26ca
+new.profile_tier1,0.2268,results/numbers/frontier.tex:17 @ 1aa26ca
+new.q_monthly,35,results/numbers/lattice.tex:34 @ 1aa26ca
+new.q_off,28,results/numbers/lattice.tex:35 @ 1aa26ca
+new.quad_width,0.10,results/numbers/frontier.tex:18 @ 1aa26ca
+new.range_fortnightly,0.13,results/numbers/phaseclock.tex:13 @ 1aa26ca
+new.range_fortnightly_steady,0.00,results/numbers/phaseclock.tex:14 @ 1aa26ca
+new.range_off,1.80,results/numbers/phaseclock.tex:15 @ 1aa26ca
+new.range_spread,1.85,results/numbers/phaseclock.tex:16 @ 1aa26ca
+new.reached_fortnightly,1,results/numbers/phaseclock.tex:17 @ 1aa26ca
+new.reached_fortnightly_steady,1,results/numbers/phaseclock.tex:18 @ 1aa26ca
+new.reached_monthly,25,results/numbers/phaseclock.tex:19 @ 1aa26ca
+new.reached_off,25,results/numbers/phaseclock.tex:20 @ 1aa26ca
+new.reached_spread,25,results/numbers/phaseclock.tex:21 @ 1aa26ca
+new.reduction_cost,31.8,results/numbers/reduction.tex:4 @ 1aa26ca
+new.reduction_cost_k0p1,83.1,results/numbers/reduction.tex:5 @ 1aa26ca
+new.reduction_cost_k10,4.8,results/numbers/reduction.tex:6 @ 1aa26ca
+new.reduction_cost_k100,0.5,results/numbers/reduction.tex:7 @ 1aa26ca
+new.reduction_cost_step10,9.9,results/numbers/reduction.tex:8 @ 1aa26ca
+new.reduction_cost_step10_k0p1,18.4,results/numbers/reduction.tex:9 @ 1aa26ca
+new.reduction_cost_step10_k10,1.9,results/numbers/reduction.tex:10 @ 1aa26ca
+new.reduction_cost_step10_k100,0.2,results/numbers/reduction.tex:11 @ 1aa26ca
+new.reduction_cost_tracer,0.98,results/numbers/reduction.tex:12 @ 1aa26ca
+new.reduction_cost_tracer_k0p1,1.62,results/numbers/reduction.tex:13 @ 1aa26ca
+new.reduction_cost_tracer_k10,0.22,results/numbers/reduction.tex:14 @ 1aa26ca
+new.reduction_cost_tracer_k100,0.024,results/numbers/reduction.tex:15 @ 1aa26ca
+new.sd_10pct,1.5830,results/numbers/scope.tex:22 @ 1aa26ca
+new.sd_5pct,3.0673,results/numbers/scope.tex:23 @ 1aa26ca
+new.sd_aliased,4.5845,results/numbers/design.tex:56 @ 1aa26ca
+new.sd_aliased_hi,5.6362,results/numbers/design.tex:57 @ 1aa26ca
+new.sd_aliased_lo,3.5050,results/numbers/design.tex:58 @ 1aa26ca
+new.sd_aliased_off,0.1615,results/numbers/design.tex:59 @ 1aa26ca
+new.sd_aliased_off_hi,0.1618,results/numbers/design.tex:60 @ 1aa26ca
+new.sd_aliased_off_lo,0.1611,results/numbers/design.tex:61 @ 1aa26ca
+new.sd_carn_hi,2.0558,results/numbers/design.tex:62 @ 1aa26ca
+new.sd_carn_lo,1.9126,results/numbers/design.tex:63 @ 1aa26ca
+new.sd_dense,0.1500,results/numbers/design.tex:64 @ 1aa26ca
+new.sd_dense_flat,1.1096,results/numbers/design.tex:65 @ 1aa26ca
+new.sd_dense_flat_hi,1.1923,results/numbers/design.tex:66 @ 1aa26ca
+new.sd_dense_flat_lo,1.0313,results/numbers/design.tex:67 @ 1aa26ca
+new.sd_dense_hi,0.1501,results/numbers/design.tex:68 @ 1aa26ca
+new.sd_dense_lo,0.1498,results/numbers/design.tex:69 @ 1aa26ca
+new.sd_load_1pct,0.1696,results/numbers/design.tex:70 @ 1aa26ca
+new.sd_load_1pct_hi,0.1697,results/numbers/design.tex:71 @ 1aa26ca
+new.sd_load_1pct_lo,0.1695,results/numbers/design.tex:72 @ 1aa26ca
+new.sd_load_20pct,0.1701,results/numbers/design.tex:73 @ 1aa26ca
+new.sd_load_20pct_hi,0.1725,results/numbers/design.tex:74 @ 1aa26ca
+new.sd_load_20pct_lo,0.1677,results/numbers/design.tex:75 @ 1aa26ca
+new.sd_load_acc_1pct,0.1590,results/numbers/design.tex:76 @ 1aa26ca
+new.sd_load_acc_1pct_hi,0.1599,results/numbers/design.tex:77 @ 1aa26ca
+new.sd_load_acc_1pct_lo,0.1583,results/numbers/design.tex:78 @ 1aa26ca
+new.sd_load_acc_20pct,0.2876,results/numbers/design.tex:79 @ 1aa26ca
+new.sd_load_acc_20pct_hi,0.2994,results/numbers/design.tex:80 @ 1aa26ca
+new.sd_load_acc_20pct_lo,0.2775,results/numbers/design.tex:81 @ 1aa26ca
+new.sd_load_acc_40pct,0.5049,results/numbers/design.tex:82 @ 1aa26ca
+new.sd_load_acc_40pct_hi,0.5322,results/numbers/design.tex:83 @ 1aa26ca
+new.sd_load_acc_40pct_lo,0.4816,results/numbers/design.tex:84 @ 1aa26ca
+new.sd_load_steady,0.1696,results/numbers/design.tex:85 @ 1aa26ca
+new.sd_load_steady_hi,0.1696,results/numbers/design.tex:86 @ 1aa26ca
+new.sd_load_steady_lo,0.1696,results/numbers/design.tex:87 @ 1aa26ca
+new.sd_monthly,0.1699,results/numbers/design.tex:88 @ 1aa26ca
+new.sd_monthly_hi,0.1709,results/numbers/design.tex:89 @ 1aa26ca
+new.sd_monthly_lo,0.1684,results/numbers/design.tex:90 @ 1aa26ca
+new.sd_n20_lap,0.1760,results/numbers/lattice.tex:36 @ 1aa26ca
+new.sd_n20_off,0.1897,results/numbers/lattice.tex:37 @ 1aa26ca
+new.sd_n25_off,0.1739,results/numbers/lattice.tex:38 @ 1aa26ca
+new.sd_one_cycle,0.2162,results/numbers/design.tex:91 @ 1aa26ca
+new.sd_one_cycle_hi,0.2300,results/numbers/design.tex:92 @ 1aa26ca
+new.sd_one_cycle_lo,0.2053,results/numbers/design.tex:93 @ 1aa26ca
+new.sd_six_monthly,0.4570,results/numbers/design.tex:94 @ 1aa26ca
+new.sd_six_monthly_hi,0.5097,results/numbers/design.tex:95 @ 1aa26ca
+new.sd_six_monthly_lo,0.4121,results/numbers/design.tex:96 @ 1aa26ca
+new.sd_spont_10,1.7930,results/numbers/design.tex:97 @ 1aa26ca
+new.sd_spont_40,0.6980,results/numbers/design.tex:98 @ 1aa26ca
+new.sd_straddle,0.0157,results/numbers/design.tex:99 @ 1aa26ca
+new.sd_straddle_hi,0.0157,results/numbers/design.tex:100 @ 1aa26ca
+new.sd_straddle_lo,0.0157,results/numbers/design.tex:101 @ 1aa26ca
+new.sd_tier1_with_kappa,0.2002,results/numbers/frontier.tex:19 @ 1aa26ca
+new.sd_two_monthly,0.1876,results/numbers/design.tex:102 @ 1aa26ca
+new.sd_two_monthly_hi,0.1939,results/numbers/design.tex:103 @ 1aa26ca
+new.sd_two_monthly_lo,0.1839,results/numbers/design.tex:104 @ 1aa26ca
+new.sep_over_mbar,12.6,results/numbers/boundary.tex:30 @ 1aa26ca
+new.settle_hours,0.91,results/numbers/design.tex:105 @ 1aa26ca
+new.settle_hours_1pct,1.30,results/numbers/design.tex:106 @ 1aa26ca
+new.share_10pct,29.2,results/numbers/scope.tex:24 @ 1aa26ca
+new.share_5pct,16.3,results/numbers/scope.tex:25 @ 1aa26ca
+new.share_5pct_half,23.1,results/numbers/kesweep.tex:15 @ 1aa26ca
+new.share_nominal_pct,84.5,results/numbers/scope.tex:26 @ 1aa26ca
+new.sigma,22.0,results/numbers/design.tex:107 @ 1aa26ca
+new.sim_spread_recommended,0.2002,results/numbers/frontier.tex:20 @ 1aa26ca
+new.sim_spread_robust_recommended,0.1776,results/numbers/frontier.tex:21 @ 1aa26ca
+new.span_aliased_off,725,results/numbers/design.tex:108 @ 1aa26ca
+new.span_fortnightly,336,results/numbers/phaseclock.tex:22 @ 1aa26ca
+new.span_fortnightly_steady,336,results/numbers/phaseclock.tex:23 @ 1aa26ca
+new.span_monthly,730,results/numbers/phaseclock.tex:24 @ 1aa26ca
+new.span_off,348,results/numbers/phaseclock.tex:25 @ 1aa26ca
+new.span_spread,738,results/numbers/phaseclock.tex:26 @ 1aa26ca
+new.step10_fold,1.10,results/numbers/reduction.tex:16 @ 1aa26ca
+new.straddle_gain,9.5,results/numbers/design.tex:109 @ 1aa26ca
+new.struct_draws_40pct,5,results/numbers/structure.tex:4 @ 1aa26ca
+new.struct_sigma_15min,9.7,results/numbers/structure.tex:5 @ 1aa26ca
+new.struct_sigma_1h,0.68,results/numbers/structure.tex:6 @ 1aa26ca
+new.struct_sigma_2h,0.01,results/numbers/structure.tex:7 @ 1aa26ca
+new.struct_sigma_30min,4.4,results/numbers/structure.tex:8 @ 1aa26ca
+new.struct_sigma_3min,16.3,results/numbers/structure.tex:9 @ 1aa26ca
+new.tau_frozen_h,0.555,results/numbers/structure.tex:10 @ 1aa26ca
+new.tau_hours,0.81,results/numbers/design.tex:110 @ 1aa26ca
+new.tau_reduced_h,0.587,results/numbers/structure.tex:11 @ 1aa26ca
+new.theta_crit,150.8,results/numbers/margin.tex:6 @ 1aa26ca
+new.tier1_cv_cut_pct,17,results/numbers/tier1.tex:3 @ 1aa26ca
+new.tier1_factor,1.21,results/numbers/tier1.tex:4 @ 1aa26ca
+new.tier1_floor_10,0.151,results/numbers/tier1.tex:5 @ 1aa26ca
+new.tier1_floor_14,0.174,results/numbers/tier1.tex:6 @ 1aa26ca
+new.tier1_floor_20,0.207,results/numbers/tier1.tex:7 @ 1aa26ca
+new.tier1_floor_30,0.248,results/numbers/tier1.tex:8 @ 1aa26ca
+new.tier1_floor_req,0.160,results/numbers/tier1.tex:9 @ 1aa26ca
+new.tier1_sd_at_pub,0.212,results/numbers/tier1.tex:10 @ 1aa26ca
+new.tier1_visits_at_pub,118,results/numbers/tier1.tex:11 @ 1aa26ca
+new.tier1_visits_exact,11,results/numbers/tier1.tex:12 @ 1aa26ca
+new.tier1_years_at_pub,9.8,results/numbers/tier1.tex:13 @ 1aa26ca
+new.timescale_ratio,104,results/numbers/design.tex:111 @ 1aa26ca
+new.tracer_fold,1.01,results/numbers/reduction.tex:17 @ 1aa26ca
+new.track_pct,4.9745,results/numbers/design.tex:112 @ 1aa26ca
+new.track_pct_1pct,0.9861,results/numbers/design.tex:113 @ 1aa26ca
+new.train_drop,1.95,results/numbers/design.tex:114 @ 1aa26ca
+new.train_peak_frac,2.13,results/numbers/design.tex:115 @ 1aa26ca
+new.train_ratio,2.64,results/numbers/design.tex:116 @ 1aa26ca
+new.train_trough_frac,0.134,results/numbers/design.tex:117 @ 1aa26ca
+new.trans_b_disease,513,results/numbers/transient.tex:3 @ 1aa26ca
+new.trans_b_nominal,163,results/numbers/transient.tex:4 @ 1aa26ca
+new.trans_b_prior,16.1,results/numbers/transient.tex:5 @ 1aa26ca
+new.trans_base_disease,3.0583,results/numbers/transient.tex:6 @ 1aa26ca
+new.trans_base_nominal,0.1696,results/numbers/transient.tex:7 @ 1aa26ca
+new.trans_gain20_disease,0.4,results/numbers/transient.tex:8 @ 1aa26ca
+new.trans_gain20_nominal,3.8,results/numbers/transient.tex:9 @ 1aa26ca
+new.trans_gain_disease,0.2,results/numbers/transient.tex:10 @ 1aa26ca
+new.trans_gain_late_disease,0.02,results/numbers/transient.tex:11 @ 1aa26ca
+new.trans_gain_late_nominal,0.10,results/numbers/transient.tex:12 @ 1aa26ca
+new.trans_gain_nominal,2.1,results/numbers/transient.tex:13 @ 1aa26ca
+new.trans_ke_gain_disease,1.1,results/numbers/transient.tex:14 @ 1aa26ca
+new.trans_ke_gain_nominal,0.01,results/numbers/transient.tex:15 @ 1aa26ca
+new.trans_late_lo,1.30,results/numbers/transient.tex:16 @ 1aa26ca
+new.trans_noprior_disease,3.3478,results/numbers/transient.tex:17 @ 1aa26ca
+new.trans_noprior_nominal,0.1733,results/numbers/transient.tex:18 @ 1aa26ca
+new.trans_sigmas_disease,11.3,results/numbers/transient.tex:19 @ 1aa26ca
+new.trans_sigmas_nominal,10.9,results/numbers/transient.tex:20 @ 1aa26ca
+new.trans_window_hi,1.0,results/numbers/transient.tex:21 @ 1aa26ca
+new.trans_window_lo,0.05,results/numbers/transient.tex:22 @ 1aa26ca
+new.unreachable_pct,19.9,results/numbers/cohort.tex:13 @ 1aa26ca
+new.visits,25,results/numbers/phaseclock.tex:27 @ 1aa26ca
+old.above_floor_pct,20.1,results/numbers/cohort.tex:3 @ 1b226f5
+old.alias_cost,27,results/numbers/design.tex:3 @ 1b226f5
+old.alias_cost_hi,33,results/numbers/design.tex:4 @ 1b226f5
+old.alias_cost_lo,21,results/numbers/design.tex:5 @ 1b226f5
+old.band_best,0.123,results/numbers/scope.tex:3 @ 1b226f5
+old.band_best_pct,193,results/numbers/scope.tex:4 @ 1b226f5
+old.band_dense_gain_pct,9,results/numbers/scope.tex:5 @ 1b226f5
+old.band_fold,7.6,results/numbers/scope.tex:6 @ 1b226f5
+old.band_hi,18814,results/numbers/scope.tex:7 @ 1b226f5
+old.band_hi_dbl_pct,589,results/numbers/kesweep.tex:3 @ 1b226f5
+old.band_hi_mma_pct,631,results/numbers/kesweep.tex:4 @ 1b226f5
+old.band_hi_pct,627,results/numbers/scope.tex:8 @ 1b226f5
+old.band_hi_qtr_pct,647,results/numbers/kesweep.tex:5 @ 1b226f5
+old.band_lo,2472,results/numbers/scope.tex:9 @ 1b226f5
+old.band_lo_dbl_pct,166,results/numbers/kesweep.tex:6 @ 1b226f5
+old.band_lo_dense_pct,75,results/numbers/scope.tex:10 @ 1b226f5
+old.band_lo_mma_pct,73,results/numbers/kesweep.tex:7 @ 1b226f5
+old.band_lo_pct,82,results/numbers/scope.tex:11 @ 1b226f5
+old.band_lo_qtr_pct,24,results/numbers/kesweep.tex:8 @ 1b226f5
+old.carn_travel_pct,2.9,results/numbers/structure.tex:3 @ 1b226f5
+old.ceiling_blind_pct,32,results/numbers/scope.tex:12 @ 1b226f5
+old.cohort_fixed,4900,results/numbers/decision.tex:3 @ 1b226f5
+old.cohort_med_drawn,0.241,results/numbers/cohort.tex:4 @ 1b226f5
+old.cohort_med_exact,0.192,results/numbers/cohort.tex:5 @ 1b226f5
+old.cohort_monthly,2200,results/numbers/decision.tex:4 @ 1b226f5
+old.cohort_n,4000,results/numbers/cohort.tex:6 @ 1b226f5
+old.cohort_q1_drawn,0.158,results/numbers/cohort.tex:7 @ 1b226f5
+old.cohort_q3_drawn,0.390,results/numbers/cohort.tex:8 @ 1b226f5
+old.cov_drawn_pct,39.2,results/numbers/cohort.tex:9 @ 1b226f5
+old.cov_exact_pct,52.5,results/numbers/cohort.tex:10 @ 1b226f5
+old.crb_factor,1.95,results/numbers/profile.tex:3 @ 1b226f5
+old.cv_floor_pct,18.7,results/numbers/cohort.tex:11 @ 1b226f5
+old.cv_hi_pct,50.8,results/numbers/cohort.tex:12 @ 1b226f5
+old.decomp_E,0.35,results/numbers/design.tex:6 @ 1b226f5
+old.decomp_frac_pct,74,results/numbers/design.tex:7 @ 1b226f5
+old.delta_range_aliased,0.13,results/numbers/design.tex:8 @ 1b226f5
+old.delta_range_dense,1.95,results/numbers/design.tex:9 @ 1b226f5
+old.delta_range_monthly,1.84,results/numbers/design.tex:10 @ 1b226f5
+old.delta_range_off,1.99,results/numbers/design.tex:11 @ 1b226f5
+old.delta_range_one_cycle,1.81,results/numbers/design.tex:12 @ 1b226f5
+old.delta_range_six_monthly,0.45,results/numbers/design.tex:13 @ 1b226f5
+old.delta_range_two_monthly,1.94,results/numbers/design.tex:14 @ 1b226f5
+old.disease_factor,16,results/numbers/scope.tex:13 @ 1b226f5
+old.dropped_hi,10.6,results/numbers/design.tex:15 @ 1b226f5
+old.dropped_lo,1.05,results/numbers/design.tex:16 @ 1b226f5
+old.excitation_ratio,42,results/numbers/design.tex:17 @ 1b226f5
+old.free_cv10,0.1735,results/numbers/design.tex:18 @ 1b226f5
+old.free_cv10_hi,0.1873,results/numbers/design.tex:19 @ 1b226f5
+old.free_cv10_lo,0.1705,results/numbers/design.tex:20 @ 1b226f5
+old.free_cv2,0.264,results/numbers/design.tex:21 @ 1b226f5
+old.free_cv20,0.1713,results/numbers/design.tex:22 @ 1b226f5
+old.free_cv20_hi,0.1779,results/numbers/design.tex:23 @ 1b226f5
+old.free_cv20_lo,0.1692,results/numbers/design.tex:24 @ 1b226f5
+old.free_cv2_hi,0.3553,results/numbers/design.tex:25 @ 1b226f5
+old.free_cv2_lo,0.2286,results/numbers/design.tex:26 @ 1b226f5
+old.free_steady,\infty,results/numbers/design.tex:27 @ 1b226f5
+old.free_steady_hi,\infty,results/numbers/design.tex:28 @ 1b226f5
+old.free_steady_lo,\infty,results/numbers/design.tex:29 @ 1b226f5
+old.illness_fold,1.50,results/numbers/reduction.tex:3 @ 1b226f5
+old.kappa_monthly,0.1162,results/numbers/design.tex:30 @ 1b226f5
+old.kappa_monthly_hi,0.1187,results/numbers/design.tex:31 @ 1b226f5
+old.kappa_monthly_lo,0.1136,results/numbers/design.tex:32 @ 1b226f5
+old.kappa_monthly_pct,11.6,results/numbers/design.tex:33 @ 1b226f5
+old.kappa_monthly_pct_hi,11.9,results/numbers/design.tex:34 @ 1b226f5
+old.kappa_monthly_pct_lo,11.4,results/numbers/design.tex:35 @ 1b226f5
+old.kappa_two_monthly,0.0765,results/numbers/design.tex:36 @ 1b226f5
+old.kappa_two_monthly_hi,0.0871,results/numbers/design.tex:37 @ 1b226f5
+old.kappa_two_monthly_lo,0.0525,results/numbers/design.tex:38 @ 1b226f5
+old.ke_for_disease,0.0999,results/numbers/kesweep.tex:9 @ 1b226f5
+old.ke_mma,4.41,results/numbers/kesweep.tex:10 @ 1b226f5
+old.ke_mma_bw,70,results/numbers/kesweep.tex:11 @ 1b226f5
+old.ke_mma_cross_bw,62,results/numbers/kesweep.tex:12 @ 1b226f5
+old.ke_mma_half_h,3.8,results/numbers/kesweep.tex:13 @ 1b226f5
+old.ke_mma_vs_carried_pct,13,results/numbers/kesweep.tex:14 @ 1b226f5
+old.ke_needed,0.9803,results/numbers/design.tex:39 @ 1b226f5
+old.ke_needed_factor,2.67,results/numbers/design.tex:40 @ 1b226f5
+old.ke_needed_factor_hi,2.68,results/numbers/design.tex:41 @ 1b226f5
+old.ke_needed_factor_lo,2.65,results/numbers/design.tex:42 @ 1b226f5
+old.ke_needed_hi,0.9865,results/numbers/design.tex:43 @ 1b226f5
+old.ke_needed_lo,0.9761,results/numbers/design.tex:44 @ 1b226f5
+old.ke_prior_worth,7.4,results/numbers/design.tex:45 @ 1b226f5
+old.km_crossing,124,results/numbers/kmcost.tex:3 @ 1b226f5
+old.km_crossing_sd_hi,0.2009,results/numbers/kmcost.tex:4 @ 1b226f5
+old.km_crossing_sd_lo,0.1986,results/numbers/kmcost.tex:5 @ 1b226f5
+old.km_headroom,1.24,results/numbers/kmcost.tex:6 @ 1b226f5
+old.km_invitro_sd,0.4158,results/numbers/kmcost.tex:7 @ 1b226f5
+old.km_sweep_fold,26.8,results/numbers/kmcost.tex:8 @ 1b226f5
+old.km_sweep_hi,1.3608,results/numbers/kmcost.tex:9 @ 1b226f5
+old.km_sweep_lo,0.0507,results/numbers/kmcost.tex:10 @ 1b226f5
+old.load_accuracy_gate,10,results/numbers/design.tex:46 @ 1b226f5
+old.marker_high,8.9708,results/numbers/design.tex:47 @ 1b226f5
+old.marker_low,3.3646,results/numbers/design.tex:48 @ 1b226f5
+old.mtol_window_hi_pct,67,results/numbers/local.tex:3 @ 1b226f5
+old.mtol_window_lo_pct,1.2,results/numbers/local.tex:4 @ 1b226f5
+old.mtol_window_pct,14.8,results/numbers/local.tex:5 @ 1b226f5
+old.phase_gap_monthly,0.0857,results/numbers/design.tex:49 @ 1b226f5
+old.phase_spread_fortnightly,0.0000,results/numbers/design.tex:50 @ 1b226f5
+old.phi_drop,0.0462,results/numbers/design.tex:51 @ 1b226f5
+old.profile_factor,3.76,results/numbers/profile.tex:4 @ 1b226f5
+old.profile_factor_hi,5.08,results/numbers/profile.tex:5 @ 1b226f5
+old.profile_factor_lo,2.86,results/numbers/profile.tex:6 @ 1b226f5
+old.reduction_cost,31.8,results/numbers/reduction.tex:4 @ 1b226f5
+old.reduction_cost_k0p1,83.1,results/numbers/reduction.tex:5 @ 1b226f5
+old.reduction_cost_k10,4.8,results/numbers/reduction.tex:6 @ 1b226f5
+old.reduction_cost_k100,0.5,results/numbers/reduction.tex:7 @ 1b226f5
+old.reduction_cost_step10,9.9,results/numbers/reduction.tex:8 @ 1b226f5
+old.reduction_cost_step10_k0p1,18.4,results/numbers/reduction.tex:9 @ 1b226f5
+old.reduction_cost_step10_k10,1.9,results/numbers/reduction.tex:10 @ 1b226f5
+old.reduction_cost_step10_k100,0.2,results/numbers/reduction.tex:11 @ 1b226f5
+old.reduction_cost_tracer,0.98,results/numbers/reduction.tex:12 @ 1b226f5
+old.reduction_cost_tracer_k0p1,1.62,results/numbers/reduction.tex:13 @ 1b226f5
+old.reduction_cost_tracer_k10,0.22,results/numbers/reduction.tex:14 @ 1b226f5
+old.reduction_cost_tracer_k100,0.024,results/numbers/reduction.tex:15 @ 1b226f5
+old.sd_10pct,1.5830,results/numbers/scope.tex:14 @ 1b226f5
+old.sd_5pct,3.0673,results/numbers/scope.tex:15 @ 1b226f5
+old.sd_aliased,4.5845,results/numbers/design.tex:52 @ 1b226f5
+old.sd_aliased_hi,5.6362,results/numbers/design.tex:53 @ 1b226f5
+old.sd_aliased_lo,3.5050,results/numbers/design.tex:54 @ 1b226f5
+old.sd_aliased_off,0.1615,results/numbers/design.tex:55 @ 1b226f5
+old.sd_aliased_off_hi,0.1618,results/numbers/design.tex:56 @ 1b226f5
+old.sd_aliased_off_lo,0.1611,results/numbers/design.tex:57 @ 1b226f5
+old.sd_carn_hi,2.0558,results/numbers/design.tex:58 @ 1b226f5
+old.sd_carn_lo,1.9126,results/numbers/design.tex:59 @ 1b226f5
+old.sd_dense,0.1500,results/numbers/design.tex:60 @ 1b226f5
+old.sd_dense_flat,1.1096,results/numbers/design.tex:61 @ 1b226f5
+old.sd_dense_flat_hi,1.1923,results/numbers/design.tex:62 @ 1b226f5
+old.sd_dense_flat_lo,1.0313,results/numbers/design.tex:63 @ 1b226f5
+old.sd_dense_hi,0.1501,results/numbers/design.tex:64 @ 1b226f5
+old.sd_dense_lo,0.1498,results/numbers/design.tex:65 @ 1b226f5
+old.sd_load_1pct,0.1696,results/numbers/design.tex:66 @ 1b226f5
+old.sd_load_1pct_hi,0.1697,results/numbers/design.tex:67 @ 1b226f5
+old.sd_load_1pct_lo,0.1695,results/numbers/design.tex:68 @ 1b226f5
+old.sd_load_20pct,0.1701,results/numbers/design.tex:69 @ 1b226f5
+old.sd_load_20pct_hi,0.1725,results/numbers/design.tex:70 @ 1b226f5
+old.sd_load_20pct_lo,0.1677,results/numbers/design.tex:71 @ 1b226f5
+old.sd_load_acc_1pct,0.1590,results/numbers/design.tex:72 @ 1b226f5
+old.sd_load_acc_1pct_hi,0.1599,results/numbers/design.tex:73 @ 1b226f5
+old.sd_load_acc_1pct_lo,0.1583,results/numbers/design.tex:74 @ 1b226f5
+old.sd_load_acc_20pct,0.2876,results/numbers/design.tex:75 @ 1b226f5
+old.sd_load_acc_20pct_hi,0.2994,results/numbers/design.tex:76 @ 1b226f5
+old.sd_load_acc_20pct_lo,0.2775,results/numbers/design.tex:77 @ 1b226f5
+old.sd_load_acc_40pct,0.5049,results/numbers/design.tex:78 @ 1b226f5
+old.sd_load_acc_40pct_hi,0.5322,results/numbers/design.tex:79 @ 1b226f5
+old.sd_load_acc_40pct_lo,0.4816,results/numbers/design.tex:80 @ 1b226f5
+old.sd_load_steady,0.1696,results/numbers/design.tex:81 @ 1b226f5
+old.sd_load_steady_hi,0.1696,results/numbers/design.tex:82 @ 1b226f5
+old.sd_load_steady_lo,0.1696,results/numbers/design.tex:83 @ 1b226f5
+old.sd_monthly,0.1699,results/numbers/design.tex:84 @ 1b226f5
+old.sd_monthly_hi,0.1709,results/numbers/design.tex:85 @ 1b226f5
+old.sd_monthly_lo,0.1684,results/numbers/design.tex:86 @ 1b226f5
+old.sd_one_cycle,0.2162,results/numbers/design.tex:87 @ 1b226f5
+old.sd_one_cycle_hi,0.2300,results/numbers/design.tex:88 @ 1b226f5
+old.sd_one_cycle_lo,0.2053,results/numbers/design.tex:89 @ 1b226f5
+old.sd_six_monthly,0.4570,results/numbers/design.tex:90 @ 1b226f5
+old.sd_six_monthly_hi,0.5097,results/numbers/design.tex:91 @ 1b226f5
+old.sd_six_monthly_lo,0.4121,results/numbers/design.tex:92 @ 1b226f5
+old.sd_spont_10,1.7930,results/numbers/design.tex:93 @ 1b226f5
+old.sd_spont_40,0.6980,results/numbers/design.tex:94 @ 1b226f5
+old.sd_straddle,0.0157,results/numbers/design.tex:95 @ 1b226f5
+old.sd_straddle_hi,0.0157,results/numbers/design.tex:96 @ 1b226f5
+old.sd_straddle_lo,0.0157,results/numbers/design.tex:97 @ 1b226f5
+old.sd_two_monthly,0.1876,results/numbers/design.tex:98 @ 1b226f5
+old.sd_two_monthly_hi,0.1939,results/numbers/design.tex:99 @ 1b226f5
+old.sd_two_monthly_lo,0.1839,results/numbers/design.tex:100 @ 1b226f5
+old.settle_hours,0.91,results/numbers/design.tex:101 @ 1b226f5
+old.settle_hours_1pct,1.30,results/numbers/design.tex:102 @ 1b226f5
+old.share_10pct,29.2,results/numbers/scope.tex:16 @ 1b226f5
+old.share_5pct,16.3,results/numbers/scope.tex:17 @ 1b226f5
+old.share_5pct_half,23.1,results/numbers/kesweep.tex:15 @ 1b226f5
+old.share_nominal_pct,84.5,results/numbers/scope.tex:18 @ 1b226f5
+old.sigma,22.0,results/numbers/design.tex:103 @ 1b226f5
+old.step10_fold,1.10,results/numbers/reduction.tex:16 @ 1b226f5
+old.straddle_gain,9.5,results/numbers/design.tex:104 @ 1b226f5
+old.struct_draws_40pct,5,results/numbers/structure.tex:4 @ 1b226f5
+old.struct_sigma_15min,9.7,results/numbers/structure.tex:5 @ 1b226f5
+old.struct_sigma_1h,0.68,results/numbers/structure.tex:6 @ 1b226f5
+old.struct_sigma_2h,0.01,results/numbers/structure.tex:7 @ 1b226f5
+old.struct_sigma_30min,4.4,results/numbers/structure.tex:8 @ 1b226f5
+old.struct_sigma_3min,16.3,results/numbers/structure.tex:9 @ 1b226f5
+old.tau_frozen_h,0.555,results/numbers/structure.tex:10 @ 1b226f5
+old.tau_hours,0.81,results/numbers/design.tex:105 @ 1b226f5
+old.tau_reduced_h,0.587,results/numbers/structure.tex:11 @ 1b226f5
+old.timescale_ratio,104,results/numbers/design.tex:106 @ 1b226f5
+old.tracer_fold,1.01,results/numbers/reduction.tex:17 @ 1b226f5
+old.track_pct,4.9745,results/numbers/design.tex:107 @ 1b226f5
+old.track_pct_1pct,0.9861,results/numbers/design.tex:108 @ 1b226f5
+old.train_drop,1.95,results/numbers/design.tex:109 @ 1b226f5
+old.train_peak_frac,2.13,results/numbers/design.tex:110 @ 1b226f5
+old.train_ratio,2.64,results/numbers/design.tex:111 @ 1b226f5
+old.train_trough_frac,0.134,results/numbers/design.tex:112 @ 1b226f5
+old.trans_b_disease,513,results/numbers/transient.tex:3 @ 1b226f5
+old.trans_b_nominal,163,results/numbers/transient.tex:4 @ 1b226f5
+old.trans_b_prior,16.1,results/numbers/transient.tex:5 @ 1b226f5
+old.trans_base_disease,3.0583,results/numbers/transient.tex:6 @ 1b226f5
+old.trans_base_nominal,0.1696,results/numbers/transient.tex:7 @ 1b226f5
+old.trans_gain20_disease,0.4,results/numbers/transient.tex:8 @ 1b226f5
+old.trans_gain20_nominal,3.8,results/numbers/transient.tex:9 @ 1b226f5
+old.trans_gain_disease,0.2,results/numbers/transient.tex:10 @ 1b226f5
+old.trans_gain_late_disease,0.02,results/numbers/transient.tex:11 @ 1b226f5
+old.trans_gain_late_nominal,0.10,results/numbers/transient.tex:12 @ 1b226f5
+old.trans_gain_nominal,2.1,results/numbers/transient.tex:13 @ 1b226f5
+old.trans_ke_gain_disease,1.1,results/numbers/transient.tex:14 @ 1b226f5
+old.trans_ke_gain_nominal,0.01,results/numbers/transient.tex:15 @ 1b226f5
+old.trans_late_lo,1.30,results/numbers/transient.tex:16 @ 1b226f5
+old.trans_noprior_disease,3.3478,results/numbers/transient.tex:17 @ 1b226f5
+old.trans_noprior_nominal,0.1733,results/numbers/transient.tex:18 @ 1b226f5
+old.trans_sigmas_disease,11.3,results/numbers/transient.tex:19 @ 1b226f5
+old.trans_sigmas_nominal,10.9,results/numbers/transient.tex:20 @ 1b226f5
+old.trans_window_hi,1.0,results/numbers/transient.tex:21 @ 1b226f5
+old.trans_window_lo,0.05,results/numbers/transient.tex:22 @ 1b226f5
+old.unreachable_pct,19.9,results/numbers/cohort.tex:13 @ 1b226f5
