@@ -6,7 +6,7 @@
 PY ?= python
 TEX = pdflatex -interaction=nonstopmode -halt-on-error
 
-all: report.pdf what_i_did_this_week.pdf
+all: report.pdf what_i_did_this_week.pdf pairfig.pdf
 
 numbers: numbers.tex
 numbers.tex provenance.csv: make_numbers.py model_abc.py
@@ -27,6 +27,9 @@ report.pdf: report.tex sections/*.tex numbers.tex figures
 what_i_did_this_week.pdf: week.tex numbers.tex fig/week_cycle.pdf
 	$(TEX) -jobname=what_i_did_this_week week.tex >/dev/null \
 	  && $(TEX) -jobname=what_i_did_this_week week.tex | grep -E "Output written" || grep -E "^!|^l\.[0-9]" what_i_did_this_week.log
+
+pairfig.pdf: pairfig.tex numbers.tex fig/week_cycle.pdf fig/week_band.pdf
+	$(TEX) pairfig.tex >/dev/null && $(PY) -c "import pymupdf; d=pymupdf.open('pairfig.pdf'); d[0].get_pixmap(dpi=300).save('pairfig.png'); print('pairfig.pdf and pairfig.png,', round(d[0].rect.width), 'x', round(d[0].rect.height), 'pt')"
 
 #  one section alone, so a failure in it costs nothing elsewhere
 section: numbers.tex

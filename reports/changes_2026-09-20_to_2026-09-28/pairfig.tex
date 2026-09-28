@@ -1,0 +1,36 @@
+% =====================================================================
+%  The two update plots as one standalone picture, panels (a) and (b),
+%  for dropping into slides or a note. Build: make pairfig.pdf
+% =====================================================================
+\documentclass[border=8pt]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\graphicspath{{fig/}}
+
+\makeatletter
+\newcommand{\rn}[1]{%
+  \ifcsname rep@num@#1\endcsname\csname rep@num@#1\endcsname
+  \else\PackageError{pairfig}{no generated number for this key}{}\fi}
+\makeatother
+\input{numbers}
+
+\newcommand{\panel}[2]{%
+  \begin{minipage}[t]{0.487\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{#1}\\[3pt]
+    {\footnotesize #2\par}
+  \end{minipage}}
+
+\begin{document}
+\begin{minipage}{17.6cm}
+\panel{week_cycle}{(a) \rn{new.visits} draws over one fortnight, booked two ways. On dosing
+days they all catch the same point of the rise and fall. Booked half a day later each time,
+they cover the cycle.}
+\hfill
+\panel{week_band}{(b) How tightly the enzyme level can be pinned down, against how much of it
+the patient has. Median over \rn{fus.nseeds} simulated diet records. It works between
+\rn{week.band_lo_round}\,\% and \rn{new.band_hi_pct}\,\% of normal, and these patients sit at
+or below \rn{week.dis_pct}\,\%.}
+\end{minipage}
+\end{document}
