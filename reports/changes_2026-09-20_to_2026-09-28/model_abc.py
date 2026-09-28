@@ -102,6 +102,15 @@ def train_delta(times):
     return np.asarray(DR.delta(np.asarray(times, float) + ON_THERAPY_SHIFT))
 
 
+#: the number of draws the summary's figure shows, the paper's own visit count
+VISITS_DRAWN = 25
+
+
+def lap_step(n=None):
+    """The smallest offset that takes n visits once round the cycle: T/n."""
+    return T_DOSE / (VISITS_DRAWN if n is None else n)
+
+
 def schedule(step, n=None, span=730.0):
     t = np.arange(0.0, span, step)
     return t if n is None else t[:n]

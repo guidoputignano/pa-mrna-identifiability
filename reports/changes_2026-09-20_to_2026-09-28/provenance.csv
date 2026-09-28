@@ -1103,3 +1103,9 @@ old.trans_sigmas_nominal,10.9,results/numbers/transient.tex:20 @ 1b226f5
 old.trans_window_hi,1.0,results/numbers/transient.tex:21 @ 1b226f5
 old.trans_window_lo,0.05,results/numbers/transient.tex:22 @ 1b226f5
 old.unreachable_pct,19.9,results/numbers/cohort.tex:13 @ 1b226f5
+week.band_lo_round,82,new.band_lo_pct
+week.dis_pct,5,calc.dis_pct
+week.lap_eps_h_round,6,"new.lap_eps_h, to the hour"
+week.n20_vs_n25_pct,1,"new.n20_vs_n25, as a percentage"
+week.near_step_extra_min,14,"new.near_step - the dose interval, in minutes"
+week.trough_fold,16,calc.peak / calc.trough: the dose train's peak over its trough

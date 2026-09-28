@@ -6,13 +6,15 @@
 PY ?= python
 TEX = pdflatex -interaction=nonstopmode -halt-on-error
 
-all: report.pdf
+all: report.pdf what_i_did_this_week.pdf
 
 numbers: numbers.tex
 numbers.tex provenance.csv: make_numbers.py model_abc.py
 	$(PY) make_numbers.py
 
-figures: fig/phaseclock_0920.pdf fig/fig5a_abc.pdf
+figures: fig/phaseclock_0920.pdf fig/fig5a_abc.pdf fig/week_cycle.pdf
+fig/week_cycle.pdf: fig_week.py model_abc.py
+	$(PY) fig_week.py
 fig/phaseclock_0920.pdf fig/phaseclock_0927.pdf: fig_phaseclock.py
 	$(PY) fig_phaseclock.py
 fig/fig5a_abc.pdf fig/fig5b_fibre.pdf: fig_abc.py model_abc.py
@@ -21,6 +23,10 @@ fig/fig5a_abc.pdf fig/fig5b_fibre.pdf: fig_abc.py model_abc.py
 report.pdf: report.tex sections/*.tex numbers.tex figures
 	$(TEX) report.tex >/dev/null && $(TEX) report.tex | grep -E "Output written|Warning.*undefined" || true
 	@grep -c "rep@num" numbers.tex >/dev/null
+
+what_i_did_this_week.pdf: week.tex numbers.tex fig/week_cycle.pdf
+	$(TEX) -jobname=what_i_did_this_week week.tex >/dev/null \
+	  && $(TEX) -jobname=what_i_did_this_week week.tex | grep -E "Output written" || grep -E "^!|^l\.[0-9]" what_i_did_this_week.log
 
 #  one section alone, so a failure in it costs nothing elsewhere
 section: numbers.tex
