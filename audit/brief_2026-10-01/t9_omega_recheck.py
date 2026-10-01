@@ -339,7 +339,7 @@ OM = np.r_[0.0, 0.01, 0.02, np.arange(0.03, 0.7, 0.03), np.arange(0.75, 1.5, 0.0
            np.arange(1.5, 3.0 + 1e-9, 0.1), 3.25, 3.5, 3.75, 4.0]
 OM_GH = OM[(OM > 0) & (OM < 0.025)]
 OM_GR = OM[OM >= 0.025]
-GHX, GHW = np.polynomial.hermite_e.hermegauss(24)
+GHX, GHW = np.polynomial.hermite_e.hermegauss(10)
 GHW = GHW / np.sqrt(2 * np.pi)
 
 
@@ -393,8 +393,8 @@ def para_min(D):
     a = np.take_along_axis(D, (jj - 1)[..., None], -1)[..., 0]
     b = np.take_along_axis(D, jj[..., None], -1)[..., 0]
     c = np.take_along_axis(D, (jj + 1)[..., None], -1)[..., 0]
-    den = a - 2 * b + c
     with np.errstate(invalid="ignore", divide="ignore"):
+        den = a - 2 * b + c
         ref = np.where(den > 0, b - (c - a) ** 2 / (8 * den), b)
     ref = np.where(np.isfinite(ref), np.minimum(ref, D.min(-1)), D.min(-1))
     edge = (j == 0) | (j == n - 1)
@@ -438,9 +438,12 @@ def make_cohort(rng, omega, des, n, seedbase, theta_sd=0.0, b_random=True):
 
 
 def k_center(ms, inc, ys, sgs):
+    """The cohort's fixed-effects K_m estimate (each patient's own k_e), to centre the K_m window."""
     lk = np.log(KM0) + np.arange(-0.3, 0.3 + 1e-9, 0.01)
-    S = stats(ms, inc, ys, sgs, lk)
-    fe = -2 * loglik(S, U, "prof").max(-1).sum(0)
+    fe = np.zeros(lk.size)
+    for a in range(0, ms.shape[0], 48):
+        S = stats(ms[a:a + 48], inc, ys[a:a + 48], sgs[a:a + 48], lk)
+        fe += -2 * loglik(S, U, "prof").max(-1).sum(0)
     return lk[np.argmin(fe)], bool(np.argmin(fe) in (0, lk.size - 1))
 
 
@@ -448,15 +451,28 @@ LOG_PRIOR_MU = norm.logpdf(MU, LN5, 2.0)
 
 
 def summarise_D(D):
-    """Profile over K then mu: deviance curve in omega, plus edge flags."""
-    DK, eK = para_min(D)
+    """Profile over K (if present) then mu: deviance curve in omega, plus edge flags."""
+    if D.ndim == 3:
+        DK, eK = para_min(D)
+    else:
+        DK, eK = D, np.zeros(D.shape, bool)
     Dw, eM = para_min(DK)
     rel = Dw - Dw.min()
     inside = rel <= CHI95
     idx = np.flatnonzero(inside)
     i0, i1 = idx[0], idx[-1]
-    lo = 0.0 if i0 == 0 else float(np.interp(CHI95, [rel[i0], rel[i0 - 1]], [OM[i0], OM[i0 - 1]]))
-    hi = float(OM[-1]) if i1 == OM.size - 1 else float(np.interp(CHI95, [rel[i1], rel[i1 + 1]], [OM[i1], OM[i1 + 1]]))
+    if i0 == 0:
+        lo = 0.0
+    elif np.isfinite(rel[i0 - 1]):
+        lo = float(np.interp(CHI95, [rel[i0], rel[i0 - 1]], [OM[i0], OM[i0 - 1]]))
+    else:
+        lo = float(OM[i0])
+    if i1 == OM.size - 1:
+        hi = float(OM[-1])
+    elif np.isfinite(rel[i1 + 1]):
+        hi = float(np.interp(CHI95, [rel[i1], rel[i1 + 1]], [OM[i1], OM[i1 + 1]]))
+    else:
+        hi = float(OM[i1])
     jm = np.argmin(DK, -1)
     mu_edge = bool(np.any((jm[inside] == 0) | (jm[inside] == MU.size - 1)))
     k_edge = bool(np.any(eK[inside, :][np.arange(inside.sum()), jm[inside]]))
@@ -495,11 +511,9 @@ def analyse(ms, ys, sgs, des, zread=None, zsd=None, perpatient=True, bayes=True)
             res["post"] = posterior(D, 0.015)
     if perpatient:
         # K_m per patient, theta profiled: profile K inside each patient's likelihood
-        lKp = np.log(KM0) + np.arange(-0.4, 0.4 + 1e-9, 0.01)
+        lKp = np.log(KM0) + np.arange(-0.4, 0.4 + 1e-9, 0.02)
         Sp = stats(ms, inc, ys, sgs, lKp)
 
-        class _S(dict):
-            pass
         llu = loglik(Sp, U, "prof", zread, zsd)              # (n, nK, nu)
         prof_u, _ = para_min(np.moveaxis(-llu, 1, -1))       # (n, nu) of -ll
         llm = loglik(Sp, MU, "prof", zread, zsd)
@@ -518,7 +532,7 @@ def analyse(ms, ys, sgs, des, zread=None, zsd=None, perpatient=True, bayes=True)
         with np.errstate(divide="ignore"):
             lI = np.log(I).reshape(OM_GR.size, MU.size, n) + M[None, None]
         D[1 + OM_GH.size:] = -2 * lI.sum(-1)
-        res["pp"] = summarise_D(D[..., None].repeat(3, -1))
+        res["pp"] = summarise_D(D)
     return res
 
 
@@ -542,7 +556,6 @@ def validate():
             bb = np.r_[r / sg, 0.0]
             sol = lsq_linear(A, bb, bounds=([0.0, -np.inf], [np.inf, np.inf]), tol=1e-14, lsmr_tol="auto")
             brute = -0.5 * 2 * sol.cost
-            # constant: the b-integral identity differs from the b-profile by -0.5 log(1 + n sb^2/sg^2)
             mine = loglik({k: v[i:i + 1] for k, v in S.items()}, np.array([uu]), "prof")[0, 0, 0]
             worst_p = max(worst_p, abs(brute - mine))
             # integrated theta: quad over theta of exp(-0.5 Q(theta)), b profiled (= integrated up to const)
@@ -552,25 +565,30 @@ def validate():
                 b2 = np.r_[(r - t * g) / sg, 0.0]
                 bh = np.linalg.lstsq(A2, b2, rcond=None)[0]
                 return 0.5 * np.sum((b2 - A2 @ bh) ** 2)
-            ref = negq(max(0.0, (S["gr"][i, 0] - ke * S["gm"][i, 0]) / S["gg"][i, 0]))
-            val = quad(lambda t: np.exp(ref - negq(t)), 0.0, np.inf, limit=200)[0]
+            ref = negq(max(0.0, (S["gr"][i, 0] - ke * S["gm"][i, 0]) / S["gg"][i, 0]))  # value at the mode
+            tc = max(0.0, (S["gr"][i, 0] - ke * S["gm"][i, 0]) / S["gg"][i, 0])
+            ts = 1.0 / np.sqrt(S["gg"][i, 0])
+            val = quad(lambda t: np.exp(ref - negq(t)), 0.0, tc + 40 * ts, points=[tc], limit=400)[0]
             bi = np.log(val) - ref
             mi = loglik({k: v[i:i + 1] for k, v in S.items()}, np.array([uu]), "int")[0, 0, 0]
             worst_i = max(worst_i, abs(bi - mi))
         # u-integral: quad against the grid, two (omega, mu) points
-        f = lambda uu, mode: np.exp(loglik({k: v[i:i + 1] for k, v in S.items()}, np.array([uu]), mode)[0, 0, 0])
-        ll = loglik({k: v[i:i + 1] for k, v in S.items()}, U, "prof")[0, 0]
-        for w, mu in ((0.33, LN5), (0.9, LN5 - 0.7), (0.06, LN5 + 0.1)):
-            q = quad(lambda uu: f(uu, "prof") * norm.pdf(uu, mu, w), -40, U[-1], points=[mu], limit=400)[0]
-            gsum = np.sum(np.exp(ll) * norm.pdf(U, mu, w) * WU) + np.exp(ll[0]) * ndtr((U[0] - mu) / w)
+        Si = {k: v[i:i + 1] for k, v in S.items()}
+        ll = loglik(Si, U, "prof")[0, 0]
+        Mx = ll.max()
+        f = lambda uu: np.exp(loglik(Si, np.array([uu]), "prof")[0, 0, 0] - Mx)
+        for w, mu in ((0.33, LN5), (0.9, LN5 - 0.7), (0.06, LN5 + 0.1), (2.0, LN5 - 2.0)):
+            a, b = max(-60.0, mu - 12 * w), min(U[-1], mu + 12 * w)
+            pts = [x for x in (mu, U[np.argmax(ll)]) if a < x < b]
+            q = quad(lambda uu: f(uu) * norm.pdf(uu, mu, w), a, b, points=pts, limit=500,
+                     epsabs=0.0, epsrel=1e-10)[0]
+            gsum = np.sum(np.exp(ll - Mx) * norm.pdf(U, mu, w) * WU) + np.exp(ll[0] - Mx) * ndtr((U[0] - mu) / w)
             worst_q = max(worst_q, abs(np.log(gsum) - np.log(q)))
     print(f"  theta-profiled log-lik vs bounded least squares (lsq_linear): max |diff| = {worst_p:.2e}")
     print(f"  theta-integrated log-lik vs adaptive quadrature over theta:   max |diff| = {worst_i:.2e}")
-    print(f"  grid integral over ln k_e vs adaptive quadrature (3 (omega, mu)): max |log diff| = {worst_q:.2e}")
-    print("  (b is profiled in the brute force and integrated in the closed form; for a Gaussian prior on")
-    print("   a linear parameter the two differ by a constant, which the first check shows is ~0 here")
-    print("   up to that constant only if it is printed small: the constant is absorbed because the")
-    print("   closed form drops log|Sigma|.)")
+    print(f"  grid integral over ln k_e vs adaptive quadrature (4 (omega, mu) x 3 patients): max |log diff| = {worst_q:.2e}")
+    print("  (the brute force profiles b under its prior; the closed form uses r'(sigma^2 I + sb^2 11')^-1 r,")
+    print("   which is the same minimum exactly; both drop the constant log-determinant.)")
 
 
 def shape_table():
@@ -586,15 +604,16 @@ def shape_table():
     lKp = np.log(KM0) + np.arange(-3.0, 3.0 + 1e-9, 0.005)
     for des in ("monthly", "2d"):
         inc = INC[des]
-        rel, walls = [], []
+        rel, walls, kedge = [], [], 0
         fine = LN5 + np.arange(-1.0, 1.0 + 1e-9, 0.002)
         for s in range(24):
             m = level(TH5, KM0, KE0, intake(s, inc.size), inc)
             sg, _ = sigma(TH5, KM0, KE0)
             y = (TH5 + inc) * m / (KM0 + m) + KE0 * m + np.random.default_rng(10_000 + s).normal(0.0, sg, m.size)
             S = stats(m[None], inc, y[None], np.array([sg]), lKp)
-            p, _ = para_min(np.moveaxis(-2 * loglik(S, LN5 + off20, "prof"), 1, -1))
+            p, ek = para_min(np.moveaxis(-2 * loglik(S, LN5 + off20, "prof"), 1, -1))
             p = p[0]
+            kedge += int(ek.any())
             rel.append(p - p.min())
             pf, _ = para_min(np.moveaxis(-2 * loglik(S, fine, "prof"), 1, -1))
             pf = pf[0] - min(pf[0].min(), p.min())
@@ -605,7 +624,7 @@ def shape_table():
         print(f"  {'':>8} 95% upper end in ln k_e offset: median {np.median(walls):+.3f} "
               f"[{np.min(walls):+.3f}, {np.max(walls):+.3f}]; region reaches offset -8 in "
               f"{np.mean(rel[:, 0] <= CHI95):.0%} of records (t9: +0.319 [+0.227, +0.467], 96% monthly;"
-              f" +0.233 [-0.195, +0.312], 29% every 2 d)")
+              f" +0.233 [-0.195, +0.312], 29% every 2 d); K_m on its +-3 grid edge in {kedge} records")
 
 
 def run_cells(cells, label):
@@ -615,7 +634,7 @@ def run_cells(cells, label):
         R = []
         for k in range(n_coh):
             rng = np.random.default_rng([seed0, k])
-            ms, ys, sgs, eta = make_cohort(rng, w, des, 24, seed0 * 100 + 1000 * k)
+            ms, ys, sgs, eta = make_cohort(rng, w, des, 24, seed0 * 10 ** 6 + 1000 * k)
             zr = (LN5 + eta + zsd * rng.standard_normal(24)) if zsd else None
             R.append(analyse(ms, ys, sgs, des, zr, zsd))
         rows[(des, w, zsd)] = R
@@ -656,7 +675,8 @@ def print_cells(rows):
           f"ln k_e grid {fl[:, 5].max():.1e}")
     print("\n  Bayesian posterior for omega (theta_i flat on [0, inf), b_i ~ N(0, (5% L)^2), mu ~ N(ln 5, 2^2),")
     print("  ln K_m flat on the cohort's +-0.06 window, omega ~ half-normal(1); 'u4' = omega ~ U(0, 4)).")
-    print("  Prior alone, half-normal(1): median 0.674, 95% upper 1.960, P(omega > 0.2) = 0.841.")
+    print(f"  Prior alone, half-normal(1): median {norm.ppf(0.75):.3f}, 95% upper {norm.ppf(0.975):.3f}, "
+          f"P(omega > 0.2) = {2 * norm.sf(0.2):.3f}.")
     print(f"     {'design':<22} {'w':>5} {'post med':>9} {'95% up: med [P10,P90]':>25} {'P(w>.2)':>8} "
           f"{'P(w>.2)>.95':>11} {'covers':>7} {'u4: 95% up':>11} {'log BF .33:0 med':>17}")
     for (des, w, zsd), R in rows.items():
@@ -686,10 +706,12 @@ def power_large_n(Ns, n_coh, seed0):
             edge = 0
             for k in range(n_coh):
                 rng = np.random.default_rng([seed0, N, int(100 * w), k])
-                ms, ys, sgs, _ = make_cohort(rng, w, "monthly", N, seed0 * 1000 + 10_000 * k)
+                ms, ys, sgs, _ = make_cohort(rng, w, "monthly", N,
+                                            (seed0 * 10 ** 6 + N * 10 ** 3 + int(100 * w)) * 10 ** 5 + 1000 * k)
                 inc = INC["monthly"]
                 kc, _ = k_center(ms, inc, ys, sgs)
-                lK = kc + np.arange(-0.03, 0.03 + 1e-9, 0.01)
+                hw = max(0.03, 0.06 * np.sqrt(24.0 / N))
+                lK = kc + np.linspace(-hw, hw, 7)
                 S = stats(ms, inc, ys, sgs, lK)
                 for mode in ("prof", "int"):
                     D, _ = D_cube(S, mode, mu=mu, kern=kern, tail=tail, om_gr=om_gr)
@@ -726,9 +748,9 @@ def main():
     print(f"  Grids: ln k_e {U.size} points (step 0.01 on ln 5 + [-2, 2.5]), mu {MU.size} points (step 0.04,"
           f" parabolic refinement), omega {OM.size} points to {OM[-1]:.0f}, K_m 9 points of 0.015 about the")
     print("  cohort's own fixed-effects estimate (parabolic refinement).")
-    cells = [("monthly", 0.0, 60, None, 101), ("monthly", 0.33, 60, None, 102),
-             ("2d", 0.0, 40, None, 103), ("2d", 0.33, 40, None, 104),
-             ("monthly", 0.0, 30, 0.2, 105), ("monthly", 0.33, 30, 0.2, 106)]
+    cells = [("monthly", 0.0, 80, None, 101), ("monthly", 0.33, 80, None, 102),
+             ("2d", 0.0, 60, None, 103), ("2d", 0.33, 60, None, 104),
+             ("monthly", 0.0, 40, 0.2, 105), ("monthly", 0.33, 40, 0.2, 106)]
     rows = run_cells(cells, "main")
     print_cells(rows)
 
@@ -738,9 +760,9 @@ def main():
     rows2 = {}
     for w, seed0 in ((0.0, 201), (0.33, 202)):
         R = []
-        for k in range(30):
+        for k in range(40):
             rng = np.random.default_rng([seed0, k])
-            ms, ys, sgs, eta = make_cohort(rng, w, "monthly", 24, seed0 * 100 + 1000 * k, theta_sd=0.5)
+            ms, ys, sgs, eta = make_cohort(rng, w, "monthly", 24, seed0 * 10 ** 6 + 1000 * k, theta_sd=0.5)
             R.append(analyse(ms, ys, sgs, "monthly", perpatient=False))
         rows2[("monthly", w, None)] = R
     print_cells(rows2)

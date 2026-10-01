@@ -1,0 +1,94 @@
+
+====================================================================================================
+  RECHECK OF t9_omega.py: N = 24 AND OMEGA
+====================================================================================================
+  rebuilt footing: L = 322.727, m_bar(5%) = 54.023, sigma = 22.1774, b prior sd = 16.136;
+  25 monthly draws, 365 every-2-d draws; max deviation from core.record over 6 records = 0.0e+00 (asserted < 1e-13), sigma equal to core.sigmas (asserted).
+
+====================================================================================================
+  (a) N = 24 DISEASE COHORT, FIM IN THE MARGINAL-PRIOR FORM (independent algebra)
+====================================================================================================
+  target = patient 0 (intake seed 0). t9 printed 1.172 (omega 0) and 1.817 (omega 0.33).
+       omega  sd ln theta_0  sd own ln ke_0
+       0.000         1.1721          0.2498
+       0.001         1.1721          0.2499
+       0.100         1.2516          0.2683
+       0.200         1.4575          0.3158
+       0.330         1.8168          0.3977
+       0.500         2.3079          0.5088
+  continuity omega 0 -> 1e-3: 8.3e-06 (two different parameterisations)
+  one patient alone: 3.0820
+
+  Plateau check (t9 part B). N -> inf limit: K_m and the population mean known, own ln k_e
+  carries prior sd omega. 'user approx' = sqrt(0.39^2 + ((1-s)/s omega)^2).
+  s = 0.1630, (1-s)/s = 5.134
+      omega  user approx  limit median   seed 0  N=1024 seed 0
+       0.20        1.098         0.964    0.966          0.981
+       0.33        1.739         1.466    1.469          1.479
+       0.50        2.597         2.066    2.072          2.079
+
+====================================================================================================
+  (b) PER-PATIENT DATA-ONLY sd OF ln k_e (no k_e prior; b prior 5% L)
+====================================================================================================
+  t9 printed: monthly 1.064 [0.73, 1.33] (K_m shared), 1.349 (per patient), 1.052 (known);
+              every 2 d 0.378 [0.35, 0.41], 0.379, 0.378.
+   monthly: K_m shared 1.0642 [0.730, 1.330]; per patient 1.3493; K_m known 1.0516; max corr 0.034; sd ln K_m: cohort 0.0149, per patient 0.0735
+        2d: K_m shared 0.3776 [0.353, 0.409]; per patient 0.3793; K_m known 0.3775; max corr 0.001; sd ln K_m: cohort 0.0067, per patient 0.0328
+  [11 s]
+
+====================================================================================================
+  GAUSSIAN-SUMMARY MODEL z ~ N(mu 1, V + omega^2 I), RE-SIMULATED (independent code)
+====================================================================================================
+  V = the K_m-shared data-only covariance from (b). 2000 cohorts per cell. t9 printed
+  (4000 cohorts): monthly [0, 0.894] / [0, 1.000]; every 2 d [0, 0.325] / [0, 0.542].
+       design     w      upper med [P10,P90]  excl 0   test  covers w
+      monthly  0.00   0.898 [0.658,1.279]    1.1%   2.6%     98.9%
+      monthly  0.33   0.985 [0.695,1.363]    4.2%   7.1%     98.4%
+           2d  0.00   0.321 [0.238,0.455]    1.0%   2.2%     99.0%
+           2d  0.33   0.545 [0.389,0.693]   49.6%  59.5%     94.0%
+
+  Asymptotic N for the one-sided 5% test of omega = 0 with 80% power at omega = 0.33,
+  re-derived: omega2_hat ~ N(omega^2, 2 h(omega)^2 / N), h^-2 = mean (v_i + omega^2)^-2,
+  so N = 2 (z_.95 h(0) + z_.80 h(w))^2 / w^4 (diagonal V). t9 printed 1200 (monthly), 33 (2 d).
+      monthly: N = 1200
+           2d: N = 33
+  Simulation check inside the Gaussian model at that N (diagonal V, the 24 v_i cycled),
+  boundary LR test D(0) - D_min > 2.71; 1000 cohorts each:
+      monthly, N = 1200, true omega 0.0: rejects omega = 0 in 4.9%
+      monthly, N = 1200, true omega 0.33: rejects omega = 0 in 77.1%
+           2d, N = 33, true omega 0.0: rejects omega = 0 in 2.7%
+           2d, N = 33, true omega 0.33: rejects omega = 0 in 72.0%
+  [19 s]
+
+====================================================================================================
+  (c0) VALIDATION OF THE CLOSED FORMS AGAINST BRUTE FORCE (one simulated cohort)
+====================================================================================================
+  theta-profiled log-lik vs bounded least squares (lsq_linear): max |diff| = 5.97e-13
+  theta-integrated log-lik vs adaptive quadrature over theta:   max |diff| = 6.25e-13
+  grid integral over ln k_e vs adaptive quadrature (4 (omega, mu) x 3 patients): max |log diff| = 5.16e-05
+  (the brute force profiles b under its prior; the closed form uses r'(sigma^2 I + sb^2 11')^-1 r,
+   which is the same minimum exactly; both drop the constant log-determinant.)
+
+====================================================================================================
+  (c1) EACH PATIENT'S DATA-ONLY PROFILE IN ln k_e, CLOSED FORM (cross-check of t9 C(iv))
+====================================================================================================
+  t9's C(iv) data: intake seed s, noise seed 10000 + s, b = 0; K_m and theta profiled per
+  patient (theta >= 0), b prior 5% L, no k_e prior. Deviance relative to the minimum over
+  t9's 20 offsets. t9 printed, monthly median: 1.41 1.38 1.20 0.86 0.67 0.23 0.64 2.92 24.36 265.42
+                            every 2 d median: 5.66 5.44 4.13 2.04 0.64 0.39 1.06 9.04 80.96 877.86
+   monthly median:    1.41    1.38    1.20    0.86    0.67    0.23    0.64    2.92   24.36  265.42
+   monthly    max:    5.71    5.61    4.98    3.77    2.61    2.13    2.76    8.49   39.58  337.14
+           95% upper end in ln k_e offset: median +0.326 [+0.234, +0.474]; region reaches offset -8 in 96% of records (t9: +0.319 [+0.227, +0.467], 96% monthly; +0.233 [-0.195, +0.312], 29% every 2 d); K_m on its +-3 grid edge in 0 records
+        2d median:    5.66    5.44    4.13    2.04    0.64    0.39    1.06    9.04   80.95  877.86
+        2d    max:   20.27   19.79   16.79   11.51    7.04    5.79    9.01   16.46   95.73  940.44
+           95% upper end in ln k_e offset: median +0.255 [-0.182, +0.318]; region reaches offset -8 in 29% of records (t9: +0.319 [+0.227, +0.467], 96% monthly; +0.233 [-0.195, +0.312], 29% every 2 d); K_m on its +-3 grid edge in 0 records
+  [21 s]
+
+====================================================================================================
+  (c) OMEGA FROM SIMULATED RAW RECORDS: JOINT MARGINAL LIKELIHOOD AND POSTERIOR, 24 PATIENTS
+====================================================================================================
+  Each cohort: 24 patients at theta = 150, eta_i ~ N(0, omega^2), k_e,i = 5 e^eta_i, b_i ~ N(0, (5% L)^2),
+  fresh intake seeds, Gaussian noise sigma_i. 'ML' = theta_i profiled (>= 0), K_m shared; 'REML' =
+  theta_i integrated flat on [0, inf), K_m shared; 'ML-ppK' = theta_i and K_m profiled per patient.
+  Grids: ln k_e 596 points (step 0.01 on ln 5 + [-2, 2.5]), mu 163 points (step 0.04, parabolic refinement), omega 61 points to 4, K_m 9 points of 0.015 about the
+  cohort's own fixed-effects estimate (parabolic refinement).
