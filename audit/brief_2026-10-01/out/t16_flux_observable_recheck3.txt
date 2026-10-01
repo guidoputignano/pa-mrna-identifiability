@@ -1,0 +1,52 @@
+================================================================================================
+  RECHECK3 of ITEM 11 -- independent rebuild of the FIMs
+================================================================================================
+
+  (a) 5x5 marginal sd(ln theta), median over 24 seeds (rows Z, cols Y):
+        Z \ Y       5.0%   10.0%   15.0%   17.5%   20.0%   25.0%
+        exact     0.071   0.112   0.159   0.182   0.206   0.255 
+         0.05     0.087   0.123   0.166   0.189   0.212   0.260 
+         0.10     0.123   0.150   0.187   0.208   0.229   0.273 
+         0.15     0.166   0.187   0.218   0.236   0.255   0.295 
+         0.20     0.212   0.229   0.255   0.270   0.287   0.323 
+
+      hypot collapse: worst |5x5 - single(Y_eff)| over grid = 2.78e-16  at (Y,Z)=(0.05, 0.2)
+      cross-check vs t12.fim_sd primitive: worst |mine - t12| = 0.00e+00
+
+      single calibrated-reading crossing Y* = 19.333%   (sd at Y* = 0.2000)
+        bracket: sd(Y=19.0%)=0.1968, sd(Y=19.33%)=0.2000, sd(Y=19.7%)=0.2035
+
+      contour test -- for each Z, find Y where sd=0.20, report hypot(Y,Z):
+        Z=0.00:  Y*=19.333%   hypot(Y*,Z)=19.333%
+        Z=0.05:  Y*=18.676%   hypot(Y*,Z)=19.333%
+        Z=0.10:  Y*=16.546%   hypot(Y*,Z)=19.333%
+        Z=0.15:  Y*=12.197%   hypot(Y*,Z)=19.333%
+
+      named cells:  (Y=10%,Z=10%) -> 0.150  (claim ~0.150)
+                    (Y=20%,Z=exact) -> 0.206  (claim ~0.206)
+      brief-table reproduction (cols Y=5,10,15,17.5,20,25):
+          exact  0.071 0.112 0.159 0.182 0.206 0.255
+           0.05  0.087 0.123 0.166 0.189 0.212 0.260
+           0.10  0.123 0.150 0.187 0.208 0.229 0.273
+           0.15  0.166 0.187 0.218 0.236 0.255 0.295
+           0.20  0.212 0.229 0.255 0.270 0.287 0.323
+
+  (b) (s,L) reparam: sd(ln theta), median over seeds (rows X=load prec):
+        X \ Y       5.0%   10.0%   15.0%   17.5%   20.0%   25.0%
+      L exact    0.065   0.108   0.155   0.179   0.203   0.251 
+      L    1%    0.065   0.108   0.155   0.179   0.203   0.251 
+      L    2%    0.065   0.108   0.155   0.179   0.203   0.251 
+      L    5%    0.067   0.109   0.156   0.180   0.204   0.252 
+
+      0.20 crossing in Y per load precision X (my own FD, h=1e-6):
+         L exact: s to Y <= 19.69%   (hypot(Y,X)=19.7%)
+         L to 1%: s to Y <= 19.69%   (hypot(Y,X)=19.7%)
+         L to 2%: s to Y <= 19.68%   (hypot(Y,X)=19.8%)
+         L to 5%: s to Y <= 19.60%   (hypot(Y,X)=20.2%)
+
+      FD robustness -- crossings recomputed with h=1e-5:
+         L exact: s to Y <= 19.69%
+         L to 5%: s to Y <= 19.60%
+
+      crossing spread over X in [0,5%]: 19.69% - 19.60% = 0.09 pts  -> WEAK
+      hypot(Y*,X) across X: 19.7%, 19.7%, 19.8%, 20.2%  (rises by 0.53 pts -> NOT exact quadrature)

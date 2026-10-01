@@ -1,0 +1,59 @@
+grid n (2yr): [np.int64(24), np.int64(31), np.int64(39), np.int64(50), np.int64(63), np.int64(80), np.int64(102), np.int64(130), np.int64(166), np.int64(211), np.int64(269), np.int64(342), np.int64(436), np.int64(555), np.int64(707), np.int64(900), np.int64(1147), np.int64(1460)]
+draws/yr     : [12, 16, 20, 25, 32, 40, 51, 65, 83, 106, 134, 171, 218, 278, 354, 450, 574, 730]
+
+sd(ln theta) median/24 seeds  [INDEPENDENT FIM]
+ke_sd \ n        24     31     39     50     63     80    102    130    166    211    269    342    436    555    707    900   1147   1460
+    exact    0.408  0.362  0.345  0.324  0.304  0.286  0.272  0.257  0.241  0.224  0.209  0.194  0.179  0.165  0.150  0.137  0.124  0.112
+     0.05    0.463  0.427  0.411  0.394  0.378  0.365  0.353  0.342  0.332  0.321  0.311  0.301  0.291  0.283  0.274  0.266  0.258  0.252
+     0.10    0.599  0.578  0.563  0.551  0.539  0.533  0.522  0.516  0.509  0.502  0.493  0.485  0.475  0.466  0.455  0.444  0.430  0.416
+     0.20    0.963  0.954  0.942  0.931  0.923  0.916  0.898  0.890  0.874  0.856  0.837  0.813  0.785  0.754  0.721  0.682  0.644  0.598
+     0.40    1.744  1.716  1.691  1.651  1.622  1.582  1.520  1.471  1.402  1.320  1.265  1.184  1.096  1.022  0.940  0.858  0.787  0.705
+     0.80    3.096  2.899  2.808  2.607  2.507  2.330  2.167  2.030  1.838  1.654  1.546  1.407  1.262  1.154  1.038  0.931  0.842  0.743
+
+CONTROL  (my_fim vs core.fim), max |diff| over spot cells:
+   max|my - core| = 0.00e+00
+
+CROSSINGS (n over 2yr; /yr in brackets):
+  gate 0.30:
+     exact: n =    66.6 (  33.3/yr)
+      0.05: n =   350.0 ( 175.0/yr)
+      0.10: not reached by 1460 (min sd over grid = 0.416 at n=1460)
+      0.20: not reached by 1460 (min sd over grid = 0.598 at n=1460)
+      0.40: not reached by 1460 (min sd over grid = 0.705 at n=1460)
+      0.80: not reached by 1460 (min sd over grid = 0.743 at n=1460)
+  gate 0.20:
+     exact: n =   309.4 ( 154.7/yr)
+      0.05: not reached by 1460 (min sd over grid = 0.252 at n=1460)
+      0.10: not reached by 1460 (min sd over grid = 0.416 at n=1460)
+      0.20: not reached by 1460 (min sd over grid = 0.598 at n=1460)
+      0.40: not reached by 1460 (min sd over grid = 0.705 at n=1460)
+      0.80: not reached by 1460 (min sd over grid = 0.743 at n=1460)
+
+(c) ke_sd=0.20 row: min=0.598 (n=1460), max=0.963 (n=24)
+    ke_sd=0.20 at n=730 (daily): 0.716
+    ke_sd=0.20 at n=364 (182/yr ceiling): 0.806
+
+FEASIBILITY BOX (n = 2*rate, exact):
+   ke_sd=0.20             biweekly 26/yr: sd = 0.928
+   ke_sd=0.20               weekly 52/yr: sd = 0.893
+   ke_sd=0.20     every-other-day 182/yr: sd = 0.806
+   ke_sd=exact every-other-day 182/yr: sd = 0.189
+
+(d) FEASIBLE-REGION FLOOR (achievable ke_sd>=0.20):
+    best feasible (ke=0.20, 182/yr ceiling) sd = 0.806
+    even ke=0.20 at 1460 draws (730/yr) sd = 0.598  (> 0.20? True)
+    -> 0.20 contour reached by any feasible point? NO
+
+SPOT CHECKS vs published table (2 dp):
+   ke=exact n=   24: mine=0.408 pub=0.408  OK
+   ke=exact n= 1460: mine=0.112 pub=0.112  OK
+   ke= 0.05 n=   24: mine=0.463 pub=0.463  OK
+   ke= 0.05 n= 1460: mine=0.252 pub=0.252  OK
+   ke= 0.10 n=   24: mine=0.599 pub=0.599  OK
+   ke= 0.10 n=  707: mine=0.455 pub=0.455  MISMATCH
+   ke= 0.10 n= 1460: mine=0.416 pub=0.416  OK
+   ke= 0.20 n=   24: mine=0.963 pub=0.963  OK
+   ke= 0.20 n= 1460: mine=0.598 pub=0.598  OK
+   ke= 0.40 n=  436: mine=1.096 pub=1.096  OK
+   ke= 0.80 n=   24: mine=3.096 pub=3.096  OK
+   ke= 0.80 n= 1460: mine=0.743 pub=0.743  OK
