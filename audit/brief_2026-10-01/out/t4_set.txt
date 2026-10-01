@@ -1,0 +1,31 @@
+============================================================================================
+  TASK 4. SET IDENTIFICATION
+============================================================================================
+
+  A. Untreated steady state of the 5% patient: L = 322.73, m = 54.02, L/m = 5.974 /d
+     theta_max = (L - k_e,lo m)(K_m,hi + m)/m, as % of normal (truth 5%)
+                                                            K_m<=100   K_m<=107   K_m<=150   K_m<=200   K_m<=500 K_m<=10000
+     k_e >= 0 (non-negativity only)                            30.7%      32.1%      40.6%      50.6%     110.3%    2002.1%
+     k_e >= 1.04 (95% low end of the 0.8 prior)                25.3%      26.5%      33.5%      41.8%      91.1%    1652.7%
+     k_e >= 2.25 (1 sd low end)                                19.1%      20.0%      25.3%      31.6%      68.8%    1249.1%
+     K_m unbounded: no finite bound in any row.
+     Lower end: 0 for any k_e,hi >= L/m = 5.97; the 0.8 prior's 95% upper end is 24.0, so the lower bound is 0.
+
+  B. Under the dose train, noiseless, K_m known: theta <= min_i [(L_i - k_e,lo m_i)/g(m_i) - Delta_i]
+     k_e >= 0 (non-negativity only)                      : tightest draw    673 = 22.4% (at m = 4.7, Delta = 5913); loosest 27.5%
+     k_e >= 1.04 (95% low end of the 0.8 prior)          : tightest draw    564 = 18.8% (at m = 4.7, Delta = 5913); loosest 22.8%
+     The tightest draws are the high-Delta ones, where the bound is L/g - Delta: a
+     difference of two numbers near 6500 whose own error is a few hundred (5% on m
+     alone moves L/g by 5%), so on real data the per-draw bound there is noise.
+
+  C. Noisy records: the 95% upper end of the profile, by what closes it
+     n6 footing: k_e prior 0.8, b prior 5%     : median     672 =  22.4% of normal; 0 of 24 unbounded on the grid; k_e at the bound 1.497
+     NO k_e prior, k_e > 0, b prior 5%         : median     907 =  30.2% of normal; 0 of 24 unbounded on the grid; k_e at the bound 0.000
+     NO k_e prior, K_m prior 0.07 as well      : median     864 =  28.8% of normal; 0 of 24 unbounded on the grid; k_e at the bound 0.000
+     k_e prior 0.8, K_m prior 0.07             : median     672 =  22.4% of normal; 0 of 24 unbounded on the grid; k_e at the bound 1.497
+     noiseless record (expected profile), same four footings:
+       n6 footing: k_e prior 0.8, b prior 5%     :    672 = 22.4%; k_e there 1.417, K_m 102.7
+       NO k_e prior, k_e > 0, b prior 5%         :    907 = 30.2%; k_e there 0.000, K_m 105.2
+       NO k_e prior, K_m prior 0.07 as well      :    907 = 30.2%; k_e there 0.000, K_m 103.2
+       k_e prior 0.8, K_m prior 0.07             :    672 = 22.4%; k_e there 1.415, K_m 101.6
+  wrote fig/t4_set.png

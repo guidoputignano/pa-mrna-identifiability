@@ -1,0 +1,43 @@
+============================================================================================
+  TASK 3. VARIANCE DECOMPOSITION
+============================================================================================
+
+  A. The exact split, monthly 25 draws, median over 24 records
+       pct      s       sd       Var    Var|ke  beta^2 Var ke  n-indep share  Var ke post     beta  -(1-s)/s
+       5.0  0.163   3.0674   9.40864   0.15047        9.25239          98.3%       0.4735  -4.4437   -5.1341
+      10.0  0.292   1.5830   2.50573   0.04350        2.46068          98.2%       0.5246  -2.1722   -2.4287
+      20.0  0.472   0.8107   0.65728   0.01512        0.64007          97.4%       0.5855  -1.0478   -1.1172
+      50.0  0.717   0.3228   0.10419   0.00673        0.09751          93.6%       0.6321  -0.3930   -0.3942
+      82.4  0.815   0.2000   0.04001   0.00630        0.03371          84.3%       0.6380  -0.2299   -0.2264
+     100.0  0.845   0.1699   0.02888   0.00658        0.02233          77.3%       0.6389  -0.1870   -0.1833
+     200.0  0.919   0.1228   0.01509   0.00995        0.00515          34.1%       0.6399  -0.0897   -0.0877
+     627.0  0.974   0.2000   0.03999   0.03951        0.00048           1.2%       0.6400  -0.0274   -0.0270
+
+     At the band edge (theta = 2472, s = 0.815): 84.3% of the variance is the k_e term.
+     Implied Var(ln k_e) = (beta^2 Var ke)/beta^2 = 0.6380 (sd 0.7987); via the brief's (1-s)/s instead: 0.6580 (sd 0.8111). The prior is 0.8^2 = 0.64.
+
+  B. Each term against the number of draws (monthly, longer records), theta = 2472
+         n       sd  Var|ke * n  beta^2 Var ke  Var ke post
+         6   0.2453     0.16135        0.03352       0.6397
+        12   0.2159     0.15611        0.03360       0.6392
+        25   0.2000     0.15762        0.03371       0.6380
+        50   0.1923     0.16849        0.03361       0.6360
+       100   0.1880     0.14755        0.03388       0.6280
+       200   0.1858     0.11513        0.03394       0.5997
+       400   0.1833     0.15692        0.03322       0.5762
+
+     Fit sd(n) = sqrt(floor^2 + c^2/n) over n = 8..400: floor 0.1834, c 0.4014; at n = 25 the floor is 83.9% of the variance
+     worst fit residual 0.0015
+
+  C. The lower band edge against sampling effort (gate 0.20)
+     monthly, 25 draws:                      2472 =  82.4% of normal
+     every 2 days, 365 draws (14.6x):        2253 =  75.1% (moves 8.9%)
+     infinitely many, k_e at its prior:      2396 =  79.9%
+     the share s at those edges: 0.815, 0.800, 0.810
+     dense beats the k_e-held limit because 365 draws DO teach k_e a little: at theta = 2253
+     the posterior Var(ln k_e) is 0.6373 after 25 monthly draws and 0.6100 after 365 dense ones (4.3% less).
+     and the edge with a tighter k_e, monthly 25 draws:
+       ln k_e prior 0.40 (factor 1.49): edge   1312 =  43.7% of normal
+       ln k_e prior 0.20 (factor 1.22): edge    738 =  24.6% of normal
+       ln k_e prior 0.10 (factor 1.11): edge    468 =  15.6% of normal
+  wrote fig/t3_variance.png

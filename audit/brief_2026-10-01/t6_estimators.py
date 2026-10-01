@@ -401,17 +401,27 @@ def main():
         keys = (("fd", "(a) FD"), ("fdm", "(a) FD mid"), ("gen", "(b′) integral"),
                 ("cum", "(b″) cumulative"), ("nls", "(c) NLS"), ("ekf", "(c) EKF+RTS"),
                 ("ieks", "(c) iterated EKS"))
-        data = []
-        for k, lab in keys:
+        data, labs = [], []
+        for j, (k, lab) in enumerate(keys):
             v = (np.exp([o[0] for o in R["out"][k]]) if k in ("nls", "ekf", "ieks")
                  else np.array([o["th"] for o in R["out"][k]]))
+            neg = float(np.mean(v <= 0))
             v = v[v > 0]
-            data.append(np.clip(np.log(v / th0), -8, 8))
-        bp = a.boxplot(data, orientation="horizontal", widths=0.55, patch_artist=True, showfliers=False,
-                       medianprops=dict(color=INK, lw=1.5))
+            e = np.log(v / th0)
+            clipped = float(np.mean(np.abs(e) > 8)) if e.size else 0.0
+            data.append(np.clip(e, -8, 8) if e.size else np.array([np.nan]))
+            labs.append(lab + (f"\nθ̂ ≤ 0 in {neg:.0%}" if neg > 0 else ""))
+            if not e.size:
+                a.text(0, j + 1, "every estimate ≤ 0", ha="center", va="center", fontsize=8,
+                       color=INK)
+            elif clipped > 0.5:
+                a.text(7.6, j + 1.33, f"{clipped:.0%} beyond +8", ha="right", fontsize=7.5,
+                       color=MUTED)
+        bp = a.boxplot(data, orientation="horizontal", widths=0.55, patch_artist=True,
+                       showfliers=False, medianprops=dict(color=INK, lw=1.5))
         for patch in bp["boxes"]:
             patch.set_facecolor(C1); patch.set_alpha(0.35); patch.set_edgecolor(C1)
-        a.set_yticks(range(1, len(keys) + 1), [lab for _, lab in keys])
+        a.set_yticks(range(1, len(keys) + 1), labs, fontsize=8)
         a.axvline(0, color=INK, lw=0.8)
         a.set_xlabel(r"ln($\hat\theta$/θ), positive estimates only, clipped at ±8")
         a.set_title(nm)

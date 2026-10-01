@@ -116,7 +116,7 @@ The fixed parameters are normal θ = 3000, K_m = 100 and k_e = 5 /d, with L = 32
   | 16 | 1.33 | 1.46 | 0.90 | 4% |
   | 64 | 0.81 | 0.49 | 0.46 | 0% |
 
-  At 64 patients the FIM is *pessimistic*, because θ enters closer to linearly than log-linearly once k_e is pinned. Below about 8 patients it is meaningless.
+  At 64 patients the FIM is *pessimistic* (0.81 against an MC spread of 0.46–0.49), and the MAP is biased high by a median 0.12 in log units. I have not isolated why. The likelihood in ln θ is far from quadratic at 5% (Task 1), so the FIM cannot be trusted in either direction there. Below about 8 patients it is meaningless.
 - **The answer to the main question.** Borrowing k_e across a disease cohort, with no new measurement, takes one patient from 3.07 to about 1 at 16 patients and about 0.5–0.8 at 64. It cannot reach 0.20 on monthly records, because even exact k_e leaves 0.39.
 - **Which kind of uncertainty the 0.8 is decides almost everything.** If it is a shared-but-unknown constant, the cohort helps. If it is between-patient spread (ω), the cohort measures the population and not the patient. The repository's own R1 figure of a 33% between-patient CV leaves 1.62 at 64 patients. Nothing in the repository says which kind the 0.8 is.
 
@@ -164,7 +164,7 @@ Every number is at θ = 5% of normal on the current monthly record.
 - **(d) combinations.** k_e to 1.05 plus load to 1% gives 0.305; k_e exact plus load exact gives 0.204. A 20% flux reading plus k_e to 1.2 plus load to 2% gives 0.199. A 30% flux reading plus *exact* k_e gives 0.226, so k_e cannot rescue a poor flux reading.
 - **Ranking by precision gained per unit of measurement precision.** Direct flux ≫ k_e ≫ load.
   - Elasticities of sd(ln θ̂) to each measurement's own sd: 0.90 for flux, 0.79 for k_e and 0.15 for the load.
-  - Only the flux reading clears the target alone, at a precision (19%) that is loose by assay standards.
+  - Only the flux reading clears the target alone, at 19%. For scale: the only repeatability figure the repository carries for the 1-¹³C-propionate breath test is a between-visit mean of 14% (`PHASE4_SUMMARY.md`). But that is for an uncalibrated relative reading, which is the wrong kind of measurement (next point).
 - **Two conditions on (c).**
   - **It must be taken off therapy.** On therapy any PCC flux measurement sees (θ + Δ)g with Δ/θ = 3–40.
   - **It must be absolutely calibrated.** The repository's 1-¹³C-propionate breath test is modelled as y = c·F with an unknown recovery c (`u2_breath_functional.py`), and under that model one reading is worth nothing.

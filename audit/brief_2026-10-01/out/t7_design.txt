@@ -1,0 +1,78 @@
+============================================================================================
+  TASK 7. EXPERIMENT DESIGN AT 5% OF NORMAL
+============================================================================================
+
+  A. The washout, hourly, 48 h, 5% CV. sd(ln theta) down the knowledge ladder
+                                              nothing k_e prior 0.8 + K_m from th + L0 to 5% of + L0 to 1% of k_e exact, K_  + record
+     withdraw 25% of the load                4330.187        24.509         5.659         1.594         1.255         0.092     1.202   m 40-54
+     withdraw 50% (all the diet)              383.313         9.415         4.126         1.535         0.629         0.104     0.623   m 26-54
+     load x2 for 24 h, then diet out           21.264         9.002         1.315         0.780         0.307         0.078     0.293   m 26-113
+     load x3 for 24 h, then diet out            9.445         7.225         0.861         0.576         0.237         0.075     0.225   m 27-174
+     load x6 for 24 h, then diet out            3.114         3.044         0.565         0.402         0.176         0.073     0.165   m 27-362
+     '+ record' = the washout joined to the 25-draw monthly record, k_e prior 0.8,
+     L0 to 1% of L; the record supplies K_m and its own load-bias prior.
+
+     The half-load washout over (tau, T), rung '+ L0 to 1% of L':
+          T tau 0.083 h  tau 0.25 h   tau 0.5 h     tau 1 h     tau 2 h     tau 4 h
+       12 h       0.496       0.745       0.983       1.281       1.611       1.924
+       24 h       0.377       0.483       0.601       0.773       1.003       1.282
+       48 h       0.359       0.426       0.506       0.629       0.805       1.037
+       96 h       0.355       0.409       0.474       0.578       0.731       0.937
+     The x6 excursion over (tau, T), same rung:
+       24 h       0.142       0.208       0.270       0.347       0.426       0.500
+       48 h       0.109       0.130       0.149       0.176       0.215       0.269
+       96 h       0.090       0.118       0.134       0.150       0.170       0.199
+     Sensitivity to the assumed unrecorded share L0/L, x6 design, rung '+ L0 1%':
+       L0 = 0.3 L: 0.183
+       L0 = 0.5 L: 0.176
+       L0 = 0.7 L: 0.179
+
+  B. The tension in tau
+     washout: lambda = 5.632 /d at m0 = 54.0 and 5.944 at the new level 26.1; 1/lambda = 4.26 to 4.04 h
+     (i) efficient estimator, a FIXED number of samples N = 24, rung '+ L0 1%':
+        tau = 0.05/lambda ( 0.21 h, T =   4.9 h): 2.269
+        tau = 0.10/lambda ( 0.43 h, T =   9.8 h): 1.159
+        tau = 0.20/lambda ( 0.85 h, T =  19.6 h): 0.811
+        tau = 0.30/lambda ( 1.28 h, T =  29.4 h): 0.780
+        tau = 0.50/lambda ( 2.13 h, T =  49.0 h): 0.820
+        tau = 0.75/lambda ( 3.20 h, T =  73.5 h): 0.891
+        tau = 1.00/lambda ( 4.26 h, T =  98.0 h): 0.957
+        tau = 1.50/lambda ( 6.39 h, T = 147.0 h): 1.070
+        tau = 2.00/lambda ( 8.52 h, T = 196.0 h): 1.159
+        tau = 3.00/lambda (12.78 h, T = 294.0 h): 1.252
+        optimum near tau = 0.3/lambda: N samples should span ~7/lambda
+     (ii) fixed duration 48 h: denser is never worse for the efficient estimator
+          (part A's rows fall monotonically as tau shrinks).
+     (iii) the finite-difference derivative psi: MSE over the transient of the
+           forward and central differences, noise 5% CV, exponential relaxation
+           forward: optimum tau = 0.879/lambda, relative RMS error 0.43
+           central: optimum tau = 1.566/lambda, relative RMS error 0.19
+           a relative error near 1 means the derivative is not measured at all,
+           which is why every FD row of Task 6's bench A fails.
+
+  C. The excursion: sd(ln theta), and cond of the [1, m, m^2] columns over the path
+      load factor        m range  m_max/K_m  cond[1,m,m^2]   cond FIM  rung k_e+K_m  rung +L0 1%
+             1.25   26.2-  68.4       0.68           76.5   1.41e+09         2.940        0.456
+             1.50   26.2-  83.1       0.83           52.9   7.97e+08         2.052        0.386
+             2.00   26.3- 112.9       1.13           36.7   4.56e+08         1.315        0.307
+             3.00   26.5- 173.9       1.74           27.1   2.52e+08         0.861        0.237
+             4.00   26.7- 236.0       2.36           23.6   1.95e+08         0.697        0.205
+             6.00   27.2- 361.8       3.62           20.7   1.73e+08         0.565        0.176
+             8.00   27.6- 488.6       4.89           19.4   1.84e+08         0.513        0.161
+            12.00   28.7- 743.5       7.44           18.2   2.43e+08         0.478        0.147
+
+  D. The drug as the forcing input: first dose, every 15 min for 72 h
+     kernel: rise rate 6.70 /d, peak at 13.0 h, decay half-life 3.5 d
+     peak Delta  Delta/th  m min       nothing k_e prior 0.8 + K_m from th + L0 to 5% of + L0 to 1% of k_e exact, K_  +record  kap 12%+rec  kap free+rec
+            150       1.0   45.9        48.676         6.104         5.975         1.610         1.351         0.093    1.219        1.518         1.849
+            450       3.0   34.3         7.357         4.415         4.401         1.451         0.982         0.096    0.860        1.186         1.304
+           1500      10.0   16.9         2.132         1.941         1.937         1.541         1.175         0.088    1.018        1.153         1.181
+           2850      19.0   10.0         1.942         1.771         1.743         1.645         1.481         0.087    1.260        1.362         1.381
+           6400      42.7    4.8         2.740         2.277         2.163         2.159         2.151         0.091    1.693        1.766         1.779  (booked; NOT admissible at 5%)
+     The burst with k_e EXACT and the record, peak 2850:
+       L0 unknown 0.150;  L0 to 1% of L 0.085
+     How well k_e must be known for burst + record to reach 0.20, L0 unknown:
+       kappa known: sd(ln k_e) <= 0.0251 (k_e to 2.5%)
+       kappa to 12%: sd(ln k_e) <= 0.0244 (k_e to 2.4%)
+     the monthly record alone with k_e to 5%: 0.465; burst + record with k_e to 5%: 0.300
+  wrote fig/t7_design.png
