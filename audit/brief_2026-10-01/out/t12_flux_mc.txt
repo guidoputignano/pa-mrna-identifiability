@@ -1,0 +1,186 @@
+====================================================================================================
+  FOLLOW-UP: THE FLUX-READING CROSSING OF sd(ln theta_hat) = 0.20 BY MONTE CARLO
+====================================================================================================
+  Footing (core / n4, convention A): theta = 150 (5%), K_m = 100, k_e = 5, L = 322.73, 25 monthly
+  draws with the booked dose train, n4's sigma, k_e prior 0.8, load-bias prior 0.05 L; plus one
+  untreated visit (marker draw + flux reading). ONE simulated patient; there is no patient data.
+  Y grid [10.0, 12.5, 15.0, 17.5, 20.0, 22.5]% (22.5% added beyond the brief's 10-20% to bracket the crossing);
+  2000 replicates per scenario; bootstrap B = 2000; seed label 71212026.
+
+====================================================================================================
+  PART 0  THE ESTIMATOR: t11_fim_check.Problem rerun on t11's OWN Task 5 draws
+====================================================================================================
+  t11 Part 2: 240 replicates, intake seed j % 24, errors from default_rng(70000 + j).
+     Y = 10.0%: RMSE 0.1175, robust 0.1130, median -0.0016;  t11 printed 0.1175, 0.1130, -0.0016: identical
+     Y = 20.0%: RMSE 0.2266, robust 0.2179, median -0.0060;  t11 printed 0.2266, 0.2179, -0.0060: identical
+  The same estimator is used below, on fresh draws.
+  [7 s]
+
+====================================================================================================
+  PART 1  THE FIM, on t5_value.sd5's footing (median over the repository's 24 intake seeds)
+====================================================================================================
+     scenario                            FIM here   t5.sd5  match
+     1 reading, Y = 10.0%                  0.1120   0.1120    yes
+     1 reading, Y = 12.5%                  0.1350   0.1350    yes
+     1 reading, Y = 15.0%                  0.1585   0.1585    yes
+     1 reading, Y = 17.5%                  0.1824   0.1824    yes
+     1 reading, Y = 20.0%                  0.2064   0.2064    yes
+     1 reading, Y = 22.5%                  0.2306   0.2306    yes
+     3 readings averaged, Y = 15%          0.0965   0.0965    yes
+       (marker-assay term shared)          0.1001        -         sensitivity only, not simulated
+     recovery sd(ln c) .10, Y = 10.0%      0.1504   0.1504    yes  (t5.sd5 at Y_eff = hypot(Y, 10%) = 14.14%; 5x5 FIM with ln c)
+     recovery sd(ln c) .10, Y = 12.5%      0.1681   0.1681    yes  (t5.sd5 at Y_eff = hypot(Y, 10%) = 16.01%; 5x5 FIM with ln c)
+     recovery sd(ln c) .10, Y = 15.0%      0.1874   0.1874    yes  (t5.sd5 at Y_eff = hypot(Y, 10%) = 18.03%; 5x5 FIM with ln c)
+     recovery sd(ln c) .10, Y = 17.5%      0.2079   0.2079    yes  (t5.sd5 at Y_eff = hypot(Y, 10%) = 20.16%; 5x5 FIM with ln c)
+  FIM crossing of 0.20: one reading Y <= 19.33%; three readings Y <= 33.80%;
+     one reading with recovery known to 10%: Y <= 16.55%; at Y = 15% the recovery must be
+     known to sd(ln c) <= 0.1220
+  [9 s]
+
+====================================================================================================
+  PART 2  MONTE CARLO MAP, 2000 replicates per scenario, fresh seeds, common random numbers
+====================================================================================================
+     500 replicates done [114 s]
+     1000 replicates done [209 s]
+     1500 replicates done [312 s]
+     2000 replicates done [422 s]
+
+  (a) are the draws representative? standard-normal errors pooled over replicates
+     stream                     n     mean      sd   median  frac > 0    KS p
+     26 marker errors       52000  -0.0003  0.9992  +0.0039     0.502   0.825
+     flux reading 1          2000  -0.0124  1.0028  -0.0162     0.492   0.714
+     flux reading 2          2000  -0.0452  0.9981  -0.0089     0.496   0.311
+     flux reading 3          2000  +0.0072  0.9940  -0.0021     0.499   0.903
+     k_e centre              2000  -0.0020  0.9882  -0.0134     0.496   0.751
+     load-bias centre        2000  +0.0382  1.0026  +0.0428     0.518   0.158
+     recovery centre         2000  -0.0360  0.9738  -0.0248     0.491   0.105
+
+  (b) ln theta_hat - ln theta. [..] = percentile-bootstrap 90% interval over replicates (B = 2000, paired across scenarios).
+      FIM sd5: t5_value.sd5 (median, 24 repository seeds); FIM rms: over this MC's own records.
+     scenario                     FIM sd5 FIM rms MC RMSE          90% CI  robust          90% CI  median            90% CI lin RMSE          90% CI at bnd RMSE/FIM rob/FIM P(RMSE<=.2)
+     1 reading, Y = 10.0%          0.1120  0.1120  0.1130 [0.1098,0.1162]  0.1113 [0.1072,0.1150] -0.0025 [-0.0081,+0.0026]   0.1123 [0.1092,0.1154]  0.00%    1.009   0.994       1.000
+     1 reading, Y = 12.5%          0.1350  0.1349  0.1373 [0.1335,0.1413]  0.1346 [0.1298,0.1387] -0.0037 [-0.0101,+0.0029]   0.1354 [0.1317,0.1391]  0.00%    1.018   0.997       1.000
+     1 reading, Y = 15.0%          0.1585  0.1584  0.1629 [0.1582,0.1678]  0.1566 [0.1525,0.1628] -0.0043 [-0.0103,+0.0029]   0.1591 [0.1548,0.1635]  0.00%    1.029   0.989       1.000
+     1 reading, Y = 17.5%          0.1824  0.1823  0.1899 [0.1842,0.1957]  0.1817 [0.1760,0.1878] -0.0050 [-0.0134,+0.0032]   0.1832 [0.1782,0.1883]  0.00%    1.042   0.997       0.997
+     1 reading, Y = 20.0%          0.2064  0.2064  0.2182 [0.2114,0.2252]  0.2064 [0.1996,0.2138] -0.0068 [-0.0152,+0.0032]   0.2075 [0.2018,0.2132]  0.00%    1.057   1.000       0.000
+     1 reading, Y = 22.5%          0.2306  0.2305  0.2481 [0.2399,0.2565]  0.2317 [0.2239,0.2398] -0.0070 [-0.0190,+0.0040]   0.2319 [0.2256,0.2382]  0.00%    1.076   1.005       0.000
+     3 readings, Y = 15.0%         0.0965  0.0965  0.0969 [0.0945,0.0994]  0.0941 [0.0911,0.0975] +0.0012 [-0.0030,+0.0061]   0.0959 [0.0936,0.0984]  0.00%    1.004   0.975       1.000
+     recovery sd .10, Y = 10.0%    0.1504  0.1503  0.1501 [0.1460,0.1541]  0.1487 [0.1433,0.1537] +0.0002 [-0.0058,+0.0056]   0.1516 [0.1472,0.1560]  0.00%    0.998   0.990       1.000
+     recovery sd .10, Y = 12.5%    0.1681  0.1680  0.1692 [0.1645,0.1738]  0.1651 [0.1599,0.1718] -0.0033 [-0.0103,+0.0054]   0.1699 [0.1650,0.1748]  0.00%    1.007   0.983       1.000
+     recovery sd .10, Y = 15.0%    0.1874  0.1874  0.1906 [0.1852,0.1959]  0.1865 [0.1802,0.1936] -0.0064 [-0.0136,+0.0025]   0.1898 [0.1844,0.1952]  0.00%    1.017   0.996       0.998
+     recovery sd .10, Y = 17.5%    0.2079  0.2079  0.2141 [0.2080,0.2200]  0.2104 [0.2025,0.2167] -0.0064 [-0.0150,+0.0026]   0.2108 [0.2049,0.2168]  0.00%    1.030   1.012       0.000
+     at bnd: fraction of fits at theta = 1e-3 (ln err -11.92). P(RMSE<=.2): bootstrap share.
+
+  (c) further diagnostics per scenario
+     scenario                     at bnd n  at box  mean err  min err  max err |err|>ln2 ln k_e RMSE ln K_m RMSE ln c RMSE
+     1 reading, Y = 10.0%                0   0.00%   -0.0045   -0.471   +0.396     0.00%      0.0837      0.0567         -
+     1 reading, Y = 12.5%                0   0.00%   -0.0077   -0.600   +0.454     0.00%      0.0851      0.0567         -
+     1 reading, Y = 15.0%                0   0.00%   -0.0116   -0.748   +0.510     0.05%      0.0868      0.0567         -
+     1 reading, Y = 17.5%                0   0.00%   -0.0163   -0.922   +0.562     0.10%      0.0888      0.0567         -
+     1 reading, Y = 20.0%                0   0.00%   -0.0219   -1.132   +0.612     0.65%      0.0911      0.0567         -
+     1 reading, Y = 22.5%                0   0.00%   -0.0283   -1.395   +0.659     1.40%      0.0936      0.0567         -
+     3 readings, Y = 15.0%               0   0.00%   -0.0040   -0.360   +0.258     0.00%      0.0834      0.0567         -
+     recovery sd .10, Y = 10.0%          0   0.00%   -0.0009   -0.510   +0.445     0.00%      0.0874      0.0567    0.0972
+     recovery sd .10, Y = 12.5%          0   0.00%   -0.0041   -0.639   +0.502     0.00%      0.0888      0.0567    0.0972
+     recovery sd .10, Y = 15.0%          0   0.00%   -0.0081   -0.788   +0.557     0.10%      0.0905      0.0567    0.0972
+     recovery sd .10, Y = 17.5%          0   0.00%   -0.0128   -0.962   +0.609     0.30%      0.0926      0.0567    0.0972
+     at box: K_m or k_e at its box bound. ln c RMSE: estimated recovery factor against c_true = 1.
+     fits at the theta bound, all scenarios: 0; with zero of n fits, the 95% upper bound on the rate is 3/n = 0.15%
+  [425 s]
+
+====================================================================================================
+  PART 3  THE CROSSING OF 0.20 BY MONTE CARLO
+====================================================================================================
+  Piecewise-linear interpolation between grid points; uncertainty from the paired bootstrap
+  (every resample re-interpolates all Y on the same replicate indices). The 90% interval counts
+  resamples that do not cross inside the grid as lying beyond it.
+  (a) ONE CALIBRATED READING, Y = 10 ... 22.5%
+     MC RMSE                values at Y = 10%, 12.5%, 15%, 17.5%, 20%, 22.5%: 0.1130 0.1373 0.1629 0.1899 0.2182 0.2481
+                            crossing Y = 18.40% (ok); bootstrap 90% [17.86, 18.95]% (crossing resamples only: 90% [17.86, 18.95]%, 95% [17.78, 19.11]%, sd 0.33 pp); quadratic fit over the grid 18.40%
+                            resamples: crossing inside the grid 100.0%, below 0, above 0; more than one crossing 0
+     MC robust half-width   values at Y = 10%, 12.5%, 15%, 17.5%, 20%, 22.5%: 0.1113 0.1346 0.1566 0.1817 0.2064 0.2317
+                            crossing Y = 19.35% (ok); bootstrap 90% [18.68, 20.04]% (crossing resamples only: 90% [18.68, 20.04]%, 95% [18.56, 20.16]%, sd 0.41 pp); quadratic fit over the grid 19.37%
+                            resamples: crossing inside the grid 100.0%, below 0, above 0; more than one crossing 0
+     linear-theta RMSE      values at Y = 10%, 12.5%, 15%, 17.5%, 20%, 22.5%: 0.1123 0.1354 0.1591 0.1832 0.2075 0.2319
+                            crossing Y = 19.23% (ok); bootstrap 90% [18.68, 19.81]% (crossing resamples only: 90% [18.68, 19.81]%, 95% [18.58, 19.91]%, sd 0.34 pp); quadratic fit over the grid 19.24%
+                            resamples: crossing inside the grid 100.0%, below 0, above 0; more than one crossing 0
+     FIM rms (own records)  values 0.1120 0.1349 0.1584 0.1823 0.2064 0.2305; crossing 19.34% (interpolated)
+     FIM sd5 (24 seeds)     values 0.1120 0.1350 0.1585 0.1824 0.2064 0.2306; crossing 19.33% interpolated, 19.33% exact (t5_value.crossing)
+     brief's grid only (10-20%), MC RMSE: crossing 18.40% (ok)
+     brief's grid only (10-20%), MC robust half-width: crossing 19.35% (ok)
+
+  (b) BENCHMARK: what the ln-scale measures would be if theta_hat/theta - 1 were exactly
+      N(0, FIM rms^2) (linear-Gaussian in theta, no estimator inefficiency); quadrature, not sampled
+          Y  FIM rms  bench ln RMSE  MC ln RMSE  bench robust  MC robust  MC lin RMSE  lin RMSE/FIM          90% CI
+      10.0%   0.1120         0.1140      0.1130        0.1118     0.1113       0.1123         1.003 [0.975,1.031]
+      12.5%   0.1349         0.1385      0.1373        0.1350     0.1346       0.1354         1.004 [0.976,1.031]
+      15.0%   0.1584         0.1645      0.1629        0.1589     0.1566       0.1591         1.005 [0.977,1.032]
+      17.5%   0.1823         0.1918      0.1899        0.1833     0.1817       0.1832         1.005 [0.978,1.033]
+      20.0%   0.2064         0.2211      0.2182        0.2082     0.2064       0.2075         1.006 [0.978,1.033]
+      22.5%   0.2305         0.2543      0.2481        0.2334     0.2317       0.2319         1.006 [0.979,1.033]
+     benchmark crossings: ln RMSE 18.20%, robust 19.18%
+
+  (c) ONE READING WITH RECOVERY KNOWN TO 10% (sd ln c = 0.10), Y = 10 ... 17.5% (15% is the brief's point; the others extend it)
+     MC RMSE                values at Y = 10%, 12.5%, 15%, 17.5%: 0.1501 0.1692 0.1906 0.2141
+                            crossing Y = 16.00% (ok); bootstrap 90% [15.43, 16.63]% (crossing resamples only: 90% [15.43, 16.63]%, 95% [15.31, 16.78]%, sd 0.37 pp); quadratic fit over the grid 16.03%
+                            resamples: crossing inside the grid 100.0%, below 0, above 0; more than one crossing 0
+     MC robust half-width   values at Y = 10%, 12.5%, 15%, 17.5%: 0.1487 0.1651 0.1865 0.2104
+                            crossing Y = 16.41% (ok); bootstrap 90% [15.71, 17.21]% (crossing resamples only: 90% [15.70, 17.16]%, 95% [15.59, 17.27]%, sd 0.43 pp); quadratic fit over the grid 16.47%
+                            resamples: crossing inside the grid 98.5%, below 0, above 30; more than one crossing 0
+     linear-theta RMSE      values at Y = 10%, 12.5%, 15%, 17.5%: 0.1516 0.1699 0.1898 0.2108
+                            crossing Y = 16.22% (ok); bootstrap 90% [15.55, 16.91]% (crossing resamples only: 90% [15.55, 16.90]%, 95% [15.42, 17.03]%, sd 0.40 pp); quadratic fit over the grid 16.24%
+                            resamples: crossing inside the grid 99.9%, below 0, above 2; more than one crossing 0
+     FIM rms (own records)  values 0.1503 0.1680 0.1874 0.2079; crossing 16.54% (interpolated)
+
+  (d) PAIRED DIFFERENCES at Y = 15%, against one calibrated reading (same replicates); bootstrap 90%
+     3 readings, Y = 15.0%          RMSE    0.0969 - 0.1629 = -0.0660  [-0.0704, -0.0614]
+     3 readings, Y = 15.0%          robust  0.0941 - 0.1566 = -0.0626  [-0.0687, -0.0578]
+     recovery sd .10, Y = 15.0%     RMSE    0.1906 - 0.1629 = +0.0277  [+0.0242, +0.0309]
+     recovery sd .10, Y = 15.0%     robust  0.1865 - 0.1566 = +0.0299  [+0.0236, +0.0353]
+
+  (e) DOES AN UNKNOWN RECOVERY ACT LIKE A LOOSER CALIBRATED READING? Recovery variant at Y against
+      one calibrated reading at Y_eff = hypot(Y, 10%), interpolated on (a)'s grid; paired bootstrap 90%
+     Y = 10.0% (Y_eff 14.14%): RMSE 0.1501 vs 0.1541, diff -0.0041 [-0.0079, -0.0004]; robust 0.1487 vs 0.1491, diff -0.0003 [-0.0064, +0.0044]
+     Y = 12.5% (Y_eff 16.01%): RMSE 0.1692 vs 0.1738, diff -0.0046 [-0.0084, -0.0009]; robust 0.1651 vs 0.1668, diff -0.0017 [-0.0073, +0.0044]
+     Y = 15.0% (Y_eff 18.03%): RMSE 0.1906 vs 0.1958, diff -0.0052 [-0.0090, -0.0015]; robust 0.1865 vs 0.1870, diff -0.0004 [-0.0066, +0.0060]
+     Y = 17.5% (Y_eff 20.16%): RMSE 0.2141 vs 0.2200, diff -0.0060 [-0.0098, -0.0022]; robust 0.2104 vs 0.2080, diff +0.0024 [-0.0054, +0.0082]
+     MC RMSE: crossing with recovery known to 10%, derived as sqrt(Y*^2 - 0.10^2) from (a): 15.44%; simulated directly in (c): 16.00%
+     MC robust half-width: crossing with recovery known to 10%, derived as sqrt(Y*^2 - 0.10^2) from (a): 16.56%; simulated directly in (c): 16.41%
+  [425 s]
+
+====================================================================================================
+  PART 4  IS THE MAP THE GLOBAL OPTIMUM? first 100 replicates, dense full-box search
+====================================================================================================
+  Standard fit as above. Check: 161 x 241 grid over the whole (K_m, k_e) box, 20 refinements;
+  for the recovery variant also 21 values of ln c over +-5 prior sd. (theta, b) exact throughout.
+     scenario                      reps  max cost gain  gains > 1e-6  max |d ln theta|
+     1 reading, Y = 10.0%           100       1.07e-14             0          6.71e-09
+     1 reading, Y = 15.0%           100       1.24e-14             0          6.96e-09
+     1 reading, Y = 20.0%           100       1.24e-14             0          1.25e-08
+     1 reading, Y = 22.5%           100       1.07e-14             0          1.91e-08
+     3 readings, Y = 15.0%          100       1.07e-14             0          5.06e-09
+     recovery sd .10, Y = 15.0%     100       1.07e-14             0          1.38e-08
+     recovery sd .10, Y = 17.5%     100       1.07e-14             0          2.28e-08
+     recovery MAP with sd(ln c) = 1e-6 and centre 0 against the calibrated MAP, Y = 15%: max |d ln theta| = 7.84e-09
+  [489 s]
+
+====================================================================================================
+  PART 5  AGAINST t11 AND ITS RECHECK, at Y = 10% and 20% (as printed in out/)
+====================================================================================================
+     Y = 10.0%: here RMSE 0.1130, robust 0.1113 (2000 reps); t11 RMSE 0.1175 [95% 0.1072, 0.1286], robust 0.1130 (240 reps); recheck RMSE 0.1156 [95% 0.1070, 0.1245], robust 0.1093 (400 reps)
+     Y = 20.0%: here RMSE 0.2182, robust 0.2064 (2000 reps); t11 RMSE 0.2266 [95% 0.2028, 0.2511], robust 0.2179 (240 reps); recheck RMSE 0.2252 [95% 0.2033, 0.2504], robust 0.2031 (400 reps)
+
+====================================================================================================
+  SUMMARY (every number repeated from above)
+====================================================================================================
+  one calibrated reading, MC RMSE               crosses 0.20 at Y = 18.40%  (bootstrap 90% 17.86% to 18.95%, sd 0.33 pp)
+  one calibrated reading, MC robust half-width  crosses 0.20 at Y = 19.35%  (bootstrap 90% 18.68% to 20.04%, sd 0.41 pp)
+  one calibrated reading, linear-theta RMSE     crosses 0.20 at Y = 19.23%  (bootstrap 90% 18.68% to 19.81%, sd 0.34 pp)
+  one calibrated reading, FIM (t5_value.sd5)        crosses 0.20 at Y = 19.33%
+  recovery known to 10%,  MC RMSE               crosses 0.20 at Y = 16.00%  (bootstrap 90% 15.43% to 16.63%; resamples crossing inside 10-17.5%: 100.0%)
+  recovery known to 10%,  MC robust half-width  crosses 0.20 at Y = 16.41%  (bootstrap 90% 15.71% to 17.21%; resamples crossing inside 10-17.5%: 98.5%)
+  1 reading, Y = 15.0%           FIM 0.1585; MC RMSE 0.1629 [0.1582, 0.1678], robust 0.1566, median -0.0043, P(RMSE <= 0.20) 1.000
+  3 readings, Y = 15.0%          FIM 0.0965; MC RMSE 0.0969 [0.0945, 0.0994], robust 0.0941, median +0.0012, P(RMSE <= 0.20) 1.000
+  recovery sd .10, Y = 15.0%     FIM 0.1874; MC RMSE 0.1906 [0.1852, 0.1959], robust 0.1865, median -0.0064, P(RMSE <= 0.20) 0.998
+
+  total runtime 489 s

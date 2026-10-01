@@ -53,7 +53,7 @@ from pathlib import Path
 
 import numpy as np
 from scipy.optimize import least_squares
-from scipy.stats import kstest
+from scipy.stats import kstest, norm
 
 import core as C
 import t5_value as T5
@@ -71,6 +71,7 @@ YS = (0.10, 0.125, 0.15, 0.175, 0.20, 0.225)   # 0.225 added beyond the brief's 
 Y_BRIEF = (0.10, 0.125, 0.15, 0.175, 0.20)
 Y_VAR = 0.15
 CAL_SD = 0.10
+YR = (0.10, 0.125, 0.15, 0.175)      # recovery variant: 15% is the brief's; the others are an extension
 REPS = int(sys.argv[1]) if len(sys.argv) > 1 else 2000
 B = 2000                             # bootstrap resamples
 N_GLOBAL = int(sys.argv[2]) if len(sys.argv) > 2 else 100
@@ -198,9 +199,12 @@ def problem(r, e, ef, eke, eb, Y, nread=1):
     return P, z, sdf
 
 
+KC = "recovery sd .10"
+
+
 def scen_keys():
-    return [("1 reading", Y, 1, None) for Y in YS] + [("3 readings", Y_VAR, 3, None),
-                                                     ("recovery 10%", Y_VAR, 1, CAL_SD)]
+    return ([("1 reading", Y, 1, None) for Y in YS] + [("3 readings", Y_VAR, 3, None)]
+            + [(KC, Y, 1, CAL_SD) for Y in YR])
 
 
 def label(key):
@@ -273,12 +277,14 @@ def part1():
     print(f"     {'3 readings averaged, Y = 15%':34} {a3:9.4f} {ref3:8.4f} {'yes':>6}")
     a3s = fim_seeds(Y=Y_VAR, nread=3, shared_assay=True)
     print(f"     {'  (marker-assay term shared)':34} {a3s:9.4f} {'-':>8} {'':>6}  sensitivity only, not simulated")
-    ac = fim_seeds(Y=Y_VAR, cal_sd=CAL_SD)
-    yeff = float(np.hypot(Y_VAR, CAL_SD))
-    refc = T5.sd5(flux_Y=yeff)
-    F[("recovery 10%", Y_VAR, 1, CAL_SD)] = ac
-    print(f"     {'recovery c, sd(ln c) = 0.10, Y=15%':34} {ac:9.4f} {refc:8.4f} "
-          f"{'yes' if abs(ac - refc) <= 1e-9 * refc else 'NO':>6}  (t5.sd5 at Y_eff = hypot(15%, 10%) = {100 * yeff:.2f}%)")
+    for Y in YR:
+        ac = fim_seeds(Y=Y, cal_sd=CAL_SD)
+        yeff = float(np.hypot(Y, CAL_SD))
+        refc = T5.sd5(flux_Y=yeff)
+        F[(KC, Y, 1, CAL_SD)] = ac
+        print(f"     {'recovery sd(ln c) .10, Y = %.1f%%' % (100 * Y):34} {ac:9.4f} {refc:8.4f} "
+              f"{'yes' if abs(ac - refc) <= 1e-9 * refc else 'NO':>6}  (t5.sd5 at Y_eff = hypot(Y, 10%) = {100 * yeff:.2f}%;"
+              f" 5x5 FIM with ln c)")
     yc = T5.crossing(lambda v: T5.sd5(flux_Y=v), 1e-3, 1.0)
     ycc = T5.crossing(lambda v: fim_seeds(Y=v, cal_sd=CAL_SD), 1e-3, 1.0)
     yc3 = T5.crossing(lambda v: T5.sd5(flux_Y=v, n_flux=3), 1e-3, 1.0)
@@ -398,72 +404,136 @@ def part2(F_seed, yc_fim):
     return keys, res, BS, PT, FR
 
 
-def part3(keys, res, BS, PT, FR, F_seed, yc_fim):
-    banner("PART 3  THE CROSSING OF 0.20 BY MONTE CARLO (one reading)")
-    k1 = [k for k in keys if k[0] == "1 reading"]
-    ys = np.array([k[1] for k in k1])
-    print("     piecewise-linear interpolation between grid points; uncertainty from the paired bootstrap")
-    print("     (every resample re-interpolates all Y on the same replicate indices).")
+def lognormal_bench(s):
+    """
+    ln-scale RMSE and robust half-width of ln(1 + s eps), eps ~ N(0, 1), floored at the MAP's
+    theta bound: what an estimator would show if theta_hat/theta - 1 were exactly N(0, s^2)
+    (linear-Gaussian in theta at the FIM sd). Deterministic quadrature, no sampling.
+    """
+    x = np.linspace(-40.0, 40.0, 800_001)
+    w = np.exp(-0.5 * x ** 2)
+    w /= w.sum()
+    le = np.log(np.maximum(1.0 + s * x, 1e-3 / TH))
+    zq = float(norm.ppf(0.84))
+    return float(np.sqrt(np.sum(w * le ** 2))), float(0.5 * (np.log(1 + zq * s) - np.log(1 - zq * s)))
+
+
+def flo(t, y0):
+    return f"{100 * t:.2f}" if np.isfinite(t) else f"below {100 * y0:g}"
+
+
+def fhi(t, y1):
+    return f"{100 * t:.2f}" if np.isfinite(t) else f"above {100 * y1:g}"
+
+
+def cross_block(title, kset, BS, PT):
+    ys = np.array([k[1] for k in kset])
+    print(f"  {title}")
     rows = {}
     for nm, key in (("MC RMSE", "rmse"), ("MC robust half-width", "robust"), ("linear-theta RMSE", "lin")):
-        v = np.array([PT[k][key] for k in k1])
+        v = np.array([PT[k][key] for k in kset])
         yhat, flag = crossing(ys, v)
-        yq = crossing_quad(ys, v)
-        vb = np.stack([BS[k][key] for k in k1], 1)
+        yq = crossing_quad(ys, v) if ys.size >= 3 else np.nan
+        vb = np.stack([BS[k][key] for k in kset], 1)
         cb = [crossing(ys, vb[i]) for i in range(B)]
         yb = np.array([c[0] for c in cb])
         fl = [c[1] for c in cb]
         ok = np.isfinite(yb)
         nx = np.array([n_crossings(vb[i]) for i in range(B)])
+        print(f"     {nm:22} values at Y = {', '.join(f'{100 * y:g}%' for y in ys)}: {' '.join(f'{x:.4f}' for x in v)}")
+        if ok.sum() < 20:
+            print(f"     {'':22} crossing: {flag}; resamples inside the grid {np.mean(ok):.1%}")
+            rows[nm] = (yhat, np.nan, np.nan, np.nan, flag, float(np.mean(ok)), ys[0], ys[-1])
+            continue
         lo, hi = ci90(yb[ok])
         lo95, hi95 = np.percentile(yb[ok], [2.5, 97.5])
-        rows[nm] = (yhat, lo, hi, float(np.std(yb[ok])))
-        print(f"     {nm:22} values {' '.join(f'{x:.4f}' for x in v)}")
-        print(f"     {'':22} crossing Y = {100 * yhat:.2f}% ({flag}); bootstrap 90% [{100 * lo:.2f}, {100 * hi:.2f}]%,"
-              f" 95% [{100 * lo95:.2f}, {100 * hi95:.2f}]%, sd {100 * np.std(yb[ok]):.2f} pp;"
-              f" quadratic fit over the grid {100 * yq:.2f}%")
+        # resamples that do not cross inside the grid lie beyond it: fold them into the interval as such
+        #  (sentinels -1 and 9 stand for "below" and "above" the grid; 'nearest' never interpolates them)
+        ya = np.where(ok, yb, np.where(np.array(fl) == "below grid", -1.0, 9.0))
+        lo_all = float(np.percentile(ya, 5, method="nearest"))
+        hi_all = float(np.percentile(ya, 95, method="nearest"))
+        lo_all = lo_all if ys[0] <= lo_all <= ys[-1] else np.nan
+        hi_all = hi_all if ys[0] <= hi_all <= ys[-1] else np.nan
+        rows[nm] = (yhat, lo_all, hi_all, float(np.std(yb[ok])), flag, float(np.mean(ok)), ys[0], ys[-1])
+        print(f"     {'':22} crossing Y = {100 * yhat:.2f}% ({flag}); bootstrap 90% [{flo(lo_all, ys[0])}, {fhi(hi_all, ys[-1])}]%"
+              f" (crossing resamples only: 90% [{100 * lo:.2f}, {100 * hi:.2f}]%, 95% [{100 * lo95:.2f}, {100 * hi95:.2f}]%,"
+              f" sd {100 * np.std(yb[ok]):.2f} pp); quadratic fit over the grid {100 * yq:.2f}%")
         print(f"     {'':22} resamples: crossing inside the grid {np.mean(ok):.1%}, below {fl.count('below grid')},"
               f" above {fl.count('above grid')}; more than one crossing {int(np.sum(nx > 1))}")
+    return rows
+
+
+def part3(keys, res, BS, PT, FR, F_seed, yc_fim):
+    banner("PART 3  THE CROSSING OF 0.20 BY MONTE CARLO")
+    print("  Piecewise-linear interpolation between grid points; uncertainty from the paired bootstrap")
+    print("  (every resample re-interpolates all Y on the same replicate indices). The 90% interval counts")
+    print("  resamples that do not cross inside the grid as lying beyond it.")
+    k1 = [k for k in keys if k[0] == "1 reading"]
+    ys = np.array([k[1] for k in k1])
+    rows = cross_block("(a) ONE CALIBRATED READING, Y = 10 ... 22.5%", k1, BS, PT)
     fr = np.array([FR[k] for k in k1])
     fs = np.array([F_seed[k] for k in k1])
     print(f"     {'FIM rms (own records)':22} values {' '.join(f'{x:.4f}' for x in fr)}; crossing "
           f"{100 * crossing(ys, fr)[0]:.2f}% (interpolated)")
     print(f"     {'FIM sd5 (24 seeds)':22} values {' '.join(f'{x:.4f}' for x in fs)}; crossing "
           f"{100 * crossing(ys, fs)[0]:.2f}% interpolated, {100 * yc_fim:.2f}% exact (t5_value.crossing)")
-    # restricted to the brief's grid
     kb = [k for k in k1 if k[1] in Y_BRIEF]
     yb_ = np.array([k[1] for k in kb])
     for nm, key in (("MC RMSE", "rmse"), ("MC robust half-width", "robust")):
         v = np.array([PT[k][key] for k in kb])
         print(f"     brief's grid only (10-20%), {nm}: crossing {100 * crossing(yb_, v)[0]:.2f}% ({crossing(yb_, v)[1]})")
 
-    print("\n  PAIRED DIFFERENCES at Y = 15%, against one reading (same replicates); bootstrap 90%")
+    print("\n  (b) BENCHMARK: what the ln-scale measures would be if theta_hat/theta - 1 were exactly")
+    print("      N(0, FIM rms^2) (linear-Gaussian in theta, no estimator inefficiency); quadrature, not sampled")
+    print(f"     {'Y':>6} {'FIM rms':>8} {'bench ln RMSE':>14} {'MC ln RMSE':>11} {'bench robust':>13} {'MC robust':>10}"
+          f" {'MC lin RMSE':>12} {'lin RMSE/FIM':>13} {'90% CI':>15}")
+    bl, br = [], []
+    for k in k1:
+        a, b = lognormal_bench(FR[k])
+        bl.append(a)
+        br.append(b)
+        c = ci90(BS[k]["lin"] / FR[k])
+        print(f"     {100 * k[1]:5.1f}% {FR[k]:8.4f} {a:14.4f} {PT[k]['rmse']:11.4f} {b:13.4f} {PT[k]['robust']:10.4f}"
+              f" {PT[k]['lin']:12.4f} {PT[k]['lin'] / FR[k]:13.3f} [{c[0]:.3f},{c[1]:.3f}]")
+    print(f"     benchmark crossings: ln RMSE {100 * crossing(ys, bl)[0]:.2f}%, robust {100 * crossing(ys, br)[0]:.2f}%")
+
+    kr = [k for k in keys if k[0] == KC]
+    print()
+    rows_c = cross_block("(c) ONE READING WITH RECOVERY KNOWN TO 10% (sd ln c = 0.10), Y = 10 ... 17.5% "
+                         "(15% is the brief's point; the others extend it)", kr, BS, PT)
+    frc = np.array([FR[k] for k in kr])
+    print(f"     {'FIM rms (own records)':22} values {' '.join(f'{x:.4f}' for x in frc)}; crossing "
+          f"{100 * crossing([k[1] for k in kr], frc)[0]:.2f}% (interpolated)")
+    rows.update({"recovery " + nm: v for nm, v in rows_c.items()})
+
+    print("\n  (d) PAIRED DIFFERENCES at Y = 15%, against one calibrated reading (same replicates); bootstrap 90%")
     base = ("1 reading", Y_VAR, 1, None)
     for k in keys:
-        if k[0] == "1 reading":
+        if k[0] == "1 reading" or k[1] != Y_VAR:
             continue
         for nm, key in (("RMSE", "rmse"), ("robust", "robust")):
             d = BS[k][key] - BS[base][key]
             c = ci90(d)
-            print(f"     {label(k):28} {nm:7} {PT[k][key]:.4f} - {PT[base][key]:.4f} = {PT[k][key] - PT[base][key]:+.4f}"
+            print(f"     {label(k):30} {nm:7} {PT[k][key]:.4f} - {PT[base][key]:.4f} = {PT[k][key] - PT[base][key]:+.4f}"
                   f"  [{c[0]:+.4f}, {c[1]:+.4f}]")
-    # the recovery factor as an inflated Y, by MC
-    kc = ("recovery 10%", Y_VAR, 1, CAL_SD)
-    yeff = float(np.hypot(Y_VAR, CAL_SD))
-    for nm, key in (("RMSE", "rmse"), ("robust", "robust")):
-        v = np.array([PT[k][key] for k in k1])
-        at = float(np.interp(yeff, ys, v))
-        vb = np.stack([BS[k][key] for k in k1], 1)
-        atb = np.array([np.interp(yeff, ys, vb[i]) for i in range(B)])
-        d = BS[kc][key] - atb
-        c = ci90(d)
-        print(f"     recovery 10% at Y = 15% vs one calibrated reading at Y_eff = {100 * yeff:.2f}% (interpolated),"
-              f" {nm}: {PT[kc][key]:.4f} vs {at:.4f}, difference {PT[kc][key] - at:+.4f} [{c[0]:+.4f}, {c[1]:+.4f}]")
-    yr = rows["MC RMSE"][0]
-    yrb = rows["MC robust half-width"][0]
-    print(f"     IF the recovery factor acts as an inflated Y (checked just above), the MC crossings with recovery")
-    print(f"     known to 10% would be sqrt(Y*^2 - 0.10^2): RMSE {100 * np.sqrt(max(yr ** 2 - CAL_SD ** 2, 0)):.2f}%,"
-          f" robust {100 * np.sqrt(max(yrb ** 2 - CAL_SD ** 2, 0)):.2f}% (derived, not simulated)")
+    print("\n  (e) DOES AN UNKNOWN RECOVERY ACT LIKE A LOOSER CALIBRATED READING? Recovery variant at Y against")
+    print("      one calibrated reading at Y_eff = hypot(Y, 10%), interpolated on (a)'s grid; paired bootstrap 90%")
+    for k in kr:
+        yeff = float(np.hypot(k[1], CAL_SD))
+        parts = []
+        for nm, key in (("RMSE", "rmse"), ("robust", "robust")):
+            v = np.array([PT[q][key] for q in k1])
+            at = float(np.interp(yeff, ys, v))
+            vb = np.stack([BS[q][key] for q in k1], 1)
+            atb = np.array([np.interp(yeff, ys, vb[i]) for i in range(B)])
+            c = ci90(BS[k][key] - atb)
+            parts.append(f"{nm} {PT[k][key]:.4f} vs {at:.4f}, diff {PT[k][key] - at:+.4f} [{c[0]:+.4f}, {c[1]:+.4f}]")
+        print(f"     Y = {100 * k[1]:4.1f}% (Y_eff {100 * yeff:5.2f}%): " + "; ".join(parts))
+    for nm in ("MC RMSE", "MC robust half-width"):
+        y1 = rows[nm][0]
+        yd = np.sqrt(max(y1 ** 2 - CAL_SD ** 2, 0.0))
+        print(f"     {nm}: crossing with recovery known to 10%, derived as sqrt(Y*^2 - 0.10^2) from (a): {100 * yd:.2f}%;"
+              f" simulated directly in (c): {100 * rows['recovery ' + nm][0]:.2f}%")
     print(f"  {elapsed()}")
     return rows
 
@@ -477,7 +547,8 @@ def part4():
     print("  for the recovery variant also 21 values of ln c over +-5 prior sd. (theta, b) exact throughout.")
     print(f"     {'scenario':28} {'reps':>5} {'max cost gain':>14} {'gains > 1e-6':>13} {'max |d ln theta|':>17}")
     for key in [("1 reading", 0.10, 1, None), ("1 reading", 0.15, 1, None), ("1 reading", 0.20, 1, None),
-                ("1 reading", 0.225, 1, None), ("3 readings", Y_VAR, 3, None), ("recovery 10%", Y_VAR, 1, CAL_SD)]:
+                ("1 reading", 0.225, 1, None), ("3 readings", Y_VAR, 3, None), (KC, Y_VAR, 1, CAL_SD),
+                (KC, 0.175, 1, CAL_SD)]:
         _, Y, nread, cal = key
         gain, cnt, dth = -np.inf, 0, 0.0
         for j in range(N_GLOBAL):
@@ -522,6 +593,27 @@ def part5(keys, PT, rows):
               f" recheck RMSE {m2.group(1)} [95% {m2.group(2)}, {m2.group(3)}], robust {m2.group(4)} (400 reps)")
 
 
+def summary(keys, PT, BS, FR, F_seed, rows, yc):
+    banner("SUMMARY (every number repeated from above)")
+    for nm in ("MC RMSE", "MC robust half-width", "linear-theta RMSE"):
+        y, lo, hi, sd, flag, frac, y0, y1 = rows[nm]
+        print(f"  one calibrated reading, {nm:21} crosses 0.20 at Y = {100 * y:.2f}%  (bootstrap 90% {flo(lo, y0)}% to"
+              f" {fhi(hi, y1)}%, sd {100 * sd:.2f} pp)")
+    print(f"  one calibrated reading, FIM (t5_value.sd5)        crosses 0.20 at Y = {100 * yc:.2f}%")
+    for nm in ("MC RMSE", "MC robust half-width"):
+        y, lo, hi, sd, flag, frac, y0, y1 = rows["recovery " + nm]
+        if np.isfinite(y):
+            print(f"  recovery known to 10%,  {nm:21} crosses 0.20 at Y = {100 * y:.2f}%  (bootstrap 90% {flo(lo, y0)}% to"
+                  f" {fhi(hi, y1)}%; resamples crossing inside 10-17.5%: {frac:.1%})")
+        else:
+            print(f"  recovery known to 10%,  {nm:21} crossing {flag} (10-17.5%)")
+    for k in keys:
+        if k[1] == Y_VAR:
+            c = ci90(BS[k]["rmse"])
+            print(f"  {label(k):30} FIM {F_seed[k]:.4f}; MC RMSE {PT[k]['rmse']:.4f} [{c[0]:.4f}, {c[1]:.4f}], robust"
+                  f" {PT[k]['robust']:.4f}, median {PT[k]['median']:+.4f}, P(RMSE <= 0.20) {np.mean(BS[k]['rmse'] <= C.GATE):.3f}")
+
+
 def main():
     print("=" * 100)
     print("  FOLLOW-UP: THE FLUX-READING CROSSING OF sd(ln theta_hat) = 0.20 BY MONTE CARLO")
@@ -537,6 +629,7 @@ def main():
     rows = part3(keys, res, BS, PT, FR, F_seed, yc)
     part4()
     part5(keys, PT, rows)
+    summary(keys, PT, BS, FR, F_seed, rows, yc)
     print(f"\n  total runtime {time.time() - T_START:.0f} s")
 
 
