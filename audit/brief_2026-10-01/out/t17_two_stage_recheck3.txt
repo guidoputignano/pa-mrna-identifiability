@@ -1,0 +1,55 @@
+================================================================================================
+  INDEPENDENT RECHECK OF ITEM 15  (t17_two_stage.txt)
+================================================================================================
+  L = dyn.LTOT = 322.72727   (expect 322.73)
+  TH = 5% theta = 150.0000   K_m = 100.0   k_e = 5.0
+
+  SIDE CHECK  sd(ln K_m) from the monthly record (core idx 1, with
+              the full default priors incl. k_e 0.8) = 0.0604
+              KM_REC used by the claim = 0.062
+  transient grid: 577 samples, 0.0000..2.0000 d (5 min, 48 h)
+
+------------------------------------------------------------------------------------------------
+  (a) SAFE FULL WITHDRAWAL: dyn.Experiment([(-1,0.5L),(0,0.0)], L0=0.5L)
+      K_m prior 0.062 (dyn idx 2), L0 prior at 5% / 1% / exact (dyn idx 3)
+------------------------------------------------------------------------------------------------
+      marker over the transient: 26.07 .. 54.02  (drops from 54.0; untreated 5% marker ~54 -> DROPS, safe)
+            L0 5%:  sd(ln k_e) = 0.2052   sd(ln theta) = 1.2784
+            L0 1%:  sd(ln k_e) = 0.0623   sd(ln theta) = 0.3607
+         L0 exact:  sd(ln k_e) = 0.0382   sd(ln theta) = 0.1858
+      mild 25% withdrawal (marker 46.9-54.0): sd(ln k_e) @L0 5% = 0.2149
+
+------------------------------------------------------------------------------------------------
+  (c) FOLD + ADMISSIBILITY SWEEP (joined transient+record FIM)
+      fold check and whether any f<=1.177 reaches sd(ln theta)=0.20
+------------------------------------------------------------------------------------------------
+      boundary.tex fold_load_ratio = 1.177  (claim uses 1.177)
+      boundary.tex fold_m          = 276.0  (marker at the saddle)
+       f x load   marker  admissible  sd(ln theta)
+          0.500     26.1         yes        0.3473
+          0.750     39.9         yes        0.4440
+          1.000     54.0         yes        2.2729
+          1.177     64.2         yes        0.6824
+          1.500     83.2          NO        0.3224
+          2.000    113.2          NO        0.2197
+          3.000    174.6          NO        0.1679
+          4.000    237.1          NO        0.1519
+          6.000    363.7          NO        0.1432
+          8.000    491.4          NO        0.1434
+      f reaching sd<=0.20: [3.0, 4.0, 6.0, 8.0]; of these ADMISSIBLE (f<=1.177): NONE
+      best (lowest) sd(ln theta) over the ADMISSIBLE band f<=1.177: 0.3473
+
+------------------------------------------------------------------------------------------------
+  (b) TWO-STAGE COST: k_e pinned at stage 1, then n monthly theta-draws
+      median over 24 intake seeds, perdraw noise
+------------------------------------------------------------------------------------------------
+        draws    k_e~0.20    k_e~0.06   k_e exact
+           24      0.9631      0.4849      0.4077
+           52      0.9281      0.4192      0.3239
+          104      0.8931      0.3834      0.2733
+          365      0.8077      0.3336      0.1914
+      any safe two-stage (k_e 0.20 or 0.06) reaching sd(ln theta)<=0.20? False
+
+================================================================================================
+  DONE
+================================================================================================
