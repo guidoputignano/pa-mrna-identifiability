@@ -34,7 +34,7 @@
               every 2 d 0.378 [0.35, 0.41], 0.379, 0.378.
    monthly: K_m shared 1.0642 [0.730, 1.330]; per patient 1.3493; K_m known 1.0516; max corr 0.034; sd ln K_m: cohort 0.0149, per patient 0.0735
         2d: K_m shared 0.3776 [0.353, 0.409]; per patient 0.3793; K_m known 0.3775; max corr 0.001; sd ln K_m: cohort 0.0067, per patient 0.0328
-  [11 s]
+  [5 s]
 
 ====================================================================================================
   GAUSSIAN-SUMMARY MODEL z ~ N(mu 1, V + omega^2 I), RE-SIMULATED (independent code)
@@ -58,14 +58,15 @@
       monthly, N = 1200, true omega 0.33: rejects omega = 0 in 77.1%
            2d, N = 33, true omega 0.0: rejects omega = 0 in 2.7%
            2d, N = 33, true omega 0.33: rejects omega = 0 in 72.0%
-  [19 s]
+  [13 s]
 
 ====================================================================================================
   (c0) VALIDATION OF THE CLOSED FORMS AGAINST BRUTE FORCE (one simulated cohort)
 ====================================================================================================
   theta-profiled log-lik vs bounded least squares (lsq_linear): max |diff| = 5.97e-13
-  theta-integrated log-lik vs adaptive quadrature over theta:   max |diff| = 6.25e-13
+  theta-integrated log-lik vs adaptive quadrature over theta:   max |diff| = 6.25e-13 (on [0, inf)), 2.00e-13 (whole line)
   grid integral over ln k_e vs adaptive quadrature (4 (omega, mu) x 3 patients): max |log diff| = 5.16e-05
+  production D_cube (float32 stacked kernels, GH below 0.025) vs quadrature, 5 (omega, mu) x 3 patients: max |log diff| = 1.96e-05
   (the brute force profiles b under its prior; the closed form uses r'(sigma^2 I + sb^2 11')^-1 r,
    which is the same minimum exactly; both drop the constant log-determinant.)
 
@@ -82,13 +83,138 @@
         2d median:    5.66    5.44    4.13    2.04    0.64    0.39    1.06    9.04   80.95  877.86
         2d    max:   20.27   19.79   16.79   11.51    7.04    5.79    9.01   16.46   95.73  940.44
            95% upper end in ln k_e offset: median +0.255 [-0.182, +0.318]; region reaches offset -8 in 29% of records (t9: +0.319 [+0.227, +0.467], 96% monthly; +0.233 [-0.195, +0.312], 29% every 2 d); K_m on its +-3 grid edge in 0 records
-  [21 s]
+  [17 s]
 
 ====================================================================================================
   (c) OMEGA FROM SIMULATED RAW RECORDS: JOINT MARGINAL LIKELIHOOD AND POSTERIOR, 24 PATIENTS
 ====================================================================================================
   Each cohort: 24 patients at theta = 150, eta_i ~ N(0, omega^2), k_e,i = 5 e^eta_i, b_i ~ N(0, (5% L)^2),
-  fresh intake seeds, Gaussian noise sigma_i. 'ML' = theta_i profiled (>= 0), K_m shared; 'REML' =
-  theta_i integrated flat on [0, inf), K_m shared; 'ML-ppK' = theta_i and K_m profiled per patient.
-  Grids: ln k_e 596 points (step 0.01 on ln 5 + [-2, 2.5]), mu 163 points (step 0.04, parabolic refinement), omega 61 points to 4, K_m 9 points of 0.015 about the
+  fresh intake seeds, Gaussian noise sigma_i. Likelihoods, all marginal over ln k_e,i and b_i:
+    ML     theta_i profiled on theta >= 0, K_m shared (mu, K_m profiled)
+    IL+    theta_i integrated, flat prior on [0, inf), K_m shared (the posterior below uses this)
+    IL     theta_i integrated, flat on the whole line: the exact restricted likelihood of the
+           theta-free contrasts (a proper density, so standard asymptotics apply; ignores theta >= 0)
+    ML-ppK theta_i and K_m profiled per patient (the analogue of t9's C(iv) hierarchy)
+  Grids: ln k_e 656 points on ln 5 + [-12, 4] (step 0.01 on [-2, 2.2]), mu 263 points (step 0.04, parabolic refinement), omega 61 points to 4, K_m 9 points of 0.015 about the
   cohort's own fixed-effects estimate (parabolic refinement).
+     ... monthly omega=0.0 read=None: 80 cohorts in 81 s [98 s]
+     ... monthly omega=0.33 read=None: 80 cohorts in 92 s [190 s]
+     ... 2d omega=0.0 read=None: 60 cohorts in 61 s [251 s]
+     ... 2d omega=0.33 read=None: 60 cohorts in 62 s [313 s]
+     ... monthly omega=0.0 read=0.2: 40 cohorts in 35 s [348 s]
+     ... monthly omega=0.33 read=0.2: 40 cohorts in 39 s [387 s]
+
+  95% likelihood intervals for omega, {D(omega) - D_min <= 3.84}, mu and K_m profiled.
+  'excl 0' = lower end > 0; 'test' = D(0) - D_min > 2.71 (boundary 5% test); 'covers' = interval
+  holds the true omega; 'both' = holds 0 and 0.33. Upper end median [P10, P90].
+     design                     w  like. med w_hat     upper med [P10,P90]  excl 0   test  covers   both  cens
+     monthly                 0.00     ML     0.000   0.455 [ 0.233, 1.015]      0%     0%    100%    75%    1%
+     monthly                 0.00    IL+     0.000   0.459 [ 0.262, 1.124]      0%     0%    100%    78%    2%
+     monthly                 0.00     IL     0.000   1.051 [ 0.653, 2.170]      2%     5%     98%    98%    4%
+     monthly                 0.00 ML-ppK     0.000   0.479 [ 0.240, 1.042]      0%     0%    100%    76%    1%
+     monthly                 0.33     ML     0.000   0.612 [ 0.393, 2.176]      0%     0%    100%   100%    8%
+     monthly                 0.33    IL+     0.000   0.645 [ 0.431, 3.461]      0%     0%    100%   100%   10%
+     monthly                 0.33     IL     0.210   1.168 [ 0.813, 4.000]      4%     5%    100%    96%   12%
+     monthly                 0.33 ML-ppK     0.000   0.592 [ 0.398, 2.709]      0%     0%     99%    99%    8%
+     2d                      0.00     ML     0.000   0.181 [ 0.135, 0.261]      0%     0%    100%     3%    0%
+     2d                      0.00    IL+     0.000   0.167 [ 0.122, 0.247]      0%     0%    100%     2%    0%
+     2d                      0.00     IL     0.000   0.322 [ 0.226, 0.461]      0%     0%    100%    48%    0%
+     2d                      0.00 ML-ppK     0.000   0.189 [ 0.141, 0.271]      0%     0%    100%     3%    0%
+     2d                      0.33     ML     0.150   0.369 [ 0.224, 0.520]     25%    32%     65%    40%    0%
+     2d                      0.33    IL+     0.150   0.357 [ 0.223, 0.511]     30%    35%     63%    35%    0%
+     2d                      0.33     IL     0.300   0.569 [ 0.405, 0.708]     42%    53%     93%    53%    0%
+     2d                      0.33 ML-ppK     0.150   0.376 [ 0.253, 0.547]     23%    35%     70%    47%    0%
+     monthly + ke read 0.2   0.00     ML     0.000   0.127 [ 0.101, 0.168]      0%     0%    100%     0%    0%
+     monthly + ke read 0.2   0.00    IL+     0.000   0.100 [ 0.085, 0.132]      0%     0%    100%     0%    0%
+     monthly + ke read 0.2   0.00 ML-ppK     0.000   0.131 [ 0.102, 0.169]      0%     0%    100%     0%    0%
+     monthly + ke read 0.2   0.33     ML     0.300   0.445 [ 0.344, 0.511]    100%   100%     90%     0%    0%
+     monthly + ke read 0.2   0.33    IL+     0.300   0.438 [ 0.334, 0.501]    100%   100%     90%     0%    0%
+     monthly + ke read 0.2   0.33 ML-ppK     0.300   0.445 [ 0.333, 0.505]    100%   100%     90%     0%    0%
+
+  Diagnostic (K_m shared): the same likelihoods with mu and K_m FIXED at the truth
+  (ln 5, 100) instead of profiled. 'D(0)-D(.33) > 0' = share of cohorts in which omega = 0.33 beats
+  omega = 0 at the true (mu, K_m); 'profiled' = the same with mu, K_m profiled; mu_hat(0) = the profiled
+  mu at omega = 0, minus ln 5 (median).
+     design                     w  like. w_hat at truth  D(0)-D(.33)>0 truth  profiled  mu_hat(0)
+     monthly                 0.00     ML          0.000                   0%        0%     -0.040
+     monthly                 0.00    IL+          0.000                   0%        0%     -0.160
+     monthly                 0.00     IL          0.000                  32%       30%     -0.060
+     monthly                 0.33     ML          0.210                  86%        8%     -0.400
+     monthly                 0.33    IL+          0.300                  95%        6%     -0.520
+     monthly                 0.33     IL          0.270                  51%       49%     -0.240
+     2d                      0.00     ML          0.000                   0%        0%     +0.000
+     2d                      0.00    IL+          0.000                   0%        0%     +0.000
+     2d                      0.00     IL          0.000                   5%        8%     +0.000
+     2d                      0.33     ML          0.270                  97%       37%     -0.320
+     2d                      0.33    IL+          0.270                  98%       37%     -0.360
+     2d                      0.33     IL          0.330                  90%       75%     -0.160
+     monthly + ke read 0.2   0.00     ML          0.000                   0%        0%     +0.000
+     monthly + ke read 0.2   0.00    IL+          0.000                   0%        0%     +0.000
+     monthly + ke read 0.2   0.33     ML          0.330                 100%       98%     -0.140
+     monthly + ke read 0.2   0.33    IL+          0.330                 100%      100%     -0.160
+  grid checks over all cohorts: K centre at edge 0%; K_m profile on the grid edge inside the interval ML 0% / IL+ 0%; mu on the edge ML 3% / IL+ 4%; largest scaled likelihood at the top of the ln k_e grid 9.7e-29
+
+  Bayesian posterior for omega (theta_i flat on [0, inf), b_i ~ N(0, (5% L)^2), mu ~ N(ln 5, 2^2),
+  ln K_m flat on the cohort's +-0.06 window, omega ~ half-normal(1); 'u4' = omega ~ U(0, 4)).
+  Prior alone, half-normal(1): median 0.674, 95% upper 1.960, P(omega > 0.2) = 0.841.
+     design                     w  post med     95% up: med [P10,P90]  P(w>.2) P(w>.2)>.95  covers  u4: 95% up  log BF .33:0 med
+     monthly                 0.00     0.171   0.699 [ 0.406, 1.077]     0.43          0%    100%       0.890             -1.05
+     monthly                 0.33     0.244   0.875 [ 0.603, 1.229]     0.59          0%    100%       1.178             -0.46
+     2d                      0.00     0.058   0.170 [ 0.129, 0.242]     0.04          0%    100%       0.170             -6.25
+     2d                      0.33     0.185   0.364 [ 0.269, 0.509]     0.47          2%     68%       0.369             +0.43
+     monthly + ke read 0.2   0.00     0.038   0.110 [ 0.094, 0.137]     0.00          0%    100%       0.111            -13.50
+     monthly + ke read 0.2   0.33     0.322   0.446 [ 0.341, 0.507]     0.91         68%     90%       0.448            +27.37
+
+====================================================================================================
+  (c2) SENSITIVITY: CAPACITY VARYING BETWEEN PATIENTS (ln theta_i ~ N(ln 150, 0.5^2)), monthly
+====================================================================================================
+  Tests whether the raw likelihood's information on omega depends on every patient sharing
+  theta = 150 (so that each patient's theta >= 0 wall sits the same distance above its k_e).
+
+  95% likelihood intervals for omega, {D(omega) - D_min <= 3.84}, mu and K_m profiled.
+  'excl 0' = lower end > 0; 'test' = D(0) - D_min > 2.71 (boundary 5% test); 'covers' = interval
+  holds the true omega; 'both' = holds 0 and 0.33. Upper end median [P10, P90].
+     design                     w  like. med w_hat     upper med [P10,P90]  excl 0   test  covers   both  cens
+     monthly                 0.00     ML     0.000   0.516 [ 0.282, 0.839]      0%     0%    100%    83%    3%
+     monthly                 0.00    IL+     0.000   0.519 [ 0.301, 0.869]      0%     0%    100%    87%    3%
+     monthly                 0.33     ML     0.000   0.632 [ 0.390, 4.000]      0%     0%     97%    97%   13%
+     monthly                 0.33    IL+     0.000   0.687 [ 0.423, 4.000]      0%     0%    100%   100%   20%
+
+  Diagnostic (K_m shared): the same likelihoods with mu and K_m FIXED at the truth
+  (ln 5, 100) instead of profiled. 'D(0)-D(.33) > 0' = share of cohorts in which omega = 0.33 beats
+  omega = 0 at the true (mu, K_m); 'profiled' = the same with mu, K_m profiled; mu_hat(0) = the profiled
+  mu at omega = 0, minus ln 5 (median).
+     design                     w  like. w_hat at truth  D(0)-D(.33)>0 truth  profiled  mu_hat(0)
+     monthly                 0.00     ML          0.000                   0%        0%     -0.120
+     monthly                 0.00    IL+          0.000                   0%        0%     -0.160
+     monthly                 0.33     ML          0.225                  97%        3%     -0.400
+     monthly                 0.33    IL+          0.300                 100%        3%     -0.560
+  grid checks over all cohorts: K centre at edge 0%; K_m profile on the grid edge inside the interval ML 0% / IL+ 0%; mu on the edge ML 13% / IL+ 13%; largest scaled likelihood at the top of the ln k_e grid 0.0e+00
+
+  Bayesian posterior for omega (theta_i flat on [0, inf), b_i ~ N(0, (5% L)^2), mu ~ N(ln 5, 2^2),
+  ln K_m flat on the cohort's +-0.06 window, omega ~ half-normal(1); 'u4' = omega ~ U(0, 4)).
+  Prior alone, half-normal(1): median 0.674, 95% upper 1.960, P(omega > 0.2) = 0.841.
+     design                     w  post med     95% up: med [P10,P90]  P(w>.2) P(w>.2)>.95  covers  u4: 95% up  log BF .33:0 med
+     monthly                 0.00     0.194   0.774 [ 0.473, 0.996]     0.47          0%    100%       1.034             -0.85
+     monthly                 0.33     0.256   0.907 [ 0.664, 1.274]     0.60          0%    100%       1.260             -0.41
+  [417 s]
+
+====================================================================================================
+  (c3) RAW-LIKELIHOOD POWER AT LARGER N: the claims 'about 1200 patients' (monthly) and '33' (every 2 d)
+====================================================================================================
+  Share of cohorts in which the boundary LR test (D(0) - D_min > 2.71) rejects omega = 0. Same model
+  as (c), coarser grids (mu step 0.03 on ln 5 + [-3, 1], omega to 1.3, K_m 7 points). 'Gauss-model
+  rej' = the same test inside the Gaussian-summary model at the same N (1000 cohorts, diagonal V).
+  'edge' = count of (cohort, likelihood) curves whose mu or K_m optimum sat on a grid edge at omega = 0
+  or at omega_hat. Binomial 95% upper bound for 0 of 20 is 17%, for 0 of 8 is 37%.
+       design     N     w cohorts  ML rej  IL+ rej  IL rej   w_hat ML/IL+/IL (median)  Gauss-model rej  edge
+      monthly    96  0.00      20      0%       0%      0%    0.000/0.000/0.000             3.5%     0   (15 s) [432 s]
+      monthly    96  0.33      20      0%       0%     10%    0.000/0.000/0.000            15.3%     0   (16 s) [449 s]
+      monthly   384  0.00      16      0%       0%      0%    0.000/0.000/0.000             4.7%     0   (49 s) [497 s]
+      monthly   384  0.33      24      0%       0%     17%    0.060/0.000/0.255            38.0%     0   (73 s) [570 s]
+      monthly  1200  0.33       8     50%      25%     88%    0.075/0.015/0.300            77.4%     0   (70 s) [640 s]
+           2d    48  0.00      20      0%       0%      5%    0.010/0.005/0.030             3.8%     0   (7 s) [648 s]
+           2d    48  0.33      20     50%      50%     60%    0.150/0.150/0.270            84.4%     0   (8 s) [656 s]
+           2d    96  0.33      20     90%      90%    100%    0.180/0.180/0.315            98.4%     0   (17 s) [673 s]
+
+  total runtime 673 s

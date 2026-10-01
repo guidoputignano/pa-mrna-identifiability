@@ -19,8 +19,10 @@ Routes that differ from t9's:
   (c) omega from SIMULATED RAW RECORDS by the exact joint marginal likelihood.
       Given K_m the model is LINEAR in (theta_i, k_e,i, b_i), so b_i (Gaussian
       prior) is integrated analytically, theta_i >= 0 is either profiled (ML)
-      or integrated under a flat prior on [0, inf) (REML-like), both in closed
-      form, and ln k_e,i ~ N(mu, omega^2) is integrated numerically on a fine
+      or integrated under a flat prior on [0, inf) (IL+), or theta_i is
+      integrated over the whole line (IL, the exact restricted likelihood that
+      ignores theta >= 0), all in closed form, and ln k_e,i ~ N(mu, omega^2) is
+      integrated numerically on a fine
       grid. mu and the shared K_m are profiled (likelihood) or integrated
       (Bayesian posterior for omega, half-normal(1) prior). No Gaussian
       per-patient summary is used anywhere in (c).
@@ -329,12 +331,12 @@ def part_gauss(Vs):
 # =====================================================================
 #  u = ln k_e grid: coarse, medium, fine (trapezoid weights); analytic tail below.
 U = np.r_[LN5 + np.arange(-12.0, -5.0, 0.1), LN5 + np.arange(-5.0, -2.0, 0.04),
-          LN5 + np.arange(-2.0, 2.5 + 1e-9, 0.01)]
+          LN5 + np.arange(-2.0, 2.2, 0.01), LN5 + np.arange(2.2, 4.0 + 1e-9, 0.02)]
 WU = np.zeros(U.size)
 _d = np.diff(U)
 WU[:-1] += _d / 2
 WU[1:] += _d / 2
-MU = LN5 + np.arange(-4.5, 2.0 + 1e-9, 0.04)
+MU = LN5 + np.arange(-8.0, 2.5 + 1e-9, 0.04)
 OM = np.r_[0.0, 0.01, 0.02, np.arange(0.03, 0.7, 0.03), np.arange(0.75, 1.5, 0.05),
            np.arange(1.5, 3.0 + 1e-9, 0.1), 3.25, 3.5, 3.75, 4.0]
 OM_GH = OM[(OM > 0) & (OM < 0.025)]
@@ -348,7 +350,12 @@ def kernels(mu, om):
     Kr = np.exp(-0.5 * ((U[None, None, :] - mu[None, :, None]) / om[:, None, None]) ** 2) \
         / (om[:, None, None] * np.sqrt(2 * np.pi)) * WU[None, None, :]
     tail = ndtr((U[0] - mu[None, :]) / om[:, None])
-    return Kr.reshape(om.size * mu.size, U.size), tail.reshape(-1)
+    # each row rescaled to the exact Gaussian mass on [U[0], U[-1]] (removes aliasing where the
+    # grid is coarse relative to omega; a change below 1e-6 where it is fine)
+    mass = ndtr((U[-1] - mu[None, :]) / om[:, None]) - tail
+    rs = Kr.sum(-1)
+    Kr = Kr * np.where(rs > 0, mass / np.where(rs > 0, rs, 1.0), 0.0)[..., None]
+    return Kr.reshape(om.size * mu.size, U.size).astype(np.float32), tail.reshape(-1)
 
 
 KERN, TAIL = kernels(MU, OM_GR)
@@ -378,8 +385,10 @@ def loglik(S, u, mode, zread=None, zsd=None):
     Q = rss0 - th * th * gg
     if mode == "prof":
         out = -0.5 * np.where(th >= 0, Q, rss0)
-    else:
+    elif mode == "int":
         out = -0.5 * Q + log_ndtr(th * np.sqrt(gg)) + 0.5 * np.log(2 * np.pi / gg)
+    else:          # 'unc': theta integrated flat on the whole line (exact restricted likelihood)
+        out = -0.5 * Q + 0.5 * np.log(2 * np.pi / gg)
     if zread is not None:
         out = out - 0.5 * ((u - zread[:, None, None]) / zsd) ** 2
     return out
@@ -401,23 +410,30 @@ def para_min(D):
     return np.where(edge, D.min(-1), ref), edge
 
 
-def D_cube(S, mode, zread=None, zsd=None, mu=MU, kern=KERN, tail=TAIL, om_gr=OM_GR):
+def D_cube(S, mode, zread=None, zsd=None, mu=MU, kern=KERN, tail=TAIL, om_gr=OM_GR, chunk=96):
     """-2 log L(omega, mu, K) summed over patients; omega on OM (0, GH values, grid values)."""
     n, nK = S["gg"].shape
-    out = np.empty((1 + OM_GH.size + om_gr.size, mu.size, nK))
-    out[0] = -2 * loglik(S, mu, mode, zread, zsd).sum(0).T
-    for k, w in enumerate(OM_GH):
-        pts = (mu[:, None] + w * GHX[None, :]).ravel()
-        lp = loglik(S, pts, mode, zread, zsd).reshape(n, nK, mu.size, GHX.size)
-        out[1 + k] = -2 * logsumexp(lp, axis=-1, b=GHW).sum(0).T
-    ll = loglik(S, U, mode, zread, zsd)
-    M = ll.max(-1)
-    E = np.exp(ll - M[..., None])
-    I = kern @ E.reshape(n * nK, U.size).T + tail[:, None] * E[..., 0].reshape(1, -1)
-    with np.errstate(divide="ignore"):
-        lI = np.log(I).reshape(om_gr.size, mu.size, n, nK) + M[None, None]
-    out[1 + OM_GH.size:] = -2 * lI.sum(2)
-    return out, float(E[..., -1].max())
+    out = np.zeros((1 + OM_GH.size + om_gr.size, mu.size, nK))
+    etop = 0.0
+    for a in range(0, n, chunk):
+        Sc = {k: v[a:a + chunk] for k, v in S.items()}
+        zc = None if zread is None else zread[a:a + chunk]
+        nc = Sc["gg"].shape[0]
+        out[0] += -2 * loglik(Sc, mu, mode, zc, zsd).sum(0).T
+        for k, w in enumerate(OM_GH):
+            pts = (mu[:, None] + w * GHX[None, :]).ravel()
+            lp = loglik(Sc, pts, mode, zc, zsd).reshape(nc, nK, mu.size, GHX.size)
+            out[1 + k] += -2 * logsumexp(lp, axis=-1, b=GHW).sum(0).T
+        ll = loglik(Sc, U, mode, zc, zsd)
+        M = ll.max(-1)
+        E = np.exp(ll - M[..., None])
+        I = (kern @ E.reshape(nc * nK, U.size).T.astype(np.float32)).astype(np.float64) \
+            + tail[:, None] * E[..., 0].reshape(1, -1)
+        with np.errstate(divide="ignore"):
+            lI = np.log(I).reshape(om_gr.size, mu.size, nc, nK) + M[None, None]
+        out[1 + OM_GH.size:] += -2 * lI.sum(2)
+        etop = max(etop, float(E[..., -1].max()))
+    return out, etop
 
 
 def make_cohort(rng, omega, des, n, seedbase, theta_sd=0.0, b_random=True):
@@ -476,7 +492,8 @@ def summarise_D(D):
     jm = np.argmin(DK, -1)
     mu_edge = bool(np.any((jm[inside] == 0) | (jm[inside] == MU.size - 1)))
     k_edge = bool(np.any(eK[inside, :][np.arange(inside.sum()), jm[inside]]))
-    return dict(lo=lo, hi=hi, lr0=float(rel[0]), what=float(OM[np.argmin(Dw)]),
+    mu0 = float(MU[np.argmin(DK[0])] - LN5)
+    return dict(lo=lo, hi=hi, lr0=float(rel[0]), what=float(OM[np.argmin(Dw)]), mu0=mu0,
                 cens=i1 == OM.size - 1, mu_edge=mu_edge, k_edge=k_edge, rel=rel)
 
 
@@ -497,15 +514,19 @@ def posterior(D, dK):
     return out
 
 
-def analyse(ms, ys, sgs, des, zread=None, zsd=None, perpatient=True, bayes=True):
+def analyse(ms, ys, sgs, des, zread=None, zsd=None, perpatient=True, bayes=True, modes=("prof", "int")):
     inc = INC[des]
     kc, kc_edge = k_center(ms, inc, ys, sgs)
     lK = kc + np.arange(-0.06, 0.06 + 1e-9, 0.015)
     S = stats(ms, inc, ys, sgs, lK)
     res = dict(kc_edge=kc_edge)
-    for mode in ("prof", "int"):
+    for mode in modes:
         D, etop = D_cube(S, mode, zread, zsd)
         res[mode] = summarise_D(D)
+        im, ik = np.argmin(np.abs(MU - LN5)), np.argmin(np.abs(lK - np.log(KM0)))
+        i33 = np.argmin(np.abs(OM - 0.33))
+        res[mode]["true_pref33"] = float(D[0, im, ik] - D[i33, im, ik])   # > 0: truth (mu, K) prefers 0.33
+        res[mode]["true_what"] = float(OM[np.argmin(D[:, im, ik])])
         res["etop"] = max(res.get("etop", 0.0), etop)
         if mode == "int" and bayes:
             res["post"] = posterior(D, 0.015)
@@ -528,7 +549,7 @@ def analyse(ms, ys, sgs, des, zread=None, zsd=None, perpatient=True, bayes=True)
             lp = loglik(Sp, pts, "prof", zread, zsd)
             pp, _ = para_min(np.moveaxis(-lp, 1, -1))
             D[1 + k] = -2 * logsumexp(-pp.reshape(n, MU.size, GHX.size), axis=-1, b=GHW).sum(0)
-        I = KERN @ E.T + TAIL[:, None] * E[:, 0][None, :]
+        I = (KERN @ E.T.astype(np.float32)).astype(np.float64) + TAIL[:, None] * E[:, 0][None, :]
         with np.errstate(divide="ignore"):
             lI = np.log(I).reshape(OM_GR.size, MU.size, n) + M[None, None]
         D[1 + OM_GH.size:] = -2 * lI.sum(-1)
@@ -544,7 +565,7 @@ def validate():
     inc = INC["monthly"]
     lK = np.array([np.log(KM0)])
     S = stats(ms, inc, ys, sgs, lK)
-    worst_p, worst_i, worst_q = 0.0, 0.0, 0.0
+    worst_p, worst_i, worst_q, worst_u, worst_c = 0.0, 0.0, 0.0, 0.0, 0.0
     for i in range(3):
         m, y, sg = ms[i], ys[i], sgs[i]
         g = m / (KM0 + m)
@@ -572,6 +593,10 @@ def validate():
             bi = np.log(val) - ref
             mi = loglik({k: v[i:i + 1] for k, v in S.items()}, np.array([uu]), "int")[0, 0, 0]
             worst_i = max(worst_i, abs(bi - mi))
+            tu = (S["gr"][i, 0] - ke * S["gm"][i, 0]) / S["gg"][i, 0]
+            vu = quad(lambda t: np.exp(ref - negq(t)), tu - 40 * ts, tu + 40 * ts, points=[tu], limit=400)[0]
+            mu_ = loglik({k: v[i:i + 1] for k, v in S.items()}, np.array([uu]), "unc")[0, 0, 0]
+            worst_u = max(worst_u, abs(np.log(vu) - ref - mu_))
         # u-integral: quad against the grid, two (omega, mu) points
         Si = {k: v[i:i + 1] for k, v in S.items()}
         ll = loglik(Si, U, "prof")[0, 0]
@@ -584,9 +609,22 @@ def validate():
                      epsabs=0.0, epsrel=1e-10)[0]
             gsum = np.sum(np.exp(ll - Mx) * norm.pdf(U, mu, w) * WU) + np.exp(ll[0] - Mx) * ndtr((U[0] - mu) / w)
             worst_q = max(worst_q, abs(np.log(gsum) - np.log(q)))
+        # the production pipeline (stacked float32 kernels, GH for small omega) on the same patient
+        Dc, _ = D_cube(Si, "prof")
+        for w, mut in ((0.01, LN5 - 0.2), (0.33, LN5), (0.9, LN5 - 0.7), (2.0, LN5 - 2.0), (0.06, LN5 + 0.1)):
+            iw, im = int(np.argmin(np.abs(OM - w))), int(np.argmin(np.abs(MU - mut)))
+            ww, mm_ = OM[iw], MU[im]
+            a, b = max(-60.0, mm_ - 12 * ww), min(U[-1] + 3.0, mm_ + 12 * ww)
+            pts = [x for x in (mm_, U[np.argmax(ll)]) if a < x < b]
+            q = quad(lambda uu: f(uu) * norm.pdf(uu, mm_, ww), a, b, points=pts, limit=500,
+                     epsabs=0.0, epsrel=1e-10)[0]
+            worst_c = max(worst_c, abs(-0.5 * Dc[iw, im, 0] - (np.log(q) + Mx)))
     print(f"  theta-profiled log-lik vs bounded least squares (lsq_linear): max |diff| = {worst_p:.2e}")
-    print(f"  theta-integrated log-lik vs adaptive quadrature over theta:   max |diff| = {worst_i:.2e}")
+    print(f"  theta-integrated log-lik vs adaptive quadrature over theta:   max |diff| = {worst_i:.2e} (on [0, inf)),"
+          f" {worst_u:.2e} (whole line)")
     print(f"  grid integral over ln k_e vs adaptive quadrature (4 (omega, mu) x 3 patients): max |log diff| = {worst_q:.2e}")
+    print(f"  production D_cube (float32 stacked kernels, GH below 0.025) vs quadrature, 5 (omega, mu) x 3 patients:"
+          f" max |log diff| = {worst_c:.2e}")
     print("  (the brute force profiles b under its prior; the closed form uses r'(sigma^2 I + sb^2 11')^-1 r,")
     print("   which is the same minimum exactly; both drop the constant log-determinant.)")
 
@@ -629,21 +667,21 @@ def shape_table():
 
 def run_cells(cells, label):
     rows = {}
-    for (des, w, n_coh, zsd, seed0) in cells:
+    for (des, w, n_coh, zsd, seed0, modes) in cells:
         t0 = time.time()
         R = []
         for k in range(n_coh):
             rng = np.random.default_rng([seed0, k])
             ms, ys, sgs, eta = make_cohort(rng, w, des, 24, seed0 * 10 ** 6 + 1000 * k)
             zr = (LN5 + eta + zsd * rng.standard_normal(24)) if zsd else None
-            R.append(analyse(ms, ys, sgs, des, zr, zsd))
+            R.append(analyse(ms, ys, sgs, des, zr, zsd, modes=modes))
         rows[(des, w, zsd)] = R
         print(f"     ... {des} omega={w} read={zsd}: {n_coh} cohorts in {time.time() - t0:.0f} s {el()}")
     return rows
 
 
 def print_cells(rows):
-    print("\n  Profile-likelihood 95% intervals for omega, {D(omega) - D_min <= 3.84}, mu and K_m profiled.")
+    print("\n  95% likelihood intervals for omega, {D(omega) - D_min <= 3.84}, mu and K_m profiled.")
     print("  'excl 0' = lower end > 0; 'test' = D(0) - D_min > 2.71 (boundary 5% test); 'covers' = interval")
     print("  holds the true omega; 'both' = holds 0 and 0.33. Upper end median [P10, P90].")
     hdr = (f"     {'design':<22} {'w':>5} {'like.':>6} {'med w_hat':>9} {'upper med [P10,P90]':>23} "
@@ -651,7 +689,7 @@ def print_cells(rows):
     print(hdr)
     for (des, w, zsd), R in rows.items():
         lab = des + ("" if not zsd else f" + ke read {zsd}")
-        for key, nm in (("prof", "ML"), ("int", "REML"), ("pp", "ML-ppK")):
+        for key, nm in (("prof", "ML"), ("int", "IL+"), ("unc", "IL"), ("pp", "ML-ppK")):
             if key not in R[0]:
                 continue
             hi = np.array([r[key]["hi"] for r in R])
@@ -666,12 +704,30 @@ def print_cells(rows):
             print(f"     {lab:<22} {w:5.2f} {nm:>6} {np.median(wh):9.3f} {np.median(hi):7.3f} "
                   f"[{np.percentile(hi, 10):6.3f},{np.percentile(hi, 90):6.3f}] {np.mean(lo > 0):7.0%} "
                   f"{np.mean(lr > CHI90):6.0%} {np.mean(cov):7.0%} {np.mean(both):6.0%} {np.mean(cen):5.0%}")
+    print("\n  Diagnostic (K_m shared): the same likelihoods with mu and K_m FIXED at the truth")
+    print("  (ln 5, 100) instead of profiled. 'D(0)-D(.33) > 0' = share of cohorts in which omega = 0.33 beats")
+    print("  omega = 0 at the true (mu, K_m); 'profiled' = the same with mu, K_m profiled; mu_hat(0) = the profiled")
+    print("  mu at omega = 0, minus ln 5 (median).")
+    print(f"     {'design':<22} {'w':>5} {'like.':>6} {'w_hat at truth':>14} {'D(0)-D(.33)>0 truth':>20} "
+          f"{'profiled':>9} {'mu_hat(0)':>10}")
+    for (des, w, zsd), R in rows.items():
+        lab = des + ("" if not zsd else f" + ke read {zsd}")
+        for key, nm in (("prof", "ML"), ("int", "IL+"), ("unc", "IL")):
+            if key not in R[0]:
+                continue
+            tw = np.array([r[key]["true_what"] for r in R])
+            tp = np.array([r[key]["true_pref33"] for r in R])
+            relv = np.array([r[key]["rel"] for r in R])
+            pp = np.array([rv[0] > np.interp(0.33, OM, rv) for rv in relv])
+            m0 = np.array([r[key]["mu0"] for r in R])
+            print(f"     {lab:<22} {w:5.2f} {nm:>6} {np.median(tw):14.3f} {np.mean(tp > 0):20.0%} "
+                  f"{np.mean(pp):9.0%} {np.median(m0):+10.3f}")
     flags = [(r["kc_edge"], r["prof"]["k_edge"], r["prof"]["mu_edge"], r["int"]["k_edge"], r["int"]["mu_edge"],
               r["etop"]) for R in rows.values() for r in R]
     fl = np.array(flags, float)
     print(f"  grid checks over all cohorts: K centre at edge {fl[:, 0].mean():.0%}; K_m profile on the grid edge "
-          f"inside the interval ML {fl[:, 1].mean():.0%} / REML {fl[:, 3].mean():.0%}; mu on the edge ML "
-          f"{fl[:, 2].mean():.0%} / REML {fl[:, 4].mean():.0%}; largest scaled likelihood at the top of the "
+          f"inside the interval ML {fl[:, 1].mean():.0%} / IL+ {fl[:, 3].mean():.0%}; mu on the edge ML "
+          f"{fl[:, 2].mean():.0%} / IL+ {fl[:, 4].mean():.0%}; largest scaled likelihood at the top of the "
           f"ln k_e grid {fl[:, 5].max():.1e}")
     print("\n  Bayesian posterior for omega (theta_i flat on [0, inf), b_i ~ N(0, (5% L)^2), mu ~ N(ln 5, 2^2),")
     print("  ln K_m flat on the cohort's +-0.06 window, omega ~ half-normal(1); 'u4' = omega ~ U(0, 4)).")
@@ -692,42 +748,61 @@ def print_cells(rows):
               f"{np.mean(up >= w):7.0%} {np.median(u4):11.3f} {np.median(lbf):+17.2f}")
 
 
-def power_large_n(Ns, n_coh, seed0):
-    """Raw-likelihood boundary test at larger N, monthly: reduced grids, theta profiled and integrated."""
-    mu = LN5 + np.arange(-1.5, 0.8 + 1e-9, 0.03)
+def gauss_power(v24, N, w, reps, seed):
+    """Boundary LR test inside the Gaussian-summary model, diagonal V (the 24 v_i cycled)."""
+    wg = np.r_[0.0, np.geomspace(0.01, 3.0, 160)]
+    v = np.resize(v24, N)
+    rng = np.random.default_rng(seed)
+    rej = []
+    for blk in range(0, reps, 250):
+        Z = LN5 + rng.standard_normal((250, N)) * np.sqrt(v + w * w)
+        D = np.empty((wg.size, 250))
+        for k, ww in enumerate(wg):
+            s2 = v + ww * ww
+            mu = (Z / s2).sum(1) / (1 / s2).sum()
+            D[k] = np.log(s2).sum() + (((Z - mu[:, None]) ** 2) / s2).sum(1)
+        rej.append(D[0] - D.min(0) > CHI90)
+    return float(np.mean(np.concatenate(rej)))
+
+
+def power_large_n(plan, Vs, seed0):
+    """Raw-likelihood boundary test at larger N: reduced grids, the three K_m-shared likelihoods."""
+    mu = LN5 + np.arange(-3.0, 1.0 + 1e-9, 0.03)
     om_gr = np.r_[np.arange(0.03, 0.7, 0.03), 0.8, 1.0, 1.3]
+    omg = np.r_[0.0, OM_GH, om_gr]
     kern, tail = kernels(mu, om_gr)
-    out = {}
-    for N in Ns:
-        for w in (0.0, 0.33):
-            t0 = time.time()
-            rej = {"prof": [], "int": []}
-            what = {"prof": [], "int": []}
-            edge = 0
-            for k in range(n_coh):
-                rng = np.random.default_rng([seed0, N, int(100 * w), k])
-                ms, ys, sgs, _ = make_cohort(rng, w, "monthly", N,
-                                            (seed0 * 10 ** 6 + N * 10 ** 3 + int(100 * w)) * 10 ** 5 + 1000 * k)
-                inc = INC["monthly"]
-                kc, _ = k_center(ms, inc, ys, sgs)
-                hw = max(0.03, 0.06 * np.sqrt(24.0 / N))
-                lK = kc + np.linspace(-hw, hw, 7)
-                S = stats(ms, inc, ys, sgs, lK)
-                for mode in ("prof", "int"):
-                    D, _ = D_cube(S, mode, mu=mu, kern=kern, tail=tail, om_gr=om_gr)
-                    DK, eK = para_min(D)
-                    Dw, eM = para_min(DK)
-                    rej[mode].append(Dw[0] - Dw.min() > CHI90)
-                    omg = np.r_[0.0, OM_GH, om_gr]
-                    what[mode].append(omg[np.argmin(Dw)])
-                    jm = np.argmin(DK, -1)
-                    edge += int(np.any((jm == 0) | (jm == mu.size - 1)) or np.any(eK[np.arange(omg.size), jm]))
-            out[(N, w)] = rej
-            print(f"     N = {N:4d}, true omega {w:4.2f}: test rejects omega = 0 in ML {np.mean(rej['prof']):4.0%}, "
-                  f"REML {np.mean(rej['int']):4.0%} of {n_coh} cohorts; median omega_hat ML "
-                  f"{np.median(what['prof']):.3f}, REML {np.median(what['int']):.3f}; grid-edge hits {edge} "
-                  f"({time.time() - t0:.0f} s) {el()}")
-    return out
+    modes = ("prof", "int", "unc")
+    print(f"     {'design':>8} {'N':>5} {'w':>5} {'cohorts':>7} {'ML rej':>7} {'IL+ rej':>8} {'IL rej':>7} "
+          f"{'w_hat ML/IL+/IL (median)':>26} {'Gauss-model rej':>16} {'edge':>5}")
+    for des, N, w, n_coh in plan:
+        t0 = time.time()
+        rej = {m: [] for m in modes}
+        what = {m: [] for m in modes}
+        edge = 0
+        for k in range(n_coh):
+            rng = np.random.default_rng([seed0, N, int(100 * w), k, len(des)])
+            ms, ys, sgs, _ = make_cohort(rng, w, des, N,
+                                        (seed0 * 10 ** 6 + N * 10 ** 3 + int(100 * w) + 7 * len(des)) * 10 ** 5
+                                        + 1000 * k)
+            inc = INC[des]
+            kc, _ = k_center(ms, inc, ys, sgs)
+            hw = max(0.03, 0.06 * np.sqrt(24.0 / N))
+            lK = kc + np.linspace(-hw, hw, 7)
+            S = stats(ms, inc, ys, sgs, lK)
+            for mode in modes:
+                D, _ = D_cube(S, mode, mu=mu, kern=kern, tail=tail, om_gr=om_gr)
+                DK, eK = para_min(D)
+                Dw, eM = para_min(DK)
+                rej[mode].append(Dw[0] - Dw.min() > CHI90)
+                ih = int(np.argmin(Dw))
+                what[mode].append(omg[ih])
+                jm = np.argmin(DK, -1)
+                for ii in {0, ih}:      # edges only where the test reads the curve
+                    edge += int(jm[ii] in (0, mu.size - 1) or eK[ii, jm[ii]])
+        gp = gauss_power(np.diag(Vs[des]), N, w, 1000, 40_000 + N + int(100 * w) + 7 * len(des))
+        print(f"     {des:>8} {N:5d} {w:5.2f} {n_coh:7d} {np.mean(rej['prof']):7.0%} {np.mean(rej['int']):8.0%} "
+              f"{np.mean(rej['unc']):7.0%} {np.median(what['prof']):8.3f}/{np.median(what['int']):.3f}/"
+              f"{np.median(what['unc']):.3f} {gp:16.1%} {edge:5d}   ({time.time() - t0:.0f} s) {el()}")
 
 
 def main():
@@ -743,14 +818,19 @@ def main():
 
     banner("(c) OMEGA FROM SIMULATED RAW RECORDS: JOINT MARGINAL LIKELIHOOD AND POSTERIOR, 24 PATIENTS")
     print("  Each cohort: 24 patients at theta = 150, eta_i ~ N(0, omega^2), k_e,i = 5 e^eta_i, b_i ~ N(0, (5% L)^2),")
-    print("  fresh intake seeds, Gaussian noise sigma_i. 'ML' = theta_i profiled (>= 0), K_m shared; 'REML' =")
-    print("  theta_i integrated flat on [0, inf), K_m shared; 'ML-ppK' = theta_i and K_m profiled per patient.")
-    print(f"  Grids: ln k_e {U.size} points (step 0.01 on ln 5 + [-2, 2.5]), mu {MU.size} points (step 0.04,"
+    print("  fresh intake seeds, Gaussian noise sigma_i. Likelihoods, all marginal over ln k_e,i and b_i:")
+    print("    ML     theta_i profiled on theta >= 0, K_m shared (mu, K_m profiled)")
+    print("    IL+    theta_i integrated, flat prior on [0, inf), K_m shared (the posterior below uses this)")
+    print("    IL     theta_i integrated, flat on the whole line: the exact restricted likelihood of the")
+    print("           theta-free contrasts (a proper density, so standard asymptotics apply; ignores theta >= 0)")
+    print("    ML-ppK theta_i and K_m profiled per patient (the analogue of t9's C(iv) hierarchy)")
+    print(f"  Grids: ln k_e {U.size} points on ln 5 + [-12, 4] (step 0.01 on [-2, 2.2]), mu {MU.size} points (step 0.04,"
           f" parabolic refinement), omega {OM.size} points to {OM[-1]:.0f}, K_m 9 points of 0.015 about the")
     print("  cohort's own fixed-effects estimate (parabolic refinement).")
-    cells = [("monthly", 0.0, 80, None, 101), ("monthly", 0.33, 80, None, 102),
-             ("2d", 0.0, 60, None, 103), ("2d", 0.33, 60, None, 104),
-             ("monthly", 0.0, 40, 0.2, 105), ("monthly", 0.33, 40, 0.2, 106)]
+    M3 = ("prof", "int", "unc")
+    cells = [("monthly", 0.0, 80, None, 101, M3), ("monthly", 0.33, 80, None, 102, M3),
+             ("2d", 0.0, 60, None, 103, M3), ("2d", 0.33, 60, None, 104, M3),
+             ("monthly", 0.0, 40, 0.2, 105, M3[:2]), ("monthly", 0.33, 40, 0.2, 106, M3[:2])]
     rows = run_cells(cells, "main")
     print_cells(rows)
 
@@ -760,7 +840,7 @@ def main():
     rows2 = {}
     for w, seed0 in ((0.0, 201), (0.33, 202)):
         R = []
-        for k in range(40):
+        for k in range(30):
             rng = np.random.default_rng([seed0, k])
             ms, ys, sgs, eta = make_cohort(rng, w, "monthly", 24, seed0 * 10 ** 6 + 1000 * k, theta_sd=0.5)
             R.append(analyse(ms, ys, sgs, "monthly", perpatient=False))
@@ -768,9 +848,16 @@ def main():
     print_cells(rows2)
     print(f"  {el()}")
 
-    banner("(c3) RAW-LIKELIHOOD POWER AT LARGER N (monthly): the claim 'about 1200 patients for 80% power'")
-    print("  Same model and estimators as (c), coarser grids (mu step 0.03 on ln 5 + [-1.5, 0.8], omega to 1.3).")
-    power_large_n((24, 96, 384), 20, 301)
+    banner("(c3) RAW-LIKELIHOOD POWER AT LARGER N: the claims 'about 1200 patients' (monthly) and '33' (every 2 d)")
+    print("  Share of cohorts in which the boundary LR test (D(0) - D_min > 2.71) rejects omega = 0. Same model")
+    print("  as (c), coarser grids (mu step 0.03 on ln 5 + [-3, 1], omega to 1.3, K_m 7 points). 'Gauss-model")
+    print("  rej' = the same test inside the Gaussian-summary model at the same N (1000 cohorts, diagonal V).")
+    print("  'edge' = count of (cohort, likelihood) curves whose mu or K_m optimum sat on a grid edge at omega = 0")
+    print("  or at omega_hat. Binomial 95% upper bound for 0 of 20 is 17%, for 0 of 8 is 37%.")
+    plan = [("monthly", 96, 0.0, 20), ("monthly", 96, 0.33, 20), ("monthly", 384, 0.0, 16),
+            ("monthly", 384, 0.33, 24), ("monthly", 1200, 0.33, 8),
+            ("2d", 48, 0.0, 20), ("2d", 48, 0.33, 20), ("2d", 96, 0.33, 20)]
+    power_large_n(plan, Vs, 301)
     print(f"\n  total runtime {time.time() - T0:.0f} s")
 
 
