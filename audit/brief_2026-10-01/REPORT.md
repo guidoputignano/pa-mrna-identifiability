@@ -1,27 +1,40 @@
 # Practical identifiability of enzyme capacity at 5% of normal
 
-**Brief of 1 October 2026, worked on the repository's own footing, with a follow-up round on six points.** Every number comes from a script in this directory. `out/<script>.txt` holds each script's printed output and `fig/` its figures. Each follow-up script (`t8`–`t11`, `t6c`, `t6d`) was re-derived by an independent verifier, by a route sharing no code with it; `t12` (the flux crossing) was not. Repository constants and the `n6` output this report quotes are printed in `out/t0_footing.txt` and `out/n6_profile_vs_crb.txt`. The verifier's script is `<name>_recheck.py`, and its output is `out/<name>_recheck.txt`. The footing is imported from `audit/n4_theta_scope.py`, not restated, and `core.fim` reproduces `n4.sd_ln_theta` to 1e-13. Claims that are assumed or not verified are collected in the [last section](#unverified-or-assumed) rather than left inline.
+**Brief of 1 October 2026, worked on the repository's own footing, over three rounds (the original eight tasks, a six-point follow-up, and a nine-point round on conditioning, specification, and feasibility).** Every number comes from a script in this directory. `out/<script>.txt` holds each script's printed output and `fig/` its figures. The follow-up scripts (`t8`–`t11`, `t6c`, `t6d`) and the round-3 scripts (`t13`–`t19`) were re-derived by independent verifiers, by routes sharing no code with them; `t12` (the flux crossing) was not. Repository constants and the `n6` output this report quotes are printed in `out/t0_footing.txt` and `out/n6_profile_vs_crb.txt`. The footing is imported from `audit/n4_theta_scope.py`, not restated, and `core.fim` reproduces `n4.sd_ln_theta` to 1e-13. Claims that are assumed or not verified are collected in the [last section](#unverified-or-assumed).
 
-## The answer
+## The decision
 
-**At 5% of normal, k_e is the dominant nuisance, but no knowledge of k_e alone reaches the target on the current record.**
-- ln θ and ln k_e are confounded (correlation −0.992 at 5%), and k_e carries 98% of Var(ln θ̂).
-- With k_e exact, 25 monthly draws give 0.39 (FIM). By Monte Carlo the spread is about 0.39–0.45, with a heavy lower tail.
-- **That 0.39 is not a floor in the number of draws.** With k_e exact, the record keeps improving as draws are added: 0.195 at 365 draws every 2 days, 0.151 at 730 daily draws (Monte Carlo 0.151).
-- The load-recording bias slows the fall at clinical sample sizes but does not stop it.
+**At 5% of normal, exactly one route reaches the sd(ln θ̂) = 0.20 target feasibly and safely: a single, absolutely-calibrated, off-therapy reading of the enzymatic flux, to about 18% or better.** Everything else either rests on an unobtainable premise, needs research-grade hardware, or is clinically inadmissible:
 
-**Borrowing k_e across a cohort, with no new measurement, does not reach 0.20 at any realistic size.**
-- At the trial's 24 patients, all at 5%, with k_e genuinely shared, the FIM gives 1.17. Monte Carlo gives a robust spread of 0.75 and an RMSE of 2.3.
-- At a 33% between-patient spread in k_e, the FIM gives 1.82.
-- **ω cannot be estimated from the repository.** It holds no patient records: its "24 records" are 24 diet histories of one simulated patient, all with k_e = 5.
-- **24 real monthly records could not estimate ω either.** For a true ω of 0–0.33 the typical 95% interval is [0, 0.9–1.2], depending on the likelihood used. The test rejects ω = 0 in 0–5% of cohorts even at ω = 0.33.
+| route | verdict at 5% |
+|---|---|
+| **one calibrated flux reading (O ∝ θ·g) to Y ≤ ~18%** | **reaches 0.20** — but only if absolutely calibrated. The 0.20 contour is **√(Y² + Z²) ≤ ~18–19%** in the reading precision Y and the calibration precision Z (`t16`, R11). The repository's breath test reads a *fraction oxidised* with unknown recovery, which is off this contour until calibrated. |
+| k_e known **exactly** + hundreds of draws | reaches 0.20 in principle (309 draws/2 yr) but **not feasibly**: k_e is achievable only to ~0.2 log units, and at that precision no sampling intensity reaches 0.20 (R12). |
+| drug-forcing burst, peak 1500 | reaches 0.20 (0.131) only with a **research-grade 0.5% assay CV and κ known exactly** (`t10`). |
+| load excursions large enough to reach 0.20 | **inadmissible** — every one sits past the parent model's crisis threshold of 1.177× baseline load (R15). |
+| a cohort, a washout, a second-reading average, measuring the load | **none reach 0.20.** |
 
-**Routes that clear 0.20 at 5% by Monte Carlo, not just by FIM** ("clear" = the Monte Carlo interval lies wholly below 0.20):
-1. **One calibrated, off-therapy measurement of the enzymatic flux, to about 18% or better.** The Monte Carlo crossing is 18.4% [17.9, 19.0]; the FIM puts it at 19.3%. A 10% reading gives 0.113. If the reading's recovery factor is itself known only to 10%, the crossing falls to 16.0%. This must be an absolute in vivo measurement of PCC flux. The repository's breath test measures a fraction oxidised with an unknown recovery, which is a different observable.
-2. **k_e known exactly, plus near-daily sampling for two years.** 730 draws give 0.151.
-3. **A drug-forcing burst with no added substrate**, at peak 1500, every 5 min for 72 h (865 samples). It needs a research-grade 0.5% assay CV and the delivered increment κ known exactly, and gives 0.131 [0.114, 0.149].
+**If no calibrated flux assay exists, the deliverable is set identification, not a point estimate** (R16): the record pins a one-sided ceiling **θ ≤ 30.7% of normal** (balance + non-negativity + K_m), tightening to **22–25%** with the k_e prior, and it pins K_m (~6%), the clearance slope b = θg′+k_e (~28%), and a k_e-dominated combination (~8%) — but not θ itself, nor the untreated flux or fraction oxidised, which all inherit θ's ~3.0. A defensible ceiling beats an unreachable target.
 
-**Only five of the 1422 designs that pass by FIM were checked by Monte Carlo.** Of those, the drug-1500 burst passes. Three straddle 0.20: the drug burst at the admissible peak 2850 (0.204), a 50% diet withdrawal at 0.5% CV with L₀ to 1% (0.199), and a ×3 load (0.211). A ×2 load fails (0.217). Larger load excursions (×4–×8) pass by FIM only, and they lie beyond the parent model's fold at 1.18× baseline load, so they are not admissible designs.
+### Supporting findings
+- **The confounding.** ln θ and ln k_e are confounded (correlation −0.99 at 5%); k_e carries 98% of Var(ln θ̂). The likelihood already conditions on the per-draw recorded load L(t_k) and drug dose Δ(t_k), so the L–m covariation is inside the 3.07 (R9); the only load lever left is the systematic bias, worth little (R13).
+- **No floor, but no feasible escape.** With k_e exact, sd(ln θ̂) falls as ~1/√n to zero — the 0.39 is not an n-floor (0.195 at 365 draws/2 yr; `t15`, R13). But with k_e achievable only to ~0.2, sampling alone stalls near 0.8 (R12), and tightening k_e safely runs into the load-measurement wall.
+- **Task 2 is closed as a negative result** (R14): at 24 patients with k_e shared the per-patient sd is 1.17 (still a factor 3.2 either way), and ω is unidentifiable from the available records under every likelihood tried.
+- **The two-stage design is safe but short.** A mild, safe transient pins k_e to ~0.2 log units where it is nowhere near pinning θ, but k_e to 0.2 is not tight enough: the two-stage lands near 0.9, not 0.20 (R15).
+- **The specification is untested, and largely untestable here.** All data is simulated from the one-compartment model; the monthly record is nearly blind to a second compartment and to saturable non-enzymatic clearance, though it can catch a time-varying load drift (R10).
+
+## What changed across the three rounds
+
+Several round-1 claims were overturned by later rounds. The causes:
+
+| claim (round) | corrected to | what caused the change |
+|---|---|---|
+| "the 0.39 is an n-independent floor" (R1 framing) | **not a floor**: ~1/√n with k_e exact, no positive asymptote (R13) | decomposing bias vs scatter and pushing n → 10⁵; both load terms are learned from the dose-modulated operating point |
+| "the washout is the safe route to 0.20" (R1) | **the washouts that reach 0.20 add substrate past the 1.177× crisis threshold; inadmissible** (R15, F3) | making the safety threshold a hard constraint and sourcing it to `boundary.tex` / Model C |
+| "the one-pass EKF is a bug" (R2 suspicion) | **linearisation error, not a bug**; dropped as unfair (F5) | the exact information identity at the truth + error growth with prior width |
+| "the FIM misleads in both directions" (R2 suspicion) | **exact in linear θ; a lower bound only in ln θ where θ̂→0** (F6) | 150–300-replicate Monte Carlo against the FIM |
+| best washout "0.237, fails" (R2, 40 replicates) | **0.199, straddles** (F3) | the verifier's 150-replicate re-run |
+| "flux ≫ k_e ≫ load; flux reaches 0.20 alone" (R1/R2) | holds, **but only if absolutely calibrated**: √(Y²+Z²) ≤ ~19% (R11) | the generic-observable + (s, L) analysis, and the breath-test reparameterisation |
 
 ## What the repository contains, and where the brief departs from it
 
@@ -315,6 +328,102 @@ The other three degrade NLS roughly in line with the FIM. Starting from TB-A, no
 
 ---
 
+## Round 3: conditioning, specification, and feasibility
+
+### R9. What the likelihood conditions on (`t13_conditioning.py`)
+
+The likelihood **conditions on the per-draw recorded load L(t_k) and the per-draw drug increment Δ(t_k)**, not on one constant load per patient. Each marker m(t_k) solves the balance at its own recorded load and dose (`m` recomputed from (load_k, inc_k) matches the record exactly); doubling the booked dose doubles Δ exactly. The only load quantity treated as unknown is a single systematic bias b (prior 5% of L, the one constant column of `flux_rows`).
+
+Consequence: the L–m covariation is **already inside the 3.07**. Holding the load flat makes the record slightly *worse* (3.06 → 3.14), so the day-to-day variation is mild signal, not discarded noise; pinning the bias (measuring L exactly) moves 3.06 → 3.03, almost nothing at 5% because k_e dominates. Ideas that relied on unused L–m covariation are already counted; the only load lever is the bias (R13).
+
+### R10. Is the model right? Residual diagnostics (`t19_residuals.py`)
+
+![round 3 — nothing here; see text](fig/r3_asymptote.png)
+
+**Caveat first:** all data is simulated from the one-compartment Michaelis–Menten model, so MM residuals are white by construction. This is a **power analysis of the diagnostic**, not a test of the model — a real test needs real data, which the repository does not have.
+
+Residuals from the MM fit, regressed on marker / time / load, with power at the repository's noise (25 monthly draws, 5% CV) against three misspecified data-generating processes:
+
+| misspecification | monthly record | dense excursion |
+|---|---|---|
+| second compartment (slow exchange pool) | **blind** (identical steady-state balance; shows only in the transient decay, 5–15% of the rate) | — |
+| saturable non-enzymatic clearance (k_e·m → Vₙₑ·m/(Kₙₑ+m)) | **nearly blind** (power ~5% at n=25; narrow on-therapy m-range looks linear) | detected (~100% on time/load tests) |
+| time-varying load drift (10–20%, zero-mean) | **detected** (residual-vs-time power 88–100%) | — |
+
+The residual-vs-marker test is degenerate here (the MM fit is itself a marker model). So the load-record assumption is partly checkable from the monthly record, but a second compartment and saturable clearance are not — they need the same dense excursion that identifies θ. **Model criticism and θ-identification require the same richer data.**
+
+### R11. The flux observable as a specification (`t16_flux_observable.py`)
+
+![round 3 flux contour](fig/r3_flux_contour.png)
+
+Treating the observable as a specification, not a biological claim:
+
+- **Generic observable O = c·θ·g(m), calibration c unknown to Z.** The 5×5 FIM collapses *exactly* (gap 3e-16) to a single calibrated reading at Y_eff = √(Y² + Z²). So the 0.20 contour is **√(Y² + Z²) ≤ 19.3% (FIM) / 18.4% (Monte Carlo)**. **Requirement sentence:** *an observable proportional to the enzymatic flux, read to Y% with calibration known to Z%, reaches sd(ln θ̂) = 0.20 at 5% of normal iff √(Y² + Z²) ≤ ~18–19%.* Averaging n readings divides Y by √n but **not** Z: a single shared calibration is the floor, so three readings still need Z ≤ 19% alone.
+- **Reparameterisation (s, L).** If the reading is the fraction oxidised s = θg/L, then (s to Y%, L to X%) reaches target on the **same locus** (crossing Y ≈ 19.7%, weakly dependent on X): s and L enter as ln(flux) = ln s + ln L, so measuring L plays exactly the role of calibrating c. Switching to the fraction oxidised buys nothing; it only moves the calibration burden onto an independent L.
+- **The breath test.** It reads a fraction oxidised y = c·F(m) with recovery c unknown (round 2, `u2_breath_functional.py`). It can deliver the relative reading (a Y) but **not** the absolute calibration (its Z). With c entirely unknown, one reading is off the contour. It reaches target only if **both** its recovery is calibrated to Z ≤ ~18% **and** the load is known, with √(Y²+Z²+X²) ≤ ~18–19%. Whether such a calibration exists is a domain question, not answered here.
+
+### R12. The k_e-precision / sampling trade-off surface (`t14_ke_sampling.py`)
+
+![round 3 k_e × sampling](fig/r3_ke_sampling.png)
+
+sd(ln θ̂) at 5% over (external precision sd(ln k_e), draws per year over a two-year programme), replacing the unobtainable "k_e exact" premise:
+
+- The **0.20 contour** is reached only at k_e essentially exact: 309 draws/2 yr (≈155/yr) with k_e exact; **sd(ln k_e) = 0.05 does not reach 0.20 by 730/yr**, and ≥ 0.10 does not reach 0.30.
+- At the **achievable** precision sd(ln k_e) = 0.20, sd(ln θ̂) stays **0.81–0.96** from 24 draws up to daily for two years.
+- **There is no feasible point on the 0.20 contour.** Reaching it needs k_e tighter than ~0.05 log units, which the project's own estimate (~0.2) rules out. The "0.195 at 365 draws" of round 2 was conditional on k_e *exactly* known.
+
+### R13. Does the fall asymptote? Load bias vs scatter (`t15_load_asymptote.py`)
+
+![round 3 asymptote](fig/r3_asymptote.png)
+
+- **n → ∞ with k_e exact: the limit is 0, not a floor.** sd(ln θ̂) falls as ~1/√n (sd·√n settles to ≈4.5); 0.38 at n=25, 0.15 at 730, 0.03 at 2×10⁴. Neither the load bias nor the scatter creates a positive floor — both are learned from the dose-train modulation of the operating point. So 0.151 at 730 draws is **not** flattening toward a floor; **Task 2 is not answered by an asymptote, it is answered by feasibility** (R12).
+- **The bias is not the binding term.** At n=25, removing the per-draw load *scatter* helps more (0.38 → 0.19) than pinning the *bias* (0.38 → 0.28); the user's premise that the bias is binding does not hold here.
+- **Costing an L measurement.** Measuring L to 1–2% takes the n=25, k_e-exact value from 0.38 to ~0.30, but does nothing to the n → ∞ limit and almost nothing when k_e is the binding nuisance. L binds in three places — the 0.39 partition (small), the washout intercept L₀ (the biggest washout-ladder rung, but the washout is inadmissible on safety), and the flux route's calibration (R11) — and is only decisive in the third.
+
+### R14. Task 2 is closed as a negative result
+
+At 24 patients, all at 5%, with k_e genuinely shared, the per-patient sd is **1.17** (a factor of 3.2 either way) — still uninformative. ω is **unidentifiable** from the available records under every likelihood tried, and the repository holds no real records to estimate it from. The mechanism (the shared-k_e core is narrowed only through the other patients' positivity, which borrows little at ω ≥ 0; the between-record k_e spread is 0 by construction) is in F2 and Task 2. No further work is warranted; the recheck already committed stands.
+
+### R15. The safety threshold as a hard constraint, and the two-stage design (`t17_two_stage.py`)
+
+![round 3 excursion vs safety](fig/r3_excursion_safety.png)
+
+- **The threshold, sourced and flagged.** `results/numbers/boundary.tex`: the parent model (Model C / ParamsC) loses its steady state when the load exceeds **1.177× baseline** (= 380). This is a **modelling construct** — a saddle-node of ParamsC's R0 setting — not a measured clinical crisis level; `src/model_A/run.py:35–40` states only the *ratio* (~1.5×) as "the physiological claim". The load ratio is model-independent (the fold *marker* 276 is Model C's, not Model A's — at the fold load Model A's marker is ~64). The repository's one clinical-labelled figure, M_TOL = 40, is a target, not a ceiling (the untreated 5% marker is already 54). The hard bound used here: an added-substrate excursion must keep the load below **1.177×**; withdrawals and the drug channel add no substrate and are admissible by construction.
+- **The gap, as a figure.** Every sustained load excursion that drives sd(ln θ̂) below 0.20 crosses at **f ≈ 2.3× baseline** — about twice the admissible edge. The admissible band (shaded) never reaches 0.20.
+- **The smallest excursion that pins k_e.** λ ≈ k_e once the enzyme works hard, so a *mild, safe* transient (even withdrawing 25% of the diet, marker dropping 54 → 47) pins **k_e to ~0.2 log units** while leaving sd(ln θ̂) ≈ 1.2. But k_e's precision is capped by the unrecorded load L₀: ~0.2 at L₀ to 5%, ~0.06 at L₀ to 1%. Tightening k_e past 0.06 needs L₀ measured (R13).
+- **The two-stage cost.** Safe k_e transient, then n steady-state draws for θ:
+
+  | draws (2 yr) | k_e ≈ 0.20 (L₀ 5%) | k_e ≈ 0.06 (L₀ 1%) | k_e exact (ref) |
+  |---|---|---|---|
+  | 24 | 0.96 | 0.49 | 0.41 |
+  | 52 | 0.93 | 0.42 | 0.32 |
+  | 104 | 0.89 | 0.38 | 0.27 |
+  | 365 | 0.81 | 0.33 | 0.19 |
+
+  **The two-stage is safe and feasible but does not reach 0.20.** With a realistic L₀ it lands near 0.9; with L₀ measured to 1% it reaches ~0.25–0.30 only with hundreds of draws. k_e to ~0.2 is simply not tight enough (R12), and the safe transient cannot do better without also solving the load-measurement problem. The user's intuition — that pinning k_e needs a far smaller excursion than pinning θ — is **correct**, but it does not rescue θ.
+
+### R16. Set identification elevated: what is recoverable (`t18_set_id.py`)
+
+If no feasible design reaches 0.20, the deliverable is what the record *does* fix.
+
+- **The one-sided bound on θ** (balance θg(m) + k_e m = L at the untreated state, L/m = 5.97/d): with K_m from the record, θ ≤ **30.7%** of normal under non-negativity alone, **25.3%** at the k_e prior's 95% low end. The lower bound is 0 — no record rules out a near-complete deficiency. The deliverable is a **ceiling on capacity**, not a point.
+- **What the record pins, and what it does not** (median over 24 seeds):
+
+  | quantity | sd(ln ·) | recoverable? |
+  |---|---|---|
+  | θ (capacity) | 3.05 | no |
+  | a = θ·g(m)² | 3.13 | no |
+  | untreated flux θ·g(m₀) | 3.09 | no |
+  | fraction oxidised s | 3.08 | no |
+  | K_m | 0.062 | **yes (~6%)** |
+  | clearance slope b = θg′(m) + k_e (≈ λ) | 0.28 | **yes (~28%)** |
+  | best (ln θ, ln k_e) combination (k_e-dominated) | 0.084 | **yes (~8%)** |
+
+  The record identifies the **local clearance curve** (its slope and K_m), hence k_e, but not the capacity: the enzyme's own curvature a = θg² is swamped at this operating point. Neither the flux nor the fraction oxidised is a reparameterisation that escapes θ — they *are* θ, up to the pinned g and L.
+- **Complete-deficiency check** (asked in Task 5, answered here): all 24 records have θ = 150; none is a θ ≈ 0 patient. If one existed at an untreated steady state, θg ≈ 0 would give k_e = L/m directly with no confounding — a tight prior at no cost. But in the parent model a θ = 0 patient has **no steady state**, so the counterfactual cannot be realised within the model.
+
+---
+
 ## The original tasks
 
 ### 1. Identifiability (`t1_identifiability.py`)
@@ -335,7 +444,7 @@ The other three degrade NLS roughly in line with the FIM. Starting from TB-A, no
   - **Upper side: a wall.** The 95% upper end is at median **672 (22.4% of normal)**, where k_e has been pushed about 1.5 prior sd below its centre (1.6 on the noiseless profile; `t4`).
   - **The CRB is the wrong shape.** It implies a symmetric factor of 166,704; the likelihood is instead a one-sided plateau with a cliff about 4.5× above the truth.
 
-### 2. Joint fit (`t2_cohort.py`; corrected by F2 and F6)
+### 2. Joint fit (`t2_cohort.py`; corrected by F2 and F6) — **closed as a negative result (R14)**
 
 ![task 2](fig/t2_cohort.png)
 
@@ -366,7 +475,7 @@ Exact split: Var(ln θ̂) = Var(ln θ̂ | k_e) + β²·Var(ln k_e).
 - **Correction.** I wrote that n·Var(ln θ̂ | k_e) stays between 0.115 and 0.168 for n = 6–400. That was computed on n4's GRID prefixes, which go untreated after the repository's 200-dose cap. With therapy continued, the values at n = 100 and 400 are 0.178 and 0.197 (`t8_floor_recheck.py`). The floor fit and the share are essentially unaffected (0.183, 83.8%).
 - The edge moves with the k_e prior: 43.7% of normal at a prior sd of 0.4, 24.6% at 0.2 and 15.6% at 0.1.
 
-### 4. Set identification (`t4_set.py`)
+### 4. Set identification (`t4_set.py`) — **elevated to a main result (R16)**
 
 ![task 4](fig/t4_set.png)
 
@@ -512,6 +621,15 @@ The washout at 5%, hourly for 48 h, down the knowledge ladder (FIM):
 - **`t12_flux_mc.py`, the source of the 18.4% headline crossing, has no independent recheck.** It reruns `t11`'s estimator on `t11`'s own draws at Y = 10% and 20% and reproduces them exactly, and its FIM matches `t5` at every Y. The 2000-replicate fresh-draw crossing itself has not been reproduced by a second script.
 - Repository-sourced numbers (the dose train, LOAD_CV, the 1.177 fold, the breath-test 14%, the ln-m/flux FIM agreement, and the saturation range under therapy) are printed by `t0_footing.py`. n6's 708 = 24% is in `out/n6_profile_vs_crb.txt`, from an unchanged run of the repository's script.
 - Assumption-free conclusions are limited to the structure: the confounding mechanisms, the lack of an n-floor, the non-identifiability of ω from monthly records, and the FD mechanism. Every absolute sd depends on the repository's illustrative constants.
+
+**Round 3 (`t13`–`t19`), assumed or of limited support**
+
+- The round-3 scripts (`t13`–`t19`) were each re-derived by an independent verifier (`*_recheck3.py`), by a route sharing no code with the script under test. _Verification verdicts are folded in below once the workflow completes._
+- **R10 is a power analysis, not a model test.** The misspecified data-generating processes (second compartment, saturable non-enzymatic clearance, time-varying load drift) are my constructions; the reported rejection rates depend on their parameterisation and on the particular residual-slope test. The claim is the **direction and ranking** (monthly record blind to the first two, sensitive to a load drift; an excursion restores power), not the exact percentages. With no real data the specification cannot actually be tested.
+- **R11's (s, L) reparameterisation treats the fraction oxidised as absolutely measurable to Y%.** If the available reading carries an unknown recovery (as the breath test does), that route is back to the calibration problem and needs c calibrated to Z. The √(Y²+Z²) contour is a first-order FIM result in linear θ; near 0.20 it inherits the same ln-θ optimism as the rest (F6), so read it as a lower bound.
+- **R15's safety threshold (1.177×) is a modelling construct**, the saddle-node of the parent model's R0 setting, not a measured clinical crisis level (`src/model_A/run.py`). The excursion-sweep figure uses a generous knowledge rung (k_e prior + K_m from the record + L₀ to 1%) and FIM; the authoritative excursion verdicts remain the `t10` Monte Carlo ones. The two-stage k_e precision (~0.2 at L₀ 5%) assumes the unrecorded load L₀ is known to the stated precision and constant through the transient (`dyn.py`, as in Task 7).
+- **R12 and R15's "draws per year" use a fixed two-year horizon** (n draws over 730 days), so "365 draws" is every-other-day for two years. The per-draw noise is the repository's; verdicts within a few per cent of 0.20 shift under per-draw noise and sample timing, as elsewhere.
+- **R16's "recoverable" sds are first-order FIM propagation** on the monthly record's covariance; the θ-proportional quantities (flux, share, a) inherit θ's ill-conditioning and are not Gaussian there. The one-sided θ bound is exact algebra; the ~6%/28%/8% figures are local.
 
 ## Reproducing
 

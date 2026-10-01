@@ -24,6 +24,15 @@ It builds on the repository rather than beside it. The footing (convention A, th
 | `t6d_ekf.py` | follow-up 5: the one-pass EKF diagnosed | 6 min |
 | `t11_fim_check.py` | follow-up 6: FIM against Monte Carlo, and the Task 5 spot-checks | 9 min |
 | `t12_flux_mc.py` | follow-up 6: the Monte Carlo crossing for the direct flux reading (no recheck) | 8 min |
+| `t13_conditioning.py` | round 3, item 9: what the likelihood conditions on (per-draw L and dose) | 2 s |
+| `t19_residuals.py` | round 3, item 10: residual diagnostics as a power analysis of misspecification | 6 min |
+| `t16_flux_observable.py` | round 3, item 11: the flux observable O=c·θ·g(m) as a specification; (s,L) reparam | 2 min |
+| `t14_ke_sampling.py` | round 3, item 12: sd(ln θ) over (sd(ln k_e), draws/year) | 2 min |
+| `t15_load_asymptote.py` | round 3, item 13: the load-bias asymptote and the value of measuring L | 2 min |
+| `t17_two_stage.py` | round 3, item 15: the safety threshold and the two-stage design | 3 min |
+| `t18_set_id.py` | round 3, item 16: set identification elevated — what is recoverable | 10 s |
+| `r3_figs.py` | round 3 figures (flux contour, k_e×sampling, asymptote, excursion/safety) | 2 min |
+| `*_recheck3.py` | independent verifier re-derivations of the round-3 scripts | — |
 | `*_recheck.py` | an independent verifier's re-derivation of each follow-up script, sharing no code with it | 3–25 min |
 | `plotstyle.py` | the repository's rcParams with a validated palette | — |
 
@@ -32,9 +41,12 @@ To run them all, from this directory:
 ```bash
 pip install -r ../../requirements.txt
 for s in t0_footing t1_identifiability t2_cohort t3_variance t4_set t5_value t7_design t6_estimators t6b_ma1 \
-         t8_floor t9_omega t10_factorial t6c_iv t6d_ekf t11_fim_check t12_flux_mc; do
+         t8_floor t9_omega t10_factorial t6c_iv t6d_ekf t11_fim_check t12_flux_mc \
+         t13_conditioning t14_ke_sampling t15_load_asymptote t16_flux_observable t17_two_stage \
+         t18_set_id t19_residuals; do
   python -W error $s.py > out/$s.txt
 done
+python -W error r3_figs.py   # round-3 figures
 ```
 
 Figures go to `fig/` and printed output to `out/`. Every number in `REPORT.md` appears in one of the `out/*.txt` files. `out/n6_profile_vs_crb.txt` is the repository's own `audit/n6_profile_vs_crb.py`, run unchanged (`python -W error audit/n6_profile_vs_crb.py` from the repository root), because the report quotes its 708 = 24%.
