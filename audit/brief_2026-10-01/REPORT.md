@@ -17,7 +17,7 @@
 - **24 real monthly records could not estimate ω either.** The typical 95% interval would be [0, 0.9–1.0] whatever the truth.
 
 **Routes that clear 0.20 at 5% by Monte Carlo, not just by FIM:**
-1. **One calibrated, off-therapy measurement of the enzymatic flux.** A 10% reading gives 0.118. The Monte Carlo crossing is [[FLUX_CROSSING]]; the FIM puts it at 19.3%.
+1. **One calibrated, off-therapy measurement of the enzymatic flux, to about 18% or better.** The Monte Carlo crossing is 18.4% [17.9, 19.0]; the FIM puts it at 19.3%. A 10% reading gives 0.113. If the reading's recovery factor is itself known only to 10%, the crossing falls to 16.0%.
 2. **k_e known exactly, plus near-daily sampling for two years.** 730 draws give 0.151.
 3. **A drug-forcing burst with no added substrate.** It needs a 0.5% assay CV, 865 samples over 72 h and the delivered increment κ known exactly; it gives 0.113.
 4. **Large load excursions.** ×4–×8 pass by FIM; ×3 straddles 0.20 by Monte Carlo (0.203 [0.167, 0.238]). All of them lie beyond the parent model's fold at 1.18× baseline load, so they are not admissible designs.
@@ -60,9 +60,12 @@ The fixed parameters are normal θ = 3000, K_m = 100 and k_e = 5 /d, with L = 32
 | load ×3, every 5 min for 72 h, 5% CV, K_m from the record (inadmissible load) | 0.193 | 0.203 [0.167, 0.238] | t10 |
 | **drug burst** at the admissible peak (2850), every 15 min for 72 h, 0.5% CV, κ exact | 0.194 | **0.204 [0.185, 0.222]** (300 replicates): **does not pass** | t10, t10 recheck |
 | drug burst, peak 1500, every 5 min for 72 h (N = 865), 0.5% CV, κ exact | **0.124** | **0.113 [0.094, 0.130]** | t10 |
-| **direct enzymatic flux**: one untreated reading to 10% | **0.112** | **0.118 [0.107, 0.129]** | t5, t11 |
-| … to 20% | 0.206 | 0.227 [0.203, 0.251]: **does not pass** | t5, t11 |
-| … Monte Carlo crossing | 19.3% (FIM) | [[FLUX_CROSSING]] | t12 |
+| **direct enzymatic flux**: one untreated reading to 10% | **0.112** | **0.113 [0.110, 0.116]** (2000 replicates) | t5, t12 |
+| … to 15% | 0.159 | 0.163 [0.158, 0.168] | t5, t12 |
+| … to 20% | 0.206 | 0.218 [0.211, 0.225]: **does not pass** | t5, t12 |
+| … crossing of 0.20 | 19.3% | **18.4%** [17.9, 19.0] by RMSE; 19.35% by robust spread | t12 |
+| … with the reading's recovery factor known only to 10% | crossing 16.5% | crossing **16.0%** [15.4, 16.6] | t12 |
+| … three readings averaged, each to 15% | 0.097 | 0.097 | t12 |
 | flux to 20% + k_e to 1.2 + load to 2% | 0.199 | 0.221 [0.197, 0.244]: not confirmed | t5, t11 |
 | k_e known to 5% (monthly record) | 0.445 | robust 0.49 | t5, t11 |
 
@@ -298,7 +301,9 @@ The other three degrade NLS roughly in line with the FIM. Starting from TB-A, no
   | k_e exact | 0.388 | 1.49 (bound hits) | 0.45 | fails |
   | k_e to 5% | 0.445 | 1.67 | 0.49 | fails |
 
-  The ranking survives except for a tie at ranks 2–3. In linear θ the FIM is attained in every scenario (linear RMSE/FIM 0.99–1.06). With k_e exact or to 5%, the ln θ profile reaches θ near 0 in 6 of 24 records, so the FIM's symmetric ln θ interval is optimistic on the low side. Only the 10% flux reading clears 0.20 by Monte Carlo; the crossing is [[FLUX_CROSSING]] (`t12_flux_mc.py`).
+  The two flux rows were re-run with 2000 replicates on fresh draws (`t12`): RMSE 0.113 at 10% and 0.218 at 20%, robust 0.111 and 0.206. The verdicts are unchanged.
+
+  The ranking survives except for a tie at ranks 2–3. In linear θ the FIM is attained in every scenario (linear RMSE/FIM 0.99–1.06). With k_e exact or to 5%, the ln θ profile reaches θ near 0 in 6 of 24 records, so the FIM's symmetric ln θ interval is optimistic on the low side. Only the flux reading clears 0.20 by Monte Carlo. `t12_flux_mc.py` locates the crossing with 2000 replicates per point on fresh draws, checked to be representative: **18.4% [17.9, 19.0]** by RMSE and 19.35% by robust spread, against 19.33% by FIM. The FIM is attained in linear θ (linear RMSE/FIM 1.003–1.006). If the reading's recovery factor is known only to 10%, the crossing is 16.0% [15.4, 16.6].
 
 ---
 
@@ -390,7 +395,7 @@ The printed output, at θ = 5% of normal on the current monthly record (FIM; see
 | complete-deficiency anchor (k_e from (L − b)/m), ω = 0 / 0.2 / 0.33 | 0.45–0.50 / 1.0 / 1.5 |
 
 - **Ranking:** flux ≫ k_e ≫ load. The elasticities of sd(ln θ̂) to each measurement's own precision are 0.90, 0.79 and 0.15.
-- Only the flux reading reaches 0.20 alone: at Y ≤ 19.3% by FIM, and at [[FLUX_CROSSING]] by Monte Carlo.
+- Only the flux reading reaches 0.20 alone: at Y ≤ 19.3% by FIM and Y ≤ 18.4% by Monte Carlo (`t12`), or ≤ 16.0% if its recovery factor is known only to 10%.
 - **Conditions on the flux reading:** it must be taken off therapy, since on therapy any PCC flux measurement sees (θ + Δ)g, and it must be absolutely calibrated.
 
 ### 6. Dynamic estimators (`t6_estimators.py`; extended by F4 and F5)
@@ -483,7 +488,7 @@ The washout at 5%, hourly for 48 h, down the knowledge ladder (FIM):
 
 **Comparisons with limited support**
 
-- The 19.3% flux crossing is FIM. [[FLUX_CROSSING_NOTE]]
+- The flux crossing (18.4% by Monte Carlo) is for one simulated patient on the repository's footing. The reading is Gaussian and taken with an untreated marker draw, and either perfectly calibrated or with a recovery factor known to 10% (16.0%). Whether a measurement of this kind and precision exists for PCC flux in vivo is not established here.
 - The repository's only breath-test repeatability figure, a between-visit 14% (`PHASE4_SUMMARY.md:208`), is for an uncalibrated relative reading. It does not show that a 10–19% *calibrated* flux measurement exists.
 - Monte Carlo sizes: 30–40 replicates per cell in `t10`, overturned where the verifier ran 300 (the drug-2850 burst); 60 per ω in `t9`. Borderline Monte Carlo verdicts carry their bootstrap intervals in the table.
 - Assumption-free conclusions are limited to the structure: the confounding mechanisms, the lack of an n-floor, the non-identifiability of ω from monthly records, and the FD mechanism. Every absolute sd depends on the repository's illustrative constants.
