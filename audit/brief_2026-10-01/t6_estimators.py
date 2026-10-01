@@ -391,7 +391,7 @@ def main():
         print(f"     bench B, (a) with {tag}: median coefficient / truth = "
               + ", ".join(f"{np.median(P[:, j])/lt[j]:.3f}" for j in range(4)))
     print("     psi is noisy in both rows and sits on both sides of the regression;")
-    print("     the K_m coefficient multiplies psi, so it carries the attenuation.")
+    print("     The two rows agree, so the bias is from psi used as a regressor, not from noise in m.")
 
     # ---- figure: bench B, distributions of ln(theta_hat/theta)
     fig, ax = plt.subplots(1, 2, figsize=(11.0, 3.8))
@@ -407,7 +407,7 @@ def main():
                  else np.array([o["th"] for o in R["out"][k]]))
             v = v[v > 0]
             data.append(np.clip(np.log(v / th0), -8, 8))
-        bp = a.boxplot(data, vert=False, widths=0.55, patch_artist=True, showfliers=False,
+        bp = a.boxplot(data, orientation="horizontal", widths=0.55, patch_artist=True, showfliers=False,
                        medianprops=dict(color=INK, lw=1.5))
         for patch in bp["boxes"]:
             patch.set_facecolor(C1); patch.set_alpha(0.35); patch.set_edgecolor(C1)

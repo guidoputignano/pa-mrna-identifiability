@@ -13,7 +13,8 @@ It builds on the repository rather than beside it. The footing (convention A, th
 | `t4_set.py` | 4: set identification and the one-sided bound | 1 min |
 | `t5_value.py` | 5: what each extra measurement is worth | 5 s |
 | `dyn.py` | the ODE with forward sensitivities, for tasks 6 and 7 | — |
-| `t6_estimators.py` | 6: FD, integral, NLS, EKF and iterated EKF smoother | ~40 min |
+| `t6_estimators.py` | 6: FD, integral, NLS, EKF and iterated EKF smoother | ~15 min |
+| `t6b_ma1.py` | 6: the MA(1) claim, on the equation error | 30 s |
 | `t7_design.py` | 7: washout and drug-forcing design | 1 min |
 | `plotstyle.py` | the repository's rcParams with a validated palette | — |
 
@@ -21,7 +22,7 @@ To run them all, from this directory:
 
 ```bash
 pip install -r ../../requirements.txt
-for s in t1_identifiability t2_cohort t3_variance t4_set t5_value t7_design t6_estimators; do
+for s in t1_identifiability t2_cohort t3_variance t4_set t5_value t7_design t6_estimators t6b_ma1; do
   python -W error $s.py > out/$s.txt
 done
 ```

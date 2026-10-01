@@ -1,0 +1,3 @@
+  lag-1 autocorrelation of the FD regression's error, median of 300 records
+    bench A: equation error at the true coefficients -0.469 (noiseless m in the regressors -0.487); fitted OLS residual -0.333
+    bench B: equation error at the true coefficients -0.491 (noiseless m in the regressors -0.492); fitted OLS residual -0.295
