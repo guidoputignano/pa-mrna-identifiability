@@ -1,258 +1,493 @@
 # Practical identifiability of enzyme capacity at 5% of normal
 
-**Brief of 1 October 2026, worked on the repository's own footing.** Every number comes from a script in this directory. `out/<script>.txt` holds its printed output and `fig/` the figures. The footing is imported from `audit/n4_theta_scope.py`, not restated, and `core.fim` reproduces `n4.sd_ln_theta` to 1e-13.
+**Brief of 1 October 2026, worked on the repository's own footing, with a follow-up round on six points.** Every number comes from a script in this directory. `out/<script>.txt` holds each script's printed output and `fig/` its figures. Each follow-up script (`t8`–`t11`, `t6c`, `t6d`) was re-derived by an independent verifier, by a route sharing no code with it. The verifier's script is `<name>_recheck.py`, and its output is `out/<name>_recheck.txt`. The footing is imported from `audit/n4_theta_scope.py`, not restated, and `core.fim` reproduces `n4.sd_ln_theta` to 1e-13. Claims that are assumed or not verified are collected in the [last section](#unverified-or-assumed) rather than left inline.
 
-## The answer in one paragraph
+## The answer
 
-The brief's central mechanism holds. At 5% of normal, ln θ and ln k_e are confounded with correlation −0.992, and k_e carries 98% of Var(ln θ̂). But k_e is not the only binding constraint. With k_e known exactly, the current record still gives 0.39, twice the target. With k_e, K_m and the load bias all known, it gives 0.194: the assay and load-record noise alone sit at the target. So no amount of k_e knowledge rescues the current design.
+**At 5% of normal, k_e is the dominant nuisance, but no knowledge of k_e alone reaches the target on the current record.**
+- ln θ and ln k_e are confounded (correlation −0.992), and k_e carries 98% of Var(ln θ̂).
+- With k_e exact, 25 monthly draws give 0.39 (FIM). By Monte Carlo the spread is about 0.39–0.45, with a heavy lower tail.
+- **That 0.39 is not a floor in the number of draws.** With k_e exact, the record keeps improving as draws are added: 0.195 at 365 draws every 2 days, 0.151 at 730 daily draws (Monte Carlo 0.151).
+- The load-recording bias slows the fall at clinical sample sizes but does not stop it.
 
-Borrowing k_e across a real cohort, at zero new measurement, buys a factor of 2–7. That is 3.07 → 1.33 at 16 patients and → 0.81 at 64, with Monte Carlo spreads of 0.90 and 0.46. It never reaches 0.20. Even that gain depends on k_e being genuinely shared: at the repository's 33% between-patient spread, 64 patients give 1.62.
+**Borrowing k_e across a cohort, with no new measurement, does not reach 0.20 at any realistic size.**
+- At the trial's 24 patients, all at 5%, with k_e genuinely shared, the FIM gives 1.17. Monte Carlo gives a robust spread of 0.75 and an RMSE of 2.3.
+- At a 33% between-patient spread in k_e, the FIM gives 1.82.
+- **ω cannot be estimated from the repository.** It holds no patient records: its "24 records" are 24 diet histories of one simulated patient, all with k_e = 5.
+- **24 real monthly records could not estimate ω either.** The typical 95% interval would be [0, 0.9–1.0] whatever the truth.
 
-A washout transient is worse than the brief expects. The enzyme is not saturated (m/K_m = 0.1 at normal, not 10), so the relaxation rate is λ = k_e + θg′(m), not k_e. The transient pins λ, while θ stays confounded with the unrecorded load and K_m.
+**Routes that clear 0.20 at 5% by Monte Carlo, not just by FIM:**
+1. **One calibrated, off-therapy measurement of the enzymatic flux.** A 10% reading gives 0.118. The Monte Carlo crossing is [[FLUX_CROSSING]]; the FIM puts it at 19.3%.
+2. **k_e known exactly, plus near-daily sampling for two years.** 730 draws give 0.151.
+3. **A drug-forcing burst with no added substrate.** It needs a 0.5% assay CV, 865 samples over 72 h and the delivered increment κ known exactly; it gives 0.113.
+4. **Large load excursions.** ×4–×8 pass by FIM; ×3 straddles 0.20 by Monte Carlo (0.203 [0.167, 0.238]). All of them lie beyond the parent model's fold at 1.18× baseline load, so they are not admissible designs.
 
-The one measurement that clears the target on its own is a calibrated, off-therapy measurement of the enzymatic flux, good to about 19%. Its row carries no k_e term.
+Everything else in the design space fails once checked by Monte Carlo, including the drug burst at the admissible peak (0.204) and the best washouts (0.20–0.24).
 
 ## What the repository contains, and where the brief departs from it
 
 | the brief says | the repository has | consequence |
 |---|---|---|
-| "~24 patient records" | `design.run.SEEDS = range(24)`: **24 draws of one simulated patient's intake sequence**. There is no patient data anywhere in the repository (README: "parameter values are illustrative, not fitted"). | A joint fit "across the 24 records" cannot share k_e across patients, because they are not patients (Task 2). There are no complete-deficiency records (Task 5). |
-| "steady state only" | The 3.07 carries the **booked dose train**: Δ(t), D = 6000 every 14 d, 3.5 d half-life, known, acting on the enzyme channel. Draws are quasi-steady (marker settles in hours), and the load varies by 10% day to day. | Without the dose train the 5% figure is **8.59**, not 3.07. With constant load too, the FIM is singular. |
-| FIM over (θ, k_e, K_m, L) of ln m | Flux-space FIM over (ln θ, ln K_m, b, ln k_e). b is a load-recording bias with a 5%·L prior; K_m has **no prior**; σ combines a 5% assay CV and a 5% load-record scatter. | Equivalent to the brief's ln m form to first order. The finite-difference ln m route agrees to 4e-8, and per-draw ln m noise gives 3.045 against 3.067. |
-| "m/K_m ~ 10 at normal" | m = 10, K_m = 100: **m/K_m = 0.1**, ε = K_m/(K_m+m) = 0.909. | The enzyme runs at 9% saturation at normal, 35% at 5% untreated, and ≤8% under therapy. This undermines the "saturated" premises of Task 6. |
-| "figure caption: median and range across records" | `n4_theta_scope.py` → `tab_S_scope`, Section 11. Each seed is scored by its own FIM **at the truth**: nothing is fitted. | |
-| "upper bound ruling out capacity above ~25%" | `n6_profile_vs_crb.py`: the median upper end of a **profile-likelihood** 95% interval, on 6 records with the k_e prior in force. It prints 708 (24%). | A prior-driven bound, not a set-identification result (Task 4). |
+| "~24 patient records" (and, in the follow-up, "the real cohort is 24 patients") | `design.run.SEEDS = range(24)`: **24 draws of one simulated patient's intake sequence**, all with k_e = 5. There is no patient data anywhere in the repository (README: "parameter values are illustrative, not fitted"). | Nothing can be "fit jointly across patients", and ω cannot be estimated from them: their between-record spread of k_e is 0 by construction (`t9`). There are no complete-deficiency records (`t5`). |
+| "steady state only" | The 3.07 carries the **booked dose train**: Δ(t), D = 6000 every 14 d, 3.5 d half-life, known, acting on the enzyme channel. Draws are quasi-steady, and the load varies by 10% day to day. | Without the dose train the 5% figure is **8.59**. With constant load too, the FIM is singular. |
+| FIM over (θ, k_e, K_m, L) of ln m | Flux-space FIM over (ln θ, ln K_m, b, ln k_e). b is a load-recording bias with a 5%·L prior; K_m has **no prior**; σ combines a 5% assay CV and a 5% load-record scatter. | Equivalent to first order. The finite-difference ln m route agrees to 4e-8; per-draw ln m noise gives 3.045 against 3.067. |
+| "m/K_m ~ 10 at normal" | m = 10, K_m = 100: **m/K_m = 0.1**, ε = 0.909. | The enzyme runs at 9% saturation at normal, 35% at 5% untreated, and ≤8% under therapy. |
+| "figure caption: median and range across records" | `n4_theta_scope.py` → `tab_S_scope`. Each seed is scored by its own FIM **at the truth**; nothing is fitted. | |
+| "upper bound ruling out capacity above ~25%" | `n6_profile_vs_crb.py`: the median upper end of a **profile-likelihood** 95% interval, on 6 records with the k_e prior in force (708, 24%). | Prior-driven, not set identification (Task 4). |
+| — | `design.run.delta` **stops after 200 doses** (day 2786), so draws on n4's GRID beyond about the 93rd are untreated. | Affects any "longer monthly record" result. `t8` uses a continued train; Task 3's n·Var figures are corrected below. |
 
 The fixed parameters are normal θ = 3000, K_m = 100 and k_e = 5 /d, with L = 322.73 held as capacity falls (convention A). At 5% (θ = 150), m = 54.0 and s = θg/L = 0.163. Time is in days.
 
 ## Scenario table: sd(ln θ̂) at θ = 5% of normal
 
-| scenario | sd(ln θ̂) | source |
-|---|---|---|
-| **current design**: 25 monthly draws, therapy on, k_e prior 0.8 | **3.07** [2.66, 3.26] | t1, = n4 |
-| … with no therapy ("steady state only") | 8.59 | t1 |
-| … plus one untreated baseline draw | 2.31 | t5 |
-| … with k_e known exactly | 0.39 | t1, t5 |
-| … with k_e, K_m and load bias all known | 0.194 | t1 |
-| **joint cohort fit**, 16 patients at 5%, k_e shared exactly | **1.33** (Monte Carlo 0.90) | t2 |
-| joint cohort fit, 64 patients | **0.81** (MC 0.46) | t2 |
-| joint cohort fit, 64 patients, k_e varying 33% between patients | 1.62 | t2 |
-| joint cohort fit, any size, k_e shared (floor) | → 0.39 | t2 |
-| **washout**: diet withdrawn, hourly for 48 h, k_e prior 0.8 | **9.4** (383 with no priors) | t7 |
-| washout + the monthly record | 1.39 | t7 |
-| **washout + measured load** (unrecorded load to 1% of L) + record | **0.62** | t7 |
-| sixfold load step then withdrawal, + record, unrecorded load to 1% | 0.165 (not clinically admissible) | t7 |
-| drug burst, admissible peak, 15-min sampling for 72 h, + record | 1.34 | t7 |
-| drug burst + record + k_e to 2.5% | 0.20 | t7 |
-| **direct enzymatic flux**: one untreated reading to 10% / 20% | **0.11 / 0.21** | t5 |
-| measured load, exact, with the monthly record | 2.67 | t5 |
+**The FIM is right about the likelihood in linear θ, and is attained there in every scenario checked (`t11`).** In ln θ it is a lower bound wherever θ̂ can reach 0. That is the case on the current record, with k_e exact, and in any small cohort. There, ln θ Monte Carlo summaries depend on how θ̂ ≤ 0 is bounded. **Use the FIM for ranking. Treat its absolute values at 5% as optimistic unless a Monte Carlo column says otherwise.**
+
+| scenario | FIM | Monte Carlo (MAP) | source |
+|---|---|---|---|
+| **current design**: 25 monthly draws, therapy on, k_e prior 0.8 | **3.07** [2.66, 3.26] | RMSE 7.1 and robust 6.6, both set by the θ ≥ 1e-3 bound (35% of fits sit on it) | t1, t11 |
+| … with no therapy ("steady state only") | 8.59 | — | t1 |
+| … plus one untreated baseline draw | 2.31 | — | t5 |
+| … with k_e exact | 0.388 | robust 0.39–0.45; RMSE 0.64–1.49 depending on the bound (tail) | t8 recheck, t11 |
+| … with k_e exact and the load measured exactly | 0.204 | 0.215–0.218 | t8 recheck, t11 |
+| k_e exact, **365 draws every 2 days** for 2 years | 0.195 | 0.219 (robust 0.199) | t8, t8 recheck |
+| k_e exact, **730 daily draws** for 2 years | **0.151** | **0.151** | t8, t8 recheck |
+| **joint cohort, 24 patients at 5%**, k_e shared exactly (ω = 0) | **1.17** | RMSE 2.34, robust 0.75 | t9 |
+| joint cohort, 24 patients, ω = 0.33 | 1.82 | RMSE 3.90, robust 1.39 | t9 |
+| joint cohort, 64 patients, ω = 0 | 0.78 | patient 0: RMSE 1.33, robust 0.52 (200 replicates) | t11 |
+| **washout**: diet withdrawn, hourly for 48 h, k_e prior 0.8 | **9.4** (383 with no priors) | — | t7 |
+| washout + the monthly record + unrecorded load L₀ known to 1% | 0.62 | — | t7 |
+| washout at 0.5% CV, every 5 min for 48 h, L₀ to 1% | 0.195 | 0.237 [0.198, 0.273]: **does not pass** | t10 |
+| load ×3, every 5 min for 72 h, 5% CV, K_m from the record (inadmissible load) | 0.193 | 0.203 [0.167, 0.238] | t10 |
+| **drug burst** at the admissible peak (2850), every 15 min for 72 h, 0.5% CV, κ exact | 0.194 | **0.204 [0.185, 0.222]** (300 replicates): **does not pass** | t10, t10 recheck |
+| drug burst, peak 1500, every 5 min for 72 h (N = 865), 0.5% CV, κ exact | **0.124** | **0.113 [0.094, 0.130]** | t10 |
+| **direct enzymatic flux**: one untreated reading to 10% | **0.112** | **0.118 [0.107, 0.129]** | t5, t11 |
+| … to 20% | 0.206 | 0.227 [0.203, 0.251]: **does not pass** | t5, t11 |
+| … Monte Carlo crossing | 19.3% (FIM) | [[FLUX_CROSSING]] | t12 |
+| flux to 20% + k_e to 1.2 + load to 2% | 0.199 | 0.221 [0.197, 0.244]: not confirmed | t5, t11 |
+| k_e known to 5% (monthly record) | 0.445 | robust 0.49 | t5, t11 |
 
 ## Which hypotheses held
 
 | # | hypothesis | verdict |
 |---|---|---|
-| 1 | sd ≈ 0.17 at normal, ≈ 3.07 at 5%, band 82–627% | **Held exactly**: 0.1699, 3.0673 and 82.4–627.1%. But it is on the dose-train footing, for one simulated patient. |
+| 1 | sd ≈ 0.17 at normal, ≈ 3.07 at 5%, band 82–627% | **Held exactly**: 0.1699, 3.0673 and 82.4–627.1%. It is on the dose-train footing, for one simulated patient. |
 | 2 | U-shape with its minimum near 200–250% | **Held**: minimum 0.1226 at 212%. |
-| 3 | corr(θ, k_e) → −1 as s falls | **Held**: −0.879 at normal, −0.992 at ≤10%. The other arm of the U is a different confounder: corr(θ, K_m) → +0.98 at 1000%, the linear regime where only θ/K_m is seen. |
-| 4 | amplification (1−s)/s = 5.1 at s = 0.16, 0.18 at s = 0.845 | **Held** as the fixed-(m, L, K_m) derivative. The posterior's effective factor β is −4.44 and −0.187. |
-| 5 | the binding constraint is k_e, not assay noise | **Partly wrong.** k_e is the dominant term, but exact k_e leaves 0.39, and with every nuisance known the noise alone gives 0.194. |
-| 6 | elasticity −s/(sε + 1 − s) | **Held** to 3e-10 against Richardson differences, and per draw under therapy with Δ in the denominator. |
-| 7 | m/K_m ≈ 10 at normal | **Wrong**: 0.1. The fitted ε at normal is 0.90909. |
-| 8 | the 24 records are fit one at a time | **Yes, but they are not patients and are not fitted.** Pooled, they are one patient with 600 draws: 1.09. |
-| 9 | borrowing k_e across the cohort buys a lot for nothing | **Partly**: a factor of 2.3 at 16 patients and 3.8 at 64 (FIM). It never reaches 0.20, and it collapses if k_e varies between patients. |
-| 10 | ~83% of the variance at the band edge is n-independent | **Held**: 84.3% from the exact split, 83.9% from the sd(n) fit. The implied Var(ln k_e) is 0.638 (sd 0.80), which *is* the prior. |
+| 3 | corr(θ, k_e) → −1 as s falls | **Held**: −0.879 at normal, −0.992 at ≤10%. The high-capacity arm of the U is a different confounder: corr(θ, K_m) → +0.98. |
+| 4 | amplification (1−s)/s = 5.1 at s = 0.16 | **Held** as the fixed-(m, L, K_m) derivative. The posterior's effective factor is β = −4.44 (−4.50 at the k_e-exact point). |
+| 5 | the binding constraint is k_e, not assay noise | **Partly wrong.** k_e is the dominant term, but exact k_e leaves 0.39. In that 0.39 the load record holds 62% and the assay 29% (`t8`). |
+| 6 | elasticity −s/(sε + 1 − s) | **Held** to 3e-10. |
+| 7 | m/K_m ≈ 10 at normal | **Wrong**: 0.1 (ε = 0.909). |
+| 8 | the 24 records are fit one at a time | **They are not patients and are not fitted.** Each is scored by an FIM at the truth. |
+| 9 | borrowing k_e across the cohort buys a lot for nothing | **Partly.** At N = 24 it buys 3.07 → 1.17 (FIM) if k_e is genuinely shared. It never reaches 0.20, and it nearly vanishes at ω = 0.33 (1.82). |
+| 10 | ~83% of the variance at the band edge is n-independent | **Held**: 84.3% exact, 83.9% from the sd(n) fit. The implied Var(ln k_e) is 0.638, which is the prior itself. |
 | 11 | 15× sampling moves the edge only a few percent (82 → 75%) | **Held**: 82.4% → 75.1%. |
-| 12 | set identification reproduces the ~25% upper bound | **No.** Non-negativity alone gives 30% (907), and only because the record pins K_m; with K_m unbounded there is no bound. The 22–24% is the k_e prior's lower tail. |
-| 13 | direct flux > k_e > load, in value | **Held.** Flux alone reaches 0.20 at Y ≤ 19.3%; k_e and load never reach it alone. |
-| 14 | a complete-deficiency record gives k_e for free | **No such record exists.** In the parent model θ = 0 has no steady state. One would give k_e only to its load-record precision (~5%). |
-| 15 | λ → k_e because the enzyme is saturated, so a transient gives k_e without θ | **Premise wrong**: not saturated. λ ≈ k_e at 5% only because θ is small: θg′ is 11–16% of λ, which still matters. |
-| 16 | FD regression: EIV attenuation, MA(1) correlation of −0.5 | **Worse than attenuation, and not from noise in m**: the noisy difference ψ sits on both sides of the regression and flips coefficient signs. **MA(1) of −0.5 held**: −0.47 to −0.49 in the equation error, −0.30 to −0.33 after fitting. See Task 6. |
-| 17 | the integral form is much better conditioned | **Only the 2-column saturated form**, and it cannot return θ at all. The general integral forms have larger cond(X) yet are far better estimators. |
-| 18 | τ tension between derivative noise and aliasing | **Exists only for derivative estimators**: optimum 0.9–1.6/λ. For the efficient estimator, denser is never worse at fixed duration. |
-| 19 | conditioning depends strongly on the excursion | **Held**: cond[1, m, m²] goes from 76 to 18, and sd from 2.9 to 0.48, as the peak m/K_m goes from 0.7 to 7.4. |
+| 12 | set identification reproduces the ~25% upper bound | **No.** Non-negativity alone gives 30%, and only because the record pins K_m. The 22–24% is the k_e prior's lower tail. |
+| 13 | direct flux > k_e > load, in value | **Held**, and Monte Carlo confirms the ranking (`t11`). |
+| 14 | a complete-deficiency record gives k_e for free | **No such record exists.** In the parent model θ = 0 has no steady state. |
+| 15 | λ → k_e because the enzyme is saturated | **Premise wrong**: the enzyme is not saturated. λ ≈ k_e at 5% only because θ is small, and θg′ is still 11–16% of λ. |
+| 16 | FD regression: EIV attenuation and an MA(1) correlation of −0.5 | **MA(1) held**: −0.47 to −0.49 in the equation error. The bias is **not** classical EIV in m: noisy ψ sits on both sides and flips signs. **IV and bias-compensated LS do not fix it; generalised TLS with the MA(1) covariance does** (`t6c`). |
+| 17 | the integral form is much better conditioned | **Only the 2-column saturated form, which cannot return θ.** My earlier "conditioning is not the issue" was wrong: the **noiseless** FD design is nearly collinear (cond 353 on TB-B, 4.8e4 on TB-A), and the noisy cond(X) of 26–93 hid that. |
+| 18 | τ tension between derivative noise and aliasing | **Exists only for derivative estimators**: optimum 0.9–1.6/λ. |
+| 19 | conditioning depends strongly on the excursion | **Held**: cond[1, m, m²] goes from 76 to 18 as the peak m/K_m goes from 0.7 to 7.4. |
+| F1 | 0.39 is an n-independent floor, so measuring L is mandatory | **No floor.** The fall is slow because of the load bias b (slope −0.22 to −0.33 against −0.5). An L measurement is necessary at monthly or weekly sampling, but **not sufficient** at 25 monthly draws (0.204). |
+| F1 | the k_e share is 98% at 5% and ~83% at the band edge | **Held, as one curve**: flat at 98.4% to 10%, 93.5% at 50%, 84.3% at the band edge, 77% at 100%, 34% at 200%. |
+| F2 | the plateau ≈ (1−s)/s · ω, so ω = 0.33 lands at ~1.55 | **Roughly**: 1.47 computed. The formula overstates by 14–26%, because the posterior amplifies by β = 4.5, not 5.1, and the patient's own record shrinks k_e below ω. |
+| F2 | estimate ω from the 24 real records | **Not possible: there are no real records.** 24 real monthly records could not estimate it either. |
+| F3 | TB-A to TB-B: which factor? | **The excursion**: 63% of the change in log sd (no priors), then assay CV 19%, capacity 10% and sampling 8%. For NLS, the excursion is the one indispensable factor. |
+| F3 | "×4 misses, ×6 passes" | **A sampling and duration edge, not an excursion threshold**: ×4 passes hourly over 72 h, or every 30 min over 48 h. |
+| F4 | IV or TLS removes the FD bias | **IV and bias-compensated LS: no.** They need a CV of 0.01% or less. **Generalised TLS with the MA(1) covariance: yes**, matching NLS on TB-B. |
+| F5 | the EKF degrading on TB-B is a bug | **No bug.** It is one-pass linearisation error, which grows with the prior width. Started at the truth it still gives 0.50 against a bound of 0.088. **Dropped** from the comparison. |
+| F6 | the FIM misleads in both directions | **The FIM is right in linear θ.** "Optimistic at N = 1" compared it with a number set by the θ bound. "Pessimistic at N = 64" was a 60-replicate artefact. Only the core of the constrained MAP is narrower, and that is the positivity of the *other* patients' θ acting through the shared k_e (tested). |
 
 ---
 
-## 1. Identifiability (`t1_identifiability.py`)
+## Follow-up results
+
+### F1. The 0.39 is not a floor (`t8_floor.py`, rechecked)
+
+![follow-up 1](fig/t8_floor.png)
+
+**What holds the k_e-exact variance**, by Shapley share of Var(ln θ̂ | k_e) = 0.150 at 5%:
+
+| factor | share | in your partition |
+|---|---|---|
+| load-record bias b | 29.2% | load record (b + scatter): **61.7%** |
+| per-visit load-record scatter | 32.5% | |
+| assay CV (per draw) | 29.1% | assay: **29.1%** |
+| K_m | 9.3% | K_m: **9.3%** |
+
+- **b and K_m have zero main effect.** With no per-visit noise the variance is 0. They act only through interaction with the noise, so order-dependent figures range widely: b takes 41% if removed first and 70% if removed after K_m.
+- **Measuring the load exactly removes 72% of the variance** (0.388 → 0.204).
+- Across 10–100% of normal the two σ terms hold 62–68%. b's share falls from 27% to 11%, and K_m's rises from 9% to 27%.
+
+**The 0.39 against the number of draws, k_e exact, at 5%** (FIM; therapy continued past the repository's 200-dose cap):
+
+| scenario | 25 monthly | 100 monthly | 600 monthly | 365 every 2 d | 730 daily | draws for 0.20 |
+|---|---|---|---|---|---|---|
+| k_e exact | 0.388 | 0.277 | 0.162 | 0.195 | 0.151 | 324 in 2 y, or 328 monthly (27 y) |
+| + load bias b exact | 0.298 | 0.147 | 0.060 | 0.084 | 0.056 | 58 monthly |
+| + load measured exactly (b and scatter) | 0.204 | 0.101 | 0.041 | 0.057 | 0.038 | 29 monthly |
+| + K_m and b exact | 0.194 | 0.095 | 0.039 | 0.054 | 0.036 | 24 monthly |
+
+- **No n-independent floor.** A fit of √(floor² + c²/n) over n = 6–600 gives a floor of 0.189, but it fails out of sample: it predicts 0.190 at n = 6000, where the FIM gives 0.059.
+- **The load bias is what makes the fall slow.** With b at its prior, the local slope of ln sd against ln n is −0.22 (25–50 draws), −0.33 (400–600) and −0.48 (2400–6000): the prior on b is slowly overtaken by the data. The record barely updates b: its posterior/prior sd is 0.96 at 25 draws and 0.64 at 365. With b exact the fall is pure 1/√n.
+- **So the answer to "mandatory or optional" is in between.**
+  - At monthly or weekly sampling an independent L measurement is **necessary but not sufficient**: at 25 monthly draws, k_e exact plus the load exact gives 0.204 (Monte Carlo 0.215–0.218), and K_m must also be known (0.194).
+  - With near-daily sampling it is optional: 730 daily draws with k_e to 2% give 0.176 (FIM).
+  - k_e to 5% fails everywhere in the grid.
+- **Requirements for 0.20 (FIM)**, with the load as recorded unless stated:
+
+  | draws | k_e needed | other conditions |
+  |---|---|---|
+  | 730 daily | 2.9% | — |
+  | 365 every 2 d | 1.0% | — |
+  | 100 every 7.3 d | 2% | load bias and scatter both to 2% |
+  | 25 monthly | exact | load exact **and** K_m exact |
+- **Caveat from the recheck: the CRB is not attained at the deciding designs.** Monte Carlo with k_e fixed gives:
+  - 25 monthly draws: RMSE 0.643 against a CRB of 0.388 (9% of fits off by more than 2×).
+  - 365 every 2 d: 0.219 against 0.195.
+  - 730 daily: 0.151 against 0.151.
+
+  So 365-every-2-day designs are at best on the edge of 0.20. Per-record CRBs there span 0.185–0.206, and 17% of records miss.
+- **The k_e variance share, as a curve** (25 monthly draws, median over 24 records):
+
+  | capacity, % of normal | 1–10 | 20 | 50 | 63 | 82.4 (band edge) | 100 | 158 | 200 | 316 | 627 | 1000 |
+  |---|---|---|---|---|---|---|---|---|---|---|---|
+  | k_e share of Var(ln θ̂) | 98.4–98.2% | 97.7% | 93.5% | 90.4% | 84.3% | 77.2% | 50.2% | 34.2% | 11.1% | 1.2% | 0.2% |
+
+  Your 1 − (0.39/3.07)² = 0.9839 at 5% and the ~84% at the band edge are two points on this curve (0.9838 and 0.8425).
+
+### F2. N = 24, and ω (`t9_omega.py`, rechecked: [[OMEGA_VERIFY]])
+
+![follow-up 2](fig/t9_omega.png)
+
+**Task 2 read at N = 24** (FIM; target patient at 5%; the patient's marginal prior on ln k_e stays 0.8):
+
+| ω | 24 patients at 5%: sd ln θ̂ | population sd ln k_e | patient's own sd ln k_e | mixed 5–20% cohort: sd ln θ̂ |
+|---|---|---|---|---|
+| 0 | **1.17** | 0.25 | 0.25 | 1.44 |
+| 0.1 | 1.25 | 0.25 | 0.27 | 1.50 |
+| 0.2 | 1.46 | 0.25 | 0.32 | 1.66 |
+| 0.33 | **1.82** | 0.26 | 0.40 | 1.97 |
+| 0.5 | 2.31 | 0.26 | 0.51 | 2.40 |
+
+- **Monte Carlo joint MAP at N = 24** (60 replicates):
+
+  | ω | RMSE | robust | fits more than 4.5× off |
+  |---|---|---|---|
+  | 0 | 2.34 | 0.75 | 8% |
+  | 0.33 | 3.90 | 1.39 | 25% |
+
+  The FIM is optimistic in ln θ here, as F6 explains.
+- **Your plateau approximation**, √(0.39² + ((1−s)/s·ω)²), gives 1.10, 1.74 and 2.60 at ω = 0.2, 0.33 and 0.5. The computed plateau is 0.96, 1.47 and 2.07, so the approximation is 14–26% high. The amplification actually applied is |β| = 4.50 rather than (1−s)/s = 5.13, and the patient's own record shrinks their k_e uncertainty to 0.90–0.98 ω.
+- **ω cannot be estimated from the repository.** Its 24 records have one k_e value (5.0) by construction.
+- **Would 24 real monthly records identify ω? No.** Simulated cohorts of 24 at 5%, each patient's data-only ln k_e summarised and ω profiled (4000 cohorts per cell):
+
+  | design | true ω | typical 95% interval for ω | share excluding ω = 0 |
+  |---|---|---|---|
+  | 24 at 5%, monthly | 0 | **[0, 0.89]** | 1% |
+  | 24 at 5%, monthly | 0.33 | **[0, 1.00]** | 4% |
+  | mixed 5–20%, monthly | 0.33 | [0, 1.22] | 4% |
+  | 24 at 5%, every 2 d | 0.33 | [0, 0.54] | 49% |
+  | 24 at 5% monthly, + each patient's k_e measured to sd 0.2 | 0.33 | [0.21, 0.47] | 99% |
+
+  The reason is that one monthly record gives each patient's ln k_e only to sd ≈ 1.06 with no k_e prior, three times larger than the ω being sought. Detecting ω = 0.33 with 80% power from monthly records would take about 1200 patients (asymptotic). With every-2-day sampling it would take 33, and with a per-patient k_e measurement to sd 0.2, 6.
+- **The repository's only information on ω** is brief R1's "probably a third or more", for "the nearest comparable disposal rate" in healthy adults; there is no 3-HP figure (`q14_hierarchical.py:19-30`, `PHASE8_SIMULATIONS.md:721-723`). `PHASE10_SENSORS.md:486-494` adds that R1's figure is for the marker's clearance, not the model's k_e/α, so the true spread could be larger. No number in the repository measures ω.
+
+### F3. TB-A against TB-B, and whether 5% can reach 0.20 at all (`t10_factorial.py`, rechecked)
+
+**Factorial attribution.** The 2⁴ FIM factorial reproduces both benches exactly (383.3 and 0.089). The change in log₁₀ sd from TB-A to TB-B is −3.63, attributed by Shapley share:
+
+| factor | share |
+|---|---|
+| excursion (diet out → ×6 load) | **63.4%** |
+| assay CV (5% → 1%) | 19.2% |
+| capacity (5% → 20%) | 9.5% |
+| sampling (1 h → 15 min) | 7.8% |
+
+Main effects carry 99.3% of the variance across the 16 cells; the only material interaction is capacity × excursion. On the "k_e 0.8 + K_m from the record" rung the shares are excursion 48%, capacity 22%, assay CV 22% and sampling 8%.
+
+**For NLS the excursion is the one indispensable factor.** Starting from TB-B and putting back a single TB-A setting:
+
+| TB-B with … at its TB-A value | NLS RMSE | FIM |
+|---|---|---|
+| nothing (TB-B itself) | 0.100 | 0.089 |
+| capacity | 0.38 | 0.32 |
+| sampling | 0.21 | 0.17 |
+| assay CV | 0.51 | 0.45 |
+| excursion | **1.30, and every fit fails** | — |
+
+The other three degrade NLS roughly in line with the FIM. Starting from TB-A, no single TB-B factor rescues it: RMSE stays at 3.3–4.1.
+
+**A 5% patient on TB-B's other settings** (15-min sampling, 1% CV, ×6) has FIM sd 0.32 with no priors and 0.07 on the rung. **So capacity by itself does not block 0.20.** What blocks it is that the excursions able to reach 0.20 add substrate.
+
+**The 5% design frontier.** I scanned 5280 designs:
+- sampling every 5–60 min, for 24–72 h;
+- assay CV 0.5–5%;
+- excursions: diet withdrawal of 25% or 50%, load ×1.5 to ×8, or a drug burst at peak 450, 1500 or 2850;
+- the full knowledge ladder, alone or joined to the record.
+
+1422 pass by FIM. The cheapest passes per class, with an explicit cost order (safety class first, then knowledge that must be bought, then assay CV, then samples):
+
+| class | best route to 0.20 (FIM) | Monte Carlo |
+|---|---|---|
+| **no added substrate** (drug burst, diet withdrawal) | **none at 5%, 2% or 1% CV**: 0 of the grid. At 0.5% CV: drug 2850 at N = 289 gives 0.194; drug 1500 at N = 865 gives 0.124; withdrawal 50% with L₀ to 1% at N = 577 gives 0.195. | drug 2850 **0.204, fails**; drug 1500 **0.113, passes**; withdrawal 0.237, fails |
+| load ×1.5 | not at 5% CV; at 2% CV with N = 865 | — |
+| load ×2, 5% CV | L₀ to 1%, every 15 min for 72 h, joined: 0.199 | 0.237 [0.181, 0.291], straddles |
+| load ×3, 5% CV, no bought knowledge | every 5 min for 72 h (N = 865): 0.193 | 0.203 [0.167, 0.238], straddles |
+| load ×4, 5% CV, no bought knowledge, joined | every 5 min for 48 h: 0.199 | — |
+
+- **The earlier "×4 misses (0.205), ×6 passes (0.176)" is a sampling-and-duration edge** at hourly sampling over 48 h, not an excursion threshold. ×4 passes hourly over 72 h (0.182), and every 30 min over 48 h (0.174).
+- **The drug designs need the delivered increment κ known exactly.** With κ to 12%, the 2850 burst at N = 289 gives 0.345.
+- **Load excursions sit past the repository's own crisis threshold.** The parent model's fold is at 1.18× baseline load (`results/numbers/boundary.tex: fold_load_ratio = 1.177`, a 10%-capacity patient). Every load-up excursion in this table is therefore beyond the point where the parent model has no steady state.
+- **Answer: 5% can reach 0.20 in this design space only two ways.** Either through a drug burst at a research-grade 0.5% assay CV, with 865 samples and κ exactly known, or through load excursions that are not admissible. No design at a clinical assay CV with no added substrate does. Two corrections to the earlier Task 7 text follow below.
+
+### F4. One fix for the FD estimator (`t6c_iv.py`, rechecked)
+
+![follow-up 4](fig/t6c_iv.png)
+
+- **The noiseless FD design is nearly collinear**: ψ₀ is almost a quadratic in m along the path. In midpoint form, cond(X₀) is 4.8e4 on TB-A, 353 on TB-B and 1234 on bench C (5%, ×6, 15 min, 1% CV). The noisy cond(X) of about 25 that t6 reported is inflated by the noise in ψ.
+- **The psi column carries almost no independent signal.** Its partial signal-to-noise ratio, off [1, m, m²], is 0.0016 on TB-B and 7e-5 on C. So OLS's K_m coefficient goes to its noise-only limit: −266 on TB-B (exact limit −265.5, Monte Carlo −265.1).
+- **Instrumental variables do not fix it.** I tried instruments from samples k−1 and k+2 (IV-JI, 2SLS, GMM with an MA-robust weight) and a heteroscedasticity-weighted IV. They still return θ̂ ≤ 0 in 33–61% of records on TB-B and on C. The instruments look strong overall (first-stage R² 0.89) but are weak in the direction that identifies K_m (conditional R² 0.019).
+- **Bias-compensated LS does not fix it either**, even with the exact lognormal moment correction, which is verified unbiased. The corrected X′X is positive definite in only about half the records.
+- Both linear corrections become consistent only at an assay CV of 0.01% or less.
+- **Generalised TLS with the row-wise MA(1) (tridiagonal) noise covariance does fix it** (GTLS-t, midpoint form).
+
+  | | TB-B: bias / RMSE / robust | bench C: RMSE / robust |
+  |---|---|---|
+  | GTLS-t | −0.016 / 0.090 / 0.084 | 0.43 / 0.34 (recheck: 0.57 / 0.37) |
+  | NLS | −0.011 / 0.079 / 0.085 | — |
+  | FIM sd | 0.089 | 0.32 |
+
+  The left-point form is discretisation-biased. On TB-A nothing works, because the bench carries no information.
+- **So:** OLS-FD and every linear correction of it is a clean negative result, with the mechanism quantified above. The FD equation itself is usable if it is estimated with its correct noise covariance. At that point it is a reparameterised NLS, and offers no advantage over fitting the ODE.
+
+### F5. The one-pass EKF: no bug, dropped (`t6d_ekf.py`, rechecked)
+
+![follow-up 5](fig/t6d_ekf.png)
+
+- **No algebraic error.** A copy of t6's filter reproduces t6's numbers exactly. On noiseless data at the truth, its posterior sd equals the FIM+prior bound to five digits (0.08922). The log-state Jacobian matches finite differences to 3e-4. Process noise is irrelevant: q = 0 gives the same result. And an iterated measurement update is a no-op, because the measurement is linear in the log-state.
+- **One real inconsistency, which is not the cause.** The diagonal P₀ ignores that the initial marker is a deterministic function of the parameters. Tying it improves RMSE from 3.25 to 1.82 on TB-B.
+- **The cause is one-pass linearisation error, which grows with the prior width.**
+  - Started *at the truth* with t6's prior width, it still gives RMSE 0.50 while reporting sd 0.05.
+  - Narrowing the prior to ×0.1, ×0.3, ×0.5 and ×1 gives RMSE 0.028, 0.093, 0.261 and 0.503.
+  - Tied P₀, annealed parameter noise, lag-1 re-linearisation and a cubature filter all fail. The best robust spread is 0.66, against a bound of 0.088.
+- **"Wider on TB-B" is mostly one record.** 83% of the EKF's sum of squared errors on TB-B comes from a single record. By robust spread it is *narrower* on TB-B (1.07) than on TB-A (1.63), where it simply returns its prior.
+- **Decision: the one-pass EKF is dropped from the comparison.** It stays in t6's printed table, labelled as not a fair comparator, and is removed from t6's figure. The iterated EKF smoother is the Kalman entry.
+- **The verifier's corrections.**
+  - NLS started only from the drawn prior centre gives RMSE 0.085, identical to the truth-start in 40 of 40 records, so NLS is a like-for-like benchmark.
+  - A one-pass Liu–West particle filter reaches a robust spread of 0.15–0.18, so the right statement is "no *Gaussian* one-pass filter is a fair comparator".
+
+### F6. Where the FIM misleads, and the Task 5 spot-checks (`t11_fim_check.py`, rechecked)
+
+![follow-up 6](fig/t11_fim_check.png)
+
+- **Given (K_m, k_e), each θᵢ enters linearly.** So the FIM describes a Gaussian likelihood in **linear θ**, and with an sd of 3.0θ at N = 1 and 0.78θ at N = 64, θ̂ ≤ 0 is common. Every ln θ summary then depends on how that is handled.
+- **N = 1.** 33.5% of fits sit on the θ ≥ 1e-3 bound. The robust spread is 5.4, 6.6 and 8.9 for bounds of 1e-2, 1e-3 and 1e-5, so t2's "6.6" measured the bound, not the data. Unconstrained, the linear-θ spread is 3.27 against the FIM's 3.04.
+- **N = 64.** t2's RMSE of 0.49 was a 60-replicate artefact. With 200 replicates, patient 0's RMSE is 1.33 [0.55, 1.98], above the FIM's 0.78, and pooled over all 64 patients it is 1.47.
+- **Why only the core is narrower than the FIM** (robust 0.52, about 0.67× the FIM from N = 8 to 64): positivity of the **other** patients' θ, acting through the shared k_e. The verifier tested this directly. Constraining only the other patients reproduces the full narrowing (0.556); constraining only patient 0 does nothing (0.704, equal to unconstrained). It also makes the MAP biased upward, by +0.04 to +0.12 in median ln error depending on the draws. The unbiased-estimator CRB does not bound a biased estimator, so there is no contradiction.
+- **The Monte Carlo machinery was validated** on an exactly linear-Gaussian surrogate.
+- **Task 5 spot-checks**, 240 replicates each:
+
+  | scenario | FIM | MC RMSE | MC robust | Monte Carlo verdict |
+  |---|---|---|---|---|
+  | flux reading to 10% | 0.112 | 0.118 | 0.113 | passes |
+  | flux reading to 20% | 0.206 | 0.227 | 0.218 | fails |
+  | k_e exact + load exact | 0.204 | 0.215 | 0.197 | fails |
+  | flux 20% + k_e 1.2 + load 2% | 0.199 | 0.221 | 0.202 | not confirmed |
+  | k_e exact | 0.388 | 1.49 (bound hits) | 0.45 | fails |
+  | k_e to 5% | 0.445 | 1.67 | 0.49 | fails |
+
+  The ranking survives except for a tie at ranks 2–3. In linear θ the FIM is attained in every scenario (linear RMSE/FIM 0.99–1.06). With k_e exact or to 5%, the ln θ profile reaches θ near 0 in 6 of 24 records, so the FIM's symmetric ln θ interval is optimistic on the low side. Only the 10% flux reading clears 0.20 by Monte Carlo; the crossing is [[FLUX_CROSSING]] (`t12_flux_mc.py`).
+
+---
+
+## The original tasks
+
+### 1. Identifiability (`t1_identifiability.py`)
 
 ![task 1](fig/t1_identifiability.png)
 
-- **U-curve, 1–1000%.** 14.75 at 1%, 3.07 at 5%, 0.17 at 100%, minimum **0.1226 at 212%**, 0.29 at 1000%. The band is 82.4–627.1%. Below the band sd(ln θ̂) ∝ 1/s, almost exactly.
-- **Mechanism.** corr(ln θ, ln k_e) runs −0.992 (1–10%), −0.967 (50%), −0.879 (100%), −0.583 (200%), −0.047 (1000%). corr(ln θ, ln K_m) rises from +0.21 at 50% to +0.98 at 1000%. corr(ln θ, b) stays between −0.13 and +0.02.
-  - **Low-capacity arm**: θ against k_e, the brief's mechanism.
-  - **High-capacity arm**: θ against K_m. There m ≪ K_m, g ≈ m/K_m, and the record sees θ/K_m.
-- **Variance attribution at 5%, with each nuisance known.** None 3.07; k_e 0.388; K_m 2.885; b 3.046; k_e + b 0.298; all three 0.194. k_e's share of the variance is 98.4% at 5%, 77% at normal and 1% at 627%.
-- **Elasticity.** The analytic form matches numerical differentiation to 3.3e-10 untreated, and to 9e-10 per draw on therapy (where (θ+Δ)g enters the denominator).
+- **U-curve, 1–1000%.** 14.75 at 1%, 3.07 at 5%, 0.17 at 100%, minimum **0.1226 at 212%**, 0.29 at 1000%. The band is 82.4–627.1%.
+- **Mechanism.** corr(ln θ, ln k_e) is −0.992 at 1–10%, −0.967 at 50%, −0.879 at 100%, −0.583 at 200% and −0.047 at 1000%. corr(ln θ, ln K_m) rises from +0.21 at 50% to +0.98 at 1000%, where m ≪ K_m and the record sees only θ/K_m. corr(ln θ, b) stays between −0.13 and +0.02.
+- **Variance attribution at 5%, with each nuisance known:** none 3.07; k_e 0.388; K_m 2.885; b 3.046; k_e + b 0.298; all three 0.194. The full curve of k_e's share is in F1.
+- **Elasticity.** The analytic form matches numerical differentiation to 3.3e-10 untreated, and to 9e-10 per draw on therapy.
 
   | | s | m/K_m | ε | d ln m/d ln θ |
   |---|---|---|---|---|
   | normal | 0.845 | 0.100 | 0.909 | −0.9154 |
   | 5% | 0.163 | 0.540 | 0.649 | −0.1729 |
-- **Profile likelihood at s = 0.16**, 24 records, ln θ grid from 0.05 to 4967.
-  - **Lower side: there is no lower bound.** The profile is flat to within 0.05 log-likelihood units from 0.01× to 2× the truth. All 24 intervals run to the grid floor. The MLE has median 3.8 (truth 150), and 54% of records put it below 15.
-  - **Upper side: a wall.** The 95% upper end has median **672 (22.4% of normal)**, range 451–821; the noiseless expected profile gives 672 too. At the wall, k_e has been driven to ~1.4. That is about 1.6 prior sd below its centre, so it is the k_e prior that closes it.
-  - **The CRB is the wrong shape entirely.** Its sd of 3.07 implies a symmetric factor of 166,704. The likelihood is instead a one-sided plateau with a cliff about 4.5× above the truth.
+- **Profile likelihood at s = 0.16**, 24 records.
+  - **Lower side: no lower bound.** All 24 intervals run to the grid floor (θ = 0.05), and the MLE has median 3.8.
+  - **Upper side: a wall.** The 95% upper end is at median **672 (22.4% of normal)**, where k_e has been pushed about 1.6 prior sd below its centre.
+  - **The CRB is the wrong shape.** It implies a symmetric factor of 166,704; the likelihood is instead a one-sided plateau with a cliff about 4.5× above the truth.
 
-## 2. Joint fit (`t2_cohort.py`)
+### 2. Joint fit (`t2_cohort.py`; corrected by F2 and F6)
 
 ![task 2](fig/t2_cohort.png)
 
-**What the records are.** They are not patients. Each is one diet history of the same θ = 150, K_m = 100, k_e = 5 patient, scored separately (median 3.07, range 2.66–3.26). Pooling all 24 as one patient with 600 draws gives 1.09 at 5% and 0.147 at normal.
+The 24 records are one diet history each of the same patient. Pooled as one patient with 600 draws they give 1.09 at 5%.
 
-**A real cohort.** N patients each have their own θᵢ and their own load-diary bias bᵢ. K_m is shared, and ln k_e,ᵢ = ln k_e,pop + ηᵢ with ηᵢ ~ N(0, ω²). The population prior is σ_pop² = 0.8² − ω², so each patient's marginal prior stays 0.8 and N = 1 reproduces n4 exactly (3.0820 against 3.0820). The full shared (K_m, k_e) posterior reaches each θᵢ. On `q14_hierarchical.py`'s composition (5/8/10/15/20%) this reproduces q14's 1.578 and 0.969 within 4%, as 1.63 and 0.975.
+**A real cohort, FIM.** Each patient has their own θᵢ and load-diary bias bᵢ. K_m is shared, and ln k_e,ᵢ = ln k_e,pop + ηᵢ with ηᵢ ~ N(0, ω²). The population prior is σ_pop² = 0.8² − ω², and N = 1 reproduces n4 exactly. On q14's composition this agrees with `q14_hierarchical.py` within 4%.
 
-| patients at 5% | ω = 0 | ω = 0.2 | ω = 0.33 | ω = 0.5 | population sd(ln k_e), ω = 0 |
-|---|---|---|---|---|---|
-| 1 | 3.08 | 3.08 | 3.08 | 3.08 | 0.69 |
-| 16 | **1.33** | 1.59 | 1.92 | 2.38 | 0.29 |
-| 64 | **0.81** | 1.19 | 1.62 | 2.18 | 0.16 |
-| 1024 | 0.43 | 0.98 | 1.48 | 2.08 | 0.04 |
+| patients at 5% | ω = 0 | ω = 0.2 | ω = 0.33 | ω = 0.5 |
+|---|---|---|---|---|
+| 1 | 3.08 | 3.08 | 3.08 | 3.08 |
+| 16 | 1.33 | 1.59 | 1.92 | 2.38 |
+| **24** | **1.17** | 1.46 | 1.82 | 2.31 |
+| 64 | 0.81 | 1.19 | 1.62 | 2.18 |
+| 1024 | 0.43 | 0.98 | 1.48 | 2.08 |
 
-- **Monte Carlo check.** I fitted the joint MAP across N patients, with priors read as noisy pseudo-observations.
+**Correction.** This section first reported Monte Carlo spreads of 0.90 (N = 16) and 0.46 (N = 64), and called the FIM pessimistic. Those came from 60 replicates and a bounded ln θ. With 200 replicates the N = 64 RMSE is 1.33. Only the robust core (0.52) is narrower than the FIM, for the reason tested in F6.
 
-  | N | FIM | MC RMSE | robust half-width (16–84%) | fits off by > 4.5× |
-  |---|---|---|---|---|
-  | 1 | 3.08 | 6.9 | 6.6 | 38% |
-  | 16 | 1.33 | 1.46 | 0.90 | 4% |
-  | 64 | 0.81 | 0.49 | 0.46 | 0% |
+**What does not change:** even exact k_e leaves 0.39 on 25 monthly draws, so borrowing cannot reach 0.20 without more draws per patient (F1). And at ω = 0.33 it buys little.
 
-  At 64 patients the FIM is *pessimistic* (0.81 against an MC spread of 0.46–0.49), and the MAP is biased high by a median 0.12 in log units. I have not isolated why. The likelihood in ln θ is far from quadratic at 5% (Task 1), so the FIM cannot be trusted in either direction there. Below about 8 patients it is meaningless.
-- **The answer to the main question.** Borrowing k_e across a disease cohort, with no new measurement, takes one patient from 3.07 to about 1 at 16 patients and about 0.5–0.8 at 64. It cannot reach 0.20 on monthly records, because even exact k_e leaves 0.39.
-- **Which kind of uncertainty the 0.8 is decides almost everything.** If it is a shared-but-unknown constant, the cohort helps. If it is between-patient spread (ω), the cohort measures the population and not the patient. The repository's own R1 figure of a 33% between-patient CV leaves 1.62 at 64 patients. Nothing in the repository says which kind the 0.8 is.
-
-## 3. Variance decomposition (`t3_variance.py`)
+### 3. Variance decomposition (`t3_variance.py`)
 
 ![task 3](fig/t3_variance.png)
 
 Exact split: Var(ln θ̂) = Var(ln θ̂ | k_e) + β²·Var(ln k_e).
 
-- **At the band edge** (θ = 2472, s = 0.815) the k_e term is **84.3%** of the variance. A fit of sd(n) = √(floor² + c²/n) over n = 8–400 gives floor 0.1834 and c 0.4014, which puts the floor at 83.9% at n = 25. The implied **Var(ln k_e) = 0.638, sd 0.80**: the prior itself. The data have taught nothing about k_e.
-- The conditional term scales roughly as 1/n: n·Var stays between 0.115 and 0.168 for n from 6 to 400. The k_e term stays flat at 0.0335 ± 0.0004.
-- **15× sampling** (every 2 days, 365 draws) moves the edge from **82.4% to 75.1%**, which is 8.9%.
-  - That is more than the k_e-held limit allows (79.9% with infinitely many draws). Dense sampling across dose phases does teach k_e a little: Var(ln k_e) falls 4.3%.
-  - So "n-independent" is nearly, not exactly, true.
+- **At the band edge** (θ = 2472) the k_e term is **84.3%** of the variance. The sd(n) fit puts the floor at 83.9% at n = 25. The implied Var(ln k_e) is 0.638, the prior itself.
+- **15× sampling** (every 2 days, 365 draws) moves the edge from 82.4% to 75.1%. That is beyond the k_e-held limit of 79.9%, because dense sampling teaches k_e a little: Var(ln k_e) falls 4.3%.
+- **Correction.** I wrote that n·Var(ln θ̂ | k_e) stays between 0.115 and 0.168 for n = 6–400. That was computed on n4's GRID prefixes, which go untreated after the repository's 200-dose cap. With therapy continued, the values at n = 100 and 400 are 0.178 and 0.197 (`t8_floor_recheck.py`). The floor fit (0.183) and the 83.9% are unaffected.
 - The edge moves with the k_e prior: 43.7% of normal at a prior sd of 0.4, 24.6% at 0.2 and 15.6% at 0.1.
 
-## 4. Set identification (`t4_set.py`)
+### 4. Set identification (`t4_set.py`)
 
 ![task 4](fig/t4_set.png)
 
-**The bound, from the balance alone.** The balance gives θ = (L − k_e·m)/g(m). Non-negativity of every flux then gives
-
-**θ_max = (L − k_e,lo·m)(K_m,hi + m)/m**
-
-The lower end is 0 whenever k_e,hi·m ≥ L, which at 5% means any k_e above 5.97 /d, only 1.2× nominal.
+**θ_max = (L − k_e,lo·m)(K_m,hi + m)/m**, which increases with K_m.
 
 | k_e floor | K_m ≤ 100 | 107 | 150 | 200 | 500 | unbounded |
 |---|---|---|---|---|---|---|
 | 0 (non-negativity only) | 30.7% | 32.1% | 40.6% | 50.6% | 110% | ∞ |
 | 1.04 (the 0.8 prior's 95% low end) | 25.3% | 26.5% | 33.5% | 41.8% | 91% | ∞ |
 
-- **On the actual noisy dose-train records** I ran a constrained profile (k_e > 0, no k_e prior, b prior 5%). Its upper end is **907 = 30.2%** in all 24 records, with k_e at 0 at the bound; the noiseless record gives the same.
-- **Non-negativity bounds θ at 30% only because the dose train pins K_m to ~6%.** With K_m unconstrained there is no upper bound. Adding the k_e prior gives 672 (22.4%).
-- **So the reported ~25% is the k_e prior's lower tail plus K_m from the record, not a consequence of non-negativity.** Analytically, the 95% low end of the prior gives 25.3%.
+- On the noisy dose-train records, a constrained profile with k_e > 0 and no k_e prior gives **907 = 30.2%** in all 24 records. It is finite only because the dose train pins K_m to ~6%.
+- **The reported ~25% is the k_e prior's lower tail**: 672 (22.4%) with the prior.
 
-## 5. Value of additional measurements (`t5_value.py`)
+### 5. Value of additional measurements (`t5_value.py`; spot-checked in F6)
 
 ![task 5](fig/t5_value.png)
 
-Every number is at θ = 5% of normal on the current monthly record.
+The printed output, at θ = 5% of normal on the current monthly record (FIM; see F6 for Monte Carlo):
 
-- **(a) k_e known to a factor F (1 sd).** The ln k_e prior sd becomes ln F. F = 1.05 → 0.445; 1.1 → 0.576; 1.2 → 0.895; 1.5 → 1.77; 2.0 → 2.76. Exact gives 0.388. **It never reaches 0.20.** The 95% reading of F gives 0.40 at F = 1.05.
-- **(b) load measured to X%** (bias prior and per-visit scatter both X%). 1% → 2.70; 5% → 3.07; 20% → 3.75. Exact gives 2.67. **It never reaches 0.20.**
-- **(c) one direct enzymatic-flux reading F_enz = θ·g(m) at an untreated visit.** Its row is (θg, −θK_m m/(K_m+m)², 0, 0), with zero derivative in k_e and in b. The untreated visit's marker draw alone takes 3.07 → 2.31, and is credited separately. Y = 5% → 0.071; 10% → 0.112; 20% → 0.206; 30% → 0.303. **One reading reaches 0.20 at Y ≤ 19.3%**, and three averaged readings at Y = 30% give 0.18.
-- **(d) combinations.** k_e to 1.05 plus load to 1% gives 0.305; k_e exact plus load exact gives 0.204. A 20% flux reading plus k_e to 1.2 plus load to 2% gives 0.199. A 30% flux reading plus *exact* k_e gives 0.226, so k_e cannot rescue a poor flux reading.
-- **Ranking by precision gained per unit of measurement precision.** Direct flux ≫ k_e ≫ load.
-  - Elasticities of sd(ln θ̂) to each measurement's own sd: 0.90 for flux, 0.79 for k_e and 0.15 for the load.
-  - Only the flux reading clears the target alone, at 19%. For scale: the only repeatability figure the repository carries for the 1-¹³C-propionate breath test is a between-visit mean of 14% (`PHASE4_SUMMARY.md`). But that is for an uncalibrated relative reading, which is the wrong kind of measurement (next point).
-- **Two conditions on (c).**
-  - **It must be taken off therapy.** On therapy any PCC flux measurement sees (θ + Δ)g with Δ/θ = 3–40.
-  - **It must be absolutely calibrated.** The repository's 1-¹³C-propionate breath test is modelled as y = c·F with an unknown recovery c (`u2_breath_functional.py`), and under that model one reading is worth nothing.
-- **Complete deficiency.** The repository holds no patient records, so there is no θ ≈ 0 record to read k_e from.
-  - In the parent model (`ParamsC`) a θ = 0 patient has no steady state at all: R0 is set so the alternative route alone peaks at 500 against a load of 600.
-  - If such a patient existed under model A, k_e = (L − b)/m would carry the anchor's own load bias, ~5–7%. Transferred to a 5% patient that gives 0.45–0.50 if k_e is shared exactly, 1.0 at ω = 0.2 and 1.5 at ω = 0.33.
+| measurement | sd(ln θ̂) |
+|---|---|
+| none (current design) | 3.07 |
+| + one untreated baseline marker draw | 2.31 |
+| k_e to a factor 1.05 / 1.1 / 1.2 / 1.5 / 2.0 (1 sd) | 0.445 / 0.576 / 0.895 / 1.77 / 2.76 |
+| k_e exact | 0.388 |
+| load measured to 1% / 2% / 5% / 10% / 20% | 2.70 / 2.77 / 3.07 / 3.41 / 3.75 |
+| load measured exactly | 2.67 |
+| one untreated flux reading to 5% / 10% / 15% / 20% / 30% | 0.071 / 0.112 / 0.159 / 0.206 / 0.303 |
+| three flux readings at 30%, averaged | 0.179 |
+| k_e 1.05 + load 1% | 0.305 |
+| k_e exact + load exact | 0.204 |
+| flux 20% + k_e 1.2 + load 2% | 0.199 |
+| flux 30% + k_e exact | 0.226 |
+| complete-deficiency anchor (k_e from (L − b)/m), ω = 0 / 0.2 / 0.33 | 0.45–0.50 / 1.0 / 1.5 |
 
-## 6. Dynamic estimators (`t6_estimators.py`)
+- **Ranking:** flux ≫ k_e ≫ load. The elasticities of sd(ln θ̂) to each measurement's own precision are 0.90, 0.79 and 0.15.
+- Only the flux reading reaches 0.20 alone: at Y ≤ 19.3% by FIM, and at [[FLUX_CROSSING]] by Monte Carlo.
+- **Conditions on the flux reading:** it must be taken off therapy, since on therapy any PCC flux measurement sees (θ + Δ)g, and it must be absolutely calibrated.
+
+### 6. Dynamic estimators (`t6_estimators.py`; extended by F4 and F5)
 
 ![task 6](fig/t6_estimators.png)
 
-**The relaxation rate at 5%.** λ = 5.63–5.94 /d (1/λ = 4.0–4.3 h), and θg′ is 11–16% of it along a washout. At normal, θg′ is 83% of λ.
+- **λ = 5.6–5.9 /d at 5%** (1/λ = 4.0–4.3 h), with θg′ 11–16% of it.
+- **The brief's integral form (b) cannot identify θ**: θ enters only through L₀ − θ.
 
-**The brief's (b) cannot identify θ in principle.** In m_{k+1} − m_k = (L₀ − θ)τ − k_e∫m, θ enters only through L₀ − θ, because a saturated enzyme is a constant sink.
+| estimator | ln θ̂ on TB-A: median bias, RMSE | ln θ̂ on TB-B: median bias, RMSE (robust) | ln k̂_e median bias, A / B |
+|---|---|---|---|
+| (a) FD, left point | −4.6, 4.9; θ̂ ≤ 0 in 56% | θ̂ ≤ 0 in **100%** | +0.21 / +0.33 |
+| (a) FD, midpoint | −4.0, 4.4; θ̂ ≤ 0 in 44% | θ̂ ≤ 0 in **100%** | +0.03 / +0.33 |
+| (a) FD estimated by GTLS with the MA(1) covariance (F4) | fails (no information) | −0.016, 0.090 (0.084) | — / +0.004 |
+| (b) integral, saturated (brief's) | θ not identified | θ not identified | **+0.11 / +0.23** |
+| (b′) integral, general, K_m profiled | +9.8, 9.5 | +0.03, 0.32 (0.24) | +1.7 / −0.01 |
+| (b″) integral, cumulative | +9.3, 8.5 | +0.04, 0.21 (0.19) | +0.7 / −0.01 |
+| (c) NLS through the ODE | +1.1, 4.3 | **−0.01, 0.079 (0.085)** | 0.00 / 0.00 |
+| (c) iterated EKF smoother | +0.11, 1.48 (its prior) | −0.01, 0.33 (**0.082**) | 0.00 / 0.00 |
 
-**Two benches.**
-- **TB-A, the target.** θ = 150, diet (half the load) withdrawn, hourly for 48 h, 5% CV. Its FIM sd is **383 with no priors**, so nothing can be estimated there and the bench only shows how each estimator fails.
-- **TB-B, a measurement bench, not a design.** θ = 600, load raised sixfold for 24 h then withdrawn, every 15 min, 1% CV. Its FIM sd is 0.089.
+The one-pass EKF is dropped (F5). TB-B's FIM sd is 0.089.
 
-| estimator | cond(X) A / B | ln θ̂ on TB-A: median bias, RMSE | ln θ̂ on TB-B: median bias, RMSE (robust) | ln k̂_e median bias, A / B |
-|---|---|---|---|---|
-| (a) FD, left point | 93 / 26 | −4.6, 4.9; θ̂ ≤ 0 in 56% | θ̂ ≤ 0 in **100%** | +0.21 / +0.33 |
-| (a) FD, midpoint | 104 / 26 | −4.0, 4.4; θ̂ ≤ 0 in 44% | θ̂ ≤ 0 in **100%** | +0.03 / +0.33 |
-| (b) integral, saturated (brief's) | 10 / 3 | θ not identified | θ not identified | **+0.11 / +0.23** |
-| (b′) integral, general, K_m profiled | 575 / 19 | +9.8, 9.5 | +0.03, 0.32 (0.24) | +1.7 / −0.01 |
-| (b″) integral, cumulative | 5410 / 138 | +9.3, 8.5 | +0.04, 0.21 (0.19) | +0.7 / −0.01 |
-| (c) NLS through the ODE | 2.8e4 / 185 | +1.1, 4.3 | **−0.01, 0.079 (0.085)** | 0.00 / 0.00 |
-| (c) EKF + RTS, one pass | — | +0.15, 1.65* | −0.02, 3.2 (1.07) | +0.15 / +0.08 |
-| (c) iterated EKF smoother | — | +0.11, 1.48* | −0.01, 0.33 (**0.082**) | 0.00 / 0.00 |
+- **The FD bias is endogeneity of ψ**, not noise in m. The coefficients relative to truth are (−1.59, −2.06, 1.39, −2.64) with noiseless m, and the same with noisy m.
+- **Discretisation bias:** on noiseless TB-B samples the left point unlumps to θ = 56 against 600; the midpoint gives 600.3.
+- **MA(1):** −0.47 to −0.49 in the equation error at the true coefficients, and −0.30 to −0.33 in fitted residuals (`t6b_ma1.py`).
+- **Correction.** I wrote "conditioning is not the issue". It is: the noiseless FD design is nearly collinear (F4).
 
-TB-B's FIM sd is 0.089, so NLS attains it. The iterated smoother's robust spread matches it too, but a few fits fail and inflate its RMSE.
-
-\* On TB-A the Kalman estimators return their own 1.5-sd prior on ln θ: the data add nothing.
-
-- **The bias in (a) is worse than attenuation, and it is not classical errors-in-variables in m.** The median lumped coefficients on TB-A are K_m −30 against 100 and L₀K_m −5400 against +16,100; on TB-B, K_m is −264. On TB-B the median coefficients relative to truth are (−1.59, −2.06, 1.39, −2.64) with *noiseless* m in the m and m² columns, and (−1.60, −2.07, 1.39, −2.64) with noisy m. The two agree. So the whole bias comes from ψ, the noisy difference, sitting as a regressor (−ψ) while also inside the response (ψ·m). That is endogeneity, and it flips signs rather than shrinking coefficients towards zero.
-- **Discretisation bias is separate and large.** On *noiseless* TB-B samples the left-point form unlumps to θ = 56 against 600; the midpoint form gives 600.3. On TB-A the left point gives 135.5 against 150.
-- **MA(1) holds where it should** (`t6b_ma1.py`). At the *true* coefficients, the equation error has lag-1 autocorrelation −0.47 (TB-A) and −0.49 (TB-B), the predicted −0.5; it is the same with noiseless m. The *fitted* residuals show only −0.30 to −0.33, because OLS absorbs part of the shared noise through the biased coefficient on −ψ. So a residual check after fitting understates the correlation the estimator actually faces.
-- **Conditioning is not the issue.** The brief's saturated integral form is the best conditioned (cond 3–10), but it estimates the wrong things: k_e biased high, and no θ. The general per-interval integral form is the FD form, divided through instead of multiplied, so it is linear in (L₀, θ, k_e) given K_m and has no ψ·m product. The cumulative integral form is near-unbiased despite cond 138. NLS and the iterated EKF smoother are efficient.
-- **About the smoothers.** A single EKF pass from a prior centre up to 20× off is unreliable. The iterated smoother (Bell 1994), damped to 0.5 log units per pass, is Gauss–Newton on the MAP objective. It reached costs at or below those of a multi-start least-squares fit.
-
-## 7. Experiment design (`t7_design.py`)
+### 7. Experiment design (`t7_design.py`; extended by F3)
 
 ![task 7](fig/t7_design.png)
 
-**The washout at 5%, hourly for 48 h.** sd(ln θ̂) down the ladder of what has to be known in advance; each column adds to the one before.
+The washout at 5%, hourly for 48 h, down the knowledge ladder (FIM):
 
 | design | nothing | k_e 0.8 | + K_m from the record | + L₀ to 5% of L | + L₀ to 1% | k_e exact |
 |---|---|---|---|---|---|---|
 | withdraw half the load (the diet) | 383 | 9.4 | 4.1 | 1.5 | 0.63 | 0.10 |
 | load ×3 for 24 h, then out | 9.4 | 7.2 | 0.86 | 0.58 | 0.24 | 0.08 |
-| load ×6 for 24 h, then out | 3.1 | 3.0 | 0.57 | 0.40 | **0.18** | 0.07 |
+| load ×6 for 24 h, then out | 3.1 | 3.0 | 0.57 | 0.40 | 0.18 | 0.07 |
 
-- **What reaches 0.20.** A washout needs **all** of: an excursion well past K_m (at hourly sampling a ×4 load step just misses, at 0.205, and ×6, with m reaching 3.6·K_m, passes), the unrecorded load L₀ known to about 1% of L, K_m taken from the monthly record, and the k_e prior.
-  - The ×6 design reaches 0.176 hourly over 48 h, 0.130 at 15-minute sampling, and 0.150 hourly over 96 h. That is 49–193 samples.
-  - A sixfold propiogenic load is not admissible in PA.
-  - A pure withdrawal never reaches 0.20 short of exact k_e. Joining the washout to the monthly record changes little: 0.62 and 0.165.
-- **The binding unknown in a washout is the unrecorded load L₀, then k_e, not the sampling.** The transient fixes λ and a level. L₀ absorbs the level, and λ = k_e + θg′ cannot be split without curvature.
-- **The result is insensitive to the assumed L₀/L share:** 0.183 at 0.3·L, 0.176 at 0.5·L, 0.179 at 0.7·L.
+- **Corrections from F3.**
+  - I wrote that a washout needs *all of* an excursion past K_m, L₀ known to 1%, K_m from the record and the k_e prior. Too strong: with dense enough sampling, ×4 passes joined to the record with no bought knowledge (FIM).
+  - I wrote that "a pure withdrawal never reaches 0.20 short of exact k_e". Wrong in the wider grid: a 50% withdrawal reaches 0.195 by FIM at 0.5% CV with L₀ to 1%, although the Monte Carlo gives 0.237.
+  - The binding unknowns in a washout are still L₀, then k_e.
 - **The τ tension.**
-  - For the efficient estimator at fixed duration, denser sampling is never worse. Over 48 h the half-load washout gives 0.36 at 5-minute sampling and 1.04 at 4-hourly.
-  - At a fixed N = 24 samples the optimum is τ ≈ 0.3/λ (1.3 h), so the samples span about 7/λ.
-  - The tension is real **only for derivative estimators**. A forward difference is best at τ ≈ 0.88/λ (3.7 h) with the derivative still 43% wrong in RMS; a central difference is best at τ ≈ 1.57/λ (6.7 h) with 19% error. That is why every FD estimator fails on TB-A.
-- **The excursion.** As the peak marker goes from 0.68·K_m to 7.4·K_m, cond[1, m, m²] over the path falls from 76 to 18. sd(ln θ̂) falls from 2.94 to 0.48 (k_e prior and K_m from the record), or from 0.46 to 0.15 (adding L₀ to 1%). The gain is steepest up to about 2–3·K_m, as the brief expected.
-- **The drug as the forcing input.**
-  - The kernel is an indirect rise peaking at 13 h with a 3.5-day decay. The drug adds no substrate and leaves k_e untouched. First dose, every 15 min for 72 h.
-  - Results, from the burst alone with the k_e prior to the burst plus the record (L₀ to 1%):
+  - For the efficient estimator at fixed duration, denser is never worse.
+  - At a fixed N = 24 the optimum is τ ≈ 0.3/λ.
+  - Derivative estimators are best at 0.88/λ (forward) or 1.57/λ (central), with the derivative still 43% or 19% wrong.
+- **Excursion.** As the peak m goes from 0.68·K_m to 7.4·K_m, cond[1, m, m²] falls from 76 to 18, and sd from 2.94 to 0.48 (k_e prior + K_m from the record).
+- **Drug forcing** (13 h rise, 3.5 d decay, no added substrate, k_e untouched). Results are FIM; Monte Carlo is in F3.
+  - The burst plus record gives 0.86–1.26 at admissible peaks with L₀ to 1%.
+  - It reaches 0.20 if k_e is known to 2.5%, whether κ is known or at 12%.
+  - The booked dose (peak 6400) is inadmissible at 5% and worse (1.69).
 
-    | peak Δ (Δ/θ) | burst + k_e prior | burst + record |
-    |---|---|---|
-    | 150 (1) | 6.1 | 1.22 |
-    | 450 (3) | 4.4 | 0.86 |
-    | 1500 (10) | 1.9 | 1.02 |
-    | 2850 (19), the admissible ceiling | 1.8 | 1.26 |
-    | 6400 (43), the booked dose | 2.3 | 1.69 |
+---
 
-    The booked dose is inadmissible at 5%: it would take the enzyme to 2.2× normal.
-  - **κ at 12% costs +4–38%** over κ known, the most at peak Δ = 450. κ free costs a little more.
-  - **With k_e exact the burst gives 0.09.** The burst plus record reaches 0.20 with k_e known to **2.5%**, whether κ is known or at 12%, even with L₀ unknown.
-  - So the drug is a better perturbation than a washout, because it adds no load and does not depend on L₀. It converts the problem back into "know k_e to a few per cent", which no published source supplies.
+## Unverified or assumed
 
-## Assumptions not supplied by the repository, and their sensitivity
+**Repository footing that this work inherits and cannot check**
 
-| assumption | value used | sensitivity |
-|---|---|---|
-| between-patient sd ω of ln k_e (the 0.8 split into population and individual parts) | swept 0–0.8 | decisive for Task 2: 0.81 at ω = 0, 1.62 at ω = 0.33, 64 patients |
-| unrecorded share of the load, L₀/L | 0.5 | ±0.2 moves the best washout by under 4% |
-| L₀ constant through a washout | assumed | the repository withdraws the fast because fasting *raises* it (`u15`); the glucose-protected withdrawal (`u17`) is unverified |
-| drug kernel | 13 h rise to peak, 3.5 d decay | peak timing from `q1`; amplitude ceiling from n4 |
-| the meaning of "k_e known to a factor F" | 1-sd factor | the 95% reading is printed beside it: F = 1.05 gives 0.40 rather than 0.44 |
-| direct flux: off therapy and absolutely calibrated | assumed | with an unknown recovery factor (the repository's breath-test model), one reading is worth nothing |
-| washout noise | 5% CV per sample, independent | the 1% CV bench is used only to measure estimator mechanics |
+- There is no patient data. Every "patient" and "record" is simulated on illustrative parameters (README).
+- The marker is treated as the enzyme's substrate. The paper names this its weakest assumption.
+- The noise model is the repository's: one flux-space σ per record, evaluated at the untreated level. Under per-draw noise, verdicts within a few per cent of 0.20 can flip. For example, k_e exact plus load exact at 25 monthly draws gives 0.2044 on the repository's noise and 0.1933 per draw.
+- Verdicts within a few per cent of 0.20 also depend on the intake seeds and on sample timing against the 14-day dose phase. With k_e and the load exact, 25 draws at 29.2 d give 0.198, at 30.4 d 0.204, and at 28 d (2 × 14 d) 32.6.
+
+**Assumptions I made, with their sensitivity where checked**
+
+| assumption | detail |
+|---|---|
+| what the 0.8 k_e prior is | Shared-but-unknown, or between-patient spread ω: the repository does not say. Decisive for Task 2 (1.17 at ω = 0 against 1.82 at ω = 0.33, N = 24). R1's "a third or more" is qualitative, for a comparable disposal rate in healthy adults, and for the marker's clearance rather than k_e/α. |
+| "k_e known to a factor F" | Read as a 1-sd factor, so sd(ln k_e) = ln F; "k_e to p%" as ln(1 + p). The 95% reading gives 0.40 rather than 0.44 at F = 1.05. |
+| unrecorded load in transients | L₀ = 0.5 L and constant through the experiment. ±0.2 L moves the best washout by under 4%. Constancy under a glucose-protected withdrawal is unverified, and the repository withdrew the fast because catabolism raises the load (`u15`, `u17`). |
+| load-excursion exposure | Washout and load designs hold the changed load for half the duration, so 72 h designs carry 36 h of load and the safety class counts only the multiple. With the hold capped at 24 h, a few edge passes become misses (`t10_factorial_recheck`). |
+| clinical admissibility | Ranking load increases as unsafe, and placing them beyond the parent model's fold (1.18× at 10% capacity, `boundary.tex`), is a judgement drawn from the repository, not a clinical assessment. |
+| assay CV below 5% | 0.5–2% assay CVs have no source in the repository. The "5%-assay equivalent" sample counts assume purely analytical, independent noise. |
+| drug kernel | A difference of exponentials with a 13 h peak and a 3.5 d decay, my construction around the peak time from `q1`. The admissible ceiling (peak 2850) is n4's R2 reading, one of three that disagree. κ exact unless stated. |
+| the direct flux reading | One untreated visit, off therapy, absolutely calibrated, Gaussian with sd F·√(Y² + (ε·5%)²), with m₀ known as in n6. The repository's breath test has an unknown recovery factor, under which one reading is worth nothing. |
+| long records | The 27-year (328 monthly) and 500-year (6000) records assume one patient with one constant load bias for decades. They show there is no floor mathematically; they are not designs. |
+| the dose train | `design.run.delta` stops after 200 doses. `t8` continues it in closed form; that continuation is mine. |
+| the "K_m from the record" rung | Applied on its own with the k_e prior, it counts that prior twice. That is conservative: it created no false passes in the cases checked. |
+| cohort composition | Task 2 and F2 put every patient at 5% (and q14's 5–20% mix), with each patient's load bias independent. |
+
+**Explanations that are supported but not proven**
+
+- **The EKF failure** is attributed to one-pass linearisation error growing with the prior width. That is supported by the exact information identity at the truth and by the error's growth with prior width; there is no second-order analysis. The drift of outliers towards the Michaelis–Menten limits is common to all records, so it does not explain the outliers.
+- **GTLS-t's success** is read as MA(1) whitening restoring the level information that differencing removes. That is an interpretation, consistent with the whitened partial SNR (3.1 against 0.0016).
+- **Why b is so weakly separated from θ** (its constant column against θg(mᵢ), and the limited spread of mᵢ) is plausible, not tested.
+- **The linear-Gaussian surrogate at N = 64** has a whitened sd of 0.984 over 8000 replicates, just outside its 95% band. It is provisionally sampling noise.
+- **The iterated smoother reaching costs at or below a multi-start least-squares fit** was shown on 6 records only.
+- **The ω profile-likelihood hierarchy** in `t9` uses each patient's profile, not integrated, likelihood, and holds it constant below the grid.
+
+**Comparisons with limited support**
+
+- The 19.3% flux crossing is FIM. [[FLUX_CROSSING_NOTE]]
+- The repository's only breath-test repeatability figure, a between-visit 14% (`PHASE4_SUMMARY.md:208`), is for an uncalibrated relative reading. It does not show that a 10–19% *calibrated* flux measurement exists.
+- Monte Carlo sizes: 30–40 replicates per cell in `t10`, overturned where the verifier ran 300 (the drug-2850 burst); 60 per ω in `t9`. Borderline Monte Carlo verdicts carry their bootstrap intervals in the table.
+- Assumption-free conclusions are limited to the structure: the confounding mechanisms, the lack of an n-floor, the non-identifiability of ω from monthly records, and the FD mechanism. Every absolute sd depends on the repository's illustrative constants.
+
+## Reproducing
+
+See [`README.md`](README.md) for the script list and the run order.

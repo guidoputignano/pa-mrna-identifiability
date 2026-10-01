@@ -342,7 +342,7 @@ def report(name, R):
             ("(b') integral, general", "gen", ncond(out["gen"][0]["X"])),
             ("(b'') integral, cumulative", "cum", ncond(out["cum"][0]["X"])),
             ("(c) NLS on the ODE", "nls", R["cond_nls"]),
-            ("(c) EKF + RTS, one pass", "ekf", np.nan),
+            ("(c) EKF + RTS, one pass [NOT a fair comparator, t6d_ekf.py]", "ekf", np.nan),
             ("(c) iterated EKF smoother", "ieks", np.nan))
     summ = {}
     for lab, k, cn in rows:
@@ -398,8 +398,10 @@ def main():
     for a, (R, nm) in zip(ax, ((RA, "TB-A: 5%, washout, hourly, CV 5%"),
                                (RB, "TB-B bench: 20%, ×6 step, 15 min, CV 1%"))):
         th0 = R["b"]["th"]
+        #  the one-pass EKF is left out: t6d_ekf.py shows it is not a fair
+        #  comparator (one-pass linearisation error, not a configuration bug)
         keys = (("fd", "(a) FD"), ("fdm", "(a) FD mid"), ("gen", "(b′) integral"),
-                ("cum", "(b″) cumulative"), ("nls", "(c) NLS"), ("ekf", "(c) EKF+RTS"),
+                ("cum", "(b″) cumulative"), ("nls", "(c) NLS"),
                 ("ieks", "(c) iterated EKS"))
         data, labs = [], []
         for j, (k, lab) in enumerate(keys):
