@@ -1,0 +1,69 @@
+================================================================================================
+  ITEM 15.  SAFETY AS A HARD CONSTRAINT, AND THE TWO-STAGE DESIGN
+================================================================================================
+
+  (1) THE CRISIS THRESHOLD.
+      results/numbers/boundary.tex: fold_load_ratio = 1.177, i.e. the
+      parent model (Model C / ParamsC) loses its steady state when the
+      load exceeds 1.177 x baseline = 380. (That is a LOAD
+      RATIO, which is model-independent; the fold MARKER 276 is Model
+      C's own, not Model A's -- at the fold load Model A's marker is only
+      ~64. So the admissibility bound used below is f <= 1.177 x load.)
+      PROVENANCE AND STATUS: src/model_A/run.py:35-40 states the ILLNESS
+      ratio (~1.5x baseline load) as 'the physiological claim', and that
+      Model C's FOLD 'sits at 1.18x' -- a saddle-node of ParamsC's own R0
+      setting. So 1.177 is a MODELLING construct (where this model has no
+      steady state), not a measured clinical crisis level. The repository's
+      one clinical-labelled figure is M_TOL = 40 (a 'tolerable metabolite
+      level', run.py:34); note the untreated 5% marker is already 54 > 40,
+      so M_TOL is a target, not a ceiling. The hard bound used here is the
+      substrate one: an ADDED-substrate excursion must keep the load below
+      1.18x. Substrate-reducing excursions (withdrawal) and the drug
+      channel (no substrate) are admissible by construction.
+
+  (2) THE EXCURSION SWEEP FOR THETA, WITH ADMISSIBILITY (figure data).
+      load multiple f -> untreated marker, admissible?, sd(ln theta)
+      (dense 5-min transient to the new level for 48 h, joined to the
+      monthly record, with the k_e prior + K_m from the record + L0 to 1%):
+       f x load   marker  admissible  sd(ln theta)
+          0.500     26.1         yes         0.347
+          0.750     39.9         yes         0.444
+          1.000     54.0         yes         2.273
+          1.177     64.2         yes         0.682
+          1.500     83.2          NO         0.322
+          2.000    113.2          NO         0.220
+          3.000    174.6          NO         0.168
+          4.000    237.1          NO         0.152
+          6.000    363.7          NO         0.143
+          8.000    491.4          NO         0.143
+      load multiples reaching 0.20: [3.0, 4.0, 6.0, 8.0]; of these ADMISSIBLE: NONE
+      -> every load-up excursion that reaches 0.20 needs the marker far
+         past the fold 276; the admissible band never reaches 0.20.
+
+  (3) THE SMALLEST SAFE EXCURSION THAT PINS k_e.
+      A withdrawal (marker DROPS, always safe), dense 5-min for 48 h,
+      K_m from the record, L0 known to the stated precision:
+      withdrawal: marker 26.1-54.0 (drops, safe),
+         L0 to 5%: sd(ln k_e) = 0.2052, sd(ln theta) from the same transient = 1.278
+         L0 to 1%: sd(ln k_e) = 0.0623, sd(ln theta) from the same transient = 0.361
+         L0 exact: sd(ln k_e) = 0.0382, sd(ln theta) from the same transient = 0.186
+      Even a MILD withdrawal suffices for k_e: 25% of the diet (marker
+        46.9-54.0) gives sd(ln k_e) = 0.215 at L0 5%.
+      So the user's hypothesis holds: a safe transient pins k_e (~0.2 log
+      units) where it is nowhere near pinning theta (~1.2). But k_e's
+      precision is capped by the UNRECORDED load L0: ~0.2 at L0 5%, ~0.06
+      at L0 1%. Tightening k_e past 0.06 needs L0 measured -- item 13.
+
+  (4) THE TWO-STAGE COST: safe k_e transient, then n records for theta.
+      sd(ln theta) at 5%, median over seeds, k_e fixed at the stage-1 value:
+      draws (2 yr)  k_e~0.20 (L0 5%)  k_e~0.06 (L0 1%)  k_e exact (ref)
+                24             0.963             0.485            0.408
+                52             0.928             0.419            0.324
+               104             0.893             0.383            0.273
+               365             0.808             0.334            0.191
+      VERDICT: the two-stage design is SAFE and feasible, but it does NOT
+      reach 0.20. With a realistic L0 (5%) it lands near 0.9 at every n;
+      with L0 measured to 1% it reaches ~0.25-0.30 only with hundreds of
+      draws, still short of 0.20. k_e to ~0.2 is simply not tight enough
+      (item 12), and the safe transient cannot do better without also
+      solving the load-measurement problem.
