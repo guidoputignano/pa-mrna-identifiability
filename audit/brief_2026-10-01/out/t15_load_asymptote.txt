@@ -4,11 +4,13 @@
 
   (1) DECOMPOSITION OF THE 0.377 AT n = 25 (k_e exact, K_m free):
       full (5% assay, 5% load scatter, 5% bias prior):  0.377
-      remove the per-draw load SCATTER (LOAD_FRAC->0):   0.188   (scatter worth +0.188)
+      remove the per-draw load SCATTER (keep 5% bias):   0.304   (scatter worth +0.073)
       remove the systematic BIAS b (measure L exactly):  0.283   (bias worth    +0.094)
       remove BOTH load terms (assay + K_m only):         0.188
-      -> at n = 25 the per-draw SCATTER costs more than the BIAS.
-      -> the user's premise (bias is the binding term) does not hold here.
+      -> at n = 25 the systematic BIAS is modestly the MORE binding of the
+         two (bias +0.094 vs scatter +0.073),
+         which SUPPORTS the premise that the bias is the binding load term.
+         (Neither is a floor -- see part 2.)
 
   (2) n -> inf WITH k_e EXACT. Does sd asymptote above 0.20?
              n   b 5% prior  b pinned (L exact)    sd*sqrt(n), b 5%
@@ -20,7 +22,9 @@
           5000       0.0629              0.0200               4.449
          20000       0.0321              0.0100               4.543
         100000       0.0144              0.0045               4.562
-      sd*sqrt(n) settles to a constant: the fall is ~1/sqrt(n), limit 0.
+      sd*sqrt(n) is nearly flat (it drifts slowly up toward ~4.6 as the
+      priors wash out; the log-log slope is ~-0.497): the fall is ~1/sqrt(n),
+      limit 0.
       NEITHER the bias nor the scatter creates a positive floor: both are
       learned from the dose-train modulation of the operating point m.
       => 0.151 at 730 draws is NOT flattening toward a floor. Item 2 is

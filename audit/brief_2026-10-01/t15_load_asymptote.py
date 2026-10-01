@@ -36,18 +36,24 @@ def main():
 
     base = sd(25)
     print(f"\n  (1) DECOMPOSITION OF THE {base:.3f} AT n = 25 (k_e exact, K_m free):")
-    only_assay = sd(25, lf=1e-6, bX=1e-7)       # no load at all
-    no_scatter = sd(25, lf=1e-6)                # bias kept, scatter off
+    #  NOTE: core.fim ties the DEFAULT bias prior to load_frac (sb = load_frac*L
+    #  when b_prior is None). So removing the scatter must pass an EXPLICIT 5%
+    #  bias prior (bX=0.05); otherwise the bias is silently pinned as well and
+    #  the run lands on the both-off corner. (That coupling misled the first
+    #  version of this script; corrected after the item-13 verifier flagged it.)
+    both_off = sd(25, lf=1e-6, bX=1e-7)         # no load at all (assay + K_m only)
+    no_scatter = sd(25, lf=1e-6, bX=0.05)       # scatter off, 5% bias KEPT
     no_bias = sd(25, bX=1e-7)                   # scatter kept, bias pinned (L exact)
-    km_pin = sd(25, bX=1e-7, lf=1e-6)           # as only_assay
     print(f"      full (5% assay, 5% load scatter, 5% bias prior):  {base:.3f}")
-    print(f"      remove the per-draw load SCATTER (LOAD_FRAC->0):   {no_scatter:.3f}"
+    print(f"      remove the per-draw load SCATTER (keep 5% bias):   {no_scatter:.3f}"
           f"   (scatter worth {base - no_scatter:+.3f})")
     print(f"      remove the systematic BIAS b (measure L exactly):  {no_bias:.3f}"
           f"   (bias worth    {base - no_bias:+.3f})")
-    print(f"      remove BOTH load terms (assay + K_m only):         {only_assay:.3f}")
-    print(f"      -> at n = 25 the per-draw SCATTER costs more than the BIAS.")
-    print(f"      -> the user's premise (bias is the binding term) does not hold here.")
+    print(f"      remove BOTH load terms (assay + K_m only):         {both_off:.3f}")
+    print(f"      -> at n = 25 the systematic BIAS is modestly the MORE binding of the")
+    print(f"         two (bias {base-no_bias:+.3f} vs scatter {base-no_scatter:+.3f}),")
+    print(f"         which SUPPORTS the premise that the bias is the binding load term.")
+    print(f"         (Neither is a floor -- see part 2.)")
 
     print(f"\n  (2) n -> inf WITH k_e EXACT. Does sd asymptote above 0.20?")
     print(f"      {'n':>8}  {'b 5% prior':>11}  {'b pinned (L exact)':>18}  {'sd*sqrt(n), b 5%':>18}")
@@ -55,7 +61,9 @@ def main():
         a = sd(n)
         b = sd(n, bX=1e-7)
         print(f"      {n:>8}  {a:>11.4f}  {b:>18.4f}  {a*np.sqrt(n):>18.3f}")
-    print(f"      sd*sqrt(n) settles to a constant: the fall is ~1/sqrt(n), limit 0.")
+    print(f"      sd*sqrt(n) is nearly flat (it drifts slowly up toward ~4.6 as the")
+    print(f"      priors wash out; the log-log slope is ~-0.497): the fall is ~1/sqrt(n),")
+    print(f"      limit 0.")
     print(f"      NEITHER the bias nor the scatter creates a positive floor: both are")
     print(f"      learned from the dose-train modulation of the operating point m.")
     print(f"      => 0.151 at 730 draws is NOT flattening toward a floor. Item 2 is")

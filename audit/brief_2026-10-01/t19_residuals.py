@@ -90,20 +90,19 @@ def monthly_power(dgp, nmc=300, **kw):
     return rej / nmc, sig / nmc
 
 
-def excursion_power(dgp, nmc=200, **kw):
-    """power on a dense within-record excursion: a 48 h load ramp, 5-min."""
-    tt = np.arange(0.0, 2.0 + 1e-9, 5 / 60 / 24)
-    # a slow sweep of the load across a wide m-range (up to ~3x), sampled dense
+def excursion_power(dgp, nmc=200, dt_min=5.0, assay=0.05, **kw):
+    """power on a within-record load ramp over 48 h, sampling step dt_min minutes."""
+    tt = np.arange(0.0, 2.0 + 1e-9, dt_min / 60 / 24)
     loads = L0 * (0.6 + 0.9 * tt / tt[-1])      # 0.6L -> 1.5L, within fold at the top
     inc = np.zeros_like(tt)
     rej = np.zeros(3)
     for j in range(nmc):
         mt = np.array([m_true(dgp, loads[i], 0.0, **kw) for i in range(loads.size)])
-        m_obs = mt * np.exp(RNG.normal(0, 0.05, mt.size))
+        m_obs = mt * np.exp(RNG.normal(0, assay, mt.size))
         res = mm_fit(loads, inc, m_obs)
         ts = np.array([slope_t(m_obs, res), slope_t(tt, res), slope_t(loads, res)])
         rej += np.abs(ts) > 1.96
-    return rej / nmc
+    return rej / nmc, tt.size
 
 
 def main():
@@ -120,14 +119,24 @@ def main():
     print(f"        vs marker {100*p[0]:.1f}%, vs time {100*p[1]:.1f}%, vs load {100*p[2]:.1f}%")
 
     print("\n  (1) SATURABLE NON-ENZYMATIC CLEARANCE (k_e m -> Vne m/(Kne+m)).")
+    print("      monthly record (n=25): nearly blind.")
     for Kne in (150.0, 60.0):
         pm, sm = monthly_power("sat_ne", Kne=Kne, m_ref=M0 or 20.0)
-        pe = excursion_power("sat_ne", Kne=Kne, m_ref=M0 or 20.0)
-        print(f"      Kne = {Kne:.0f} (smaller = more saturable):")
-        print(f"        monthly:   power vs marker {100*pm[0]:.0f}%, vs time {100*pm[1]:.0f}%,"
-              f" vs load {100*pm[2]:.0f}%  (mean residual-vs-marker t = {sm[0]:+.2f})")
-        print(f"        excursion: power vs marker {100*pe[0]:.0f}%, vs time {100*pe[1]:.0f}%,"
-              f" vs load {100*pe[2]:.0f}%")
+        print(f"        Kne = {Kne:.0f}: power vs marker {100*pm[0]:.0f}%, vs time {100*pm[1]:.0f}%,"
+              f" vs load {100*pm[2]:.0f}%")
+    print("      Dense excursion: the residual-slope test is SIZE-INVALID at large N --")
+    print("      a noisy nonlinear regressor (errors-in-variables) inflates the false")
+    print("      positive rate. Compare the TRUE-MM rejection (should be ~5%) at each N:")
+    for dt, lab in ((5.0, "5-min"), (60.0, "hourly")):
+        mm_rej, N = excursion_power("mm", dt_min=dt)
+        print(f"        {lab} sampling (N={N}):  TRUE-MM false positive"
+              f" vs time {100*mm_rej[1]:.0f}%, vs load {100*mm_rej[2]:.0f}%  <- the null")
+        for Kne in (150.0, 60.0):
+            pe, _ = excursion_power("sat_ne", Kne=Kne, m_ref=M0 or 20.0, dt_min=dt)
+            print(f"           Kne={Kne:.0f}: vs time {100*pe[1]:.0f}%, vs load {100*pe[2]:.0f}%")
+    print("      So at the dense N the '100%' is mostly the EIV artifact; at the coarse,")
+    print("      size-valid N only STRONG saturation (Kne=60) genuinely rejects above the")
+    print("      null, while MILD saturation (Kne=150) is still undetected.")
 
     print("\n  (2) LOAD MISMATCH: a 10%/20% linear drift of true load off its record,")
     print("      beyond the constant bias b the model allows.")
@@ -179,9 +188,11 @@ def main():
     print("   - SECOND COMPARTMENT: the monthly record is BLIND (identical steady-state")
     print("     balance); it shows only in a transient's second decay phase.")
     print("   - SATURABLE non-enzymatic clearance: the monthly record is nearly BLIND")
-    print("     (narrow on-therapy m-range looks linear; power ~5% at n=25). A dense")
-    print("     load EXCURSION detects it with ~100% power -- the same richer data")
-    print("     that identifies theta.")
+    print("     (narrow on-therapy m-range looks linear; power ~5% at n=25). A load")
+    print("     EXCURSION carries the signal, BUT the residual-slope test is size-invalid")
+    print("     at large N (EIV inflates the true-MM false positive to ~100%). At a")
+    print("     size-valid N only STRONG saturation is genuinely detected; MILD")
+    print("     saturation (Kne=150) is not. The excursion is necessary, not sufficient.")
     print("   - LOAD MISMATCH (a time-varying drift): the monthly record CAN catch it,")
     print("     via residual-vs-time (88-100% power at a 10-20% drift). The constant")
     print("     bias b absorbs only a constant offset, not a trend.")
