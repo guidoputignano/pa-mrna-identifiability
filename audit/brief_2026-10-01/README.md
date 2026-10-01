@@ -6,6 +6,7 @@ It builds on the repository rather than beside it. The footing (convention A, th
 
 | script | brief task | runtime |
 |---|---|---|
+| `t0_footing.py` | the repository constants and files the report quotes, printed from source | 1 s |
 | `core.py` | the repository's FIM, the ln-m form, profiling | — |
 | `t1_identifiability.py` | 1: U-curve, correlations, elasticity, profile | 15 s |
 | `t2_cohort.py` | 2: joint and hierarchical cohort fit, with Monte Carlo | 2 min |
@@ -22,7 +23,7 @@ It builds on the repository rather than beside it. The footing (convention A, th
 | `t6c_iv.py` | follow-up 4: IV, bias-compensated LS and generalised TLS for the FD equation | 6 min |
 | `t6d_ekf.py` | follow-up 5: the one-pass EKF diagnosed | 6 min |
 | `t11_fim_check.py` | follow-up 6: FIM against Monte Carlo, and the Task 5 spot-checks | 9 min |
-| `t12_flux_mc.py` | follow-up 6: the Monte Carlo crossing for the direct flux reading | — |
+| `t12_flux_mc.py` | follow-up 6: the Monte Carlo crossing for the direct flux reading (no recheck) | 8 min |
 | `*_recheck.py` | an independent verifier's re-derivation of each follow-up script, sharing no code with it | 3–25 min |
 | `plotstyle.py` | the repository's rcParams with a validated palette | — |
 
@@ -30,10 +31,10 @@ To run them all, from this directory:
 
 ```bash
 pip install -r ../../requirements.txt
-for s in t1_identifiability t2_cohort t3_variance t4_set t5_value t7_design t6_estimators t6b_ma1 \
+for s in t0_footing t1_identifiability t2_cohort t3_variance t4_set t5_value t7_design t6_estimators t6b_ma1 \
          t8_floor t9_omega t10_factorial t6c_iv t6d_ekf t11_fim_check t12_flux_mc; do
   python -W error $s.py > out/$s.txt
 done
 ```
 
-Figures go to `fig/` and printed output to `out/`. Every number in `REPORT.md` appears in one of the `out/*.txt` files.
+Figures go to `fig/` and printed output to `out/`. Every number in `REPORT.md` appears in one of the `out/*.txt` files. `out/n6_profile_vs_crb.txt` is the repository's own `audit/n6_profile_vs_crb.py`, run unchanged (`python -W error audit/n6_profile_vs_crb.py` from the repository root), because the report quotes its 708 = 24%.

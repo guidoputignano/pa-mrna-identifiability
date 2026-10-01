@@ -1,0 +1,60 @@
+# Output of the repository's audit/n6_profile_vs_crb.py, run UNCHANGED in this session (1 Oct 2026).
+# Copied here so that REPORT.md's citations of it can be traced to a file in out/.
+========================================================================================
+  WHAT INTERVAL DOES ONE RECORD SUPPORT, AGAINST WHAT THE CRB IMPLIES
+========================================================================================
+
+  theta = 3000 (100% of nominal). CRB sd(ln theta) = 0.1699,
+  so a reader infers a 95% interval a factor of 1.95 wide.
+    seed 600: MLE    2714.5  95% profile [    859.5,    3399.4]  factor     3.96
+    seed 601: MLE    3233.7  95% profile [   1282.2,    3949.6]  factor     3.08
+    seed 602: MLE    3315.5  95% profile [   1076.4,    4049.6]  factor     3.76
+    seed 603: MLE    2783.2  95% profile [    926.5,    3485.5]  factor     3.76
+    seed 604: MLE    3664.2  95% profile [   1023.9,    4588.8]  factor     4.48
+    seed 605: MLE    3000.0  95% profile [    903.6,    3757.0]  factor     4.16
+    seed 606: MLE    3399.4  95% profile [   1219.7,    4152.1]  factor     3.40
+    seed 607: MLE    2714.5  95% profile [    777.7,    3399.4]  factor     4.37
+    seed 608: MLE    3757.0  95% profile [   1646.4,    4704.9]  factor     2.86
+    seed 609: MLE    2853.7  95% profile [    838.3,    3573.7]  factor     4.26
+    seed 610: MLE    3153.8  95% profile [    881.3,    3852.1]  factor     4.37
+    seed 611: MLE    2925.9  95% profile [   1023.9,    3664.2]  factor     3.58
+    seed 612: MLE    2925.9  95% profile [    974.0,    3664.2]  factor     3.76
+    seed 613: MLE    3000.0  95% profile [    739.8,    3757.0]  factor     5.08
+    seed 614: MLE    2714.5  95% profile [    926.5,    3399.4]  factor     3.67
+    seed 615: MLE    2925.9  95% profile [   1023.9,    3664.2]  factor     3.58
+    over 16 records: median width a factor of 3.76 (range 2.86 to 5.08),
+    against the 1.95 the CRB implies.
+  wrote results/numbers/profile.tex  (4 numbers)
+    ratio of the honest interval to the CRB interval: 1.93.
+    MLE spread over records 2715 to 3757, truth 3000: the CRB describes
+    THAT correctly, and understates the interval. The asymmetry is the fibre:
+    lowering theta is compensated by raising K_m, so the profile has a long
+    tail downward while its upper end sits near where the CRB puts it.
+
+  theta = 150 (5% of nominal). CRB sd(ln theta) = 3.0673,
+  so a reader infers a 95% interval a factor of 166703.55 wide.
+    seed 600: MLE       2.7  95% profile [      2.7,     550.4]  factor   200.34  GRID EDGE
+    seed 601: MLE     223.8  95% profile [      2.7,     743.0]  factor   270.43  GRID EDGE
+    seed 602: MLE     202.5  95% profile [      2.7,     743.0]  factor   270.43  GRID EDGE
+    seed 603: MLE     223.8  95% profile [      2.7,     672.3]  factor   244.69  GRID EDGE
+    seed 604: MLE       2.7  95% profile [      2.7,     743.0]  factor   270.43  GRID EDGE
+    seed 605: MLE      49.9  95% profile [      2.7,     672.3]  factor   244.69  GRID EDGE
+    over 6 records: median width a factor of 257.56 (range 200.34 to 270.43),
+    against the 166703.55 the CRB implies.
+    6 of 6 intervals reach the grid edge, so those widths are LOWER
+    bounds and the ratio to the CRB is not meaningful here: the record does
+    not bound theta from below AT ALL. The MLE itself runs 3 to 224
+    against a truth of 150, so the point estimate is not usable either.
+    What the record DOES supply is an upper bound: it rules out capacity above
+    about 708, which is 24% of nominal. That is the half of the question a
+    clinician can still be given an answer to.
+
+  RE-CHECK. On a noiseless record the profile's curvature at the
+  truth is the same second derivative as the CRB, so they must agree.
+    theta   3000: profile curvature sd 0.1697 against CRB 0.1699, ratio 0.9989
+    theta    150: profile curvature sd 3.0554 against CRB 3.0673, ratio 0.9961
+    worst relative disagreement 0.390% against 1%
+    RE-CHECK PASSES
+
+========================================================================================
+

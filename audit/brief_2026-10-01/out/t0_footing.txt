@@ -1,0 +1,12 @@
+============================================================================================
+  REPOSITORY FOOTING QUOTED BY REPORT.md
+============================================================================================
+  design.run: D_AMP = 6000, DOSE_INTERVAL = 14 d, increment half-life 3.50 d
+  design.run: LOAD_CV = 0.10 (day-to-day intake variation, recorded), LOAD_FRAC = 0.05, ASSAY_CV = 0.05
+  core: monthly record of 25 draws; SEEDS = 0..23
+  ln-m FIM by finite differences of the steady-state solve, against the flux-space FIM (per-draw noise): worst relative 3.9e-08
+  saturation g at normal: untreated 0.091 (m = 10.00); on therapy, over the 24 monthly records: 0.028 to 0.101 (median 0.059)
+  saturation g at     5%: untreated 0.351 (m = 54.02); on therapy, over the 24 monthly records: 0.040 to 0.304 (median 0.121)
+  results/numbers/boundary.tex: fold_load_ratio = 1.177
+  audit/PHASE4_SUMMARY.md:208: repository's own between-visit row is *mean 14.0%, range 0.4-50.8%*, an upper bound on what is
+  (n6_profile_vs_crb.py's own output, run unchanged in this session, is out/n6_profile_vs_crb.txt)
