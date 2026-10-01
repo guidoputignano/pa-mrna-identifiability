@@ -1,0 +1,132 @@
+====================================================================================================
+  RECHECK OF t6c_iv.py (item 4), independent code: DOP853 + finite-difference FIM, sympy
+  corrections, own IV/BCLS/GTLS-t, new seeds
+====================================================================================================
+  L (convention A) = 322.7273; L0 = L/2 = 161.3636
+
+  R1. FIM sd ln theta, no priors, from central differences of ln m (Richardson), two steps
+     bench A: m 26.1-54.0, 49 samples, cv 0.05; sd ln theta 383.3 (h=1e-3) / 383.3 (h=2e-4); sd ln k_e 37.37; at cv 0.1%: 7.666
+     bench B: m 15.9-296.3, 193 samples, cv 0.01; sd ln theta 0.08927 (h=1e-3) / 0.08927 (h=2e-4); sd ln k_e 0.02128; at cv 0.1%: 0.008927
+     bench C: m 27.2-361.8, 193 samples, cv 0.01; sd ln theta 0.3218 (h=1e-3) / 0.3218 (h=2e-4); sd ln k_e 0.01788; at cv 0.1%: 0.03218
+
+  R2. Noiseless FD design X0 = [1, m, -m^2, -psi0] from my own simulation
+     A left: cond(X0) 4.904e+04, smallest normalised eigenvalue 1.39e-09; OLS on noiseless samples: ln(theta/truth) -0.101
+     A mid : cond(X0) 4.756e+04, smallest normalised eigenvalue 1.48e-09; OLS on noiseless samples: ln(theta/truth) -0.010
+     B left: cond(X0) 196.3, smallest normalised eigenvalue 9.44e-05; OLS on noiseless samples: ln(theta/truth) -2.364
+     B mid : cond(X0) 352.9, smallest normalised eigenvalue 2.92e-05; OLS on noiseless samples: ln(theta/truth) +0.001
+     C left: cond(X0) 230.9, smallest normalised eigenvalue 6.88e-05; OLS on noiseless samples: ln(theta/truth) theta -1.7 <= 0
+     C mid : cond(X0) 1234, smallest normalised eigenvalue 2.41e-06; OLS on noiseless samples: ln(theta/truth) -0.002
+
+  R3. OLS limit by DIRECT Monte Carlo averaging of X'X and X'z (midpoint)
+     A: 40000 records: K_m noise-only -31.1, OLS limit -31.0, median of 2000 OLS fits -29.5 (truth 100); limit coefficients/truth -0.269 -0.636 +1.104 -0.310; theta limit 0.3866; noise share of psi-psi entry 0.6817
+     B: 20000 records: K_m noise-only -266.3, OLS limit -265.5, median of 2000 OLS fits -265.2 (truth 100); limit coefficients/truth -1.587 -2.073 +1.386 -2.655; theta limit -10.04; noise share of psi-psi entry 0.0484
+     C: 20000 records: K_m noise-only -319.5, OLS limit -319.3, median of 2000 OLS fits -319.0 (truth 100); limit coefficients/truth -2.653 -3.788 +1.074 -3.193; theta limit -2.74; noise share of psi-psi entry 0.0737
+
+  partial SNR of the psi column, closed-form lognormal variances (midpoint)
+     A: unweighted 3.56e-08; MA(1)-whitened 1.32e-07 per row
+     B: unweighted 0.0016; MA(1)-whitened 3.12 per row
+     C: unweighted 7.16e-05; MA(1)-whitened 0.119 per row
+
+  R4. Linear corrected estimators, own sympy corrections, NEW seeds, 300 records each
+     cells: median ln(theta/truth) over theta>0 / RMSE / robust (16-84 half range) / frac theta<=0
+     sympy-corrected X'X vs noiseless, B mid, 400 records: max |z| 2.25; corrected psi-psi sd/value 0.00869
+     cv = 0 limits, B mid (ln theta/truth): OLS +0.0006, IV-JI +0.0000, wIV +0.0019, 2SLS -0.0016, BCLS +0.0006, IV-wide -0.0011
+     bench B, cv 1%, midpoint: (SW conditional R^2 median 0.0247)
+        OLS          +nan /     nan /     nan / 100.0%   ln k_e median +0.325  (n 300)
+        IV-JI      -3.268 /   3.530 /   1.845 /  47.7%   ln k_e median +0.336  (n 300)
+        wIV        -0.427 /   2.607 /   2.331 /  32.7%   ln k_e median +0.212  (n 300)
+        2SLS       -4.067 /   4.386 /   1.333 /  58.3%   ln k_e median +0.335  (n 300)
+        IV-wide    -3.188 /   3.607 /   2.169 /  52.7%   ln k_e median +0.331  (n 300)
+        BCLS       -2.841 /   3.277 /   1.778 /  40.0%   ln k_e median +0.341  (n 300)
+     bench C, cv 1%, midpoint: (SW conditional R^2 median 0.0220)
+        OLS          +nan /     nan /     nan / 100.0%   ln k_e median +0.071  (n 300)
+        IV-JI      -2.914 /   3.500 /   2.316 /  49.3%   ln k_e median +0.074  (n 300)
+        wIV        -3.050 /   2.981 /   2.194 /  43.0%   ln k_e median +0.046  (n 300)
+        2SLS       -4.172 /   4.487 /   1.444 /  61.7%   ln k_e median +0.073  (n 300)
+        IV-wide    -3.335 /   4.138 /   2.021 /  51.0%   ln k_e median +0.074  (n 300)
+        BCLS       -3.100 /   3.644 /   1.744 /  53.7%   ln k_e median +0.073  (n 300)
+     bench A, cv 5%, midpoint: (SW conditional R^2 median 0.0839)
+        OLS        -4.054 /   4.528 /   1.081 /  42.7%   ln k_e median +0.075  (n 300)
+        IV-JI      -3.735 /   4.466 /   2.720 /  47.7%   ln k_e median +0.432  (n 300)
+        wIV        -4.735 /   5.266 /   2.144 /  50.0%   ln k_e median +0.279  (n 300)
+        2SLS       -4.438 /   4.830 /   1.289 /  53.3%   ln k_e median +0.292  (n 300)
+        IV-wide    -4.411 /   4.903 /   1.903 /  57.0%   ln k_e median +0.353  (n 300)
+        BCLS       -3.350 /   4.056 /   3.132 /  50.0%   ln k_e median +0.207  (n 300)
+     bench B, cv 1%, left point: (SW conditional R^2 median 0.0265)
+        OLS          +nan /     nan /     nan /  99.7%   ln k_e median +0.331  (n 300)
+        IV-JI      -2.946 /   3.689 /   2.173 /  50.7%   ln k_e median +0.335  (n 300)
+        wIV        -0.501 /   2.868 /   2.112 /  34.7%   ln k_e median +0.214  (n 300)
+        2SLS       -4.570 /   4.711 /   0.899 /  84.7%   ln k_e median +0.317  (n 300)
+        IV-wide    -3.074 /   3.579 /   1.949 /  50.3%   ln k_e median +0.334  (n 300)
+        BCLS       -3.331 /   3.822 /   1.846 /  50.0%   ln k_e median +0.338  (n 300)
+     bench B, cv 0.1%, midpoint: (SW conditional R^2 median 0.0351)
+        OLS          +nan /     nan /     nan / 100.0%   ln k_e median +0.286  (n 300)
+        IV-JI      +0.081 /   1.256 /   0.518 /   8.7%   ln k_e median +0.016  (n 300)
+        wIV        +0.002 /   0.052 /   0.048 /   0.0%   ln k_e median -0.000  (n 300)
+        2SLS       -2.241 /   2.251 /   1.652 /  23.3%   ln k_e median +0.145  (n 300)
+        IV-wide    +0.061 /   0.601 /   0.338 /   4.0%   ln k_e median +0.001  (n 300)
+        BCLS       +0.599 /   2.870 /   2.878 /  11.3%   ln k_e median +0.136  (n 300)
+     bench C, cv 0.1%, midpoint: (SW conditional R^2 median 0.0166)
+        OLS          +nan /     nan /     nan / 100.0%   ln k_e median +0.071  (n 300)
+        IV-JI      -1.967 /   2.762 /   2.310 /  41.7%   ln k_e median +0.068  (n 300)
+        wIV        +0.128 /   2.170 /   0.887 /  15.3%   ln k_e median +0.016  (n 300)
+        2SLS       -3.898 /   4.252 /   0.990 /  29.7%   ln k_e median +0.077  (n 300)
+        IV-wide    -1.001 /   2.356 /   2.169 /  33.7%   ln k_e median +0.064  (n 300)
+        BCLS       -3.073 /   3.534 /   2.262 /  45.0%   ln k_e median +0.074  (n 300)
+     bench B, cv 0.01%, midpoint: (SW conditional R^2 median 0.1432)
+        OLS        -0.102 /   0.104 /   0.017 /   0.0%   ln k_e median +0.022  (n 300)
+        IV-JI      -0.000 /   0.014 /   0.014 /   0.0%   ln k_e median +0.000  (n 300)
+        wIV        +0.002 /   0.003 /   0.002 /   0.0%   ln k_e median -0.000  (n 300)
+        2SLS       -0.007 /   0.103 /   0.104 /   0.0%   ln k_e median +0.001  (n 300)
+        IV-wide    -0.001 /   0.017 /   0.017 /   0.0%   ln k_e median +0.000  (n 300)
+        BCLS       +0.001 /   0.021 /   0.021 /   0.0%   ln k_e median -0.000  (n 300)
+
+  R6. Lag structure of the IV-JI moments g_k = w_k (z^_k - x^_k'p_true), B mid, 3000 records
+     mean lag-l product of the standardised psi~ moment (z-score): l=1: -0.4897 (z -334.5), l=2: -0.0060 (z -2.4), l=3: +0.0005 (z +0.2), l=4: -0.0038 (z -1.5), l=5: +0.0034 (z +1.3)
+
+  R5. GTLS-t (tridiagonal covariance), physical coordinates, own starts; truth start as a
+      DIAGNOSTIC only (reported separately, never used for the estimate)
+     noiseless limit, B left: ln(theta/truth) +0.073, ln k_e -0.009, ln K_m +0.330
+     noiseless limit, C left: ln(theta/truth) +5.676, ln k_e -9.647, ln K_m +4.379
+     noiseless limit, B mid : ln(theta/truth) +0.000, ln k_e -0.000, ln K_m +0.004
+     noiseless limit, C mid : ln(theta/truth) -0.005, ln k_e +0.000, ln K_m -0.000
+     C left, at the investigator's limit (theta 934, k_e 4.55, K_m 966): cost 0.0138073, gradient -2.93e-04 -1.57e-02 +2.19e-03 +2.77e-03; descending from it ends at cost 0.0137139, theta 2.958e+04 (ln +5.284), k_e 0.947, K_m 6517
+     C left, six starts at theta 934: end costs 0.0137099-0.0137236, end theta 1.44e+04-4.31e+04, end k_e 0.0384-2.27 (a flat valley, not an isolated minimum)
+     bench B mid, cv 1%, 300 records: ln theta -0.006 / RMSE 0.092 / robust 0.086 / theta<=0 0.0%; ln k_e +0.002 / 0.022 / 0.021; FIM sd 0.08927, robust/FIM 0.968
+        truth-start diagnostic: no-truth fit's cost exceeds the truth-start fit's by >1e-6 (relative) in 0.0% of records, by >1e-2 in 0.0%; (148 s)
+     bench C mid, cv 1%, 200 records: ln theta -0.023 / RMSE 0.572 / robust 0.366 / theta<=0 0.0%; ln k_e +0.003 / 0.041 / 0.022; FIM sd 0.3218, robust/FIM 1.139
+        truth-start diagnostic: no-truth fit's cost exceeds the truth-start fit's by >1e-6 (relative) in 0.5% of records, by >1e-2 in 0.0%; (519 s)
+
+  R7. The investigator's hand-derived second-order noise terms (left point), checked symbolically
+     E[psi^2] - psi0^2: second-order term minus the docstring's = 0
+     E[psi m] - psi0 m: second-order term minus the docstring's = 0
+     E[psi^2 m] - psi0^2 m (1/tau^2 part): second-order term minus the docstring's = 0
+
+  R8. Is the K_m, k_e > 0 constraint needed, or did the unconstrained run start in K_m < 0?
+      per record: constrained fit (physical coordinates, grid starts); unconstrained fits in
+      lumped coordinates from (i) linear starts OLS, BCLS, wIV, IV-JI (the investigator used OLS,
+      BCLS, wBCLS, wIV), (ii) the positive grid starts, (iii) all of these plus the constrained optimum
+     bench B mid, GTLS-d, 20 records: linear starts with K_m <= 0 95%; unconstrained K_m <= 0 from (i) 75%, (ii) 0%, (iii) 50%; a K_m <= 0 minimum BELOW the constrained one in 50%
+     bench B mid, GTLS-t, 20 records: linear starts with K_m <= 0 85%; unconstrained K_m <= 0 from (i) 30%, (ii) 0%, (iii) 0%; a K_m <= 0 minimum BELOW the constrained one in 0%
+     bench C mid, GTLS-d, 20 records: linear starts with K_m <= 0 96%; unconstrained K_m <= 0 from (i) 100%, (ii) 30%, (iii) 100%; a K_m <= 0 minimum BELOW the constrained one in 100%
+     bench C mid, GTLS-t, 20 records: linear starts with K_m <= 0 92%; unconstrained K_m <= 0 from (i) 65%, (ii) 0%, (iii) 0%; a K_m <= 0 minimum BELOW the constrained one in 0%
+
+  R9a. Sampling spread of the theta_hat <= 0 fraction, B mid, cv 1%, 300 records per seed set.
+       Seed 7110 regenerates the investigator's own B-midpoint records (its job seed; my m equals
+       its m to ~1e-9, and y = m exp(N(0, cv^2)) is drawn the same way), the others are new
+       seed 7110: BCLS theta<=0 52.7%, IV-JI 47.3% (binomial sd at p = 0.5 and n = 300: 2.9%)
+       seed 12345: BCLS theta<=0 40.0%, IV-JI 50.3% (binomial sd at p = 0.5 and n = 300: 2.9%)
+       seed 2026: BCLS theta<=0 55.0%, IV-JI 46.3% (binomial sd at p = 0.5 and n = 300: 2.9%)
+
+  R9b. GMM weight: Bartlett lags 1-3 (the investigator's) against the uniform kernel over lags 1
+       (exact MA(1)) and 1-2, from 2SLS residuals; pseudo-inverse when the uniform S is not PD
+       B mid 2SLS         :  -3.738 /  4.131 /  1.070 / theta<=0  58.7%  (S PD in 100%)
+       B mid Bartlett 1-3 :  -3.858 /  4.021 /  1.099 / theta<=0  60.0%  (S PD in 100%)
+       B mid uniform 1    :  -3.570 /  3.883 /  1.370 / theta<=0  56.7%  (S PD in 21%)
+       B mid uniform 1-2  :  -3.580 /  4.106 /  1.275 / theta<=0  60.3%  (S PD in 40%)
+       C mid 2SLS         :  -4.068 /  4.424 /  1.348 / theta<=0  63.7%  (S PD in 100%)
+       C mid Bartlett 1-3 :  -4.132 /  4.442 /  1.111 / theta<=0  60.3%  (S PD in 100%)
+       C mid uniform 1    :  -3.801 /  4.499 /  1.864 / theta<=0  53.7%  (S PD in 2%)
+       C mid uniform 1-2  :  -3.844 /  4.349 /  1.493 / theta<=0  54.7%  (S PD in 1%)
+
+  runtime 831 s

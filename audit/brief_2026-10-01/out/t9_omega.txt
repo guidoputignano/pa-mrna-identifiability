@@ -1,0 +1,303 @@
+
+================================================================================================
+  FOLLOW-UP ITEM 2.  N = 24 AND OMEGA
+================================================================================================
+  The repository's '24 records' are design.run.SEEDS = range(24): 24 intake sequences of ONE
+  simulated patient. Distinct k_e values among them: [5.0]. Their between-record
+  spread of k_e is therefore exactly 0 by construction; 'estimating omega from them' can
+  only recover that construction (up to noise) and says nothing about patients. There is no
+  patient data in the repository. Below, '24 patients' always means a SIMULATED cohort.
+  Footing: theta_5% = 150, K_m = 100, k_e = 5, L = 322.73, m = 54.02, s = 0.163.
+
+================================================================================================
+  A. TASK 2 READ AT N = 24 PATIENTS (FIM, t2_cohort.cohort), THEN A JOINT-MAP CHECK
+================================================================================================
+  Each cell: target patient's sd(ln theta) | sd(ln k_e,pop) | sd of the target's OWN ln k_e.
+  The target is patient 0 (a 5% patient, intake seed 0). The marginal prior on any one
+  patient's ln k_e stays 0.8: sigma_pop^2 = 0.8^2 - omega^2 (Task 2's convention).
+
+  disease cohort, 24 at 5%, monthly (25 draws each)
+      omega  sd ln theta_0  sd ln ke_pop  sd own ln ke_0
+       0.00          1.172         0.250           0.250
+       0.10          1.252         0.250           0.268
+       0.20          1.458         0.252           0.316
+       0.33          1.817         0.256           0.398
+       0.50          2.308         0.259           0.509
+       0.80          2.915         0.000           0.644
+
+  q14 mixed cohort, 5/8/10/15/20% cycled, monthly (25 draws each)
+      omega  sd ln theta_0  sd ln ke_pop  sd own ln ke_0
+       0.00          1.437         0.312           0.312
+       0.10          1.498         0.312           0.326
+       0.20          1.663         0.313           0.364
+       0.33          1.966         0.313           0.432
+       0.50          2.398         0.310           0.529
+       0.80          2.915         0.000           0.644
+
+  For reference, one patient alone: 3.082 (Task 2, N = 1).
+
+  Monte Carlo joint MAP, 24 patients at 5% monthly, random effects eta_i ~ N(0, omega^2).
+  Truth per replicate: eta_i drawn, ln k_e,i = ln 5 + eta_i, load 322.73 for everyone,
+  fresh intake and noise seeds. Errors are in ln units; half-width = (P84 - P16)/2.
+  REPLICATES: 60 per omega (the brief asked for about 40-60).
+      omega  FIM sd  MC RMSE  MC half-w  median bias  >4.5x off  at floor  RMSE excl  ke_pop RMSE  own ke RMSE  FIM own ke
+       0.00   1.172    2.339      0.751       +0.033       8.3%      3.3%      0.872        0.227        0.227       0.250   (12 s)
+       0.33   1.817    3.896      1.388       +0.348      25.0%     10.0%      1.041        0.274        0.406       0.398   (32 s)
+  'at floor' = theta_hat_0 at the fit's lower bound 1e-3 (the one-sided likelihood of Task 1);
+  'RMSE excl' = RMSE over the other fits.
+  Reading: at omega = 0.33 the target's own ln k_e is known to 0.398 (FIM) / 0.406 (MC RMSE),
+  against omega = 0.33 itself; its sd(ln theta) is 1.817 (FIM), against the 0.20 target.
+
+================================================================================================
+  B. THE PLATEAU APPROXIMATION  sqrt(0.39^2 + ((1-s)/s * omega)^2)  AGAINST COMPUTED VALUES
+================================================================================================
+  s at 5% (untreated balance) = 0.1630, (1-s)/s = 5.134
+  k_e-exact floor, K_m free (the 0.39): median 0.3879 [0.3703, 0.4260]; seed 0 0.4093
+  k_e-exact floor, K_m known (the N -> inf floor): median 0.3786 [0.3601, 0.4101]; seed 0 0.3936
+
+  Computed plateau (target seed 0 for the cohort columns; the limit column is the
+  median over the 24 intake seeds, seed 0 in brackets):
+      omega  user approx   N=1024   N=4096           N->inf  approx/limit   A_eff  |beta|  own sd/omega
+       0.20        1.098    0.981    0.970    0.964 (0.966)         1.139   4.418   4.499         0.982
+       0.33        1.739    1.479    1.471    1.466 (1.469)         1.186   4.290   4.499         0.954
+       0.50        2.597    2.079    2.074    2.066 (2.072)         1.257   4.055   4.499         0.903
+  A_eff = sqrt(plateau^2 - floor_Km-known^2)/omega, the amplification the posterior actually
+  applies; it factors exactly as |beta| * (own sd/omega), where beta is the posterior
+  regression of ln theta on the patient's own ln k_e and own sd/omega < 1 is the shrinkage
+  of the patient's own k_e by their own record (identity asserted per seed).
+  The user's form overstates the plateau because it uses (1-s)/s instead of |beta|, and
+  omega instead of the patient's posterior sd of ln k_e; see the two right-hand columns.
+
+================================================================================================
+  C. COULD 24 RECORDS IDENTIFY OMEGA?  GAUSSIAN SUMMARY OF EACH PATIENT'S DATA-ONLY ln k_e
+================================================================================================
+  NOTE. The repository's 24 records are NOT patients: they share one k_e = 5, so their
+  between-record spread of k_e is 0 by construction and no estimate from them is evidence
+  about patients. Everything below is about a HYPOTHETICAL cohort of 24 real patients
+  simulated on the repository's footing (each patient's own intake seed 0..23).
+
+  Model: z_i = data-only estimate of ln k_e_i (theta_i, b_i profiled, b prior 5% L kept,
+  no k_e prior); z ~ N(mu 1, V + omega^2 I), mu profiled with no prior. V is evaluated at
+  the typical patient (eta = 0) and held fixed across replicates.
+
+  (i) per-patient data-only sd of ln k_e_i, and the expected (Fisher) information for omega^2
+     design                                                        sd z_i: Km shared  Km per pt  Km known
+     24 at 5%, monthly (25 draws)                                    1.064 [0.73,1.33]      1.349     1.052
+     q14 mix 5-20%, monthly                                          1.347 [0.92,2.31]      1.766     1.325
+     24 at 5%, every 2 d (365 draws)                                 0.378 [0.35,0.41]      0.379     0.378
+     q14 mix 5-20%, every 2 d                                        0.475 [0.36,0.73]      0.478     0.475
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.2       0.197 [0.19,0.20]      0.198     0.196
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.1       0.100 [0.10,0.10]      0.100     0.100
+     (median over the 24 patients, [min, max] for the shared-K_m column)
+     Shared K_m makes the z_i correlated; the largest correlation in V is printed below.
+
+     design                                                       max corr  sd(w^2)|w=0    REML z at w=0.2 z at w=0.33 z at w=0.5
+     24 at 5%, monthly (25 draws)                                    0.034       0.2944  0.2996       0.14       0.37       0.85
+     q14 mix 5-20%, monthly                                          0.038       0.4578  0.4665       0.09       0.24       0.55
+     24 at 5%, every 2 d (365 draws)                                 0.001       0.0403  0.0412       0.99       2.70       6.20
+     q14 mix 5-20%, every 2 d                                        0.001       0.0600  0.0618       0.67       1.81       4.17
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.2       0.001       0.0111  0.0114       3.59       9.79      22.47
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.1       0.000       0.0029  0.0029      13.99      38.08      87.42
+     sd(w^2)|w=0 = 1/sqrt(I(omega^2)) at omega = 0 (ML; REML beside it). 'z at w' is
+     omega^2 / sd(omega^2 | omega = 0): the expected Wald signal of a true omega against the
+     null's sd. omega = 0.33 is omega^2 = 0.109; omega = 0.5 is 0.25. I(omega) itself is
+     4 omega^2 I(omega^2), which is ZERO at omega = 0: omega is a boundary parameter there.
+
+     Fisher sd of omega at the true omega (delta method, ML, shared K_m):
+     design                                                          w=0.2   w=0.33    w=0.5
+     24 at 5%, monthly (25 draws)                                    0.769    0.500    0.375
+     q14 mix 5-20%, monthly                                          1.179    0.751    0.543
+     24 at 5%, every 2 d (365 draws)                                 0.130    0.109    0.113
+     q14 mix 5-20%, every 2 d                                        0.184    0.145    0.139
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.2       0.057    0.064    0.083
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.1       0.036    0.052    0.075
+
+  (ii) 4000 simulated cohorts of 24 per (design, true omega); each cohort's 95% profile-
+  likelihood interval for omega = {omega : D(omega) - D_min <= 3.84} (ML, mu profiled).
+  'excl 0' = interval excludes omega = 0; 'test' = boundary-corrected 5% LR test of omega = 0
+  (D(0) - D_min > 2.71, the 50:50 chi2_0/chi2_1 mixture); 'both' = interval holds 0 AND 0.33;
+  'excl .33' = interval excludes 0.33. Upper limit: median [P10, P90]; censored = upper
+  limit beyond the grid (30).
+
+   -- K_m shared (primary)
+     design                                                           w median w_hat    upper: med [P10,P90] med lower  excl 0   test   both  excl .33  cens
+     24 at 5%, monthly (25 draws)                                  0.00        0.000   0.894 [ 0.655, 1.268]     0.000    1.3%   2.9%  98.7%      0.4%  0.0%
+     24 at 5%, monthly (25 draws)                                  0.20        0.000   0.945 [ 0.679, 1.326]     0.000    2.3%   5.3%  97.7%      0.7%  0.0%
+     24 at 5%, monthly (25 draws)                                  0.33        0.200   1.000 [ 0.696, 1.374]     0.000    3.9%   7.4%  96.1%      1.8%  0.0%
+     24 at 5%, monthly (25 draws)                                  0.50        0.406   1.110 [ 0.754, 1.502]     0.000   10.3%  16.1%  89.7%      4.7%  0.0%
+     q14 mix 5-20%, monthly                                        0.00        0.000   1.135 [ 0.824, 1.602]     0.000    1.5%   3.1%  98.5%      0.6%  0.0%
+     q14 mix 5-20%, monthly                                        0.20        0.000   1.171 [ 0.843, 1.646]     0.000    2.0%   3.9%  98.0%      0.9%  0.0%
+     q14 mix 5-20%, monthly                                        0.33        0.134   1.223 [ 0.861, 1.706]     0.000    3.7%   6.2%  96.3%      2.1%  0.0%
+     q14 mix 5-20%, monthly                                        0.50        0.368   1.318 [ 0.918, 1.817]     0.000    5.9%  10.3%  94.1%      3.5%  0.0%
+     24 at 5%, every 2 d (365 draws)                               0.00        0.000   0.325 [ 0.237, 0.458]     0.000    1.6%   3.0%  46.7%     51.8%  0.0%
+     24 at 5%, every 2 d (365 draws)                               0.20        0.166   0.415 [ 0.280, 0.555]     0.000   11.4%  17.5%  66.0%     22.6%  0.0%
+     24 at 5%, every 2 d (365 draws)                               0.33        0.303   0.542 [ 0.379, 0.692]     0.000   48.7%  58.3%  45.8%      6.6%  0.0%
+     24 at 5%, every 2 d (365 draws)                               0.50        0.471   0.732 [ 0.560, 0.913]     0.276   91.8%  94.5%   8.0%     31.4%  0.0%
+     q14 mix 5-20%, every 2 d                                      0.00        0.000   0.406 [ 0.299, 0.577]     0.000    1.3%   2.6%  76.8%     21.9%  0.0%
+     q14 mix 5-20%, every 2 d                                      0.20        0.150   0.488 [ 0.333, 0.672]     0.000    7.2%  11.9%  83.3%      9.6%  0.0%
+     q14 mix 5-20%, every 2 d                                      0.33        0.293   0.600 [ 0.404, 0.802]     0.000   27.7%  37.0%  69.7%      4.3%  0.0%
+     q14 mix 5-20%, every 2 d                                      0.50        0.468   0.784 [ 0.566, 0.994]     0.201   71.2%  77.7%  28.5%     20.9%  0.0%
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.2     0.00        0.000   0.169 [ 0.124, 0.238]     0.000    1.2%   2.9%   0.0%     99.9%  0.0%
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.2     0.20        0.185   0.312 [ 0.228, 0.396]     0.070   65.4%  73.5%   0.0%     61.0%  0.0%
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.2     0.33        0.316   0.468 [ 0.363, 0.575]     0.209   98.9%  99.4%   0.0%      5.9%  0.0%
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.2     0.50        0.478   0.678 [ 0.545, 0.827]     0.347  100.0% 100.0%   0.0%     59.6%  0.0%
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.1     0.00        0.000   0.086 [ 0.063, 0.122]     0.000    1.1%   2.8%   0.0%    100.0%  0.0%
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.1     0.20        0.190   0.276 [ 0.217, 0.335]     0.133   99.8%  99.9%   0.0%     87.9%  0.0%
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.1     0.33        0.316   0.442 [ 0.356, 0.532]     0.236  100.0% 100.0%   0.0%      5.6%  0.0%
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.1     0.50        0.481   0.662 [ 0.536, 0.797]     0.365  100.0% 100.0%   0.0%     73.2%  0.0%
+
+   -- K_m per patient (diagonal V)
+     design                                                           w median w_hat    upper: med [P10,P90] med lower  excl 0   test   both  excl .33  cens
+     24 at 5%, monthly (25 draws)                                  0.00        0.000   1.115 [ 0.812, 1.607]     0.000    1.7%   3.2%  98.3%      0.9%  0.0%
+     24 at 5%, monthly (25 draws)                                  0.20        0.000   1.132 [ 0.818, 1.613]     0.000    1.5%   3.1%  98.5%      0.7%  0.0%
+     24 at 5%, monthly (25 draws)                                  0.33        0.000   1.181 [ 0.837, 1.695]     0.000    3.0%   5.7%  97.0%      1.7%  0.0%
+     24 at 5%, monthly (25 draws)                                  0.50        0.298   1.278 [ 0.883, 1.781]     0.000    5.6%   9.1%  94.4%      3.0%  0.0%
+     q14 mix 5-20%, monthly                                        0.00        0.000   1.440 [ 1.050, 2.064]     0.000    1.3%   2.8%  98.7%      0.6%  0.0%
+     q14 mix 5-20%, monthly                                        0.20        0.000   1.473 [ 1.063, 2.112]     0.000    1.5%   3.4%  98.5%      1.0%  0.0%
+     q14 mix 5-20%, monthly                                        0.33        0.000   1.499 [ 1.075, 2.114]     0.000    1.9%   3.8%  98.1%      1.3%  0.0%
+     q14 mix 5-20%, monthly                                        0.50        0.180   1.579 [ 1.107, 2.201]     0.000    3.3%   6.0%  96.7%      2.6%  0.0%
+     24 at 5%, every 2 d (365 draws)                               0.00        0.000   0.324 [ 0.238, 0.453]     0.000    1.5%   2.9%  46.0%     52.5%  0.0%
+     24 at 5%, every 2 d (365 draws)                               0.20        0.168   0.418 [ 0.278, 0.562]     0.000   12.4%  18.9%  64.4%     23.2%  0.0%
+     24 at 5%, every 2 d (365 draws)                               0.33        0.303   0.542 [ 0.387, 0.695]     0.000   47.9%  58.1%  48.1%      5.5%  0.0%
+     24 at 5%, every 2 d (365 draws)                               0.50        0.471   0.731 [ 0.550, 0.913]     0.273   90.3%  93.5%   9.5%     31.8%  0.0%
+     q14 mix 5-20%, every 2 d                                      0.00        0.000   0.406 [ 0.300, 0.580]     0.000    1.5%   2.7%  77.8%     20.6%  0.0%
+     q14 mix 5-20%, every 2 d                                      0.20        0.139   0.483 [ 0.328, 0.673]     0.000    7.7%  12.2%  81.8%     10.5%  0.0%
+     q14 mix 5-20%, every 2 d                                      0.33        0.291   0.600 [ 0.398, 0.787]     0.000   26.5%  35.4%  70.6%      4.5%  0.0%
+     q14 mix 5-20%, every 2 d                                      0.50        0.468   0.786 [ 0.578, 0.994]     0.202   71.3%  79.4%  28.5%     21.1%  0.0%
+
+   REML check (shared K_m), same cohorts: excl 0 | median upper limit
+     24 at 5%, monthly (25 draws)                                 w=0.0:  1.7% |  0.935   w=0.2:  3.0% |  0.989   w=0.33:  4.8% |  1.046   w=0.5: 11.9% |  1.158
+     q14 mix 5-20%, monthly                                       w=0.0:  1.7% |  1.191   w=0.2:  2.4% |  1.228   w=0.33:  4.3% |  1.283   w=0.5:  7.0% |  1.378
+     24 at 5%, every 2 d (365 draws)                              w=0.0:  2.1% |  0.345   w=0.2: 13.9% |  0.437   w=0.33: 53.0% |  0.565   w=0.5: 93.0% |  0.759
+     q14 mix 5-20%, every 2 d                                     w=0.0:  1.9% |  0.434   w=0.2:  8.9% |  0.517   w=0.33: 32.0% |  0.630   w=0.5: 74.3% |  0.816
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.2    w=0.0:  1.8% |  0.179   w=0.2: 68.9% |  0.325   w=0.33: 99.1% |  0.484   w=0.5: 100.0% |  0.700
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.1    w=0.0:  1.5% |  0.091   w=0.2: 99.8% |  0.285   w=0.33: 100.0% |  0.455   w=0.5: 100.0% |  0.682
+
+  (iii) What would identify omega = 0.33 (boundary test, one-sided 5%, 80% power).
+  ASYMPTOTIC formula from the per-patient expected information 1/(2 (v_i + omega^2)^2),
+  diagonal V (K_m correlation ignored); NOT checked by simulation at the large N it returns.
+     design                                                        N for w=0.33  N for w=0.5  N for w=0.2
+     24 at 5%, monthly (25 draws)                                          1200          251         8470
+     q14 mix 5-20%, monthly                                                2846          577        20396
+     24 at 5%, every 2 d (365 draws)                                         33           10          182
+     q14 mix 5-20%, every 2 d                                                65           18          387
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.2                6            3           21
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.1                2            2            4
+     With N = 24 fixed, the per-patient data-only sd of ln k_e needed for omega = 0.33: 0.339 (equal v_i, same formula).
+     simulated check at that sd, true omega = 0.0: test rejects omega = 0 in 2.9%, interval excludes 0 in 1.2%, median upper limit 0.295
+     simulated check at that sd, true omega = 0.33: test rejects omega = 0 in 71.2%, interval excludes 0 in 61.3%, median upper limit 0.527
+
+  SUMMARY of (ii), K_m shared, Gaussian summary: the typical 95% interval for omega
+     design                                                                 true w = 0        true w = 0.33
+     24 at 5%, monthly (25 draws)                                 [0.000,  0.894]       [0.000,  1.000]
+     q14 mix 5-20%, monthly                                       [0.000,  1.135]       [0.000,  1.223]
+     24 at 5%, every 2 d (365 draws)                              [0.000,  0.325]       [0.000,  0.542]
+     q14 mix 5-20%, every 2 d                                     [0.000,  0.406]       [0.000,  0.600]
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.2    [0.000,  0.169]       [0.209,  0.468]
+     HYPOTHETICAL 24 at 5% monthly + own ln k_e read to sd 0.1    [0.000,  0.086]       [0.236,  0.442]
+     (median lower limit, median upper limit over the simulated cohorts)
+
+================================================================================================
+  C (iv). CHECK OF THE GAUSSIAN SUMMARY: EACH PATIENT'S DATA-ONLY PROFILE LIKELIHOOD IN ln k_e
+================================================================================================
+  One patient at 5%, n6-style noisy ordinate (core.noisy); (ln theta, ln K_m, b) profiled,
+  b prior 5% L, no k_e prior. Columns are ln k_e offsets from the truth ln 5. 'Gauss' is the
+  Gaussian summary's offset^2 / v_i (K_m per patient); 'theta_hat' is the profiled theta.
+
+  24 at 5%, monthly: deviance relative to the minimum, 24 intake seeds
+         ln k_e offset      -8      -4      -2      -1    -0.5       0     0.2     0.3     0.5     1.0
+     noiseless, seed 0    0.50    0.49    0.38    0.21    0.08    0.00    0.03    1.68   19.27  235.68
+         noisy: median    1.41    1.38    1.20    0.86    0.67    0.23    0.64    2.92   24.36  265.42
+            noisy: max    5.71    5.61    4.98    3.77    2.61    2.13    2.76    8.49   39.58  337.14
+       Gauss, median v   35.15    8.79    2.20    0.55    0.14    0.00    0.02    0.05    0.14    0.55
+      theta_hat median   828.4   815.5   732.1   568.9   404.8   136.8     0.0     0.0     0.0     0.0
+     The 95% region (deviance <= 3.84) reaches the grid floor (k_e = 5 e^-8 = 0.0017) in 96% of the 24 records.
+     Its upper end: ln k_e offset median +0.319 [+0.227, +0.467], i.e. k_e up to 6.88 /d, a factor 1.25-1.60 above the truth;
+     the Gaussian summary puts it at +2.64. Plateau below the truth (deviance at offset -8): noiseless 0.50, noisy median 1.41.
+     (5 s)
+
+  24 at 5%, every 2 d: deviance relative to the minimum, 24 intake seeds
+         ln k_e offset      -8      -4      -2      -1    -0.5       0     0.2     0.3     0.5     1.0
+     noiseless, seed 0    7.54    7.27    5.65    3.03    1.18    0.00    0.38    8.49   83.22  902.16
+         noisy: median    5.66    5.44    4.13    2.04    0.64    0.39    1.06    9.04   80.96  877.86
+            noisy: max   20.27   19.79   16.79   11.51    7.04    5.79    9.01   16.46   95.73  940.44
+       Gauss, median v  444.83  111.21   27.80    6.95    1.74    0.00    0.28    0.63    1.74    6.95
+      theta_hat median   833.1   820.7   740.5   582.0   418.4   152.5     4.7     0.0     0.0     0.0
+     The 95% region (deviance <= 3.84) reaches the grid floor (k_e = 5 e^-8 = 0.0017) in 29% of the 24 records.
+     Its upper end: ln k_e offset median +0.233 [-0.195, +0.312], i.e. k_e up to 6.31 /d, a factor 0.82-1.37 above the truth;
+     the Gaussian summary puts it at +0.74. Plateau below the truth (deviance at offset -8): noiseless 7.54, noisy median 5.66.
+     (5 s)
+
+  Where theta_hat is ~1e-6 (the fit's floor) the wall is the theta >= 0 bound of Task 4.
+
+  Profile-based hierarchy: each patient's profile likelihood exp(-dev_i/2) in ln k_e
+  integrated against N(mu, omega^2), mu profiled on ln 5 + [-6, 2], K_m per patient. An
+  approximation: a profile, not an integrated, likelihood per patient, and held constant
+  below the profile grid's floor. Right of the bar, the SAME cohorts summarised the way a
+  two-stage analysis would: z_i = the patient's profile ML of ln k_e (on the grid), v_i from
+  the FIM, diagonal V. 'z_i at floor' = share of patients whose ML sits at the grid floor.
+
+  24 at 5%, monthly: 25 simulated cohorts of 24 per omega (REDUCED count: 24 profiles per cohort)
+      omega  excl 0   test     upper: med [min,max]  both 0,.33  censored | Gauss: excl 0  upper med  z_i at floor
+       0.00      0%     0%    0.426 [0.170, 1.454]         76%        0% |          100%      4.432         23.2%
+       0.33      0%     0%    0.575 [0.261, 3.579]         92%        0% |          100%      4.415         24.2%
+     (227 s)
+
+  24 at 5%, every 2 d: 15 simulated cohorts of 24 per omega (REDUCED count: 24 profiles per cohort)
+      omega  excl 0   test     upper: med [min,max]  both 0,.33  censored | Gauss: excl 0  upper med  z_i at floor
+       0.00      0%     0%    0.188 [0.089, 0.260]          0%        0% |           13%      0.279          0.3%
+       0.33     27%    40%    0.295 [0.200, 0.540]         20%        0% |           40%      0.476          0.3%
+     (176 s)
+
+================================================================================================
+  D. THE REPOSITORY'S ONLY INFORMATION ON OMEGA, QUOTED FROM THE FILES
+================================================================================================
+
+  audit/q14_hierarchical.py, lines 19-30:
+      19: THE QUESTION THAT DECIDES IT IS NOT THE SAMPLE SIZE. Brief R1 states that the
+      20: clearance is patient-specific: 3-HP is renally secreted by OAT1, half of adults
+      21: with PA have an eGFR under 60, and the between-patient CV is "probably a third or
+      22: more". A cohort fit with a SHARED constant is then misspecified, and a
+      23: hierarchical one with a random `k_e_i/alpha_i` pins the POPULATION value while
+      24: each patient's own stays uncertain by the between-patient spread. So the sweep
+      25: that decides the route is over that spread, and the headline is not "how many
+      26: patients" but "how many patients, and does it help at all when the spread is a
+      27: third".
+      28: 
+      29: WHAT IS COMPUTED
+      30:   A  the population constant against cohort size, each patient's own
+
+  audit/PHASE10_SENSORS.md, lines 486-494:
+     486: 
+     487: **The 33% is applied to a quantity it was not measured on, and the floor is therefore optimistic.**
+     488: R1's between-patient CV of about a third is for the MARKER'S CLEARANCE. The model's parameter is
+     489: `k_e/alpha`, and `alpha` varies between patients too, through carnitine status and the relative sizes
+     490: of the overflow routes. **Applying 33% to the composite assumes `alpha` is either constant across
+     491: patients or perfectly anticorrelated with `k_e`**, and neither has been measured. Any other
+     492: relationship makes the composite's spread larger than its numerator's, so **the true floor could be
+     493: worse than the table shows and cannot be better unless the anticorrelation is near perfect.** Stated,
+     494: not re-run: the direction is what matters and the magnitude needs a measurement nobody has.
+
+  Two further places restate or border on it (found by grep; not asked for):
+
+  audit/PHASE8_SIMULATIONS.md, lines 721-723:
+     721: 10%). Brief **R1** puts the between-patient CV of the nearest comparable disposal rate at about a
+     722: third in healthy adults and gives reasons to expect more in patients (renal OAT1 secretion;
+     723: eGFR under 60 in half of adults with PA); it has no 3-HP figure. Monte Carlo, truth-drawn, load
+
+  src/common/params.py, lines 363-367:
+     363:                  r"it, and the cohort is methylmalonic acidemia. Biological variability is far "
+     364:                  r"larger: the translational model carries $51\%$ between subjects on the "
+     365:                  r"3-HP baseline~\cite{pkpd_translational}, \emph{between mice of one inbred "
+     366:                  r"strain}, which bounds between-patient variability from below rather than "
+     367:                  r"above",
+
+  Reading: every between-patient figure traces to brief R1, which (PHASE8_SIMULATIONS.md
+  721-723) is for 'the nearest comparable disposal rate' in healthy adults and has no 3-HP
+  figure; PHASE10_SENSORS.md 487-494 adds that it is for the marker's clearance, not the
+  model's k_e/alpha, so the model's omega could be larger. The params.py 51% is between
+  MICE, on the 3-HP baseline level, not on k_e. No number in the repository measures omega.
+  README.md: 'Parameter values are illustrative, not fitted' (asserted present).
+  wrote fig/t9_omega.png
+
+  total runtime 479 s
