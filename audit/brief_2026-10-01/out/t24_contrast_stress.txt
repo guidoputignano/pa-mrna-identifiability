@@ -1,0 +1,65 @@
+============================================================================================
+  CLOSE. STRESS-TESTING THE LONGITUDINAL CONTRAST
+============================================================================================
+
+  (1a) THE CONTRAST DEPENDS ON DRAWS-PER-WINDOW, NOT CALENDAR SPAN.
+        window             monthly            weekly             daily
+      6 months        n=6    0.568      n=26   0.278      n=180  0.096
+        1 year        n=12   0.388      n=52   0.187      n=365  0.067
+       2 years        n=24   0.281      n=104  0.133      n=730  0.047
+      So two SHORT dense windows work: 6-month daily (n=180) gives 0.10, and
+      ~45 draws/window reaches 0.20. You do not need years of weekly draws;
+      a ~6-week daily burst per window suffices. Calendar span barely matters
+      at fixed n -- but a longer GAP between windows allows more drift (1b).
+
+  (1b) IMPERFECT SHARING: where the contrast degrades past 0.20.
+      k_e drift between windows (weekly n=104 base 0.13; monthly n=25 base 0.26):
+       drift (log units)    weekly   monthly
+                    0.00     0.133     0.264
+                    0.02     0.157     0.277
+                    0.05     0.245     0.337
+                    0.10     0.426     0.491
+                    0.20     0.767     0.848
+      load-calibration (b) drift between windows:
+          drift (frac L)    weekly   monthly
+                    0.00     0.133     0.264
+                    0.01     0.176     0.289
+                    0.02     0.226     0.341
+                    0.05     0.276     0.447
+      The weekly contrast holds below 0.20 up to ~0.06 log units of k_e drift
+      and ~0.015 L of calibration drift; beyond that it degrades toward the
+      cross-sectional bar. PHYSIOLOGY: k_e is the marker's clearance (renal +
+      non-enzymatic). Over a week it is effectively fixed (<0.01); over a year
+      in a growing child renal clearance scales with size and 0.05-0.1 is
+      plausible. The load calibration b drifts with any diet/formula/adherence
+      change. So the contrast is reliable for SHORT intervals (weeks-months)
+      on a stable regimen, and degrades over a year or across a regimen change.
+
+  (1c) AN ANTIBIOTIC COURSE STARTING BETWEEN WINDOWS IS CATASTROPHIC.
+      A load drop of delta on window 2 that the record does not capture, as a
+      fake capacity change (linear response; low markers at the nominal
+      recorded load read as HIGHER capacity):
+        antibiotic depth   fake d ln theta  apparent capacity change
+                    10%             +1.14                     +213%
+                    20%             +2.01                     +644%
+                    41%             +2.94                    +1798%
+      Even a 10% unrecorded load drop fakes ~+1.1 ln theta (a ~3x apparent
+      rise), ~8x the 0.13 weekly precision; at the realistic 41% metronidazole
+      depth it is ~+2.9 (a ~20x apparent rise). It would MASK any real decline
+      and MIMIC a large improvement. Antibiotic status (and any load-regimen
+      change) MUST be recorded and held constant across the two windows.
+
+  (2) WHAT REAL CHANGE IS DETECTABLE AT 80% POWER (two-sided 5%).
+      Minimum detectable |d ln theta| = 2.80 * sd(contrast); as a rise/fall:
+                            design  contrast sd  min detectable rise    fall
+             monthly, 2-yr windows        0.264                +109%    -52%
+              weekly, 1-yr windows        0.187                 +69%    -41%
+              weekly, 2-yr windows        0.133                 +45%    -31%
+            daily, 6-month windows        0.096                 +31%    -24%
+               daily, 2-yr windows        0.047                 +14%    -12%
+      So weekly windows detect a ~+45% rise (or ~-30% fall); a 6-month daily
+      programme detects ~+30%/-24%; monthly windows only a doubling (~+110%).
+      A 50% capacity rise (ln 1.5 = 0.405) needs contrast sd <= 0.145 -- weekly
+      windows or denser. None of this is absolute capacity: it is CHANGE, and
+      only valid if k_e, the load calibration and antibiotic status are held
+      fixed between the two windows.
