@@ -1,0 +1,86 @@
+============================================================================================
+  ITEM 1. THE kappa QUESTION FOR EX VIVO PCC
+============================================================================================
+
+  PROVENANCE: the 20% is REPEATABILITY only (q15 step 3: 'an ex vivo assay's
+  repeatability'). kappa (cell-to-whole-body mapping) is unreported in any human
+  study (PHASE10 1.2, R4), so it is UNCALIBRATED -- the same object as the breath
+  test's recovery c. q15's 0.200 adds the 20% as a direct theta-prior, which
+  silently assumes kappa = 1 known.
+
+  sd(ln theta) at 5% monthly, over (repeatability Y, calibration Z = sd(ln kappa)):
+    Z = sd(ln kappa) \ Y        10%     15%     20%     25%     30%
+      exact (kappa known)      0.100   0.150   0.200   0.249   0.299
+                     0.05      0.112   0.158   0.206   0.254   0.303
+                     0.10      0.141   0.180   0.223   0.268   0.315
+                     0.20      0.223   0.249   0.282   0.318   0.358
+      free (uncalibrated)      3.045   3.045   3.045   3.045   3.045
+
+  READING:
+  - kappa KNOWN: sd(ln theta) ~ the repeatability Y (0.20 at 20%, 0.30 at 30%).
+    So the 0.200 is knife-edge: it sits exactly on the gate at the stated 20%,
+    and 25%/30% repeatability give 0.25/0.30 -- a result on the gate should never
+    have been reported without this.
+  - kappa UNCALIBRATED (free): sd(ln theta) = 3.045, the record's own value. A
+    single ex vivo reading is then worth NOTHING for absolute theta, exactly as
+    a single breath reading is (R11). The ex vivo route has the SAME unresolved
+    calibration problem, and at face value the conclusion REVERTS.
+  - The 0.20 contour is sqrt(Y^2 + Z^2) <= 0.20 (hypot, as in R11). Maximum kappa
+    uncertainty compatible with target, by repeatability:
+      Y = 10%: sd(ln kappa) <= 0.173
+      Y = 15%: sd(ln kappa) <= 0.132
+      Y = 20%: sd(ln kappa) <= NONE (repeatability alone >= 0.20)
+      Y = 25%: sd(ln kappa) <= NONE (repeatability alone >= 0.20)
+      Y = 30%: sd(ln kappa) <= NONE (repeatability alone >= 0.20)
+    At the repo's 20% repeatability, kappa must be known essentially EXACTLY;
+    any tolerance for kappa needs the repeatability pushed below ~15% first.
+  - MONITORING escapes this: kappa is a patient constant, so it CANCELS in the
+    longitudinal contrast (like k_e, b). Two ex vivo reads give a contrast of
+    ~sqrt(2)*0.20 = 0.28 (worse than the marker's 0.13), so ex vivo
+    does not improve monitoring, but the kappa problem is a CLASSIFICATION
+    problem only -- the same split as everything else in this study.
+
+============================================================================================
+  ITEM 2. SCOPING THE PROPIONYL-CoA MODEL EXTENSION (PHASE10 1.1 route b)
+============================================================================================
+
+  THE REPO DOES NOT PRICE C3. C3 is dropped at step 1 (inexpressible: no
+  propionyl-CoA state). So 'compute sd(ln theta) with C3' cannot be done on repo
+  values -- it requires building route (b), which the repo states it 'cannot
+  itself run'. Scoping it, repo-grounded where possible and flagged where not:
+
+  NEW STRUCTURE (PHASE10 1.1b): a propionyl-CoA pool P, the enzyme acting on P,
+  the marker m formed from P 'by overflow'. New parameters beyond (theta, K_m,
+  k_e, L, b):
+    - k_P : non-enzymatic disposal of P              (NEW, not in any repo file)
+    - the overflow kinetics P -> m (form + rate)     (NEW, functional form unstated)
+    - kappa_c : the C3 assay's mapping constant        (NEW, a THIRD uncalibrated
+                multiplier, exactly like kappa and c)
+
+  IDENTIFIABILITY OF THE NEW PARAMETERS FROM EXISTING DATA: NO. The marker record
+  observes only m, which is downstream of P; P and its disposal split (theta g(P)
+  vs k_P P vs overflow) are unobserved. Adding k_P and the overflow kinetics as
+  free parameters, with only m observed, adds unidentified parameters to an
+  already ill-posed model -- it can only make theta worse, not better. So the
+  extension is worth running ONLY together with a P-observable (C3).
+
+  WOULD C3 THEN BREAK THE DEGENERACY, OR MOVE IT? Structural answer:
+    - C3 ∝ kappa_c * P reads the pool directly. With P pinned, the enzyme flux
+      theta g(P) is read more directly than through the overflow marker -- that is
+      the genuine promise, and why the enzyme's SUBSTRATE pool is the right place
+      to look.
+    - BUT two obstructions reappear on P: (i) the theta-vs-k_P confound on the P
+      balance (L = theta g(P) + k_P P + overflow) is the SAME structure as the
+      theta-vs-k_e confound on m, so it breaks theta out only if non-enzymatic P
+      disposal k_P is small or known; (ii) kappa_c is a new uncalibrated
+      multiplier, so an absolute C3 reading inherits the kappa/c calibration
+      problem above.
+    - VERDICT: the extension MOVES the degeneracy from (theta vs k_e, on m) to
+      (theta vs k_P, on P) and adds a third calibration unknown. It BREAKS the
+      degeneracy only if (a) non-enzymatic propionyl-CoA disposal is negligible or
+      measured and (b) C3's mapping kappa_c is calibrated -- neither of which the
+      repository provides. A definitive number needs the structural model built
+      with those priors; that is out of the current model and is the repo's own
+      stated main open item (PHASE10 'route (b) is what this phase should
+      recommend and cannot itself run'). Not fabricated here.
+
