@@ -31,6 +31,8 @@ It builds on the repository rather than beside it. The footing (convention A, th
 | `t15_load_asymptote.py` | round 3, item 13: the load-bias asymptote and the value of measuring L | 2 min |
 | `t17_two_stage.py` | round 3, item 15: the safety threshold and the two-stage design | 3 min |
 | `t18_set_id.py` | round 3, item 16: set identification elevated — what is recoverable | 10 s |
+| `t20_saturation.py` | round-3 close-out A: saturation regime, integral collapse, excursion = saturation | 1 min |
+| `t21_sensitivity.py` | round-3 close-out B: sensitivity of the conclusions, flux contour across capacity | 3 min |
 | `r3_figs.py` | round 3 figures (flux contour, k_e×sampling, asymptote, excursion/safety) | 2 min |
 | `*_recheck3.py` | independent verifier re-derivations of the round-3 scripts | — |
 | `*_recheck.py` | an independent verifier's re-derivation of each follow-up script, sharing no code with it | 3–25 min |
@@ -43,7 +45,7 @@ pip install -r ../../requirements.txt
 for s in t0_footing t1_identifiability t2_cohort t3_variance t4_set t5_value t7_design t6_estimators t6b_ma1 \
          t8_floor t9_omega t10_factorial t6c_iv t6d_ekf t11_fim_check t12_flux_mc \
          t13_conditioning t14_ke_sampling t15_load_asymptote t16_flux_observable t17_two_stage \
-         t18_set_id t19_residuals; do
+         t18_set_id t19_residuals t20_saturation t21_sensitivity; do
   python -W error $s.py > out/$s.txt
 done
 python -W error r3_figs.py   # round-3 figures

@@ -1,0 +1,62 @@
+================================================================================================
+  CLOSE-OUT B. SENSITIVITY, AND THE FLUX CONTOUR ACROSS CAPACITY
+================================================================================================
+
+  (1) DOES 'NO FEASIBLE POINT REACHES 0.20' SURVIVE PARAMETER VARIATION?
+      sd(ln theta) at 5%, k_e to 0.2, daily draws over 2 yr (730). Baseline:
+      baseline (K_m 100, assay 5%, k_e prior 0.8, perdraw): 0.716
+                               variation  sd(ln theta)   > 0.20?
+                                K_m = 50         0.342       yes
+                               K_m = 200         1.456       yes
+                             assay CV 3%         0.661       yes
+                             assay CV 8%         0.787       yes
+                           k_e prior 0.4         0.716       yes
+                        repo noise model         0.719       yes
+                         load scatter 2%         0.585       yes
+                        load scatter 10%         0.863       yes
+                  k_e achievable to 0.10         0.453       yes
+                  k_e achievable to 0.05         0.273       yes
+      CONCLUSION: the sd stays FAR above 0.20 under every variation except
+      shrinking the achievable k_e precision itself (0.05 -> ~0.25, still >0.20).
+      'No feasible point reaches 0.20' survives; it is governed by k_e precision
+      (item 12), not by K_m, L, the noise model or the assay CV.
+
+  (2) DOES THE FLUX 0.20 CONTOUR (~19% AT 5%) SURVIVE?
+      single-reading flux crossing Y*, median over seeds:
+                           variation  Y* crossing
+      baseline (5%, K_m100, assay5%)        19.3%
+                            K_m = 50        20.2%
+                           K_m = 200        18.8%
+                         assay CV 3%        19.6%
+                         assay CV 8%        18.8%
+      The contour is stable in the ~16-22% band: the flux route's requirement
+      (an absolutely-calibrated reading to ~1 part in 5) is robust.
+
+  (3) THE FLUX CONTOUR ACROSS CAPACITY (the deliverable, extended).
+      single-reading flux crossing Y* at which sd(ln theta) = 0.20:
+       capacity  Y* (one reading)  Y* (3 readings)
+            1%             19.4%            33.9%
+            2%             19.4%            33.9%
+            5%             19.3%            33.8%
+           10%             19.3%            33.8%
+           20%             19.5%            34.2%
+           50%             23.6%            41.4%
+          100%             60.0%            90.0%
+      Y* is the LOOSEST reading that still reaches 0.20 (higher = easier).
+      So: a single calibrated flux reading to ~19% recovers theta to 0.20
+      across the clinically relevant low-capacity range (~1-20%), where the
+      requirement is essentially FLAT at ~19%. It only LOOSENS above ~50%
+      (Y* 24% at 50%, >60% at 100%), because there the monthly record ALONE
+      already approaches 0.20 (Task 1's U-curve). The reading matters most
+      exactly where capacity is lowest -- which is where it is needed.
+
+  (4) PROVENANCE OF 'k_e ACHIEVABLE TO ~0.2 LOG UNITS'.
+      It is NOT an external measurement capability; it is what item 15's SAFE
+      within-fold transient delivers, and it is set by the unrecorded load L0:
+          L0 to 5% (the repo load prior): safe transient gives sd(ln k_e) = 0.205
+                                L0 to 2%: safe transient gives sd(ln k_e) = 0.103
+                                L0 to 1%: safe transient gives sd(ln k_e) = 0.062
+                                L0 exact: safe transient gives sd(ln k_e) = 0.038
+      So 'k_e to 0.2' = L0 known to 5% (the repository's own load prior). The
+      0.20 theta-contour needs k_e to ~0.05, which needs L0 to ~1%. The whole
+      question is that gap: knowing the UNRECORDED load to 5% vs 1%.

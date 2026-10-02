@@ -2,13 +2,15 @@
 
 **Brief of 1 October 2026, worked on the repository's own footing, over three rounds (the original eight tasks, a six-point follow-up, and a nine-point round on conditioning, specification, and feasibility).** Every number comes from a script in this directory. `out/<script>.txt` holds each script's printed output and `fig/` its figures. The follow-up scripts (`t8`–`t11`, `t6c`, `t6d`) and the round-3 scripts (`t13`–`t19`) were re-derived by independent verifiers, by routes sharing no code with them; `t12` (the flux crossing) was not. Repository constants and the `n6` output this report quotes are printed in `out/t0_footing.txt` and `out/n6_profile_vs_crb.txt`. The footing is imported from `audit/n4_theta_scope.py`, not restated, and `core.fim` reproduces `n4.sd_ln_theta` to 1e-13. Claims that are assumed or not verified are collected in the [last section](#unverified-or-assumed).
 
+> **This is a design study on a specified, simulated model, not an analysis of a cohort.** Item 10 established that the repository holds no patient data — every "record" is generated from the one-compartment Michaelis–Menten model on illustrative parameters (the brief's "24 patient records" was a mislabelling). So every number below is conditional on that model and its constants. The two load-bearing conclusions were stress-tested against variation in K_m, L, the k_e prior width, the noise model and the assay CV (R-B): **both survive** — "no feasible point reaches 0.20" and the ~19% flux contour hold across the range. The enzyme's saturation regime, which governs which approximations hold, is stated explicitly in R-A (at 5%, m/K_m ≈ 0.54, g ≈ 0.35 — sub-saturated).
+
 ## The decision
 
 **At 5% of normal, exactly one route reaches the sd(ln θ̂) = 0.20 target feasibly and safely: a single, absolutely-calibrated, off-therapy reading of the enzymatic flux, to about 18% or better.** Everything else either rests on an unobtainable premise, needs research-grade hardware, or is clinically inadmissible:
 
 | route | verdict at 5% |
 |---|---|
-| **one calibrated flux reading (O ∝ θ·g) to Y ≤ ~18%** | **reaches 0.20** — but only if absolutely calibrated. The 0.20 contour is **√(Y² + Z²) ≤ ~18–19%** in the reading precision Y and the calibration precision Z (`t16`, R11). The repository's breath test reads a *fraction oxidised* with unknown recovery, which is off this contour until calibrated. |
+| **one calibrated flux reading (O ∝ θ·g) to Y ≤ ~18%** | **reaches 0.20** — but only if absolutely calibrated. The 0.20 contour is **√(Y² + Z²) ≤ ~18–19%** in the reading precision Y and the calibration precision Z (`t16`, R11). The requirement is flat at ~19% across capacities ~1–20% and only loosens above ~50% where the record alone nears 0.20 (`t21`, R-B). The repository's breath test reads a *fraction oxidised* with unknown recovery, which is off this contour until calibrated. |
 | k_e known **exactly** + hundreds of draws | reaches 0.20 in principle (309 draws/2 yr) but **not feasibly**: k_e is achievable only to ~0.2 log units, and at that precision no sampling intensity reaches 0.20 (R12). |
 | drug-forcing burst, peak 1500 | reaches 0.20 (0.131) only with a **research-grade 0.5% assay CV and κ known exactly** (`t10`). |
 | load excursions large enough to reach 0.20 | **inadmissible** — every one sits past the parent model's crisis threshold of 1.177× baseline load (R15). |
@@ -18,7 +20,7 @@
 
 ### Supporting findings
 - **The confounding.** ln θ and ln k_e are confounded (correlation −0.99 at 5%); k_e carries 98% of Var(ln θ̂). The likelihood already conditions on the per-draw recorded load L(t_k) and drug dose Δ(t_k), so the L–m covariation is inside the 3.07 (R9); the only load lever left is the systematic bias, worth little (R13).
-- **No floor, but no feasible escape.** With k_e exact, sd(ln θ̂) falls as ~1/√n to zero — the 0.39 is not an n-floor (0.195 at 365 draws/2 yr; `t15`, R13). But with k_e achievable only to ~0.2, sampling alone stalls near 0.8 (R12), and tightening k_e safely runs into the load-measurement wall.
+- **No floor only when k_e is exact; otherwise there is a floor.** In one sentence: *with k_e exact the fall is 1/√n and crosses 0.20 near n ≈ 300 draws, but at the achievable sd(ln k_e) = 0.2 no sampling rate reaches even 0.30* (R12, R13). The 0.39 is not an n-floor in the first clause; the feasibility wall is the second. "k_e achievable to ~0.2" is itself not an external measurement — it is what a safe transient delivers when the unrecorded load L₀ is known to 5% (the repo's load prior); reaching the k_e ≈ 0.05 the target needs would require L₀ to ~1% (R-B).
 - **Task 2 is closed as a negative result** (R14): at 24 patients with k_e shared the per-patient sd is 1.17 (still a factor 3.2 either way), and ω is unidentifiable from the available records under every likelihood tried.
 - **The two-stage design is safe but short.** A mild, safe transient pins k_e to ~0.2 log units where it is nowhere near pinning θ, but k_e to 0.2 is not tight enough: the two-stage lands near 0.9, not 0.20 (R15).
 - **The specification is untested, and largely untestable here.** All data is simulated from the one-compartment model; the monthly record is nearly blind to a second compartment and to saturable non-enzymatic clearance, though it can catch a time-varying load drift (R10).
@@ -390,7 +392,7 @@ At 24 patients, all at 5%, with k_e genuinely shared, the per-patient sd is **1.
 
 - **The threshold, sourced and flagged.** `results/numbers/boundary.tex`: the parent model (Model C / ParamsC) loses its steady state when the load exceeds **1.177× baseline** (= 380). This is a **modelling construct** — a saddle-node of ParamsC's R0 setting — not a measured clinical crisis level; `src/model_A/run.py:35–40` states only the *ratio* (~1.5×) as "the physiological claim". The load ratio is model-independent (the fold *marker* 276 is Model C's, not Model A's — at the fold load Model A's marker is ~64). The repository's one clinical-labelled figure, M_TOL = 40, is a target, not a ceiling (the untreated 5% marker is already 54). The hard bound used here: an added-substrate excursion must keep the load below **1.177×**; withdrawals and the drug channel add no substrate and are admissible by construction.
 - **The gap, as a figure.** Every sustained load excursion that drives sd(ln θ̂) below 0.20 crosses at **f ≈ 2.3× baseline** — about twice the admissible edge. The admissible band (shaded) never reaches 0.20.
-- **The smallest excursion that pins k_e.** λ ≈ k_e once the enzyme works hard, so a *mild, safe* transient (even withdrawing 25% of the diet, marker dropping 54 → 47) pins **k_e to ~0.2 log units** while leaving sd(ln θ̂) ≈ 1.2. But k_e's precision is capped by the unrecorded load L₀: ~0.2 at L₀ to 5%, ~0.06 at L₀ to 1%. Tightening k_e past 0.06 needs L₀ measured (R13).
+- **The smallest excursion that pins k_e.** The relaxation rate λ = θg′(m) + k_e is k_e-*dominated* (≈1.13 k_e at 5%, the θ-term ~11%; R-A), not equal to k_e — so a *mild, safe* transient (even withdrawing 25% of the diet, marker dropping 54 → 47) still pins **k_e to ~0.2 log units** while leaving sd(ln θ̂) ≈ 1.2, because pinning k_e tolerates the small θ-contamination that pinning θ cannot. k_e's precision is capped by the unrecorded load L₀: ~0.2 at L₀ to 5%, ~0.06 at L₀ to 1%. Tightening k_e past 0.06 needs L₀ measured (R13).
 - **The two-stage cost.** Safe k_e transient, then n steady-state draws for θ:
 
   | draws (2 yr) | k_e ≈ 0.20 (L₀ 5%) | k_e ≈ 0.06 (L₀ 1%) | k_e exact (ref) |
@@ -421,6 +423,52 @@ If no feasible design reaches 0.20, the deliverable is what the record *does* fi
 
   The record identifies the **local clearance curve** (its slope and K_m), hence k_e, but not the capacity: the enzyme's own curvature a = θg² is swamped at this operating point. Neither the flux nor the fraction oxidised is a reparameterisation that escapes θ — they *are* θ, up to the pinned g and L.
 - **Complete-deficiency check** (asked in Task 5, answered here): all 24 records have θ = 150; none is a θ ≈ 0 patient. If one existed at an untreated steady state, θg ≈ 0 would give k_e = L/m directly with no confounding — a tight prior at no cost. But in the parent model a θ = 0 patient has **no steady state**, so the counterfactual cannot be realised within the model.
+- **Validation against the parent model.** The θ ≤ 22–25% ceiling here reproduces the parent model's published statement that the data "rule out capacity above about a quarter of normal" (`n6_profile_vs_crb.py`'s 708 = 24%, `out/n6_profile_vs_crb.txt`). An independent arrival at the same bound is a check that this pipeline matches its source, not just an internal result.
+
+---
+
+## Round-3 close-out
+
+### R-A. The saturation regime, the integral collapse, and why the dynamic route fails (`t20_saturation.py`)
+
+**A correction the brief's author flagged, and the explanation it unlocks.** The enzyme is **not** saturated in the disease range: at 5%, m/K_m ≈ 0.54 and g ≈ 0.35, so λ = θg′(m) + k_e = **1.13 k_e**, with the θ-term carrying **11%** of λ — of the same order as the precision we want, not negligible. The regime across capacity (K_m = 100):
+
+| capacity | untreated m | m/K_m | g | on-therapy g (median) |
+|---|---|---|---|---|
+| 1% | 62.2 | 0.62 | 0.384 | 0.127 |
+| 5% | 54.0 | 0.54 | 0.351 | 0.121 |
+| 20% | 34.1 | 0.34 | 0.254 | 0.104 |
+| 100% | 10.0 | 0.10 | 0.091 | 0.059 |
+
+**This explains the TB-A integral collapse — and it is not quite the g = 1 story.** Only the *saturated* form (b) assumes g = 1 (a ~1/0.35 ≈ 3× misspecification at 5%), and it cannot identify θ structurally regardless. The general forms (b′)/(b″) use the proper g and in fact **recover θ noiselessly even on TB-A** (153.5 vs 150). Their TB-A collapse is **ill-conditioning**: θ's regressor is ∫g, and when g barely moves (0.21–0.35) the ∫g column is near-collinear with the constant and ∫m columns (design cond ≈ 2×10⁴), so the 5% assay noise is amplified ~10⁴-fold. On TB-B the ×6 excursion sweeps g to 0.75, the condition number falls ~7×, and θ survives the noise. So *sub-saturation via ill-conditioning*, not a misspecified flux, is what sinks the integral estimators.
+
+**"Needs an excursion" and "needs to drive the enzyme toward saturation" are one constraint — and it is the one safety forbids.** As the load excursion f grows, the peak g rises from its baseline ~0.35 and θ becomes identifiable (sd and the ∫g-column condition both fall):
+
+| f × load | peak marker | peak g | sd(ln θ̂) | admissible (≤1.177×) |
+|---|---|---|---|---|
+| 1.18 | 64 | 0.39 | 0.68 | yes |
+| 1.5 | 83 | 0.45 | 0.32 | no |
+| 2.3 | 131 | 0.57 | 0.20 | no |
+| 6.0 | 364 | 0.78 | 0.14 | no |
+
+θ first clears 0.20 at **f ≈ 2.3** (peak g ≈ 0.57, marker ≈ 131, well above K_m) — the excursion that drives the enzyme substantially toward saturation is the same one that reaches target, and it sits ~2× past the admissible edge. **The dynamic route fails for the same reason it would be unsafe: θ's information lives in the curvature of g, which only appears when substrate is pushed past the crisis fold.** This is the cleanest statement of the negative result.
+
+### R-B. Sensitivity of the conclusions, and the flux contour across capacity (`t21_sensitivity.py`)
+
+Because the data is simulated, the two load-bearing conclusions were stress-tested.
+
+- **"No feasible point reaches 0.20" survives.** The anchor (sd(ln θ̂) at 5%, k_e to 0.2, daily draws for two years) is 0.72 at baseline and stays **far above 0.20** under every variation: K_m = 50 → 0.34, K_m = 200 → 1.46, assay CV 3–8% → 0.66–0.79, repo vs per-draw noise → 0.72, load scatter 2–10% → 0.59–0.86. Even shrinking the *achievable* k_e precision to 0.05 gives 0.27 — still above. The conclusion is governed by k_e precision, not by K_m, L, the noise model or the assay.
+- **The ~19% flux contour survives.** The single-reading crossing Y* is 18.8–20.2% across K_m ∈ {50, 100, 200} and assay CV ∈ {3, 5, 8}% — a robust "~1 part in 5".
+- **The flux contour across capacity** (the deliverable, extended): a single calibrated reading to **~19% recovers θ to 0.20 across the clinically relevant low-capacity range (~1–20%)**, where the requirement is essentially flat. It loosens only above ~50% (Y* 24% at 50%, >60% at 100%), where the monthly record alone already approaches 0.20 — so the reading matters most exactly where capacity is lowest. Three averaged readings relax the requirement to ~34% over the same range.
+- **Provenance of "k_e achievable to ~0.2".** It is not an external measurement capability; it is what the safe transient (R15) delivers, and it is set by the unrecorded load L₀: L₀ to 5% (the repo's load prior) → sd(ln k_e) 0.21; L₀ to 2% → 0.10; L₀ to 1% → 0.06; L₀ exact → 0.04. The θ-target needs k_e ≈ 0.05, i.e. **L₀ to ~1%** — so the whole gap between the feasible (~0.2) and the required (~0.05) is the gap between knowing the unrecorded load to 5% versus 1%.
+
+### R-C. The safety threshold cuts both ways
+
+The 1.177× fold is a modelling construct (R15), so it must not carry a clinical conclusion in either direction. Stated cleanly:
+
+- **Design requirement (a fact of this model):** the transient/excursion route needs a *sustained load excursion of ≈ 2.3× baseline* to reach 0.20 (R-A).
+- **Admissibility (an open question for a clinician):** whether 2.3× is tolerable is not settled here; the repository's own crisis fold is at 1.177×, but that is a saddle-node of the parent model, not a measured safe limit.
+- The gap between the requirement (2.3×) and the modelled threshold (1.177×) is about a factor of two. That is wide enough that the conclusion *probably* survives a corrected threshold — but it is stated as "probably", not assumed. A clinician's admissible limit anywhere below ~2.3× leaves the dynamic route infeasible.
 
 ---
 
