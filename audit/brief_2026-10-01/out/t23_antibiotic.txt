@@ -1,0 +1,68 @@
+============================================================================================
+  ADD-ON 3&4. ANTIBIOTICS AS A LOAD TERM, AND AS A DOWNWARD EXCURSION
+============================================================================================
+
+  (3a) IS ANTIBIOTIC STATUS IN THE MODEL?
+      CORE identifiability model (core.record / n4, every number in this
+      report): NO. The load is dietary intake, recorded with 10% CV plus a
+      constant bias b; there is no antibiotic term. A diet prescription does
+      not record antibiotic weeks (m2).
+      REPO AUDIT layer: YES, characterized but not folded in -- gut share
+      22.2+/-8.5% of production (params.py); metabolites fall ~41% (12-76%)
+      under metronidazole on a 21-35 day cycle (m2, Thompson 1990); u15 treats
+      suppression as a k_e instrument. So L is NOT a patient constant, and the
+      core model's constant-b load is a known idealisation.
+
+  (3b) BIAS ON theta FROM AN UNMODELLED ANTIBIOTIC SWING.
+      Fit with k_e,K_m FIXED at truth (the identified regime -- otherwise the
+      fit is ill-posed and the bias is unbounded, which is itself the point).
+      WITHIN-record cycle (phi of draws suppressed): ln(theta_hat/theta_true)
+      and the fraction of fits driven to theta ~ 0:
+        depth  phi=20% (floor)  phi=35% (floor)  phi=50% (floor)
+         30%   -1.00 (20%)    -2.13 (38%)    -1.76 (45%)
+         41%  -21.15 (69%)   -24.29 (85%)   -26.12 (82%)
+         50%  -25.56 (91%)   -31.72 (99%)   -28.43 (96%)
+      WHOLE-record uniform suppression (delta 41%): bias +0.36, floor 0% -- absorbed by the per-record bias b.
+      READING: the bias is DOWNWARD (suppressed-load troughs read as lower
+      capacity) and NOT a modest number. Even a mild 30% cycle pushes ln theta
+      down by ~1-2 and collapses a fifth-to-a-half of fits to theta ~ 0; at the
+      clinically realistic ~41% depth (Thompson) most fits COLLAPSE (69-99%).
+      The cause is that theta is weakly identified, so the near-singular
+      direction amplifies the unmodelled load variation without bound -- a
+      cross-sectional theta estimate is simply not robust to antibiotic status.
+      A UNIFORM whole-record suppression is absorbed by the per-record bias b
+      (so the harm is from VARIATION, as with the load drift in R10). And the
+      longitudinal route (add-on 2) is corrupted too if antibiotic status
+      DIFFERS between the two visits: a load change of delta fakes a capacity
+      change of order (L/theta g)*delta ~ 6*delta, far above the 0.26 contrast
+      precision. So antibiotic status MUST be recorded for either route.
+
+  (4) A KNOWN ANTIBIOTIC STEP AS AN EXCURSION (load DOWN = safe).
+      sd from the transient; daily for two weeks (15 pts) and hourly for two
+      days (49 pts, to catch the ~4 h relaxation). K_m from record, L0 to 5%.
+       load step   new g | daily-2wk sd(lnth)   sd(lnke) | hourly-2d sd(lnth)   sd(lnke)
+           -20%   0.305 |              2.917      0.886 |              1.921      0.415
+           -30%   0.279 |              2.356      0.606 |              1.542      0.299
+           -50%   0.224 |              1.843      0.410 |              1.478      0.261
+      UP vs DOWN (the g-direction question), hourly-2d, matched |step| = 30%,
+      and a large +100% up for contrast (g-span = how far g moves):
+        step  -50%: g-span 0.224-0.351 (0.127)  sd(lnth) 1.48  sd(lnke) 0.261
+        step  -30%: g-span 0.279-0.351 (0.072)  sd(lnth) 1.54  sd(lnke) 0.299
+        step  +30%: g-span 0.351-0.411 (0.060)  sd(lnth) 1.68  sd(lnke) 0.306
+        step +100%: g-span 0.351-0.517 (0.166)  sd(lnth) 0.86  sd(lnke) 0.113
+      READING:
+      - k_e: the antibiotic step is a SAFE, MODERATE k_e instrument, but only
+        if sampled fast enough to see the ~4 h relaxation: hourly gives sd(lnke)
+        ~0.26-0.42 (deeper step = better), daily MISSES it (0.4-0.9, two steady
+        states only). A deliberate larger suppression does better (u15, R15).
+        It is valuable because k_e is the binding nuisance and this adds NO
+        substrate -- it is the safe stage 1 of the two-stage design (R15).
+      - theta: NOT recovered, in EITHER direction (sd(lnth) ~1.5-2.9). The limit
+        is AMPLITUDE, not direction: a downward step is capped at removing the
+        gut share (~20-50% of L), so g moves only ~0.35 -> 0.22-0.28 (span
+        <=0.13). theta's information needs g driven UP to ~0.57 (the 2.3x
+        excursion, g-span ~0.22), which only a large substrate LOAD can do.
+        At matched 30% the two directions barely differ; the low-m collinearity
+        (theta*g ~ (theta/Km)*m, aliased with k_e*m) is a secondary effect under
+        the amplitude cap. So lowering L cannot probe theta -- but it safely
+        probes k_e, which is the half of the problem worth solving.

@@ -1,0 +1,48 @@
+============================================================================================
+  ADD-ON 1&2. SAMPLING AT REALISTIC k_e, AND LONGITUDINAL PRECISION
+============================================================================================
+
+  (1) sd(ln theta) AT 5% vs SAMPLING, with sd(ln k_e) = 0.06 (feasible),
+      over a two-year programme (median over 24 seeds):
+                    protocol  draws/2yr   k_e=0.06  k_e exact (ref)
+               monthly (~25)         25      0.465            0.379
+           fortnightly (~52)         52      0.419            0.324
+               weekly (~104)        104      0.383            0.273
+            ~daily/2d (~365)        365      0.334            0.191
+                daily (~730)        730      0.310            0.149
+      The k_e = 0.06 floor (|beta|*0.06 ~ 0.30) is approached by daily; monthly
+      sits above it at ~0.47, so sampling DOES buy ~1/3 (0.47 -> 0.31). None
+      reaches 0.20: a feasible monthly protocol lands at ~0.47, weekly ~0.38.
+
+  (2) LONGITUDINAL CONTRAST sd(ln theta_2 - ln theta_1), ONE patient.
+      The shared k_e, load-bias b and K_m cancel in the difference, so the
+      contrast is limited only by the INDEPENDENT per-visit noise -- far below
+      the cross-sectional bar. (median over seed pairs; k_e prior 0.8 as usual)
+       draws per visit  sd(d ln theta)  cross-sectional sd(ln theta)
+                    25           0.264                         2.123
+                    52           0.191                         1.883
+                   104           0.133                         1.529
+                   365           0.067                         0.972
+      So monitoring a CHANGE is 0.26 (monthly) / 0.13 (weekly) -- the weekly
+      contrast is BELOW 0.20, which no cross-sectional design reaches. This is
+      the one regime where the marker is clinically usable at target precision.
+
+  (2b) BUT ONLY IF k_e AND THE LOAD CALIBRATION ARE STABLE BETWEEN VISITS.
+      The cancellation is exact only if the shared nuisances do not drift. The
+      'interval between estimates' enters ONLY through drift (with perfect
+      sharing the contrast is interval-independent). Sensitivity, n=25/visit:
+       k_e drift (log units)  sd(d ln theta)
+                        0.00           0.264
+                        0.02           0.277
+                        0.05           0.337
+                        0.10           0.491
+                        0.20           0.848
+      load-bias drift (frac L)  sd(d ln theta)
+                        0.00           0.264
+                        0.02           0.341
+                        0.05           0.447
+                        0.10           0.496
+      The advantage survives drift up to ~0.05 log units in k_e (contrast
+      ~0.34); beyond that it erodes toward the cross-sectional value. Whether
+      k_e is that stable over the monitoring interval is a clinical assumption,
+      not something the repository can settle.

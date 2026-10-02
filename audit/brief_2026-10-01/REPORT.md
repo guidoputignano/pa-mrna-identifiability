@@ -22,6 +22,8 @@
 
 **If no calibrated flux assay exists, the deliverable is set identification, not a point estimate** (R16): the record pins a one-sided ceiling **θ ≤ 30.7% of normal** (balance + non-negativity + K_m), tightening to **22–25%** with the k_e prior, and it pins K_m (~6%), the clearance slope b = θg′+k_e (~28%), and a k_e-dominated combination (~8%) — but not θ itself, nor the untreated flux or fraction oxidised, which all inherit θ's ~3.0. A defensible ceiling beats an unreachable target.
 
+**Monitoring is the exception — within-patient change does reach target.** Every bar above is a cross-sectional error on *absolute* capacity. If the clinical use is tracking change rather than classification, the quantity is sd(ln θ₂ − ln θ₁) within one patient, where the shared k_e, load calibration and K_m **cancel**. It is **0.26 at monthly sampling and 0.13 at weekly** (R-D) — the weekly contrast is below 0.20, which no cross-sectional design reaches. Two conditions attach: k_e and the load calibration must be stable between visits (the advantage erodes past ~0.05 log-units of k_e drift, or ~0.02 L of load-calibration drift), and **antibiotic status must be recorded** — an unrecorded gut-flora suppression (metronidazole, ~40% load swing) fakes a capacity change several times the contrast precision and collapses the cross-sectional estimate outright (R-E).
+
 ### Supporting findings
 - **The confounding.** ln θ and ln k_e are confounded (correlation −0.99 at 5%); k_e carries 98% of Var(ln θ̂). The likelihood already conditions on the per-draw recorded load L(t_k) and drug dose Δ(t_k), so the L–m covariation is inside the 3.07 (R9); the only load lever left is the systematic bias, worth little (R13).
 - **No floor only when k_e is exact; otherwise there is a floor.** In one sentence: *with k_e exact the fall is 1/√n and crosses 0.20 near n ≈ 300 draws, but at the achievable sd(ln k_e) = 0.2 no sampling rate reaches even 0.30* (R12, R13). The 0.39 is not an n-floor in the first clause; the feasibility wall is the second. "k_e achievable to ~0.2" is itself not an external measurement — it is what a safe transient delivers when the unrecorded load L₀ is known to 5% (the repo's load prior); reaching the k_e ≈ 0.05 the target needs would require L₀ to ~1% (R-B).
@@ -473,6 +475,27 @@ The 1.177× fold is a modelling construct (R15), so it must not carry a clinical
 - **Design requirement (a fact of this model):** the transient/excursion route needs a *sustained load excursion of ≈ 2.3× baseline* to reach 0.20 (R-A).
 - **Admissibility (an open question for a clinician):** whether 2.3× is tolerable is not settled here; the repository's own crisis fold is at 1.177×, but that is a saddle-node of the parent model, not a measured safe limit.
 - The gap between the requirement (2.3×) and the modelled threshold (1.177×) is about a factor of two. That is wide enough that the conclusion *probably* survives a corrected threshold — but it is stated as "probably", not assumed. A clinician's admissible limit anywhere below ~2.3× leaves the dynamic route infeasible.
+
+### R-D. Realistic sampling, and longitudinal (monitoring) precision (`t22_longitudinal.py`)
+
+**Sampling at an achievable k_e.** Holding sd(ln k_e) = 0.06 (what the safe transient delivers with L₀ to 1%, R-B), sd(ln θ̂) at 5% over a two-year programme is **0.47 monthly / 0.38 weekly / 0.31 daily**. The k_e-floor (|β|·0.06 ≈ 0.30) is approached only at daily sampling; a feasible monthly protocol sits at ~0.47. None reaches 0.20 — sampling buys about a third, not the factor of two needed.
+
+**Longitudinal precision is the one regime that reaches target.** Every cross-sectional bar is an error on *absolute* θ. For monitoring, the quantity is the within-patient contrast sd(ln θ₂ − ln θ₁), where the shared k_e, load-bias b and K_m cancel, leaving only the independent per-visit noise:
+
+| draws per visit | sd(ln θ₂ − ln θ₁) | cross-sectional sd(ln θ) |
+|---|---|---|
+| 25 (monthly) | **0.26** | 2.1 |
+| 104 (weekly) | **0.13** | 1.5 |
+| 365 (~daily) | 0.07 | 1.0 |
+
+The weekly contrast (0.13) is below 0.20 — **the only design in this whole study that reaches target on the marker alone.** It holds only while the shared nuisances are stable between visits: the contrast is interval-independent under perfect sharing, and degrades with drift (k_e drift 0.05 → 0.34, 0.10 → 0.49; load-calibration drift is more damaging, 0.02 L → 0.34). Whether k_e is that stable over a monitoring interval is a clinical assumption the repository cannot settle. Nobody had looked at this quantity before; it reframes the marker as a monitoring tool rather than a classifier.
+
+### R-E. Antibiotics as a load term, and as a safe excursion (`t23_antibiotic.py`)
+
+Gut-bacterial propionate is a substantial, antibiotic-suppressible part of the load, so **L is not a patient constant**. The **core identifiability model does not represent antibiotic status** (the load is dietary-recorded with a constant bias; a diet prescription does not record antibiotic weeks) — stated as explicitly as R9. The repository's *audit* layer does characterise it: gut flora ≥ 22.2 ± 8.5% of production, metabolites falling ~41% (12–76%) under metronidazole on a 21–35 day cycle (`params.py`, `m2_antibiotic_cycle.py`, Thompson 1990), and `u15` even treats suppression as a k_e instrument. This is a **model extension**, built on those repo numbers.
+
+- **An unmodelled antibiotic swing corrupts the cross-sectional estimate.** Because θ is weakly identified, the near-singular direction amplifies the unmodelled load variation without bound. A within-record cycle biases θ **downward** (suppressed troughs read as lower capacity): even a mild 30% cycle pushes ln θ down by 1–2 and collapses a fifth-to-a-half of fits to θ ≈ 0; at the realistic ~41% depth most fits collapse. A *uniform* whole-record suppression is absorbed by the per-record bias b — so the harm comes from *variation*, as with the load drift in R10. The longitudinal contrast is corrupted too if antibiotic status differs between visits: a load change δ fakes a capacity change of order (L/θg)·δ ≈ 6δ, far above the 0.26 precision. **Antibiotic status must be recorded for either route.**
+- **A known antibiotic step is a safe (downward) excursion — good for k_e, not for θ.** It adds no substrate, so it escapes the 2.3× safety wall. For **k_e** it is a moderate instrument if sampled fast enough to catch the ~4 h relaxation: hourly gives sd(ln k_e) ≈ 0.26–0.42 (deeper = better); daily sampling misses the relaxation entirely. For **θ** it fails in *either* direction (sd ≈ 1.5–2.9): the limit is amplitude, not direction — a downward step can remove at most the gut share (~20–50% of L), moving g only 0.35 → 0.22–0.28, far short of the g ≈ 0.57 that θ-information needs (that needs a large *upward* substrate load, g-span 0.22 at +100%). The low-m collinearity of θ·g with k_e·m is a secondary effect under that amplitude cap. So a documented antibiotic step is a **safe way to pin k_e** — the stage 1 of the two-stage design (R15), without the inadmissible substrate loading — but it cannot recover θ.
 
 ---
 
