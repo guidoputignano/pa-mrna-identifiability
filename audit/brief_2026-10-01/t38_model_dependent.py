@@ -64,9 +64,10 @@ def main():
         mark = lambda v: f"{v:.3f}" + ("*" if v <= 0.20 else " ")
         print(f"    {kep:>14.2f}  {mark(pin):>10}  {mark(k3):>13}  {mark(k1):>13}")
     print("    (* = reaches 0.20.) Reading: under B, a k_e prior tightened from 0.8 to")
-    print("    ~0.2 (with K_e known) reaches target. A sd(ln k_e)=0.2 k_e prior is exactly")
-    print("    what the IV 13C3 tracer delivers (5.4%, R-G) or the safe transient at L0 to")
-    print("    1% (R-B) -- so UNDER MODEL B the cross-sectional target is reachable with a")
+    print("    ~0.2 (with K_e known) reaches target. A sd(ln k_e)=0.2 k_e prior is COMFORTABLY")
+    print("    MET by the IV 13C3 tracer (5.4% = sd 0.054, R-G; tighter than the 0.2 needed,")
+    print("    so at the tracer's own precision B reaches ~0.19) or the safe transient at L0")
+    print("    to 1% (R-B) -- so UNDER MODEL B the cross-sectional target is reachable with a")
     print("    k_e sensor the brief already prices, a far cheaper requirement than the")
     print("    direct-enzyme calibration Model A forces. This is model-dependent and worth")
     print("    stating as such: the whole 'only a direct calibrated enzyme read works'")
@@ -108,8 +109,10 @@ def main():
   RECONCILING THE LOAD-REDUCTION FIGURE WITH THE PAPER'S OWN NUMBERS:
     - This script's margin needs a ~10-20% load reduction to lift a 5% patient
       above theta_crit (t35).
-    - The paper states management cuts the load by 20-40% (standard of care:
-      protein restriction + gut suppression), and that the SMALLEST illness
+    - The LITERATURE (Thompson 1990 et al., round-6 research; not the parent
+      paper's own text) puts management's load reduction at 20-40% (standard of
+      care: protein restriction + gut suppression), and the parent paper states
+      that the SMALLEST illness
       excursion that strands a patient is +18% in the load (s_fold 706 vs
       baseline 600 at theta=300, sections/03_dynamic.tex).
     - These are the SAME ORDER: the reduction management must supply (~10-20%),
