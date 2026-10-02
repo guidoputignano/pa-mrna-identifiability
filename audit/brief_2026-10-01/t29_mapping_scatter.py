@@ -133,6 +133,46 @@ def main():
   and the only same-disease-adjacent datum puts it far too loose for 0.20.
 """)
 
+    print("=" * 94)
+    print("  ITEM 2. THE FLOOR IS BORROWED, NOT MEASURED -- and the study that would settle it")
+    print("=" * 94)
+    print("""
+  The 0.5-0.8 floor rests entirely on Manoli R^2 = 0.327 -- MMA, 11 patients,
+  14C-incorporation, not a direct PCC assay. There is NO PA/PCC same-subject
+  in-vitro/in-vivo study at all. So the honest conclusion is NOT 'the floor is
+  0.66'; it is: THERE IS NO EVIDENCE THAT AN IN-VITRO ASSAY REACHES TARGET FOR
+  WHOLE-BODY CAPACITY, AND THE STUDY THAT WOULD SETTLE IT HAS NEVER BEEN DONE IN
+  PA. The 0.66 is an indicative calculation from the nearest datum.
+
+  WHAT R^2 THE RATIO ROUTE WOULD NEED. To bring the mapping scatter sig_eta =
+  sqrt(1-R^2)*sd_between under the 0.20 gate, the mapping must explain""")
+    for sd_bw in (0.6, 0.8, 1.0):
+        r2_need = 1 - (0.20 / sd_bw) ** 2
+        print(f"      between-patient sd {sd_bw}: R^2 >= {r2_need:.3f}  "
+              f"(Manoli's 0.327 is far below)")
+    print("""
+  i.e. R^2 ~= 0.89-0.96 -- the in-vitro assay would have to predict in-vivo
+  capacity almost perfectly, versus the ~1/3 of variance actually measured.
+
+  THE STUDY: paired DIRECT ex vivo PCC activity AND 1-13C-propionate oxidation
+  in the SAME PA patients (what Manoli did in MMA, with a direct PCC assay added).
+  N to decide, from the Fisher-z SE of a correlation (1/sqrt(N-3)):""")
+    for N in (12, 20, 30, 60):
+        se_z = 1 / np.sqrt(N - 3)
+        # if true r ~ 0.57 (R^2=0.33), upper 95% bound on R^2:
+        import math
+        z = math.atanh(0.57)
+        r_hi = math.tanh(z + 1.96 * se_z)
+        print(f"      N={N:>2}: if true R^2~0.33, 95% upper bound on R^2 ~ {r_hi**2:.2f} "
+              f"-> {'REJECTS the route' if r_hi**2 < 0.89 else 'inconclusive'}")
+    print("""
+  So ~20-30 PA patients with both measurements would REJECT the ratio route if
+  the PA mapping is as loose as MMA's; CONFIRMING it (a tight CI around R^2 >=
+  0.9) would take more, but the point estimate alone would almost certainly
+  settle it. This is the single experiment that decides whether the ex vivo
+  route is viable, and it is small.
+""")
+
 
 if __name__ == "__main__":
     main()

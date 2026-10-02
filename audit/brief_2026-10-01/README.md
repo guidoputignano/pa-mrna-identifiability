@@ -44,6 +44,8 @@ It builds on the repository rather than beside it. The footing (convention A, th
 | `t30_monitoring_confounders.py` | round 6, item 2: the monitoring contrast vs the literature confounders (eGFR→k_e, carnitine→calibration); the empirical challenge and falsification spec | 1 min |
 | `t31_breath_contrast.py` | round 6, item 3: the breath test as the monitoring instrument (reads in-vivo capacity directly, c cancels; one reading ≈ 104 draws) | 1 min |
 | `t32_massbalance.py` | round 6, item 4: the clearance split (84% non-PCC at 5%) vs the PA literature; Model A's unbounded k_e·m and Model B's saturating fix | 1 min |
+| `t33_model_b.py` | round 7, item 1: Model A vs Model B side by side — steady-state existence (θ_crit), enzyme share, cross-sectional sd, longitudinal contrast | 1 min |
+| `t34_breath_stress.py` | round 7, item 3: breath-test stress tests — 8% provenance, c-drift breakpoint, control spread, confounder inheritance, cross-sectional c-contour | 1 min |
 | `r3_figs.py` | round 3 figures (flux contour, k_e×sampling, asymptote, excursion/safety) | 2 min |
 | `*_recheck3.py` | independent verifier re-derivations of the round-3 scripts | — |
 | `*_recheck.py` | an independent verifier's re-derivation of each follow-up script, sharing no code with it | 3–25 min |
@@ -57,7 +59,8 @@ for s in t0_footing t1_identifiability t2_cohort t3_variance t4_set t5_value t7_
          t8_floor t9_omega t10_factorial t6c_iv t6d_ekf t11_fim_check t12_flux_mc \
          t13_conditioning t14_ke_sampling t15_load_asymptote t16_flux_observable t17_two_stage \
          t18_set_id t19_residuals t20_saturation t21_sensitivity t22_longitudinal t23_antibiotic t24_contrast_stress t25_drug_cv_marker t26_multiobservable t27_exvivo_kappa t28_ratio_route \
-         t29_mapping_scatter t30_monitoring_confounders t31_breath_contrast t32_massbalance; do
+         t29_mapping_scatter t30_monitoring_confounders t31_breath_contrast t32_massbalance \
+         t33_model_b t34_breath_stress; do
   python -W error $s.py > out/$s.txt
 done
 python -W error r3_figs.py   # round-3 figures

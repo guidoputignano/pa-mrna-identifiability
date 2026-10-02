@@ -62,3 +62,37 @@
   is that the mapping is unmeasured in PA and assumed tight by the ratio route,
   and the only same-disease-adjacent datum puts it far too loose for 0.20.
 
+==============================================================================================
+  ITEM 2. THE FLOOR IS BORROWED, NOT MEASURED -- and the study that would settle it
+==============================================================================================
+
+  The 0.5-0.8 floor rests entirely on Manoli R^2 = 0.327 -- MMA, 11 patients,
+  14C-incorporation, not a direct PCC assay. There is NO PA/PCC same-subject
+  in-vitro/in-vivo study at all. So the honest conclusion is NOT 'the floor is
+  0.66'; it is: THERE IS NO EVIDENCE THAT AN IN-VITRO ASSAY REACHES TARGET FOR
+  WHOLE-BODY CAPACITY, AND THE STUDY THAT WOULD SETTLE IT HAS NEVER BEEN DONE IN
+  PA. The 0.66 is an indicative calculation from the nearest datum.
+
+  WHAT R^2 THE RATIO ROUTE WOULD NEED. To bring the mapping scatter sig_eta =
+  sqrt(1-R^2)*sd_between under the 0.20 gate, the mapping must explain
+      between-patient sd 0.6: R^2 >= 0.889  (Manoli's 0.327 is far below)
+      between-patient sd 0.8: R^2 >= 0.938  (Manoli's 0.327 is far below)
+      between-patient sd 1.0: R^2 >= 0.960  (Manoli's 0.327 is far below)
+
+  i.e. R^2 ~= 0.89-0.96 -- the in-vitro assay would have to predict in-vivo
+  capacity almost perfectly, versus the ~1/3 of variance actually measured.
+
+  THE STUDY: paired DIRECT ex vivo PCC activity AND 1-13C-propionate oxidation
+  in the SAME PA patients (what Manoli did in MMA, with a direct PCC assay added).
+  N to decide, from the Fisher-z SE of a correlation (1/sqrt(N-3)):
+      N=12: if true R^2~0.33, 95% upper bound on R^2 ~ 0.74 -> REJECTS the route
+      N=20: if true R^2~0.33, 95% upper bound on R^2 ~ 0.65 -> REJECTS the route
+      N=30: if true R^2~0.33, 95% upper bound on R^2 ~ 0.60 -> REJECTS the route
+      N=60: if true R^2~0.33, 95% upper bound on R^2 ~ 0.52 -> REJECTS the route
+
+  So ~20-30 PA patients with both measurements would REJECT the ratio route if
+  the PA mapping is as loose as MMA's; CONFIRMING it (a tight CI around R^2 >=
+  0.9) would take more, but the point estimate alone would almost certainly
+  settle it. This is the single experiment that decides whether the ex vivo
+  route is viable, and it is small.
+

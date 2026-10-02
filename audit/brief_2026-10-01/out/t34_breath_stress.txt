@@ -1,0 +1,68 @@
+============================================================================================
+  ROUND 7 ITEM 3. BREATH TEST STRESS TESTS (elasticity = 0.888)
+============================================================================================
+
+  (a) PROVENANCE OF THE 8%. It is NOT a measured within-subject figure. The
+      literature gives only BETWEEN-subject spreads: Manoli 2021 controls
+      47.9 +/- 4.26% (CV 8.9%), heterozygotes 41.6 +/- 5.05% (CV 12.1%); Thompson
+      1990 controls mean 81.9%, range 69.4-101.0 (n=5). Within-subject
+      reproducibility is documented only QUALITATIVELY ('good intrasubject
+      reproducibility', Shchelochkov 2021; 'reproducible', Thompson 1990). So the
+      8% is a between-subject CV used as a stand-in and SWEPT 5-10%; the headline
+      needs a measured within-subject CV_S to stand, and that number does not yet
+      exist. This is the same evidence gap as the marker's missing within-patient
+      CV (R-D) -- but here at least the qualitative claim is on record for the
+      right quantity.
+  (b) c-DRIFT BREAKPOINT. c cancels only if it is STABLE between windows.
+      Subject-specific is not temporally stable: c is the 1-13C recovery,
+      set by gut absorption + oxidation, so it can drift with diet, gut flora
+      or an antibiotic course. A between-window drift d(ln c) biases the
+      contrast by d(ln c)/elasticity; rmse = hypot(base, d(ln c)/elasticity).
+            base (reads @CV_S)    c-drift that breaks 0.20
+                   1 read @ 8%  d(ln c) = 0.137  (c drift +15%)
+                  3 reads @ 8%  d(ln c) = 0.165  (c drift +18%)
+                  3 reads @ 5%  d(ln c) = 0.173  (c drift +19%)
+      So the breath contrast tolerates a ~14-18% between-window drift in the
+      recovery c before the bias alone reaches target -- wider than the marker's
+      k_e/b tolerances (R-D), but NOT unlimited, and c-drift is plausible across
+      an antibiotic course or a gut-flora change (the same events that corrupt
+      the load record, R-E). c must be held as fixed as k_e and the diet.
+
+  (c) CONTROL-SPREAD UNCERTAINTY (Thompson n=5). For MONITORING it is
+      irrelevant -- c and the control mean cancel in the within-patient
+      contrast. It matters only for a CROSS-SECTIONAL absolute reading, where
+      the control mean carries SE = spread/sqrt(n_controls):
+      Thompson controls: ln-spread ~ 0.094 (range 69.4-101.0 as +/-2SD),
+        n= 5 controls: control-mean SE = 0.042
+        n=10 controls: control-mean SE = 0.030
+        n=30 controls: control-mean SE = 0.017
+      At Thompson's n=5 the control-mean SE alone is ~0.04 -- small next to the
+      cross-sectional c-calibration problem below, but it says a 5-control
+      reference is thin; ~15-30 controls make it negligible.
+
+  (d) CONFOUNDER INHERITANCE. The breath test reads the OXIDISED FRACTION of
+      an administered dose, normalised to measured CO2 production (indirect
+      calorimetry, Manoli). So it does NOT inherit the marker-pool confounders
+      that move C3: renal clearance (eGFR) and carnitine dose act on the
+      accumulated marker, not on the oxidation fraction. It IS sensitive to
+      fed/fasted state and activity (substrate competition, REE) -- but those
+      are controllable WITHIN a test protocol (fasting, rest, REE normalisation),
+      unlike the uncontrolled month-scale drift of eGFR/carnitine. Net: fewer
+      month-scale confounders than C3, at the cost of a standardised test visit.
+
+  (e) CROSS-SECTIONAL behaviour, c uncalibrated vs calibrated (the R11 contour).
+      A single breath reading gives S = c * fraction(theta,...); cross-
+      sectionally c is the SAME uncalibrated multiplier as the flux route.
+      sd(ln theta) = hypot(CV_S, Z)/elasticity, Z = sd(ln c):
+          Z = sd(ln c)    CV_S=5%       8%      10%
+               c known      0.056    0.090    0.113
+                  0.10      0.126    0.144    0.159
+                  0.20      0.232    0.243    0.252
+                c free        inf      inf      inf
+      So cross-sectionally the breath test has the SAME calibration problem as
+      every direct route (R11/R-G): c known -> reaches ~0.06-0.11; c uncalibrated
+      -> worthless. Its advantage is entirely longitudinal, where c cancels. The
+      cross-sectional verdict (only a CALIBRATED direct in-vivo read reaches
+      target) is unchanged; the breath test is that read, and its calibration is
+      the open requirement -- but UNLIKE the ex vivo route it has no in-vitro/
+      in-vivo mapping gap (t29): it reads capacity in vivo by construction.

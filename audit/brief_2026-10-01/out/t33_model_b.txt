@@ -1,0 +1,83 @@
+==============================================================================================
+  ROUND 7 ITEM 1. MODEL A vs MODEL B: EXISTENCE FIRST, THEN THE HEADLINES
+==============================================================================================
+
+  (1) DOES A STEADY STATE EXIST IN THE DISEASE RANGE UNDER B?
+      Disposal is bounded by theta+ke; SS exists iff load L < theta+ke.
+      theta_crit = L - ke is the capacity (as % of normal) below which the
+      marker DIVERGES -- no steady state, i.e. decompensation.
+
+        alt-route ceiling ke  anchored load L   theta_crit (% normal)
+                         400            285.6                   -3.8%  <- ParamsB
+                         300            282.4                   -0.6%
+                         200            279.2                    2.6%
+                         100            276.0                    5.9%  (no SS at 5%)
+                          50            274.3                    7.5%  (no SS at 5%)
+                          25            273.5                    8.3%  (no SS at 5%)
+
+      READING: ParamsB sets the alt-route ceiling ke=400, ABOVE the load (~286),
+      so theta_crit < 0 and a steady state exists even at theta=0 -- ParamsB does
+      NOT reproduce decompensation, which already conflicts with severe PA. The
+      literature (and the repo's own Model C: alt peak 500 < load 600) puts the
+      ceiling BELOW the load; then theta_crit lands at ~7-9% of normal, so AT THE
+      5% DISEASE REFERENCE THERE IS NO STEADY STATE. Where the ceiling is genuinely
+      low-capacity, the steady-state FIM analysis -- every precision number in this
+      brief -- does not apply at the capacity the clinical question is about. That
+      is a more fundamental finding than any sd: the benign steady state the brief
+      analyses exists only because Model A's clearance is unbounded.
+
+  (2) ENZYME SHARE s = theta g(m)/L ACROSS CAPACITY (ParamsB, SS exists):
+          capacity    A: share      A: m    B: share      B: m
+             100%        0.845      10.0       0.955      10.0
+              10%        0.292      45.7       0.586     126.1
+               5%        0.163      54.0       0.372     243.7
+               1%        0.036      62.2       0.089     558.3
+      Under B the enzyme carries a LARGER share at low capacity (the alt route
+      saturates, so it cannot soak up the rising marker as A's linear term does).
+      The s=0.16 premise of the A analysis becomes ~0.37 at 5% under ParamsB.
+
+  (3) HEADLINE sd(ln theta) AT 5% MONTHLY (where B's SS exists, ParamsB):
+      Model A (4 params: ln th, ln Km, b, ln ke):            3.045
+      Model B, Ke pinned (4 params, matched to A):           0.923
+      Model B, Ke free with 50% prior (5 params):            1.041
+      (Under B the enzyme's larger share tightens theta where a steady state
+       exists; but a NEW nuisance Ke appears, and the result still sits far
+       above 0.20 -- the cross-sectional verdict is unchanged in sign.)
+
+  (3b) WHY B's sd IS FINITE: the DOSED record stays near-affine (paper's C23).
+      Over the record, m in [4.1, 58.7]; alt-route saturation h(m)=m/(Ke+m)
+      runs 0.013->0.164 (Ke=300), so h is still RISING, not saturated.
+      The parent paper (sections/03_model_A.tex, claim C23) conditions its
+      degeneracy 'on clearance being affine over the observed range' -- which the
+      DOSED record respects, so the FIM result is similar in kind. Saturation and
+      non-existence bite at the UNTREATED balance (m ~ 244 at 5%) and below
+      theta_crit, NOT in the dosed data -- that is the scope line (1).
+
+  (4) LONGITUDINAL CONTRAST sd(ln th2 - ln th1), weekly windows, A vs B:
+      Model A (shared Km, b, ke):            0.133
+      Model B (shared Km, b, ke, Ke):        0.167
+      The contrast still cancels the shared patient constants (now including
+      Ke), so monitoring survives the model change WHERE A STEADY STATE EXISTS.
+      But if the alt route is low-capacity (no SS at 5%), there is no stable
+      marker to difference, and the monitoring result is moot in severe disease.
+
+  WHICH MODEL THE PARENT PAPER USED, AND WHAT INHERITS THIS:
+    The parent paper's identifiability configuration (sections/03_model_A.tex,
+    eq:local; symbolic/.../observational_equivalence.py) is MODEL A:
+    m' = L + L0 - (theta+Delta) g(m) - k_e m. So every published degeneracy /
+    precision figure -- and every number in this brief -- is a Model-A result.
+    The paper does NOT ignore the issue: claim C23 states the degeneracy is
+    'conditioned on clearance being affine over the observed range', and Model C
+    (sections/05) is where it treats a bounded alternative route and the
+    decompensation the null genotype cannot escape. So the published figures
+    inherit the Model-A affine-clearance assumption EXPLICITLY, not silently.
+
+  BOTTOM LINE:
+    - Numbers move materially under B: share 0.16 -> 0.37 at 5%, cross-sectional
+      sd 3.05 -> ~0.9. SIGNS do not: cross-sectional still fails 0.20, monitoring
+      still ~passes where a steady state exists.
+    - The fundamental change is SCOPE, not precision: under a literature-
+      consistent LOW-capacity alternative route (the repo's own Model C), no
+      steady state exists below ~6-8% of normal, so the steady-state analysis
+      does not describe severe disease at all -- it describes the stable inter-
+      crisis state, and the crisis boundary sits inside the disease range.
