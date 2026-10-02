@@ -1,0 +1,53 @@
+==========================================================================================
+  ITEM 4. THE CLEARANCE SPLIT vs THE PA LITERATURE
+==========================================================================================
+
+  Model A disposal partition, convention A (same diet, L fixed at nominal):
+                  capacity        L         m   enzymatic   ke*m (non-PCC)  non-PCC %
+             100% (normal)    322.7      10.0       272.7             50.0      15.5%
+                       10%    322.7      45.7        94.1            228.6      70.8%
+              5% (disease)    322.7      54.0        52.6            270.1      83.7%
+                        1%    322.7      62.2        11.5            311.2      96.4%
+
+  READING: at NORMAL capacity the enzyme carries ~85% and the alternative route
+  ~15%. As capacity falls the split INVERTS: at 5% the alternative route ke*m
+  carries ~84% and rising, because Model A's ke*m is LINEAR and UNBOUNDED -- as m
+  climbs, ke*m climbs without limit and silently disposes of the whole load. That
+  is the structural reason a 5% patient still reaches a benign steady state in the
+  model.
+
+  THE CONFLICT. The PA literature says the opposite: non-PCC disposal is LOW-
+  CAPACITY (urinary metabolite output 1.5-3 umol/kg/h, 1-2 orders below
+  production), so a real PCC-deficient patient does NOT clear 84% by alternative
+  routes -- they accumulate and decompensate. Model A's unbounded ke*m overstates
+  residual disposal at low capacity, exactly where the disease lives.
+
+  THE REPO ALREADY CONTAINS THE FIX. models.py Model B replaces ke*m with
+  ke*h(m), h(m)=m/(Ke+m): a SATURATING alternative route with its own V_max = ke.
+  Capping the alternative route is precisely what the literature's low-capacity
+  non-PCC disposal implies. The FIM/identifiability work in this brief used Model
+  A throughout (the linear, analytically tractable form); the clearance-structure
+  question (A vs B vs C) is the repo's own PHASE5/hypothesis question, and the
+  literature here comes down on the side of a SATURATING (or otherwise bounded)
+  alternative route.
+
+  Model A at 5%: ke*m = 270 (vs ke*m_bar at nominal = 50), a 5.4x rise in the alternative flux as m goes 10 -> 54.
+  A saturating route (Model B) would cap that rise, so the marker would
+  climb far higher (or the steady state would not exist) at 5% -- which is
+  the clinically realistic picture of accumulation. The s=0.16 fraction
+  oxidised is specific to Model A's unbounded clearance and would MOVE under
+  a bounded route; much of the cross-sectional analysis is conditioned on it.
+
+  PHYSICAL UNITS. The model is in abstract units (theta=3000 'V_max',
+  L~323/time); the repository supplies NO bridge to umol/kg/h (it is
+  calibrated to a mouse 3-HP marker baseline, not an absolute propionate
+  flux). So the model's ke*m CANNOT be put in umol/kg/h to compare numerically
+  with the 1.5-3 umol/kg/h urinary figure -- only the FRACTION (84% non-PCC)
+  is comparable, and that is what conflicts. An absolute comparison needs a
+  unit anchor the repo does not contain (flagged, not fabricated).
+
+  PROVENANCE CONFIRMED: no human measurement of k_e exists in the literature
+  (research doc 4: 'no direct human measurement of the total fraction cleared
+  by non-PCC routes'; 'a precise human plasma propionate half-life ... is not
+  well established'). This SUPPORTS the parent paper's claim that no published
+  source supplies k_e, and is why k_e is carried with a wide prior here.

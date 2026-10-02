@@ -1,0 +1,53 @@
+============================================================================================
+  ITEM 2. THE MONITORING CONTRAST vs THE CONFOUNDERS THE LITERATURE NAMES
+============================================================================================
+
+  Within-draw-noise-only floor (R-D): weekly 0.133, monthly 0.264.
+  This is the BEST case: it assumes k_e, b and the calibrations are shared
+  exactly between windows. The literature confounders break that sharing.
+
+  (a) eGFR decline -> k_e drift (renal clearance of the marker):
+       k_e drift (log units)  weekly contrast
+                        0.00            0.133   <= gate
+                        0.03            0.182   <= gate
+                        0.06            0.280   > gate
+                        0.10            0.426   > gate
+      Shchelochkov 2021: plasma C3 and 2-MC rise significantly as eGFR falls.
+      In a growing child renal clearance tracks size and eGFR can decline over
+      months, so a k_e drift of order 0.05-0.10 between windows is plausible --
+      which is already at or past the weekly breakpoint (~0.06).
+
+  (b) levocarnitine dose change / preanalytical -> calibration (b) drift:
+        b drift (fraction L)  weekly contrast
+                       0.000            0.133   <= gate
+                       0.015            0.204   > gate
+                       0.030            0.254   > gate
+                       0.050            0.276   > gate
+      Shchelochkov 2021: plasma C3 rises with levocarnitine dose (r=0.41).
+      A carnitine dose change or a shift in sampling conditions (fed/fasted,
+      time since dose) between windows moves the calibration; past ~0.015-0.03
+      L the weekly contrast exceeds the gate.
+
+  REFRAME OF R-D: the 0.13 is a model-predicted FLOOR under perfect nuisance
+  sharing, and it is EMPIRICALLY UNTESTED. The one cohort that collected the right
+  data longitudinally (Moderna n=50) found the markers too variable to use past
+  baseline -- a direct, if indirect, challenge. The contrast's own stress tests
+  show it survives only small between-window drift, and the literature names real
+  month-scale confounders (eGFR, carnitine, preanalytical) that plausibly exceed
+  those breakpoints. So the monitoring claim must be stated as CONDITIONAL on
+  short intervals, a stable regimen (fixed carnitine, stable renal function) and
+  standardised sampling -- and as awaiting an empirical within-patient CV.
+
+  WHAT WOULD TEST IT (the most valuable outstanding item):
+  From Haijes et al. 2020 (11 PA, longitudinal deep phenotyping) and Cappuccio
+  et al. (serial C3 per patient), extract, for each patient, the serial 3-HP (or
+  C3) values from CLINICALLY STABLE periods only (no decompensation), with:
+    - sampling date/time, fed vs fasted state, time since last feed and last dose,
+    - levocarnitine dose and renal function at each draw, same lab/assay throughout.
+  Then (i) compute the raw within-patient CV of the marker in stable periods and
+  compare it to the model's per-draw 5% assay + 5% load assumption; (ii) partition
+  it into within-window (days) vs across-window (months) variance -- the first is
+  the per-draw noise the 0.13 rests on, the second is the non-shared drift that
+  inflates the contrast; (iii) only the across-window, confounder-adjusted
+  residual tests whether sd(ln theta_2 - ln theta_1) really approaches ~0.13.
+  No published study has done this; the raw material exists in those two papers.
