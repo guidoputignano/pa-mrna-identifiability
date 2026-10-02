@@ -1,0 +1,63 @@
+================================================================================================
+  THE JOINT MULTI-OBSERVABLE FIM (repo observables, repo precisions), 5% MONTHLY
+================================================================================================
+
+  record (plasma 3-HP) alone: sd(ln theta) = 3.045
+
+  EACH INDEPENDENT SENSOR, AT ITS REPO PRECISION:
+    ex vivo PCC activity (-> theta, 20%)   0.200
+    ex vivo PCC at 10%                     0.100
+    IV 13C3 tracer (-> k_e, 5.4%)          0.454
+    IV 13C3 tracer, k_e exact              0.384
+    turnover (-> L+b, 10%)                 3.041
+    turnover, L exact                      3.028
+
+  COMBINATIONS (does any sensor set reach 0.20 at 5% monthly?):
+    k_e 5.4% + turnover 10% (nuisance sensors only)      0.441
+    k_e exact + turnover exact (nuisances, best case)    0.291
+    ex vivo PCC 20% + k_e 5.4%                           0.183  <= GATE
+    ex vivo PCC 20% + k_e 5.4% + turnover 10% (all three) 0.182  <= GATE
+
+  THE FLUX PAIR (breath fraction-oxidised S + turnover L+b), repo precisions:
+    if S were absolutely known: pair reaches 0.20 at S-precision <= 19.7% (L exact)
+    if S were absolutely known: pair reaches 0.20 at S-precision <= 19.4% (L via turnover (10%))
+    BUT the breath S has an UNKNOWN recovery c (carried free, u3), so a single
+    reading is worth nothing and the pair needs many readings: u3 finds ~70
+    breath readings at 10% capacity (CV 5%), more at 5%. Turnover cleanly
+    supplies the L half (10% is ample); the breath recovery is the unresolved
+    half -- exactly the calibration requirement of R11.
+
+  ITEM 3 RECOMPUTED WITH TURNOVER'S OWN 10% PRECISION (not a hypothetical):
+    cross-sectional theta, record + turnover 10%: 3.041
+      (turnover 10% is LOOSER than the record's own 5% load-bias prior, so it
+       barely tightens b: combined ~4.5%. Measuring the load does ~nothing for
+       cross-sectional theta, because k_e -- not the load -- is the binding
+       nuisance. This is the q15 candidate-9 result.)
+    k_e from the safe transient, load known to turnover 10%: sd(ln k_e) = 0.285
+    k_e from the safe transient, load known to           5%: sd(ln k_e) = 0.205
+    k_e from the safe transient, load known to           1%: sd(ln k_e) = 0.062
+      So turnover at its own 10% gives k_e only to ~0.29 from the transient --
+      the ~0.06 of R-B needed the load to 1%, which turnover does not deliver.
+
+  LONGITUDINAL CONTRAST UNDER SENSORS:
+    The contrast already CANCELS the shared k_e, b and K_m, so the k_e tracer
+    and the turnover add nothing to it (they tighten what already cancels). A
+    per-visit ex vivo PCC at 20% gives a contrast of sqrt(2)*0.20 ~ 0.28, WORSE
+    than the record's own 0.13. So no sensor improves monitoring: the record
+    alone is the best instrument for CHANGE; sensors only help CLASSIFICATION.
+
+  VERDICT (item 6):
+    - Only the direct enzyme assay (ex vivo PCC) reaches 0.20 cross-sectionally
+      at 5% monthly, at its repo 20% (0.200), alone. The nuisance sensors do
+      NOT: k_e 5.4% + turnover 10% = 0.45; even k_e exact + L exact stays ~0.4
+      monthly (it needs dense sampling too, q15).
+    - So the report's cross-sectional claim needs ONE addition: besides the
+      calibrated flux reading (~19%), a direct ex vivo PCC enzyme assay (repo-
+      priced at 20%) also reaches target -- it measures theta itself. Both are
+      DIRECT measurements, not inferences from the accumulation marker; the
+      marker-only conclusion stands. The nuisance sensors do not overturn it.
+    - The biggest untapped lever is NOT a new assay but a MODEL EXTENSION: a
+      propionyl-CoA state would make the breath test and the C3/2-MC/
+      propionylglycine markers expressible (5 of 10 candidates), the only
+      observables that read the enzyme's substrate pool. That is outside the
+      current model (PHASE10 1.1(b)).

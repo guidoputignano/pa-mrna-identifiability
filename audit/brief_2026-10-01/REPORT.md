@@ -8,7 +8,7 @@
 
 **The answer splits by clinical use.**
 
-**1. Classifying absolute capacity — cross-sectional.** One route reaches sd(ln θ̂) = 0.20 at 5%: a single, absolutely-calibrated, off-therapy reading of the enzymatic flux to ~18% (the 0.20 contour is √(Y² + Z²) ≤ 18–19% in reading precision Y and calibration Z). **No marker-only cross-sectional design reaches it** — not a cohort, a washout, a drug burst at clinical assay quality, a load excursion within the safety limit, nor any amount of sampling at an achievable k_e. The table below is the cross-sectional picture.
+**1. Classifying absolute capacity — cross-sectional.** **No design that reads the accumulation marker reaches sd(ln θ̂) = 0.20 at 5%** — not a cohort, a washout, a drug burst at clinical assay quality, a load excursion within the safety limit, nor any amount of sampling at an achievable k_e, nor the repo's nuisance sensors (an IV ¹³C₃ tracer for k_e + an isotope-dilution turnover for the load) together (0.44). Target is reached only by a **direct measurement of the enzyme**, of which the repository defines two (R-G): a single absolutely-calibrated, off-therapy **enzymatic-flux reading to ~18%** (contour √(Y² + Z²) ≤ 18–19% in reading precision Y and calibration Z), or an **ex vivo PCC activity assay**, which measures θ itself and reaches 0.20 at its repo-stated 20% repeatability. Both are direct enzyme measurements, not inferences from the marker; the marker-only conclusion stands, but it is not the only route. The table below is the marker/nuisance-sensor picture.
 
 **2. Monitoring within-patient change — longitudinal.** Here the marker reaches target *on its own*. The contrast sd(ln θ₂ − ln θ₁) is **≈ 0.13 for two weekly windows and ≈ 0.10 for two 6-month daily windows**, because the shared k_e, load calibration and K_m cancel — enough to detect a **+45% rise or −30% fall at 80% power** (weekly), needing no new assay (R-D). It depends on draws-*per-window*, not calendar span, so short dense windows suffice; but it holds only while k_e and the load calibration are stable between windows.
 
@@ -54,6 +54,7 @@ Several round-1 claims were overturned by later rounds. The causes:
 | "at n=25 the load scatter costs more than the bias" (R3 draft) | **reversed**: the bias is modestly more binding (R13) | the item-13 verifier caught a `core.fim` coupling that silently pinned the bias in the scatter-off run |
 | "a dense excursion detects saturable clearance at ~100% power" (R3 draft) | **overstated**: that test is size-invalid at large N; only strong saturation is detected at a size-valid N (R10) | the item-10 verifier found the true MM model is rejected at ~100% too (errors-in-variables) |
 | "no feasible design reaches 0.20 on the marker" (R3) | **split in two**: true for cross-sectional classification; **monitoring within-patient change reaches ~0.13** (R-D) | asking for the longitudinal contrast, where the shared nuisances cancel |
+| "the calibrated flux reading is the only cross-sectional route" (R-B) | **also** a direct ex vivo PCC enzyme assay (repo-priced at 20%); the nuisance sensors (k_e tracer + load turnover) do **not** reach 0.20 even combined (R-G) | building the joint multi-observable FIM from the repo's own sensor panel — a gap in all prior rounds |
 
 ## What the repository contains, and where the brief departs from it
 
@@ -530,6 +531,45 @@ Gut-bacterial propionate is a substantial, antibiotic-suppressible part of the l
 **Assay CV × draws — a noisier marker does not substitute.** The contrast variance goes as CV²/n, so the draws per window needed to reach 0.20 scale with the square of the assay CV: **~45 at 5%, ~100 at 10%, ~190 at 15%, ~340 at 20%, ~760 at 30%.** A less-invasive but noisier collection (dried spot, saliva) at 15–30% CV is not deliverable — the protocol needs a ~5% assay. The monitoring route trades on precision per draw, not on more draws.
 
 **A falsifiable prediction (the most valuable thing left).** The 0.13 contrast rests on the shared nuisances cancelling, which is a property of the simulation. Its checkable consequence is how much the marker *itself* fluctuates within a patient on serial sampling. The model predicts serial within-patient **sd(ln marker) ≈ 0.12 (CV ~12%) when sampling is synchronised to the dose cycle** (load 10% and assay 5% combined), rising to ~0.64 (CV ~64%) if sampling is dose-phase-random (then dominated by the 14-day dose cycle). **The test:** on real serial-monitoring data sampled at a consistent time relative to dosing, within-patient marker CV should be ≈ 12%. If real patients fluctuate materially more than that (after removing dose-phase), the extra variance is either real θ movement — the "stable θ between visits" assumption fails — or uncancelled nuisance; either way the cancellation is optimistic and the main result with it. This converts the study from simulated to testable.
+
+### R-G. The joint multi-observable FIM (`t26_multiobservable.py`; repo sensors `q15_sensors.py`, `u3_joint_fisher.py`, `PHASE10_SENSORS.md`)
+
+The whole report had treated this as a one-observable problem. The repository defines a sensor panel (Phase 10), and the joint FIM over it had not been placed in this report — a real gap. Built here, **repo observables and repo precisions only**.
+
+**Enumeration (ten candidates; five dropped).** The model carries only the marker state — it has no propionyl-CoA pool — so every observable that reads that upstream pool is *inexpressible* and dropped at step 1:
+
+| # | observable | what it reads | repo precision (source) | type | status |
+|---|---|---|---|---|---|
+| 1 | 1-¹³C-propionate breath test | fraction oxidised S = θ/(θ+k_e(K_m+m)), ×unknown recovery c | CV swept 5–10% (not a repo-measured figure) | repeated single-timepoint | **dropped** (no propionyl-CoA state; S not a physical flux) — modelled anyway in `u3` |
+| 2 | **ex vivo PCC activity** | A = κ·θ·exp(ε) → **θ directly** | **20%** (assay repeatability; κ, τ_map unreported in any human study) | tissue/cell procedure | **kept** |
+| 3 | plasma 3-HP | the balance itself (= the marker m) | 5% assay + 5% load-record | steady-state record | kept (= the record) |
+| 4 | 2-methylcitrate | propionyl-CoA × oxaloacetate | — | — | dropped (needs oxaloacetate) |
+| 5 | **C3 / propionylcarnitine** | near-equilibrium on propionyl-CoA, scaled by free carnitine | — | — | **dropped** (needs propionyl-CoA) |
+| 6 | C3/C2 ratio | propionyl-CoA vs acetyl-CoA | — | — | dropped (needs acetyl-CoA) |
+| 7 | propionylglycine | GLYAT, glycine-dependent | — | — | dropped (needs propionyl-CoA) |
+| 8 | **IV ¹³C₃-3-HP micro-dose** (the "IV microbolus") | CL_total = k_e + θ/(K_m+m₀) → **k_e** | **5.4%** (P.8's four micro-dose studies; α closure assumed free) | tracer procedure | **kept** |
+| 9 | **whole-body propionate turnover** (isotope dilution) | R_a = L + b → **the load** | **10%** (a turnover study at the load record's CV) | tracer procedure | **kept** |
+| 10 | timed urine + paired plasma | CL_renal = f_renal·k_e → k_e, **bound only** | f_renal "not found in any population" | timed collection | kept, as a lower bound |
+
+**Classification (the three buckets you asked for).** (a) *Known inputs already conditioned on*: dose Δ and recorded diet. (b) *Re-reads of m*: **none** — the repo has no clean re-read. Your C3 example is **not** a re-read: C3 reads the upstream propionyl-CoA pool, which would be *independent* information, but the model cannot express it without a propionyl-CoA state. (c) *Independent, parameter-specific*: ex vivo PCC → θ, IV tracer → k_e, turnover → L+b, timed urine → k_e (bound). Each buys precision on **one** existing parameter; none is a novel combination, because the only observables that would read a different mechanism (the propionyl-CoA markers) are inexpressible here.
+
+**The joint FIM at 5% of normal, monthly record** (`t26`, reproducing `q15`):
+
+| observable set (repo precisions) | sd(ln θ̂) |
+|---|---|
+| record alone (plasma 3-HP) | 3.05 |
+| + ex vivo PCC (θ, 20%) | **0.20** |
+| + IV tracer (k_e, 5.4%) | 0.45 |
+| + turnover (L+b, 10%) | 3.04 |
+| + IV tracer + turnover (**nuisance sensors only**) | **0.44** |
+| + ex vivo PCC + IV tracer + turnover (all three) | **0.18** |
+
+- **Only the direct enzyme assay reaches target.** Ex vivo PCC at 20% gives 0.20 alone (it measures θ). The **nuisance sensors do not**, even together: an IV k_e tracer (5.4%) + a turnover load measurement (10%) give 0.44, and even k_e-exact + L-exact stays ~0.29 at monthly sampling. **Turnover (the load) adds almost nothing** to cross-sectional θ (3.05 → 3.04): at 10% it is looser than the record's own 5% load-bias prior, and k_e, not the load, is the binding nuisance.
+- **The flux pair (breath + turnover).** Turnover cleanly supplies the L+b the flux route needs (θ = S·(L+b)/g); at 10% it is ample. The unresolved half is the breath recovery: with c carried free, one breath reading is worth nothing and `u3` needs ~70 readings at 10% capacity. So the pair reaches 0.20 only if the fraction-oxidised reading is itself calibrated (S to ~19%) — exactly R11's requirement, now with the load half supplied by a named assay.
+- **Item 3 with turnover's real precision.** Turnover at 10% leaves cross-sectional θ at 3.04 (negligible), and the safe-transient k_e it supports is only **sd(ln k_e) ≈ 0.29** (not the 0.06 of R-B, which needed the load to 1% — turnover does not deliver that). So a real load assay does not rescue the two-stage design.
+- **Monitoring.** No sensor improves the longitudinal contrast: it already cancels the shared k_e, b and K_m, so the tracer and turnover tighten what already cancels, and a per-visit ex vivo PCC at 20% gives √2·0.20 ≈ 0.28, worse than the record's 0.13. Sensors help classification, not monitoring.
+
+**Does it overturn the conclusion? (item 6)** Partly, and the report is revised. The cross-sectional claim is no longer "the calibrated flux reading is the only route": a **direct ex vivo PCC enzyme assay** (repo-priced at 20%) also reaches target. But both are *direct enzyme measurements*, not inferences from the accumulation marker — the marker-only conclusion stands, and the **nuisance sensors (k_e tracer + load turnover) do not reach 0.20 even combined**. The largest untapped lever is not a new assay but a **model extension**: a propionyl-CoA state would make the breath test and the C3 / 2-MC / propionylglycine markers expressible at once — the only observables that read the enzyme's own substrate pool — which the repository explicitly flags (`PHASE10 1.1(b)`) as the structural change its sensor half is waiting on.
 
 ---
 

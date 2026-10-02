@@ -37,6 +37,7 @@ It builds on the repository rather than beside it. The footing (convention A, th
 | `t23_antibiotic.py` | round-3 add-on: antibiotics as an unmodelled load term, and as a safe downward excursion | 3 min |
 | `t24_contrast_stress.py` | round-3 close: stress-testing the longitudinal contrast (drift, antibiotics, power, minimum programme) | 2 min |
 | `t25_drug_cv_marker.py` | round-3 final: drug response, assay-CV x draws surface, and the falsifiable marker-variability prediction | 2 min |
+| `t26_multiobservable.py` | multi-observable: joint FIM over the repo's sensor panel (ex vivo PCC, IV tracer, turnover, breath) | 2 min |
 | `r3_figs.py` | round 3 figures (flux contour, k_e×sampling, asymptote, excursion/safety) | 2 min |
 | `*_recheck3.py` | independent verifier re-derivations of the round-3 scripts | — |
 | `*_recheck.py` | an independent verifier's re-derivation of each follow-up script, sharing no code with it | 3–25 min |
@@ -49,10 +50,10 @@ pip install -r ../../requirements.txt
 for s in t0_footing t1_identifiability t2_cohort t3_variance t4_set t5_value t7_design t6_estimators t6b_ma1 \
          t8_floor t9_omega t10_factorial t6c_iv t6d_ekf t11_fim_check t12_flux_mc \
          t13_conditioning t14_ke_sampling t15_load_asymptote t16_flux_observable t17_two_stage \
-         t18_set_id t19_residuals t20_saturation t21_sensitivity t22_longitudinal t23_antibiotic t24_contrast_stress t25_drug_cv_marker; do
+         t18_set_id t19_residuals t20_saturation t21_sensitivity t22_longitudinal t23_antibiotic t24_contrast_stress t25_drug_cv_marker t26_multiobservable; do
   python -W error $s.py > out/$s.txt
 done
 python -W error r3_figs.py   # round-3 figures
 ```
 
-Figures go to `fig/` and printed output to `out/`. Every number in `REPORT.md` appears in one of the `out/*.txt` files. `out/n6_profile_vs_crb.txt` is the repository's own `audit/n6_profile_vs_crb.py`, run unchanged (`python -W error audit/n6_profile_vs_crb.py` from the repository root), because the report quotes its 708 = 24%.
+Figures go to `fig/` and printed output to `out/`. Every number in `REPORT.md` appears in one of the `out/*.txt` files. `out/q15_sensors.txt` and `out/u3_joint_fisher.txt` are the repository's own Phase-10 sensor scripts (`audit/q15_sensors.py`, `audit/u3_joint_fisher.py`), run unchanged. `out/n6_profile_vs_crb.txt` is the repository's own `audit/n6_profile_vs_crb.py`, run unchanged (`python -W error audit/n6_profile_vs_crb.py` from the repository root), because the report quotes its 708 = 24%.
