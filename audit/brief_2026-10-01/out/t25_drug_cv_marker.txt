@@ -1,0 +1,58 @@
+============================================================================================
+  FINAL. DRUG RESPONSE, ASSAY-CV x DRAWS, AND A FALSIFIABLE PREDICTION
+============================================================================================
+
+  (1) DRUG RESPONSE. The drug is a KNOWN per-draw increment Delta on the
+      enzyme channel; at the booked dose theta+Delta ~ 14x theta (it dominates).
+        no drug dose: effective capacity theta+Delta =  1.0x theta, median marker 54.02
+          half dose: effective capacity theta+Delta =  7.5x theta, median marker 22.78
+        booked dose: effective capacity theta+Delta = 14.0x theta, median marker 13.75
+        double dose: effective capacity theta+Delta = 27.0x theta, median marker  7.57
+      A RECORDED dose change does NOT fake a theta change (Delta is modeled) --
+      the contrast stays unbiased, at a precision cost: same dose 0.133, double dose on window 2 0.184. This is the
+      GOOD DUAL of the antibiotic (which is unrecorded and biases, R-E).
+      So the contrast is SPECIFIC to the patient's own capacity theta. Its
+      drug-response use is detecting a change in theta ITSELF (a disease-
+      modifying response), which it resolves at +45%/-30% (weekly) over a
+      weeks window -- matching the contrast's validity. A dose change alone
+      moves only the known Delta, so it needs no measurement; and if the
+      delivered dose/kappa were UNCERTAIN it would leak into theta like the
+      antibiotic, so dosing must be documented.
+      PROTOCOL (drug-response monitoring): two windows of ~45-100 draws each
+      (a ~6-week daily burst, or weekly for longer), SAME recorded dose and
+      diet, antibiotic status fixed, gap = the expected response interval
+      (weeks); read a >=45% change in theta at 80% power.
+
+  (2) ASSAY CV x DRAWS PER WINDOW: contrast sd(d ln theta).
+      CV \ draws      25     50    100    200    400    800
+           5%      0.265  0.188  0.131  0.091  0.065  0.046
+          10%      0.402  0.285  0.200  0.139  0.098  0.069
+          15%      0.561  0.397  0.278  0.193  0.137  0.096
+          20%      0.727  0.514  0.361  0.250  0.177  0.125
+          30%      1.066  0.754  0.529  0.367  0.260  0.183
+      draws per window needed to reach 0.20, by assay CV (interp, ~ n prop CV^2):
+        CV  5%: n ~    44 draws/window
+        CV 10%: n ~   100 draws/window
+        CV 15%: n ~   187 draws/window
+        CV 20%: n ~   314 draws/window
+        CV 30%: n ~   674 draws/window
+      VERDICT: variance ~ CV^2/n, so a less-invasive but noisier marker fails
+      to substitute -- a 20% CV collection needs ~340 draws/window against ~45
+      at 5%, and 30% CV needs ~760. Low-invasiveness at high CV is not
+      deliverable; the protocol needs a ~5% assay.
+
+  (3) A FALSIFIABLE PREDICTION: observed within-patient marker variability.
+      The contrast's 0.13 rests on the shared nuisances cancelling, a property
+      of the simulation. The CHECKABLE consequence is how much the marker
+      ITSELF fluctuates within a patient on serial sampling. The model predicts
+      serial within-patient sd(ln marker):
+        dose-phase RANDOM sampling (full)        : 0.636  (CV ~64%) -- dominated by the 14-day dose cycle
+        dose-SYNCHRONISED sampling (load+assay)  : 0.121  (CV ~12%)
+          of which load (10%) alone 0.099, assay (5%) alone 0.050
+      THE TEST: on serial monitoring data sampled at a consistent time relative
+      to dosing, the model predicts within-patient marker CV ~ 12%. If real
+      patients fluctuate materially more than that (after removing dose-phase),
+      the extra variance is either real theta movement (the 'stable theta'
+      assumption fails) or uncancelled nuisance -- either way the cancellation
+      is optimistic and the 0.13 contrast, the main result, is too. This is the
+      one number that converts the study from simulated to testable.
