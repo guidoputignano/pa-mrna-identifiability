@@ -39,6 +39,7 @@ It builds on the repository rather than beside it. The footing (convention A, th
 | `t25_drug_cv_marker.py` | round-3 final: drug response, assay-CV x draws surface, and the falsifiable marker-variability prediction | 2 min |
 | `t26_multiobservable.py` | multi-observable: joint FIM over the repo's sensor panel (ex vivo PCC, IV tracer, turnover, breath) | 2 min |
 | `t27_exvivo_kappa.py` | the ex vivo PCC calibration (kappa) contour, and scoping the propionyl-CoA model extension | 1 min |
+| `t28_ratio_route.py` | the ratio route (capacity as a fraction of normal cancels kappa; sd over healthy-control N), and the kappa-difference tolerance | 1 min |
 | `r3_figs.py` | round 3 figures (flux contour, k_e×sampling, asymptote, excursion/safety) | 2 min |
 | `*_recheck3.py` | independent verifier re-derivations of the round-3 scripts | — |
 | `*_recheck.py` | an independent verifier's re-derivation of each follow-up script, sharing no code with it | 3–25 min |
@@ -51,7 +52,7 @@ pip install -r ../../requirements.txt
 for s in t0_footing t1_identifiability t2_cohort t3_variance t4_set t5_value t7_design t6_estimators t6b_ma1 \
          t8_floor t9_omega t10_factorial t6c_iv t6d_ekf t11_fim_check t12_flux_mc \
          t13_conditioning t14_ke_sampling t15_load_asymptote t16_flux_observable t17_two_stage \
-         t18_set_id t19_residuals t20_saturation t21_sensitivity t22_longitudinal t23_antibiotic t24_contrast_stress t25_drug_cv_marker t26_multiobservable t27_exvivo_kappa; do
+         t18_set_id t19_residuals t20_saturation t21_sensitivity t22_longitudinal t23_antibiotic t24_contrast_stress t25_drug_cv_marker t26_multiobservable t27_exvivo_kappa t28_ratio_route; do
   python -W error $s.py > out/$s.txt
 done
 python -W error r3_figs.py   # round-3 figures

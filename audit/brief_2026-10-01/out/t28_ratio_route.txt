@@ -1,0 +1,57 @@
+============================================================================================
+  ITEM 1. THE RATIO ROUTE: theta_frac = A_patient / mean(A_healthy), kappa CANCELS
+============================================================================================
+
+  The estimand is capacity as a FRACTION of normal (the figure's x-axis; the gate
+  sd(ln theta)=0.20 is scale-free). A_patient = kappa*theta_patient,
+  mean(A_healthy) = kappa*theta_normal: the ratio is theta_patient/theta_normal and
+  kappa drops out. No known-theta anchor is needed -- only N healthy controls,
+  whose mean carries an error sig_healthy/sqrt(N) that falls with N. sig_healthy is
+  the between-healthy-subject spread of ln A (biological PCC-activity spread + any
+  per-subject kappa + repeatability); the repository has NO figure for it (the 51%
+  it carries is the 3-HP marker baseline between mice, not PCC activity), so it is
+  swept below and flagged.
+
+  sd(ln theta_hat) at 5% of normal, ratio route (no kappa anchor):
+
+  patient reading 20% (one read):
+      sig_healthy \ N controls     N=10     N=30    N=100
+    healthy spread  30%           0.221    0.207    0.202 
+    healthy spread  50%           0.254    0.219    0.206 
+    healthy spread  70%           0.297    0.237    0.211 
+
+  patient reading 10% (or 20% x4 reads):
+      sig_healthy \ N controls     N=10     N=30    N=100
+    healthy spread  30%           0.138*   0.114*   0.104*
+    healthy spread  50%           0.187*   0.135*   0.112*
+    healthy spread  70%           0.242    0.162*   0.122*
+
+  READING: with the patient read to ~10% (achievable by averaging a few assays) and
+  ~30-100 obtainable healthy controls, the ratio route reaches ~0.11-0.19 at 5%
+  capacity WITH NO known-theta anchor. kappa never has to be estimated: it cancels.
+  The 'calibrate kappa from known-theta patients' framing (t27) answered a question
+  that need not be asked. The one real cost is a healthy control panel, which exists.
+  (At 20% patient repeatability it is borderline, ~0.21-0.26; the lever is averaging
+  the patient's own reads, not more controls, once N >~ 30.)
+
+============================================================================================
+  ITEM 3. THE ASSUMPTION: kappa IDENTICAL IN PATIENTS AND CONTROLS
+============================================================================================
+
+  The ratio is unbiased only if the cell-to-whole-body mapping kappa is the same in
+  patients and controls. Under chronic overload (different expression, different
+  tissue contribution) it may not be. A systematic difference
+  b = ln(kappa_patient / kappa_control) passes straight into ln theta_hat as a BIAS,
+  so the total error is rmse = hypot(sd, b).
+
+    at sd = 0.135 (read 10%, 30 controls, spread 50%): a kappa difference of ln-ratio 0.147 (kappa_patient +16%) makes rmse = 0.20
+    at sd = 0.112 (read 10%, 100 controls, spread 50%): a kappa difference of ln-ratio 0.166 (kappa_patient +18%) makes rmse = 0.20
+    at sd = 0.219 (read 20%, 30 controls, spread 50%): a kappa difference of ln-ratio 0.000 (kappa_patient +0%) makes rmse = 0.20
+
+  So the ratio tolerates a systematic kappa difference of only ~15-20% between
+  chronically-overloaded patients and healthy controls before the bias alone reaches
+  the target. Whether chronic propionate overload changes the PCC cell-to-whole-body
+  mapping by less than ~15% is a BIOLOGICAL question the statistics cannot settle,
+  and it is the assumption on which the ratio route stands or falls. The repository
+  says nothing about it.
+
