@@ -1,0 +1,32 @@
+============================================================================================
+  ITEM 1. THE SHARING CONTRACT: test, then audit every contrast number
+============================================================================================
+
+  (a) CONTRACT TEST (contrast.check_contract):
+      marker / Model A  : PASS -- all patient constants shared
+      Model B           : PASS -- all patient constants shared
+      negative control  : unshared b is CAUGHT (the test would fail)
+
+  (b) AUDIT -- every FIM contrast in the report, recomputed via the helper:
+      report location / quantity                    reported    helper  status
+      R-D marker, monthly (25/window)                  0.260     0.264  unchanged
+      R-D marker, weekly (104/window)                  0.130     0.133  unchanged
+      R-D marker, daily (365/window)                   0.070     0.067  unchanged
+      R-D breaking: k_e drift 0.06 (weekly)            0.280     0.280  unchanged
+      R-D breaking: b drift 0.015 (weekly)             0.200     0.204  unchanged
+      t30 confounder base (weekly)                     0.133     0.133  unchanged
+      R-H Model B (ParamsB), weekly                    0.088     0.088  unchanged
+      R-H Model B (managed L=220), weekly              0.078     0.078  unchanged
+      R-H Model A (managed L=220), weekly              0.132     0.132  unchanged
+
+  READING:
+  - The contract test passes for both model parameterisations and CATCHES an
+    unshared constant (negative control), so a future contrast cannot silently
+    drop a patient constant.
+  - R-D (the main deliverable) is CLEAN: every marker contrast reproduces to
+    <=0.006 through the helper. R-D's numbers were always correct -- t24 shared
+    b and k_e from the start; the bug was only ever in the round-7 Model-B
+    contrast (t33), which reported 0.167 and is now 0.088.
+  - The ONLY number that ever changed is the Model-B contrast: 0.167 (v11, b not
+    shared) -> 0.088 (fixed). Everything else audited here is unchanged.
+

@@ -48,6 +48,10 @@ It builds on the repository rather than beside it. The footing (convention A, th
 | `t34_breath_stress.py` | round 7, item 3: breath-test stress tests — 8% provenance, c-drift breakpoint, control spread, confounder inheritance, cross-sectional c-contour | 1 min |
 | `t35_managed_load.py` | round 8, items 2–3: θ_crit moves with the managed load (margin μ); the only valid Model B column (low ceiling + managed load); ParamsB miscalibration | 1 min |
 | `t36_reconcile_remark15.py` | round 8, items 1,4: reconcile "B better for θ" with the paper's Remark 15 (marginal CRB vs joint conditioning + exchange degeneracy); share mechanism; corr(θ,k_e) vs share | 1 min |
+| `contrast.py` | round 8: the sharing contract in one place — `window_contrast` ties every patient constant between windows unless given a drift; `check_contract` fails if any is left independent | — |
+| `t37_contrast_audit.py` | round 8, item 1: the contract test + an audit of every FIM contrast number in the report through the helper (R-D clean; only the Model-B 0.167→0.088 ever changed) | 1 min |
+| `t38_model_dependent.py` | round 8, items 2–3: cross-sectional sd per model, prior-sensitivity, what reaches 0.20 under B; valid-point provenance and ceiling×load sweep | 2 min |
+| `t39_affine_check.py` | round 8, item 4: the paper's own affine condition (eq:affine) run on the repo's data — passes in the dosed record, fails over the excursion to the resting balance | 1 min |
 | `r3_figs.py` | round 3 figures (flux contour, k_e×sampling, asymptote, excursion/safety) | 2 min |
 | `*_recheck3.py` | independent verifier re-derivations of the round-3 scripts | — |
 | `*_recheck.py` | an independent verifier's re-derivation of each follow-up script, sharing no code with it | 3–25 min |
@@ -62,7 +66,8 @@ for s in t0_footing t1_identifiability t2_cohort t3_variance t4_set t5_value t7_
          t13_conditioning t14_ke_sampling t15_load_asymptote t16_flux_observable t17_two_stage \
          t18_set_id t19_residuals t20_saturation t21_sensitivity t22_longitudinal t23_antibiotic t24_contrast_stress t25_drug_cv_marker t26_multiobservable t27_exvivo_kappa t28_ratio_route \
          t29_mapping_scatter t30_monitoring_confounders t31_breath_contrast t32_massbalance \
-         t33_model_b t34_breath_stress t35_managed_load t36_reconcile_remark15; do
+         t33_model_b t34_breath_stress t35_managed_load t36_reconcile_remark15 \
+         t37_contrast_audit t38_model_dependent t39_affine_check; do
   python -W error $s.py > out/$s.txt
 done
 python -W error r3_figs.py   # round-3 figures

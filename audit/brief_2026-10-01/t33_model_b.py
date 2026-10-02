@@ -251,9 +251,10 @@ def contrast_A(n, win, s1, s2, ke_prior=0.8, bfrac=0.05):
 
 def contrast_B(n, win, s1, s2, ke_prior=0.8, bfrac=0.05, ke_m_prior=0.5,
                drift_ke=0.0):
-    """Mirrors t24.contrast exactly, with a 5th shared nuisance Ke. ke1/ke2 are
-    coupled with precision 1/drift_ke^2 (drift_ke=0 -> shared, as in R-D's base
-    case); Ke (alt Michaelis const, a patient constant) is a single shared index."""
+    """Model-B contrast through the centralised sharing contract (contrast.py):
+    theta is per-window; Km, b, ke, Ke are patient constants, all SHARED unless a
+    drift is given. ke may drift (drift_ke)."""
+    import contrast as K
     r1 = record_B(C.TH_5, np.linspace(0, win, n), s1)
     r2 = record_B(C.TH_5, np.linspace(0, win, n), s2)
     L = r1["L"]
@@ -261,26 +262,10 @@ def contrast_B(n, win, s1, s2, ke_prior=0.8, bfrac=0.05, ke_m_prior=0.5,
     sg1, sg2 = sigmas_B(r1), sigmas_B(r2)
     F1 = (Q1 / sg1[:, None] ** 2).T @ Q1
     F2 = (Q2 / sg2[:, None] ** 2).T @ Q2
-    # params: th1,th2, Km(sh), b1,b2, ke1,ke2, Ke(sh)  -> 8
-    i1 = [0, 2, 3, 5, 7]
-    i2 = [1, 2, 4, 6, 7]
-    Z = np.zeros((8, 8))
-    for a in range(5):
-        for b in range(5):
-            Z[i1[a], i1[b]] += F1[a, b]
-            Z[i2[a], i2[b]] += F2[a, b]
-
-    def cp(i, j, sd):                       # couple i,j (shared when sd=0)
-        g = 1e12 if sd <= 0 else 1.0 / sd ** 2
-        Z[i, i] += g; Z[j, j] += g; Z[i, j] -= g; Z[j, i] -= g
-    cp(3, 4, 0.0)                           # b a patient constant (shared), as t24
-    cp(5, 6, drift_ke)                      # ke a patient constant (shared), as t24
-    Z[5, 5] += ke_prior ** -2; Z[6, 6] += ke_prior ** -2
-    Z[3, 3] += (bfrac * L) ** -2; Z[4, 4] += (bfrac * L) ** -2
-    Z[7, 7] += ke_m_prior ** -2
-    P = np.linalg.inv(Z)
-    e = np.zeros(8); e[0] = -1; e[1] = 1
-    return float(np.sqrt(e @ P @ e))
+    return K.window_contrast(
+        [F1, F2], ["theta", "Km", "b", "ke", "Ke"],
+        drifts={"ke": drift_ke},
+        priors={"ke": ke_prior, "b": bfrac * L, "Ke": ke_m_prior})
 
 
 if __name__ == "__main__":

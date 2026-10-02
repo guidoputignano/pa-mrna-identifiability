@@ -160,44 +160,25 @@ def main():
 
 
 def contrast_A_managed(L, n, win, s1, s2, ke_prior=0.8, bfrac=0.05):
+    import contrast as K
     r1 = record_A_managed(TH5, L, np.linspace(0, win, n), s1)
     r2 = record_A_managed(TH5, L, np.linspace(0, win, n), s2)
     F1 = C.fim(r1, noise="perdraw", ke_prior=0.0, b_prior=np.inf)
     F2 = C.fim(r2, noise="perdraw", ke_prior=0.0, b_prior=np.inf)
-    i1, i2 = [0, 2, 3, 5], [1, 2, 4, 6]
-    Z = np.zeros((7, 7))
-    for a in range(4):
-        for b in range(4):
-            Z[i1[a], i1[b]] += F1[a, b]; Z[i2[a], i2[b]] += F2[a, b]
-    g = 1e12
-    Z[3, 3] += g; Z[4, 4] += g; Z[3, 4] -= g; Z[4, 3] -= g   # b shared (as t24)
-    Z[5, 5] += g; Z[6, 6] += g; Z[5, 6] -= g; Z[6, 5] -= g   # ke shared
-    Z[5, 5] += ke_prior ** -2; Z[6, 6] += ke_prior ** -2
-    Z[3, 3] += (bfrac * L) ** -2; Z[4, 4] += (bfrac * L) ** -2
-    P = np.linalg.inv(Z); e = np.array([-1, 1, 0, 0, 0, 0, 0.])
-    return float(np.sqrt(e @ P @ e))
+    return K.window_contrast([F1, F2], ["theta", "Km", "b", "ke"],
+                             priors={"ke": ke_prior, "b": bfrac * L})
 
 
 def contrast_B_managed(L, ke, n, win, s1, s2, ke_prior=0.8, bfrac=0.05, ke_m_prior=0.5):
+    import contrast as K
     r1 = record_B_managed(TH5, L, ke, np.linspace(0, win, n), s1)
     r2 = record_B_managed(TH5, L, ke, np.linspace(0, win, n), s2)
     Q1, Q2 = T.flux_rows_B(r1), T.flux_rows_B(r2)
     sg1, sg2 = T.sigmas_B(r1), T.sigmas_B(r2)
     F1 = (Q1 / sg1[:, None] ** 2).T @ Q1
     F2 = (Q2 / sg2[:, None] ** 2).T @ Q2
-    i1, i2 = [0, 2, 3, 5, 7], [1, 2, 4, 6, 7]
-    Z = np.zeros((8, 8))
-    for a in range(5):
-        for b in range(5):
-            Z[i1[a], i1[b]] += F1[a, b]; Z[i2[a], i2[b]] += F2[a, b]
-    g = 1e12
-    Z[3, 3] += g; Z[4, 4] += g; Z[3, 4] -= g; Z[4, 3] -= g   # b shared (as t24)
-    Z[5, 5] += g; Z[6, 6] += g; Z[5, 6] -= g; Z[6, 5] -= g   # ke shared
-    Z[5, 5] += ke_prior ** -2; Z[6, 6] += ke_prior ** -2
-    Z[3, 3] += (bfrac * L) ** -2; Z[4, 4] += (bfrac * L) ** -2
-    Z[7, 7] += ke_m_prior ** -2
-    P = np.linalg.inv(Z); e = np.zeros(8); e[0] = -1; e[1] = 1
-    return float(np.sqrt(e @ P @ e))
+    return K.window_contrast([F1, F2], ["theta", "Km", "b", "ke", "Ke"],
+                             priors={"ke": ke_prior, "b": bfrac * L, "Ke": ke_m_prior})
 
 
 if __name__ == "__main__":

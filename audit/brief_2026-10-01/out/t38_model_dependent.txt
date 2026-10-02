@@ -1,0 +1,78 @@
+============================================================================================
+  ITEM 2. THE CROSS-SECTIONAL CONCLUSION IS MODEL-DEPENDENT
+============================================================================================
+
+  Stated per model (cross-sectional sd(ln theta) at 5% of normal, monthly record):
+    Model A (the paper's working model):            3.05   -> no feasible route
+                                                            (misses 0.20 by ~15x)
+    Model B, literature-consistent, managed load:   0.29   -> still misses 0.20,
+                                                            but by ~1.5x, not ~15x
+  Model A is the model the parent paper ITSELF calls inadequate (its linear
+  clearance predicts no decompensation; the paper keeps A only as the most
+  favourable *identifiability* case, Remark 15). So the headline 'no marker-only
+  design reaches target cross-sectionally' is a Model-A statement; under the more
+  faithful B the gap is a factor of ~1.5, not ~15.
+
+  PRIOR SENSITIVITY (the improvement is bought with prior information, not data):
+    Model B, managed, ke prior 0.8, Ke pinned:   0.29
+    Model B, managed, ke prior 0.8, Ke free 0.5: 0.32
+    Model B, managed, NO priors, Ke free:        52.82   <- exchange degeneracy
+    Model A, NO ke prior:                        5.86
+    So B's 0.29 rests on the k_e/K_e priors; strip them and B is far WORSE
+    than A (the a-fortiori of Remark 15). The gain is prior-bought, not data-bought.
+
+  WHAT WOULD REACH 0.20 UNDER B? (tighten the nuisance priors at the valid point)
+      k_e prior sd   Ke pinned   Ke prior 0.3   Ke prior 0.1
+              0.80      0.292          0.301          0.293 
+              0.40      0.217          0.229          0.219 
+              0.20      0.194*         0.207          0.195*
+              0.10      0.187*         0.201          0.189*
+              0.05      0.186*         0.200*         0.187*
+    (* = reaches 0.20.) Reading: under B, a k_e prior tightened from 0.8 to
+    ~0.2 (with K_e known) reaches target. A sd(ln k_e)=0.2 k_e prior is exactly
+    what the IV 13C3 tracer delivers (5.4%, R-G) or the safe transient at L0 to
+    1% (R-B) -- so UNDER MODEL B the cross-sectional target is reachable with a
+    k_e sensor the brief already prices, a far cheaper requirement than the
+    direct-enzyme calibration Model A forces. This is model-dependent and worth
+    stating as such: the whole 'only a direct calibrated enzyme read works'
+    conclusion is partly an artefact of Model A's low enzyme share.
+
+============================================================================================
+  ITEM 3. PROVENANCE AND RANGES OF THE VALID MODEL-B POINT
+============================================================================================
+
+  WHAT WAS CHOSEN, AND ON WHAT BASIS (nothing here is fitted to a patient):
+    - ceiling k_e = 100: chosen BELOW the untreated load (~276) so theta=0 is not
+      maintainable (the severe phenotype); literature-consistent (non-PCC disposal
+      is low-capacity) but not a measured value -- the repo gives no k_e in units.
+    - managed load L = 220: chosen to ADMIT a steady state at 5% with a ~1%-of-
+      normal margin (a ~20% reduction from the untreated anchor). Also a choice.
+  Because both are choices, the honest output is a RANGE over their plausible
+  spans, not the single 0.29.
+
+  sd(ln theta), monthly, swept over ceiling k_e x managed load L (Ke pinned):
+         k_e \ L     180     200     220     240
+              50   0.212      --      --      --
+             100   0.286   0.289   0.292   0.296
+             150   0.376   0.381   0.387   0.393
+             200   0.471   0.478   0.486   0.494
+
+    RANGE of sd across the valid grid: 0.21 to 0.49 (median 0.38).
+    Every valid cell is > 0.20 and << Model A's 3.05: the model-dependence of
+    the magnitude is real but the SIGN (misses 0.20 cross-sectionally) is robust
+    across the whole plausible ceiling x load grid.
+
+  RECONCILING THE LOAD-REDUCTION FIGURE WITH THE PAPER'S OWN NUMBERS:
+    - This script's margin needs a ~10-20% load reduction to lift a 5% patient
+      above theta_crit (t35).
+    - The paper states management cuts the load by 20-40% (standard of care:
+      protein restriction + gut suppression), and that the SMALLEST illness
+      excursion that strands a patient is +18% in the load (s_fold 706 vs
+      baseline 600 at theta=300, sections/03_dynamic.tex).
+    - These are the SAME ORDER: the reduction management must supply (~10-20%),
+      the reduction it does supply (20-40%), and the excursion that strands
+      (18%) all sit in a ~10-40% band. So the patient lives in a narrow margin --
+      normal management keeps them just inside it and a single ~18% illness
+      pushes them out. The margin mu and the trigger amplitude are comparable,
+      which is why decompensation is a recurring event rather than a rare one.
+
