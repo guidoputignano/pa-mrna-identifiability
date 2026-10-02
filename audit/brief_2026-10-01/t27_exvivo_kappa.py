@@ -121,5 +121,42 @@ def main():
 """)
 
 
+def calibration():
+    print("\n" + "=" * 92)
+    print("  ITEM 1b. CALIBRATING kappa (a POPULATION constant) -- the shortest path")
+    print("=" * 92)
+    print("""
+  kappa is a population constant (cell-to-whole-body mapping), so it is pinned
+  ONCE, not per subject. Calibration subgroup: N patients whose theta is
+  independently known to sd(ln theta) = sig_th, each giving an ex vivo reading
+  ln A = ln kappa + ln theta + eps (repeatability Y_cal, n_read reads). Each
+  patient estimates ln kappa with variance Y_cal^2/n_read + sig_th^2; over N,
+      sd(ln kappa) = sqrt(Y_cal^2/n_read + sig_th^2) / sqrt(N).
+  Target for the 10%-repeatability deployment: sd(ln kappa) <= 0.173 (so that
+  hypot(0.10, 0.173) = 0.20).
+
+  COMPLETE-DEFICIENCY (theta ~ 0) DOES NOT SERVE. At theta = 0 the reading
+  A = kappa*theta = 0 for every kappa: zero information. And 'theta near 0' with
+  an unknown value leaves ln theta unbounded, so kappa is not separable. The
+  anchor must be patients with KNOWN, NONZERO theta.""")
+    Z = 0.173
+    print("  N patients needed (Y_cal = 10%, 1 read each):")
+    for sig in (0.10, 0.20, 0.30, 0.50):
+        per = 0.10 ** 2 + sig ** 2
+        print(f"    theta independently known to {int(sig*100):>2}%:  N = {int(np.ceil(per/Z**2))}")
+    print("""
+  DELIVERABLE: kappa calibrated to sd(ln kappa) <= 0.173 from N ~ 2 patients with
+  theta independently known to 20% (or ~9 at 50%) makes the ex vivo route reach
+  0.20 at <=10% repeatability -- PROVIDED a source of independently-known nonzero
+  theta exists. The repository identifies none (ex vivo itself is circular;
+  complete deficiency fails), so that source is the open requirement, not the N.
+
+  DOES THE SAME SERVE THE BREATH TEST's c? NO. u3 carries c as a SUBJECT-SPECIFIC
+  recovery factor, so a population calibration study does not transfer -- each
+  patient would need their own c. Only kappa (population) is fixable once. That is
+  the one structural advantage ex vivo has over the breath test.""")
+
+
 if __name__ == "__main__":
     main()
+    calibration()

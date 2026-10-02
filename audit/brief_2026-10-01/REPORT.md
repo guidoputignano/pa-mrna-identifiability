@@ -502,6 +502,8 @@ The 1.177× fold is a modelling construct (R15), so it must not carry a clinical
 
 **Longitudinal precision is the one regime that reaches target.** Every cross-sectional bar is an error on *absolute* θ. For monitoring, the quantity is the within-patient contrast sd(ln θ₂ − ln θ₁), where the shared k_e, load-bias b and K_m cancel, leaving only the independent per-visit noise:
 
+> **One mechanism, not three escapes.** Every nuisance that defeats *classification* is a patient-level constant — the clearance k_e, the Michaelis constant K_m, the additive load-record bias b, and the two multiplicative calibration factors (ex vivo κ, breath recovery c). A within-patient contrast differences out *every* patient-level constant at once, additive and multiplicative alike. That single fact — not a separate piece of luck for each — is why monitoring survives the κ/c calibration failure that kills the ex vivo and flux routes, the k_e confounding that kills the record, and the load-bias that dominates the finite-n budget: the contrast never has to *know* any of them, only that they are stable between the two windows.
+
 | draws per visit | sd(ln θ₂ − ln θ₁) | cross-sectional sd(ln θ) |
 |---|---|---|
 | 25 (monthly) | **0.26** | 2.1 |
@@ -584,6 +586,8 @@ The whole report had treated this as a one-observable problem. The repository de
   | κ free (uncalibrated) | 3.05 | 3.05 | 3.05 |
 
   At the repo's 20% repeatability the maximum κ uncertainty compatible with target is **≈ 0** (repeatability alone already = 0.20); tolerating any κ uncertainty needs the repeatability pushed below ~15% first (Y = 10% → sd(ln κ) ≤ 0.173). **Uncalibrated, the ex vivo route reverts to 3.0** — the same unresolved calibration problem as the breath test. The κ problem is a *classification* problem only: κ is a patient constant and cancels in the longitudinal contrast, so monitoring is immune.
+
+- **Calibrating κ is a short, costable study — because κ is a *population* constant.** It is pinned once, not per subject. From N patients whose θ is independently known to sd(ln θ) = σ_θ, each read to repeatability Y_cal, sd(ln κ) = √(Y_cal² + σ_θ²)/√N. To reach the sd(ln κ) ≤ 0.173 the 10%-repeatability deployment needs: **N ≈ 2 patients at σ_θ = 20%, ≈ 4 at 30%, ≈ 9 at 50%** (10% calibration reads). **Deliverable:** *κ calibrated to ≤ 0.173 from ~2 patients with θ independently known to 20% makes the ex vivo route reach 0.20 at ≤ 10% repeatability.* Two caveats sharpen it: (i) **complete-deficiency patients (θ ≈ 0) do not serve** — A = κ·θ → 0 for every κ, so a zero anchor carries no κ information; the subgroup needs *known, nonzero* θ, and the repository identifies no source for it (ex vivo itself is circular), making that source the real open requirement, not N. (ii) **The same study does not fix the breath test**, whose recovery c is *subject-specific* (`u3`), not a population constant — so κ is calibratable once and c is not, the one structural advantage ex vivo holds over the breath test.
 - **The flux pair (breath + turnover).** Turnover cleanly supplies the L+b the flux route needs (θ = S·(L+b)/g); at 10% it is ample. The unresolved half is the breath recovery: with c carried free, one breath reading is worth nothing and `u3` needs ~70 readings at 10% capacity. So the pair reaches 0.20 only if the fraction-oxidised reading is itself calibrated (S to ~19%) — exactly R11's requirement, now with the load half supplied by a named assay.
 - **Item 3 with turnover's real precision.** Turnover at 10% leaves cross-sectional θ at 3.04 (negligible), and the safe-transient k_e it supports is only **sd(ln k_e) ≈ 0.29** (not the 0.06 of R-B, which needed the load to 1% — turnover does not deliver that). So a real load assay does not rescue the two-stage design.
 - **Monitoring.** No sensor improves the longitudinal contrast: it already cancels the shared k_e, b and K_m, so the tracer and turnover tighten what already cancels, and a per-visit ex vivo PCC at 20% gives √2·0.20 ≈ 0.28, worse than the record's 0.13. Sensors help classification, not monitoring.
@@ -805,6 +809,28 @@ The washout at 5%, hourly for 48 h, down the knowledge ladder (FIM):
 - **R15's safety threshold (1.177×) is a modelling construct**, the saddle-node of the parent model's R0 setting, not a measured clinical crisis level (`src/model_A/run.py`). The excursion-sweep figure uses a generous knowledge rung (k_e prior + K_m from the record + L₀ to 1%) and FIM; the authoritative excursion verdicts remain the `t10` Monte Carlo ones. The two-stage k_e precision (~0.2 at L₀ 5%) assumes the unrecorded load L₀ is known to the stated precision and constant through the transient (`dyn.py`, as in Task 7).
 - **R12 and R15's "draws per year" use a fixed two-year horizon** (n draws over 730 days), so "365 draws" is every-other-day for two years. The per-draw noise is the repository's; verdicts within a few per cent of 0.20 shift under per-draw noise and sample timing, as elsewhere.
 - **R16's "recoverable" sds are first-order FIM propagation** on the monthly record's covariance; the θ-proportional quantities (flux, share, a) inherit θ's ill-conditioning and are not Gaussian there. The one-sided θ bound is exact algebra; the ~6%/28%/8% figures are local.
+
+## Appendix: repository material this report has not used
+
+`q15_sensors.py`, `u3_joint_fisher.py` and `PHASE10_SENSORS.md` existed through seven rounds and entered the report only when asked for. This surfaces the rest. The repository holds a large pre-existing audit of the *original paper* (Phases 1–12, ~160 scripts in series a–u plus `PHASE*.md`), of which this report cites ~10. Most of the series are the paper's own checks and rechecks; listed below are the uncited items that bear on **identifiability, sensors, calibration or study design** — the category where `q15`/`u3` were found. Surfaced, not analysed; the "would it change anything" column is a first read of the title/banner only.
+
+**Phase documents (narrative audits, none cited):**
+
+| document | what it contains | bears on |
+|---|---|---|
+| `PHASE11_KE_MEASUREMENT.md`, `PHASE11_KE_ROUTE.md` | the k_e requirement frontier and what could measure it (the carnitine lever) | the binding nuisance (R-G); may refine the k_e-sensor pricing |
+| `PHASE11_SAMPLING.md` | sampling modality: assay CV, home microsampling, what binds | R-F (assay-CV × draws); possibly a less-invasive option I priced as failing |
+| `PHASE11_TRADE_AND_PRIOR.md` | the (n, k) trade curve, and "a caveat that attaches to every Fisher figure" | R-D/R-F; the caveat may qualify the FIM numbers |
+| `PHASE11_DRIFT.md`, `PHASE11_PROPOSED_CONSTANCY.md` | the constant-θ assumption priced against record length, with a failure threshold | **directly the monitoring stability caveat (R-D)** — could sharpen or challenge the main result |
+| `PHASE11_KM_BYPASS.md` | the K_m bypass and the breath test's actual functional, with a joint Fisher | R11/R-G; a second take on the breath observable |
+| `PHASE11_MARGIN_NUISANCE.md` | "the binding nuisance for the decision is not the one that binds the estimate" | the classification-vs-decision split; may reframe the verdict |
+| `PHASE11_CATABOLIC_GATE.md`, `PHASE11_GLUCOSE_ARM.md` | a withdrawn result and a priced substitute; a manoeuvre "with all three properties" | the safe-excursion question (R15/R-E) |
+| `PHASE12_GENOTYPE_REVIEW.md` | the genotype-prior document ("what 118 rests on") | **a possible source of independently-known θ for κ calibration (item 1)** — the open requirement there |
+| `PHASE5_ROBUSTNESS.md`, `PHASE7_TABLE2_PROVENANCE.md` | robustness to model structure; provenance of Table 2 | the specification question (R10) and the footing |
+
+**Scripts (uncited; clearly on the brief's questions):** `q2_requirement_map.py` (the schedule/requirement map `q15` is built on), `q2b_ke_measurement.py` and `u9_ke_frontier.py` / `u11_trade_curve.py` / `u13_ke_requirement_audit.py` (the k_e sensor and its (n,k) frontier), `q5_exvivo_prior.py` and `a5_kappa.py` (the ex vivo / κ prior — directly item 1), `t6_cohort_with_kappa.py` (the breath test's per-subject repeatability range — item 1's c), `t9_measured_load.py` (how often a turnover tracer is actually run — R-G's load sensor), `t1_transient_worth.py` (the transient's worth — R15), `n3_ke_prior_worth.py` / `m1_loadbias_prior.py` (what the k_e and load-bias priors are worth), `d10_two_channels.py`, `m3_edt3_discriminator.py`, `k1_sources.py` / `k2_structures.py` / `k5_identifiability.py` (sources, structures and identifiability of the information). The remaining ~140 files (the a–u rechecks and Phases 1–9 scaffolding) are the paper's own audit and are not surfaced individually.
+
+**Honest status:** none of these was read for this report. The ones most likely to matter are the Phase 11 **drift/constancy** documents (they price the exact assumption the monitoring result rests on) and **Phase 12 genotype** (a candidate source of the independently-known θ that κ calibration needs). Reading them is the obvious next step, and is empirical/model work rather than more of this identifiability analysis.
 
 ## Reproducing
 
