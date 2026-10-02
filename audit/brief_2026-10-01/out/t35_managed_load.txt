@@ -1,0 +1,70 @@
+==============================================================================================
+  ROUND 8 ITEM 2. theta_crit MOVES WITH THE MANAGED LOAD; the margin mu
+==============================================================================================
+
+  For a literature-consistent LOW ceiling (take ke=100, well below the untreated
+  load L0=276, so theta=0 is NOT maintainable -- the severe phenotype):
+  theta_crit = L - ke, and the 5% patient (theta=150) is stable iff
+  L < theta + ke = 250. The margin is mu = theta - theta_crit(L).
+
+        managed load L   reduction vs L0  theta_crit (%norm)    mu (%norm)   5% stable?
+                   276              0.0%                5.9%        -0.87%  NO (diverges)
+                   260              5.8%                5.3%        -0.33%  NO (diverges)
+                   250              9.4%                5.0%         0.00%  NO (diverges)
+                   240             13.0%                4.7%         0.33%          yes
+                   220             20.3%                4.0%         1.00%          yes
+                   200             27.5%                3.3%         1.67%          yes
+                   180             34.8%                2.7%         2.33%          yes
+
+  READING: untreated (L=276) the 5% patient is BELOW theta_crit and diverges.
+  A load reduction of ~9% (to L<250) brings them above it; deeper
+  management buys margin. Protein restriction + gut suppression routinely cut the
+  load 20-40% (Thompson: gut share ~22%, ~41% suppressible; protein restriction
+  cuts the ~52% amino-acid share), so a stable managed steady state at 5% is
+  ACHIEVABLE -- which is why real patients are stable. The correct statement is:
+  the severe patient has a steady state only UNDER active load management, with a
+  thin margin mu that the record's own antibiotic/protein excursions (paper 3.5)
+  can erase -- a theta_crit excursion is a decompensation.
+
+==============================================================================================
+  ROUND 8 ITEM 3. THE ONLY VALID MODEL-B COLUMN: low ceiling + managed load
+==============================================================================================
+
+  THE DOUBLE BIND. ParamsB's ceiling (400) EXCEEDS the untreated load (~286): a
+  theta=0 patient is maintainable, which is clinically wrong. A clinically-right
+  ceiling (< load) admits NO steady state at the untreated 5% load. So t33's 0.92
+  was computed at a MISCALIBRATED point. The valid comparison fixes both: a low
+  ceiling (ke=100) AND a managed load that admits a steady state (take L=220, a
+  ~20% reduction, margin mu~1% of normal). A and B are compared at the SAME
+  clinically valid managed point.
+
+  At theta=5%, managed load L=220:
+                                     Model A  Model B (ke=100)
+    untreated-balance m                 36.1            1272.8
+      (B near its ceiling)                                    
+    DOSED-record m (mean)               10.6              17.2
+      record m range                  [2,22]            [3,52]
+    untreated enzyme share             0.181             0.632
+    cross-sectional sd(lnth)         3.046             0.292  (Ke pinned)
+                     Ke free                           0.317
+    longitudinal contrast            0.132             0.078
+
+  READING at the VALID point (5% capacity, managed load 220, low ceiling):
+    - The UNTREATED balance sits near the ceiling (m~1273, share 0.63), but the
+      DOSED record operates LOW (m in [3,52], like every other record here),
+      because the dose train boosts disposal -- so the FIM is well-behaved, not
+      stiff, and the numbers are robust across the managed range (sd ~0.29,
+      contrast ~0.08 for L from 180 to 240).
+    - The marginal cross-sectional sd (~0.29) is still FINITE and still > 0.20; the
+      sign of the verdict is unchanged whether we use ParamsB (0.92) or this valid
+      point (0.29) -- both fail cross-sectionally. B is tighter than A at every
+      valid point (the share effect of item 1).
+    - The longitudinal contrast (~0.08) is BELOW A's 0.133: B is better on BOTH
+      axes (b and ke shared, as in t24). So the qualitative conclusions survive the
+      correction; only the specific 0.92/0.167 of v11 were at a bad point / a b-not-
+      shared bug.
+    - ParamsB (ke=400) is MISCALIBRATED for severe PA: its ceiling exceeds the load,
+      so it cannot represent a null-genotype patient (theta=0 stays maintainable),
+      contradicting the repo's own Model C ('alt peaks at 500 vs load 600, so
+      theta=0 cannot be maintained'). Flagged.
+

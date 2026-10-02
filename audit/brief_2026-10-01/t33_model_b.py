@@ -213,10 +213,12 @@ def main():
     cB = over(lambda s: contrast_B(104, 730, 2 * s, 2 * s + 1))
     print(f"      Model A (shared Km, b, ke):            {cA:.3f}")
     print(f"      Model B (shared Km, b, ke, Ke):        {cB:.3f}")
-    print("      The contrast still cancels the shared patient constants (now including")
-    print("      Ke), so monitoring survives the model change WHERE A STEADY STATE EXISTS.")
-    print("      But if the alt route is low-capacity (no SS at 5%), there is no stable")
-    print("      marker to difference, and the monitoring result is moot in severe disease.")
+    print("      B is BETTER on the contrast too (not worse): the higher enzyme share")
+    print("      tightens theta per window, and the shared patient constants (now including")
+    print("      Ke) still cancel. So monitoring survives -- and improves -- WHERE A STEADY")
+    print("      STATE EXISTS. If the alt route is low-capacity and the load unmanaged (no SS")
+    print("      at 5%), there is no stable marker to difference, and monitoring is moot in")
+    print("      severe disease until the load is managed (t35).")
 
     print("\n  WHICH MODEL THE PARENT PAPER USED, AND WHAT INHERITS THIS:")
     print("""    The parent paper's identifiability configuration (sections/03_model_A.tex,
@@ -231,8 +233,9 @@ def main():
 
   BOTTOM LINE:
     - Numbers move materially under B: share 0.16 -> 0.37 at 5%, cross-sectional
-      sd 3.05 -> ~0.9. SIGNS do not: cross-sectional still fails 0.20, monitoring
-      still ~passes where a steady state exists.
+      sd 3.05 -> ~0.9, contrast 0.133 -> 0.088 (B better on BOTH, the share effect).
+      SIGNS do not: cross-sectional still fails 0.20, monitoring still passes where
+      a steady state exists.
     - The fundamental change is SCOPE, not precision: under a literature-
       consistent LOW-capacity alternative route (the repo's own Model C), no
       steady state exists below ~6-8% of normal, so the steady-state analysis
@@ -270,6 +273,7 @@ def contrast_B(n, win, s1, s2, ke_prior=0.8, bfrac=0.05, ke_m_prior=0.5,
     def cp(i, j, sd):                       # couple i,j (shared when sd=0)
         g = 1e12 if sd <= 0 else 1.0 / sd ** 2
         Z[i, i] += g; Z[j, j] += g; Z[i, j] -= g; Z[j, i] -= g
+    cp(3, 4, 0.0)                           # b a patient constant (shared), as t24
     cp(5, 6, drift_ke)                      # ke a patient constant (shared), as t24
     Z[5, 5] += ke_prior ** -2; Z[6, 6] += ke_prior ** -2
     Z[3, 3] += (bfrac * L) ** -2; Z[4, 4] += (bfrac * L) ** -2

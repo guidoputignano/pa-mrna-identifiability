@@ -55,11 +55,13 @@
 
   (4) LONGITUDINAL CONTRAST sd(ln th2 - ln th1), weekly windows, A vs B:
       Model A (shared Km, b, ke):            0.133
-      Model B (shared Km, b, ke, Ke):        0.167
-      The contrast still cancels the shared patient constants (now including
-      Ke), so monitoring survives the model change WHERE A STEADY STATE EXISTS.
-      But if the alt route is low-capacity (no SS at 5%), there is no stable
-      marker to difference, and the monitoring result is moot in severe disease.
+      Model B (shared Km, b, ke, Ke):        0.088
+      B is BETTER on the contrast too (not worse): the higher enzyme share
+      tightens theta per window, and the shared patient constants (now including
+      Ke) still cancel. So monitoring survives -- and improves -- WHERE A STEADY
+      STATE EXISTS. If the alt route is low-capacity and the load unmanaged (no SS
+      at 5%), there is no stable marker to difference, and monitoring is moot in
+      severe disease until the load is managed (t35).
 
   WHICH MODEL THE PARENT PAPER USED, AND WHAT INHERITS THIS:
     The parent paper's identifiability configuration (sections/03_model_A.tex,
@@ -74,8 +76,9 @@
 
   BOTTOM LINE:
     - Numbers move materially under B: share 0.16 -> 0.37 at 5%, cross-sectional
-      sd 3.05 -> ~0.9. SIGNS do not: cross-sectional still fails 0.20, monitoring
-      still ~passes where a steady state exists.
+      sd 3.05 -> ~0.9, contrast 0.133 -> 0.088 (B better on BOTH, the share effect).
+      SIGNS do not: cross-sectional still fails 0.20, monitoring still passes where
+      a steady state exists.
     - The fundamental change is SCOPE, not precision: under a literature-
       consistent LOW-capacity alternative route (the repo's own Model C), no
       steady state exists below ~6-8% of normal, so the steady-state analysis
