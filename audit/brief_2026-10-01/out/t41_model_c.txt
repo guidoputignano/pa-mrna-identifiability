@@ -1,0 +1,47 @@
+============================================================================================
+  ROUND 9 ITEM 2. MODEL C: DOES A DIRECTLY-OBSERVED COMPETING CHANNEL BREAK THE PATTERN?
+============================================================================================
+
+  operating point at theta=5%, load 500: m=65.0, c=1119.7  (alt flux 441 of 500)
+
+  sd(ln theta) at 5% of normal:
+    A (marker only, linear clearance)                3.05   (reference)
+    B (marker+Ke, managed, Ke free)                  0.29   (reference)
+    C: m only, alt channel free                      19.92
+    C: m + c, alt channel FREE (Kc,R0,Mi,rho0,k)     16.30
+    C: m + c, alt channel KNOWN (all pinned)         0.34
+
+  WHICH alt constant has to be known? (m+c, that one FREE, the rest known):
+    free ln_Kc                                       0.44
+    free ln_rho0                                     0.36
+    free ln_Mi                                       0.49
+    free ln_R0                                       0.38
+    free ln_k                                        0.34
+
+  READING: free carnitine c DOES add information the marker alone lacks -- with the
+  alternative channel's constants KNOWN, the (m,c) pair identifies theta far better
+  than the marker alone. But with those constants FREE it does not: theta reverts.
+  So Model C does not escape the pattern -- it relocates it. The competing channel
+  is observed, yet reading theta through it still requires the channel's SHAPE
+  constants, and those (Kc arbitrary, R0 reverse-engineered, Mi arbitrary, rho0 a
+  one-sided bound) are exactly the unmeasured constants the pattern predicts. The
+  R0/k pair is additionally degenerate in c (c depends on R0/k only), so one of
+  them must be known even to use the carnitine reading.
+
+============================================================================================
+  SWEEP of the alt-channel constants over admissible ranges (m+c, channel KNOWN)
+============================================================================================
+  (varying one constant's TRUE value; it is 'known' at that value, so this shows
+   how the achievable sd moves across the plausible channel, not a prior width)
+    Kc     25:0.70  50:0.48  100:0.34  200:0.25  400:noSS  800:noSS
+    R0     800:noSS  1000:0.29  1122:0.34  1400:0.45  1800:0.64
+    Mi     100:noSS  200:0.32  300:0.34  600:0.36
+    rho0   0.1:1.30  0.195:0.73  0.35:0.45  0.6:0.30
+
+  READING (sweep): with the channel known, sd(ln theta) stays well below the marker-
+  only value across the admissible ranges of Kc, R0, Mi, rho0 -- so the value of the
+  carnitine reading is real and robust WHEN the channel is known. The dependence is
+  therefore not on the operating point but on KNOWING the channel, which the repo
+  does not: Kc and Mi are arbitrary, R0 reverse-engineered, rho0 one-sided. Fourth
+  instance -> the pattern is a law, not a coincidence.
+
