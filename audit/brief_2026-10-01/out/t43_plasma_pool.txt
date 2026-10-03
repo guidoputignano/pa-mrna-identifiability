@@ -1,0 +1,39 @@
+============================================================================================
+  ROUND 10 ITEM 2. PLASMA c DOES NOT REPORT THE MODELLED POOL -- A FIFTH INSTANCE?
+============================================================================================
+
+  The value of the second observable (free carnitine) is in helping identify the
+  ALT CHANNEL when it is unknown -- which is the regime that matters (the channel's
+  constants are the unmeasured ones, instances 1-4). When the channel is already
+  known c is redundant for theta (m alone suffices), so the plasma defect must be
+  tested where c earns its keep: the alt-channel-FREE regime.
+
+  m-only, alt free (no carnitine):                         19.92
+  m + c, alt free, phi = 1 (plasma IS the pool, t41):      16.30
+  m + c, alt free, phi free (plasma a fixed fraction):     17.70
+  m + c, alt free, phi free AND m-dependent (drifts):      17.73
+
+  (for contrast, alt-channel KNOWN -- where c is redundant for theta:)
+  m-only, alt KNOWN:                                       0.34
+  m + c, alt KNOWN, phi free AND m-dependent:              0.34
+
+  READING: c's only real contribution is in the alt-FREE regime, and that is where
+  a realistic plasma compartment erodes it. Freeing the plasma<->pool partition phi
+  (plasma free carnitine is an unknown fraction of the modelled whole-body pool --
+  >95% of carnitine is in muscle, <1% in plasma, on a ~230 h vs <1 h two-timescale
+  split) removes c's absolute calibration; letting phi DRIFT with the load (Stanley
+  1993: rising acylcarnitine displaces free carnitine, so the partition itself moves
+  with m) corrupts the carnitine SHAPE, which is where c's channel-information lives.
+  The m+c, alt-free number moves back toward the m-only value: plasma carnitine stops
+  reporting the modelled pool, so it stops helping identify the channel.
+
+  Where the channel is already known, c is redundant for theta and phi is harmless --
+  but that regime is not the disease's: the channel is exactly what is unmeasured.
+
+  So the second-observable argument does NOT survive a realistic plasma compartment.
+  This is the SAME compartment problem the parent paper flags for the marker m (the
+  measured quantity is one compartment from the modelled one), and it adds a FIFTH
+  unmeasured constant -- the plasma/pool partition phi -- to the four shape constants.
+  Not a break in the pattern: a fifth instance of it, and one that removes the only
+  model in which the competing channel looked observable.
+
