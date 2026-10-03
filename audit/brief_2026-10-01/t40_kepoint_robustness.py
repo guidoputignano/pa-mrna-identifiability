@@ -62,15 +62,20 @@ def main():
               ", ".join(f"{100*mu/TH0:.1f}%->{v:.3f}" for v, mu, _ in bymu))
 
     print("""
-  READING (1): the 0.19 is NOT a property of Model B generally -- it is a property
-  of a LOW, unmeasured ceiling. With K_e known and the k_e prior at 0.2 (or the
-  tracer's 0.054), only the low-ceiling cells (k_e <= 100) reach 0.20; at k_e =
-  150-200 every cell misses (into the 0.3-0.5 range). Within a ceiling, sd is
-  nearly flat in the managed load, so it does NOT track the margin mu -- it tracks
-  the enzyme SHARE, which the ceiling sets. And the cells that do reach 0.20 are
-  the low-ceiling ones, which are the most fragile (smallest mu at a given load).
-  So "0.19 at the gate" is a POINT at a low ceiling with K_e known, not a finding
-  that survives the plausible ceiling range.
+  READING (1): the 0.19 is a KNIFE-EDGE AT THE GATE, and how robust it is to the
+  ceiling depends entirely on the (unmeasured) k_e prior:
+    - at the tracer prior (0.054), the whole ceiling sweep 50-200 sits at the gate
+      (0.18-0.20, 10/13 cells <= 0.20); the result is marginal everywhere, not a
+      clear pass and not a clear miss.
+    - at the looser 0.2 prior it degrades off the gate: only the low ceilings
+      (k_e <= 100) pass, k_e = 150-200 miss, though only mildly (up to 0.228) --
+      NOT into any 0.3+ range (the whole item-1 grid spans 0.18-0.23).
+  Within a ceiling, sd is nearly flat in the managed load, so it does NOT track the
+  margin mu -- it tracks the enzyme SHARE, which the ceiling sets; and the cells
+  nearest the gate are the low-ceiling = smallest-mu = most-fragile ones. So "0.19"
+  is a marginal, gate-hugging result conditional on BOTH a tight k_e prior and a
+  low ceiling (and, from item 2, K_e known) -- a point held up by three unmeasured
+  assumptions, not a finding that stands on its own.
 """)
 
     print("=" * 92)
