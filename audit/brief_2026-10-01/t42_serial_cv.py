@@ -55,9 +55,9 @@ def main():
     print("""
   READING: at the repo's 5% assay the weekly contrast is ~0.13 (R-D). At the only
   empirical serial CV (26.4%, healthy adults), the SAME 104-draw window gives a
-  contrast of ~0.7, and reaching 0.20 needs of order a THOUSAND draws per window --
+  contrast of ~0.48, and reaching 0.20 needs of order ~590 draws per window --
   not deliverable in a monitoring programme. At the low end of the range (8.2%) it
-  is ~0.21 at 104 draws (borderline); at the high end (61.1%) it is hopeless.
+  is ~0.18 at 104 draws (borderline); at the high end (61.1%) it is hopeless.
   So R-D's 0.13 is a best-case floor at an assay CV far below the only measured
   serial variability.
 """)
