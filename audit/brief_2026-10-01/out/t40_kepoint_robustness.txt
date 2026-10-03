@@ -1,0 +1,71 @@
+============================================================================================
+  (1) THE 0.19 CONDITIONS ACROSS THE CEILING x LOAD GRID, AND vs THE MARGIN
+============================================================================================
+
+  k_e prior 0.2 (the value required), K_e known.  cell = sd(ln theta)  [margin mu, %% of normal]
+       ceiling            L=180            L=200            L=220            L=240
+            50    0.183*[ 0.7%]          (no SS)          (no SS)          (no SS)
+           100    0.195*[ 2.3%]    0.194*[ 1.7%]    0.194*[ 1.0%]    0.194*[ 0.3%]
+           150    0.210 [ 4.0%]    0.209 [ 3.3%]    0.209 [ 2.7%]    0.210 [ 2.0%]
+           200    0.226 [ 5.7%]    0.227 [ 5.0%]    0.227 [ 4.3%]    0.228 [ 3.7%]
+      RANGE 0.183 to 0.228;  5/13 valid cells reach 0.20
+      sd vs margin (ascending mu):  0.3%->0.194, 0.7%->0.183, 1.0%->0.194, 1.7%->0.194, 2.0%->0.210, 2.3%->0.195, 2.7%->0.209, 3.3%->0.209, 3.7%->0.228, 4.0%->0.210, 4.3%->0.227, 5.0%->0.227, 5.7%->0.226
+
+  k_e prior 0.054 (the IV tracer's precision), K_e known.  cell = sd(ln theta)  [margin mu, %% of normal]
+       ceiling            L=180            L=200            L=220            L=240
+            50    0.181*[ 0.7%]          (no SS)          (no SS)          (no SS)
+           100    0.188*[ 2.3%]    0.187*[ 1.7%]    0.186*[ 1.0%]    0.185*[ 0.3%]
+           150    0.195*[ 4.0%]    0.194*[ 3.3%]    0.193*[ 2.7%]    0.193*[ 2.0%]
+           200    0.202 [ 5.7%]    0.201 [ 5.0%]    0.200 [ 4.3%]    0.200*[ 3.7%]
+      RANGE 0.181 to 0.202;  10/13 valid cells reach 0.20
+      sd vs margin (ascending mu):  0.3%->0.185, 0.7%->0.181, 1.0%->0.186, 1.7%->0.187, 2.0%->0.193, 2.3%->0.188, 2.7%->0.193, 3.3%->0.194, 3.7%->0.200, 4.0%->0.195, 4.3%->0.200, 5.0%->0.201, 5.7%->0.202
+
+  READING (1): the 0.19 is NOT a property of Model B generally -- it is a property
+  of a LOW, unmeasured ceiling. With K_e known and the k_e prior at 0.2 (or the
+  tracer's 0.054), only the low-ceiling cells (k_e <= 100) reach 0.20; at k_e =
+  150-200 every cell misses (into the 0.3-0.5 range). Within a ceiling, sd is
+  nearly flat in the managed load, so it does NOT track the margin mu -- it tracks
+  the enzyme SHARE, which the ceiling sets. And the cells that do reach 0.20 are
+  the low-ceiling ones, which are the most fragile (smallest mu at a given load).
+  So "0.19 at the gate" is a POINT at a low ceiling with K_e known, not a finding
+  that survives the plausible ceiling range.
+
+============================================================================================
+  (2) K_e TOLERANCE AND PROVENANCE  (k_e=100, L=220, k_e prior = tracer 0.054)
+============================================================================================
+
+  PROVENANCE: K_e is the half-saturation of the alternative (non-PCC) route. In
+  the repo it is a bare default (ParamsB.Ke = 300 in src/common/models.py) with NO
+  entry in the parameter-provenance registry (src/common/params.py) and NO human
+  measurement behind it -- the same gap as k_e itself (round-6: no human non-PCC
+  disposal constant exists). And the paper's exchange degeneracy is EXACTLY
+  (theta, K_m) <-> (k_e, K_e): the pair is unidentified without a selective,
+  time-varying input (A1_supplementary). So "K_e known" does not tighten a
+  nuisance -- it collapses the degeneracy by fiat, assuming the very constant whose
+  unknownness is the degeneracy.
+
+  sd(ln theta) as a function of sd(ln K_e):
+          sd(ln K_e)    sd(ln theta)
+      known (pinned)           0.186  <= 0.20
+                0.05           0.186  <= 0.20
+                0.10           0.187  <= 0.20
+                0.20           0.192  <= 0.20
+                0.30           0.200  <= 0.20
+                0.50           0.223
+                1.00           0.307
+      free (no prior)           9.337
+
+  READING (2): sd(ln theta) crosses 0.20 at sd(ln K_e) ~ 0.30.
+  So the gate is reached only while K_e is known to within ~30%;
+  beyond that the exchange degeneracy reopens and sd climbs back toward the
+  record-only value. Since no human K_e exists, this tolerance is not met by any
+  data the repo or the literature supplies -- the 0.19 rests on assuming it.
+
+  THE PATTERN (belongs in the decision): every route that reaches target
+  cross-sectionally does so CONDITIONAL ON AN UNMEASURED MULTIPLICATIVE/SHAPE
+  CONSTANT -- kappa (ex vivo mapping), c (breath recovery), and now K_e (the
+  alternative route's half-saturation). Three different routes, three different
+  unmeasured constants, each of which the repository and the human literature
+  leave unfixed. That recurrence is itself the finding: the cross-sectional
+  target is reachable only by importing a constant nobody has measured.
+
