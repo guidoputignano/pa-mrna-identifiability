@@ -124,13 +124,17 @@ def item1_tolerance():
             fa = f"{req_a:.2f}" if np.isfinite(req_a) else "inf"
             print(f"      {f'{a} vs {b}':>10}  {gaps[(a,b)]['rate']:>7.0f}  {fb:>10}  {fl:>14}  {fa:>10}")
         print()
-    print("""  READING: the user's linearisation dtau = dtheta/(lambda Delta_trough) is exact for
-  the FINE grid (14 vs 15) and progressively UNDERSTATES the tolerance for the coarse
-  grid, because Delta_trough grows faster than linearly as tau shrinks -- so the coarse
-  decision is even looser than the tangent says. Under the routine-load reading the drug
-  dominates theta_crit at the trough and every tolerance is large; under the conservative
-  fold-1.5 reading the drug no longer dominates and the fine grid tightens to ~0.08-0.13.
-  The fixed-amplitude regime (a) gives still wider gaps, so same-rate (b) is conservative.""")
+    print("""  READING: the user's linearisation dtau = dtheta/(lambda Delta_trough) is a tangent
+  approximation, good to tens of per cent but not exact: against the same-rate column it
+  OVERSTATES the tolerance at the fine and mid grids (deriv/req ~1.31 at 14v15, ~1.11 at
+  14v10) and UNDERSTATES at the coarse 14v7 (~0.92), because Delta_trough is convex in tau
+  and the secant (the true capacity gap) departs from the tangent in both directions as the
+  step widens. The qualitative message is unchanged -- the coarse tolerances are large --
+  but the exact gaps, not the tangent, are what the table reports. Under the routine-load
+  reading the drug dominates theta_crit at the trough and every tolerance is large; under
+  the conservative fold-1.5 reading the drug no longer dominates and the fine grid tightens
+  to ~0.08-0.13. The fixed-amplitude regime (a) gives wider gaps, so same-rate (b) is
+  conservative.""")
     return gaps
 
 
