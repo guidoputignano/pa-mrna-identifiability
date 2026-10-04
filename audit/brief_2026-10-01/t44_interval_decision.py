@@ -215,22 +215,34 @@ def item3_full_uncertainty():
             acc, unamb = determined_fraction(thc, sd)
             print(f"      {lab:>38}  {sd:>6.2f}  {acc:>13.1%}  {unamb:>11.1%}")
     print(f"""
-  READING: under Model C's intrinsic margin (theta_crit^int(s_base=600) = {thc_int:.1f} uM/d,
-  carrying NO m_tol convention) the trough increment Delta_trough(14)=400 alone EXCEEDS
-  theta_crit, so every PA patient clears the bar at the booked interval regardless of
-  residual capacity: 100% determined at any precision -- the convention-free headline.
-  Under Model A a PA population straddles the safety boundary theta_crit-Delta_trough(14),
-  so at the record sd 3.05 classification is weak (61% at fold 1.0, 78% at fold 1.5; 0%
-  unambiguous either way) and only at the managed sd 0.29 reaches 93-100%. The
-  decision survives the full uncertainty where the PARAMETER never does -- but under
-  Model A that survival still needs the managed precision for boundary patients; it is
-  measurement-free only under Model C's convention-free margin.""")
+  READING: the operative number for a per-patient booking is the DETERMINED SUBGROUP --
+  the fraction whose choice no measurement could change (true theta more than Z*sd from
+  the nearest boundary). At the record sd 3.05 that subgroup is 0% under Model A (no
+  patient is far enough from the single safety boundary; correct-choice is only 61%/78%,
+  barely above the ~52% base rate), rising to 72% (fold 1.0) / 100% (fold 1.5) only at
+  the managed 0.29. So for an individual booking at the record precision the interval
+  choice is NOT settled without measurement: the wide interval gaps (item 2) describe the
+  grid, not a patient sitting near the boundary. Item 2 (how far apart the intervals are)
+  and item 3 (whether a given patient's choice is pinned) answer different questions, and
+  the per-patient one is the operative one.
+
+  Model C reads 100% for a different and WEAKER reason than "the boundary is well
+  resolved": theta_crit^int = {thc_int:.1f} < Delta_trough(14) = 400, so NO patient is near
+  the boundary at all -- every patient clears tau=14 regardless of residual capacity. It
+  determines the decision by REMOVING it. That is a testable consequence: Model C predicts
+  the uniform fortnightly regimen is adequate for every PA patient, checkable against the
+  trial's own marker reductions (the ~70% C3 fall reported for mRNA-3927) -- if some
+  patients are inadequately controlled at the booked interval, the intrinsic margin is too
+  low or lambda is shorter than assumed. The decision survives the full uncertainty where
+  the PARAMETER never does, but under Model A only at the managed precision, and under
+  Model C only because the drug removes the boundary -- not because theta is resolved.""")
 
 
 # ---------------------------------------------------------------------------
 def item4_lambda():
+    from scipy.optimize import brentq
     print("\n" + "=" * 92)
-    print("  ITEM 4. SENSITIVITY TO lambda (which the repo ASSUMES, and nothing measures)")
+    print("  ITEM 4. lambda IS THE SIXTH UNMEASURED CONSTANT -- AND ITS TOLERANCE IS THE SPEC")
     print("=" * 92)
     print("""
   PROVENANCE: design/run.py sets LAMBDA = ln2/3.5 /day, labelled ASSUMED -- "Nothing
@@ -238,27 +250,56 @@ def item4_lambda():
   sole support is a translational PK model's k_deg = 0.0075/h for PCC protein, fitted in
   mouse/rat/monkey and allometrically scaled, inside a two-compartment model whose own
   protein half-life is ~7 d. lambda is not a human measurement, and it enters the trough
-  -- and so every tolerance above -- directly.
+  -- and so every result above -- directly.
 """)
     print(f"  Delta_trough(14), same-rate, and the fold-1.0 14-vs-15 required sd, across half-life:\n")
     print(f"      {'half-life (d)':>14}  {'lambda (/d)':>11}  {'Delta_trough(14)':>16}  {'req sd 14v15':>13}")
-    thc = theta_crit_A(1.0)
+    thc10 = theta_crit_A(1.0)
     for hl in (2.0, 3.0, 3.5, 5.0, 7.0):
         lam = np.log(2.0) / hl
         tr14 = trough(14, "rate", lam); tr15 = trough(15, "rate", lam)
-        thb = thc - tr15
+        thb = thc10 - tr15
         req = abs(tr14 - tr15) / thb if thb > 0 else float("inf")
         rq = f"{req:.2f}" if np.isfinite(req) else "inf"
         print(f"      {hl:>14.1f}  {lam:>11.4f}  {tr14:>16.1f}  {rq:>13}")
+    print("\n  Delta_trough(14) swings a factor of %.0f across a 2-7 d half-life, so "
+          "'the drug term\n  dominates theta_crit' is TRUE at one end and FALSE at the other."
+          % (trough(14, "rate", np.log(2)/7.0) / trough(14, "rate", np.log(2)/2.0)))
+
+    # THE SPECIFICATION: how well must lambda be known for each headline to hold?
+    thc_int = MC.theta_crit_intrinsic(ParamsC(), MC.S_BASE)
+    HL0 = 3.5
+    hlC = brentq(lambda hl: trough(14, "rate", np.log(2)/hl) - thc_int, 0.5, 30.0)
+
+    def req_14v10(hl):
+        lam = np.log(2)/hl
+        g = abs(trough(10, "rate", lam) - trough(14, "rate", lam))
+        thb = thc10 - trough(14, "rate", lam)
+        return g/thb if thb > 0 else float("inf")
+    hl_rec = brentq(lambda hl: req_14v10(hl) - SD_RECORD, 3.0, 3.58)
+
     print("""
-  READING: a shorter half-life (faster decay) drains the trough, lowering the whole
-  increment toward the safety boundary and tightening the fine grid; a longer half-life
-  raises the trough so high the 15-day interval is safe for everyone (req sd infinite,
-  trivially determined). The coarse-grid headline is robust across the plausible range
-  (the gaps still dwarf a deep-PA theta_base), but the exact boundary interval and the
-  fine-grid precision move sharply with an UNMEASURED human parameter. The single
-  measurement the interval decision turns on is not sd(ln theta) at all -- it is the human
-  decay rate lambda of the therapeutic increment.""")
+  THE lambda TOLERANCE, stated as a specification (like the 19% flux and the 30% K_e):""")
+    print(f"      - Model C headline (every patient clears tau=14, 100% determined) holds while")
+    print(f"        Delta_trough(14) > theta_crit^int = {thc_int:.0f}: half-life > {hlC:.2f} d, "
+          f"i.e. ~{100*(HL0-hlC)/HL0:.0f}% margin below the")
+    print(f"        assumed 3.5 d (lambda not more than ~{100*(np.log(2)/hlC - np.log(2)/HL0)/(np.log(2)/HL0):.0f}% above assumed).")
+    print(f"      - Coarse 14-vs-10 determined at the record 3.05 (fold 1.0) holds only for")
+    print(f"        half-life > {hl_rec:.2f} d -- lambda within ~{100*(np.log(2)/hl_rec - np.log(2)/HL0)/(np.log(2)/HL0):.0f}% of assumed. This boundary is")
+    print(f"        knife-edge (theta* ~ 30 at fold 1.0), so the fold-1.0 coarse headline is FRAGILE")
+    print(f"        to lambda; the robust version is Model C's ~25% margin.")
+    print("""
+  READING: the round-11 conclusion is therefore conditional on an unmeasured human
+  constant, exactly like kappa (ex vivo), c (breath), K_e (Model-B shape), the Model-C
+  shape constants, and phi (plasma/pool partition). lambda is the SIXTH instance -- and
+  the first that gates the DECISION rather than the estimate of theta. The specification
+  the report ends on is not a sd(ln theta) at all: it is 'measure the human decay rate
+  lambda of the therapeutic increment to within ~5-25% (tighter for the routine-load
+  coarse grid, looser for the convention-free Model-C claim).' WHAT WOULD MEASURE IT: the
+  mRNA-3927 programme already did dose selection by population PK/PD modelling
+  (dose_selection_poster), so the trial's own PK data should contain lambda -- the decay
+  of PCC activity / the marker response between doses. It is the one number the whole
+  decision turns on, and it has been measured; it is just not in this repository.""")
 
 
 def main():
