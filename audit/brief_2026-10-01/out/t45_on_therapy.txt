@@ -1,0 +1,97 @@
+============================================================================================
+  ROUND 12. TWO YEARS ON THERAPY: RETROSPECTIVE ADJUSTMENT ON THE ACCUMULATED RECORD
+============================================================================================
+
+  ITEM 1. WHAT TWO YEARS OF DOSING BUYS (sd(ln theta), median over 24 intake draws)
+
+  PREMISE CORRECTION: the 3.05 baseline is NOT pre-therapy -- it is ALREADY the regular
+  on-therapy monthly record. The genuinely pre-therapy (flat, no increment) record is
+  8.56; the regular 14-day dose train sampled monthly is 3.05. So most of the
+  lift (8.6 -> 3.0) is bought by the dose train ITSELF -- the increment's
+  phase-drifting excursion against monthly sampling is already Prop-2 excitation. The
+  question is what the DATED EVENTS and more sampling add on top.
+
+    (a) schedule richness, monthly sampling:
+                                    regular 14 d  sd(ln theta) = 3.05
+                      + interval jitter (sd 2 d)  sd(ln theta) = 2.90
+                      + jitter + 8% missed doses  sd(ln theta) = 2.45
+             + jitter + misses + 28 d supply gap  sd(ln theta) = 2.28
+
+    (b) sampling density, with the full event schedule, and the determined subgroup
+        (grid {7,10,14}, routine-load theta_crit = 430):
+         sampling (draws/2 yr)  sd(ln theta)   correct   determined
+                  monthly (25)          2.28       64%           0%
+              fortnightly (52)          1.69       69%           0%
+                  weekly (104)          1.27       73%           0%
+           alternate-day (365)          0.75       83%          27%
+
+  READING: on therapy the increment drives the marker over an ~8-10x range between dose
+  and trough; the monthly draws sample it at drifting phase, and dated events (jitter,
+  misses, a supply gap) widen it. This separates theta from k_e -- Prop 2, at no risk,
+  because the booked interval is safe for all (t44). But the honest answer to "can any
+  patient's interval be changed on evidence after two years" is mostly NO at realistic
+  cadence: sd(ln theta) is sampling-limited (~1/sqrt(n): monthly 2.3, weekly 1.3,
+  alternate-day 0.75) and never reaches the ~0.29 that would individualise the whole
+  cohort, so the DETERMINED SUBGROUP is 0% through weekly sampling and reaches only ~27%
+  at alternate-day (365 draws). Two years of passive observation tightens theta
+  meaningfully (8.6 -> 2.3, better with density) but does not make the {7,10,14} choice
+  individually determined for most. (The safe, evidence-gated lever is lengthening, which
+  is one-sided and far more favourable -- item 3.)
+
+============================================================================================
+  ITEM 2. IS lambda RECOVERABLE FROM THE SAME RECORD?  (it is -- the clear win)
+============================================================================================
+
+    Event schedule; sd(ln lambda), and the cost to theta of freeing lambda:
+                      sampling  sd(ln lambda)   sd(ln th)|lam fixed   sd(ln th)|lam free
+                  monthly (25)          0.055                  2.28                 3.45
+              fortnightly (52)          0.046                  1.69                 3.01
+                  weekly (104)          0.037                  1.27                 2.45
+           alternate-day (365)          0.023                  0.75                 1.61
+
+  READING: the last round's lambda SPECIFICATION was ~5% (routine-load coarse grid) to
+  ~25% (Model C headline). sd(ln lambda) is the relative precision on lambda, and the
+  monthly record already delivers ~0.055 (5.5%) -- comfortably inside the 25% spec and
+  essentially at the 5% spec, tightening to ~0.02 with dense sampling. So the accumulated
+  dosing record SELF-CALIBRATES the one constant the decision turns on, and the trial's
+  own population-PK lambda becomes a CROSS-CHECK rather than a prerequisite. The honest
+  cost: freeing lambda does degrade theta (e.g. monthly 2.3 -> ~3.5), because theta and
+  lambda share some of the dose-response direction -- but theta was not individualising
+  the decision anyway (item 1), whereas lambda IS recovered to spec. This is the asymmetry
+  that matters: the record gives up little that was usable (theta) to pin the thing that
+  was binding (lambda).
+
+============================================================================================
+  ITEM 3. LENGTHENING IS THE RISKY DIRECTION -- A ONE-SIDED TEST, NOT A CLASSIFICATION
+============================================================================================
+
+  Shortening is safe and only costs money; lengthening (14 -> 15 or 21 d) risks a crisis.
+  So lengthen a patient only when the record is confident the LONGER trough still clears
+  theta_crit: a one-sided test -- lengthen iff the lower 95% bound on
+  mu_long = theta_base + Delta_trough(tau_long) - theta_crit exceeds 0.
+  Delta_trough: 14d=400, 15d=347, 21d=143 uM/d;
+  Model C theta_crit^int = 151. At 15 d the trough alone clears theta_crit for
+  everyone (no evidence needed); at 21 d it does NOT (143 < 151), so
+  lengthening to 21 d is the real evidence-gated decision.
+
+    LENGTHEN-ELIGIBLE fraction (lower 95% bound on mu_long > 0), Model C theta_crit:
+                    record / precision  sd(ln th)   to 15 d   to 21 d
+                      pre-therapy flat       8.56      100%        0%
+            regular monthly (the 3.05)       3.05      100%        0%
+                   event, monthly (25)       2.28      100%        0%
+               event, fortnightly (52)       1.69      100%        5%
+                   event, weekly (104)       1.27      100%       26%
+            event, alternate-day (365)       0.75      100%       51%
+                 managed-load protocol       0.29      100%       73%
+
+  READING: lengthening to 15 d is safe for the whole cohort under Model C regardless of
+  precision (the trough dominates), so it needs no evidence -- a free burden reduction.
+  Lengthening to 21 d is the genuine one-sided decision, and here the two-year record
+  DOES deliver an actionable, safe subgroup: the eligible fraction climbs with sampling
+  density (0% monthly -> ~50% at alternate-day), each patient lengthened only on a
+  confident lower bound, never a point estimate. So the operative conclusion is not the
+  symmetric classification (which the record cannot settle) but a one-sided, safe-by-
+  construction lever: shorten freely, lengthen to 15 d for all, and lengthen to 21 d for
+  the growing subgroup whose own accumulated record proves it, with lambda self-calibrated
+  from the same data.
+

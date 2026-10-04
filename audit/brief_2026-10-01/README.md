@@ -57,6 +57,7 @@ It builds on the repository rather than beside it. The footing (convention A, th
 | `t42_serial_cv.py` | round 10, item 1: R-D against the only empirical serial-CV anchor (C3 CVi 26.4%) — contrast and draws/window for 0.20 across 8.2-61.1% | 1 min |
 | `t43_plasma_pool.py` | round 10, item 2: the plasma-vs-pool compartment defect in Model C — free carnitine never earns its keep; the partition is a fifth unmeasured constant | 3 min |
 | `t44_interval_decision.py` | round 11: the dosing-INTERVAL decision as a trough condition θ_base+Δ_trough>θ_crit — the interval tolerance on θ, compared to the record; the coarse grid (and all of Model C) is determined with no new measurement; the decision turns on λ, which is unmeasured | 1 min |
+| `t45_on_therapy.py` | round 12: retrospective interval adjustment on a two-year on-therapy record — what the dated dose schedule buys for θ (sampling-limited, premise correction: 3.05 is already on-therapy), whether λ self-calibrates from the same record (it does, ~5.5%), and the one-sided lengthening test (15 d free, 21 d evidence-gated) | 1 min |
 | `r3_figs.py` | round 3 figures (flux contour, k_e×sampling, asymptote, excursion/safety) | 2 min |
 | `*_recheck3.py` | independent verifier re-derivations of the round-3 scripts | — |
 | `*_recheck.py` | an independent verifier's re-derivation of each follow-up script, sharing no code with it | 3–25 min |
@@ -72,7 +73,7 @@ for s in t0_footing t1_identifiability t2_cohort t3_variance t4_set t5_value t7_
          t18_set_id t19_residuals t20_saturation t21_sensitivity t22_longitudinal t23_antibiotic t24_contrast_stress t25_drug_cv_marker t26_multiobservable t27_exvivo_kappa t28_ratio_route \
          t29_mapping_scatter t30_monitoring_confounders t31_breath_contrast t32_massbalance \
          t33_model_b t34_breath_stress t35_managed_load t36_reconcile_remark15 \
-         t37_contrast_audit t38_model_dependent t39_affine_check t40_kepoint_robustness t41_model_c t42_serial_cv t43_plasma_pool t44_interval_decision; do
+         t37_contrast_audit t38_model_dependent t39_affine_check t40_kepoint_robustness t41_model_c t42_serial_cv t43_plasma_pool t44_interval_decision t45_on_therapy; do
   python -W error $s.py > out/$s.txt
 done
 python -W error r3_figs.py   # round-3 figures
