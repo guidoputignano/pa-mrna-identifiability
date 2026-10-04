@@ -84,7 +84,7 @@ def main():
       repo's single-exponential increment via the decision-relevant quantity (the trough)
       therefore gives ~3-5 d, which CONVERGES with the human single-exp value (3.6 d) rather
       than the 7-d terminal. So reporting the decision "at 7 d" (below) uses the naive terminal
-      mapping and OVERSTATES the trough; the proper mapping of either source lands at ~3.5-5 d
+      mapping and OVERSTATES the trough; the proper mapping of either source lands at ~3-5 d
       -- right at the thresholds. The exact 2-comp value is structure-dependent (equations
       unpublished), so the three stated points (3.6 / 3.8 / 7 d) are carried forward with 7 d
       flagged as the optimistic end.""")
@@ -116,12 +116,12 @@ def main():
         except Exception:
             hl = float("nan")
         marg = 100 * (3.6 - hl) / hl if np.isfinite(hl) else float("nan")
-        print(f"      {lab:>56}  {hl:>9.2f} d  {marg:>+13.0f}%")
+        print(f"      {lab:>56}  {hl:>9.2f} d  {marg:>+12.1f}%")
     print(f"""
   READING: the correction runs the WRONG WAY. The repo's old 3.5 d sat just BELOW the
   21-day floor (3.55 d), so round 13 found 21-day needs theta (and the record cannot supply
   it); the human-measured 3.6 d sits just ABOVE it, flipping 21-day to "free for all" -- but
-  by only ~1%, a knife-edge. The Model-C 14-/15-day safe-for-all headlines clear 3.6 d by a
+  by only ~1.5%, a knife-edge. The Model-C 14-/15-day safe-for-all headlines clear 3.6 d by a
   comfortable ~30-37%; the coarse-grid resolvability clears by only ~8%. And human HEPATIC
   PCC very likely turns over FASTER than fibroblast (liver is the fastest-turnover tissue,
   Rolfs 2021), so the true hepatic half-life may sit at or below 3.6 d -- toward every
@@ -169,7 +169,7 @@ def main():
   patient is in. So round 12's self-calibration is better stated as a PREDICTION the trial's
   own marker record could settle: measure lambda from the dose-timing response and it will
   say whether human hepatic PCC turns over near 3.6 d (headlines on the edge) or near 7 d
-  (headlines comfortable). The 3.6-vs-3.8 d distinction is NOT resolvable (<1 sigma), and
+  (headlines comfortable). The 3.6-vs-3.8 d distinction is NOT resolvable (<1.5 sigma), and
   need not be -- both sit on the same side of the knife-edge pattern. The decision does not
   need lambda assumed; it needs lambda READ, and the record reads it.""")
 
