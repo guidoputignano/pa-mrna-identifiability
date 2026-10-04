@@ -1,0 +1,37 @@
+============================================================================================
+  ROUND 16. BRIDGING HUMAN HEPATIC PCC TURNOVER, AND P(below the 3.5452 d crossing)
+============================================================================================
+
+  Bridge: human_liver t_half = human_fibroblast (3.6 d) * (liver/fibroblast ratio r),
+  r taken from mouse. Crossing = 3.5452 d (round 15). Uncertainty: anchor sd(ln)=0.20,
+  ratio sd(ln)=0.35, per-protein sd(ln)=0.35 -> combined sd(ln) ~ 0.53
+  (a factor ~1.7 one-sigma band -- deliberately wide).
+
+                                         ratio reading  bridged median          5-95% band  P(hepatic<cross)
+         A  cross-study medians (r=1.44, liver slower)           5.2 d         [2.2, 12.5]              24%
+                  B  like-for-like degradation (r=1.0)           3.6 d          [1.5, 8.7]              49%
+        C  liver fastest in vivo (r=0.8, liver faster)           2.9 d          [1.2, 6.9]              65%
+
+      COMBINED (center r=1, ratio sd widened to span A-C)           3.6 d          [1.3, 9.8]              49%
+
+  READING. There is NO clean paired mouse fibroblast-vs-liver dataset for PCC: the
+  fibroblast numbers are cultured (Swovick) or [3H]biotin (Chandler), the liver numbers
+  in-vivo (Rolfs/Price/Kim) or exogenous-mRNA (Jiang/Attarwala); no study has both, and
+  no mouse fibroblast PCC exists. The only available ratio is a cross-study ratio of
+  tissue MEDIANS, confounded by culture-vs-in-vivo (division dilutes cultured protein and
+  inflates its apparent turnover). The three defensible readings DISAGREE ON DIRECTION --
+  liver slower (A), equal (B), or faster (C) -- so the bridged estimate spans ~2.9-5.2 d
+  and P(hepatic < crossing) spans ~65% to ~24%, centred near 50%. The bridge
+  therefore CANNOT determine which side of the 3.5452 d crossing human hepatic PCC falls
+  on; it is consistent with either. The striking like-for-like coincidence -- human
+  fibroblast PCC (3.6 d) = mouse liver median (3.6 d) = mouse liver PCC intrinsic (3.8 d)
+  -- argues the tissue effect is small (r ~= 1), which lands the estimate ~3.6 d, almost
+  exactly ON the crossing, where the probability is ~50/50 by construction.
+
+  CONCLUSION: the bridge is uninformative about the side of the crossing -- which is a
+  real answer: the trial record is the only route. Round 12 shows the on-therapy record
+  reads lambda at 7-18 sigma (separating 3.6 from 7 d decisively), and it separates the
+  two sides of a 3.5452 d crossing a fortiori. The single decision-relevant measurement --
+  human HEPATIC PCC turnover -- cannot be bridged from fibroblast data and must be READ,
+  either from a dedicated hepatic measurement or from NCT04159103's accumulated record.
+

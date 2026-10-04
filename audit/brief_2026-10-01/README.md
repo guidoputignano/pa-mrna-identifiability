@@ -61,6 +61,7 @@ It builds on the repository rather than beside it. The footing (convention A, th
 | `t46_timing.py` | round 13: WHEN — timing of each step. 21-day eligibility by NLS simulation (not FIM: the margin is tail-dominated, §7b skew) — it does NOT accrue with record length, superseding t45's optimism; λ crosses its spec early (FIM); the 15-day step needs no record; no review unlocks 21 d (needs the active protocol) | 3 min (diagnostic) |
 | `t47_fim_audit.py` | round 14: the FIM-vs-simulation audit. States the method lesson (log-scale sd reliable, natural-scale/one-sided decision tail-dominated); spot-checks by NLS the two at-risk claims (round-11 determined-subgroup 61%→54%, cross-sectional at 5%) — both survive; scans the posterior correlations for hidden favourable cancellations (θ–k_e, θ–λ both already simulation-handled; no third) | 2 min |
 | `t48_lambda_literature.py` | round 15: λ re-grounded on literature (human 3.6 d Chandler 1985; mouse ~7 d Attarwala). Which λ the trough sees (2-comp → effective 3–5 d); the decision at 3.6/3.8/7 d and the fail half-lives (14d 2.62, 15d 2.75, coarse 3.32, 21d 3.55); every headline flips inside the 3-fold band (λ the dominant uncertainty); the record discriminates 3.6 vs 7 d at 7–18 σ (a test, not self-calibration) | 1 min |
+| `t49_hepatic_bridge.py` | round 16: can human hepatic PCC turnover be bridged from the fibroblast value via the mouse tissue ratio? No clean paired dataset exists; the three defensible ratio readings disagree on direction, so P(hepatic < 3.5452 d crossing) spans ~24–65 %, centred ~50 % — the bridge cannot settle the side, so the trial record is the only route | 1 min |
 | `r3_figs.py` | round 3 figures (flux contour, k_e×sampling, asymptote, excursion/safety) | 2 min |
 | `*_recheck3.py` | independent verifier re-derivations of the round-3 scripts | — |
 | `*_recheck.py` | an independent verifier's re-derivation of each follow-up script, sharing no code with it | 3–25 min |
@@ -76,7 +77,7 @@ for s in t0_footing t1_identifiability t2_cohort t3_variance t4_set t5_value t7_
          t18_set_id t19_residuals t20_saturation t21_sensitivity t22_longitudinal t23_antibiotic t24_contrast_stress t25_drug_cv_marker t26_multiobservable t27_exvivo_kappa t28_ratio_route \
          t29_mapping_scatter t30_monitoring_confounders t31_breath_contrast t32_massbalance \
          t33_model_b t34_breath_stress t35_managed_load t36_reconcile_remark15 \
-         t37_contrast_audit t38_model_dependent t39_affine_check t40_kepoint_robustness t41_model_c t42_serial_cv t43_plasma_pool t44_interval_decision t45_on_therapy t46_timing t47_fim_audit t48_lambda_literature; do
+         t37_contrast_audit t38_model_dependent t39_affine_check t40_kepoint_robustness t41_model_c t42_serial_cv t43_plasma_pool t44_interval_decision t45_on_therapy t46_timing t47_fim_audit t48_lambda_literature t49_hepatic_bridge; do
   python -W error $s.py > out/$s.txt
 done
 python -W error r3_figs.py   # round-3 figures
