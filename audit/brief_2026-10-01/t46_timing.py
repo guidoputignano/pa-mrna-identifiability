@@ -135,7 +135,7 @@ def main():
                   f"{np.percentile(mh,5):>7.0f}  {mh.std():>10.0f}  {np.mean(mh>0):>11.0%}")
     print(f"""
   READING: the NLS margin estimate does NOT tighten with record length. sd(mu_hat) stays
-  ~130-160 uM/d -- comparable to theta_crit^int ({THC_INT:.0f}) itself -- from 6 months out to
+  ~105-165 uM/d -- comparable to theta_crit^int ({THC_INT:.0f}) itself -- from 6 months out to
   5 years, and its lower (p5) tail stays below 0 at every capacity, so the one-sided lower
   bound never cleanly clears 0 and does not improve with time. This RESOLVES the FIM
   ambiguity noted in the header: the log-normal MC's optimism (a positive lower bound at 2

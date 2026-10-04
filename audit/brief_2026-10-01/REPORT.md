@@ -931,7 +931,7 @@ Every round-11/12 result was stated at "two years" — the record length we inhe
 | 65 (+57) | 121, 74% | 139, 76% | 135, 74% |
 | 20 (+12) | 109, 70% | 126, 66% | 119, 62% |
 
-sd(μ̂) stays ~130–160 µM/d — comparable to θ_crit^int (151) itself — from 6 months out to 5 years, and the lower tail stays below zero at every capacity, so the one-sided bound never cleanly clears 0. **This resolves the FIM ambiguity: the MC optimism was an artefact of ignoring NLS estimator bias/heavy tails; the pessimistic reading is right.** 21-day lengthening is **not supportable from the passive on-therapy record at any horizon** — there is no crossing time to report. (This supersedes R-K item 3, whose 51–73 % lengthen fractions used a representative, λ-fixed FIM sd and so were badly optimistic — a changed claim.)
+sd(μ̂) stays ~105–165 µM/d — comparable to θ_crit^int (151) itself — from 6 months out to 5 years, and the lower tail stays below zero at every capacity, so the one-sided bound never cleanly clears 0. **This resolves the FIM ambiguity: the MC optimism was an artefact of ignoring NLS estimator bias/heavy tails; the pessimistic reading is right.** 21-day lengthening is **not supportable from the passive on-therapy record at any horizon** — there is no crossing time to report. (This supersedes R-K item 3, whose 51–73 % lengthen fractions used a representative, λ-fixed FIM sd and so were badly optimistic — a changed claim.)
 
 **2. λ crosses early, and uniformly.** By contrast, λ — the binding constant, which governs the trough — is pinned long before anything else, and θ_base-independently:
 
