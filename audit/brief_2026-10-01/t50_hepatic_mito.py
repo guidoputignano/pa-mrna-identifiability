@@ -76,8 +76,10 @@ def main():
   ~50-65%. The 21-day safe-for-all step is therefore MORE likely to hold (~65-70%) than
   round 15's "toward every threshold" framing implied -- the directional claim there was
   wrong because it used the whole-liver median rather than the mitochondrial-matrix one, and
-  PCC is a matrix enzyme. BUT the band still straddles: at the fast end of the plausible
-  range (3-3.6 d) the 21-day step still needs theta, and P(below) is still ~36-49%. So the
+  PCC is a matrix enzyme. BUT the band still straddles: a hepatic half-life below the 3.545 d
+  crossing (the lower part of the plausible 3-6 d band) still puts the 21-day step in the
+  needs-theta regime, and P(hepatic < crossing) is ~30% at the central 4.3 d, rising toward
+  ~50% only if the true value is near the 3.6 d fibroblast anchor. So the
   correction reverses the direction without settling the side -- the decision is now more
   likely free than round 15 said, but is still not resolved by the literature. The bridge
   narrows the question (compartment context + four converging anchors put it in 3-6 d) but
