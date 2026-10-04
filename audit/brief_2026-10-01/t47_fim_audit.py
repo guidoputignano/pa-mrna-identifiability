@@ -15,7 +15,7 @@ This script audits where the report relies on that fragile step, and SPOT-CHECKS
 natural-scale crossings that matter most by NLS simulation:
   A. round-11's interval determined-subgroup (61% correct, 0% unambiguous at the record).
   B. the cross-sectional headline at 5% -- can NLS place theta on the natural scale at all?
-and scans the FIM parameter correlations for counterparts to the theta-lambda +0.85 that
+and scans the FIM parameter correlations for counterparts to the theta-lambda +0.87 that
 could hide further favourable (optimistic-direction) cancellations.
 """
 import sys
@@ -141,9 +141,9 @@ def main():
       the heavy lower tail worse than, the FIM, consistent with F6. The headline is a NEGATIVE,
       so the tail-dominance that broke the round-13 OPTIMISTIC claim only reinforces it.""")
 
-    # ---------- CORRELATION SCAN: counterparts to theta-lambda +0.85 ----------
+    # ---------- CORRELATION SCAN: counterparts to theta-lambda +0.87 ----------
     print("""
-  CORRELATION SCAN. The theta-lambda posterior correlation (+0.85) created a favourable
+  CORRELATION SCAN. The theta-lambda posterior correlation (+0.87) created a favourable
   natural-scale cancellation in mu_long that linearisation discarded. Are there other strong
   correlations that could hide further favourable (optimistic-direction) cancellations?""")
     # on-therapy 5-param FIM at theta=150, 24 mo weekly
@@ -159,7 +159,7 @@ def main():
         print(f"      {n:>9} " + " ".join(f"{S[i,j]/(D[i]*D[j]):>8.2f}" for j in range(len(names))))
     print("""
       READING: the strong correlations are theta-k_e (-0.99, the cross-sectional confound)
-      and theta-lambda (+0.85). Both already feed one-sided MARGIN quantities that are now
+      and theta-lambda (+0.87). Both already feed one-sided MARGIN quantities that are now
       handled by SIMULATION, not linearisation: theta-k_e is the paper's own fibre result for
       mu = theta - theta_crit (eq:mufibre: mu linear where theta is quadratic, simulated in the
       paper's fig D3), and theta-lambda is mu_long (round 13, t46). So both favourable
