@@ -80,22 +80,6 @@ def fig_pencil():
     sm = ScalarMappable(norm=MNORM, cmap=CMAP); sm.set_array([])
     cb = fig.colorbar(sm, cax=cax)
     cb.set_label("marker level  m_i  (µM)", fontsize=8.5)
-
-    # inset: the slope identity -1/(K_m+m), dosed band marked (bottom-left of A)
-    axi = ax[0].inset_axes([0.10, 0.10, 0.40, 0.30])
-    axi.set_facecolor("white")
-    mm = np.linspace(1, 600, 400)
-    axi.plot(mm, -1.0 / (T.KM + mm), color=P.INK, lw=1.6)
-    axi.axvspan(Pn["m_obs"].min(), Pn["m_obs"].max(), color=P.C1, alpha=0.22)
-    axi.axhline(-1.0 / T.KM, color=P.MUTED, ls=":", lw=0.8)
-    axi.text(0.04, 0.90, "slope −1/(K_m+m)", transform=axi.transAxes,
-             fontsize=7.2, va="top")
-    axi.text(Pn["m_obs"].max() + 20, -1 / T.KM + 0.0013, "dosed band:\nslope ≈ −1/100",
-             fontsize=6.4, color=P.C1, va="center")
-    axi.set_xlabel("m  (µM)", fontsize=7, labelpad=1); axi.tick_params(labelsize=6.5)
-    axi.set_ylim(-0.011, 0); axi.set_xlim(0, 600)
-    for s in ("top", "right"):
-        axi.spines[s].set_visible(False)
     fig.savefig(P.FIG / "r18_pencil.png", dpi=160, bbox_inches="tight")
     plt.close(fig)
     print("  wrote fig/r18_pencil.png")
@@ -140,43 +124,46 @@ def _trough(tau, thalf):
 
 
 def fig_knife():
-    fig, ax = plt.subplots(figsize=(7.4, 4.8))
-    th = np.linspace(2.8, 6.2, 400)
-    # 3-6 d bridging band
-    ax.axvspan(3.0, 6.0, color=P.C1, alpha=0.08, zorder=0,
-               label="3–6 d bridging band (tissue-ratio work)")
-    # regime shading split at the crossing
-    ax.axvspan(2.8, CROSS, color=P.C2, alpha=0.08, zorder=0)
-    # the trough curve for the 21-day step
-    ax.plot(th, _trough(21, th), color=P.INK, lw=2.4, zorder=4,
-            label="Δ_trough(21 d)")
-    # faint reference: the 14-day step is always far above theta_crit
-    ax.plot(th, _trough(14, th), color=P.MUTED, lw=1.1, ls="--", zorder=3,
-            label="Δ_trough(14 d), for reference")
-    # theta_crit horizontal
-    ax.axhline(THC, color=P.C3, lw=1.8, zorder=4)
-    ax.text(2.84, THC + 12, f"θ_crit = {THC:.0f} µM/d", color=P.C3, fontsize=8.5, va="bottom")
-    # crossing
+    # The decision as a MARGIN that crosses zero: mu(tau) = Delta_trough(tau) - theta_crit.
+    # A zero crossing reads more cleanly than a line intersection, and it keeps the
+    # y-axis a real quantity (safety margin, flux units) so the only percentage on the
+    # figure -- the 1.5% -- is unambiguously a HALF-LIFE (x-axis) difference.
+    fig, ax = plt.subplots(figsize=(7.7, 5.0))
+    th = np.linspace(3.0, 6.0, 400)
+    ax.axvspan(3.0, CROSS, color=P.C2, alpha=0.09, zorder=0)
+    ax.axvspan(CROSS, 6.0, color=P.C3, alpha=0.07, zorder=0)
+    ax.axhline(0.0, color=P.INK, lw=1.3, zorder=3)
+    ax.text(5.97, 10, "margin = 0  (θ_crit = 151 µM/d)", color=P.INK, fontsize=8,
+            ha="right", va="bottom")
+    ax.plot(th, _trough(21, th) - THC, color=P.C1, lw=2.6, zorder=4,
+            label="μ(21 d) = Δ_trough(21) − θ_crit")
+    ax.plot(th, _trough(14, th) - THC, color=P.MUTED, lw=1.1, ls="--", zorder=3,
+            label="μ(14 d), always positive (14-day step never needs θ)")
     ax.axvline(CROSS, color=P.INK, ls=":", lw=1.2, zorder=3)
-    ax.text(CROSS, 690, f"crossing\n{CROSS:.3f} d", ha="center", fontsize=8, color=P.INK)
-    # the two anchors on the curve
-    for x0, lab, col, dy in [(3.5, "repo's assumed\n3.5 d (below)", P.C2, -70),
-                             (3.6, "measured human\n3.6 d — Chandler &\nBallard 1985 (above)", P.C4, 60)]:
-        y0 = _trough(21, x0)
+    for x0, lab, col, dy in [
+            (3.5, f"repo's assumed 3.5 d\nmargin {_trough(21,3.5)-THC:+.0f} µM/d (below)", P.C2, -120),
+            (3.6, f"measured human 3.6 d\n(Chandler & Ballard 1985)\nmargin {_trough(21,3.6)-THC:+.0f} µM/d (above)", P.C4, 120)]:
+        y0 = _trough(21, x0) - THC
         ax.plot(x0, y0, "o", color=col, ms=9, zorder=6,
                 markeredgecolor="white", markeredgewidth=1.0)
         ax.annotate(lab, (x0, y0), textcoords="offset points",
-                    xytext=(-96 if x0 < CROSS else 12, dy), fontsize=7.6, color=col,
+                    xytext=(16, dy), fontsize=7.6, color=col,
                     arrowprops=dict(arrowstyle="-", color=col, lw=0.8))
-    # regime labels
-    ax.text(3.02, 560, "21-day step NEEDS θ\n(θ unmeasurable → undeliverable)",
-            fontsize=8, color=P.C2, style="italic")
-    ax.text(4.5, 560, "21-day step FREE-FOR-ALL\n(no θ needed)",
+    # annotate the x-gap explicitly (crossing -> measured), the source of the 1.5%
+    ax.annotate("", xy=(3.6, 235), xytext=(CROSS, 235),
+                arrowprops=dict(arrowstyle="<->", color=P.INK, lw=1.1))
+    ax.annotate("crossing 3.5452 d → measured 3.6 d:\n0.055 d = 1.5 % in HALF-LIFE",
+                xy=(3.573, 235), xytext=(3.95, 330), fontsize=7.8, color=P.INK,
+                arrowprops=dict(arrowstyle="-", color=P.INK, lw=0.7))
+    ax.text(3.03, -150, "21-day step NEEDS θ\n(θ unmeasurable → undeliverable)",
+            fontsize=8, color=P.C2, style="italic", va="top")
+    ax.text(4.8, 560, "21-day step FREE-FOR-ALL\n(no θ needed)",
             fontsize=8, color=P.C3, style="italic")
-    ax.set_xlim(2.8, 6.2); ax.set_ylim(0, 760)
+    ax.set_xlim(3.0, 6.0); ax.set_ylim(-220, 760)
     ax.set_xlabel("PCC protein half-life  (days)")
-    ax.set_ylabel("trough therapeutic increment  Δ_trough  (µM/d)")
-    ax.set_title("The decision turns on a protein half-life, and the measured value sits ~1.5 % above the crossing",
+    ax.set_ylabel("safety margin  μ = Δ_trough(21) − θ_crit  (µM/d)")
+    ax.set_title("The 21-day step turns on the PCC protein half-life; the measured value\n"
+                 "is 1.5 % (in half-life) past the crossing, a +10 µM/d margin",
                  fontsize=9.5)
     ax.legend(loc="upper left", fontsize=7.8, framealpha=0.92)
     P.finish(ax)
