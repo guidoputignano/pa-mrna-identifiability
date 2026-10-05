@@ -235,11 +235,13 @@ def logcorr(P):
 
 
 # ------------------------------------------------- FIM ellipse for comparison
-def fim_ellipse_linear(theta=TH5, ke=KE, Km=KM, seed=0):
+def fim_ellipse_linear(theta=TH5, ke=KE, Km=KM, seed=0, ke_prior=True):
     """
     The (theta, k_e) 2x2 covariance at FIXED K_m, in LINEAR coordinates, from
-    the flux-space information -- the pencil's own metric. This is the ellipse
-    the PI's x'Px fit reproduces. Delta-method mapping from the log-FIM block.
+    the flux-space information -- the pencil's own metric. Delta-method mapping
+    from the log-FIM block. ke_prior=True adds the report's k_e prior (the
+    headline footing); ke_prior=False is the pure data information, which is the
+    object the prior-FREE weighted pencil fit reproduces.
     """
     r = C.record(theta, seed=seed)
     Q = C.flux_rows(r)                 # cols (ln th, ln Km, b, ln ke)
@@ -247,7 +249,8 @@ def fim_ellipse_linear(theta=TH5, ke=KE, Km=KM, seed=0):
     # keep columns ln theta, ln ke (fix K_m, drop shared bias -> per-line c)
     Qr = Q[:, [C.I_TH, C.I_KE]]
     F = (Qr / sg[:, None] ** 2).T @ Qr
-    F[1, 1] += C.KE_PRIOR ** -2        # the k_e prior, as in the headline
+    if ke_prior:
+        F[1, 1] += C.KE_PRIOR ** -2
     Plog = np.linalg.inv(F)            # cov in (ln th, ln ke)
     J = np.diag([theta, ke])           # d(th,ke)/d(ln th,ln ke)
     return J @ Plog @ J, Plog
@@ -301,6 +304,14 @@ def main():
 
     # ---- item 2: pairwise intersections, narrow vs wide -----------------
     tN, tW = tail_stats(P), tail_stats(W)
+    # honest centering diagnostic: median-of-medians and the negative-median
+    # fraction over many records (the cloud is so pathological the median can
+    # itself go negative, so a "ln-bias" conditioned on positive medians misleads).
+    meds = np.array([np.median(intersections(pencil(seed=s))[0][:, 0])
+                     for s in range(400)])
+    neg_frac = float(np.mean(meds < 0))
+    med_of_meds = float(np.median(meds))                          # signed, over all records
+    ln_bias_all = float(np.log(med_of_meds / TH5)) if med_of_meds > 0 else np.nan
     print("  " + "-" * 88)
     print(f"  ITEM 2.  PAIRWISE INTERSECTIONS  (N=25 -> {tN['n']} pairs), model-free uncertainty")
     print("  " + "-" * 88)
@@ -311,8 +322,10 @@ def main():
   NARROW: the cloud is Cauchy-like (raw mean {tN['mean']:.1e} is meaningless; range ~{tN['rng']:.0e}).
     PREDICTION CONFIRMED and sharpened: not only is the SPREAD heavy-tailed -- the
     near-parallel pairs fling intersections toward infinity -- the median itself is
-    an unreliable point estimate here (biased ~+1.3 in ln theta over records). Only
-    5% of pairwise intersections even land within a factor 3 of the truth. The
+    an unreliable point estimate. Over 400 records the median-of-medians is {med_of_meds:.0f}
+    (bias +{ln_bias_all:.2f} in ln theta), and {neg_frac:.0%} of records give a NEGATIVE cloud median:
+    the pencil is so pathological the robust centre is often nonsensical. Only
+    {tN['in3x']:.0%} of pairwise intersections land within a factor 3 of the truth. The
     det^2 (crossing-angle) weighting the PI suggests pulls the centre back toward the
     MLE ({tN['detw'][0]:.0f} vs the weighted fit's 242), but the natural-scale spread stays
     enormous. This is round 13's heavy-tailed posterior and round 14's lesson from a
@@ -323,22 +336,29 @@ def main():
 """)
 
     # ---- FIM ellipse + NLS posterior comparison (narrow) ---------------
-    Cov, Plog = fim_ellipse_linear()
-    sd_th_lin = np.sqrt(Cov[0, 0]); sd_ke_lin = np.sqrt(Cov[1, 1])
-    rho = Cov[0, 1] / (sd_th_lin * sd_ke_lin)
+    # All three routes are prior-FREE pencil geometry (no k_e prior, fixed K_m),
+    # so compare against the prior-free FIM. The report's headline adds the k_e
+    # prior and the K_m fibre on top of this (noted below).
+    Cov0, _ = fim_ellipse_linear(ke_prior=False)
+    sd_th0 = np.sqrt(Cov0[0, 0]); rho0 = Cov0[0, 1] / np.sqrt(Cov0[0, 0] * Cov0[1, 1])
+    Covp, _ = fim_ellipse_linear(ke_prior=True)
+    sd_th_lin = np.sqrt(Covp[0, 0]); rho = Covp[0, 1] / np.sqrt(Covp[0, 0] * Covp[1, 1])
     post = np.array([fit_point(pencil(seed=1000 + s),
                      weights=(lambda Q: (Q["a"] ** 2 + Q["b"] ** 2)
                               / dist_sigma(Q)[1] ** 2)(pencil(seed=1000 + s)))[0]
                      for s in range(200)])
+    iqr_post = float(np.subtract(*np.quantile(post[:, 0], [.75, .25])))
     print("  " + "-" * 88)
-    print("  THREE ROUTES to the narrow-record uncertainty  (fixed K_m)")
+    print("  THREE ROUTES to the narrow-record uncertainty  (fixed K_m, prior-free geometry)")
     print("  " + "-" * 88)
-    print(f"""      FIM ellipse (delta-method, linear):   sd(theta)={sd_th_lin:7.1f}  corr={rho:+.3f}
-      NLS posterior (200 weighted fits):    theta median {np.median(post[:,0]):7.1f}  IQR {np.subtract(*np.quantile(post[:,0],[.75,.25])):7.1f}
-      intersection cloud (one record):      theta IQR {tN['iqr']:7.0f}  (heavy-tailed)
-  The FIM sd and the NLS IQR agree in the CORE; the symmetric FIM ellipse cannot show
-  the tail the two sampling routes do. All three say the same: theta is not placeable
-  on the natural scale at the record precision.
+    print(f"""      FIM ellipse (delta-method, no k_e prior):  sd(theta)={sd_th0:7.1f}  corr={rho0:+.3f}
+      NLS posterior (200 weighted fits):         theta median {np.median(post[:,0]):7.1f}  IQR {iqr_post:7.1f}
+      intersection cloud (one record):           theta IQR {tN['iqr']:7.0f}  (heavy-tailed)
+  The FIM sd and the NLS IQR agree in the CORE (a Gaussian sd={sd_th0:.0f} has IQR~{1.349*sd_th0:.0f} vs
+  NLS {iqr_post:.0f}); the symmetric FIM ellipse cannot show the tail the two sampling routes do.
+  All three say theta is not placeable on the natural scale at the record precision.
+  (Adding the report's k_e prior tightens the fixed-K_m FIM to sd(theta)={sd_th_lin:.0f}, corr {rho:+.3f};
+  the full headline sd(ln theta)=3.05 adds the K_m fibre on top -- a different, looser object.)
 """)
 
     # ---- item 3: concurrency as adequacy, and its power ----------------
@@ -390,13 +410,16 @@ def main():
     print(f"""  per-line orthogonal-distance sd ranges sigma_d in [{sig_d.min():.2f}, {sig_d.max():.2f}] over the record
   (heteroscedastic: grows with m, shrinks as the line flattens) -- so the unweighted
   Euclidean fit is the wrong metric.
-      Euclidean (P=I):       (theta,k_e) = ({xE[0]:7.1f}, {xE[1]:6.3f})   sd(theta)={np.sqrt(CovE[0,0]):6.1f}
-      weighted (TLS, x'Px):  (theta,k_e) = ({xW[0]:7.1f}, {xW[1]:6.3f})   sd(theta)={np.sqrt(CovW[0,0]):6.1f}
-      FIM 2x2 (linear):                                          sd(theta)={sd_th_lin:6.1f}
-      weighted-fit corr = {CovW[0,1]/np.sqrt(CovW[0,0]*CovW[1,1]):+.3f}   FIM corr = {rho:+.3f}  (same object)
-  The weighted normal matrix IS the (fixed-K_m) FIM: the PI's x'Px fit with the correct
-  P is the report's MLE, now shown as a geometry. The Euclidean fit mis-weights by the
-  crossing angle and is a different, worse estimator. Weighting is Remark 6 operational.
+      Euclidean (P=I):          (theta,k_e) = ({xE[0]:7.1f}, {xE[1]:6.3f})   sd(theta)={np.sqrt(CovE[0,0]):6.1f}
+      weighted (TLS, x'Px):     (theta,k_e) = ({xW[0]:7.1f}, {xW[1]:6.3f})   sd(theta)={np.sqrt(CovW[0,0]):6.1f}
+      FIM 2x2, NO k_e prior (= the weighted fit's object):        sd(theta)={sd_th0:6.1f}  corr={rho0:+.3f}
+      weighted-fit corr = {CovW[0,1]/np.sqrt(CovW[0,0]*CovW[1,1]):+.3f}
+  The weighted normal matrix IS the (fixed-K_m) FIM OF THE DATA -- same structural object:
+  corr {CovW[0,1]/np.sqrt(CovW[0,0]*CovW[1,1]):+.3f} vs {rho0:+.3f}, sd(theta) {np.sqrt(CovW[0,0]):.0f} vs {sd_th0:.0f} (both prior-free; the ~{abs(np.sqrt(CovW[0,0])-sd_th0)/sd_th0:.0%}
+  gap is realised-vs-expected sampling). Adding the report's k_e prior tightens this to
+  sd(theta)={sd_th_lin:.0f}. So the PI's x'Px fit with the correct P is the report's MLE, now shown
+  as a geometry; the Euclidean (P=I) fit mis-weights by the crossing angle and is a
+  different, worse estimator ({xE[0]:.0f} vs {xW[0]:.0f}). Weighting is Remark 6 operational.
 """)
     print("=" * 92)
     print("  WHAT THE GEOMETRY ADDS (it checks the numbers; it does not change them):")
