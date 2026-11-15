@@ -10,7 +10,11 @@ delivered increment Delta(t) added to the enzyme channel (as in t54, part B):
     dm/dt = s(t) - (theta + Delta(t)) g(m) - k c m/(K_c + m)
     dc/dt = R0 - k c m/(K_c + m) - rho0 k (1 + m/M_i) c
 Fortnightly doses of size D settle the cycle (8 doses); the next is given d days late
-(or skipped, a 28-day gap), then doses resume on time. Load s = 600 (baseline), or the
+(or skipped, a 28-day gap), then doses resume on time. The gap peak is the highest
+metabolite level from the last on-time dose to 3 d after the late one, extended during an
+illness to the illness's end. Peaks above the model's validity limit (5.5 M_i: 1650 uM
+nominal, 825 at the worst corner) are flagged with '!': they mean only that the model's
+range is left. Load s = 600 (baseline), or the
 paper's registered illness, 1.5 x baseline for 14 days (common/params ILLNESS_FOLD and
 model_C's illness window), starting on the day the dose was due.
 
@@ -83,7 +87,8 @@ def quasi_slack(theta, thalf, D, thc):
     return np.log(trough(TAU, thalf, D) / need) / (np.log(2.0) / thalf)
 
 
-def simulate(theta, thalf, D, p, delay=0.0, skip=False, illness=False, n_pre=8, n_post=4, k=1.0):
+def simulate(theta, thalf, D, p, delay=0.0, skip=False, illness=False, n_pre=8, n_post=4, k=1.0,
+             traj=False):
     """Usual cycle peak, peak in the long gap (to 3 d after the late dose), last-cycle peak."""
     lam = np.log(2.0) / thalf
     pp = replace(p, theta=float(theta))
@@ -116,8 +121,15 @@ def simulate(theta, thalf, D, p, delay=0.0, skip=False, illness=False, n_pre=8, 
         y = sol.y[:, -1]
     T, M = np.concatenate(T), np.concatenate(M)
     usual = M[(T >= pre[-2]) & (T < pre[-1])].max()
-    gap = M[(T >= pre[-1]) & (T <= late + 3.0)].max()
+    # The gap peak runs from the last on-time dose to 3 d after the late dose and, during an
+    # illness, at least to the illness's end: with an on-time or slightly late dose the highest
+    # level comes at the end of the illness, just before the next dose (an earlier version
+    # stopped at late + 3 d and missed it).
+    end = max(late + 3.0, ill[1]) if ill else late + 3.0
+    gap = M[(T >= pre[-1]) & (T <= end)].max()
     last = M[T >= doses[-2]].max()
+    if traj:
+        return T - pre[-2], M, doses - pre[-2], (None if not ill else (ill[0] - pre[-2], ill[1] - pre[-2]))
     return usual, gap, last
 
 
@@ -186,7 +198,8 @@ def main():
     print("     day the infusion is due; 14 d late = postponed until recovery, the same gap as a skip).")
     print("     Half-life 3.5 / 4.3 d.")
     print("     Peak metabolite (uM) and its fold over the usual on-therapy peak; 'back' = the last")
-    print("     cycle's peak once infusions resume, against the usual peak.")
+    print("     cycle's peak once infusions resume, against the usual peak. '!' = above the model's")
+    print("     validity limit 5.5 M_i (1650 uM nominal, 825 uM worst corner): outside the model.")
     for (lab, D, p), kk in [(st, 1.0) for st in settings[:3]] + [(settings[0], 10.0)]:
         print(f"\n    {lab} (D = {D:.0f}), k = {kk:g}:")
         print(f"      {'capacity':>10} {'half-life':>9} {'usual':>7} {'skipped':>15} {'ill, on time':>15}"
@@ -196,7 +209,8 @@ def main():
                 u = simulate(theta, th, D, p, k=kk)[0]
                 sk = simulate(theta, th, D, p, skip=True, k=kk)
                 ills = [simulate(theta, th, D, p, delay=d, illness=True, k=kk) for d in (0.0, 3.0, 7.0, ILL_DAYS)]
-                cell = lambda r: f"{r[1]:7.0f} ({r[1]/u:3.1f}x)"
+                vl = 5.5 * p.Mi
+                cell = lambda r: f"{r[1]:7.0f} ({r[1]/u:3.1f}x){'!' if r[1] > vl else ' '}"
                 print(f"      {c:>10} {th:>8.1f}d {u:7.1f} {cell(sk):>15} " + " ".join(f"{cell(r):>15}" for r in ills)
                       + f" {ills[-1][2]:5.0f}/{u:<5.0f}")
 
@@ -245,9 +259,88 @@ def main():
     fig.legend(hd, [x.replace(" of normal", "") for x in lb], loc="lower center", ncol=4, frameon=False,
                bbox_to_anchor=(0.5, -0.02), title="residual capacity, % of normal", title_fontsize=7)
     out = HERE / "pi_note" / "fig"
+    fig.savefig(out / "pi_tolerance_slack.pdf", bbox_inches="tight")
+    fig.savefig(out / "pi_tolerance_slack.png", dpi=170, bbox_inches="tight")
+    plt.close(fig)
+    print("\n  wrote pi_note/fig/pi_tolerance_slack.pdf (capped at 28 d = a whole missed infusion)")
+    fig_clear(pn)
+
+
+def fig_clear(pn, thalf=4.3):
+    """The figure for the note: (a) what a late infusion looks like; (b) peak against days late."""
+    import plotstyle as P
+    from plotstyle import plt
+    fig, ax = plt.subplots(1, 2, figsize=(6.9, 2.9), gridspec_kw=dict(width_ratios=[1.15, 1]))
+    a = ax[0]
+    print(f"\n  4. FIGURE 5 DATA (booked dose, nominal constants, k = 1, half-life {thalf} d)")
+    blues = plt.cm.Blues
+    runs = [(None, "skipped", blues(0.95), "-"), (7.0, "7 days late", blues(0.72), "-"),
+            (3.0, "3 days late", blues(0.5), "-"), (0.0, "on time", P.INK, "-")]
+    u0 = simulate(0.0, thalf, D0, pn)[0]
+    a.axhline(2.0 * u0, color=P.INK, lw=0.8, ls=":", zorder=0)
+    a.text(69, 2.0 * u0 + 3, "twice the usual peak", ha="right", va="bottom", fontsize=6.5, color=P.INK)
+    for d, lab, col, ls in runs:
+        T, M, doses, _ = simulate(0.0, thalf, D0, pn, delay=d or 0.0, skip=d is None, traj=True)
+        keep = (T >= 0) & (T <= 70)
+        a.plot(T[keep], M[keep], color=col, lw=1.1 if d == 0.0 else 1.6, ls=ls, label=lab)
+        print(f"    no own enzyme, {lab:>12}: peak in the gap {M[(T >= 14) & (T <= 45)].max():7.1f} uM")
+    for t0 in (0, 14):
+        a.axvline(t0, color=P.GRID, lw=0.8, zorder=0)
+    a.axvline(28, color=P.MUTED, lw=0.8, ls=":", zorder=0)
+    a.text(28.7, 222, "infusion due", fontsize=6.5, color=P.MUTED, va="top", ha="left")
+    a.set_xlim(0, 70)
+    a.set_ylim(0, 230)
+    a.set_xlabel("days")
+    a.set_ylabel("metabolite (\u00b5M)")
+    a.set_title("(a) a patient with no enzyme of their own, not ill", loc="left")
+    a.legend(loc="upper left", frameon=False, title="the infusion due at day 28 is", title_fontsize=6.5,
+             bbox_to_anchor=(0.0, 0.93))
+    P.finish(a)
+
+    b = ax[1]
+    days = np.arange(0, 15, 1.0)
+    vl = 5.5 * pn.Mi
+    for theta, cap_lab, ls in ((0.0, "no own enzyme", "-"), (75.0, "2.5 % of normal", "--")):
+        u = simulate(theta, thalf, D0, pn)[0]
+        well = [simulate(theta, thalf, D0, pn, delay=d)[1] / u for d in days]
+        ill = [simulate(theta, thalf, D0, pn, delay=d, illness=True)[1] / u for d in days]
+        b.plot(days, well, color=P.C1, ls=ls, lw=1.5)
+        ok = np.array(ill) * u <= vl          # stop the curve at the model's validity limit
+        last = int(np.argmax(~ok)) if (~ok).any() else len(days)
+        b.plot(days[:last], np.array(ill)[:last], color=P.C2, ls=ls, lw=1.5)
+        if last < len(days):
+            b.plot(days[last - 1], ill[last - 1], marker="o", ms=3, color=P.C2)
+            print(f"    {cap_lab:>16}: ill curve stops after {days[last-1]:.0f} d late (next point"
+                  f" {ill[last]*u:.0f} uM > validity limit {vl:.0f} uM)")
+        print(f"    {cap_lab:>16}: fold over usual by days late 0..14, not ill: "
+              + " ".join(f"{v:.1f}" for v in well))
+        print(f"    {cap_lab:>16}: fold over usual by days late 0..14, ill:     "
+              + " ".join(f"{v:.1f}" for v in ill))
+    b.axhline(2.0, color=P.INK, lw=0.8, ls=":")
+    b.text(14, 1.93, "peak doubled", ha="right", va="top", fontsize=6.5, color=P.INK)
+    b.text(4.4, 12, "ill during\nthe delay", ha="right", va="center", fontsize=7, color=P.C2)
+    b.text(9.6, 3.6, "not ill", ha="center", va="bottom", fontsize=7, color=P.C1)
+    b.text(13.9, 5.9, "14 days late\n= skipped", ha="right", va="bottom", fontsize=6.3, color=P.MUTED)
+    b.text(0.25, 52, "solid: no enzyme of their own\ndashed: 2.5 % of normal", ha="left", va="top",
+           fontsize=6.3, color=P.MUTED)
+    b.set_yscale("log")
+    b.set_ylim(0.9, 60)
+    b.set_yticks([1, 2, 5, 10, 20, 50])
+    b.set_yticklabels(["1", "2", "5", "10", "20", "50"])
+    b.text(10.5, 44, "curve stops at\nthe model's\nvalidity limit", fontsize=6.3, color=P.MUTED, va="top")
+    b.set_xlim(0, 14)
+    b.set_xticks([0, 2, 4, 6, 8, 10, 12, 14])
+    b.set_xlabel("days the infusion is late")
+    b.set_ylabel("peak / usual peak")
+    b.set_title("(b) how much higher the peak goes", loc="left")
+
+    P.finish(b)
+    fig.tight_layout(w_pad=1.5)
+    out = HERE / "pi_note" / "fig"
     fig.savefig(out / "pi_tolerance.pdf", bbox_inches="tight")
     fig.savefig(out / "pi_tolerance.png", dpi=170, bbox_inches="tight")
-    print("\n  wrote pi_note/fig/pi_tolerance.pdf (capped at 28 d = a whole missed infusion)")
+    plt.close(fig)
+    print("  wrote pi_note/fig/pi_tolerance.pdf")
 
 
 if __name__ == "__main__":

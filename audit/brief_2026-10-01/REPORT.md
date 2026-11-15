@@ -1164,6 +1164,22 @@ The 3.5452 d crossing is where the 21-day trough equals Model C's intrinsic crit
 
 **Addendum: the paper's own ranges, and the admissible increment (`t53`).** The box above is `collapse_check`'s, which reaches M_i = 100. Over the paper's own ranges (`tab_C_shape`: K_c 25–800, M_i 150–1200, ρ₀ 0.35–1) the corners move θ_crit^int from 110 to 232 µM/d, a factor of **2.1**, against the factor of 1.4 the paper's remark on the shape constants reports for the same joint sweep. The 21-day crossing there is 3.29–3.95 d (3.6 d clears it at 6 of 8 corners, 4.3 d at all 8), and the 14- and 15-day crossings at most 2.95 and 3.10 d. The paper's scope section also finds the largest admissible increment at 5 % of normal to be D = 2672, not the booked 6000; since Δ_trough ∝ D, the crossings there rise to 3.31 / 3.47 / 4.39 d at the nominal constants and 3.00–3.84 / 3.15–4.01 / 4.02–5.01 d over the paper's ranges. At the 4.3 d liver estimate all three intervals clear at D = 6000 for every corner; at D = 2672 the 14- and 15-day intervals still clear (narrowly) and the 21-day interval does not. P(liver above the 21-day crossing) is 64–71 % at the nominal constants, 56–60 % at the worst corner of the paper's ranges, and 48 % at D = 2672 (nominal). The technical note for the PI (`pi_note/`) states the dosing result as this specification. *(Round 20: same-rate scaling of D = 2672 to 15 or 21 days exceeds the paper's ceiling on peak enzyme; with the ceiling applied at each interval the crossings are 3.30 / 3.54 / 4.95 d at the nominal constants and 2.98–3.87 / 3.19–4.15 / 4.47–5.80 d over the paper's corners, `t53`; the PI note uses these.)*
 
+### R-T. How late can an infusion be? (round 20, `t55_infusion_tolerance.py`)
+
+mRNA-3927 is a fortnightly intravenous infusion, so the clinical form of the interval question is how late an infusion can be. `t55` runs Model C's two-state system (k = 1, and k = 10 near the reduced limit) through eight on-time doses, one late or skipped dose and four on-time doses, and compares the gap's highest metabolite level with the usual on-therapy peak (reached just before each on-time dose). Peaks above the model's validity limit (5.5 M_i: 1650 µM nominal, 825 at the worst corner) are flagged and not quoted as multiples.
+
+| booked dose, nominal constants, t½ 4.3 d, k = 1 | 0 % | 2.5 % | 5 % |
+|---|---|---|---|
+| days late before the peak doubles (no illness) | 6.5 | 7.4 | 8.8 |
+| skipped infusion (14 d late), peak / usual | 5.1× | 3.4× | 2.7× |
+| ill (1.5 × load for 14 d from the due day), on time | 2.6× | 2.5× | 2.4× |
+| ill, 3 d late | 4.7× | 4.1× | 3.7× |
+| ill, 7 d late | 21.0× | 14.7× | 10.3× |
+
+Without illness a day of delay adds about 10 % to the peak and the rise accelerates; once doses resume the cycle is back to its usual height. The shortest delay before doubling, for the patient with no enzyme of their own: 6.5 / 5.2 d (t½ 4.3 / 3.5 d) at the booked dose and nominal constants; 6.1 / 4.3 at the worst corner; 6.0 / 4.7 at D = 2672; 4.3 / 2.3 at D = 2672 and the worst corner, where the trough condition (R-J) already fails on time at 3.5 d for 0–1 %. k = 10 shortens these by at most 0.8 d; a smaller k lengthens them. The tipping point (separatrix at the usual trough capacity) is reached later than the doubling in every case.
+
+**Correction.** An earlier version took the gap peak only to 3 d after the late dose. With an on-time dose during the illness that window closed 3 days into a 14-day illness and missed the rise at its end, when the raised load meets the next trough; it reported "on time absorbs the illness" (1.0×). With the window extended to the illness's end, an on-time dose still lets the peak rise 2.4–4.1× (k = 1; 2.5–4.7× at k = 10) at the booked dose and nominal constants, and 4.1–11.7× at D = 2672, where it is of the same order as a 3-day delay. The late-dose values were unaffected.
+
 ---
 
 ## The original tasks
