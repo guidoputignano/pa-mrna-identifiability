@@ -1166,7 +1166,7 @@ The 3.5452 d crossing is where the 21-day trough equals Model C's intrinsic crit
 
 ### R-T. How late can an infusion be? (round 20, `t55_infusion_tolerance.py`)
 
-mRNA-3927 is a fortnightly intravenous infusion, so the clinical form of the interval question is how late an infusion can be. `t55` runs Model C's two-state system (k = 1, and k = 10 near the reduced limit) through eight on-time doses, one late or skipped dose and four on-time doses, and compares the gap's highest metabolite level with the usual on-therapy peak (reached just before each on-time dose). Peaks above the model's validity limit (5.5 M_i: 1650 µM nominal, 825 at the worst corner) are flagged and not quoted as multiples.
+mRNA-3927 is a fortnightly intravenous infusion, so the clinical form of the interval question is how late an infusion can be. `t55` runs Model C's two-state system (k = 1, and k = 10 near the reduced limit) through eight on-time doses, one late or skipped dose and three further doses every 14 days from it, and compares the gap's highest metabolite level with the usual on-therapy peak (reached just before each on-time dose). Peaks above the model's validity limit (5.5 M_i: 1650 µM nominal, 825 at the worst corner) are flagged and not quoted as multiples.
 
 | booked dose, nominal constants, t½ 4.3 d, k = 1 | 0 % | 2.5 % | 5 % |
 |---|---|---|---|

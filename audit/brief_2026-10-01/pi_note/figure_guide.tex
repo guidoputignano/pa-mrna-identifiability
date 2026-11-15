@@ -58,7 +58,8 @@ is epistemic, since knowing it as well leaves $0.29$; and partly noise in the dr
 load record, which is \emph{aleatoric} and shrinks with more draws). This is the difference between \emph{structural} identifiability (with
 perfect, noise-free data, could $\theta$ be recovered at all? yes, the paper proves it) and
 \emph{practical} identifiability (with realistic noise and sampling, how precisely? at $5\%$ of
-normal, only to a factor of about $20$ either way).
+normal, only one-sidedly: the record rules out capacities above about $22\%$ of normal, but none
+below, down to almost zero; Figure~1c).
 
 \subsection{Why no measurement closes the gap: two ways to see the enzyme} A measurement can
 see the enzyme in only two ways. \emph{Indirectly, through metabolite levels} (the blood marker,
@@ -449,35 +450,44 @@ show it given $3$ days late, $7$ days late, or skipped, in which case the next i
 day $42$. The metabolite keeps climbing until the infusion arrives, and the longer the wait, the
 faster it climbs. The horizontal dotted line marks twice the usual peak: $3$ days late stays
 below it, $7$ days late just passes it, and a skipped infusion goes to about five times the
-usual peak. After the late infusion the sawtooth returns to its usual height.
+usual peak. Once infusions resume, the first tooth is slightly higher than usual (about
+$43$ instead of $40$\,\textmu M after a skipped infusion), and from the next one the sawtooth is
+back to its usual height.
 
 \subsection{Panel (b): the same, for every delay} For each delay from $0$ to $14$ days, the
-highest level reached in the gap is divided by the usual peak, so $1$ means ``no higher than
+highest level reached in the gap (for the orange curves, until the infusion after the late one,
+because an illness can bring a later peak) is divided by the usual peak, so $1$ means ``no higher than
 usual'' and $2$ means ``twice as high''. The vertical axis is logarithmic (see the conventions
 above): each step up multiplies. Solid lines are the patient with no enzyme of their own, dashed
 lines a patient at $2.5\%$ of normal.
 \begin{itemize}
-\item \emph{Blue, not ill.} The curves rise slowly at first and then faster. They cross the
+\item \emph{Blue, not ill.} On this logarithmic axis the curves are nearly straight: each day of
+delay multiplies the peak by about the same factor, about $1.1$, so in absolute terms the rise
+grows with the delay. They cross the
 dotted ``peak doubled'' line after about six and a half days (solid) and seven and a half
 (dashed). Fourteen days late is the same as a skipped infusion.
 \item \emph{Orange, ill.} The patient has the paper's illustrative illness: $1.5$ times the usual
 load for two weeks, starting on the day the infusion is due. The curves start above $2$ even at
 zero delay. The illness alone raises the peak about $2.5$-fold, because at its end the higher
-load meets the enzyme's low point just before the next infusion. From there each day of delay
-costs far more than without illness: $3$ days late gives $4$ to $5$ times the usual peak, a week
-$15$ to $21$ times. The orange curves stop where the metabolite passes the model's validity
+load meets the enzyme's low point just before the next infusion. A one-day delay does not raise
+it further (the curves even dip slightly: the illness then ends a day before the enzyme's low
+point). From the second day on, each day of delay costs far more than without illness: $3$ days
+late gives $4$ to $5$ times the usual peak, a week $15$ to $21$ times. The orange curves stop where the metabolite passes the model's validity
 limit; beyond that point the model no longer describes the patient.
 \end{itemize}
 
-\subsection{Take-away} Without illness, a day or two late barely matters, and about a week late
-doubles the peak. During an illness the same delay costs several times more. Table~3 of the note
-gives the shortest delays in less favourable settings: as little as about two days at a shorter
-half-life, a smaller dose and the least favourable carnitine constants.
+\subsection{Take-away} Without illness, a day or two late raises the peak by about $10$ to $25\%$,
+and about a week late doubles it. During the illustrative illness the peak is already about $2.5$
+times usual with the infusion on time, and three days late it is $4$ to $5$ times usual (against
+about $1.4$ times without illness). Table~3 of the note gives less favourable settings: at a shorter
+half-life, a smaller dose and the least favourable carnitine constants the peak doubles after
+about two days, and Result~4's trough condition already fails with the infusion on time.
 
 \subsection{What it does not say} ``Twice the usual peak'' is a yardstick, chosen because the
 model does not say which level is harmful. The figure uses the model's default value of an
 assumed rate in the carnitine route ($k=1$); at $k=10$, close to the least favourable value, the
-delays shorten by less than a day. These are model results on simulated patients, not a clinical
+delays shorten by less than a day, and a late infusion during an illness gives peaks about $30\%$
+higher. These are model results on simulated patients, not a clinical
 recommendation; whether an infusion is given during an illness is a clinical decision.
 
 \section{Glossary}

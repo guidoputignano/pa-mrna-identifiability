@@ -12,7 +12,7 @@ delivered increment Delta(t) added to the enzyme channel (as in t54, part B):
 Fortnightly doses of size D settle the cycle (8 doses); the next is given d days late
 (or skipped, a 28-day gap), then doses resume on time. The gap peak is the highest
 metabolite level from the last on-time dose to 3 d after the late one, extended during an
-illness to the illness's end. Peaks above the model's validity limit (5.5 M_i: 1650 uM
+illness to the next dose after the late one. Peaks above the model's validity limit (5.5 M_i: 1650 uM
 nominal, 825 at the worst corner) are flagged with '!': they mean only that the model's
 range is left. Load s = 600 (baseline), or the
 paper's registered illness, 1.5 x baseline for 14 days (common/params ILLNESS_FOLD and
@@ -71,6 +71,15 @@ def shape(worst):
     return replace(q, R0=MC.R0_for_peak(q))
 
 
+def corner(Kc, Mi, rho0):
+    """A corner of the paper's carnitine ranges (tab_C_shape), R0 re-derived as the repo does."""
+    q = replace(MC.PC, Kc=Kc, Mi=Mi, rho0=rho0)
+    return replace(q, R0=MC.R0_for_peak(q))
+
+
+CORNERS = [(kc, mi, r0) for kc in (25.0, 800.0) for mi in (150.0, 1200.0) for r0 in (0.35, 1.0)]
+
+
 def thc_of(p):
     return MC.theta_crit_intrinsic(p, MC.S_BASE)
 
@@ -89,7 +98,8 @@ def quasi_slack(theta, thalf, D, thc):
 
 def simulate(theta, thalf, D, p, delay=0.0, skip=False, illness=False, n_pre=8, n_post=4, k=1.0,
              traj=False):
-    """Usual cycle peak, peak in the long gap (to 3 d after the late dose), last-cycle peak."""
+    """Usual cycle peak, peak in the long gap (to 3 d after the late dose; during an illness, to
+    the next dose after it), last-cycle peak."""
     lam = np.log(2.0) / thalf
     pp = replace(p, theta=float(theta))
     pre = [TAU * k for k in range(n_pre)]
@@ -122,10 +132,10 @@ def simulate(theta, thalf, D, p, delay=0.0, skip=False, illness=False, n_pre=8, 
     T, M = np.concatenate(T), np.concatenate(M)
     usual = M[(T >= pre[-2]) & (T < pre[-1])].max()
     # The gap peak runs from the last on-time dose to 3 d after the late dose and, during an
-    # illness, at least to the illness's end: with an on-time or slightly late dose the highest
-    # level comes at the end of the illness, just before the next dose (an earlier version
-    # stopped at late + 3 d and missed it).
-    end = max(late + 3.0, ill[1]) if ill else late + 3.0
+    # illness, to the next dose after the late one: with an on-time or slightly late dose the
+    # highest level comes at the end of the illness or, at the smaller dose, after it, just before
+    # that next dose (earlier versions stopped at late + 3 d, then at the illness's end).
+    end = late + TAU if ill else late + 3.0
     gap = M[(T >= pre[-1]) & (T <= end)].max()
     last = M[T >= doses[-2]].max()
     if traj:
@@ -143,7 +153,7 @@ def separatrix(theta, thalf, D, p):
     return un[0] if un else np.inf
 
 
-def dyn_slack(theta, thalf, D, p, crit="2x", k=1.0, hi=28.0, tol=0.2):
+def dyn_slack(theta, thalf, D, p, crit="2x", k=1.0, hi=28.0, tol=0.05):
     """Days of delay before the gap peak reaches 2x the usual peak, or the separatrix."""
     if crit == "2x":
         level = 2.0 * simulate(theta, thalf, D, p, delay=0.0, k=k)[0]
@@ -158,7 +168,7 @@ def dyn_slack(theta, thalf, D, p, crit="2x", k=1.0, hi=28.0, tol=0.2):
             lo_ = mid
         else:
             hi_ = mid
-    return lo_
+    return 0.5 * (lo_ + hi_)          # within tol/2 of the crossing
 
 
 def fmt(d):
@@ -213,6 +223,25 @@ def main():
                 cell = lambda r: f"{r[1]:7.0f} ({r[1]/u:3.1f}x){'!' if r[1] > vl else ' '}"
                 print(f"      {c:>10} {th:>8.1f}d {u:7.1f} {cell(sk):>15} " + " ".join(f"{cell(r):>15}" for r in ills)
                       + f" {ills[-1][2]:5.0f}/{u:<5.0f}")
+
+    print("\n  5. LEAST FAVOURABLE CONSTANTS, per column: the 8 corners of the paper's carnitine ranges")
+    print("     (K_c 25/800, M_i 150/1200, rho_0 0.35/1; R0 re-derived), no own enzyme, k = 1. The corner")
+    print("     with the highest theta_crit (25, 150, 1) is the worst for the trough condition but not")
+    print("     always for the doubling, so each column takes its own minimum.")
+    for D in (D0, D_ADM):
+        for th in (4.3, 3.5):
+            rows5 = []
+            for kc, mi, r0 in CORNERS:
+                p = corner(kc, mi, r0)
+                rows5.append((kc, mi, r0, dyn_slack(0.0, th, D, p), quasi_slack(0.0, th, D, thc_of(p)),
+                              simulate(0.0, th, D, p)[0]))
+            print(f"\n    D = {D:.0f}, half-life {th} d:   K_c    M_i  rho0   2x (d)   trough (d)   usual peak (uM)")
+            for kc, mi, r0, d2, q, u in rows5:
+                print(f"    {'':28s}{kc:5.0f} {mi:6.0f} {r0:5.2f} {fmt(d2):>8} {('fails' if q < 0 else fmt(q)):>11}"
+                      f" {u:12.1f}")
+            d2m = min(r[3] for r in rows5)
+            qm = min(r[4] for r in rows5)
+            print(f"    {'':28s}minimum: 2x {fmt(d2m)}, trough {'fails on time' if qm < 0 else fmt(qm)}")
 
     # figure: slack against half-life, booked dose, nominal constants
     import matplotlib
@@ -293,8 +322,8 @@ def fig_clear(pn, thalf=4.3):
     a.set_xlabel("days")
     a.set_ylabel("metabolite (\u00b5M)")
     a.set_title("(a) a patient with no enzyme of their own, not ill", loc="left")
-    a.legend(loc="upper left", frameon=False, title="the infusion due at day 28 is", title_fontsize=6.5,
-             bbox_to_anchor=(0.0, 0.93))
+    a.legend(loc="upper left", frameon=True, facecolor="white", edgecolor="none", framealpha=1.0,
+             title="day-28 infusion", title_fontsize=6.5, bbox_to_anchor=(0.0, 0.93))
     P.finish(a)
 
     b = ax[1]
