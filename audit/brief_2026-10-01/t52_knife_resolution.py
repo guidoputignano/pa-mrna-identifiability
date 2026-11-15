@@ -21,11 +21,17 @@ Outputs, per patient:
   * the first record length at which a 4.3 d truth is placed at 2 sigma
   * how many patients a POOLED estimate would need to place a 3.6 d truth at
     2 sigma, if (and only if) lambda were the same in every patient
+
+z is the EXPECTED separation (the log distance over the sd). One noisy record
+lands at z + N(0, 1), so the chance that it actually clears 2 sigma on the right
+side is Phi(z - 2): about 50 % when z = 2. The power columns report that chance,
+and the pooled counts are given for 50 % and 80 % power.
 """
 import re
 from pathlib import Path
 
 import numpy as np
+from scipy.stats import norm
 
 CROSS = 3.5452          # 21-day crossing (R-N, t48), Model C intrinsic theta_crit
 MEASURED = 3.6          # Chandler & Ballard 1985, human fibroblast PCC
@@ -37,7 +43,20 @@ HERE = Path(__file__).resolve().parent
 
 
 def t46_table():
-    """{cadence: {months: sd(ln lambda)}} from t46's ITEM 2 table."""
+    """
+    {cadence: {months: sd(ln lambda)}} from t46. Full-precision values come from
+    out/t46_timing_numbers.json (which t46 writes); the printed 3-decimal table in
+    out/t46_timing.txt is the fallback.
+    """
+    js = HERE / "out" / "t46_timing_numbers.json"
+    if js.exists():
+        import json
+        lam = json.loads(js.read_text())["lambda"]
+        out = {"monthly": {}, "fortnightly": {}, "weekly": {}}
+        for key, v in lam.items():
+            cad, mo = key.split("/")
+            out[cad][int(mo)] = float(v)
+        return out
     txt = (HERE / "out" / "t46_timing.txt").read_text()
     block = txt.split("ITEM 2.")[1].split("spec reached by")[0]
     rows = re.findall(r"^\s+(\d+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*$", block, re.M)
@@ -63,38 +82,44 @@ def main():
   log-distances:  3.6 d vs 7 d (R-N's 7-18 sigma)      ln = {g_mouse:.3f}
                   3.6 d vs the 3.5452 d crossing       ln = {g_meas:.4f}   ({g_mouse / g_meas:.0f}x smaller)
                   4.3 d vs the 3.5452 d crossing       ln = {g_cent:.3f}
-  sd(ln lambda) per patient: parsed from out/t46_timing.txt (FIM).
+  sd(ln lambda) per patient: from t46 (FIM), full precision from out/t46_timing_numbers.json.
 """)
     print(f"  {'cadence':>12} {'months':>6} {'sd(ln lam)':>10} {'z @3.6d':>8} {'z @4.3d':>8}"
-          f" {'z 3.6 vs 7':>10}   2-sigma dead zone (true half-life, d)")
+          f" {'P(>=2s) @4.3d':>13} {'z 3.6 vs 7':>10}   2-sigma dead zone (true half-life, d)")
     for cad in ("monthly", "fortnightly", "weekly"):
         for mo, s in sorted(tab[cad].items()):
             lo, hi = CROSS * np.exp(-Z * s), CROSS * np.exp(Z * s)
             print(f"  {cad:>12} {mo:>6} {s:>10.3f} {g_meas / s:>8.2f} {g_cent / s:>8.2f}"
-                  f" {g_mouse / s:>10.1f}   {lo:.2f} - {hi:.2f}")
+                  f" {norm.cdf(g_cent / s - Z):>13.0%} {g_mouse / s:>10.1f}   {lo:.2f} - {hi:.2f}")
     best = min(min(v.values()) for v in tab.values())
     print(f"""
   Best per-patient precision in the table: sd(ln lambda) = {best:.3f}  ->  z at 3.6 d = {g_meas / best:.2f}.
   A single patient's record never places a 3.6 d truth on a side of the crossing: even
   after 5 years of weekly draws it sits at {g_meas / best:.1f} sigma, inside the dead zone.
 """)
-    print("  First record length at which a 4.3 d truth is placed at >= 2 sigma, per patient:")
+    print("  A 4.3 d truth, one patient: first record length with expected z >= 2 (a coin flip that")
+    print("  one record clears 2 sigma), and with an 80 % chance that it does (z >= 2.84):")
     for cad in ("monthly", "fortnightly", "weekly"):
-        hit = [mo for mo, s in sorted(tab[cad].items()) if g_cent / s >= Z]
-        print(f"    {cad:>12}: {str(hit[0]) + ' months' if hit else 'not within 60 months'}"
-              f"   (z = {g_cent / tab[cad][hit[0]]:.2f})" if hit else "")
+        h50 = [mo for mo, s in sorted(tab[cad].items()) if g_cent / s >= Z]
+        h80 = [mo for mo, s in sorted(tab[cad].items()) if norm.cdf(g_cent / s - Z) >= 0.80]
+        f = lambda h: f"{h[0]} months" if h else "not within 60 months"
+        print(f"    {cad:>12}: expected 2 sigma at {f(h50)};  80 % chance at {f(h80)}")
     print("\n  Pooling (ONLY if lambda is common to every patient, which nothing measured shows):")
+    z80 = Z + norm.ppf(0.80)
     for cad, mo in (("monthly", 12), ("weekly", 12), ("weekly", 24)):
         s = tab[cad][mo]
-        n = int(np.ceil((Z * s / g_meas) ** 2))
-        print(f"    {cad:>8} draws, {mo:>2} months: {n:>4} patients to place a 3.6 d truth at 2 sigma")
+        n50 = int(np.ceil((Z * s / g_meas) ** 2))
+        n80 = int(np.ceil((z80 * s / g_meas) ** 2))
+        print(f"    {cad:>8} draws, {mo:>2} months: {n50:>4} patients (50 % power), {n80:>4} (80 % power)"
+              f" to place a 3.6 d truth at 2 sigma")
     print(f"""
   READING. R-N's 7-18 sigma is right for its question (3.6 d or 7 d?). It does not carry
   to the crossing: the crossing is {g_mouse / g_meas:.0f}x closer, so "a fortiori" runs the wrong way.
   Per patient the record settles the side only when the true liver half-life is clear of
-  the crossing: about 6 months of draws if it is near the 4.3 d central estimate, never
-  if it is near the measured 3.6 d. A pooled trial estimate could do it with a few dozen
-  patients, but only if lambda does not vary between patients, which is unmeasured. So
+  the crossing: near the 4.3 d central estimate, an 80 % chance within a year of monthly
+  draws or six months of weekly ones; near the measured 3.6 d, never. A pooled trial
+  estimate could do it with a few dozen patients (more for 80 % power), but only if lambda
+  does not vary between patients, which is unmeasured. So
   the two emails still matter, and the on-therapy record is still the best route, but
   it settles the knife-edge only if the answer is not on the knife-edge.
 """)

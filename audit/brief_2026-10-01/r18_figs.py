@@ -139,7 +139,7 @@ def fig_knife():
     ax.plot(th, _trough(21, th) - THC, color=P.C1, lw=2.6, zorder=4,
             label="μ(21 d) = Δ_trough(21) − θ_crit")
     ax.plot(th, _trough(14, th) - THC, color=P.MUTED, lw=1.1, ls="--", zorder=3,
-            label="μ(14 d), always positive (14-day step never needs θ)")
+            label="μ(14 d), positive for half-lives above 2.62 d")
     ax.axvline(CROSS, color=P.INK, ls=":", lw=1.2, zorder=3)
     for x0, lab, col, dy in [
             (3.5, f"repo's assumed 3.5 d\nmargin {_trough(21,3.5)-THC:+.0f} µM/d (below)", P.C2, -120),
@@ -151,13 +151,11 @@ def fig_knife():
                     xytext=(16, dy), fontsize=7.6, color=col,
                     arrowprops=dict(arrowstyle="-", color=col, lw=0.8))
     # annotate the x-gap explicitly (crossing -> measured), the source of the 1.5%
-    ax.annotate("", xy=(3.6, 235), xytext=(CROSS, 235),
-                arrowprops=dict(arrowstyle="<->", color=P.INK, lw=1.1))
     ax.annotate("crossing 3.5452 d → measured 3.6 d:\n0.055 d = 1.5 % in HALF-LIFE",
-                xy=(3.573, 235), xytext=(3.95, 330), fontsize=7.8, color=P.INK,
+                xy=(3.573, 4), xytext=(3.95, 330), fontsize=7.8, color=P.INK,
                 arrowprops=dict(arrowstyle="-", color=P.INK, lw=0.7))
-    ax.text(3.03, -150, "21-day step NEEDS θ\n(θ unmeasurable → undeliverable)",
-            fontsize=8, color=P.C2, style="italic", va="top")
+    ax.text(3.03, -118, "21-day step\nNEEDS θ", fontsize=8, color=P.C2,
+            style="italic", va="top")
     ax.text(4.8, 560, "21-day step FREE-FOR-ALL\n(no θ needed)",
             fontsize=8, color=P.C3, style="italic")
     ax.set_xlim(3.0, 6.0); ax.set_ylim(-220, 760)

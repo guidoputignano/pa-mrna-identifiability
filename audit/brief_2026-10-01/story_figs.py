@@ -29,9 +29,10 @@ def fig_routes():
         ("+ IV tracer that measures k_e (5.4 %)", 0.454, "A", False, "0.45"),
         ("+ both of those sensors together", 0.441, "A", False, "0.44"),
         ("both of those known exactly (not obtainable)", 0.291, "A", False, "0.29"),
-        ("+ ex vivo enzyme assay, calibration κ assumed", 0.200, "A", True, "0.20"),
-        ("+ all three sensors, calibration κ assumed", 0.182, "A", True, "0.18"),
-        ("ex vivo enzyme assay, calibration κ unknown", 3.045, "A", False, "3.05"),
+        ("+ ex vivo assay, κ assumed (test-tube activity)", 0.200, "A", True, "0.20"),
+        ("+ all three sensors, κ assumed (test-tube activity)", 0.182, "A", True, "0.18"),
+        ("ex vivo assay, κ unknown", 3.045, "A", False, "3.05"),
+        ("ex vivo vs healthy controls, as whole-body capacity", 0.654, "A", False, "≈0.65"),
         ("weekly windows, model best case (5 % draw CV)", 0.133, "B", False, "0.13"),
         ("weekly windows, at the one measured CV (26.4 %)", 0.475, "B", False, "0.475"),
     ]
@@ -71,11 +72,11 @@ def fig_routes():
                     (gB, "CHANGE WITHIN ONE PATIENT (a different quantity)")):
         ax.text(0.102, yy, txt, fontsize=8.2, color=P.MUTED, va="center",
                 fontweight="bold")
-    ax.set_xlabel("uncertainty, sd(ln θ), at 5 % of normal capacity   (log scale; lower is better)")
+    ax.set_xlabel("uncertainty sd(ln θ) at 5 % of normal capacity, Model A   (log scale; lower is better)")
     ax.legend(handles=[Patch(color=P.C2, label="misses the target"),
                        Patch(color=P.C1, label="reaches the target"),
                        Patch(facecolor="white", edgecolor=P.INK, hatch="////",
-                             label="only if an unmeasured calibration is assumed")],
+                             label="only with an unmeasured calibration assumed")],
               loc="upper center", bbox_to_anchor=(0.42, -0.11), ncol=3,
               fontsize=8, frameon=False)
     ax.grid(True, axis="x", color=P.GRID, lw=0.5, zorder=0)
@@ -93,12 +94,12 @@ def fig_wait():
         ("Know λ to ±25 %", "dot", [(6, "")], "6 months, at any draw frequency"),
         ("Know λ to ±5 %", "dot", [(12, "weekly"), (24, "every 2 wk"), (48, "monthly")], ""),
         ("Tell a 3.6-day half-life\nfrom a 7-day one", "dot", [(6, "")], "6 months (7σ, monthly draws)"),
-        ("Which side of the 21-day line,\none patient, if liver ≈ 4.3 d", "dot", [(6, "")],
-         "6 months (≥2σ at any frequency)"),
+        ("Which side of the 21-day line,\none patient, if liver ≈ 4.3 d", "dot", [(6, "weekly"), (12, "monthly")],
+         "80 % chance of a 2σ answer"),
         ("Which side of the 21-day line,\none patient, if liver ≈ 3.6 d", "never", [],
          "never: 0.6σ even after 5 years of weekly draws"),
         ("21 days for one patient\nby estimating θ (3.5-d case)", "never", [],
-         "never: margin estimate stays ±~140 µM/d"),
+         "never from the passive record: margin estimate stays ±~140 µM/d"),
     ]
     fig, ax = plt.subplots(figsize=(8.6, 4.9))
     for i, (lab, kind, pts, note) in enumerate(rows):
