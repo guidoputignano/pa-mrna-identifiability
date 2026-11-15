@@ -91,7 +91,7 @@ All records are simulated on the paper's illustrative constants; no patient data
 \begin{table}[h]
 \centering\footnotesize\setlength{\tabcolsep}{3pt}
 \caption{\label{tab:key}Key numbers at $5\%$ of normal capacity. Precisions are
-Cram\'er--Rao bounds on the log scale; the target is $0.20$, about $\pm20\%$.}
+Cram\'er--Rao bounds on the log scale, except the within-patient change, given in \um\ (as a multiple of $\theta=150$ in brackets); the target is $0.20$, about $\pm20\%$ ($30$\um\ for the change).}
 \begin{tabular}{@{}lll@{}}
 \toprule
 quantity & value & condition \\
@@ -242,7 +242,7 @@ series is $14\pm13\%$.
 \caption{\label{fig:routes}Every route to $\theta$ at $5\%$ of normal on one logarithmic axis.
 Upper group: absolute capacity; the record-alone value $3.05$ differs from the $3.07$ of
 Table~\ref{tab:key} only in the noise model (here each draw carries its own noise level, there
-one pooled level). Lower group: the change between two windows, $\hat\theta_2-\hat\theta_1$,
+one pooled level). Lower group: the standard deviation of the change between two windows, $\operatorname{sd}(\hat\theta_2-\hat\theta_1)$,
 divided by the $150$ of a patient at $5\%$ of normal, a different quantity. Hatched
 bars reach $0.20$ only when an unmeasured constant is supplied: a calibration (upper group)
 or a per-draw marker variability in PA below about $10\%$ (lower group; the bar is drawn at
@@ -292,7 +292,7 @@ of about $56$\um\ either way, $37\%$ of the patient's capacity, with $80\%$ powe
 $45\%$ rise, $64\%$ for a $30\%$ fall). The ratio $\hat\theta_2/\hat\theta_1$ is not usable at $5\%$:
 in about a quarter of simulated pairs one estimate falls to zero (the record does not bound
 $\theta$ below; Result~1) and the other follows it, so even with no change a third of the fitted
-ratios lie outside the range the linearised value would give. The record measures a change in
+ratios lie outside the $95\%$ range that the Cram\'er--Rao value predicts, where one in twenty should, so a test on the ratio raises false alarms a third of the time. The record measures a change in
 \um, not a percentage. The precision depends on draws per window, not on calendar span. This is a
 model floor with two conditions. First, it assumes that each marker value scatters by $5\%$
 around the model's prediction for that draw. No serial CV exists for 3-hydroxypropionate. The
@@ -552,7 +552,7 @@ the value lies near a crossing.
 \begin{itemize}
 \item Every record is simulated, for one illustrative patient on the paper's illustrative
 constants. Absolute precisions depend on those constants; the structural statements (the
-confounding, the two ways an observable reaches $\theta$, the cancellation in the contrast)
+confounding, the two ways an observable reaches $\theta$, the cancellation in the within-patient change)
 do not.
 \item All identifiability results describe a stable steady state between crises. Under the
 parent model, and under the saturating variant whenever its clearance ceiling lies below the
@@ -565,7 +565,7 @@ their nominal constants and over the ranges checked, the target is still not rea
 cross-sectionally unless an unmeasured constant is assumed (under the saturating variant, $K_e$
 known to about $30\%$); the identifiability under a bounded clearance calibrated to the
 literature, with the crisis boundary treated explicitly, has not been done. The
-within-patient contrast is $0.088$ under the saturating variant and has not been computed
+within-patient sd of $\hat\theta_2-\hat\theta_1$ is $0.088$ relative to $\theta$ under the saturating variant (against $0.13$; a Cram\'er--Rao value, not checked by simulated fits) and has not been computed
 under the parent model.
 \item The model has no propionyl-CoA state, so C3 and 2-methylcitrate are not represented.
 \item Result~5 rests on an assumed carnitine conjugation rate (repeated at $k=10$, near its

@@ -11,7 +11,8 @@
         1.45      0.24   +0.400 (true +0.372)    2.185 [ +0.10, +11.45]               0.41 |      +66.9   19.9 |       0.66   0.91
         0.70      0.28   -0.356 (true -0.357)    7.384 [-11.19,  -0.03]               0.48 |      -46.0   19.4 |       0.61   0.64
 
-  Reading. At no change the middle of the fitted log ratio matches the Fisher value, but its
+  Reading. At no change the fitted log ratio is centred and its middle roughly follows the
+  Fisher value (robust sd 0.174 against 0.133), but its
   tails do not: whenever one window's theta goes to the floor (the record cannot rule out zero
   capacity, t1 1d), the other follows it towards zero and their ratio is arbitrary. The
   difference theta2_hat - theta1_hat has the Fisher sd and is nearly unbiased with or without a

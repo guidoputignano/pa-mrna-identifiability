@@ -96,8 +96,9 @@ within about $\pm40$\um. Relative to the $150$ of a patient at $5\%$ of normal t
 number in Figure~3 and Table~\ref{tab:sd}. A change of about $56$\um\ either way, about a third of
 that patient's capacity, would be detected $80\%$ of the time. The ratio
 $\hat\theta_2/\hat\theta_1$ (``capacity rose by $30\%$'') is \emph{not} measured: because the level
-itself is not bounded below (Figure~1c), in about a quarter of simulated pairs both estimates fall
-near zero, and the ratio of two numbers near zero can be anything.
+itself is not bounded below (Figure~1c), in about a quarter of simulated pairs one estimate falls
+to zero and the other drops by about the same amount (to near zero if nothing has changed), and a
+ratio to a number near zero can be anything.
 
 There are two conditions. The scale must not wobble too much from one weighing to the next: the
 result assumes that each marker value scatters by about $5\%$ around what the model predicts for
@@ -155,7 +156,7 @@ $e^{1.96\,\mathrm{sd}}$.)
 \toprule
 $\sdl{\hat\theta}$ & typical error (one sd) & $95\%$ range & where it appears \\
 \midrule
-$0.13$ & $\pm13\%$ of $\theta$ & $\pm26\%$ of $\theta$ & change within one patient: a difference, not a factor \\
+$0.13^{*}$ & $\pm20$\um & $\pm39$\um & change within one patient \\
 $0.20$ & $\times/\div\,1.22$ & $\times/\div\,1.48$ & \textbf{the target} (about $\pm20\%$) \\
 $0.29$ & $\times/\div\,1.34$ & $\times/\div\,1.77$ & idealised: $k_e$ and unrecorded load known \\
 $0.44$ & $\times/\div\,1.55$ & $\times/\div\,2.4$ & best combination of real instruments \\
@@ -163,6 +164,9 @@ $0.65$ & $\times/\div\,1.9$ & $\times/\div\,3.6$ & cell assay read as whole-body
 $3.05$ & $\times/\div\,21$ & $\times/\div\,400$ & the monthly record alone, at $5\%$ of normal \\
 \bottomrule
 \end{tabular}
+\par\smallskip\footnotesize ${}^{*}$Not a log-scale sd and not a factor: the sd of the change
+$\hat\theta_2-\hat\theta_1$ in \um, $0.13$ times the $150$ of a patient at $5\%$ of normal (Section~1).
+
 \end{table}
 
 \noindent So the headline value, about $3$, is far too wide to be a measurement: read as a
@@ -373,7 +377,7 @@ reach the target?
 \end{figure}
 
 \subsection{What is drawn} Each bar is one combination of measurements. Read the number at the
-end of each bar: it is the precision, $\sdl{\hat\theta}$, on a logarithmic axis, so
+end of each bar: it is the precision, $\sdl{\hat\theta}$ in the upper group (the lower group is explained below), on a logarithmic axis, so
 \emph{shorter is better}. The dashed vertical line is the target $0.20$. Orange bars miss the
 target. Blue bars reach it, but every blue bar in this figure is striped: it reaches the target
 only if an unmeasured constant is supplied (Section~2; in the legend the stripes are drawn
@@ -400,7 +404,7 @@ are only loosely related from one patient to another, so the result is about $0.
 \subsection{How to read it, bottom group} These two bars answer a different question: not
 ``what is this patient's capacity?'' but ``has it changed between two periods?''. Each period has
 104 weekly draws (two years of weekly blood draws), hence ``$2\times104$'' in the labels. These
-bars are not on the log scale of the upper group: each is the uncertainty of the \emph{change} in
+bars share the upper group's logarithmic axis but not its quantity: each is the uncertainty (sd) of the \emph{change} in
 capacity, $\hat\theta_2-\hat\theta_1$, divided by the $150$ of a patient at $5\%$ of normal (Section~1
 explains why the change is measured as a difference, not as a ratio). Here the unknown constants
 cancel if they stay the same in both periods, and the model then gives $0.13$, that is

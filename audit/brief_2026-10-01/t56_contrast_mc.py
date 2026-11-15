@@ -94,6 +94,8 @@ def main():
         df = np.exp(xs[:, 1]) - np.exp(xs[:, 0])
         floor = np.mean(np.min(xs[:, :2], axis=1) <= LB + 1e-6)
         q = np.percentile(lr, [2.5, 25, 50, 75, 97.5])
+        if ratio == 1.0:
+            lr_sd0 = (q[3] - q[1]) / 1.349
         out = np.mean(np.abs(lr - np.log(ratio)) > 1.96 * sd_ln)
         rej_ln = np.mean(np.abs(lr) > 1.96 * sd_ln)
         rej_d = np.mean(np.abs(df) > 1.96 * sd_d)
@@ -101,7 +103,8 @@ def main():
               f" [{q[0]:+6.2f}, {q[4]:+6.2f}] {out:>18.2f} | {df.mean():>+10.1f} {df.std():>6.1f} |"
               f" {rej_ln:>10.2f} {rej_d:>6.2f}")
     print(f"""
-  Reading. At no change the middle of the fitted log ratio matches the Fisher value, but its
+  Reading. At no change the fitted log ratio is centred and its middle roughly follows the
+  Fisher value (robust sd {lr_sd0:.3f} against {sd_ln:.3f}), but its
   tails do not: whenever one window's theta goes to the floor (the record cannot rule out zero
   capacity, t1 1d), the other follows it towards zero and their ratio is arbitrary. The
   difference theta2_hat - theta1_hat has the Fisher sd and is nearly unbiased with or without a
