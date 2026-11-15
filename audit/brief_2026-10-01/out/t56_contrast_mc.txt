@@ -1,0 +1,23 @@
+============================================================================================
+  ROUND 20 (close). THE WITHIN-PATIENT CONTRAST, SIMULATED (5 % of normal, 2 x 104 weekly draws)
+============================================================================================
+  Fisher (t24) on the same 400 no-change pairs: sd(ln th2 - ln th1) median 0.133; linearised at theta = 150, that is sd(th2 - th1) = 20.0 uM/d
+  tests: log ratio rejects when |ln th2 - ln th1| > 1.96 x 0.133; difference rejects when |th2 - th1| > 1.96 x 20.0 uM/d
+
+  true ratio  at floor  ln-ratio: median  robust sd        2.5-97.5 %  outside +-1.96 sd | diff: mean     sd | reject: ln   diff
+        1.00      0.23   -0.003 (true +0.000)    0.174 [-10.04, +10.33]               0.34 |       +1.0   20.2 |       0.34   0.05
+        1.20      0.20   +0.192 (true +0.182)    0.341 [ -0.46, +10.87]               0.30 |      +31.2   21.3 |       0.42   0.37
+        0.80      0.23   -0.209 (true -0.223)    0.678 [-10.95,  +0.05]               0.34 |      -30.3   19.6 |       0.45   0.33
+        1.45      0.24   +0.400 (true +0.372)    2.185 [ +0.10, +11.45]               0.41 |      +66.9   19.9 |       0.66   0.91
+        0.70      0.28   -0.356 (true -0.357)    7.384 [-11.19,  -0.03]               0.48 |      -46.0   19.4 |       0.61   0.64
+
+  Reading. At no change the middle of the fitted log ratio matches the Fisher value, but its
+  tails do not: whenever one window's theta goes to the floor (the record cannot rule out zero
+  capacity, t1 1d), the other follows it towards zero and their ratio is arbitrary. The
+  difference theta2_hat - theta1_hat has the Fisher sd and is nearly unbiased with or without a
+  change, because k_e and the load bias shift both windows' estimates by the same AMOUNT
+  (d theta = -d k_e (K_m + m) at a fixed level), not by the same factor. So what the record
+  measures is the change in uM/d; the 0.133 is that change's sd divided by the true 150. A test
+  on the difference is calibrated; one on the log ratio raises false alarms. With sd
+  20 uM/d the change detected with 80 % power (two-sided 5 %) is 2.80 x 20 =
+  56 uM/d either way, 37 % of a 5 % patient's capacity.

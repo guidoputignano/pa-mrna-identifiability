@@ -132,15 +132,16 @@ def fig_routes():
     gA = ys[[r[2] == "A" for r in rows]].min() - 0.8
     gB = ys[[r[2] == "B" for r in rows]].min() - 0.8
     for yy, txt in ((gA, r"absolute capacity, sd(ln $\hat\theta$)"),
-                    (gB, r"within-patient change, sd(ln $\hat\theta_2$ − ln $\hat\theta_1$)")):
+                    (gB, r"within-patient change, sd($\hat\theta_2 - \hat\theta_1$) / θ")):
         ax.text(-0.01, yy, txt, transform=ax.get_yaxis_transform(), ha="right", color=P.INK,
                 va="center", style="italic")
-    ax.set_xlabel("sd on the log scale at 5 % of normal capacity (target 0.20, dashed)")
+    ax.set_xlabel("sd at 5 % of normal capacity (target 0.20, dashed)\n"
+                  "upper group: of ln θ̂;  lower group: of the change, divided by θ")
     ax.legend(handles=[Patch(color=P.C2, label="misses 0.20"),
                        Patch(color=P.C1, label="reaches 0.20"),
                        Patch(facecolor="white", edgecolor=P.INK, hatch="////",
                              label="only if an unmeasured constant is supplied")],
-              loc="upper center", bbox_to_anchor=(0.30, -0.14), ncol=3, frameon=False)
+              loc="upper center", bbox_to_anchor=(0.30, -0.19), ncol=3, frameon=False)
     ax.grid(True, axis="x", color=P.GRID, lw=0.5, zorder=0)
     ax.set_axisbelow(True)
     for s in ("top", "right", "left"):

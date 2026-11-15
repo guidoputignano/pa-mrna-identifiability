@@ -15,7 +15,7 @@
       Shchelochkov 2021: plasma C3 and 2-MC rise significantly as eGFR falls.
       In a growing child renal clearance tracks size and eGFR can decline over
       months, so a k_e drift of order 0.05-0.10 between windows is plausible --
-      which is already at or past the weekly breakpoint (~0.06).
+      which is already past the weekly breakpoint (~0.035).
 
   (b) levocarnitine dose change / preanalytical -> calibration (b) drift:
         b drift (fraction L)  weekly contrast

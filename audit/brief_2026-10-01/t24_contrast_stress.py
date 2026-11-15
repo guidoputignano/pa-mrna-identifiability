@@ -98,8 +98,8 @@ def main():
     print(f"      {'drift (frac L)':>18}  {'weekly':>8}  {'monthly':>8}")
     for db in (0.0, 0.01, 0.02, 0.05):
         print(f"      {db:>18.2f}  {med_sd(104, 730, drift_b=db):>8.3f}  {med_sd(25, 730, drift_b=db):>8.3f}")
-    print("      The weekly contrast holds below 0.20 up to ~0.06 log units of k_e drift")
-    print("      and ~0.015 L of calibration drift; beyond that it degrades toward the")
+    print("      The weekly contrast holds below 0.20 up to ~0.035 log units of k_e drift")
+    print("      and ~0.014 L of calibration drift; beyond that it degrades toward the")
     print("      cross-sectional bar. PHYSIOLOGY: k_e is the marker's clearance (renal +")
     print("      non-enzymatic). Over a week it is effectively fixed (<0.01); over a year")
     print("      in a growing child renal clearance scales with size and 0.05-0.1 is")

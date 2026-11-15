@@ -48,7 +48,7 @@ def main():
     print("      Shchelochkov 2021: plasma C3 and 2-MC rise significantly as eGFR falls.")
     print("      In a growing child renal clearance tracks size and eGFR can decline over")
     print("      months, so a k_e drift of order 0.05-0.10 between windows is plausible --")
-    print("      which is already at or past the weekly breakpoint (~0.06).")
+    print("      which is already past the weekly breakpoint (~0.035).")
 
     print("\n  (b) levocarnitine dose change / preanalytical -> calibration (b) drift:")
     print(f"      {'b drift (fraction L)':>22}  {'weekly contrast':>15}")

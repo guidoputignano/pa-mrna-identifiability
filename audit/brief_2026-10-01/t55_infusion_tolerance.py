@@ -347,6 +347,12 @@ def fig_clear(pn, thalf=4.3):
               + " ".join(f"{v:.1f}" for v in well))
         print(f"    {cap_lab:>16}: fold over usual by days late 0..14, ill:     "
               + " ".join(f"{v:.1f}" for v in ill))
+    for theta, cap_lab in ((0.0, "no own enzyme"), (75.0, "2.5 % of normal")):
+        for kk in (1.0, 10.0):
+            u = simulate(theta, thalf, D0, pn, k=kk)[0]
+            f0, f1 = (simulate(theta, thalf, D0, pn, delay=d, illness=True, k=kk)[1] / u for d in (0.0, 1.0))
+            print(f"    {cap_lab:>16}, ill, k = {kk:g}: on time {f0:.3f}x, one day late {f1:.3f}x"
+                  f" ({100 * (f1 / f0 - 1):+.0f} %)")
     b.axhline(2.0, color=P.INK, lw=0.8, ls=":")
     b.text(14, 1.93, "peak doubled", ha="right", va="top", fontsize=6.5, color=P.INK)
     b.text(4.4, 12, "ill during\nthe delay", ha="right", va="center", fontsize=7, color=P.C2)
