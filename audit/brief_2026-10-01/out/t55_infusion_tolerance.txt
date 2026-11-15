@@ -181,4 +181,8 @@
      2.5 % of normal: ill curve stops after 10 d late (next point 1916 uM > validity limit 1650 uM)
      2.5 % of normal: fold over usual by days late 0..14, not ill: 1.0 1.1 1.2 1.3 1.5 1.6 1.8 1.9 2.1 2.3 2.5 2.7 2.9 3.1 3.4
      2.5 % of normal: fold over usual by days late 0..14, ill:     2.5 2.4 3.1 4.1 5.5 7.5 10.4 14.7 20.7 28.8 38.8 50.5 63.8 78.3 93.8
+       no own enzyme, ill, k = 1: on time 2.627x, one day late 2.467x (-6 %)
+       no own enzyme, ill, k = 10: on time 2.774x, one day late 3.174x (+14 %)
+     2.5 % of normal, ill, k = 1: on time 2.492x, one day late 2.375x (-5 %)
+     2.5 % of normal, ill, k = 10: on time 2.603x, one day late 2.988x (+15 %)
   wrote pi_note/fig/pi_tolerance.pdf
