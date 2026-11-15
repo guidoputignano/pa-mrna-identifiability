@@ -432,9 +432,17 @@ safety depends on the patient's own capacity, which Figures~1--3 show cannot be 
 the note calls it the ``booked increment''). It crosses zero at $3.545$ days, marked by the black
 dotted vertical line (``crossing at nominal constants''). The grey dashed curve is the 14-day
 interval; it crosses zero at $2.62$ days, at the left edge of the plot. The 15-day interval is not
-drawn; its curve would lie between those two. The dotted blue curve is the 21-day interval at the
-largest infusion the paper's ceiling accepts for a patient at $5\%$ of normal (the enzyme's peak
-may not exceed normal); it crosses zero further right, at $4.95$ days. The grey band shows where the 21-day crossing could lie once
+drawn; its curve would lie between those two. The planned dose is $6000$ every $14$ days; for a
+longer interval it is scaled to give the same amount per day, so a 21-day infusion is $9000$.
+
+The dotted blue curve is also the 21-day interval, but with a \emph{smaller} infusion, despite
+its name in the note (``largest admissible increment''). The paper puts a ceiling on the dose:
+just after an infusion, the enzyme should be no higher than in a healthy person (normal
+capacity). The planned dose overshoots that ceiling: at a half-life of $4.3$ days, the enzyme
+just after a 21-day infusion of $9000$ is about three times normal. The dotted curve uses the
+largest infusion that respects the ceiling, about $2750$ for a 21-day interval at $4.3$ days, less
+than a third of the planned one. Less goes in, so less is left at the trough, and the curve lies
+lower; it crosses zero only at $4.95$ days. The grey band shows where the 21-day crossing could lie once
 the unmeasured carnitine constants are allowed to vary ($3.29$ to $3.95$ days).
 
 \subsection{The dots} Orange: the $3.5$ days assumed in the paper's design, just below zero.
@@ -446,10 +454,28 @@ than a measurement.
 interval and dose you care about, and check whether you are above or below zero. Table~2 of the
 note gives the same crossings as numbers, for the 14-, 15- and 21-day intervals and both doses.
 
-\subsection{Take-away} The interval decision does not need capacity; it needs the half-life (and
-the dose). At the likely liver value of $4.3$ days, all three intervals are safe at the planned
-dose. At the largest admissible dose the 21-day interval is not: the dotted blue curve is still
-below zero at $4.3$ days.
+\subsection{A worked reading at 4.3 days} Go to the green dot, the likely liver half-life.
+\begin{itemize}
+\item \emph{Planned dose (solid blue).} The curve is at about $+165$. After $21$ days, about
+$315$\um\ of delivered enzyme is left, against the $151$ needed: $165$ to spare, even for a
+patient with no enzyme of their own. The 14-day curve is far higher still. So at the planned dose
+all three intervals are safe for every patient, without knowing anyone's capacity.
+\item \emph{Capped dose (dotted blue).} The curve is at about $-55$. After $21$ days only about
+$97$ is left, $55$ short. This does not mean every patient is in danger: a patient with at least
+$55$\um\ of enzyme of their own (about $1.8\%$ of normal) makes up the difference. It means the
+21-day interval is safe only for patients known to have at least that much, and Figures~1--3 show
+that a patient's capacity cannot be measured. At the same capped dose the 14- and 15-day
+intervals still have margins at $4.3$ days (about $+150$ and $+100$).
+\end{itemize}
+
+\subsection{Take-away: what is the truth?} The figure does not say which case is true, because
+neither input has been measured: $4.3$ days is the likely half-life, estimated from comparable
+proteins, not a measurement; and how much enzyme a dose actually adds in the liver (the delivered
+increment) has not been measured either. What the figure gives is the rule for deciding once they
+are: find the measured half-life on the horizontal axis, take the curve for the dose actually
+delivered, and see whether it is above zero. If it is, the interval is safe for every patient
+without knowing their capacity; if not, the decision needs the capacity, which cannot be
+measured. Table~2 of the note gives the crossing points as numbers.
 
 \subsection{What it does not say} ``Safe'' here means that the patient keeps a steady state at
 their usual load, as the parent model defines it. It does not cover an intercurrent illness,
