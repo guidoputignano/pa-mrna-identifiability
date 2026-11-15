@@ -19,7 +19,6 @@
 \graphicspath{{fig/}}
 \captionsetup{font=small,labelfont=bf}
 \setlist{nosep,leftmargin=1.4em}
-\definecolor{soft}{RGB}{244,242,238}
 \newcommand{\um}{\,\textmu M/d}
 \newcommand{\sdl}[1]{\operatorname{sd}(\ln #1)}
 
@@ -32,23 +31,31 @@
 \maketitle
 
 \noindent The note has four figures. Each one answers a single question, and each can be read
-in a minute once you know what the axes mean and which line or bar to look at. This guide
-goes through them one at a time: the question, what is drawn, how to read it step by step,
-what to take away, and what the figure does \emph{not} say. The first section explains the
-few conventions that all four share.
+in a minute once you know what the axes mean and which line or bar to look at. This guide goes
+through them one at a time: the question, what is drawn, how to read it step by step, what to
+take away, and what the figure does \emph{not} say. The first section explains four conventions
+used in the figures; not every figure uses all four. A short glossary is at the end. Every
+record in the note is simulated on the paper's illustrative constants; no patient data are
+shown.
 
-\section{Four conventions used throughout}
+\section{Four conventions}
 
-\subsection{Logarithmic axes} Several axes are logarithmic: each labelled step is a
-\emph{multiplication}, not an addition. On an axis marked $0.1$, $0.2$, $0.5$, $1$, $2$, $5$,
-the distance from $0.1$ to $1$ is the same as from $1$ to $10$. This is the natural scale for
-uncertainties that behave like ``a factor of so much either way''.
+\subsection{Logarithmic axes} Several axes (in Figures~1 and~3) are logarithmic: equal distances
+mean equal \emph{multiplications}, not equal additions. On the axis of Figure~3, marked $0.1$,
+$0.2$, $0.5$, $1$, $2$, $5$, the distance from $0.1$ to $1$ (ten times more) is the same as the
+distance from $1$ to $10$ would be. Figure~1 writes its logarithmic axes in powers of ten:
+$10^{-3}=0.001$, $10^{-1}=0.1$, $10^0=1$, $10^1=10$, $10^2=100$, $10^3=1000$; the small
+unlabelled ticks between two labels are $2, 3, \dots, 9$ times the lower label. This scale
+suits errors that multiply (``two times too high'' or ``two times too low'').
 
-\subsection{``sd on the log scale''} The precision of an estimate of capacity $\theta$ is
-given as $\sdl{\hat\theta}$, the standard deviation of the estimate on the logarithmic scale.
-It is easiest to read as a \emph{factor}: the estimate is typically off by a factor of
-$e^{\mathrm{sd}}$ either way, and $95\%$ of the time by less than $e^{1.96\,\mathrm{sd}}$.
-Table~\ref{tab:sd} translates the values that appear in the note.
+\subsection{``sd on the log scale''} The precision of an estimate of capacity $\theta$ is given
+as $\sdl{\hat\theta}$: take the logarithm of the estimate and measure how much it typically
+varies (its standard deviation). Smaller is better; $0$ would be a perfect measurement. You do
+not need to compute anything: read it as a \emph{factor} with Table~\ref{tab:sd}.
+``$\times/\div\,1.22$'' means the estimate is typically between the true value divided by
+$1.22$ and the true value multiplied by $1.22$. The ``$95\%$ range'' column is the factor the
+error stays within $95\%$ of the time. (The factors are $e^{\mathrm{sd}}$ and
+$e^{1.96\,\mathrm{sd}}$.)
 
 \begin{table}[h]
 \centering\small
@@ -58,31 +65,36 @@ Table~\ref{tab:sd} translates the values that appear in the note.
 $\sdl{\hat\theta}$ & typical error (one sd) & $95\%$ range & where it appears \\
 \midrule
 $0.13$ & $\times/\div\,1.14$ & $\times/\div\,1.29$ & change within one patient, best case \\
-$0.20$ & $\times/\div\,1.22$ & $\times/\div\,1.48$ & \textbf{the target} \\
+$0.20$ & $\times/\div\,1.22$ & $\times/\div\,1.48$ & \textbf{the target} (about $\pm20\%$) \\
 $0.29$ & $\times/\div\,1.34$ & $\times/\div\,1.77$ & idealised: $k_e$ and unrecorded load known \\
 $0.44$ & $\times/\div\,1.55$ & $\times/\div\,2.4$ & best combination of real instruments \\
-$0.65$ & $\times/\div\,1.9$ & $\times/\div\,3.6$ & ex vivo assay read as whole-body capacity \\
+$0.65$ & $\times/\div\,1.9$ & $\times/\div\,3.6$ & cell assay read as whole-body capacity \\
 $3.05$ & $\times/\div\,21$ & $\times/\div\,400$ & the monthly record alone, at $5\%$ of normal \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\noindent So the headline value, about $3$, means the record cannot tell a patient at $5\%$ of
-normal from one at $0.25\%$ or at $100\%$: it carries essentially no information about the
-level. The target $0.20$ means ``right to within about $\pm20\%$''.
+\noindent So the headline value, about $3$, is far too wide to be a measurement: read as a
+factor, $\times/\div\,21$ would run from $0.25\%$ to $100\%$ of normal. At $5\%$, however, the
+real uncertainty is not symmetric like this. Figure~1(c) shows its true shape: the record does
+rule out capacities above about $22\%$ of normal, but it cannot rule out any value below that,
+down to almost zero.
 
-\subsection{``Nominal'' and ``over the constants''} The parent model contains three
-constants of the carnitine channel ($K_c$, $M_i$, $\rho_0$) that nobody has measured.
-``Nominal'' means the values the paper uses ($K_c=100$, $M_i=300$, $\rho_0=0.5$). ``Over the
-constants'' means the range of results when they are moved across the ranges the paper itself
-considers admissible.
+\subsection{``Nominal'' and ``over the constants''} The parent model contains three constants
+of the carnitine channel ($K_c$, $M_i$, $\rho_0$) that nobody has measured. ``Nominal'' means the
+values the paper uses ($K_c=100$, $M_i=300$, $\rho_0=0.5$). ``Over the constants'' means the range
+of results when they are moved across the ranges the paper itself considers admissible.
 
-\subsection{``Only if an unmeasured constant is supplied''} Several results reach the target
-only because the calculation was handed a number that has never been measured in patients:
-for example, how enzyme activity measured in a patient's cells in a test tube translates into
-the capacity of the whole body. The calculation is correct, but its answer is conditional on
-that number. Wherever the figures use hatching (diagonal stripes), it marks a result of this
-kind: \emph{true if someone measures this constant, not true today}.
+\subsection{``Only if an unmeasured constant is supplied''} This phrase is the legend of the
+striped (hatched) bars in Figure~3; no other figure uses stripes. It means the calculation
+reaches the target only because it was given a number that nobody has measured in patients.
+Three bars are striped. In the two upper ones ($0.20$ and $0.18$) the missing number is the
+conversion factor between enzyme activity measured in the patient's cells in a test tube and
+the enzyme capacity of the whole body. In the lower one ($0.13$) the missing number is how much
+the marker changes from one blood draw to the next in a stable patient; the bar assumes $5\%$,
+and the result holds only if the real value is below about $10\%$. The arithmetic is correct,
+but the result is only as good as that number. Read a striped bar as: \emph{this would work if
+someone measured the missing number and found it as good as assumed; it cannot be used today}.
 
 \section{Figure 1: why capacity cannot be measured at 5\% of normal}
 
@@ -95,36 +107,47 @@ therapy), how precisely is capacity known, and why does it fail in severe patien
 \end{figure}
 
 \subsection{Panel (a)} The horizontal axis is the patient's capacity as a percentage of normal,
-from $1\%$ to $1000\%$ (logarithmic). The vertical axis is $\sdl{\hat\theta}$ (logarithmic).
-The blue curve is the precision the design achieves; the dashed line is the target. Read it
-like a map of where the design works: the curve is below the dashed line only inside the
-green band, from $82\%$ to $627\%$ of normal. At $5\%$ (orange dot) it is $3.07$, fifteen
-times the target.
+from $1\%$ to $1000\%$ (logarithmic). The vertical axis is $\sdl{\hat\theta}$ (logarithmic);
+\emph{lower is better}. The blue curve is the precision the design achieves; the pale blue
+shading around it, barely visible, is its range over 24 simulated records. The dashed line is
+the target $0.20$. Read it like a map of where the design works: the curve is below the dashed
+line only inside the pale green band, from $82\%$ to $627\%$ of normal. Its best point (blue
+dot) is $0.123$ at $212\%$. At $5\%$ (orange dot) it is $3.07$, fifteen times the target.
 
-\subsection{Panel (b)} This panel gives the reason. It shows how strongly the estimate of
-$\theta$ is tied to each of the other unknowns. A value of $-1$ means a perfect trade-off: a
-larger $\theta$ together with a smaller $k_e$ explains the data exactly as well. Follow the
-blue line (``with $\ln k_e$''): below about $50\%$ of normal it sits at $-1$. In a severe
-patient the enzyme removes only a small share of the metabolite ($16\%$ at $5\%$ of normal), so
-the data cannot separate ``a bit more enzyme'' from ``a bit more of the other clearance
-route''. The orange line rises at very high capacity, where a different trade-off (with $K_m$)
-takes over; that is why the curve in panel (a) rises again on the right.
+\subsection{Panel (b)} This panel gives the reason. The vertical axis is the correlation
+between the estimate of $\theta$ and the estimate of one other unknown, from $-1$ to $+1$. $0$
+means the two are not linked. $-1$ means a perfect trade-off: a larger $\theta$ together with a
+smaller value of the other unknown explains the data exactly as well. $+1$ is also a perfect
+trade-off, with both larger together. There is one line for each other unknown: $k_e$ (blue),
+$K_m$ (orange) and $b$ (green); see the glossary. Follow the blue line: below about $50\%$ of
+normal it sits at $-1$. In a severe patient the enzyme removes only a small share of the
+metabolite ($16\%$ at $5\%$ of normal), so the data cannot separate ``a bit more enzyme'' from
+``a bit more of the other clearance route''. The orange line climbs towards $+1$ at very high
+capacity: there the trade-off is with $K_m$ instead, and that is why the curve in panel (a) rises
+again on the right. The green line stays near $0$: the load error $b$ is not the main problem.
 
-\subsection{Panel (c)} This is the most technical panel. The horizontal axis is a candidate
-value of $\theta$ divided by the true value; the vertical axis says how much worse the data
-fit becomes at that candidate ($0$ is the best fit). Candidates whose curve stays below the
-dotted line at $1.92$ are compatible with the data at the $95\%$ level. Look at the black
-curve: on the left it stays flat at zero all the way down to a thousandth of the truth, so
-the data cannot rule out a patient with almost no enzyme; on the right it climbs steeply, so
-the data \emph{can} rule out more than about $22\%$ of normal (green line). The dashed orange
-parabola is what a well-behaved problem would look like; the real curve does not have that
-shape.
+\subsection{Panel (c)} This is the most technical panel, drawn for a patient whose true
+capacity is $5\%$ of normal. The horizontal axis is a candidate value of $\theta$ divided by the
+true value: $10^0=1$ is the truth, $10^{-3}$ a thousandth of it, $10^1$ ten times it. The
+vertical axis says how much worse the model fits the data if we force $\theta$ to that candidate
+and let all the other unknowns adjust as well as they can (this is what ``profile'' means); $0$
+means ``fits as well as the best value''. Every candidate whose curve stays below the dotted line
+(``95\% cut (1.92)'') is compatible with the data at the $95\%$ level. The black curve is the
+record without measurement noise; the thin light-blue curves are 24 simulated noisy records,
+and they behave the same way. On the left the black curve stays flat at zero down to a
+thousandth of the truth and beyond, so the data cannot rule out a patient with almost no enzyme.
+On the right it climbs steeply and crosses the dotted line at about $4.5$ times the truth
+(green vertical line). Since the truth is $5\%$ of normal, $4.5\times5\%\approx22\%$: the data
+\emph{can} rule out capacities above about $22\%$ of normal. The dashed orange curve
+(``Cram\'er--Rao'') is the symmetric bowl that the value $3.07$ in panel (a) assumes. The real
+curve is not a bowl: it is flat on one side and a wall on the other. That is why $3.07$ on its own
+is misleading at $5\%$.
 
 \subsection{Take-away} At $5\%$ of normal the record supports a one-sided statement
 (``capacity is below about $22\%$ of normal''), not a measurement.
 
-\subsection{What it does not say} It does not say that capacity can never be measured: it
-says this design, with these unknowns, cannot. Figure~3 asks whether other measurements help.
+\subsection{What it does not say} It does not say that capacity can never be measured: it says
+this design, with these unknowns, cannot. Figure~3 asks whether other measurements help.
 
 \section{Figure 2: the same failure as geometry}
 
@@ -132,28 +155,39 @@ says this design, with these unknowns, cannot. Figure~3 asks whether other measu
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.92\linewidth]{pi_pencil.pdf}
+\includegraphics[width=0.9\linewidth]{pi_pencil.pdf}
 \end{figure}
 
-\subsection{What is drawn} Each blood draw gives one equation with two unknowns, capacity
-$\theta$ (horizontal axis) and the other clearance route $k_e$ (vertical axis). One equation
-with two unknowns is a \emph{line}: every point on it explains that draw exactly. Each
-coloured line is one draw; the colour is the measured metabolite level (purple low, yellow
-high). If there were no measurement noise, all lines would cross at the true value (orange
-dot). The orange outline is the region where they nearly cross, that is, the uncertainty.
+\subsection{What is drawn} Each blood draw gives one equation with two unknowns: capacity
+$\theta$ (horizontal axis) and the other clearance route $k_e$ (vertical axis). One equation with
+two unknowns is a \emph{line}: every point on it explains that draw exactly. Each coloured line
+is one draw. Its colour is the measured metabolite level, read on the colour bar at the right
+(purple low, yellow high). Here $\theta$ is in \textmu M/d, not in \% of normal: normal is
+$3000$\um, so the true value, $150$ (orange dot), is $5\%$ of normal. If there were no
+measurement noise, all lines would cross exactly at the orange dot. The orange outline (legend:
+``$2\sigma$ near-concurrence region'', where concurrence means lines meeting at one point) is
+the region where the lines nearly meet, that is, the uncertainty.
 
-\subsection{How to read it} Think of it as triangulation. Each draw is a bearing towards an
-unknown position. Bearings taken from very different directions cross sharply; bearings taken
-from almost the same direction run nearly parallel, and the crossing point smears out along
-them. The steepness of each line depends only on the metabolite level of that draw.
+\subsection{How to read it} You are looking for the one point where all the lines cross. If the
+lines point in very different directions, they cross at one clear point. If they point in almost
+the same direction, they run nearly parallel, and the crossing point is spread out along them:
+you cannot tell where along the lines it is. The steepness of each line depends only on the
+metabolite level of that draw, so draws with similar levels give lines of similar steepness.
 
-\subsection{Panel (a)} The real monthly record. The metabolite levels are all low and similar,
-so all lines have nearly the same slope. They run almost parallel, and the region where they
-nearly cross is a long thin sliver: capacity is unknown along the whole length of it.
+\subsection{Panel (a)} The paper's design: 25 monthly draws on therapy (simulated). The metabolite
+levels are all low and similar (about $4$ to $38$\,\textmu M, so every line is dark purple), and
+all lines have nearly the same slope. They run almost parallel. The orange outline is so long
+that it leaves the plot on both sides: you see only its two long edges, the two thick orange
+lines running parallel to the draws. They are not draws. Every point between those two lines is
+compatible with the data, so the data cannot place $\theta$ anywhere between $0$ and $400$\um,
+the whole width of the plot.
 
-\subsection{Panel (b)} A hypothetical record in which the dietary load is varied over a very
-wide range. The high-metabolite draws (yellow) have different slopes, the lines now cross at
-an angle, and the region shrinks to a small spot near the truth.
+\subsection{Panel (b)} An imagined record of 25 draws, with the dietary load varied from about
+half to about three times the recorded load (the title says ``0.45--3.2$\times$ recorded'').
+The draws with a high metabolite level (blue-green lines, up to about $190$\,\textmu M; no draw
+reaches the yellow end of the colour bar) are less steep, so the lines now cross at a visible
+angle. The orange outline closes into an ellipse around the orange dot. It is much smaller than in
+panel (a) but still long, from about $30$ to $270$\um.
 
 \subsection{Take-away} Precision needs draws at very different metabolite levels. In practice
 those levels require loads far above what a severe patient tolerates (the parent model predicts
@@ -169,34 +203,47 @@ reach the target?
 \includegraphics[width=0.8\linewidth]{pi_routes.pdf}
 \end{figure}
 
-\subsection{What is drawn} Each bar is one combination of measurements. Its length is the
-precision it achieves, $\sdl{\hat\theta}$, on a logarithmic axis, so \emph{shorter is better}.
-The dashed vertical line is the target $0.20$. Orange bars miss the target, blue bars reach it,
-and hatched blue bars reach it only if an unmeasured constant is supplied (Section~1).
+\subsection{What is drawn} Each bar is one combination of measurements. Read the number at the
+end of each bar: it is the precision, $\sdl{\hat\theta}$, on a logarithmic axis, so
+\emph{shorter is better}. The dashed vertical line is the target $0.20$. Orange bars miss the
+target. Blue bars reach it, but every blue bar in this figure is striped: it reaches the target
+only if an unmeasured constant is supplied (Section~1; in the legend the stripes are drawn
+black on white). A percentage in a label is the assumed typical error of that measurement (for
+example, the $k_e$ tracer measures $k_e$ with a typical error of $5.4\%$); ``per-draw CV'' in the
+lower labels is the typical variation of the marker from one blood draw to the next.
 
-\subsection{How to read it, top group} Read the bars from the top as a story. The record
-alone: $3.05$. Adding a tracer measurement of the load hardly helps ($3.04$). Adding a tracer
-that measures the other clearance route $k_e$ helps a lot ($0.45$), and both together give
-$0.44$, the best that available instruments achieve; still more than twice the target. Even
-knowing those two perfectly leaves $0.29$. Only adding a direct reading of the enzyme (the ex
-vivo assay on the patient's cells) reaches $0.20$, and that bar is hatched: it assumes we know
-how test-tube activity in cells converts into whole-body capacity. The bar two rows further down
-shows what happens without that conversion factor: $3.05$, no better than the record alone. The last
-bar of the group tries to avoid the factor by comparing the patient's cells with healthy
-controls; that removes the factor but measures test-tube activity rather than whole-body
-capacity, and the gap between the two leaves about $0.65$.
+\subsection{How to read it, top group} Read the bars from the top as a story. The record alone:
+$3.05$ (Figure~1 gives $3.07$ for the same record; the two differ only in a detail of how the
+measurement noise is modelled). Adding a tracer measurement of the load hardly helps ($3.04$).
+Adding a tracer that measures the other clearance route $k_e$ helps a lot ($0.45$), and both
+together give $0.44$, the best that available instruments achieve, still more than twice the
+target. Even if the unrecorded load and $k_e$ were known exactly (an idealised case, not an
+instrument), the result would be $0.29$. Only a direct reading of the enzyme reaches $0.20$: the
+ex vivo assay, enzyme activity measured in the patient's cells outside the body. That bar is
+striped: it assumes we know how activity in cells in a test tube converts into whole-body
+capacity. The next bar ($0.18$) adds both tracers to the assay and is striped for the same
+reason. The bar after it (``scale factor unknown'') shows the assay without that conversion
+factor: $3.05$, no better than the record alone. The last bar of the group tries to avoid the
+factor by dividing the patient's cell activity by that of healthy controls. This removes the
+factor, but it still measures activity in a test tube, not capacity in the living body; the two
+are only loosely related from one patient to another, so the result is about $0.65$.
 
 \subsection{How to read it, bottom group} These two bars answer a different question: not
-``what is this patient's capacity?'' but ``has it changed between two periods?''. Here the
-unknown constants cancel, because they are the same in both periods, and the model gives
-$0.13$, well below the target. It is hatched because it assumes the metabolite varies by only
-about $5\%$ from one draw to the next in a stable patient, which has not been measured in
-propionic acidaemia. The bar below uses the only published figure ($26.4\%$, for a related
-marker in healthy adults) and gives $0.475$.
+``what is this patient's capacity?'' but ``has it changed between two periods?''. Each period has
+104 weekly draws (two years of weekly blood draws), hence ``$2\times104$'' in the labels. Here the
+unknown constants cancel if they stay the same in both periods, and the model then gives $0.13$,
+well below the target. The bar is striped because it assumes the marker varies little from one
+draw to the next in a stable patient (it is drawn at $5\%$; the target is reached as long as the
+variability is below about $10\%$), which has not been measured in propionic acidaemia. The bar
+below uses the published value for a related marker, C3 ($26.4\%$ within one day, in healthy
+adults), and gives $0.475$. The constants may also fail to stay the same: a small drift in $k_e$
+(for example from falling kidney function in a growing child) or in the load calibration (for
+example a change of carnitine dose) between the periods already gives $0.20$--$0.28$.
 
-\subsection{Take-away} There is no solid blue bar in the top group. Every route to the
-absolute level either misses the target or needs a constant nobody has measured. Change within
-one patient is reachable, if the marker turns out to be stable enough.
+\subsection{Take-away} There is no solid blue bar in the top group: every route to the absolute
+level either misses the target or needs a constant nobody has measured. Change within one
+patient is reachable, but only if the marker turns out to be stable enough (per-draw variability
+below about $10\%$) and the patient's other constants do not drift between the two periods.
 
 \section{Figure 4: what the dosing interval needs}
 
@@ -205,55 +252,73 @@ capacity, and what does that depend on?
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.78\linewidth]{pi_margin.pdf}
+\includegraphics[width=0.76\linewidth]{pi_margin.pdf}
 \end{figure}
 
-\subsection{What is drawn} The horizontal axis is the PCC protein half-life: how long the
-enzyme delivered by each dose lasts. A longer half-life leaves more enzyme at the low point
-just before the next dose (the trough). The vertical axis is the safety margin of the most
-vulnerable patient, one with no enzyme of their own: the enzyme left at the trough minus the
-critical capacity below which the parent model loses its stable state. Above the horizontal
-zero line the interval is safe for \emph{every} patient, without knowing anyone's capacity.
-Below it, safety depends on the patient's own capacity, which Figures~1--3 show cannot be
-measured.
+\subsection{What is drawn} The horizontal axis is the PCC protein half-life: how long the enzyme
+delivered by each dose lasts. A longer half-life leaves more enzyme at the low point just before
+the next dose (the trough). The vertical axis is the safety margin $\mu$, in the same unit as
+capacity (\textmu M/d). It is computed for the most vulnerable patient, one with no enzyme of their
+own: the delivered enzyme left at the trough minus the critical capacity (the least enzyme the
+parent model needs to hold the metabolite at a steady level; see the glossary). The legend writes
+this in symbols: $\mu(21)=\Delta_{\mathrm{tr}}(21)-\theta_{\mathrm{crit}}^{\mathrm{int}}$ for the
+21-day interval, and $D$ is the size of each dose. Above the horizontal zero line even this
+patient is safe; a patient with some enzyme of their own has a larger margin, so the interval is
+then safe for \emph{every} patient, without knowing anyone's capacity. Below the zero line,
+safety depends on the patient's own capacity, which Figures~1--3 show cannot be measured.
 
-\subsection{The curves} The thick blue curve is the 21-day interval at the booked dose; it
-crosses zero at $3.545$ days. The grey dashed curve is the 14-day interval, which crosses zero
-far to the left, at $2.62$ days. The dotted blue curve is the 21-day interval at the smaller
-dose the paper considers the largest admissible in severe patients; it crosses zero much later,
-at $4.39$ days. The grey band shows where the 21-day crossing could lie once the unmeasured
-carnitine constants are allowed to vary ($3.29$ to $3.95$ days).
+\subsection{The curves} The thick blue curve is the 21-day interval at the planned dose ($D=6000$;
+the note calls it the ``booked increment''). It crosses zero at $3.545$ days, marked by the black
+dotted vertical line (``crossing at nominal constants''). The grey dashed curve is the 14-day
+interval; it crosses zero at $2.62$ days, at the left edge of the plot. The 15-day interval is not
+drawn; its curve would lie between those two. The dotted blue curve is the 21-day interval at a
+smaller dose, $D=2672$, the largest the paper accepts for a patient at $5\%$ of normal; it crosses
+zero further right, at $4.39$ days. The grey band shows where the 21-day crossing could lie once
+the unmeasured carnitine constants are allowed to vary ($3.29$ to $3.95$ days).
 
 \subsection{The dots} Orange: the $3.5$ days assumed in the paper's design, just below zero.
-Yellow: the only human measurement, $3.6$ days in skin cells, just above zero. Green: the likely
-value in liver, about $4.3$ days, an estimate from comparable proteins rather than a
-measurement.
+Yellow: the only human measurement, $3.6$ days in skin cells (fibroblasts), just above zero.
+Green: the likely value in liver, about $4.3$ days, an estimate from comparable proteins rather
+than a measurement.
 
 \subsection{How to use it} Pick a half-life on the horizontal axis, go up to the curve for the
 interval and dose you care about, and check whether you are above or below zero. Table~2 of the
-note gives the same crossings as numbers, for all three intervals and both doses.
+note gives the same crossings as numbers, for the 14-, 15- and 21-day intervals and both doses.
 
-\subsection{Take-away} The interval decision does not need capacity; it needs the half-life
-(and the dose). At the likely liver value of $4.3$ days, all three intervals are safe at the
-booked dose; at the smaller admissible dose, the 21-day interval is not.
+\subsection{Take-away} The interval decision does not need capacity; it needs the half-life (and
+the dose). At the likely liver value of $4.3$ days, all three intervals are safe at the planned
+dose. At the smaller admissible dose the 21-day interval is not: the dotted blue curve is still
+below zero at $4.3$ days.
 
-\subsection{What it does not say} ``Safe'' here means that the patient keeps a stable state at
+\subsection{What it does not say} ``Safe'' here means that the patient keeps a steady state at
 their usual load, as the parent model defines it. It does not cover an intercurrent illness,
-which raises the load, and it is not a clinical recommendation for an investigational drug.
+which raises the load: with the threshold used in the paper's own decision section, which
+includes an illness, the answer is different, and the interval decision again depends on the
+patient's capacity. It is also not a clinical recommendation for an investigational drug.
 
-\section{A short glossary}
+\section{Glossary}
 
 \begin{description}[leftmargin=1.4em,style=nextline]
-\item[$\theta$ (capacity)] the patient's residual PCC enzyme capacity; $5\%$ of normal is the
-severe range.
+\item[$\theta$ (capacity)] the patient's residual PCC enzyme capacity, in \textmu M/d; normal
+is $3000$, and $5\%$ of normal ($150$) is the severe range.
+\item[Marker] the metabolite measured in each blood draw (plasma 3-hydroxypropionate).
 \item[$k_e$] the strength of the other clearance route (conjugation to carnitine and renal
 loss), which competes with the enzyme.
+\item[$K_m$] the metabolite level at which the enzyme works at half its maximum speed.
+\item[$b$ (load bias)] the part of the dietary load that is not in the record: a fixed, unknown
+error in the recorded load.
+\item[Ex vivo, in vivo] ex vivo: measured in the patient's cells outside the body, in a test
+tube; in vivo: in the living body.
+\item[Tracer] a labelled substance given to the patient so that one flow in the body can be
+measured.
+\item[CV] coefficient of variation: the typical variation, as a percentage of the average.
+\item[Fibroblast] a type of skin cell, here grown in the laboratory.
 \item[Cram\'er--Rao bound] the best precision any unbiased estimate can achieve from a given
 record; the note's precisions are of this kind, so real estimates can only be worse.
 \item[Half-life] the time for half of the delivered enzyme to be broken down.
 \item[Trough] the lowest level of delivered enzyme, just before the next dose.
-\item[Critical capacity] the enzyme capacity below which the parent model has no stable
-state at the given load.
+\item[Critical capacity] the enzyme capacity below which the parent model has no steady state
+at the given load.
 \end{description}
 
 \end{document}

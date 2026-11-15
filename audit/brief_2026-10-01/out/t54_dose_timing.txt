@@ -1,0 +1,125 @@
+============================================================================================
+  ROUND 20. LATE AND MISSED DOSES, AND WHETHER 0.44 DECIDES THE INTERVAL PER PATIENT
+============================================================================================
+  theta_crit_int nominal 150.8, worst corner of the paper's ranges 232.1 uM/d; normal capacity 3000
+
+  A. QUASI-STATIC: days a FORTNIGHTLY dose can be late before the trough condition fails
+     (inf = never fails: the patient's own capacity alone clears theta_crit)
+
+    D = 6000, constants nominal:
+      half-life   theta 0 %   theta 1 % theta 2.5 %   theta 5 %
+           3.5d       4.9 d       6.0 d       8.4 d      31.5 d
+           3.6d       5.5 d       6.6 d       9.1 d      32.9 d
+           4.3d       9.5 d      10.9 d      13.8 d      42.2 d
+
+    D = 6000, constants worst corner:
+      half-life   theta 0 %   theta 1 % theta 2.5 %   theta 5 %
+           3.5d       2.7 d       3.4 d       4.7 d       8.0 d
+           3.6d       3.3 d       4.0 d       5.3 d       8.7 d
+           4.3d       6.9 d       7.7 d       9.3 d      13.3 d
+
+    D = 2672, constants nominal:
+      half-life   theta 0 %   theta 1 % theta 2.5 %   theta 5 %
+           3.5d       0.8 d       2.0 d       4.3 d      27.5 d
+           3.6d       1.3 d       2.4 d       4.9 d      28.7 d
+           4.3d       4.5 d       5.9 d       8.8 d      37.2 d
+
+    D = 2672, constants worst corner:
+      half-life   theta 0 %   theta 1 % theta 2.5 %   theta 5 %
+           3.5d fails on time fails on time       0.6 d       3.9 d
+           3.6d fails on time fails on time       1.1 d       4.5 d
+           4.3d       1.8 d       2.7 d       4.3 d       8.3 d
+
+    A fully SKIPPED dose (28-day gap) keeps the trough condition only for theta above:
+      D = 6000, half-life 3.5 d: increment left   25.0 -> theta >  125.8 uM/d (4.2 % of normal), nominal constants
+      D = 6000, half-life 3.6 d: increment left   29.3 -> theta >  121.5 uM/d (4.0 % of normal), nominal constants
+      D = 6000, half-life 4.3 d: increment left   73.4 -> theta >   77.3 uM/d (2.6 % of normal), nominal constants
+      D = 2672, half-life 3.5 d: increment left   11.1 -> theta >  139.6 uM/d (4.7 % of normal), nominal constants
+      D = 2672, half-life 3.6 d: increment left   13.1 -> theta >  137.7 uM/d (4.6 % of normal), nominal constants
+      D = 2672, half-life 4.3 d: increment left   32.7 -> theta >  118.1 uM/d (3.9 % of normal), nominal constants
+
+  B. DYNAMIC (two-state parent model, load 600, nominal constants): metabolite m in uM
+     usual = peak over a normal 14-day cycle; then the peak in the long gap; every run
+     returns to its usual cycle once doses resume (final cycle peak shown).
+
+    D = 6000, half-life 3.5 d:
+          capacity   usual  1 d late  3 d late  7 d late   skipped   final
+           0 % (0)    57.4      65.2      84.2     145.5     587.2    57.4
+          1 % (30)    55.1      62.1      78.7     126.5     365.3    55.1
+        2.5 % (75)    52.0      58.1      71.8     106.4     208.0    52.0
+         5 % (150)    47.7      52.5      62.9      85.1     122.9    47.7
+
+    D = 6000, half-life 4.3 d:
+          capacity   usual  1 d late  3 d late  7 d late   skipped   final
+           0 % (0)    40.4      45.0      55.7      85.5     207.6    40.4
+          1 % (30)    39.4      43.7      53.5      79.7     166.0    39.4
+        2.5 % (75)    37.9      41.8      50.6      72.4     128.7    37.9
+         5 % (150)    35.8      39.2      46.5      63.2      96.0    35.8
+
+    D = 2672, half-life 3.5 d:
+          capacity   usual  1 d late  3 d late  7 d late   skipped   final
+           0 % (0)    97.0     110.9     147.4     298.3    1535.0    97.0
+          1 % (30)    89.4     100.5     127.9     220.0     885.6    89.4
+        2.5 % (75)    80.1      88.5     107.2     156.0     339.5    80.1
+         5 % (150)    68.7      74.3      85.6     107.8     141.2    68.7
+
+    D = 2672, half-life 4.3 d:
+          capacity   usual  1 d late  3 d late  7 d late   skipped   final
+           0 % (0)    69.1      76.9      95.7     155.4     571.7    69.1
+          1 % (30)    65.5      72.3      88.1     132.7     345.5    65.5
+        2.5 % (75)    60.9      66.5      79.0     109.7     196.7    60.9
+         5 % (150)    54.7      58.9      67.8      86.6     118.8    54.7
+
+    Scale: the paper's illustrative patient (theta = 300, 10 % of normal) sits stably at 82 uM untreated at this load (separatrix 1033 uM).
+
+  C. CAN AN ESTIMATE OF theta DECIDE A LONGER INTERVAL PER PATIENT?
+     Precision is NOT one number: sd(ln theta) grows as capacity falls. Recomputed with
+     t26's machinery (25 monthly draws, per-draw noise) at each capacity:
+      % of normal                   record alone     k_e tracer + load turnover  k_e and unrecorded load exact
+             0.17                84.171 (+-  429 uM/d)                12.374 (+-   63 uM/d)                 7.420 (+-   38 uM/d)
+             0.30                47.796 (+-  430 uM/d)                 7.020 (+-   63 uM/d)                 4.221 (+-   38 uM/d)
+             0.50                28.767 (+-  432 uM/d)                 4.219 (+-   63 uM/d)                 2.548 (+-   38 uM/d)
+             1.00                14.493 (+-  435 uM/d)                 2.119 (+-   64 uM/d)                 1.294 (+-   39 uM/d)
+             2.00                 7.348 (+-  441 uM/d)                 1.069 (+-   64 uM/d)                 0.667 (+-   40 uM/d)
+             3.00                 4.963 (+-  447 uM/d)                 0.720 (+-   65 uM/d)                 0.458 (+-   41 uM/d)
+             5.00                 3.045 (+-  457 uM/d)                 0.441 (+-   66 uM/d)                 0.291 (+-   44 uM/d)
+     In absolute terms the uncertainty is nearly the same at every capacity (sd(ln theta)
+     x theta, in brackets): the likelihood is close to Gaussian in theta itself. So the
+     model below is theta_hat = theta + s(theta) Z, with s = theta sd(ln theta) interpolated
+     in log capacity and held constant beyond the computed range.
+     Population: theta log-uniform over 0.17-5 % of normal (R-J). Certify if the one-sided
+     95 % lower bound theta_hat - 1.645 s exceeds theta_need = theta_crit - Delta_tr(tau).
+
+    21 d, half-life 3.5 d, D 6000, nominal: theta_need = 7.9 uM/d (0.26 % of normal); truly safe 87% of the population
+                       configuration  certified  of the safe  false-safe among unsafe   capacity certified 50 % / 80 % of the time
+                        record alone         6%           6%                     4.9%                        25.3 % / 38.1 % of normal
+          k_e tracer + load turnover        17%          19%                     4.7%                         3.9 % / 5.7 % of normal
+       k_e and unrecorded load exact        27%          30%                     4.6%                         2.5 % / 3.8 % of normal
+
+    21 d, half-life 3.5 d, D 6000, worst corner: theta_need = 89.2 uM/d (2.97 % of normal); truly safe 15% of the population
+                       configuration  certified  of the safe  false-safe among unsafe   capacity certified 50 % / 80 % of the time
+                        record alone         4%           6%                     3.7%                        28.0 % / 40.8 % of normal
+          k_e tracer + load turnover         2%          12%                     0.8%                         6.6 % / 8.5 % of normal
+       k_e and unrecorded load exact         3%          18%                     0.4%                         5.4 % / 6.6 % of normal
+
+    21 d, half-life 4.3 d, D 2672, nominal: theta_need = 10.3 uM/d (0.34 % of normal); truly safe 79% of the population
+                       configuration  certified  of the safe  false-safe among unsafe   capacity certified 50 % / 80 % of the time
+                        record alone         6%           6%                     4.9%                        25.4 % / 38.2 % of normal
+          k_e tracer + load turnover        16%          19%                     4.6%                         3.9 % / 5.8 % of normal
+       k_e and unrecorded load exact        25%          31%                     4.3%                         2.6 % / 3.9 % of normal
+
+    14 d, half-life 3.5 d, D 2672, worst corner: theta_need = 54.0 uM/d (1.80 % of normal); truly safe 30% of the population
+                       configuration  certified  of the safe  false-safe among unsafe   capacity certified 50 % / 80 % of the time
+                        record alone         5%           6%                     4.2%                        26.8 % / 39.7 % of normal
+          k_e tracer + load turnover         6%          17%                     1.7%                         5.4 % / 7.3 % of normal
+       k_e and unrecorded load exact         9%          28%                     0.9%                         4.1 % / 5.4 % of normal
+
+  READING. (1) In the parent model a late dose is not a cliff edge. The trough condition is
+  a quasi-static test; dynamically the metabolite rises gradually while the increment is
+  low and falls back once the next dose arrives. How far it rises depends on the residual
+  capacity, the half-life and the dose: see B. (2) The 0.44 of the two tracers is the
+  precision at 5 % of normal only; in absolute terms the uncertainty is about the same at
+  every capacity, so an estimate certifies a longer interval only for patients well above
+  theta_need (see the lowest certified capacity). These are model statements on simulated
+  patients; the decision numbers in C are FIM-based (R-M's rule asks for simulated fits).
+
