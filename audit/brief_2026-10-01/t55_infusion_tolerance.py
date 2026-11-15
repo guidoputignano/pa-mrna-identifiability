@@ -262,7 +262,7 @@ def main():
     fig.savefig(out / "pi_tolerance_slack.pdf", bbox_inches="tight")
     fig.savefig(out / "pi_tolerance_slack.png", dpi=170, bbox_inches="tight")
     plt.close(fig)
-    print("\n  wrote pi_note/fig/pi_tolerance_slack.pdf (capped at 28 d = a whole missed infusion)")
+    print("\n  wrote pi_note/fig/pi_tolerance_slack.pdf (capped at 28 d late = two missed infusions; a skipped one is 14 d late)")
     fig_clear(pn)
 
 
