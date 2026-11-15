@@ -172,17 +172,31 @@ the target $0.20$. Read it like a map of where the design works: the curve is be
 line only inside the pale green band, from $82\%$ to $627\%$ of normal. Its best point (blue
 dot) is $0.123$ at $212\%$. At $5\%$ (orange dot) it is $3.07$, fifteen times the target.
 
-\subsection{Panel (b)} This panel gives the reason. The vertical axis is the correlation
-between the estimate of $\theta$ and the estimate of one other unknown, from $-1$ to $+1$. $0$
-means the two are not linked. $-1$ means a perfect trade-off: a larger $\theta$ together with a
-smaller value of the other unknown explains the data exactly as well. $+1$ is also a perfect
-trade-off, with both larger together. There is one line for each other unknown: $k_e$ (blue),
-$K_m$ (orange) and $b$ (green); see the glossary. Follow the blue line: below about $50\%$ of
-normal it sits at $-1$. In a severe patient the enzyme removes only a small share of the
-metabolite ($16\%$ at $5\%$ of normal), so the data cannot separate ``a bit more enzyme'' from
-``a bit more of the other clearance route''. The orange line climbs towards $+1$ at very high
-capacity: there the trade-off is with $K_m$ instead, and that is why the curve in panel (a) rises
-again on the right. The green line stays near $0$: the load error $b$ is not the main problem.
+\subsection{Panel (b)} This panel gives the reason. Besides $\theta$, the fit has three other
+unknowns: $k_e$ (the strength of the other clearance route), $K_m$ (the metabolite level at
+which the enzyme works at half speed) and $b$ (the part of the load missing from the record).
+For each, the panel shows how strongly its estimate is tied to the estimate of $\theta$, as a
+correlation between $-1$ and $+1$, at each capacity. One way to picture it: repeat the whole
+two-year study many times with fresh measurement noise, fit each record, and plot each fit's
+$\theta$ against its $k_e$. A correlation near $0$ gives a shapeless cloud: the two are learned
+separately. A correlation of $-0.99$ puts the points on an almost perfect downward line:
+whenever a fit puts $\theta$ high it puts $k_e$ low, because the data fix only their combined
+effect (how much is removed in total), not how it is split.
+
+\emph{The most influential unknown is $k_e$} (blue). Below about $50\%$ of normal its line sits at
+$-1$. Both routes remove the same metabolite, so more of one needs less of the other to give the
+same blood level; and in a severe patient the other route does most of the work ($84\%$ at $5\%$ of
+normal), so a small error in $k_e$ becomes a large error in $\theta$. The size of the effect: at
+$5\%$ of normal, knowing $k_e$ exactly would improve the precision from $3.07$ to $0.39$, whereas
+knowing $K_m$ exactly gives $2.89$ and knowing $b$ exactly $3.05$, almost no gain.
+
+Above normal capacity the picture reverses. The enzyme does almost all the work, so $k_e$ hardly
+matters and the blue line rises towards $0$. The trade-off moves to $K_m$ (orange, towards $+1$):
+at high capacity the metabolite level is far below $K_m$ ($1\%$ of it at $1000\%$ of normal), where
+the enzyme's speed is proportional to $\theta/K_m$; the data see only that ratio, so a larger
+$\theta$ with a larger $K_m$ fits equally well. That is why the curve in panel (a) rises again on
+the right (at $1000\%$ of normal, knowing $K_m$ exactly would improve $0.29$ to $0.05$). The green
+line ($b$) stays near $0$ everywhere: the missing part of the load is not the problem.
 
 \subsection{Panel (c)} This is the most technical panel, drawn for a patient whose true
 capacity is $5\%$ of normal. The horizontal axis is a candidate value of $\theta$ divided by the
@@ -192,14 +206,35 @@ and let all the other unknowns adjust as well as they can (this is what ``profil
 means ``fits as well as the best value''. Every candidate whose curve stays below the dotted line
 (``95\% cut (1.92)'') is compatible with the data at the $95\%$ level. The black curve is the
 record without measurement noise; the thin light-blue curves are 24 simulated noisy records,
-and they behave the same way. On the left the black curve stays flat at zero down to a
-thousandth of the truth and beyond, so the data cannot rule out a patient with almost no enzyme.
-On the right it climbs steeply and crosses the dotted line at about $4.5$ times the truth
-(green vertical line). Since the truth is $5\%$ of normal, $4.5\times5\%\approx22\%$: the data
-\emph{can} rule out capacities above about $22\%$ of normal. The dashed orange curve
-(``Cram\'er--Rao'') is the symmetric bowl that the value $3.07$ in panel (a) assumes. The real
-curve is not a bowl: it is flat on one side and a wall on the other. That is why $3.07$ on its own
-is misleading at $5\%$.
+and they behave the same way. Two features look as if they go on to infinity.
+
+\emph{On the left the curve is flat for ever.} The horizontal axis is logarithmic, so $\theta=0$
+lies infinitely far to the left, and the black curve stays at about zero all the way (it has risen
+only $0.05$ at a thousandth of the truth). Removing the patient's own enzyme altogether costs the
+fit almost nothing: its $16\%$ share is handed to the other route, whose strength $k_e$ rises from
+$5.0$ to $6.1$, and over the low metabolite levels seen on therapy ($4$--$35$\,\textmu M, well below
+$K_m=100$\,\textmu M) the enzyme's speed curve is close to a straight line, which the other
+route's straight line imitates almost perfectly. So the data cannot rule out a patient with no
+enzyme of their own: there is no lower bound.
+
+\emph{On the right the curve hits a wall.} The curves leave the top of the plot, but they do not go
+to infinity: the axis is cut at $14$ (the black curve is at $25$ at eight times the truth). The wall
+is the mass balance: at steady state everything that comes in must go out. Forcing the enzyme to
+be four or five times larger makes it remove most of the load, so the other route must shrink to
+compensate ($k_e$ falls from $5.0$ to $1.4$ at $4.5$ times the truth). At about six times the truth
+the enzyme would remove everything and $k_e$ would have to be zero; beyond that it would have to be
+negative, which is impossible, and no adjustment of the other unknowns can rescue the fit. Before
+that hard limit, most of the steepness comes from what the paper assumes is known in advance about
+$k_e$ (a prior that places it within about a factor of two of its nominal value): at $4.5$ times
+the truth about four-fifths of the rise comes from that prior. The curve crosses the dotted line
+at about $4.5$ times the truth (green vertical line). Since the truth is $5\%$ of normal,
+$4.5\times5\%\approx22\%$: the data \emph{can} rule out capacities above about $22\%$ of normal, or
+above about $30\%$ without the prior on $k_e$.
+
+The dashed orange curve (``Cram\'er--Rao'') is the symmetric bowl that the value $3.07$ in panel (a)
+assumes: the same uncertainty in both directions. The real curve is not a bowl: it is flat on one
+side and a wall on the other. That is why $3.07$ on its own is misleading at $5\%$: it averages a
+plain and a cliff.
 
 \subsection{Take-away} At $5\%$ of normal the record supports a one-sided statement
 (``capacity is below about $22\%$ of normal''), not a measurement.
