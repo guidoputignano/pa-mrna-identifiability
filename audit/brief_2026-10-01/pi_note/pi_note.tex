@@ -60,7 +60,7 @@ load, an interval keeps every patient maintainable, whatever $\theta$, when the 
 half-life exceeds a crossing value (Table~\ref{tab:spec}): at the booked increment
 $2.4$--$3.0$\,d for 14 days, $2.5$--$3.1$\,d for 15 days and $3.3$--$4.0$\,d for 21 days
 across the unmeasured carnitine constants; at the largest increment the paper finds
-admissible, $3.0$--$3.8$, $3.2$--$4.0$ and $4.0$--$5.0$\,d. Below the crossing the decision
+admissible, $3.0$--$3.9$, $3.2$--$4.2$ and $4.5$--$5.8$\,d. Below the crossing the decision
 needs $\theta$, which the record cannot supply. The hepatic value is unmeasured; the one human
 value is $3.6$\,d (fibroblasts). From comparators, chiefly mouse liver mitochondria, the likely
 hepatic value is about $4.3$\,d (plausibly $3$--$6$\,d). That value would make the 14- and
@@ -68,6 +68,12 @@ hepatic value is about $4.3$\,d (plausibly $3$--$6$\,d). That value would make t
 the probability that the true value clears even the nominal 21-day crossing is only
 $64$--$71\%$. A threshold defined with an illness amplitude, as in the paper's decision section,
 gives a different answer.
+\item \textbf{How late an infusion can be.} In the parent model, simulated through a late
+infusion, a delay of a day raises the metabolite's peak by about $10$--$15\%$, and at the booked
+increment an infusion can be about $5$ to $9$ days late before the peak doubles. A skipped
+infusion multiplies it several-fold in the weakest patients. During an intercurrent illness
+timing is decisive: an infusion given on time absorbs the illness, while one postponed by
+three days lets the peak rise four- to elevenfold.
 \end{enumerate}
 \vspace{-2pt}
 All records are simulated on the paper's illustrative constants; no patient data are used.
@@ -92,14 +98,14 @@ $\sdl{\lambda}$, increment decay rate & $0.055$ & 2 years of monthly draws \\
 $D=6000$ \\
 \quad over the paper's carnitine ranges & $2.41$--$2.95$, $2.54$--$3.10$, $3.29$--$3.95$\,d &
 $D=6000$ \\
-\quad at the largest admissible increment & $3.00$--$3.84$, $3.15$--$4.01$, $4.02$--$5.01$\,d &
-$D=2672$ \\
+\quad at the largest admissible increment & $2.98$--$3.87$, $3.19$--$4.15$, $4.47$--$5.80$\,d &
+paper's ceiling \\
+infusion delay before the peak doubles & $4.8$--$8.8$\,d & booked dose, nominal constants \\
 human PCC half-life & $3.6$\,d & fibroblast; liver unmeasured, likely $\approx4.3$\,d \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\clearpage
 \section{Setting}
 
 The marker $m$ is plasma 3-hydroxypropionate, as in the paper, and obeys the parent balance
@@ -297,7 +303,9 @@ the booking does not depend on $\theta$; whether it does is set by $t_{1/2}$ and
 
 \paragraph{The specification.} Table~\ref{tab:spec} gives, for each interval, the half-life
 above which the trough alone clears $\thci$, at the booked increment and at the largest
-increment the paper's scope section finds admissible at $5\%$ of normal ($D=2672$), at the
+increment the paper's scope section finds admissible at $5\%$ of normal (its ceiling, peak enzyme
+no higher than normal, which gives $D=2672$ for the fortnightly train; applied here at each
+interval, since scaling $2672$ at the same delivered rate would exceed it at 15 and 21 days), at the
 nominal
 carnitine constants and over the corners of the paper's ranges for them ($K_c$
 $25$--$800$, $M_i$ $150$--$1200$, $\rho_0$ $0.35$--$1$), with $R_0$ re-derived at each corner to
@@ -318,14 +326,14 @@ every patient maintainable at baseline load, whatever $\theta$. Ranges are over 
 of the paper's carnitine-constant ranges.}
 \begin{tabular}{@{}lcccc@{}}
 \toprule
-& \multicolumn{2}{c}{booked increment, $D=6000$} & \multicolumn{2}{c}{largest admissible,
-$D=2672$} \\
+& \multicolumn{2}{c}{booked increment, $D=6000$} & \multicolumn{2}{c}{largest admissible
+(ceiling)} \\
 \cmidrule(lr){2-3}\cmidrule(l){4-5}
 interval & nominal & over the constants & nominal & over the constants \\
 \midrule
-14 days & $2.62$ & $2.41$--$2.95$ & $3.31$ & $3.00$--$3.84$ \\
-15 days & $2.75$ & $2.54$--$3.10$ & $3.47$ & $3.15$--$4.01$ \\
-21 days & $3.55$ & $3.29$--$3.95$ & $4.39$ & $4.02$--$5.01$ \\
+14 days & $2.62$ & $2.41$--$2.95$ & $3.30$ & $2.98$--$3.87$ \\
+15 days & $2.75$ & $2.54$--$3.10$ & $3.54$ & $3.19$--$4.15$ \\
+21 days & $3.55$ & $3.29$--$3.95$ & $4.95$ & $4.47$--$5.80$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -338,8 +346,8 @@ $\mu=\dtr-\thci$, against the PCC protein half-life, at the parent model's nomin
 constants ($K_c=100$). Right of a curve's zero the interval keeps every patient maintainable
 at baseline load without knowing $\theta$; left of it the decision needs $\theta$. The grey
 band is the range of the 21-day crossing over the corners of the paper's carnitine-constant
-ranges; the dotted curve is the 21-day margin at the largest increment the paper finds
-admissible at $5\%$ of normal.}
+ranges; the dotted curve is the 21-day margin at the largest 21-day infusion the paper's
+ceiling admits at $5\%$ of normal.}
 \end{figure}
 
 \paragraph{The likely value.} No hepatic value has been measured. The one human measurement,
@@ -354,12 +362,11 @@ estimate is about $4.3$\,d, plausibly $3$--$6$\,d; it rests on comparators, not 
 measurement. If it is right, Table~\ref{tab:spec} gives a clear answer at the booked increment:
 all three intervals are safe for every patient, whatever the carnitine constants. At the
 largest admissible increment the 14- and 15-day intervals remain safe, narrowly at the least
-favourable constants ($3.84$ and $4.01$\,d), and the 21-day interval does not at the nominal
-constants (crossing $4.39$\,d) or at three of the eight corners ($4.34$--$5.01$\,d), though it
-does at the other five ($4.02$--$4.29$\,d). Taking the
+favourable constants ($3.87$ and $4.15$\,d), and the 21-day interval does not, at any setting of
+the constants (crossing $4.47$--$5.80$\,d). Taking the
 hepatic half-life as log-normal around $4.3$\,d with $\operatorname{sd}(\ln)$ between $0.35$
 and $0.53$, the probability that it clears the 21-day crossing is $64$--$71\%$ at the nominal
-constants and booked increment, $56$--$60\%$ at the least favourable constants, and $48\%$ at
+constants and booked increment, $56$--$60\%$ at the least favourable constants, and $34$--$39\%$ at
 the largest admissible increment and the nominal constants.
 
 \paragraph{Where the value can be found.} (i) The sponsor's population model for mRNA-3927
@@ -397,7 +404,78 @@ dose--response rather than a threshold. The specification holds within the intri
 baseline-load framing. \emph{Estimating $\theta$ instead.} When the half-life is below the
 crossing, estimating $\theta$ from the passive record does not rescue the 21-day interval: by
 simulation, at the design's $3.5$\,d the standard deviation of the estimated margin stays near
-$140$\um, comparable to $\thci$ itself, from six months to five years of draws.
+$140$\um, comparable to $\thci$ itself, from six months to five years of draws. Adding both
+tracers does not change this for the patients who matter: with $\lambda$ estimated from the
+same record, the margin's uncertainty is about $\pm95$\um\ at every capacity, so one patient's
+estimate certifies the 21-day interval half the time only at about $5.5\%$ of normal, and $80\%$
+of the time at about $8\%$, at or above the top of the range in which the question arises.
+
+\section{Result 5: how late can an infusion be?}
+
+mRNA-3927 is given as an intravenous infusion every two weeks, so the clinical form of the
+interval question is how late an infusion can be, and what a missed one costs. Like Result 4,
+the answer depends on the half-life and the dose, not on $\theta$. It is computed in the parent
+model's two-state form, with the delivered increment added to the enzyme channel, by simulating
+the dose train through a late or skipped infusion and resuming it afterwards. The model does
+not define a harmful metabolite level, so three criteria are reported: the trough condition of
+Result~4; a relative one, that the metabolite's peak in the gap stays below twice the patient's
+usual on-therapy peak; and a model-intrinsic one, that it stays below the parent model's tipping
+point (separatrix) at the patient's usual trough capacity, or below the model's validity limit
+$m\approx5.5\,M_i$, whichever is lower. The transient depends on the carnitine conjugation rate
+$k$, which the model assumes ($k=1$); results are bracketed at $k=10$, close to the reduced model
+the paper uses elsewhere, where peaks are higher.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{pi_tolerance.pdf}
+\caption{\label{fig:tolerance}Days a fortnightly infusion can be late, against the PCC protein
+half-life, at the booked increment and nominal carnitine constants. (a) Before the trough falls
+below the critical capacity (Result~4's condition; the $5\%$ curve is capped at $28$\,d, a whole
+missed infusion, and is sensitive because $\theta=150$ lies $0.8$\um\ below $\thci$). (b) Before
+the metabolite's peak in the gap reaches twice its usual on-therapy peak, simulated in the
+parent model at $k=1$ (solid) and $k=10$ (dashed).}
+\end{figure}
+
+\begin{table}[t]
+\centering\small
+\caption{\label{tab:delay}Infusion delays in the parent model, half-lives $3.5$--$4.3$\,d and
+residual capacities $0$--$5\%$ of normal. Days before the peak doubles and before it reaches
+the tipping point (or validity limit), over $k=1$ and $10$; peak after a skipped infusion (a
+$28$-day gap), as a multiple of the usual peak.}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+setting & peak below $2\times$ & below tipping point & skipped infusion \\
+\midrule
+booked dose, nominal constants & $4.8$--$8.8$\,d & $16$ to over $28$\,d & $2.6$--$15\times$ \\
+booked dose, worst constants & $3.7$--$9.0$\,d & $7.9$--$25.5$\,d & $2.9$--$71\times$ ($k=1$) \\
+admissible dose, nominal constants & $3.9$--$13.1$\,d & $6.5$ to over $28$\,d & $2.1$--$16\times$ ($k=1$) \\
+admissible dose, worst constants & $1.8$--$9.1$\,d & $4.0$--$20.5$\,d & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Delays without illness.} A delay of a day raises the peak by about $10$--$15\%$. At the
+booked increment and nominal constants an infusion can be about $5$ to $9$ days late before the
+peak doubles, for every residual capacity and both values of $k$ (Fig.~\ref{fig:tolerance}b,
+Table~\ref{tab:delay}), and the trough condition gives a similar or longer slack except for
+patients with almost no enzyme at short half-lives ($4.9$\,d at $3.5$\,d). The rise is not
+linear: it accelerates inside the gap, so a week costs far more than a few days, and at the least
+favourable constants and the admissible dose the slack falls to about two days for the weakest
+patients. A skipped infusion multiplies the peak several-fold, most in patients with little
+enzyme of their own; the cycle is restored once infusions resume.
+
+\paragraph{Delays during illness.} With the paper's registered illness, a load $1.5$ times
+baseline for $14$ days starting on the day the infusion is due, timing is decisive. Given on
+time, the infusion absorbs the illness with no rise in the peak. Postponed by three days, the
+peak rises $3.7$--$7.9$-fold at $k=1$ and $4.4$--$11$-fold at $k=10$ (booked increment, nominal
+constants); postponed by a week, $10$--$43$-fold; postponed until recovery, the parent model loses
+its steady state and the metabolite climbs until the infusion is given. This is a statement
+about the model, not a clinical recommendation: whether an infusion can be given during an
+intercurrent illness is a clinical decision.
+
+\paragraph{A late infusion is also a measurement.} The marker's response to a longer-than-usual
+gap is what identifies the half-life from the on-therapy record (Result~4). Dated infusions and
+marker draws around unplanned delays are therefore exactly the data the specification needs.
 
 \section{Limitations}
 
@@ -420,6 +498,9 @@ literature, with the crisis boundary treated explicitly, has not been done. The
 within-patient contrast is $0.088$ under the saturating variant and has not been computed
 under the parent model.
 \item The model has no propionyl-CoA state, so C3 and 2-methylcitrate are not represented.
+\item Result~5 rests on an assumed carnitine conjugation rate (bracketed), on a relative or
+model-intrinsic definition of harm rather than a clinical one, and on the paper's illustrative
+illness.
 \end{itemize}
 
 \section{What would settle the open points}

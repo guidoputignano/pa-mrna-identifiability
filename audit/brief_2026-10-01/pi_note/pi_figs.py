@@ -168,8 +168,8 @@ def fig_margin():
     ax.axhline(0.0, color=P.INK, lw=1.1, zorder=3)
     ax.plot(th, _trough(21, th) - THC, color=P.C1, lw=2.4, zorder=4,
             label=r"$\mu(21) = \Delta_{\mathrm{tr}}(21) - \theta_{\mathrm{crit}}^{\mathrm{int}}$, $D = 6000$")
-    ax.plot(th, _trough(21, th, D_ADM) - THC, color=P.C1, lw=1.2, ls=":", zorder=4,
-            label=r"$\mu(21)$ at $D = 2672$, largest admissible at 5 %")
+    ax.plot(th, 2850.0 * np.exp(-np.log(2.0) / th * 21) - THC, color=P.C1, lw=1.2, ls=":", zorder=4,
+            label=r"$\mu(21)$, largest admissible 21-day infusion")
     ax.plot(th, _trough(14, th) - THC, color=P.MUTED, lw=1.1, ls="--", zorder=3,
             label=r"$\mu(14)$, $D = 6000$, zero at 2.62 d")
     # range of the 21-day crossing over the admissible carnitine constants

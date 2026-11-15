@@ -149,6 +149,19 @@ def main():
                    ("15-d, worst corner, D=2672", pc[:,5].max())):
         pw = 1 - norm.cdf(np.log(c / CENTRAL) / 0.53); pt = 1 - norm.cdf(np.log(c / CENTRAL) / 0.35)
         print(f"    P(liver half-life above the {lab} crossing {c:.2f} d) = {pw:.0%} wide, {pt:.0%} tight")
+    # The paper's ceiling (11_scope: D = 2672 keeps theta + peak <= normal for the 5 % patient on
+    # the fortnightly train at 3.5 d) applied at EACH interval and half-life instead of scaling
+    # 2672 at the same delivered rate: per-dose A = (3000 - 150)(1 - x), so the trough is 2850 x
+    # and the crossing is tau ln2 / ln(2850 / theta_crit).
+    print("\n  THE PAPER'S CEILING APPLIED AT EACH INTERVAL (peak enzyme <= normal for the 5 % patient):")
+    print("  trough = 2850 exp(-lambda tau); crossing = tau ln2 / ln(2850/theta_crit). Same-rate scaling of")
+    print("  D = 2672 to 15 or 21 days exceeds this ceiling, so its 15- and 21-day crossings are optimistic.")
+    for tau in (14, 15, 21):
+        cn = tau * np.log(2.0) / np.log(2850.0 / base)
+        cc = tau * np.log(2.0) / np.log(2850.0 / pc[:, 0])
+        print(f"    {tau:>2}-day: nominal {cn:.2f} d; over the paper's corners {cc.min():.2f}-{cc.max():.2f} d;"
+              f" P(liver above, nominal) {1 - norm.cdf(np.log(cn / CENTRAL) / 0.53):.0%} wide,"
+              f" {1 - norm.cdf(np.log(cn / CENTRAL) / 0.35):.0%} tight")
     print(f"""
   READING. The 14- and 15-day conclusions do not depend on Model C's unmeasured
   shape: even at the worst corner of the box their crossings are about {cr[:,4].max():.2f} and {cr[:,5].max():.2f} d,

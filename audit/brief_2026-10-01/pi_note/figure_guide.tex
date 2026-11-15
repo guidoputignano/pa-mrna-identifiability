@@ -30,15 +30,62 @@
 \begin{document}
 \maketitle
 
-\noindent The note has four figures. Each one answers a single question, and each can be read
+\noindent The note has five figures. Each one answers a single question, and each can be read
 in a minute once you know what the axes mean and which line or bar to look at. This guide goes
 through them one at a time: the question, what is drawn, how to read it step by step, what to
-take away, and what the figure does \emph{not} say. The first section explains four conventions
-used in the figures; not every figure uses all four. A short glossary is at the end. Every
+take away, and what the figure does \emph{not} say. The first section explains the three ideas
+the note rests on, in plain words; the second explains four conventions used in the figures (not
+every figure uses all four). A short glossary is at the end. Every
 record in the note is simulated on the paper's illustrative constants; no patient data are
 shown.
 
+\section{Three ideas in plain words}
+
+\subsection{Why capacity cannot be measured: a trade-off, not just noise} Each blood draw is
+fairly accurate (about $5\%$ assay error and $10\%$ day-to-day variation in the load). The
+problem is that two different explanations give almost the same blood values. The metabolite
+leaves the body through two exits: the enzyme ($\theta$) and the other route ($k_e$: conjugation
+to carnitine and loss in urine). At $5\%$ of normal the enzyme handles only $16\%$ of the outflow
+and the other route $84\%$, so a small error in the big exit looks like a large error in the small
+one: a $1\%$ error in $k_e$ moves $\theta$ by about $5\%$. ``More enzyme and a slightly weaker other
+route'' fits the data as well as ``less enzyme and a slightly stronger other route''. In the
+language of uncertainty: the main part is \emph{epistemic} (we do not know $k_e$; it accounts for
+$98\%$ of the uncertainty, and measuring it with a tracer brings $3.05$ down to $0.44$); the
+remaining part is \emph{aleatoric} (measurement noise: with $k_e$ known exactly, $0.39$ is left, and
+it shrinks with more draws). This is the difference between \emph{structural} identifiability (with
+perfect, noise-free data, could $\theta$ be recovered at all? yes, the paper proves it) and
+\emph{practical} identifiability (with realistic noise and sampling, how precisely? at $5\%$ of
+normal, only to a factor of about $20$ either way).
+
+\subsection{Why no measurement closes the gap: two ways to see the enzyme} A measurement can
+see the enzyme in only two ways. \emph{Indirectly, through metabolite levels} (the blood marker,
+C3): picture a bathtub with two drains. The water level tells you how much drains out in total,
+not how much goes through each drain; to credit part of it to the enzyme you must already know
+the size of the other drain ($k_e$, or the carnitine route's shape), which nobody has measured in
+patients. \emph{Directly, by measuring the enzyme's activity} (the test-tube assay on the patient's
+cells, or the breath test): now you see the enzyme, but on an instrument with an unknown scale,
+like a speedometer whose calibration nobody knows (how does activity in cells translate to the
+whole liver? what fraction of the labelled CO$_2$ reaches the breath?). There is no third way,
+because in the model the enzyme affects the body only through the flow it carries: you either
+watch the levels that flow creates, and need the other drain, or watch the flow itself, and need
+the calibration. Monitoring change within one patient escapes both, because the drain size and
+the calibration are the same before and after, and cancel in the comparison.
+
+\subsection{The three versions of the model} The same metabolite balance is used in three
+versions, which differ only in how the other route is described. The \emph{parent model} is the
+full one: the other route uses carnitine and can run out, so past a point it clears \emph{less} as
+the metabolite rises; that creates a tipping point and a crisis, and it is used for the dosing
+questions (Figures~4 and~5). The \emph{local identification model} replaces the other route with a
+straight line, $k_e\,m$: it always removes the same fraction of the metabolite per day. ``Local''
+means that this straight line is a good stand-in for the curved carnitine route near the
+patient's usual metabolite level, the way a curve looks straight when you zoom in on one point.
+It is used to compute precision (Figures~1--3), because it is the most favourable case: if
+$\theta$ cannot be pinned down there, it cannot elsewhere; but it has no tipping point, so it
+cannot describe a crisis. The \emph{saturating variant} gives the other route a maximum speed, and
+is used to check that the conclusions do not depend on the straight-line simplification.
+
 \section{Four conventions}
+
 
 \subsection{Logarithmic axes} Several axes (in Figures~1 and~3) are logarithmic: equal distances
 mean equal \emph{multiplications}, not equal additions. On the axis of Figure~3, marked $0.1$,
@@ -271,9 +318,9 @@ safety depends on the patient's own capacity, which Figures~1--3 show cannot be 
 the note calls it the ``booked increment''). It crosses zero at $3.545$ days, marked by the black
 dotted vertical line (``crossing at nominal constants''). The grey dashed curve is the 14-day
 interval; it crosses zero at $2.62$ days, at the left edge of the plot. The 15-day interval is not
-drawn; its curve would lie between those two. The dotted blue curve is the 21-day interval at a
-smaller dose, $D=2672$, the largest the paper accepts for a patient at $5\%$ of normal; it crosses
-zero further right, at $4.39$ days. The grey band shows where the 21-day crossing could lie once
+drawn; its curve would lie between those two. The dotted blue curve is the 21-day interval at the
+largest infusion the paper's ceiling accepts for a patient at $5\%$ of normal (the enzyme's peak
+may not exceed normal); it crosses zero further right, at $4.95$ days. The grey band shows where the 21-day crossing could lie once
 the unmeasured carnitine constants are allowed to vary ($3.29$ to $3.95$ days).
 
 \subsection{The dots} Orange: the $3.5$ days assumed in the paper's design, just below zero.
@@ -287,7 +334,7 @@ note gives the same crossings as numbers, for the 14-, 15- and 21-day intervals 
 
 \subsection{Take-away} The interval decision does not need capacity; it needs the half-life (and
 the dose). At the likely liver value of $4.3$ days, all three intervals are safe at the planned
-dose. At the smaller admissible dose the 21-day interval is not: the dotted blue curve is still
+dose. At the largest admissible dose the 21-day interval is not: the dotted blue curve is still
 below zero at $4.3$ days.
 
 \subsection{What it does not say} ``Safe'' here means that the patient keeps a steady state at
@@ -295,6 +342,46 @@ their usual load, as the parent model defines it. It does not cover an intercurr
 which raises the load: with the threshold used in the paper's own decision section, which
 includes an illness, the answer is different, and the interval decision again depends on the
 patient's capacity. It is also not a clinical recommendation for an investigational drug.
+
+
+\section{Figure 5: how late can an infusion be?}
+
+\subsection{The question} The therapy is an infusion every two weeks. How many days late can an
+infusion be before it matters?
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{pi_tolerance.pdf}
+\end{figure}
+
+\subsection{What is drawn} Both panels have the PCC protein half-life on the horizontal axis
+(as in Figure~4) and, on the vertical axis, the number of days an infusion can be late. There is
+one line per residual capacity ($0$, $1$, $2.5$ and $5\%$ of normal; legend below). The vertical
+lines mark the fibroblast value ($3.6$\,d, dotted) and the likely liver value ($4.3$\,d, dashed).
+The axis stops at $28$ days, a whole missed infusion.
+
+\subsection{Panel (a)} Days before the enzyme at the end of the gap falls below the critical
+capacity: Figure~4's test, applied to a longer gap. A longer half-life gives more days, and so
+does more enzyme of the patient's own. The $5\%$ line sits at the top because a patient at $5\%$ is
+almost exactly at the critical capacity on their own; that line is sensitive and should not be
+read as ``a month''.
+
+\subsection{Panel (b)} Days before the metabolite's highest level during the gap reaches twice
+its usual on-therapy peak. This comes from simulating the full model through a late infusion.
+The solid and dashed lines use two values of an assumed rate in the carnitine route ($k=1$ and
+$k=10$); the truth is unknown, so read the pair as a range. All lines lie between about $5$ and
+$9$ days in the plausible half-life range.
+
+\subsection{Take-away} In the model a day or two late barely matters; about $5$ to $9$ days late
+doubles the peak; the rise speeds up the longer the gap lasts. The note's Table~3 gives the same
+for less favourable settings (as little as about $2$ days at the worst carnitine constants and the
+smaller dose), and the text adds the case that matters most: during an illness an on-time infusion
+keeps the metabolite at its usual level, while a delay of a few days multiplies the peak several
+times.
+
+\subsection{What it does not say} ``Twice the usual peak'' is a convention chosen because the
+model does not say which level is dangerous. These are model results on simulated patients, not a
+clinical recommendation.
 
 \section{Glossary}
 

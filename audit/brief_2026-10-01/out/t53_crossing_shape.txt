@@ -83,6 +83,13 @@
     P(liver half-life above the 14-d, worst corner, D=2672 crossing 3.84 d) = 58% wide, 63% tight
     P(liver half-life above the 15-d, worst corner, D=2672 crossing 4.01 d) = 55% wide, 58% tight
 
+  THE PAPER'S CEILING APPLIED AT EACH INTERVAL (peak enzyme <= normal for the 5 % patient):
+  trough = 2850 exp(-lambda tau); crossing = tau ln2 / ln(2850/theta_crit). Same-rate scaling of
+  D = 2672 to 15 or 21 days exceeds this ceiling, so its 15- and 21-day crossings are optimistic.
+    14-day: nominal 3.30 d; over the paper's corners 2.98-3.87 d; P(liver above, nominal) 69% wide, 77% tight
+    15-day: nominal 3.54 d; over the paper's corners 3.19-4.15 d; P(liver above, nominal) 64% wide, 71% tight
+    21-day: nominal 4.95 d; over the paper's corners 4.47-5.80 d; P(liver above, nominal) 39% wide, 34% tight
+
   READING. The 14- and 15-day conclusions do not depend on Model C's unmeasured
   shape: even at the worst corner of the box their crossings are about 3.06 and 3.21 d,
   under the measured 3.6 d. (They still need the liver half-life above those values.)
