@@ -28,23 +28,47 @@
        rho_0     1.0      152.1        3.553d            yes            yes
 
   JOINT SWEEP over collapse_check's ranges (K_c 25-794, M_i 100-1259, rho_0 0.35-1.0;
-  300 sets with a finite threshold, seed 0):
+  300 sampled sets with a finite threshold, seed 0):
     theta_crit_int            110.9 ..  235.6   (median 136.4)
     14-day crossing           2.420 ..  2.962 d
     15-day crossing           2.550 ..  3.111 d
     21-day crossing           3.302 ..  3.968 d (median 3.462)
-    sets in which the half-life clears the 21-day line:
+    sampled sets in which the half-life clears the 21-day line:
         measured 3.6 d       80%
         liver estimate 4.3 d 100%
-    sets in which 3.6 d clears the 14- and 15-day lines: 100% / 100%
+    sampled sets in which 3.6 d clears the 14- and 15-day lines: 100% / 100%
+
+  THE EIGHT CORNERS OF THE BOX (R0 re-derived at each):
+       K_c    M_i rho_0 theta_crit   14-d   15-d   21-d  3.6 d clears 21 d?
+      25.1    100  0.35      246.1  3.001  3.151  4.014  NO
+      25.1    100  1.00      262.1  3.058  3.209  4.083  NO
+      25.1   1259  0.35      138.8  2.561  2.696  3.476  yes
+      25.1   1259  1.00      144.3  2.587  2.723  3.509  yes
+     794.3    100  0.35      132.9  2.533  2.666  3.441  yes
+     794.3    100  1.00      133.2  2.534  2.668  3.443  yes
+     794.3   1259  0.35      109.7  2.414  2.543  3.294  yes
+     794.3   1259  1.00      109.8  2.414  2.544  3.294  yes
+    box: theta_crit 109.7..262.1; worst 14-day 3.058 d, 15-day 3.209 d;
+         21-day 3.294..4.083 d; 3.6 d clears at 6 of 8 corners, 4.3 d at 8 of 8.
+
+    collapse: 12 random shape sets at a held calibration give theta_crit 113.5..158.1, factor 1.39
+  For comparison, the repo's own collapse_check (12 draws) spans theta_crit 113.5..158.1, a factor 1.39;
+  the 300 draws above span a factor 2.12, the box corners 2.39. Twelve draws understate the joint spread.
+
+  R-P's 'about 65-70 % likely to hold' recomputed at the crossing (wide band: centre 4.3 d, sd(ln) 0.53):
+    repo constants             crossing 3.545 d -> P(liver half-life above it) = 64%
+    largest sampled crossing   crossing 3.968 d -> P(liver half-life above it) = 56%
+    worst box corner           crossing 4.083 d -> P(liver half-life above it) = 54%
 
   READING. The 14- and 15-day conclusions do not depend on Model C's unmeasured
-  shape: their crossings stay below 3.0 and 3.2 d, far under the measured 3.6 d.
-  The 21-day conclusion at 3.6 d does. The crossing itself moves from about 3.3 to
-  4.0 d across the admissible constants, which is wider than the 0.055 d (1.5 %)
-  by which 3.6 d clears the line at K_c = 100. At K_c <= 50, or M_i = 150, the
-  measured 3.6 d falls on the needs-theta side. The liver estimate of 4.3 d clears
-  the line for every sampled set. So the knife-edge has two blades: the true liver
-  half-life, and the carnitine channel's shape constants. The first is a data
-  request; the second is a model assumption no data in the repository can fix.
+  shape: even at the worst corner of the box their crossings are about 3.06 and 3.21 d,
+  under the measured 3.6 d. (They still need the liver half-life above those values.)
+  The 21-day conclusion at 3.6 d does depend on the shape. The crossing moves from about
+  3.29 to 4.08 d across the box (3.30-3.97 d over the 300 sampled sets), which is
+  wider than the 0.055 d (1.5 %) by which 3.6 d clears the line at K_c = 100. One constant
+  at a time, 3.6 d fails at K_c <= 50 or at M_i = 150; jointly it clears in 80 % of the
+  sampled sets and at 6 of the 8 corners. The liver estimate of 4.3 d clears the line
+  everywhere in the box. So the knife-edge has two blades: the true liver half-life, which
+  the data requests address, and the carnitine channel's shape, which no data in the
+  repository addresses.
 

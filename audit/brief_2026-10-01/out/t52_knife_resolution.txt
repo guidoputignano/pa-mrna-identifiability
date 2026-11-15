@@ -5,50 +5,52 @@
   log-distances:  3.6 d vs 7 d (R-N's 7-18 sigma)      ln = 0.665
                   3.6 d vs the 3.5452 d crossing       ln = 0.0153   (43x smaller)
                   4.3 d vs the 3.5452 d crossing       ln = 0.193
-  sd(ln lambda) per patient: from t46 (FIM), full precision from out/t46_timing_numbers.json.
+  sd(ln lambda) per patient: t46's FIM (sd_lnlam), re-evaluated here at each TRUE half-life
+  (t46 evaluates it at the repository's 3.5 d; reproduced exactly, max diff 0.0e+00).
+  Dead zones use the sd at the crossing, z at 3.6 d the sd at 3.6 d, z at 4.3 d the sd at 4.3 d.
 
-       cadence months sd(ln lam)  z @3.6d  z @4.3d P(>=2s) @4.3d z 3.6 vs 7   2-sigma dead zone (true half-life, d)
-       monthly      6      0.094     0.16     2.05           52%        7.0   2.94 - 4.28
-       monthly     12      0.067     0.23     2.87           81%        9.9   3.10 - 4.06
-       monthly     24      0.058     0.27     3.35           91%       11.5   3.16 - 3.98
-       monthly     36      0.052     0.29     3.68           95%       12.7   3.19 - 3.94
-       monthly     48      0.047     0.32     4.09           98%       14.1   3.23 - 3.90
-       monthly     60      0.045     0.34     4.31           99%       14.8   3.24 - 3.88
-   fortnightly      6      0.067     0.23     2.89           81%        9.9   3.10 - 4.05
-   fortnightly     12      0.056     0.27     3.43           92%       11.8   3.17 - 3.97
-   fortnightly     24      0.046     0.33     4.15           98%       14.3   3.23 - 3.89
-   fortnightly     36      0.040     0.38     4.80          100%       16.5   3.27 - 3.84
-   fortnightly     48      0.036     0.42     5.30          100%       18.3   3.30 - 3.81
-   fortnightly     60      0.035     0.44     5.52          100%       19.0   3.31 - 3.80
-        weekly      6      0.053     0.29     3.62           95%       12.5   3.19 - 3.94
-        weekly     12      0.045     0.34     4.25           99%       14.6   3.24 - 3.88
-        weekly     24      0.037     0.42     5.29          100%       18.2   3.30 - 3.81
-        weekly     36      0.033     0.47     5.93          100%       20.4   3.32 - 3.78
-        weekly     48      0.029     0.54     6.77          100%       23.3   3.35 - 3.75
-        weekly     60      0.026     0.58     7.29          100%       25.1   3.36 - 3.74
+       cadence months sd @3.6d  z @3.6d sd @4.3d  z @4.3d P(>=2s) @4.3d z 3.6 vs 7   2-sigma dead zone (true half-life, d)
+       monthly      6    0.095     0.16    0.100     1.93           47%        7.0   2.93 - 4.28
+       monthly     12    0.067     0.23    0.065     2.97           83%        9.9   3.10 - 4.05
+       monthly     24    0.057     0.27    0.056     3.47           93%       11.6   3.16 - 3.98
+       monthly     36    0.052     0.29    0.051     3.79           96%       12.7   3.19 - 3.94
+       monthly     48    0.047     0.32    0.046     4.16           98%       14.1   3.23 - 3.90
+       monthly     60    0.045     0.34    0.044     4.36           99%       14.9   3.24 - 3.88
+   fortnightly      6    0.067     0.23    0.066     2.92           82%       10.0   3.10 - 4.05
+   fortnightly     12    0.056     0.27    0.055     3.50           93%       11.9   3.17 - 3.97
+   fortnightly     24    0.047     0.33    0.046     4.18           99%       14.3   3.23 - 3.89
+   fortnightly     36    0.040     0.38    0.042     4.64          100%       16.5   3.27 - 3.84
+   fortnightly     48    0.037     0.42    0.036     5.31          100%       18.2   3.30 - 3.81
+   fortnightly     60    0.035     0.44    0.035     5.47          100%       18.9   3.31 - 3.80
+        weekly      6    0.053     0.29    0.052     3.71           96%       12.5   3.19 - 3.94
+        weekly     12    0.045     0.34    0.044     4.43           99%       14.7   3.24 - 3.88
+        weekly     24    0.037     0.42    0.037     5.27          100%       18.2   3.30 - 3.81
+        weekly     36    0.033     0.47    0.033     5.90          100%       20.3   3.32 - 3.78
+        weekly     48    0.029     0.54    0.029     6.76          100%       23.3   3.35 - 3.75
+        weekly     60    0.027     0.58    0.027     7.22          100%       25.0   3.36 - 3.74
 
-  Best per-patient precision in the table: sd(ln lambda) = 0.026  ->  z at 3.6 d = 0.58.
+  Best per-patient precision at a 3.6 d truth: sd(ln lambda) = 0.0266  ->  z = 0.58.
   A single patient's record never places a 3.6 d truth on a side of the crossing: even
   after 5 years of weekly draws it sits at 0.6 sigma, inside the dead zone.
 
   A 4.3 d truth, one patient: first record length with expected z >= 2 (a coin flip that
   one record clears 2 sigma), and with an 80 % chance that it does (z >= 2.84):
-         monthly: expected 2 sigma at 6 months;  80 % chance at 12 months
+         monthly: expected 2 sigma at 12 months;  80 % chance at 12 months
      fortnightly: expected 2 sigma at 6 months;  80 % chance at 6 months
           weekly: expected 2 sigma at 6 months;  80 % chance at 6 months
 
   Pooling (ONLY if lambda is common to every patient, which nothing measured shows):
-     monthly draws, 12 months:   77 patients (50 % power),  156 (80 % power) to place a 3.6 d truth at 2 sigma
-      weekly draws, 12 months:   36 patients (50 % power),   71 (80 % power) to place a 3.6 d truth at 2 sigma
+     monthly draws, 12 months:   77 patients (50 % power),  155 (80 % power) to place a 3.6 d truth at 2 sigma
+      weekly draws, 12 months:   35 patients (50 % power),   71 (80 % power) to place a 3.6 d truth at 2 sigma
       weekly draws, 24 months:   23 patients (50 % power),   46 (80 % power) to place a 3.6 d truth at 2 sigma
 
   READING. R-N's 7-18 sigma is right for its question (3.6 d or 7 d?). It does not carry
-  to the crossing: the crossing is 43x closer, so "a fortiori" runs the wrong way.
-  Per patient the record settles the side only when the true liver half-life is clear of
-  the crossing: near the 4.3 d central estimate, an 80 % chance within a year of monthly
-  draws or six months of weekly ones; near the measured 3.6 d, never. A pooled trial
-  estimate could do it with a few dozen patients (more for 80 % power), but only if lambda
-  does not vary between patients, which is unmeasured. So
-  the two emails still matter, and the on-therapy record is still the best route, but
-  it settles the knife-edge only if the answer is not on the knife-edge.
+  to the crossing: the crossing is 43x closer (in log distance), so "a fortiori"
+  runs the wrong way. Per patient the record settles the side only when the true liver
+  half-life is clear of the crossing: near the 4.3 d central estimate, an 80 % chance
+  within a year of monthly draws or six months of weekly ones; near the measured 3.6 d,
+  never. A pooled trial estimate could do it with 23-77 patients at 50 % power or 46-155
+  at 80 % (more at monthly draws), but only if lambda does not vary between patients,
+  which is unmeasured. So the two emails still matter, and the on-therapy record is still
+  the best route, but it settles the knife-edge only if the answer is not on the knife-edge.
 
