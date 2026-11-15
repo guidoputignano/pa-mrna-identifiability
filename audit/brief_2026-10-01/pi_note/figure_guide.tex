@@ -33,13 +33,13 @@
 \noindent The note has five figures. Each one answers a single question, and each can be read
 in a minute once you know what the axes mean and which line or bar to look at. This guide goes
 through them one at a time: the question, what is drawn, how to read it step by step, what to
-take away, and what the figure does \emph{not} say. The first section explains the three ideas
+take away, and what the figure does \emph{not} say. The first section explains the four ideas
 the note rests on, in plain words; the second explains four conventions used in the figures (not
 every figure uses all four). A short glossary is at the end. Every
 record in the note is simulated on the paper's illustrative constants; no patient data are
 shown.
 
-\section{Three ideas in plain words}
+\section{Four ideas in plain words}
 
 \subsection{\texorpdfstring{Why capacity cannot be measured precisely at $5\%$: a trade-off, not just noise}{Why capacity cannot be measured precisely at 5 percent: a trade-off, not just noise}}
 Each blood draw is fairly accurate (about $5\%$ assay error, and about $5\%$ error in the
@@ -77,6 +77,34 @@ watch the levels that flow creates, and need the other drain, or watch the flow 
 the calibration. Monitoring change within one patient can escape both, as long as the drain size
 and the calibration stay the same before and after, so that they cancel in the comparison (the
 note's Result~3 lists what can break this).
+
+\subsection{Change within one patient: a scale with an unknown error} The note's Result~3 asks
+a different question: not ``what is this patient's capacity?'' but ``has it changed?''. Capacity
+is estimated twice in the same patient, from two periods of $104$ weekly draws each, and the two
+estimates are compared as a ratio, $\hat\theta_2/\hat\theta_1$. On the log scale a ratio is a
+difference, $\ln\hat\theta_2-\ln\hat\theta_1$, and its standard deviation,
+$\operatorname{sd}(\ln\hat\theta_2-\ln\hat\theta_1)$, says how precisely the ratio is known; it
+reads as a factor with Table~\ref{tab:sd}. The value $0.13$ means that if nothing has changed,
+the estimated ratio typically lands between $1/1.14$ and $1.14$, and $95\%$ of the time between
+$1/1.29$ and $1.29$.
+
+Why this works when the absolute level does not: think of a bathroom scale with an unknown
+error. It cannot tell you your weight, but if it is the same scale with the same error both
+times, it can tell you whether you have gained or lost weight. Here the unknown error is
+everything that blocks the absolute level: $k_e$, the unrecorded part of the load, $K_m$, any
+calibration of the assay. If they are the same in both periods, they push both estimates the
+same way and cancel in the ratio. With $0.13$, a rise of about $45\%$ or a fall of about $30\%$
+would be detected $80\%$ of the time.
+
+There are two conditions. The scale must not wobble too much from one weighing to the next: the
+result assumes that the marker varies by about $5\%$ from draw to draw in a stable patient, and
+it holds as long as that variability is below about $10\%$, which has not been measured in
+propionic acidaemia (at the $26\%$ published for C3 in healthy adults the $0.13$ becomes
+$0.475$). And the scale must not change between the two periods: a drift of about $6\%$ in $k_e$
+(for example from falling kidney function in a growing child) gives $0.28$; a shift in the
+marker's calibration equal to $1.5\%$ of the load (for example from a change of carnitine dose)
+gives $0.20$; and an antibiotic course that is not recorded makes capacity appear to rise between
+about three- and twenty-fold when it has not.
 
 \subsection{The three versions of the model} The same metabolite balance is used in three
 versions, which differ only in how the other route is described. The \emph{parent model} is the

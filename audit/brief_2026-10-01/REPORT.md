@@ -1176,9 +1176,20 @@ mRNA-3927 is a fortnightly intravenous infusion, so the clinical form of the int
 | ill, 3 d late | 4.7× | 4.1× | 3.7× |
 | ill, 7 d late | 21.0× | 14.7× | 10.3× |
 
-Without illness a day of delay adds about 10 % to the peak and the rise accelerates; once doses resume the cycle is back to its usual height. The shortest delay before doubling, for the patient with no enzyme of their own: 6.5 / 5.2 d (t½ 4.3 / 3.5 d) at the booked dose and nominal constants; 6.1 / 4.3 at the worst corner; 6.0 / 4.7 at D = 2672; 4.3 / 2.3 at D = 2672 and the worst corner, where the trough condition (R-J) already fails on time at 3.5 d for 0–1 %. k = 10 shortens these by at most 0.8 d; a smaller k lengthens them. The tipping point (separatrix at the usual trough capacity) is reached later than the doubling in every case.
+Without illness a day of delay adds about 10 % to the peak (the fold grows by a near-constant factor of about 1.1 a day, so the absolute rise grows with the gap). Once doses resume the first cycle peaks a few per cent above usual (6.8 % after a skip) and the next is back to it. The shortest delay before doubling, for the patient with no enzyme of their own (k = 1, bisection to 0.025 d):
 
-**Correction.** An earlier version took the gap peak only to 3 d after the late dose. With an on-time dose during the illness that window closed 3 days into a 14-day illness and missed the rise at its end, when the raised load meets the next trough; it reported "on time absorbs the illness" (1.0×). With the window extended to the illness's end, an on-time dose still lets the peak rise 2.4–4.1× (k = 1; 2.5–4.7× at k = 10) at the booked dose and nominal constants, and 4.1–11.7× at D = 2672, where it is of the same order as a 3-day delay. The late-dose values were unaffected.
+| | peak doubles, t½ 4.3 / 3.5 d | trough condition fails (R-J), t½ 4.3 / 3.5 d |
+|---|---|---|
+| booked dose, nominal constants | 6.5 / 5.3 | 9.5 / 4.9 |
+| booked dose, least favourable corner | 4.5 / 4.0 | 6.9 / 2.7 |
+| D = 2672, nominal constants | 6.1 / 4.7 | 4.5 / 0.8 |
+| D = 2672, least favourable corner | 4.3 / 2.4 | 1.8 / fails on time |
+
+"Least favourable" is the minimum over the 8 corners of the paper's carnitine ranges (`tab_C_shape`), taken per column. The corner with the highest θ_crit (K_c 25, M_i 150, ρ₀ 1) sets the trough columns and the D = 2672 doubling, but at the booked dose the doubling comes sooner at K_c 800, M_i 1200, ρ₀ 1 (4.5 d at 4.3 d) and at K_c 25, M_i 1200, ρ₀ 0.35 (4.0 d at 3.5 d); each row's yardstick is its own usual peak (21–342 µM across the corners). The trough condition is the stricter test in 6 of the 8 settings (all but the booked dose at 4.3 d). k = 10 shortens the doubling delays by under a day but raises the late-dose illness multiples by about 30 % (3 d late 5.2–6.3× instead of 4.1–4.7× at 4.3 d). In every case the doubling comes before the validity limit or the tipping point at the usual trough capacity; once the trough is below θ_crit there is no tipping point.
+
+During the illness a one-day delay slightly lowers the peak at k = 1 (2.6× → 2.5×): the illness then ends a day before the enzyme's low point. At D = 2672 the illness dominates: on time 4.1–6.4× at 4.3 d and 7.2–11.7× at 3.5 d, against 5.7–8.3× and 7.3–9.5× three days late (at 3.5 d below 5 % of normal the on-time peak is the higher).
+
+**Correction.** An earlier version took the gap peak only to 3 d after the late dose. With an on-time dose during the illness that window closed 3 days into a 14-day illness and missed the rise at its end, when the raised load meets the next trough; it reported "on time absorbs the illness" (1.0×). The window now runs, during an illness, to the dose after the late one (an intermediate version stopped at the illness's end, which still missed later peaks at D = 2672 for delays of 0.5–3 d). An on-time dose lets the peak rise 2.4–4.1× (k = 1; 2.5–4.7× at k = 10) at the booked dose and nominal constants. The late-dose values at the booked dose were unaffected. The doubling bisection previously returned its lower bracket at 0.2 d tolerance, printing four Table 3 values 0.1 d low.
 
 ---
 

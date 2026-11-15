@@ -37,7 +37,8 @@ across the fortnightly dose train) identifies residual capacity to $\sdl{\hat\th
 and the paper's scope section records that the same design gives $3.07$ at $5\%$ of normal,
 the capacity of severe propionic acidaemia. This note works out why, whether any available
 measurement restores absolute precision, whether change within one patient can still be
-followed, and what the dosing-interval decision needs in place of $\theta$.
+followed, what the dosing-interval decision needs in place of $\theta$, and how late an
+infusion can be.
 \begin{enumerate}[leftmargin=1.5em,topsep=3pt]
 \item \textbf{Absolute capacity is not practically identifiable at $5\%$} ($3.07$ against a
 target of $0.20$). At $5\%$ the enzyme carries $16\%$ of the load, every steady-state draw
@@ -68,12 +69,15 @@ hepatic value is about $4.3$\,d (plausibly $3$--$6$\,d). That value would make t
 the probability that the true value clears even the nominal 21-day crossing is only
 $64$--$71\%$. A threshold defined with an illness amplitude, as in the paper's decision section,
 gives a different answer.
-\item \textbf{How late an infusion can be.} In the parent model, without illness, each day of
-delay adds about $10\%$ to the metabolite's peak, and the peak doubles only after about a week
-($6.5$ to $9$ days at the likely half-life, from about $5$ at $3.5$\,d). A skipped infusion raises
-it about $3$ to $5$ times, and the cycle returns to normal once infusions resume. During an
-intercurrent illness the peak rises even with on-time infusions, about $2.5$-fold, and each day of
-delay costs far more: three days late, it is $4$ to $5$ times its usual value.
+\item \textbf{How late an infusion can be.} In the parent model at the booked increment and
+nominal carnitine constants, each day of delay adds about $10\%$ to the metabolite's peak, and
+without illness the peak doubles after about a week ($6.5$ to $9$ days at the likely half-life of
+$4.3$\,d, from about $5$ at $3.5$\,d); at a smaller increment and less favourable constants this
+falls to about $4$ days at $4.3$\,d and $2.5$ at $3.5$\,d. At $4.3$\,d a skipped infusion raises the
+peak about $3$ to $5$ times, with no lasting effect once infusions resume. During the paper's
+illustrative illness ($1.5$ times the usual load for two weeks from the day the infusion is due)
+the peak rises about $2.5$-fold even with on-time infusions, and three days late it is $4$ to $5$
+times its usual value.
 \end{enumerate}
 \vspace{-2pt}
 All records are simulated on the paper's illustrative constants; no patient data are used.
@@ -100,7 +104,7 @@ $D=6000$ \\
 $D=6000$ \\
 \quad at the largest admissible increment & $2.98$--$3.87$, $3.19$--$4.15$, $4.47$--$5.80$\,d &
 paper's ceiling \\
-infusion delay before the peak doubles & $6.5$--$8.8$\,d & booked dose, half-life $4.3$\,d, $0$--$5\%$ \\
+infusion delay before the peak doubles & $6.5$--$8.8$\,d & nominal constants, $D=6000$, $4.3$\,d, $0$--$5\%$ \\
 human PCC half-life & $3.6$\,d & fibroblast; liver unmeasured, likely $\approx4.3$\,d \\
 \bottomrule
 \end{tabular}
@@ -422,55 +426,70 @@ is given some days late, how much higher does the metabolite go before it arrive
 changes if the patient is ill at the time?
 
 \paragraph{How it was answered.} The parent model is run through eight on-time infusions, then
-one late or skipped infusion, then on-time infusions again. The highest metabolite level in the
-long gap is compared with the patient's usual highest level, which is reached just before each
-on-time infusion (Fig.~\ref{fig:tolerance}a). Unless stated otherwise, the half-life is the
-likely $4.3$\,d, the dose is the booked increment and the carnitine constants are nominal.
+one late or skipped infusion, then infusions every $14$ days counted from the late one. The
+highest metabolite level from the last on-time infusion until three days after the late one is
+compared with the patient's usual highest level, which is reached just before each on-time
+infusion (Fig.~\ref{fig:tolerance}a). During an illness the search runs on to the infusion after
+the late one, because the end of the illness can bring a later peak. Unless stated otherwise,
+the half-life is the likely $4.3$\,d, the dose is the booked increment and the carnitine
+constants are nominal.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{pi_tolerance.pdf}
 \caption{\label{fig:tolerance}A late infusion in the parent model (half-life $4.3$\,d, booked
-increment, nominal constants). (a) The metabolite of a patient with no enzyme of their own,
-through eight on-time infusions and then the infusion due at day $28$ given on time, $3$ or $7$
-days late, or skipped; infusions resume on time afterwards. (b) The highest level reached in the
-gap, as a multiple of the usual peak, against the number of days the infusion is late (fourteen
-days late is a skipped infusion). Blue: no illness. Orange: the paper's registered illness, a
-load $1.5$ times baseline for $14$ days from the day the infusion is due; the curves stop where the
-metabolite passes the model's validity limit ($5.5\,M_i=1650$\,\textmu M).}
+increment, nominal constants). (a) The metabolite of a patient with no enzyme of their own, not
+ill, after eight on-time infusions (the last two, at days $0$ and $14$, are shown), with the
+infusion due at day $28$ given on time, $3$ or $7$ days late, or skipped; later infusions follow
+every $14$ days from the late one. (b) The highest level reached in the gap (with illness, until
+the infusion after the late one), as a multiple of the usual peak, against the number of days
+the infusion is late (fourteen days late is a skipped infusion). Blue: no illness. Orange: the
+paper's illustrative illness, a load $1.5$ times baseline for $14$ days from the day the infusion
+is due; the curves stop where the metabolite passes the model's validity limit
+($5.5\,M_i=1650$\,\textmu M).}
 \end{figure}
 
 \paragraph{Without illness, a late infusion costs little per day.} Each day of delay adds about
-$10\%$ to the peak, and the rise accelerates as the gap lengthens. In a patient with no enzyme of
+$10\%$ to the peak, and the rise grows with the length of the gap. In a patient with no enzyme of
 their own the peak is $1.4$ times its usual value three days late, $2.1$ times a week late and
-$5.1$ times when the infusion is skipped (Fig.~\ref{fig:tolerance}a). The peak doubles after
-about six and a half days in that patient, seven and a half at $2.5\%$ of normal and nine at
-$5\%$ (Fig.~\ref{fig:tolerance}b). Once infusions resume, the next cycle is back to its usual
-level: in the model a late or skipped infusion leaves no lasting effect.
+$5.1$ times when the infusion is skipped (Fig.~\ref{fig:tolerance}a, and the solid blue curve of
+b). The peak doubles after about six and a half days in that patient and seven and a half at
+$2.5\%$ of normal (Fig.~\ref{fig:tolerance}b), and after about nine at $5\%$ (not drawn). Once
+infusions resume, the first cycle peaks a few per cent above its usual level (about $7\%$ after a
+skipped infusion) and the next is back to it: in the model a late or skipped infusion leaves no
+lasting effect.
 
-\paragraph{During an illness, every day of delay costs far more.} The illness raises the peak even
-when the infusion is on time, to about $2.5$ times its usual value, because at the end of the
-illness the raised load meets the enzyme's low point just before the next infusion. A delay of a day adds little to that.
-Three days late, the peak is $4$ to $5$ times its usual value, and a week late $15$ to $21$ times
-(no enzyme of their own and $2.5\%$ of normal; Fig.~\ref{fig:tolerance}b). At the fibroblast-like
-half-life of $3.5$\,d, three days late gives $6.5$ to $8$ times, and a week late $30$ times at
-$2.5\%$ of normal, while for patients with almost no enzyme it takes the metabolite past the
-model's validity limit.
+\paragraph{During an illness, each day of delay after the first costs far more.} The paper's
+illustrative illness raises the peak even when the infusion is on time, to about $2.5$ times its
+usual value, because at the end of the illness the raised load meets the enzyme's low point just
+before the next infusion. A one-day delay does not raise it further (at $k=1$ it is even slightly
+lower, the dip in Fig.~\ref{fig:tolerance}b, because the illness then ends a day before the
+enzyme's low point). Three days late, the peak is $4$ to $5$ times its usual value, and a week
+late $15$ to $21$ times (no enzyme of their own and $2.5\%$ of normal; Fig.~\ref{fig:tolerance}b).
+At the fibroblast-like half-life of $3.5$\,d, three days late gives $6.5$ to $8$ times, and a week
+late $30$ times at $2.5\%$ of normal, while for patients with almost no enzyme it takes the
+metabolite past the model's validity limit.
 
 \paragraph{Less favourable settings.} The margin shrinks at a shorter half-life, at a smaller
-delivered increment and at less favourable carnitine constants (Table~\ref{tab:delay}). In the
-least favourable combination the peak doubles after about two days. There, Result~4's trough
+delivered increment and at less favourable carnitine constants (Table~\ref{tab:delay}); in the
+least favourable combination the peak doubles after about two and a half days. Result~4's trough
 condition (does the enzyme at the end of the gap stay above the critical capacity?) is the
-stricter test, and for the weakest patients it already fails with infusions on time, as Result~4
-found. At $D=2672$ the illness itself dominates: with infusions on time the peak already rises $4$
-to $12$ times, of the same order as with a three-day delay ($6$ to $10$ times).
+stricter test in six of the eight settings of Table~\ref{tab:delay}, all but the booked dose at
+$4.3$\,d, and in the least favourable one it already fails with infusions on time for the weakest
+patients, as Result~4 found. At $D=2672$ the illness itself dominates: with infusions on time the
+peak already rises $4$ to $6$ times ($7$ to $12$ at $3.5$\,d), of the same order as with a
+three-day delay ($6$ to $8$ times; $7$ to $9.5$ at $3.5$\,d, where for patients below $5\%$ of
+normal the on-time peak is even the higher of the two).
 
 \begin{table}[t]
 \centering\small
 \caption{\label{tab:delay}Days an infusion can be late, for a patient with no enzyme of their own
-(the shortest of the capacities $0$--$5\%$). Peak: before the gap's highest metabolite level
-reaches twice the usual peak, no illness. Trough: before the enzyme at the end of the gap falls
-below the critical capacity (Result~4's condition). $D=2672$ is the paper's admissible dose at
+(the shortest of the capacities $0$--$5\%$), $k=1$. Peak: before the gap's highest metabolite
+level reaches twice that setting's own usual peak (which differs between rows), no illness.
+Trough: before the enzyme at the end of the gap falls below the critical capacity (Result~4's
+condition). Least favourable: the shortest value over the eight corners of the paper's
+carnitine ranges, taken for each column separately (the corner that shortens the doubling is
+not the one that shortens the trough condition). $D=2672$ is the paper's admissible dose at
 $3.5$\,d; at $4.3$\,d it slightly exceeds the ceiling of Table~\ref{tab:spec}.}
 \begin{tabular}{@{}lcccc@{}}
 \toprule
@@ -478,27 +497,32 @@ $3.5$\,d; at $4.3$\,d it slightly exceeds the ceiling of Table~\ref{tab:spec}.}
 \cmidrule(lr){2-3}\cmidrule(l){4-5}
 dose and carnitine constants & $4.3$\,d & $3.5$\,d & $4.3$\,d & $3.5$\,d \\
 \midrule
-booked ($D=6000$), nominal & $6.5$ & $5.2$ & $9.5$ & $4.9$ \\
-booked ($D=6000$), least favourable & $6.1$ & $4.3$ & $6.9$ & $2.7$ \\
-$D=2672$, nominal & $6.0$ & $4.7$ & $4.5$ & $0.8$ \\
-$D=2672$, least favourable & $4.3$ & $2.3$ & $1.8$ & on time \\
+booked ($D=6000$), nominal & $6.5$ & $5.3$ & $9.5$ & $4.9$ \\
+booked ($D=6000$), least favourable & $4.5$ & $4.0$ & $6.9$ & $2.7$ \\
+$D=2672$, nominal & $6.1$ & $4.7$ & $4.5$ & $0.8$ \\
+$D=2672$, least favourable & $4.3$ & $2.4$ & $1.8$ & on time \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \paragraph{What the numbers do not say.} Twice the usual peak is a yardstick, not a threshold of
-harm: the model does not say which metabolite level is harmful. The model's tipping point, past
-which the metabolite would keep rising on its own, is reached later than the doubling in every
-case computed. The results use the model's default carnitine conjugation rate ($k=1$), which
-nothing in the model fixes; at $k=10$, close to its least favourable limit, the peak columns of
-Table~\ref{tab:delay} shorten by at most $0.8$\,d. These are statements about the model, not
-clinical recommendations: whether an infusion is given during an intercurrent illness is a
-clinical decision.
+harm: the model does not say which metabolite level is harmful. In every case computed, the peak
+doubles before the metabolite reaches the model's validity limit or its tipping point at the
+patient's usual lowest enzyme level. During a delay, though, the enzyme falls below that usual
+level; once it is below the critical capacity (the trough columns of Table~\ref{tab:delay}),
+there is no tipping point and the metabolite rises on its own until the infusion arrives. The
+results use the model's default carnitine conjugation rate ($k=1$), which nothing in the model
+fixes. At $k=10$, close to its least favourable limit, the doubling delays shorten by less than a
+day, and a late infusion during an illness gives peaks about $30\%$ higher (three days late, $5$
+to $6$ times the usual peak instead of $4$ to $5$; a week late, $19$ to $27$ instead of $15$ to
+$21$). These are statements about the model, not clinical recommendations: whether an infusion
+is given during an intercurrent illness is a clinical decision.
 
-\paragraph{A late infusion is also a measurement.} The marker's response to the dose train, and to
-longer-than-usual gaps in particular, is what identifies the half-life from the on-therapy record
-(Result~4). Dated infusions and marker draws around unplanned delays are therefore data the
-specification needs, pooled across patients where the value lies near a crossing.
+\paragraph{A late infusion is also a measurement.} The marker's response to the dated dose train,
+irregularities included (Result~4 simulates a $2$-day jitter, missed doses and one $28$-day gap),
+is what identifies the half-life from the on-therapy record. Dated infusions and marker draws
+around unplanned delays are therefore data the specification needs, pooled across patients where
+the value lies near a crossing.
 
 \section{Limitations}
 

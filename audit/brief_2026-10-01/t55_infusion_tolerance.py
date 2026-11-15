@@ -312,7 +312,9 @@ def fig_clear(pn, thalf=4.3):
         T, M, doses, _ = simulate(0.0, thalf, D0, pn, delay=d or 0.0, skip=d is None, traj=True)
         keep = (T >= 0) & (T <= 70)
         a.plot(T[keep], M[keep], color=col, lw=1.1 if d == 0.0 else 1.6, ls=ls, label=lab)
-        print(f"    no own enzyme, {lab:>12}: peak in the gap {M[(T >= 14) & (T <= 45)].max():7.1f} uM")
+        cyc = [M[(T > doses[i] + 7.0) & (T < doses[i + 1])].max() / u0 for i in (8, 9)]   # pre-dose peaks
+        print(f"    no own enzyme, {lab:>12}: peak in the gap {M[(T >= 14) & (T <= 45)].max():7.1f} uM;"
+              f" after resuming, cycle peaks {cyc[0]:.3f}x then {cyc[1]:.3f}x usual")
     for t0 in (0, 14):
         a.axvline(t0, color=P.GRID, lw=0.8, zorder=0)
     a.axvline(28, color=P.MUTED, lw=0.8, ls=":", zorder=0)
