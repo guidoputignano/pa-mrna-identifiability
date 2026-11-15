@@ -71,7 +71,7 @@ def fig_pencil():
     ax = [fig.add_subplot(gs[0]), fig.add_subplot(gs[1])]
     cax = fig.add_subplot(gs[2])
     for a, Q, ttl in [(ax[0], T.pencil(seed=0), "(a) dosed monthly record, 25 draws"),
-                      (ax[1], T.wide_pencil(seed=1), "(b) 25 draws at loads 0.45–3.2× managed")]:
+                      (ax[1], T.wide_pencil(seed=1), "(b) 25 draws at loads 0.45–3.2× recorded")]:
         _lines(a, Q)
         sig_d, sig_num = T.dist_sigma(Q)
         _, NW = T.fit_point(Q, weights=(Q["a"] ** 2 + Q["b"] ** 2) / sig_num ** 2)
