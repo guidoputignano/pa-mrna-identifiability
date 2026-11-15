@@ -61,6 +61,28 @@
     largest sampled crossing   crossing 3.968 d -> P(liver half-life above it) = 56% wide, 59% tight
     worst box corner           crossing 4.083 d -> P(liver half-life above it) = 54% wide, 56% tight
 
+  THE PAPER'S OWN RANGES (tab_C_shape: K_c 25-800, M_i 150-1200, rho_0 0.35-1), corners,
+  R0 re-derived; crossings at the booked D = 6000 and at the largest admissible D = 2672:
+      K_c   M_i rho_0 theta_crit   D=6000: 14-d  15-d  21-d    D=2672: 14-d  15-d  21-d
+       25   150  0.35      218.2           2.90  3.04  3.89            3.76  3.93  4.91
+       25   150  1.00      232.1           2.95  3.10  3.95            3.84  4.01  5.01
+       25  1200  0.35      139.8           2.57  2.70  3.48            3.23  3.39  4.29
+       25  1200  1.00      145.5           2.59  2.73  3.52            3.27  3.43  4.34
+      800   150  0.35      127.1           2.50  2.64  3.41            3.14  3.29  4.18
+      800   150  1.00      127.3           2.51  2.64  3.41            3.14  3.29  4.18
+      800  1200  0.35      109.9           2.41  2.54  3.29            3.00  3.15  4.02
+      800  1200  1.00      110.0           2.42  2.55  3.30            3.00  3.15  4.02
+    nominal constants                    2.62  2.75  3.55            3.31  3.47  4.39
+    corners: theta_crit 109.9..232.1, a factor 2.11 (the paper's remark: 'inside a factor of 1.4')
+    ranges over the corners, D=6000: 14-d 2.41-2.95, 15-d 2.54-3.10, 21-d 3.29-3.95
+                             D=2672: 14-d 3.00-3.84, 15-d 3.15-4.01, 21-d 4.02-5.01
+    3.6 d clears the 21-day line (D=6000) at 6 of 8 corners; 4.3 d at 8 of 8
+    P(liver half-life above the 21-d, nominal, D=6000 crossing 3.55 d) = 64% wide, 71% tight
+    P(liver half-life above the 21-d, worst corner, D=6000 crossing 3.95 d) = 56% wide, 60% tight
+    P(liver half-life above the 21-d, nominal, D=2672 crossing 4.39 d) = 48% wide, 48% tight
+    P(liver half-life above the 14-d, worst corner, D=2672 crossing 3.84 d) = 58% wide, 63% tight
+    P(liver half-life above the 15-d, worst corner, D=2672 crossing 4.01 d) = 55% wide, 58% tight
+
   READING. The 14- and 15-day conclusions do not depend on Model C's unmeasured
   shape: even at the worst corner of the box their crossings are about 3.06 and 3.21 d,
   under the measured 3.6 d. (They still need the liver half-life above those values.)

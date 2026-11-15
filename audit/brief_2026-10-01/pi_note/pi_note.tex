@@ -18,7 +18,7 @@
 \captionsetup{font=small,labelfont=bf}
 \setlist{nosep,leftmargin=1.4em}
 \definecolor{soft}{RGB}{244,242,238}
-\newcommand{\thci}{\theta_c^{\mathrm{int}}}
+\newcommand{\thci}{\theta_{\mathrm{crit}}^{\mathrm{int}}}
 \newcommand{\dtr}{\Delta_{\mathrm{tr}}}
 \newcommand{\sdl}[1]{\operatorname{sd}(\ln #1)}
 \newcommand{\um}{\,\textmu M/d}
@@ -51,24 +51,28 @@ $^{13}$C$_3$ tracer for $k_e$ with an isotope-dilution load turnover, reaches $0
 \item \textbf{Change within one patient is identifiable in the local identification model}:
 $\operatorname{sd}(\ln\hat\theta_2-\ln\hat\theta_1)=0.13$ between two windows of 104 weekly
 draws, because every unknown patient constant cancels. It holds in patients only if the
-marker's per-draw variability in PA is below about $10\%$ (unmeasured; at the one published
-serial CV, $26.4\%$ for C3 in healthy adults, it is $0.475$) and if $k_e$ and the load
+marker's per-draw variability in PA is below about $10\%$ (unmeasured; at the published serial
+CV for C3, $26.4\%$ within a day in healthy adults, it is $0.475$) and if $k_e$ and the load
 calibration do not drift between windows.
-\item \textbf{Under the parent model's intrinsic threshold, the interval decision needs the
-decay rate and the size of the delivered increment, not $\theta$.} At the booked increment
-the 14- and 15-day intervals keep every patient maintainable at baseline load whenever the
-PCC half-life exceeds $2.6$--$3.2$\,d. The 21-day interval turns on the half-life: the
-crossing is $3.55$\,d at the nominal carnitine constants, the one human measurement is
-$3.6$\,d (fibroblasts), and the liver value is unmeasured (estimate $4.3$\,d). The result
-does not hold for a threshold defined with an illness amplitude, and it moves materially if
-the delivered increment is smaller than booked.
+\item \textbf{The dosing interval reduces to a specification on the PCC half-life and the
+size of the delivered increment.} Under the parent model's intrinsic threshold at baseline
+load, an interval keeps every patient maintainable, whatever $\theta$, when the hepatic PCC
+half-life exceeds a crossing value (Table~\ref{tab:spec}): at the booked increment
+$2.4$--$3.0$\,d for 14 days, $2.5$--$3.1$\,d for 15 days and $3.3$--$4.0$\,d for 21 days
+across the unmeasured carnitine constants; at the largest increment the paper finds
+admissible, $3.0$--$3.8$, $3.2$--$4.0$ and $4.0$--$5.0$\,d. Below the crossing the decision
+needs $\theta$, which the record cannot supply. The hepatic value is unmeasured; the one human
+value is $3.6$\,d (fibroblasts), and the likely hepatic value, about $4.3$\,d, would make the
+14- and 15-day intervals safe in every case and the 21-day interval safe only at the booked
+increment. A threshold defined with an illness amplitude, as in the paper's decision section,
+gives a different answer.
 \end{enumerate}
 \vspace{-2pt}
 All records are simulated on the paper's illustrative constants; no patient data are used.
 }}
 
 \begin{table}[h]
-\centering\footnotesize
+\centering\footnotesize\setlength{\tabcolsep}{3pt}
 \caption{\label{tab:key}Key numbers at $5\%$ of normal capacity. Precisions are
 Cram\'er--Rao bounds on the log scale; the target is $0.20$, about $\pm20\%$.}
 \begin{tabular}{@{}lll@{}}
@@ -80,14 +84,15 @@ $\sdl{\hat\theta}$, 25 monthly draws & $3.07$ & paper's design; $0.17$ at normal
 \quad $k_e$ and unrecorded load exact & $0.29$ & idealised, same 25 draws \\
 $\operatorname{sd}(\ln\hat\theta_2-\ln\hat\theta_1)$, within patient & $0.13$ &
 $2\times104$ weekly draws, $5\%$ per-draw CV \\
-\quad at the one measured serial CV & $0.475$ & $26.4\%$ per-draw CV (C3, healthy adults) \\
+\quad at the published C3 serial CV & $0.475$ & $26.4\%$, serum C3, healthy adults \\
 $\sdl{\lambda}$, increment decay rate & $0.055$ & 2 years of monthly draws \\
 14-, 15-, 21-day crossings (PCC half-life) & $2.62$, $2.75$, $3.55$\,d & nominal constants,
 $D=6000$ \\
-\quad over the admissible carnitine constants & $\le3.06$, $\le3.21$, $3.29$--$4.08$\,d &
-corners of the box \\
-\quad at the largest admissible increment & $3.31$, $3.47$, $4.39$\,d & $D=2672$ \\
-human PCC half-life & $3.6$\,d & fibroblast; liver unmeasured, $\approx4.3$\,d \\
+\quad over the paper's carnitine ranges & $2.41$--$2.95$, $2.54$--$3.10$, $3.29$--$3.95$\,d &
+$D=6000$ \\
+\quad at the largest admissible increment & $3.00$--$3.84$, $3.15$--$4.01$, $4.02$--$5.01$\,d &
+$D=2672$ \\
+human PCC half-life & $3.6$\,d & fibroblast; liver unmeasured, likely $\approx4.3$\,d \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -127,9 +132,11 @@ $\theta$ from a smaller $k_e$. With $k_e$ known exactly a residual $0.39$ remain
 (the load record contributes $62\%$ of it, the assay $29\%$); it then falls with the number of
 draws, more slowly than $1/\sqrt n$ at first because the record learns the load bias only
 gradually, and crosses $0.20$ near 300 draws (about three a week for two years). $k_e$ is not
-available that precisely: a deliberate, crisis-free reduction of the dietary load estimates
-it to $\sdl{k_e}\approx0.2$ when the unrecorded load is known to $5\%$, and at that precision
-no sampling rate, up to two draws a day for two years, reaches even $0.30$. The profile
+available that precisely: a deliberate $25\%$ reduction of dietary intake estimates it to
+$\sdl{k_e}\approx0.2$ when the unrecorded load is known to $5\%$ and stays constant through the
+reduction (unverified: in propionic acidaemia a cut in intake can trigger catabolism, which
+raises the load), and at that precision no sampling rate, up to two draws a day for two years,
+reaches even $0.30$. The profile
 likelihood (panel~c) supports a one-sided statement, $\theta$ below about $22\%$ of normal
 at the $95\%$ level, not a point estimate.
 
@@ -153,17 +160,19 @@ g(m_i)\,\theta + m_i\,k_e = L(t_i) + L_0 - \Delta_i\,g(m_i),
 \end{equation}
 Noise-free, at the true $K_m$ and with $L_0$ known, the lines are concurrent at the true
 $(\theta,k_e)$. Over the dosed record's band ($m\approx4$--$38$\,\textmu M) every slope lies
-between $-0.0096$ and $-0.0074$, so the pencil is nearly parallel (Fig.~\ref{fig:pencil}a).
+between $-0.0096$ and $-0.0073$, so the pencil is nearly parallel (Fig.~\ref{fig:pencil}a).
 Its weighted concurrence region has correlation $-0.998$ and aspect ratio $29{:}1$, and it
 coincides with the inverse Fisher information at fixed $K_m$. Letting $K_m$ vary slides the
 concurrence point along the fibre; adding that freedom, the load bias and the prior on
 $\ln k_e$ gives the headline value. The $300$ pairwise intersections scatter like a Cauchy
 sample (only $5\%$ fall within a factor of three of the truth), so on the natural scale the
 record has no usable point estimate, only a log-scale width. Spreading the draws over loads
-from $0.45$ to $3.2$ times the managed load fans the slopes and concentrates the
-intersections (Fig.~\ref{fig:pencil}b, $41\%$ within a factor of three), but such loads lie
-far beyond the parent model's fold, which a sustained rise of $18\%$ above baseline already
-crosses, so this is not an admissible experiment. The residual distances of the lines to their
+from $0.45$ to $3.2$ times the recorded load ($323$\um) fans the slopes and concentrates the
+intersections (Fig.~\ref{fig:pencil}b, $41\%$ within a factor of three), but the upper part of
+that range lies far beyond the parent model's fold: a sustained rise of $18\%$ above baseline
+already crosses it for the paper's illustrative patient at $10\%$ of normal, and the untreated
+$5\%$ patient has no equilibrium even at baseline load. This is not an admissible
+experiment. The residual distances of the lines to their
 best common point give a calibrated test of model adequacy (it rejects $4\%$ of correctly
 specified records at the $5\%$ level). It has modest power against a mis-recorded load ($15\%$
 when half the draws carry a $10\%$ error, $58\%$ at $25\%$) and none against a second
@@ -177,7 +186,7 @@ band and is absorbed along the fibre.
 $(\theta,k_e)$ plane, coloured by the marker level. (a) The dosed monthly record: all slopes
 are close to $-1/K_m$, the lines are nearly parallel and the $2\sigma$ near-concurrence
 region is a long sliver. (b) The same number of draws spread over loads $0.45$--$3.2$ times
-the managed load: the high-marker draws change the slope and the region closes, at loads
+the recorded load: the high-marker draws change the slope and the region closes, at loads
 far beyond those the parent model tolerates.}
 \end{figure}
 
@@ -187,7 +196,9 @@ Figure~\ref{fig:routes} collects every route to absolute $\theta$ at $5\%$. Meas
 nuisances does not suffice: an isotope-dilution load turnover adds almost nothing ($3.04$),
 an intravenous $^{13}$C$_3$ tracer for $k_e$ at $5.4\%$ brings the record to $0.45$, both
 together to $0.44$, and exact knowledge of $k_e$ and of the unrecorded load leaves $0.29$
-(removing the per-draw load-record error as well gives $0.204$). $k_e$, not the load, is the
+(removing the per-draw load-record error as well brings it to the target but not reliably
+below it: $0.19$--$0.20$ by the Cram\'er--Rao bound, depending on the noise model, and
+$0.215$--$0.218$ by simulation). $k_e$, not the load, is the
 binding nuisance. Only readings of the enzyme itself reach $0.20$, and each needs a
 calibration constant that is not available. An ex vivo PCC assay at its $20\%$ repeatability
 reaches $0.20$ if the scale factor from cell activity to whole-body capacity is known, and
@@ -210,14 +221,15 @@ Upper group: absolute capacity; the record-alone value $3.05$ differs from the $
 Table~\ref{tab:key} only in the noise model (here each draw carries its own noise level, there
 one pooled level). Lower group: change between two windows, a different quantity. Hatched
 bars reach $0.20$ only when an unmeasured constant is supplied: a calibration (upper group)
-or a per-draw marker variability in PA of about $5\%$ (lower group).}
+or a per-draw marker variability in PA below about $10\%$ (lower group; the bar is drawn at
+$5\%$).}
 \end{figure}
 
 The pattern is structural. $\theta$ enters the model only as the maximal velocity of the
 flux $\theta g(m)$, so an observable depends on it in one of two ways. Either it depends on
 the states $\theta$ helps set, and inverting the balance requires the shape of the
-alternative channel ($k_e$ in the local model, its half-saturation $K_e$ in the saturating
-variant, the carnitine constants $K_c$, $M_i$, $\rho_0$, $R_0$ in the parent model); or it reads
+alternative channel ($k_e$ in the local model; its half-saturation $K_e$ under the paper's ceiling hypothesis,
+$\alpha(m)=k_e\,m/(K_e+m)$, the saturating variant below; the carnitine constants $K_c$, $M_i$, $\rho_0$, $R_0$ in the parent model); or it reads
 the flux directly, and requires a transduction constant. A marker of an upstream pool (C3,
 2-methylcitrate) needs both. The parent model is the decisive check, because there the
 alternative channel has its own observable, free carnitine. Evaluated at a managed load of
@@ -227,11 +239,12 @@ reading) and $0.34$ with them known, a value the marker alone already reaches on
 constants are known. Observing the alternative channel does not remove the need to know its
 shape.
 
-How far the target is missed depends on the clearance structure; that it is missed does not.
+How far the target is missed depends on the clearance structure; that it is missed without an
+unmeasured constant does not.
 The local model's linear clearance gives the alternative route about $84\%$ of the load at
 $5\%$ capacity, high against the measured urinary output of propionate metabolites in PA,
 a few per cent of estimated production (Thompson \& Chalmers, 1990). Under the
-saturating-clearance variant, at a constructed operating point (a clearance ceiling below the
+saturating variant, at a constructed operating point (a clearance ceiling below the
 untreated load, at a managed load), the enzyme's share is larger and the precision is $0.29$
 ($0.92$ at the variant's nominal constants, which never decompensate); the target is touched
 ($\approx0.19$) only when $k_e$ is supplied by the intravenous tracer and $K_e$ is known to
@@ -249,10 +262,11 @@ is common to both windows and cancels. Two windows of 104 weekly draws each give
 $\operatorname{sd}=0.13$, enough to detect a $+45\%$ rise or a $-30\%$ fall with $80\%$ power;
 the precision depends on draws per window, not on calendar span. This is a model floor with
 two conditions. First, it assumes a $5\%$ per-draw marker variability. No serial CV exists for
-3-hydroxypropionate; the only published one for a propionate marker, $26.4\%$ for plasma C3
-in healthy adults (Thompson et al., 2012), gives $0.475$ and would need about 590 draws per
-window, so the result holds only if the within-patient variability in PA is below about
-$10\%$. Second, the patient constants must stay constant: a drift of $0.06$ in $\ln k_e$
+3-hydroxypropionate. The one published for C3, $26.4\%$ within a day in the serum of healthy
+adults (Thompson et al., 2012), gives $0.475$ and would need about 590 draws per window, and
+the between-visit CV of serum methylmalonic acid in methylmalonic acidaemia is higher still,
+$31\pm25\%$ (Manoli et al., 2021); the result holds only if the within-patient variability in
+PA is below about $10\%$. Second, the patient constants must stay constant: a drift of $0.06$ in $\ln k_e$
 between windows, of the order a falling glomerular filtration rate can produce in a growing
 child, already gives $0.28$, and a shift of $1.5\%$ of the load in the marker's calibration,
 as a change in carnitine dose or in sampling conditions can produce, gives $0.20$. The load is
@@ -260,7 +274,7 @@ the most fragile term. Gut-derived propionate is antibiotic-suppressible (Thomps
 1990), and an unrecorded antibiotic course between windows fakes an apparent capacity rise
 of $1$ to $3$ log units, in the direction of reassurance.
 
-\section{Result 4: what the dosing interval needs}
+\section{Result 4: the dosing interval as a specification}
 
 The interval decision is posed here as a trough condition. With $D=6000$\um\ the jump in the
 increment at each fortnightly dose, and the same delivered rate at every interval $\tau$ (a
@@ -269,18 +283,45 @@ $\tau$-day dose is $\tau/14$ times the fortnightly one), the increment's trough 
 \dtr(\tau) = D\,\frac{\tau}{14}\,\frac{e^{-\lambda\tau}}{1-e^{-\lambda\tau}},\qquad
 \lambda=\frac{\ln 2}{t_{1/2}}.
 \end{equation}
-The threshold is the parent model's intrinsic critical capacity $\thci$ (the fold of the
-equilibrium reduction, supplement, Prop.~intrinsic), which needs no tolerable-level
-convention. At its own baseline load ($600$\um, not the local model's $323$) it is
-$\thci=150.8$\um, just above the $5\%$ patient's capacity of $150$, so that untreated at that
-load the $5\%$ patient has no equilibrium. A patient stays maintainable at baseline load through
-the cycle, trough included, while $\theta+\dtr(\tau)>\thci$. At the design's half-life of
-$3.5$\,d, $\dtr(14)=400$\um, so the fortnightly interval keeps every residual capacity
-maintainable, including $\theta=0$. Where the trough alone clears $\thci$, the decision does not
-depend on $\theta$; whether it does is set by $t_{1/2}$ and by $D$. Figure~\ref{fig:margin}
-plots the margin of a patient with no residual capacity, $\mu(\tau)=\dtr(\tau)-\thci$. At
-$D=6000$ it is positive for half-lives above $2.62$\,d at 14 days, $2.75$\,d at 15 days and
-$3.545$\,d at 21 days.
+The threshold is the parent model's intrinsic critical capacity $\thci$, the fold of the
+equilibrium reduction (supplement, `An intrinsic definition of $\theta_{\mathrm{crit}}$'),
+which needs no tolerable-level convention. At its own baseline load ($600$\um, not the local
+model's $323$) it is $\thci=150.8$\um, just above the $5\%$ patient's capacity of $150$, so
+that untreated at that load the $5\%$ patient has no equilibrium. A patient stays maintainable
+at baseline load through the cycle, trough included, while $\theta+\dtr(\tau)>\thci$. At the
+design's half-life of $3.5$\,d, $\dtr(14)=400$\um, so the fortnightly interval keeps every
+residual capacity maintainable, including $\theta=0$. Where the trough alone clears $\thci$
+the booking does not depend on $\theta$; whether it does is set by $t_{1/2}$ and by $D$.
+
+\paragraph{The specification.} Table~\ref{tab:spec} gives, for each interval, the half-life
+above which the trough alone clears $\thci$, at the booked increment and at the largest
+increment the paper's scope section finds admissible at $5\%$ of normal ($D=2672$), at the
+nominal carnitine constants and over the corners of the paper's ranges for them ($K_c$
+$25$--$800$, $M_i$ $150$--$1200$, $\rho_0$ $0.35$--$1$). Above the entry the interval is safe
+for every patient without knowing $\theta$; below it the booking needs $\theta$, which the
+record cannot supply. Figure~\ref{fig:margin} shows the same thing as a margin. Over those
+corners $\thci$ itself ranges from $110$ to $232$\um, a factor of $2.1$; the paper's remark on
+the shape constants reports a factor of $1.4$ for a joint sweep of the same ranges. One constant at a time, the 21-day crossing passes $3.6$\,d at $K_c\le50$ or
+$M_i=150$.
+
+\begin{table}[t]
+\centering\small
+\caption{\label{tab:spec}The specification: PCC half-life (days) above which an interval keeps
+every patient maintainable at baseline load, whatever $\theta$. Ranges are over the corners
+of the paper's carnitine-constant ranges.}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+& \multicolumn{2}{c}{booked increment, $D=6000$} & \multicolumn{2}{c}{largest admissible,
+$D=2672$} \\
+\cmidrule(lr){2-3}\cmidrule(l){4-5}
+interval & nominal & over the constants & nominal & over the constants \\
+\midrule
+14 days & $2.62$ & $2.41$--$2.95$ & $3.31$ & $3.00$--$3.84$ \\
+15 days & $2.75$ & $2.54$--$3.10$ & $3.47$ & $3.15$--$4.01$ \\
+21 days & $3.55$ & $3.29$--$3.95$ & $4.39$ & $4.02$--$5.01$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{figure}[t]
 \centering
@@ -289,78 +330,58 @@ $3.545$\,d at 21 days.
 $\mu=\dtr-\thci$, against the PCC protein half-life, at the parent model's nominal carnitine
 constants ($K_c=100$). Right of a curve's zero the interval keeps every patient maintainable
 at baseline load without knowing $\theta$; left of it the decision needs $\theta$. The grey
-band is the range of the 21-day crossing over the corners of the admissible carnitine
-constants; the dotted curve is the 21-day margin at the largest increment the paper finds
+band is the range of the 21-day crossing over the corners of the paper's carnitine-constant
+ranges; the dotted curve is the 21-day margin at the largest increment the paper finds
 admissible at $5\%$ of normal.}
 \end{figure}
 
-The only human measurement of PCC turnover, in fibroblasts (Chandler \& Ballard, 1985), is
-$3.6$\,d: $1.5\%$ above the 21-day crossing, a margin of $+10$\um, while the design's assumed
-$3.5$\,d sits just below it ($-8$\um). The relevant value is the liver's, which has not been
-measured. PCC is a mitochondrial-matrix enzyme; the closest anchors are the human fibroblast
-value, the mouse whole-liver median ($2.4$--$3.6$\,d) and the mouse liver-mitochondrial median
-($4.26$\,d; Kim et al., 2012). Together they suggest a hepatic value near $4.3$\,d, plausibly
-$3$--$6$\,d, which is weak evidence for a single protein. Taking the hepatic half-life as
-log-normal around $4.3$\,d with $\operatorname{sd}(\ln)$ between $0.35$ and $0.53$, the
-probability that it lies above the 21-day crossing is $64$--$71\%$, a rough guide rather than
-a measured probability.
+\paragraph{The likely value.} No hepatic value has been measured. The one human measurement,
+in fibroblasts, is $3.6$\,d (Chandler \& Ballard, 1985). PCC is a mitochondrial-matrix
+enzyme, so the apt comparator for the liver is the mouse liver-mitochondrial median,
+$4.26$\,d (Kim et al., 2012), rather than the whole-liver median ($2.4$--$3.6$\,d); studies of
+the drug itself in mouse liver give $3.8$\,d intrinsic and about $7$\,d effective (Attarwala
+et al., 2023), and $5.3$--$6.7$\,d for the delivered human PCC (Jiang et al., 2020). Our
+estimate is about $4.3$\,d, plausibly $3$--$6$\,d; it rests on comparators, not on a
+measurement. If it is right, Table~\ref{tab:spec} gives a clear answer at the booked increment:
+all three intervals are safe for every patient, whatever the carnitine constants. At the
+largest admissible increment the 14- and 15-day intervals remain safe, narrowly at the least
+favourable constants ($3.84$ and $4.01$\,d), and the 21-day interval does not. Taking the
+hepatic half-life as log-normal around $4.3$\,d with $\operatorname{sd}(\ln)$ between $0.35$
+and $0.53$, the probability that it clears the 21-day crossing is $64$--$71\%$ at the nominal
+constants and booked increment, $56$--$60\%$ at the least favourable constants, and $48\%$ at
+the largest admissible increment.
 
-Four qualifications bound this result. \emph{The threshold.} The intrinsic $\thci$ describes maintainability at baseline load. The
-paper's decision section defines the critical capacity with an illness amplitude; at its
-default (a load $1.5$ times baseline) the threshold is $994$\um, above $\dtr(14)$, and the
-booking again depends on $\theta$, which the record cannot supply. The paper also notes that
-the only endpoint evidence shows a smooth dose--response rather than a threshold. Result~4
-holds within the intrinsic, baseline-load framing.
+\paragraph{Where the value can be found.} (i) The sponsor's population model for mRNA-3927
+(Gao et al., 2025) was re-estimated on human data and contains a protein-decay term; the public
+abstract reports only the mRNA clearance and volume. (ii) The trial's on-therapy marker record
+(NCT04159103), held by the sponsor and, for their own patients, by the trial sites: the dated
+dose schedule identifies $\lambda$ to $\sdl{\lambda}=0.094$ after six months of monthly draws
+and $0.055$ after two years, and separates $3.6$ from $7$\,d at $7\sigma$ within six months.
+One patient's record cannot place a value that lies near a crossing: a $3.6$\,d truth sits
+$0.16\sigma$ from the nominal $3.55$\,d crossing after six months of monthly draws and only
+$0.58\sigma$ after five years of weekly draws (Fisher information, not simulated), so near
+$3.6$\,d it needs a pooled estimate, $23$ to $155$ patients against the nominal crossing
+depending on cadence, record length and power, and only if $\lambda$ is common to all of them.
+A $4.3$\,d truth is placed above the nominal crossing with $83\%$ probability after a year of
+monthly draws, but above the highest booked-increment crossing ($3.95$\,d) with only $24\%$
+($88\%$ after five years of weekly draws).
+(iii) A direct measurement of PCC turnover in human hepatocytes (pulse--chase or dynamic
+SILAC), which would give a human liver-cell value, with the caveat that cultured cells can turn
+proteins over differently from the liver in vivo. For the increment, the paper's Tier~2 study,
+two $^{13}$C-propionate breath tests bracketing a single dose on one day, establishes the
+same-day repeatability on which a pre/post measurement of $D$ depends.
 
-\emph{The increment.} $\dtr$ is proportional to $D$, and $D=6000$ is the paper's calibration,
-not a measurement. A $6\%$ smaller $D$ moves the 21-day crossing to $3.60$\,d, past the
-fibroblast value. The paper's scope section finds the largest admissible increment at $5\%$
-of normal to be $D=2672$; there the 14-, 15- and 21-day crossings are $3.31$, $3.47$ and
-$4.39$\,d (Fig.~\ref{fig:margin}, dotted), so the 21-day interval would fail even at the
-$4.3$\,d liver estimate.
-
-\emph{The carnitine constants.} $\thci$ depends on the channel's $K_c$, $M_i$ and $\rho_0$,
-none of which is measured, and on the calibration of $R_0$ that fixes the alternative route's
-peak at $500$ against a load of $600$. Holding that calibration, the corners of the admissible
-box move $\thci$ from $110$ to $262$\um, a factor of $2.4$. The 21-day
-crossing moves from $3.29$ to $4.08$\,d: $3.6$\,d clears it at six of the eight corners (it
-fails at the two with $K_c=25$ and $M_i=100$) and, one constant at a time, fails at
-$K_c\le50$ or $M_i=150$, while $4.3$\,d clears it everywhere. The 14- and 15-day floors rise
-to at most $3.06$ and $3.21$\,d, so at $D=6000$ the 14- and 15-day conclusions hold whenever
-the liver half-life exceeds about $3.2$\,d. At the least favourable constants the probability
-above falls to $54$--$59\%$.
-
-\emph{What the record can resolve.} The on-therapy record identifies $\lambda$ itself
-($\sdl{\lambda}=0.094$ after six months of monthly draws, $0.055$ after two years) and
-separates a $3.6$\,d from a $7$\,d half-life at $7\sigma$ within six months. Placing a value
-on one side of the crossing is a much finer question (Table~\ref{tab:lambda}).
-If the true value is near $3.6$\,d, no single patient's record does it at any length; a pooled
-estimate would need $23$ to $155$ patients, depending on cadence, record length and power, and
-only if $\lambda$ is common to all of them. If it is near $4.3$\,d, one record places it with
-$80\%$ probability within a year of monthly draws against the nominal crossing, but not against
-the highest crossing in the box. When the half-life is below the crossing, estimating $\theta$
-from the passive record does not rescue the 21-day interval: by simulation, at the design's
-$3.5$\,d the standard deviation of the estimated margin stays near $140$\um, comparable to
-$\thci$ itself, from six months to five years of draws.
-
-\begin{table}[t]
-\centering\small
-\caption{\label{tab:lambda}Separation of two half-life hypotheses by one patient's record,
-in units of the record's $\sdl{\lambda}$ evaluated at the true value; in brackets, the
-probability that one record clears $2\sigma$, $\Phi(z-2)$. Fisher-information values, not
-checked by simulation.}
-\begin{tabular}{@{}lcccc@{}}
-\toprule
-record & $3.6$ vs $7$\,d & $3.6$\,d vs $3.545$\,d & $4.3$\,d vs $3.545$\,d & $4.3$\,d vs
-$4.08$\,d \\
-\midrule
-6 months, monthly  & $7.0$  & $0.16$ & $1.93$ ($47\%$) & $0.52$ ($7\%$) \\
-12 months, monthly & $9.9$  & $0.23$ & $2.97$ ($83\%$) & $0.80$ ($11\%$) \\
-6 months, weekly   & $12.5$ & $0.29$ & $3.71$ ($96\%$) & $1.00$ ($16\%$) \\
-5 years, weekly    & $25.0$ & $0.58$ & $7.22$ ($>99\%$) & $1.94$ ($47\%$) \\
-\bottomrule
-\end{tabular}
-\end{table}
+\paragraph{Two qualifications.} \emph{The threshold.} The intrinsic $\thci$ describes
+maintainability at baseline load. The paper's decision section uses the local reduction's
+critical capacity, defined with an illness amplitude and a tolerable level $m_{\mathrm{tol}}$;
+at the registered amplitude, $1.5$ times the local model's baseline load of $323$\um, and with
+$m_{\mathrm{tol}}=40$\,\textmu M, it is $994$\um, above $\dtr(14)$, and the booking again
+depends on $\theta$. The paper also notes that the only endpoint evidence shows a smooth
+dose--response rather than a threshold. The specification holds within the intrinsic,
+baseline-load framing. \emph{Estimating $\theta$ instead.} When the half-life is below the
+crossing, estimating $\theta$ from the passive record does not rescue the 21-day interval: by
+simulation, at the design's $3.5$\,d the standard deviation of the estimated margin stays near
+$140$\um, comparable to $\thci$ itself, from six months to five years of draws.
 
 \section{Limitations}
 
@@ -370,12 +391,15 @@ constants. Absolute precisions depend on those constants; the structural stateme
 confounding, the two ways an observable reaches $\theta$, the cancellation in the contrast)
 do not.
 \item All identifiability results describe a stable steady state between crises. Under the
-saturating variant and the parent model the untreated $5\%$ patient has one only at a managed
-load or on therapy; none of the results describes a decompensating patient.
+parent model, and under the saturating variant whenever its clearance ceiling lies below the
+untreated load, the untreated $5\%$ patient has one only at a managed load or on therapy (at
+the variant's nominal constants it has one at every capacity); none of the results describes a
+decompensating patient.
 \item The identifiability results use the local identification model, whose linear
 clearance is not the PA phenotype. Under the saturating variant and the parent model, at
 their nominal constants and over the ranges checked, the target is still not reached
-cross-sectionally; the identifiability under a bounded clearance calibrated to the
+cross-sectionally unless an unmeasured constant is assumed (under the saturating variant, $K_e$
+known to about $30\%$); the identifiability under a bounded clearance calibrated to the
 literature, with the crisis boundary treated explicitly, has not been done. The
 within-patient contrast is $0.088$ under the saturating variant and has not been computed
 under the parent model.
@@ -385,14 +409,9 @@ under the parent model.
 \section{What would settle the open points}
 
 \begin{enumerate}
-\item \textbf{The hepatic PCC half-life.} It is contained in the mRNA-3927 trial's
-on-therapy marker record (NCT04159103) and in the sponsor's population model (Gao et al.,
-2025), neither of which is public. It would settle the 14- and 15-day intervals if it is well
-above $3.2$\,d, and the 21-day interval only if it lies clearly outside $3.29$--$4.08$\,d;
-otherwise only a pooled estimate can (Table~\ref{tab:lambda}).
-\item \textbf{The delivered increment.} The paper's first-tier study, two
-$^{13}$C-propionate breath tests bracketing a single dose, measures it; Result~4 needs it as
-much as the half-life.
+\item \textbf{The hepatic PCC half-life and the delivered increment}, against the
+specification of Table~\ref{tab:spec}; where each can be found is set out in Result~4. A
+request to the authors of the sponsor's population model is the quickest route.
 \item \textbf{The marker's within-patient variability in PA.} Serial 3-hydroxypropionate
 values from clinically stable periods, or C3 and 2-methylcitrate as proxies, or their
 within-patient CV, would decide whether within-patient monitoring is deliverable. A request
@@ -404,16 +423,22 @@ $^{13}$C-propionate breath test in the same patients), which would measure the m
 the ratio route currently borrows from methylmalonic acidaemia.
 \end{enumerate}
 
-\vspace{-0.6em}
+\clearpage
 \section*{References}
 {\footnotesize\sloppy
 \begin{itemize}[leftmargin=1em,label={}]
+\item Attarwala, H., Lumley, M., Liang, M., Ivaturi, V., Senn, J.\ (2023). Translational
+pharmacokinetic/pharmacodynamic model for mRNA-3927, an investigational therapeutic for the
+treatment of propionic acidemia. \emph{Nucleic Acid Ther.} 33(2):141--147.
 \item Chandler, C.\,S., Ballard, F.\,J. (1985). Distribution and degradation of
 biotin-containing carboxylases in human cell lines. \emph{Biochem.\ J.} 232(2):385--393.
 \item Gao, W., et al.\ (2025). Model-informed dose selection for mRNA-3927 in participants with
 propionic acidemia (PA). Poster, ACoP 2025. doi:10.70534/JVQU8233.
 \item Haijes, H.\,A., et al.\ (2020). Understanding acute metabolic decompensation in propionic and methylmalonic
 acidemias: a deep metabolic phenotyping approach. \emph{Orphanet J.\ Rare Dis.} 15:68.
+\item Jiang, L., Park, J.-S., Yin, L., et al.\ (2020). Dual mRNA therapy restores metabolic
+function in long-term studies in a mouse model of propionic acidemia. \emph{Nat.\ Commun.}
+11:5339.
 \item Kim, T.-Y., et al.\ (2012). Metabolic labeling reveals proteome dynamics of mouse
 mitochondria. \emph{Mol.\ Cell.\ Proteomics} 11(12):1586--1594.
 \item Manoli, I., et al.\ (2021). 1-$^{13}$C-propionate breath testing as a surrogate endpoint to

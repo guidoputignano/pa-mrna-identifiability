@@ -98,9 +98,9 @@ def fig_routes():
         ("+ load-turnover tracer (10 %)", 3.041, "A", False, "3.04"),
         ("+ IV $^{13}$C$_3$ tracer for $k_e$ (5.4 %)", 0.454, "A", False, "0.45"),
         ("+ both tracers", 0.441, "A", False, "0.44"),
-        ("load and $k_e$ known exactly (idealised)", 0.291, "A", False, "0.29"),
+        ("unrecorded load and $k_e$ exact (idealised)", 0.291, "A", False, "0.29"),
         ("+ ex vivo PCC assay, scale factor known", 0.200, "A", True, "0.20"),
-        ("+ all three, scale factor known", 0.182, "A", True, "0.18"),
+        ("+ both tracers and ex vivo assay, factor known", 0.182, "A", True, "0.18"),
         ("+ ex vivo PCC assay, scale factor unknown", 3.045, "A", False, "3.05"),
         ("ex vivo ratio to controls, read as in vivo θ", 0.654, "A", False, "≈ 0.65"),
         ("2 × 104 weekly draws, 5 % per-draw CV", 0.133, "B", True, "0.13"),
@@ -151,7 +151,7 @@ def fig_routes():
 
 # ------------------------------------------------------------------ margin
 D14, TAU0, THC, CROSS = 6000.0, 14.0, 150.775, 3.5452
-BOX = (3.294, 4.083)        # out/t53_crossing_shape.txt, eight corners of the admissible box
+BOX = (3.29, 3.95)          # out/t53_crossing_shape.txt, corners of the paper's ranges (tab_C_shape)
 
 
 def _trough(tau, thalf, D=D14):
@@ -167,14 +167,14 @@ def fig_margin():
     th = np.linspace(2.6, 6.0, 400)
     ax.axhline(0.0, color=P.INK, lw=1.1, zorder=3)
     ax.plot(th, _trough(21, th) - THC, color=P.C1, lw=2.4, zorder=4,
-            label=r"$\mu(21) = \Delta_{\mathrm{tr}}(21) - \theta_c^{\mathrm{int}}$, $D = 6000$")
+            label=r"$\mu(21) = \Delta_{\mathrm{tr}}(21) - \theta_{\mathrm{crit}}^{\mathrm{int}}$, $D = 6000$")
     ax.plot(th, _trough(21, th, D_ADM) - THC, color=P.C1, lw=1.2, ls=":", zorder=4,
             label=r"$\mu(21)$ at $D = 2672$, largest admissible at 5 %")
     ax.plot(th, _trough(14, th) - THC, color=P.MUTED, lw=1.1, ls="--", zorder=3,
             label=r"$\mu(14)$, $D = 6000$, zero at 2.62 d")
     # range of the 21-day crossing over the admissible carnitine constants
     ax.axvspan(*BOX, color=P.GRID, alpha=0.55, zorder=0, lw=0)
-    ax.text(2.64, 640, "grey band: 21-day\ncrossing over the\nadmissible carnitine\nconstants, "
+    ax.text(2.64, 640, "grey band: 21-day\ncrossing over the\npaper's carnitine\nranges, "
             f"{BOX[0]:.2f}–{BOX[1]:.2f} d", ha="left", va="top", fontsize=7, color=P.MUTED)
     ax.axvline(CROSS, color=P.INK, ls=":", lw=1.1, zorder=3)
     ax.annotate(f"crossing at nominal\nconstants, {CROSS:.3f} d", va="top", xy=(CROSS, -60), xytext=(2.64, -148),
@@ -182,7 +182,7 @@ def fig_margin():
     for x0, lab, col, off in [
             (3.5, "assumed in the design, 3.5 d, μ = −8 µM/d", P.C2, (4.45, -135)),
             (3.6, "human fibroblast, 3.6 d, μ = +10 µM/d", P.C4, (4.45, -75)),
-            (4.3, "liver estimate, 4.3 d\n(plausible 3–6 d)", P.C3, (4.45, 110))]:
+            (4.3, "likely liver value, 4.3 d\n(plausible 3–6 d)", P.C3, (4.75, 235))]:
         y0 = _trough(21, x0) - THC
         ax.plot(x0, y0, "o", color=col, ms=6.5, zorder=6, markeredgecolor="white",
                 markeredgewidth=1.0)
@@ -191,7 +191,9 @@ def fig_margin():
     ax.set_xlim(2.6, 6.0); ax.set_ylim(-220, 660)
     ax.set_xlabel("PCC protein half-life (d)")
     ax.set_ylabel("trough safety margin μ (µM/d)")
-    ax.legend(loc="upper left", bbox_to_anchor=(0.33, 1.0), framealpha=0.92)
+    leg = ax.legend(loc="upper left", bbox_to_anchor=(0.33, 1.0), frameon=True, framealpha=1.0,
+                    edgecolor="none")
+    leg.set_zorder(10)
     P.finish(ax)
     _save(fig, "pi_margin")
 

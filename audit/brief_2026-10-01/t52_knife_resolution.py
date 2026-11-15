@@ -45,6 +45,7 @@ CENTRAL = 4.3           # round-17 compartment-anchored liver estimate (R-P, t50
 MOUSE = 7.0             # Attarwala 2023 effective, the comparator of R-N's 7-18 sigma
 Z = 2.0
 LINE_SAMPLED, LINE_CORNER = 3.968, 4.083   # t53: largest sampled 21-day crossing, worst box corner
+LINE_PAPER = 3.95                          # t53: worst corner over the paper's own ranges (tab_C_shape)
 
 HERE = Path(__file__).resolve().parent
 
@@ -160,13 +161,15 @@ def main():
         f = lambda h: f"{h[0]} months" if h else "not within 60 months"
         print(f"    {cad:>12}: expected 2 sigma at {f(h50)};  80 % chance at {f(h80)}")
     print("\n  The same 4.3 d truth against the HIGHER lines t53 finds over Model C's admissible shape")
-    print("  constants (largest of 300 sampled sets 3.968 d; worst box corner 4.083 d), sd at 4.3 d:")
-    print(f"    {'cadence':>12} {'months':>6} {'z vs 3.968':>11} {'P(>=2s)':>8} {'z vs 4.083':>11} {'P(>=2s)':>8}")
+    print("  constants (worst corner over the paper's ranges 3.95 d; largest of 300 sampled sets 3.968 d;")
+    print("  worst corner of collapse_check's wider box 4.083 d), sd at 4.3 d:")
+    print(f"    {'cadence':>12} {'months':>6} {'z vs 3.95':>10} {'P(>=2s)':>8} {'z vs 3.968':>11} {'P(>=2s)':>8} {'z vs 4.083':>11} {'P(>=2s)':>8}")
     for cad in ("monthly", "fortnightly", "weekly"):
         for mo in sorted(tab[cad]):
             s43 = at[CENTRAL][cad][mo]
+            zp = np.log(CENTRAL / LINE_PAPER) / s43
             za, zb = np.log(CENTRAL / LINE_SAMPLED) / s43, np.log(CENTRAL / LINE_CORNER) / s43
-            print(f"    {cad:>12} {mo:>6} {za:>11.2f} {norm.cdf(za - Z):>8.0%} {zb:>11.2f} {norm.cdf(zb - Z):>8.0%}")
+            print(f"    {cad:>12} {mo:>6} {zp:>10.2f} {norm.cdf(zp - Z):>8.0%} {za:>11.2f} {norm.cdf(za - Z):>8.0%} {zb:>11.2f} {norm.cdf(zb - Z):>8.0%}")
     print("\n  Pooling (ONLY if lambda is common to every patient, which nothing measured shows):")
     z80 = Z + norm.ppf(0.80)
     for cad, mo in (("monthly", 12), ("weekly", 12), ("weekly", 24)):

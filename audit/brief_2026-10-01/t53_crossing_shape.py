@@ -118,6 +118,37 @@ def main():
         pw = 1 - norm.cdf(np.log(c / CENTRAL) / 0.53)
         pt = 1 - norm.cdf(np.log(c / CENTRAL) / 0.35)
         print(f"    {lab:<26} crossing {c:.3f} d -> P(liver half-life above it) = {pw:.0%} wide, {pt:.0%} tight")
+    # The paper's own ranges (results/tables/tab_C_shape.tex: K_c 25-800, M_i 150-1200,
+    # rho_0 0.35-1), which its remark on the shape constants sweeps jointly and reports as
+    # "inside a factor of 1.4". Also the paper's largest admissible increment at 5 % of
+    # normal (11_scope.tex: D = 2672) beside the booked D = 6000.
+    D_ADM = 2672.0
+    def cross_D(t, tau, D):
+        return brentq(lambda h: trough(tau, h) * D / D14 - t, 0.3, 40.0)
+    print("\n  THE PAPER'S OWN RANGES (tab_C_shape: K_c 25-800, M_i 150-1200, rho_0 0.35-1), corners,")
+    print("  R0 re-derived; crossings at the booked D = 6000 and at the largest admissible D = 2672:")
+    print(f"    {'K_c':>5} {'M_i':>5} {'rho_0':>5} {'theta_crit':>10}   D=6000: 14-d  15-d  21-d    D=2672: 14-d  15-d  21-d")
+    pc = []
+    for kc, mi, r0 in itertools.product((25.0, 800.0), (150.0, 1200.0), (0.35, 1.0)):
+        q = replace(MC.PC, Kc=kc, Mi=mi, rho0=r0)
+        q = replace(q, R0=MC.R0_for_peak(q))
+        t = MC.theta_crit_intrinsic(q, MC.S_BASE)
+        row = [t] + [cross_D(t, tau, D) for D in (D14, D_ADM) for tau in (14, 15, 21)]
+        pc.append(row)
+        print(f"    {kc:>5.0f} {mi:>5.0f} {r0:>5.2f} {t:>10.1f}           {row[1]:.2f}  {row[2]:.2f}  {row[3]:.2f}"
+              f"            {row[4]:.2f}  {row[5]:.2f}  {row[6]:.2f}")
+    pc = np.array(pc)
+    nom = [cross_D(base, tau, D) for D in (D14, D_ADM) for tau in (14, 15, 21)]
+    print(f"""    nominal constants                    {nom[0]:.2f}  {nom[1]:.2f}  {nom[2]:.2f}            {nom[3]:.2f}  {nom[4]:.2f}  {nom[5]:.2f}
+    corners: theta_crit {pc[:,0].min():.1f}..{pc[:,0].max():.1f}, a factor {pc[:,0].max()/pc[:,0].min():.2f} (the paper's remark: 'inside a factor of 1.4')
+    ranges over the corners, D=6000: 14-d {pc[:,1].min():.2f}-{pc[:,1].max():.2f}, 15-d {pc[:,2].min():.2f}-{pc[:,2].max():.2f}, 21-d {pc[:,3].min():.2f}-{pc[:,3].max():.2f}
+                             D=2672: 14-d {pc[:,4].min():.2f}-{pc[:,4].max():.2f}, 15-d {pc[:,5].min():.2f}-{pc[:,5].max():.2f}, 21-d {pc[:,6].min():.2f}-{pc[:,6].max():.2f}
+    3.6 d clears the 21-day line (D=6000) at {int((MEASURED > pc[:,3]).sum())} of 8 corners; 4.3 d at {int((CENTRAL > pc[:,3]).sum())} of 8""")
+    for lab, c in (("21-d, nominal, D=6000", nom[2]), ("21-d, worst corner, D=6000", pc[:,3].max()),
+                   ("21-d, nominal, D=2672", nom[5]), ("14-d, worst corner, D=2672", pc[:,4].max()),
+                   ("15-d, worst corner, D=2672", pc[:,5].max())):
+        pw = 1 - norm.cdf(np.log(c / CENTRAL) / 0.53); pt = 1 - norm.cdf(np.log(c / CENTRAL) / 0.35)
+        print(f"    P(liver half-life above the {lab} crossing {c:.2f} d) = {pw:.0%} wide, {pt:.0%} tight")
     print(f"""
   READING. The 14- and 15-day conclusions do not depend on Model C's unmeasured
   shape: even at the worst corner of the box their crossings are about {cr[:,4].max():.2f} and {cr[:,5].max():.2f} d,
