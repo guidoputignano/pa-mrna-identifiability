@@ -176,12 +176,36 @@ dot) is $0.123$ at $212\%$. At $5\%$ (orange dot) it is $3.07$, fifteen times th
 unknowns: $k_e$ (the strength of the other clearance route), $K_m$ (the metabolite level at
 which the enzyme works at half speed) and $b$ (the part of the load missing from the record).
 For each, the panel shows how strongly its estimate is tied to the estimate of $\theta$, as a
-correlation between $-1$ and $+1$, at each capacity. One way to picture it: repeat the whole
-two-year study many times with fresh measurement noise, fit each record, and plot each fit's
-$\theta$ against its $k_e$. A correlation near $0$ gives a shapeless cloud: the two are learned
-separately. A correlation of $-0.99$ puts the points on an almost perfect downward line:
-whenever a fit puts $\theta$ high it puts $k_e$ low, because the data fix only their combined
-effect (how much is removed in total), not how it is split.
+correlation between $-1$ and $+1$, at each capacity.
+
+A worked example shows what a correlation near $-1$ means. Take the patient at $5\%$ of normal,
+untreated, at steady state: everything that comes in each day goes out. The load is $323$\um, and
+at the metabolite level this produces ($54$\,\textmu M) the enzyme removes $53$\um\ ($16\%$) and
+the other route $270$\um\ ($84\%$). A blood draw measures the level, and from the level and the
+known load the model knows the \emph{total} removed: $323$. It does not see the split. Many
+pairs give the same level from the same load:
+\begin{center}\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+capacity $\theta$ (\um) & $0$ & $75$ & $150$ (true) & $300$ & $450$ \\
+$k_e$ needed to give the same level (d$^{-1}$) & $5.97$ & $5.49$ & $5.00$ & $4.03$ & $3.05$ \\
+change in $k_e$ & $+19\%$ & $+10\%$ & -- & $-19\%$ & $-39\%$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+Every column explains the draw equally well. Going from no enzyme to twice the true enzyme needs
+$k_e$ to change by only about $20\%$ either way, and nobody knows $k_e$ to $20\%$ (the paper's
+prior allows about a factor of two). It is like knowing a restaurant bill to the cent, and
+roughly what one of the two diners paid: the other's share, small to begin with, is whatever is
+left over, so a small error in the large share becomes a large error in the small one ($1\%$ of
+the other route's $270$ is $2.7$, which is $5\%$ of the enzyme's $53$).
+
+The correlation summarises this. Imagine repeating the whole two-year study many times with fresh
+measurement noise, fitting each record, and plotting each fit's $\theta$ against its $k_e$. The
+points do not form a cloud; they fall along the line of the table, high $\theta$ with low $k_e$
+and the reverse, because noise moves the fit along the pairs the data cannot tell apart. A
+correlation of $-1$ would mean the data say nothing at all about the split; $-0.99$ means they
+say very little. A correlation near $0$ would mean the two are learned separately.
 
 \emph{The most influential unknown is $k_e$} (blue). Below about $50\%$ of normal its line sits at
 $-1$. Both routes remove the same metabolite, so more of one needs less of the other to give the
