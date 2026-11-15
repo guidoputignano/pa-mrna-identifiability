@@ -48,7 +48,8 @@
   to the crossing: the crossing is 43x closer (in log distance), so "a fortiori"
   runs the wrong way. Per patient the record settles the side only when the true liver
   half-life is clear of the crossing: near the 4.3 d central estimate, an 80 % chance
-  within a year of monthly draws or six months of weekly ones; near the measured 3.6 d,
+  within a year of monthly draws or six months of weekly ones (against the K_c = 100
+  line; t53's worst-corner line at 4.08 d is much harder); near the measured 3.6 d,
   never. A pooled trial estimate could do it with 23-77 patients at 50 % power or 46-155
   at 80 % (more at monthly draws), but only if lambda does not vary between patients,
   which is unmeasured. So the two emails still matter, and the on-therapy record is still

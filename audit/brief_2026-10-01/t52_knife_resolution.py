@@ -9,9 +9,15 @@ measured 3.6 d to the crossing is ln(3.6/3.5452) = 0.015, about 43 times smaller
 So placing a value near 3.6 d on one side of the crossing is much HARDER than
 telling 3.6 d from 7 d, not easier. This script prices how much harder.
 
-Input: the per-patient sd(ln lambda) table that t46_timing.py prints (FIM, by
-record length and cadence). It is parsed from out/t46_timing.txt, not retyped, so
-the numbers here move if t46 is rerun.
+Input: t46's per-patient FIM for sd(ln lambda), by record length and cadence.
+t46 evaluates it at the repository's 3.5 d half-life; this script re-evaluates the
+same FIM (same seeds, schedule and gaps) at each TRUE half-life, and uses t46's
+stored table (out/t46_timing_numbers.json, or out/t46_timing.txt as a fallback)
+only for the grid and a reproduction check at 3.5 d.
+
+All side-of-crossing statements are against the 3.5452 d line, i.e. Model C at
+K_c = 100. t53 shows that line moves to as much as 4.08 d across Model C's
+unmeasured shape constants.
 
 Outputs, per patient:
   * z = ln(t_true / 3.5452) / sd(ln lambda) at the measured 3.6 d and at the
@@ -165,7 +171,8 @@ def main():
   to the crossing: the crossing is {g_mouse / g_meas:.0f}x closer (in log distance), so "a fortiori"
   runs the wrong way. Per patient the record settles the side only when the true liver
   half-life is clear of the crossing: near the 4.3 d central estimate, an 80 % chance
-  within a year of monthly draws or six months of weekly ones; near the measured 3.6 d,
+  within a year of monthly draws or six months of weekly ones (against the K_c = 100
+  line; t53's worst-corner line at 4.08 d is much harder); near the measured 3.6 d,
   never. A pooled trial estimate could do it with 23-77 patients at 50 % power or 46-155
   at 80 % (more at monthly draws), but only if lambda does not vary between patients,
   which is unmeasured. So the two emails still matter, and the on-therapy record is still

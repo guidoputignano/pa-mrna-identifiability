@@ -90,12 +90,12 @@ def fig_routes():
 def fig_wait():
     # (label, kind, payload, note)
     rows = [
-        ("15-day interval,\nevery patient (Model C)", "dot", [(0, "")], "day 0: no waiting"),
+        ("15-day interval, every patient\n(Model C, liver half-life > 3.2 d)", "dot", [(0, "")], "day 0: no waiting"),
         ("Know λ to ±25 %", "dot", [(6, "")], "6 months, at any draw frequency"),
         ("Know λ to ±5 %", "dot", [(12, "weekly"), (24, "every 2 wk"), (48, "monthly")], ""),
         ("Tell a 3.6-day half-life\nfrom a 7-day one", "dot", [(6, "")], "6 months (7σ, monthly draws)"),
         ("Which side of the 21-day line,\none patient, if liver ≈ 4.3 d", "dot", [(6, "weekly"), (12, "monthly")],
-         "80 % chance of a 2σ answer"),
+         "80 % chance of a 2σ answer, against the line at\nModel C's repo constants (≤ 47 % at its worst setting)"),
         ("Which side of the 21-day line,\none patient, if liver ≈ 3.6 d", "never", [],
          "never: 0.6σ even after 5 years of weekly draws"),
         ("21 days for one patient\nby estimating θ (3.5-d case)", "never", [],
