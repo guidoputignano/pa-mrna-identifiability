@@ -64,6 +64,8 @@ It builds on the repository rather than beside it. The footing (convention A, th
 | `t49_hepatic_bridge.py` | round 16: can human hepatic PCC turnover be bridged from the fibroblast value via the mouse tissue ratio? No clean paired dataset exists; the three defensible ratio readings disagree on direction, so P(hepatic < 3.5452 d crossing) spans ~24–65 %, centred ~50 % — the bridge cannot settle the side, so the trial record is the only route | 1 min |
 | `t50_hepatic_mito.py` | round 17: the hepatic correction runs the OTHER way — PCC is mitochondrial-matrix, so the liver-mito median (4.26 d) is the comparator, not whole-liver; central estimate ~4.3 d, ABOVE the crossing. P(hepatic < crossing) ~30 % (not ~50 %), so the 21-day step is ~65–70 % free-for-all, though the band straddles. Also records that the human λ (Gao model) is not public — the on-therapy record is the only accessible route | 1 min |
 | `t51_pencil_geometry.py` | round 18: the PI's line-pencil geometry (each steady-state draw is a line g(m)θ+m·k_e=L in the (θ,k_e) plane) and what it adds — the near-concurrence region IS the fixed-K_m FIM ellipse, the −0.99 IS near-parallelism, Prop 1's affine degeneracy IS the narrow-band slope collapse, the K_m family IS Remark 2's fibre; plus (2) a model-free uncertainty from pairwise-intersection scatter (heavy-tailed, a third route to the round-13/14 tail), (3) a concurrency χ² adequacy test (calibrated, power vs a biased load, blind to a second channel), (4) Remark 6's TLS weighting reproduces the FIM/MLE | 1 min |
+| `t52_knife_resolution.py` | round 19: can the on-therapy record settle which side of the 3.5452 d crossing a patient is on? Per patient, only if the true half-life is clear of it (a 4.3 d truth is placed at ≥2σ in 6 months); a 3.6 d truth is never placed (≤0.6σ even after 5 years weekly). Corrects R-O/R-P's "a fortiori". Reads t46's sd(ln λ) table | 1 s |
+| `story_figs.py` | round 19: the two plain-language charts for `story_so_far.html` (every route to capacity on one scale; how long to wait) | 10 s |
 | `r18_figs.py` | round 18 figures: (1) the pencil in (θ,k_e) — narrow (near-parallel smear) vs wide excursion (concurs), on shared axes, lines coloured by m_i, with the slope-identity inset; (2) the K_m fibre; (3) the knife-edge — safety margin μ=Δ_trough(21)−θ_crit vs PCC protein half-life, crossing zero at 3.5452 d, assumed 3.5 d (−8 µM/d) / measured 3.6 d (+10 µM/d) / 3–6 d band; 1.5 % is a half-life gap (the report's lead figure) | 1 min |
 | `r3_figs.py` | round 3 figures (flux contour, k_e×sampling, asymptote, excursion/safety) | 2 min |
 | `*_recheck3.py` | independent verifier re-derivations of the round-3 scripts | — |
@@ -80,11 +82,12 @@ for s in t0_footing t1_identifiability t2_cohort t3_variance t4_set t5_value t7_
          t18_set_id t19_residuals t20_saturation t21_sensitivity t22_longitudinal t23_antibiotic t24_contrast_stress t25_drug_cv_marker t26_multiobservable t27_exvivo_kappa t28_ratio_route \
          t29_mapping_scatter t30_monitoring_confounders t31_breath_contrast t32_massbalance \
          t33_model_b t34_breath_stress t35_managed_load t36_reconcile_remark15 \
-         t37_contrast_audit t38_model_dependent t39_affine_check t40_kepoint_robustness t41_model_c t42_serial_cv t43_plasma_pool t44_interval_decision t45_on_therapy t46_timing t47_fim_audit t48_lambda_literature t49_hepatic_bridge t50_hepatic_mito t51_pencil_geometry; do
+         t37_contrast_audit t38_model_dependent t39_affine_check t40_kepoint_robustness t41_model_c t42_serial_cv t43_plasma_pool t44_interval_decision t45_on_therapy t46_timing t47_fim_audit t48_lambda_literature t49_hepatic_bridge t50_hepatic_mito t51_pencil_geometry t52_knife_resolution; do
   python -W error $s.py > out/$s.txt
 done
 python -W error r3_figs.py    # round-3 figures
 python -W error r18_figs.py   # round-18 pencil figure
+python -W error story_figs.py # round-19 story charts
 ```
 
 Figures go to `fig/` and printed output to `out/`. Every number in `REPORT.md` appears in one of the `out/*.txt` files. `out/q15_sensors.txt` and `out/u3_joint_fisher.txt` are the repository's own Phase-10 sensor scripts (`audit/q15_sensors.py`, `audit/u3_joint_fisher.py`), run unchanged. `out/n6_profile_vs_crb.txt` is the repository's own `audit/n6_profile_vs_crb.py`, run unchanged (`python -W error audit/n6_profile_vs_crb.py` from the repository root), because the report quotes its 708 = 24%.
