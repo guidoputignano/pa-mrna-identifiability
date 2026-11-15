@@ -55,10 +55,11 @@
   For comparison, the repo's own collapse_check (12 draws) spans theta_crit 113.5..158.1, a factor 1.39;
   the 300 draws above span a factor 2.12, the box corners 2.39. Twelve draws understate the joint spread.
 
-  R-P's 'about 65-70 % likely to hold' recomputed at the crossing (wide band: centre 4.3 d, sd(ln) 0.53):
-    repo constants             crossing 3.545 d -> P(liver half-life above it) = 64%
-    largest sampled crossing   crossing 3.968 d -> P(liver half-life above it) = 56%
-    worst box corner           crossing 4.083 d -> P(liver half-life above it) = 54%
+  R-P's 'about 65-70 % likely to hold' recomputed at the crossing (centre 4.3 d; R-P's wide band
+  sd(ln) 0.53 and tight band sd(ln) 0.35):
+    repo constants             crossing 3.545 d -> P(liver half-life above it) = 64% wide, 71% tight
+    largest sampled crossing   crossing 3.968 d -> P(liver half-life above it) = 56% wide, 59% tight
+    worst box corner           crossing 4.083 d -> P(liver half-life above it) = 54% wide, 56% tight
 
   READING. The 14- and 15-day conclusions do not depend on Model C's unmeasured
   shape: even at the worst corner of the box their crossings are about 3.06 and 3.21 d,

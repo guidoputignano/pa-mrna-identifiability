@@ -44,6 +44,7 @@ MEASURED = 3.6          # Chandler & Ballard 1985, human fibroblast PCC
 CENTRAL = 4.3           # round-17 compartment-anchored liver estimate (R-P, t50)
 MOUSE = 7.0             # Attarwala 2023 effective, the comparator of R-N's 7-18 sigma
 Z = 2.0
+LINE_SAMPLED, LINE_CORNER = 3.968, 4.083   # t53: largest sampled 21-day crossing, worst box corner
 
 HERE = Path(__file__).resolve().parent
 
@@ -158,6 +159,14 @@ def main():
         h80 = [mo for mo, s in sorted(at[CENTRAL][cad].items()) if norm.cdf(g_cent / s - Z) >= 0.80]
         f = lambda h: f"{h[0]} months" if h else "not within 60 months"
         print(f"    {cad:>12}: expected 2 sigma at {f(h50)};  80 % chance at {f(h80)}")
+    print("\n  The same 4.3 d truth against the HIGHER lines t53 finds over Model C's admissible shape")
+    print("  constants (largest of 300 sampled sets 3.968 d; worst box corner 4.083 d), sd at 4.3 d:")
+    print(f"    {'cadence':>12} {'months':>6} {'z vs 3.968':>11} {'P(>=2s)':>8} {'z vs 4.083':>11} {'P(>=2s)':>8}")
+    for cad in ("monthly", "fortnightly", "weekly"):
+        for mo in sorted(tab[cad]):
+            s43 = at[CENTRAL][cad][mo]
+            za, zb = np.log(CENTRAL / LINE_SAMPLED) / s43, np.log(CENTRAL / LINE_CORNER) / s43
+            print(f"    {cad:>12} {mo:>6} {za:>11.2f} {norm.cdf(za - Z):>8.0%} {zb:>11.2f} {norm.cdf(zb - Z):>8.0%}")
     print("\n  Pooling (ONLY if lambda is common to every patient, which nothing measured shows):")
     z80 = Z + norm.ppf(0.80)
     for cad, mo in (("monthly", 12), ("weekly", 12), ("weekly", 24)):
@@ -172,8 +181,8 @@ def main():
   runs the wrong way. Per patient the record settles the side only when the true liver
   half-life is clear of the crossing: near the 4.3 d central estimate, an 80 % chance
   within a year of monthly draws or six months of weekly ones (against the K_c = 100
-  line; t53's worst-corner line at 4.08 d is much harder); near the measured 3.6 d,
-  never. A pooled trial estimate could do it with 23-77 patients at 50 % power or 46-155
+  line; against t53's worst-corner line at 4.08 d, 11 % after a year of monthly draws and
+  at most 47 % after five years of weekly ones); near the measured 3.6 d, never. A pooled trial estimate could do it with 23-77 patients at 50 % power or 46-155
   at 80 % (more at monthly draws), but only if lambda does not vary between patients,
   which is unmeasured. So the two emails still matter, and the on-therapy record is still
   the best route, but it settles the knife-edge only if the answer is not on the knife-edge.

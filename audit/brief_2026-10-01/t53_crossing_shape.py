@@ -111,10 +111,13 @@ def main():
           f" a factor {hi/lo:.2f};\n  the 300 draws above span a factor {tcs.max()/tcs.min():.2f}, the box corners"
           f" {cr[:,3].max()/cr[:,3].min():.2f}. Twelve draws understate the joint spread.")
     from scipy.stats import norm
-    print("\n  R-P's 'about 65-70 % likely to hold' recomputed at the crossing (wide band: centre 4.3 d, sd(ln) 0.53):")
+    print("\n  R-P's 'about 65-70 % likely to hold' recomputed at the crossing (centre 4.3 d; R-P's wide band")
+    print("  sd(ln) 0.53 and tight band sd(ln) 0.35):")
     for lab, c in (("repo constants", crossing(base)), ("largest sampled crossing", c21.max()),
                    ("worst box corner", cr[:,6].max())):
-        print(f"    {lab:<26} crossing {c:.3f} d -> P(liver half-life above it) = {1 - norm.cdf(np.log(c / CENTRAL) / 0.53):.0%}")
+        pw = 1 - norm.cdf(np.log(c / CENTRAL) / 0.53)
+        pt = 1 - norm.cdf(np.log(c / CENTRAL) / 0.35)
+        print(f"    {lab:<26} crossing {c:.3f} d -> P(liver half-life above it) = {pw:.0%} wide, {pt:.0%} tight")
     print(f"""
   READING. The 14- and 15-day conclusions do not depend on Model C's unmeasured
   shape: even at the worst corner of the box their crossings are about {cr[:,4].max():.2f} and {cr[:,5].max():.2f} d,

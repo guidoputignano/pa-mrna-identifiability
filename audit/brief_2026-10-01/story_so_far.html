@@ -151,7 +151,7 @@ code { font-family: var(--f-mono); font-size: 0.88em; }
   <div class="eyebrow">Propionic acidemia · PCC enzyme capacity · rounds 1–19</div>
   <h1>PCC Capacity Study Recap</h1>
   <p class="dek">What the study asked, what it found, and where it stopped, in plain language. It starts by checking your own summary point by point.</p>
-  <div class="meta">15 November 2026 · built from REPORT.md and the scripts' printed outputs · checked in three independent verification passes</div>
+  <div class="meta">15 November 2026 · built from REPORT.md and the scripts' printed outputs · checked in four independent verification passes</div>
 </header>
 
 <div class="scope">
@@ -320,7 +320,7 @@ code { font-family: var(--f-mono); font-size: 0.88em; }
   <h3>How long do we have to wait?</h3>
   <p>This is your question 4, answered by round 13 on simulated records and refined by rounds 15–19.</p>
   <figure>
-    <div class="plate"><img src="fig/story_wait.png" alt="Timeline from 0 to 60 months. 15-day interval for every patient: day 0. Know lambda to 25 percent: 6 months. Know lambda to 5 percent: 12 months weekly, 24 months every two weeks, 48 months monthly. Tell 3.6 days from 7 days: 6 months. Which side of the 21-day line if the liver value is about 4.3 days: an 80 percent chance at 6 months weekly or 12 months monthly. If it is about 3.6 days: never. 21 days for one patient by estimating capacity from the passive record: never."></div>
+    <div class="plate"><img src="fig/story_wait.png" alt="Timeline from 0 to 60 months. 15-day interval for every patient, under Model C if the liver half-life is above about 3.2 days: day 0. Know lambda to 25 percent: 6 months. Know lambda to 5 percent: 12 months weekly, 24 months every two weeks, 48 months monthly. Tell 3.6 days from 7 days: 6 months. Which side of the 21-day line if the liver value is about 4.3 days: an 80 percent chance at 6 months weekly or 12 months monthly, against the line at Model C's repository constants (at most 47 percent at its worst setting). If it is about 3.6 days: never. 21 days for one patient by estimating capacity from the passive record, in the 3.5-day case: never."></div>
     <figcaption><b>What arrives, and when.</b> The 15-day step needs no waiting under Model C (its line is at most about 3.21 days across the ranges allowed for Model C's constants; the measured 3.6 clears it). λ's precision comes from the Fisher information: ±25% within 6 months, ±5% in 1–4 years depending on draw frequency. In round 13's case (half-life assumed 3.5 days, below the line), estimating one patient's capacity from the passive record never makes the 21-day step available: the estimate of the margin stays about ±140 µM/d wide from 6 months to 5 years, and the report says an active managed-load protocol would be needed instead. Whether λ settles the 21-day question depends on where the true liver half-life sits and on where Model C's unmeasured constants put the line (below); the 4.3-day row is against the line at Model C's repository constants. Sources: <code>t46</code>, <code>t52</code>.</figcaption>
   </figure>
 
@@ -372,7 +372,7 @@ code { font-family: var(--f-mono); font-size: 0.88em; }
       <tbody>
         <tr><td data-label="Quantity">sd(ln θ)</td><td data-label="What it measures">the patient's capacity level, one snapshot</td><td class="n" data-label="Best realistic value">3.05 (record); 0.44 (sensors)</td><td data-label="Target met?">No</td></tr>
         <tr><td data-label="Quantity">sd(ln θ₂ − ln θ₁)</td><td data-label="What it measures">change within one patient</td><td class="n" data-label="Best realistic value">0.13 (model) to 0.475</td><td data-label="Target met?">Only in the model, if variability is low and the windows are short on a stable regimen</td></tr>
-        <tr><td data-label="Quantity">sd(ln λ)</td><td data-label="What it measures">the drug boost's decay rate</td><td class="n" data-label="Best realistic value">0.055 (2 yr, monthly)</td><td data-label="Target met?">Yes for the 14- and 15-day steps, in the model (Fisher information): ±25% within 6 months, ±5% in 1–4 years. For the 21-day line only if the liver value is clear of it: never near 3.6 days, and near 4.3 days only at Model C's repository constants (section 6).</td></tr>
+        <tr><td data-label="Quantity">sd(ln λ)</td><td data-label="What it measures">the drug boost's decay rate</td><td class="n" data-label="Best realistic value">0.055 (2 yr, monthly)</td><td data-label="Target met?">Yes for the 14- and 15-day steps, in the model (Fisher information): ±25% within 6 months, ±5% in 1–4 years. For the 21-day line only if the liver value is clear of it: never near 3.6 days; near 4.3 days, an 80% chance within a year of monthly draws against the line at Model C's repository constants, but only about 11% after a year of monthly draws, and at most 47% after five years of weekly ones, if its unmeasured constants push the line up to 4.08 days (section 6).</td></tr>
         <tr><td data-label="Quantity">margin spread</td><td data-label="What it measures">the 21-day safety margin for one patient, via θ</td><td class="n" data-label="Best realistic value">±~140 µM/d, flat</td><td data-label="Target met?">Never, from the passive record</td></tr>
       </tbody>
     </table>
@@ -384,7 +384,7 @@ code { font-family: var(--f-mono); font-size: 0.88em; }
 
 <footer>
   <p>Built from <code>audit/brief_2026-10-01/REPORT.md</code> (sections R-A to R-S and the original tasks) and the printed outputs in <code>out/</code>. Five figures: <code>t1_identifiability</code>, <code>r18_pencil</code>, <code>story_routes</code>, <code>story_wait</code>, <code>r18_knife</code>.</p>
-  <p>Checked in three passes. First, six readers summarised the report and adversarial checkers corrected 100 points in those summaries; a completeness review of that pass found one error in the report itself (R-R). Then five reviewers checked this page, its charts and the correction, and 41 findings confirmed by independent adjudicators were fixed. A third pass on the revised page confirmed 22 more, also fixed. A second error in the report (R-S) turned up while answering your questions about which model the conclusions rest on.</p>
+  <p>Checked in four passes. First, six readers summarised the report and adversarial checkers corrected 100 points in those summaries; a completeness review of that pass found one error in the report itself (R-R). Then five reviewers checked this page, its charts and the correction, and 41 findings confirmed by independent adjudicators were fixed. A third pass on the revised page confirmed 22 more, also fixed. A fourth pass, on the report and this page, confirmed 16 more, mostly about how far the 21-day results depend on Model C's unmeasured constants; those are fixed too. A second error in the report (R-S) turned up while answering your questions about which model the conclusions rest on.</p>
 </footer>
 
 </div>
