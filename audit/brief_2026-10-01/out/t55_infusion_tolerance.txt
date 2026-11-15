@@ -171,10 +171,10 @@
   wrote pi_note/fig/pi_tolerance_slack.pdf (capped at 28 d late = two missed infusions; a skipped one is 14 d late)
 
   4. FIGURE 5 DATA (booked dose, nominal constants, k = 1, half-life 4.3 d)
-    no own enzyme,      skipped: peak in the gap   207.6 uM
-    no own enzyme,  7 days late: peak in the gap    85.5 uM
-    no own enzyme,  3 days late: peak in the gap    55.7 uM
-    no own enzyme,      on time: peak in the gap    40.4 uM
+    no own enzyme,      skipped: peak in the gap   207.6 uM; after resuming, cycle peaks 1.068x then 1.007x usual
+    no own enzyme,  7 days late: peak in the gap    85.5 uM; after resuming, cycle peaks 1.050x then 1.005x usual
+    no own enzyme,  3 days late: peak in the gap    55.7 uM; after resuming, cycle peaks 1.028x then 1.003x usual
+    no own enzyme,      on time: peak in the gap    40.4 uM; after resuming, cycle peaks 1.000x then 1.000x usual
        no own enzyme: ill curve stops after 9 d late (next point 2155 uM > validity limit 1650 uM)
        no own enzyme: fold over usual by days late 0..14, not ill: 1.0 1.1 1.2 1.4 1.5 1.7 1.9 2.1 2.4 2.6 3.0 3.4 3.8 4.4 5.1
        no own enzyme: fold over usual by days late 0..14, ill:     2.6 2.5 3.4 4.7 6.7 9.8 14.4 21.0 29.7 40.6 53.3 67.5 82.9 99.3 116.5
