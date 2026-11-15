@@ -55,6 +55,7 @@ def _wls(Q):
 # =============================================================== figure 1
 def fig_pencil():
     fig = plt.figure(figsize=(11.4, 4.7))
+    fig.set_layout_engine("none")       # the colourbar column is laid out by the gridspec
     gs = fig.add_gridspec(1, 3, width_ratios=[1, 1, 0.045], wspace=0.22)
     ax = [fig.add_subplot(gs[0]), fig.add_subplot(gs[1])]
     cax = fig.add_subplot(gs[2])
@@ -162,8 +163,8 @@ def fig_knife():
     ax.set_xlim(3.0, 6.0); ax.set_ylim(-220, 760)
     ax.set_xlabel("PCC protein half-life  (days)")
     ax.set_ylabel("safety margin  μ = Δ_trough(21) − θ_crit  (µM/d)")
-    ax.set_title("The 21-day step turns on the PCC protein half-life; the measured value\n"
-                 "is 1.5 % (in half-life) past the crossing, a +10 µM/d margin",
+    ax.set_title("The 21-day step turns on the PCC protein half-life; the measured value is\n"
+                 "1.5 % (in half-life) past the crossing, +10 µM/d (Model C at its repo constants, K_c = 100)",
                  fontsize=9.5)
     ax.legend(loc="upper left", fontsize=7.8, framealpha=0.92)
     P.finish(ax)

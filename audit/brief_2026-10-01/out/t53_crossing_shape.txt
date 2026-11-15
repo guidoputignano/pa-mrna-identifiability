@@ -1,0 +1,50 @@
+============================================================================================
+  ROUND 19. THE 21-DAY CROSSING UNDER MODEL C'S UNMEASURED SHAPE CONSTANTS
+============================================================================================
+
+  repo constants (K_c=100, M_i=300, rho_0=0.5): theta_crit_int = 150.775
+    crossing half-life: 14-day 2.617 d   15-day 2.754 d   21-day 3.5452 d
+
+  ONE AT A TIME (model_C/run.py shape_sensitivity, R0 re-derived each time):
+    constant   value theta_crit 21-d crossing  3.6 d clears?  4.3 d clears?
+         K_c      25      186.5        3.735d             NO            yes
+         K_c      50      167.3        3.636d             NO            yes
+         K_c     100      150.8        3.545d            yes            yes
+         K_c     200      137.4        3.468d            yes            yes
+         K_c     400      127.2        3.406d            yes            yes
+         K_c     800      119.5        3.358d            yes            yes
+         M_i     150      171.4        3.657d             NO            yes
+         M_i     212      160.3        3.598d            yes            yes
+         M_i     300      150.8        3.545d            yes            yes
+         M_i     424      142.8        3.500d            yes            yes
+         M_i     600      136.0        3.460d            yes            yes
+         M_i     849      130.3        3.425d            yes            yes
+         M_i    1200      125.5        3.396d            yes            yes
+       rho_0    0.35      149.7        3.539d            yes            yes
+       rho_0     0.4      150.1        3.542d            yes            yes
+       rho_0     0.5      150.8        3.545d            yes            yes
+       rho_0     0.7      151.5        3.550d            yes            yes
+       rho_0     0.9      152.0        3.552d            yes            yes
+       rho_0     1.0      152.1        3.553d            yes            yes
+
+  JOINT SWEEP over collapse_check's ranges (K_c 25-794, M_i 100-1259, rho_0 0.35-1.0;
+  300 sets with a finite threshold, seed 0):
+    theta_crit_int            110.9 ..  235.6   (median 136.4)
+    14-day crossing           2.420 ..  2.962 d
+    15-day crossing           2.550 ..  3.111 d
+    21-day crossing           3.302 ..  3.968 d (median 3.462)
+    sets in which the half-life clears the 21-day line:
+        measured 3.6 d       80%
+        liver estimate 4.3 d 100%
+    sets in which 3.6 d clears the 14- and 15-day lines: 100% / 100%
+
+  READING. The 14- and 15-day conclusions do not depend on Model C's unmeasured
+  shape: their crossings stay below 3.0 and 3.2 d, far under the measured 3.6 d.
+  The 21-day conclusion at 3.6 d does. The crossing itself moves from about 3.3 to
+  4.0 d across the admissible constants, which is wider than the 0.055 d (1.5 %)
+  by which 3.6 d clears the line at K_c = 100. At K_c <= 50, or M_i = 150, the
+  measured 3.6 d falls on the needs-theta side. The liver estimate of 4.3 d clears
+  the line for every sampled set. So the knife-edge has two blades: the true liver
+  half-life, and the carnitine channel's shape constants. The first is a data
+  request; the second is a model assumption no data in the repository can fix.
+

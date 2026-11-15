@@ -1,4 +1,4 @@
-"""
+r"""
 Round 18: the PI's line-pencil geometry, and what it adds.
 
 Each steady-state draw is a LINE in the (theta, k_e) plane. From the Model-A
