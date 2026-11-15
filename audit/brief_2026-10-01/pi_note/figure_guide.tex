@@ -523,6 +523,32 @@ patient's capacity. It is also not a clinical recommendation for an investigatio
 \subsection{The question} The therapy is an infusion every two weeks. If one is given a few days
 late, or skipped, how much higher does the metabolite go?
 
+\subsection{Where the numbers come from: a simulation, not a measurement} Nothing in this figure
+was measured in patients. The numbers come from running the parent model on a computer, the way
+one simulates a controlled system:
+\begin{enumerate}
+\item The model's two equations (metabolite and carnitine) are solved forward in time for a
+simulated patient on the usual load, with an infusion every $14$ days. Each infusion adds enzyme,
+which then decays with the $4.3$-day half-life.
+\item After eight on-time infusions the patient has settled into a regular cycle. The highest
+metabolite level in one normal cycle, reached just before the next infusion, is the \emph{usual
+peak} (about $40$\,\textmu M for a patient with no enzyme of their own).
+\item The next infusion is then given $d$ days late. During the extra days the enzyme keeps
+decaying below its usual low point, clearance falls further and the metabolite keeps rising. The
+highest level reached before the late infusion brings it down (strictly, up to three days after
+it) is recorded and divided by the usual peak.
+\item This is repeated for $d=0,1,2,\dots,14$ days, which gives one curve of panel~(b). The delay at
+which the ratio reaches $2$ is found by halving the interval until it is known to within a
+fortieth of a day.
+\end{enumerate}
+For the patient with no enzyme of their own the ratio is $1.1$ one day late, $1.2$ two days late,
+$1.4$ three days late, $1.9$ six days late and $2.1$ seven days late, so the peak doubles after about
+six and a half days. Doubling is a yardstick chosen because the model does not say which level is
+harmful, and the result rests on values nobody has measured: the liver half-life ($4.3$\,d is the
+likely value), the enzyme an infusion adds, the carnitine constants and the conjugation rate $k$.
+Real patients could check it: a dated infusion record with marker draws around unplanned delays
+would show the same rise directly.
+
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{pi_tolerance.pdf}
