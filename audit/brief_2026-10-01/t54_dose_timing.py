@@ -22,11 +22,12 @@ Round 20: two questions the owner asked about the dosing result.
   2. Is sd(ln theta) = 0.44 (the k_e tracer plus the load turnover) enough to decide
      the interval per patient? A patient can be booked on a longer interval tau if
      theta > theta_need = theta_crit_int - Delta_tr(tau). With an estimate
-     theta_hat = theta + s(theta) Z, where s(theta) = theta sd(ln theta) is the
-     Fisher-information sd at that capacity (t26's machinery, recomputed at each
-     capacity: precision is not one number), certify when theta_hat - 1.645 s > theta_need
-     (one-sided 95 %). Population: theta log-uniform over 0.17-5 % of normal, as in R-J.
-     FIM-based, not simulated fits (R-M's rule asks for simulated fits for decisions).
+     the margin mu = theta + Delta_tr(tau; lambda) - theta_crit estimated with sd_mu from a
+     five-coordinate FIM (t26's four plus ln lambda, which the same record identifies; R-K),
+     recomputed at each capacity, certify when mu_hat - 1.645 sd_mu > 0 (one-sided 95 %).
+     Population: theta log-uniform over 0.17-5 % of normal, as in R-J. FIM-based; for the two
+     tracer configurations a check with simulated fits agreed within about 1-2 points.
+     Superseded for the infusion-delay question by t55 (worst corner, k bracket, illness).
 
 Run: python -W error t54_dose_timing.py
 """
@@ -79,6 +80,44 @@ def sd_ln_at(theta, sd_ke, turnover, seeds=None):
             b_pr = 1.0 / np.sqrt(1.0 / (CC.LOAD_FRAC * L) ** 2 + 1.0 / (turnover * L) ** 2)
         return CC.sd_th(CC.fim(r, noise="perdraw", ke_prior=sd_ke, b_prior=b_pr))
     return CC.over_seeds(one, seeds)[0]
+
+
+def cov5(theta, sd_ke, turnover, seeds=None, thalf=3.5, D=D0):
+    """Median covariance of (ln theta, ln K_m, b, ln k_e, ln lambda) over the seeds (perdraw noise)."""
+    import core as CC
+    seeds = CC.SEEDS if seeds is None else seeds
+    lam = np.log(2.0) / thalf
+    tk = np.arange(200) * TAU0
+    out = []
+    for sd_seed in seeds:
+        r = CC.record(theta, seed=sd_seed)
+        Q = CC.flux_rows(r)
+        sg = CC.sigmas(r, "perdraw")
+        t = np.asarray(r["times"], float)
+        dt = t[:, None] - tk[None, :]
+        dd = np.where(dt >= 0, -D * lam * dt * np.exp(-lam * np.clip(dt, 0, None)), 0.0).sum(axis=1)
+        col = dd * r["m"] / (r["Km"] + r["m"])
+        Q5 = np.column_stack([Q, col])
+        F = (Q5 / sg[:, None] ** 2).T @ Q5
+        L = r["L"]
+        b_pr = CC.LOAD_FRAC * L
+        if turnover is not None:
+            b_pr = 1.0 / np.sqrt(1.0 / (CC.LOAD_FRAC * L) ** 2 + 1.0 / (turnover * L) ** 2)
+        F[2, 2] += b_pr ** -2
+        F[3, 3] += sd_ke ** -2
+        w = np.linalg.eigvalsh(F)
+        if w[0] > 1e-14 * w[-1]:
+            out.append(np.linalg.inv(F))
+    return np.median(np.array(out), axis=0)
+
+
+def sd_mu(P, theta, tau, thalf, D):
+    """sd of the margin mu = theta + Delta_tr(tau; lambda) - theta_crit, gradient in (ln theta, ln lambda)."""
+    lam = np.log(2.0) / thalf
+    x = np.exp(-lam * tau)
+    dd = -D * (tau / TAU0) * lam * tau * x / (1.0 - x) ** 2
+    gv = np.array([theta, 0.0, 0.0, 0.0, dd])
+    return float(np.sqrt(gv @ P @ gv))
 
 
 def simulate(theta, thalf, D=D0, delay=0.0, skip=False, n_pre=12, n_post=5):
@@ -159,62 +198,71 @@ def main():
     print(f"\n    Scale: the paper's illustrative patient (theta = 300, 10 % of normal) sits stably at"
           f" {eq[0]:.0f} uM untreated at this load (separatrix {eq[1]:.0f} uM).")
 
-    print("\n  C. CAN AN ESTIMATE OF theta DECIDE A LONGER INTERVAL PER PATIENT?")
-    print("     Precision is NOT one number: sd(ln theta) grows as capacity falls. Recomputed with")
-    print("     t26's machinery (25 monthly draws, per-draw noise) at each capacity:")
+    print("\n  C. CAN AN ESTIMATE OF theta CERTIFY AN INTERVAL PER PATIENT? (precision at each capacity)")
+    print("     The decision quantity is the margin mu = theta + Delta_tr(tau; lambda) - theta_crit, and")
+    print("     lambda is estimated from the same record (R-K, R-L), so the FIM carries ln lambda as a")
+    print("     fifth coordinate. Record: the paper's design (25 monthly draws, booked train at 3.5 d);")
+    print("     each case sets the margin's gradient. sd(ln theta) with lambda known | free, and the")
+    print("     margin sd (uM/d) with lambda free:")
     pcts = (0.17, 0.3, 0.5, 1.0, 2.0, 3.0, 5.0)
-    confs = (("record alone", C.KE_PRIOR, None), ("k_e tracer + load turnover", 0.054, 0.10),
-             ("k_e and unrecorded load exact", 1e-6, 1e-6))
-    tab = {}
-    print(f"      {'% of normal':>11} " + " ".join(f"{c[0]:>30}" for c in confs))
+    confs = (("k_e tracer + load turnover", 0.054, 0.10), ("k_e and unrecorded load exact", 1e-4, 1e-6))
+    P5 = {}
+    print(f"      {'% of normal':>11} " + " ".join(f"{c[0]:>36}" for c in confs))
     for pct in pcts:
         th = TH_NORMAL * pct / 100
-        row = [sd_ln_at(th, ke, tu) for _, ke, tu in confs]
-        tab[pct] = row
-        print(f"      {pct:>11.2f} " + " ".join(f"{v:>21.3f} (+-{v*th:5.0f} uM/d)" for v in row))
-    print("     In absolute terms the uncertainty is nearly the same at every capacity (sd(ln theta)")
-    print("     x theta, in brackets): the likelihood is close to Gaussian in theta itself. So the")
-    print("     model below is theta_hat = theta + s(theta) Z, with s = theta sd(ln theta) interpolated")
-    print("     in log capacity and held constant beyond the computed range.")
-    print("     Population: theta log-uniform over 0.17-5 % of normal (R-J). Certify if the one-sided")
-    print("     95 % lower bound theta_hat - 1.645 s exceeds theta_need = theta_crit - Delta_tr(tau).")
+        cells = []
+        for name, ke, tu in confs:
+            P = cov5(th, ke, tu)
+            P5[(pct, name)] = P
+            cells.append(f"{sd_ln_at(th, ke, tu):7.3f} | {np.sqrt(P[0, 0]):7.3f}"
+                         f"  (mu sd {sd_mu(P, th, 21, 3.5, D0):5.0f})")
+        print(f"      {pct:>11.2f} " + " ".join(f"{c:>36}" for c in cells))
+    print("     The record alone is not shown: without the tracers K_m is unconstrained and the k_e prior")
+    print("     is wide, so the linear-Gaussian approximation used below does not hold for it.")
+    print("     Certification rule: certify if mu_hat - 1.645 sd_mu > 0 (one-sided 95 %), mu_hat ~ N(mu, sd_mu),")
+    print("     sd_mu interpolated in log capacity (held constant beyond the computed range).")
     lp = np.log(np.array(pcts))
     rng = np.random.default_rng(0)
     n = 200_000
     theta = TH_NORMAL * 10 ** rng.uniform(np.log10(0.0017), np.log10(0.05), n)
     z = rng.standard_normal(n)
     lt = np.log(100 * theta / TH_NORMAL)
-    cases = [("21 d, half-life 3.5 d, D 6000, nominal", THC_NOM - trough(21, 3.5)),
-             ("21 d, half-life 3.5 d, D 6000, worst corner", THC_WORST - trough(21, 3.5)),
-             ("21 d, half-life 4.3 d, D 2672, nominal", THC_NOM - trough(21, 4.3, D_ADM)),
-             ("14 d, half-life 3.5 d, D 2672, worst corner", THC_WORST - trough(14, 3.5, D_ADM))]
-    for lab, need in cases:
-        safe = theta > need
+    cases = [("21 d, half-life 3.5 d, D 6000, nominal", 21, 3.5, D0, THC_NOM),
+             ("21 d, half-life 3.5 d, D 6000, worst corner", 21, 3.5, D0, THC_WORST),
+             ("21 d, half-life 4.3 d, D 2672 same-rate (its 21-d peak exceeds the 14-d ceiling), nominal",
+              21, 4.3, D_ADM, THC_NOM)]
+    for lab, tau, th_true, D, thc in cases:
+        need = thc - trough(tau, th_true, D)
+        mu = theta - need
+        safe = mu > 0
         print(f"\n    {lab}: theta_need = {need:.1f} uM/d ({100*need/TH_NORMAL:.2f} % of normal);"
               f" truly safe {safe.mean():.0%} of the population")
         print(f"      {'configuration':>30} {'certified':>10} {'of the safe':>12} {'false-safe among unsafe':>24}"
               f" {'capacity certified 50 % / 80 % of the time':>44}")
-        for k, (name, _, _) in enumerate(confs):
-            s_abs = [tab[q][k] * TH_NORMAL * q / 100 for q in pcts]
+        for name, _, _ in confs:
+            s_abs = [sd_mu(P5[(q, name)], TH_NORMAL * q / 100, tau, th_true, D) for q in pcts]
             s_lin = np.interp(lt, lp, s_abs)
-            est = theta + s_lin * z
-            cert = est - 1.645 * s_lin > need
+            cert = mu + s_lin * z - 1.645 * s_lin > 0
             fs = (cert & ~safe).sum() / max((~safe).sum(), 1)
+
             def s_of(th, s_abs=s_abs):
                 return np.interp(np.log(100 * th / TH_NORMAL), lp, s_abs)
             t50 = brentq(lambda th: th - 1.645 * s_of(th) - need, 1e-3, 1e5)
             t80 = brentq(lambda th: th - (1.645 + 0.8416) * s_of(th) - need, 1e-3, 1e5)
-            print(f"      {name:>30} {cert.mean():>10.0%} {cert[safe].mean():>12.0%} {fs:>24.1%}"
-                  f" {100*t50/TH_NORMAL:>27.1f} % / {100*t80/TH_NORMAL:.1f} % of normal")
+            f50 = f"{100*t50/TH_NORMAL:.1f} %" if t50 <= 0.05 * TH_NORMAL else f"{100*t50/TH_NORMAL:.1f} % (above the PA range)"
+            f80 = f"{100*t80/TH_NORMAL:.1f} %" if t80 <= 0.05 * TH_NORMAL else f"{100*t80/TH_NORMAL:.1f} % (above)"
+            print(f"      {name:>30} {cert.mean():>10.0%} {cert[safe].mean():>12.0%} {fs:>24.1%}   {f50} / {f80}")
     print("""
-  READING. (1) In the parent model a late dose is not a cliff edge. The trough condition is
-  a quasi-static test; dynamically the metabolite rises gradually while the increment is
-  low and falls back once the next dose arrives. How far it rises depends on the residual
-  capacity, the half-life and the dose: see B. (2) The 0.44 of the two tracers is the
-  precision at 5 % of normal only; in absolute terms the uncertainty is about the same at
-  every capacity, so an estimate certifies a longer interval only for patients well above
-  theta_need (see the lowest certified capacity). These are model statements on simulated
-  patients; the decision numbers in C are FIM-based (R-M's rule asks for simulated fits).
+  READING. (1) At the nominal constants and k = 1 a delay of a day or two costs little (1 d
+  late raises the gap peak by about 8-15 %), but the rise is convex in the delay and
+  accelerates inside the gap; a skipped dose at D = 2672 takes the weakest patients past
+  the separatrix scale. The next dose always restores the cycle (every post-dose capacity
+  is at least D > s), which does not show the gap was harmless. t55 adds the worst carnitine
+  corner, a bracket on the assumed k, and illness.
+  (2) With lambda estimated from the same record, even the two tracers certify a 21-day
+  interval per patient only for patients near the top of the PA range (see the capacity
+  certified 50 % / 80 % of the time); the half-life route (Result 4 of the note) does not
+  need theta at all.
 """)
 
 
