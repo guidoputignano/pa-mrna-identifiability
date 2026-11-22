@@ -66,6 +66,10 @@ def drop(ax, x, y, s=0.32, color=BLUE):
 
 
 def tick_icon(ax, x, y, ok=True, s=0.38):
+    if ok is None:                                   # a model result, not a measurement
+        ax.add_patch(Circle((x, y), s, fc="white", ec=MUTED, lw=0.9, zorder=4))
+        ax.text(x, y, "M", ha="center", va="center", fontsize=5.4, color=MUTED, fontweight="bold", zorder=5)
+        return
     ax.add_patch(Circle((x, y), s, fc=GREEN if ok else RED, ec="none", zorder=4))
     if ok:
         ax.plot([x - 0.18, x - 0.04, x + 0.2], [y, y - 0.15, y + 0.17], color="white", lw=1.1, zorder=5,
@@ -107,7 +111,7 @@ b.add_patch(FancyBboxPatch((2.4, 2.7), 4.2, 4.3, boxstyle="round,pad=0,rounding_
 b.add_patch(Rectangle((2.45, 2.75), 4.1, 2.6, fc="#f6d9a8", ec="none", zorder=2))
 b.text(4.5, 4.0, "metabolite\nlevel m", ha="center", va="center", fontsize=5.8, color=INK, zorder=3)
 arrow(b, 4.5, 8.0, 4.5, 6.6, color=INK, lw=1.0)
-b.text(5.0, 7.6, "protein load\n(diet, body)", ha="left", va="center", fontsize=5.4)
+b.text(4.85, 7.55, "load: protein, odd-chain\nfatty acids, gut bacteria", ha="left", va="center", fontsize=5.0)
 # exits
 arrow(b, 6.6, 3.3, 8.3, 3.3, color=GREEN, lw=2.2, ms=8)
 b.text(8.35, 3.95, "enzyme\nθ + Δ(t)", ha="center", va="bottom", fontsize=5.6, color=GREEN, fontweight="bold")
@@ -145,7 +149,7 @@ for cx, cy, lab, spread, col in ((2.75, 5.3, "draws every 14 days\n(on infusion 
     c.text(cx, cy - 2.3, lab, ha="center", va="top", fontsize=5.4, color=INK)
     tick_icon(c, cx + 1.45, cy + 1.45, ok=spread, s=0.33)
 c.text(5.0, 8.3, "where blood draws land in the 14-day cycle", ha="center", fontsize=5.4, color=MUTED)
-c.text(5.0, 0.75, "same phase every time: little information.\nBook every 14.5 days; record doses and intake.",
+c.text(5.0, 0.75, "same point of the cycle every time: little information.\nBook every 14.5 days; record doses and intake.",
        ha="center", va="bottom", fontsize=5.2, color=INK)
 
 # (d) capacity in severe PA -----------------------------------------------------------------
@@ -169,7 +173,8 @@ d.text(8.6, 1.35, "candidate capacity →", fontsize=4.8, color=MUTED, ha="right
 d.text(8.0, 3.95, "upper bound", fontsize=5.3, color=MUTED, ha="right")
 tick_icon(d, 8.9, 9.0, ok=False, s=0.33)
 d.text(0.55, 1.6, "fit worse →", fontsize=4.6, color=MUTED, rotation=90, va="bottom")
-d.text(5.0, 0.3, "only an upper bound, whatever the sampling", ha="center", fontsize=5.3, color=INK)
+d.text(5.0, 0.2, "only an upper bound, while the other\nroute is known only roughly", ha="center", va="bottom",
+       fontsize=5.2, color=INK)
 
 # (e) the therapeutic window ----------------------------------------------------------------
 e = ax[1][1]
@@ -183,11 +188,11 @@ for p0 in peaks:
 enz = enz / enz.max()
 X = 1.0 + 8.0 * t / 42.0
 Y = 2.2 + 4.6 * enz
-e.add_patch(Rectangle((1.0, 2.2 + 4.6 * 0.12), 8.0, 4.6 * 0.88 - 0.0, fc=GREEN, alpha=0.10, ec="none", zorder=1))
+e.add_patch(Rectangle((1.0, 2.2 + 4.6 * 0.06), 8.0, 4.6 * 0.94, fc=GREEN, alpha=0.10, ec="none", zorder=1))
 e.plot(X, Y, color=GREEN, lw=1.2, zorder=3)
 e.plot([1.0, 9.0], [2.2 + 4.6, 2.2 + 4.6], color=RED, lw=0.8, ls="--")
-e.plot([1.0, 9.0], [2.2 + 4.6 * 0.12, 2.2 + 4.6 * 0.12], color=INK, lw=0.8, ls="--")
-e.text(9.0, 7.0, "ceiling: never above normal", ha="right", va="bottom", fontsize=5.2, color=RED)
+e.plot([1.0, 9.0], [2.2 + 4.6 * 0.06, 2.2 + 4.6 * 0.06], color=INK, lw=0.8, ls="--")
+e.text(9.0, 7.0, "ceiling: own + delivered never above normal", ha="right", va="bottom", fontsize=5.2, color=RED)
 e.text(1.0, 2.25, "critical capacity", ha="left", va="top", fontsize=5.2, color=INK)
 e.text(9.0, 1.75, "enzyme over three infusions", fontsize=5.2, color=GREEN, va="top", ha="right")
 e.text(5.0, 0.35, "interval safe if the trough clears the line:\nneeds half-life and dose, not θ",
@@ -195,11 +200,11 @@ e.text(5.0, 0.35, "interval safe if the trough clears the line:\nneeds half-life
 
 # (f) what the trial can measure -------------------------------------------------------------
 f = ax[1][2]
-panel(f, "f", "What the trial can measure")
+panel(f, "f", "What the record can identify")
 rows = [(True, "the enzyme half-life,\nfrom dated infusions"),
-        (True, "change within one patient,\nas a difference"),
+        (True, "change within one patient, as a\ndifference, if the marker is stable"),
         (False, "absolute capacity\nin severe PA"),
-        (True, "how late an infusion can be,\nalone and during illness")]
+        (None, "how late an infusion can be:\na model result, not a measurement")]
 for i, (ok, lab) in enumerate(rows):
     yy = 7.8 - 1.65 * i
     tick_icon(f, 1.2, yy, ok=ok, s=0.36)

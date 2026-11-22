@@ -70,7 +70,7 @@ def fig_pencil():
     gs = fig.add_gridspec(1, 3, width_ratios=[1, 1, 0.045], wspace=0.2)
     ax = [fig.add_subplot(gs[0]), fig.add_subplot(gs[1])]
     cax = fig.add_subplot(gs[2])
-    for a, Q, ttl in [(ax[0], T.pencil(seed=0), "(a) the paper's design: 25 monthly draws"),
+    for a, Q, ttl in [(ax[0], T.pencil(seed=0), "(a) the monthly design: 25 monthly draws"),
                       (ax[1], T.wide_pencil(seed=1), "(b) imagined: 25 loads, 0.45× to 3.2× the usual")]:
         _lines(a, Q)
         sig_d, sig_num = T.dist_sigma(Q)
@@ -175,7 +175,7 @@ def fig_margin():
             label=r"$\mu(14)$, $D = 6000$, zero at 2.62 d")
     # range of the 21-day crossing over the admissible carnitine constants
     ax.axvspan(*BOX, color=P.GRID, alpha=0.55, zorder=0, lw=0)
-    ax.text(2.64, 640, "grey band: 21-day\ncrossing over the\npaper's carnitine\nranges, "
+    ax.text(2.64, 640, "grey band: 21-day\ncrossing over the\nassumed carnitine\nranges, "
             f"{BOX[0]:.2f}–{BOX[1]:.2f} d", ha="left", va="top", fontsize=7, color=P.MUTED)
     ax.axvline(CROSS, color=P.INK, ls=":", lw=1.1, zorder=3)
     ax.annotate(f"crossing at nominal\nconstants, {CROSS:.3f} d", va="top", xy=(CROSS, -60), xytext=(2.64, -148),
