@@ -31,7 +31,7 @@
 
 \graphicspath{{fig/}{../results/figures/}{../audit/brief_2026-10-01/pi_note/fig/}}
 
-\newif\ifnotes \notestrue
+\newif\ifnotes \notesfalse
 \newcommand{\note}[1]{\ifnotes{\color{blue!70!black}\small\sffamily[#1]}\fi}
 \newcommand{\um}{\,\textmu M/d}
 \newcommand{\thci}{\theta_{\mathrm{crit}}^{\mathrm{int}}}
@@ -46,20 +46,20 @@
 
 \title{Can routine infusions reveal the therapeutic window of mRNA therapy in propionic
 acidaemia?}
-\author{Guido Putignano$^{1,\dagger,*}$ \and Alessandro Astolfi$^{1,\dagger}$\\[6pt]
-\small $^{1}$King Abdullah University of Science and Technology (KAUST), Thuwal 23955-6900,
-Saudi Arabia\\
+\author{Guido Putignano$^{1,\dagger}$ \and Alessandro Astolfi$^{1,\dagger,*}$\\[6pt]
+\small $^{1}$Computer, Electrical and Mathematical Science and Engineering (CEMSE) Division,\\
+\small King Abdullah University of Science and Technology (KAUST), Thuwal 23955-6900, Saudi
+Arabia\\
 \small $^{\dagger}$These authors contributed equally to this work.\\
-\small $^{*}$Corresponding author \note{e-mail}\\[4pt]
+\small $^{*}$Corresponding author:
+\href{mailto:alessandro.astolfi@kaust.edu.sa}{alessandro.astolfi@kaust.edu.sa}\\[4pt]
 \small ORCID: G.P.\ \href{https://orcid.org/0000-0003-2450-6025}{0000-0003-2450-6025};
-A.A.\ \href{https://orcid.org/0000-0002-4331-454X}{0000-0002-4331-454X}
-\note{division at KAUST; whether either author lists a second affiliation}}
+A.A.\ \href{https://orcid.org/0000-0002-4331-454X}{0000-0002-4331-454X}}
 \date{}
 
 \begin{document}
 \maketitle
 
-\note{Title: 13 words (limit 20).}
 
 % -----------------------------------------------------------------------------
 \begin{abstract}
@@ -80,7 +80,6 @@ keeps every patient within the therapeutic window depends instead on the enzyme'
 delivered dose, which could be measured. We give sampling rules, half-life thresholds and a data
 specification.
 \end{abstract}
-\note{199 words (limit 200); recount after any edit. No references allowed.}
 
 \noindent\textbf{Keywords:} practical identifiability; therapeutic window; propionic acidaemia;
 mRNA therapy; dosing interval; experiment design
@@ -145,11 +144,9 @@ metabolite comes in with the load, from protein, odd-chain fatty acids and gut b
 leaves through two exits: the enzyme, made up of the patient's own capacity $\theta$ and the enzyme
 delivered by the infusions, and a non-enzymatic route through conjugation to carnitine and loss in
 urine. To our knowledge it is the first model of this therapy in which residual capacity is an
-explicit parameter, separate from the delivered enzyme: the translational PK/PD model of
-mRNA-3927 has no term for the patient's own enzyme~\cite{pkpd_translational}.
-\note{Checked against Attarwala et al.\ 2023 (open access, PMC10066765): PCC protein is produced
-only from the mRNA, and the baseline parameters $E_0$ are the part of each biomarker that PCC
-cannot suppress. Still to check: the Gao et al.\ 2025 poster (please share the PDF).}
+explicit parameter, separate from the delivered enzyme: neither the translational PK/PD model of
+mRNA-3927~\cite{pkpd_translational} nor the population PK/PD model of the trial, as described in
+its published abstract~\cite{gao2025acop}, has a term for the patient's own enzyme.
 
 We ask in turn how blood should be sampled, whether that sampling identifies residual capacity in
 severe PA, what the record identifies if it does not, and what the choice of interval requires
@@ -162,9 +159,11 @@ and two published model structures.
 \caption{\label{fig:overview}Overview of the study. (a) The therapy and the routine data: an
 mRNA infusion every two weeks makes the liver produce PCC, adding a delivered enzyme $\Delta(t)$
 to the patient's own capacity $\theta$; the record holds infusion dates, blood draws and a diet
-record. (b) The model: one metabolite balance with an inflow, the load from protein, odd-chain
-fatty acids and gut bacteria, and two exits, the enzyme and the non-enzymatic route through
-carnitine and urine. The three hypotheses differ only in the shape of the second exit: rising,
+record. (b) From biology to the model: propionyl-CoA, formed from amino acids, odd-chain
+fatty acids and gut bacteria, is cleared by PCC in the mitochondria (the patient's own enzyme,
+$\theta$, and the enzyme made from the infused mRNA, $\Delta$) or conjugated to carnitine and lost
+in urine; 3-hydroxypropionate in blood is the marker. The model condenses this into one balance
+with an inflow, the load, and two exits, the enzyme and the non-enzymatic route. The three hypotheses differ only in the shape of the second exit: rising,
 then falling at high levels, which creates a tipping point (carnitine model), a straight line
 (linear-clearance model) or levelling off (saturable-clearance model). (c) Draws booked every 14
 days, on infusion days, all land at one point of the dose cycle; draws spread over the cycle, for
@@ -799,10 +798,7 @@ the numbers, tables and figures generated from them.
 
 \section*{Code availability}
 All code is available at
-\url{https://github.com/guidoputignano/system-identification-pa}. An archived release with a DOI
-will be deposited at Zenodo on acceptance.
-\note{Make the repository public and add a licence (for example MIT) before submission; update
-the URL if the repository is renamed.}
+\url{https://github.com/guidoputignano/pa-mrna-identifiability}.
 
 \section*{Author contributions}
 G.P.\ and A.A.\ contributed equally to this work. Both authors conceived the study, developed the

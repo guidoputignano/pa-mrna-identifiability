@@ -28,6 +28,7 @@ FS_S = 1.95    # small text, about 5.5 pt
 FS_T = 2.6     # panel titles, about 7.4 pt
 
 parts = []
+defs = []
 
 
 def add(s):
@@ -168,81 +169,170 @@ text(x0, ty + 15.7, "and a record of intake as eaten", size=FS, color=MUTED)
 text(x1, ty + 3.6, "days", size=FS_S, color=MUTED, anchor="end")
 
 # ---------------------------------------------------------------------- (b) biology -> model
-panel(BX, 0, BW, R1H, "b", "From biology to model: one balance, two exits")
-cx0, cy0, cw, ch = BX + 4.0, 12.0, 58.0, 33.0
-text(cx0 + 0.6, cy0 - 1.4, "liver cell", size=FS_S, color=MUTED, italic=True)
-rect(cx0, cy0, cw, ch, "#ffffff", "#c6ced8", 0.3, rx=3.0)
-text(cx0 + 2.5, cy0 + 5.3, "protein (amino acids),\nodd-chain fatty acids,\ngut bacteria", size=FS_S, color=INK)
-pcx, pcy = cx0 + 21.0, cy0 + 18.0
-add(f'<ellipse cx="{pcx}" cy="{pcy}" rx="8.6" ry="5.0" fill="{MET_L}" stroke="{MET}" stroke-width="0.35"/>')
-text(pcx, pcy - 0.4, "propionyl-CoA", size=FS, anchor="middle", weight=600)
-text(cx0 + 2.5, pcy + 8.4, "toxic when\nit builds up", size=FS_S, color=MUTED, italic=True)
-arrow(cx0 + 9.0, cy0 + 11.5, pcx - 5.0, pcy - 4.2, MET, 0.4, 1.3)
-mx, my = cx0 + 44.5, cy0 + 9.5
-add(f'<ellipse cx="{mx}" cy="{my}" rx="11.2" ry="5.6" fill="{ENZ_L}" stroke="{ENZ}" stroke-width="0.35"/>')
-text(mx, my + 2.4, "own θ + delivered Δ", size=1.8, anchor="middle", color=ENZ)
-text(mx, my - 0.9, "PCC", size=FS, anchor="middle", weight=700, color=ENZ)
-text(mx, my + 8.2, "mitochondrion", size=FS_S, anchor="middle", color=MUTED, italic=True)
-arrow(pcx + 8.0, pcy - 2.0, mx - 10.6, my + 1.8, ENZ, 0.55, 1.5)
-text(mx + 4.0, my - 6.1, "→ energy", size=FS_S, color=ENZ, anchor="start")
-ccx, ccy = cx0 + 44.0, cy0 + 25.5
-rect(ccx - 12.0, ccy - 3.4, 24.0, 6.8, OTH_L, OTH, 0.35, rx=3.2)
-text(ccx, ccy - 0.3, "propionylcarnitine", size=FS, anchor="middle", weight=600, color="#9c4a12")
-text(ccx, ccy + 2.4, "(+ carnitine)", size=FS_S, anchor="middle", color="#9c4a12")
-arrow(pcx + 7.4, pcy + 2.8, ccx - 12.2, ccy - 0.6, OTH, 0.55, 1.5)
-vy = cy0 + ch + 2.6
-rect(cx0, vy, cw, 4.2, BLOOD_L, rx=2.1)
-text(cx0 + 2.0, vy + 2.95, "blood: metabolite marker (3-hydroxypropionate)", size=FS_S, color=BLOOD)
-arrow(pcx - 1.0, pcy + 5.0, pcx - 1.0, vy - 0.2, MET, 0.35, 1.1)
-arrow(ccx + 4.0, ccy + 3.4, ccx + 4.0, vy - 0.2, OTH, 0.35, 1.1)
-kx, ky = cx0 + cw - 5.0, vy + 9.6
+panel(BX, 0, BW, R1H, "b", "From biology to the model")
+GRAD = {
+    "gAmber": ("#fff3cf", "#f4c95d"), "gMito": ("#e9f7f2", "#bfe6d9"), "gCell": ("#fffdfa", "#f7f1e8"),
+    "gVessel": ("#f9dcd6", "#efb3a8"), "gKidney": ("#d98f7c", "#b9604d"), "gPill": ("#fdebdc", "#f6c9a3"),
+    "gFluid": ("#fde7a8", "#f2c14e"), "gLNP": ("#e3edfd", "#b7cdf6"),
+}
+for gid, (c0, c1) in GRAD.items():
+    defs.append(f'<linearGradient id="{gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{c0}"/>'
+                f'<stop offset="1" stop-color="{c1}"/></linearGradient>')
+PCC_OWN, PCC_DEL = "#16866f", DEL
+SMALL = 1.85
+
+# --- sources, outside the cell
+sx = BX + 3.0
+src = [("amino acids", 15.0), ("odd-chain\nfatty acids", 24.0), ("gut bacteria", 34.5)]
+# amino-acid chain
+for j in range(4):
+    circle(sx + 1.0 + j * 1.5, src[0][1] - 1.6, 0.6, "#e7b43c")
+    if j:
+        line(sx + 1.0 + (j - 1) * 1.5 + 0.6, src[0][1] - 1.6, sx + 1.0 + j * 1.5 - 0.6, src[0][1] - 1.6, "#c99a2e", 0.25)
+# fatty acid zigzag with head
+zz = " ".join(f"{sx + 1.6 + k * 1.0:.2f},{src[1][1] - 2.6 + (0.6 if k % 2 else 0):.2f}" for k in range(7))
+add(f'<polyline points="{zz}" fill="none" stroke="#c99a2e" stroke-width="0.35" stroke-linejoin="round"/>')
+circle(sx + 1.0, src[1][1] - 2.3, 0.7, "#e7b43c")
+# bacterium
+rect(sx + 0.8, src[2][1] - 2.6, 4.4, 1.8, "#e8d7a6", "#c99a2e", 0.25, rx=0.9)
+path(f"M{sx + 5.2},{src[2][1] - 1.7} q0.6,-0.6 1.2,0 t1.2,0", stroke="#c99a2e", w=0.22)
+for lab, yy0 in src:
+    text(sx, yy0 + 0.6, lab, size=SMALL, color=INK)
+
+# --- liver cell
+cx0, cy0, cx1, cy1 = BX + 17.5, 9.8, BX + 68.0, 47.5
+path(f"M{cx0 + 4},{cy0} H{cx1 - 5} Q{cx1},{cy0} {cx1},{cy0 + 5} V{cy1 - 5} Q{cx1},{cy1} {cx1 - 5},{cy1} "
+     f"H{cx0 + 5} Q{cx0},{cy1} {cx0},{cy1 - 5} V{cy0 + 4} Q{cx0},{cy0} {cx0 + 4},{cy0} Z",
+     fill="url(#gCell)", stroke="#d9cfc2", w=0.35)
+text(cx0 + 2.2, cy0 + 3.6, "liver cell", size=SMALL, color=MUTED, italic=True)
+# nucleus
+circle(cx0 + 6.5, cy1 - 8.6, 3.4, "#eeeaf6", "#cfc8e2", 0.25)
+circle(cx0 + 7.2, cy1 - 8.0, 1.0, "#d9d2ec")
+
+# propionyl-CoA node
+nx, ny = BX + 32.0, 27.5
+circle(nx, ny, 5.0, "url(#gAmber)", MET, 0.35)
+text(nx, ny - 0.3, "propionyl-", size=SMALL, anchor="middle", weight=700, color="#6b4e00")
+text(nx, ny + 2.0, "CoA", size=SMALL, anchor="middle", weight=700, color="#6b4e00")
+for _, yy0 in src:
+    path(f"M{sx + 9.3},{yy0 - 1.2} C{sx + 12.5},{yy0 - 1.2} {nx - 8.5},{ny + (yy0 - ny) * 0.25} {nx - 5.6},{ny + (yy0 - ny) * 0.12}",
+         stroke=MET, w=0.4)
+    ang = math.atan2(ny + (yy0 - ny) * 0.12 - (ny + (yy0 - ny) * 0.25), (nx - 5.6) - (nx - 8.5))
+    hx, hy = nx - 5.4, ny + (yy0 - ny) * 0.12
+    add(f'<polygon points="{hx:.2f},{hy:.2f} {hx - 1.2 * math.cos(ang) - 0.5 * math.sin(ang):.2f},'
+        f'{hy - 1.2 * math.sin(ang) + 0.5 * math.cos(ang):.2f} {hx - 1.2 * math.cos(ang) + 0.5 * math.sin(ang):.2f},'
+        f'{hy - 1.2 * math.sin(ang) - 0.5 * math.cos(ang):.2f}" fill="{MET}"/>')
+
+# mitochondrion with PCC (own = green, delivered = blue)
+mx0, my0, mw, mh = BX + 44.0, 14.0, 21.0, 10.4
+rect(mx0, my0, mw, mh, "url(#gMito)", ENZ, 0.4, rx=mh / 2)
+rect(mx0 + 0.9, my0 + 0.9, mw - 1.8, mh - 1.8, "none", "#9ad3c2", 0.3, rx=(mh - 1.8) / 2)
+for k in range(5):
+    cxk = mx0 + 4.6 + k * 3.0
+    if k % 2 == 0:
+        path(f"M{cxk},{my0 + 0.9} V{my0 + mh * 0.58}", stroke="#9ad3c2", w=0.55)
+    else:
+        path(f"M{cxk},{my0 + mh - 0.9} V{my0 + mh * 0.42}", stroke="#9ad3c2", w=0.55)
+blobs = [(PCC_OWN, 3.0, 6.6), (PCC_DEL, 6.1, 3.4), (PCC_DEL, 9.1, 6.8), (PCC_OWN, 12.1, 3.3), (PCC_DEL, 15.1, 6.9),
+         (PCC_DEL, 17.9, 4.0)]
+for col, dx, dy in blobs:
+    circle(mx0 + dx, my0 + dy, 0.85, col, "#ffffff", 0.2)
+text(mx0 + mw / 2, my0 - 1.2, "mitochondrion: PCC", size=SMALL, anchor="middle", weight=700, color=ENZ)
+# own vs delivered legend
+circle(mx0 + 1.2, my0 + mh + 2.2, 0.7, PCC_OWN)
+text(mx0 + 2.3, my0 + mh + 2.85, "own θ", size=SMALL, color=PCC_OWN, weight=600)
+circle(mx0 + 10.2, my0 + mh + 2.2, 0.7, PCC_DEL)
+text(mx0 + 11.3, my0 + mh + 2.85, "delivered Δ", size=SMALL, color=PCC_DEL, weight=600)
+arrow(nx + 4.4, ny - 2.6, mx0 - 0.3, my0 + mh * 0.62, ENZ, 0.6, 1.5)
+text(mx0 + mw - 0.4, my0 + mh + 6.0, "→ energy (TCA cycle)", size=SMALL, color=ENZ, anchor="end")
+# mRNA-LNP entering the cell, translated into the delivered enzyme
+lx, ly = BX + 37.6, 8.4
+circle(lx, ly, 2.0, "url(#gLNP)", DEL, 0.3)
+for j in range(10):
+    a = 2 * math.pi * j / 10
+    circle(lx + 2.0 * math.cos(a), ly + 2.0 * math.sin(a), 0.32, DEL)
+path(f"M{lx - 0.9},{ly} q0.45,-0.7 0.9,0 t0.9,0", stroke=DEL, w=0.3)
+text(lx - 2.8, ly + 0.7, "mRNA-LNP", size=SMALL, color=DEL, anchor="end", weight=700)
+path(f"M{lx + 1.6},{ly + 1.8} C{lx + 3.2},{ly + 4.0} {lx + 4.0},{ly + 4.6} {mx0 + 1.6},{my0 + 2.2}",
+     stroke=DEL, w=0.35, extra='stroke-dasharray="0.8 0.6"')
+# carnitine conjugation
+px0, py0, pw, ph = BX + 45.0, 34.4, 20.5, 6.0
+rect(px0, py0, pw, ph, "url(#gPill)", OTH, 0.4, rx=3.0)
+text(px0 + pw / 2, py0 + 3.8, "propionylcarnitine", size=SMALL, anchor="middle", weight=700, color="#9c4a12")
+arrow(nx + 4.0, ny + 3.0, px0 - 0.3, py0 + ph / 2, OTH, 0.6, 1.5)
+text(nx + 2.0, ny + 11.0, "+ carnitine", size=SMALL, color="#9c4a12", weight=600)
+
+# blood vessel with red cells
+vx0, vy0, vx1, vh = BX + 3.0, 50.6, BX + 68.0, 5.0
+rect(vx0, vy0, vx1 - vx0, vh, "url(#gVessel)", "#e19a8e", 0.25, rx=vh / 2)
+for j in range(9):
+    ex, ey = vx0 + 22.0 + j * 4.9, vy0 + (1.6 if j % 2 else 3.3)
+    add(f'<ellipse cx="{ex:.2f}" cy="{ey:.2f}" rx="1.05" ry="0.6" fill="#d4544a" opacity="0.75"/>')
+text(vx0 + 2.0, vy0 + 3.3, "blood", size=SMALL, color="#9b2b22", weight=700)
+# marker into blood and the blood draw
+path(f"M{nx - 1.5},{ny + 5.0} V{vy0 - 0.4}", stroke=MET, w=0.4, extra='stroke-dasharray="0.9 0.6"')
+add(f'<polygon points="{nx - 1.5:.2f},{vy0 - 0.2:.2f} {nx - 2.1:.2f},{vy0 - 1.4:.2f} {nx - 0.9:.2f},{vy0 - 1.4:.2f}" fill="{MET}"/>')
+text(nx + 0.6, cy1 - 3.6, "3-hydroxypropionate", size=SMALL, color="#8a6400", weight=600)
+text(nx + 0.6, cy1 - 1.4, "(the marker)", size=SMALL, color=MUTED)
+tube(nx - 1.5, vy0 + vh + 1.4, 0.9)
+text(nx + 0.4, vy0 + vh + 4.6, "blood draw", size=SMALL, color=BLOOD, weight=600)
+arrow(px0 + pw / 2 + 4.0, py0 + ph, px0 + pw / 2 + 4.0, vy0 - 0.2, OTH, 0.45, 1.2)
+# kidney and urine
+kx, ky = BX + 61.5, 62.6
 path(f"M{kx},{ky - 3.3} C{kx + 3.1},{ky - 3.5} {kx + 3.5},{ky + 3.4} {kx},{ky + 3.3} C{kx - 1.8},{ky + 3.3} "
      f"{kx - 2.3},{ky + 1.7} {kx - 1.1},{ky + 0.8} C{kx - 0.5},{ky + 0.3} {kx - 0.5},{ky - 0.3} {kx - 1.1},{ky - 0.8} "
-     f"C{kx - 2.3},{ky - 1.7} {kx - 1.8},{ky - 3.3} {kx},{ky - 3.3} Z", fill="#c97a6a", stroke="none")
-path(f"M{kx - 0.6},{ky} C{kx - 2.0},{ky} {kx - 2.6},{ky + 1.2} {kx - 3.4},{ky + 3.6}", stroke="#c97a6a", w=0.4)
-arrow(kx + 0.6, vy + 4.3, kx + 0.6, ky - 3.6, OTH, 0.35, 1.0)
-text(kx - 4.2, ky + 0.9, "kidney → urine", size=FS_S, color="#9c4a12", anchor="end")
-text(cx0 + 1.0, ky + 5.6, "in the kidney, acylcarnitines compete with carnitine for reabsorption", size=FS_S, color=MUTED)
-gx = BX + 64.4
-path(f"M{gx},{25.5} l1.8,2.2 l-1.8,2.2", stroke=MUTED, w=0.45)
-text(gx + 0.9, 33.6, "model", size=FS_S, color=MUTED, anchor="middle", italic=True)
-tx0 = BX + 82.0
-tw, th_ = 19.0, 23.0
-tyy = 14.5
-path(f"M{tx0},{tyy} V{tyy + th_ - 2.5} Q{tx0},{tyy + th_} {tx0 + 2.5},{tyy + th_} H{tx0 + tw - 2.5} "
-     f"Q{tx0 + tw},{tyy + th_} {tx0 + tw},{tyy + th_ - 2.5} V{tyy}", fill="#ffffff", stroke=INK, w=0.4)
-path(f"M{tx0 + 0.2},{tyy + 9.0} H{tx0 + tw - 0.2} V{tyy + th_ - 2.5} Q{tx0 + tw - 0.2},{tyy + th_ - 0.2} "
-     f"{tx0 + tw - 2.5},{tyy + th_ - 0.2} H{tx0 + 2.5} Q{tx0 + 0.2},{tyy + th_ - 0.2} {tx0 + 0.2},{tyy + th_ - 2.5} Z",
-     fill=MET_L, stroke="none")
-text(tx0 + tw / 2, tyy + 15.6, "metabolite", size=FS, anchor="middle", weight=600)
-text(tx0 + tw / 2, tyy + 18.7, "level m", size=FS, anchor="middle", weight=600)
-arrow(tx0 + tw / 2, tyy - 7.0, tx0 + tw / 2, tyy + 4.5, INK, 0.5, 1.5)
-text(tx0 + tw / 2 + 1.5, tyy - 4.2, "load L(t) + L₀", size=FS, anchor="start")
-arrow(tx0 + tw, tyy + th_ - 5.0, tx0 + tw + 8.0, tyy + th_ - 5.0, ENZ, 1.1, 2.2)
-text(tx0 + tw + 1.0, tyy + th_ - 12.2, "enzyme", size=FS, color=ENZ, weight=700)
-text(tx0 + tw + 1.0, tyy + th_ - 9.1, "(θ + Δ) g(m)", size=FS, color=ENZ, weight=600)
-arrow(tx0, tyy + th_ - 5.0, tx0 - 8.0, tyy + th_ - 5.0, OTH, 1.1, 2.2)
-text(tx0 - 1.0, tyy + th_ - 12.2, "other route", size=FS, color=OTH, weight=700, anchor="end")
-text(tx0 - 1.0, tyy + th_ - 9.1, "α(m)", size=FS, color=OTH, weight=600, anchor="end")
+     f"C{kx - 2.3},{ky - 1.7} {kx - 1.8},{ky - 3.3} {kx},{ky - 3.3} Z", fill="url(#gKidney)", stroke="none")
+path(f"M{kx - 0.6},{ky} C{kx - 2.0},{ky} {kx - 2.4},{ky + 1.6} {kx - 2.6},{ky + 4.6}", stroke="#b9604d", w=0.45)
+arrow(kx + 1.2, vy0 + vh + 0.1, kx + 1.2, ky - 3.2, OTH, 0.4, 1.0)
+text(kx - 3.6, ky - 1.0, "kidney → urine", size=SMALL, color="#9c4a12", anchor="end", weight=600)
+text(kx - 3.6, ky + 1.3, "acylcarnitines compete with", size=SMALL, color=MUTED, anchor="end")
+text(kx - 3.6, ky + 3.6, "carnitine for reabsorption", size=SMALL, color=MUTED, anchor="end")
+
+# --- 'modelled as' connector
+gx = BX + 71.2
+line(gx, 11.0, gx, 66.0, "#d3d9e0", 0.3, dash="0.8 0.8")
+circle(gx, 29.0, 2.6, "#ffffff", "#c6ced8", 0.3)
+path(f"M{gx - 0.7},{27.6} l1.4,1.4 l-1.4,1.4", stroke=MUTED, w=0.45)
+add(f'<text x="{gx - 1.2:.2f}" y="{44.0:.2f}" text-anchor="middle" transform="rotate(-90 {gx - 1.2:.2f} 44.0)" '
+    f'style="font-size:{SMALL}px;fill:{MUTED};font-style:italic">modelled as</text>')
+
+# --- the model (right)
+tx0, tw, ty0, th_ = BX + 77.5, 15.0, 18.5, 21.0
+text(BX + 75.0, 10.8, "one balance, two exits", size=SMALL, color=MUTED, italic=True)
+arrow(tx0 + tw / 2, 12.4, tx0 + tw / 2, ty0 + 3.0, INK, 0.5, 1.4)
+text(tx0 + tw / 2 + 1.4, 15.0, "load L(t) + L₀", size=SMALL, color=INK, weight=600)
+fy = ty0 + 7.0
+path(f"M{tx0 + 0.25},{fy} H{tx0 + tw - 0.25} V{ty0 + th_ - 2.2} Q{tx0 + tw - 0.25},{ty0 + th_ - 0.25} "
+     f"{tx0 + tw - 2.2},{ty0 + th_ - 0.25} H{tx0 + 2.2} Q{tx0 + 0.25},{ty0 + th_ - 0.25} {tx0 + 0.25},{ty0 + th_ - 2.2} Z",
+     fill="url(#gFluid)", stroke="none")
+line(tx0 + 0.4, fy, tx0 + tw - 0.4, fy, "#e0a92a", 0.3)
+path(f"M{tx0},{ty0} V{ty0 + th_ - 2.4} Q{tx0},{ty0 + th_} {tx0 + 2.4},{ty0 + th_} H{tx0 + tw - 2.4} "
+     f"Q{tx0 + tw},{ty0 + th_} {tx0 + tw},{ty0 + th_ - 2.4} V{ty0}", stroke=INK, w=0.45)
+text(tx0 + tw / 2, fy + 6.4, "m", size=4.2, anchor="middle", italic=True, weight=600, color="#6b4e00")
+text(tx0 + tw / 2, fy + 10.2, "metabolite", size=SMALL, anchor="middle", color="#6b4e00")
+# exits
+for yy0, col, lab1, lab2 in ((fy + 2.6, ENZ, "enzyme", "(θ + Δ(t)) g(m)"), (fy + 9.6, OTH, "other route", "α(m)")):
+    rect(tx0 + tw, yy0 - 0.9, 5.2, 1.8, col, rx=0.3)
+    add(f'<polygon points="{tx0 + tw + 7.4:.2f},{yy0:.2f} {tx0 + tw + 5.0:.2f},{yy0 - 1.7:.2f} {tx0 + tw + 5.0:.2f},{yy0 + 1.7:.2f}" fill="{col}"/>')
+    text(tx0 + tw + 8.4, yy0 - 0.5, lab1, size=FS, color=col, weight=700)
+    text(tx0 + tw + 8.4, yy0 + 2.1, lab2, size=SMALL, color=col, weight=600)
+# three hypotheses for alpha(m)
 hy = 48.0
-text(BX + 91.5, hy - 1.8, "three hypotheses for the other route α(m)", size=FS_S, color=MUTED, anchor="middle")
+text(BX + 75.0, hy - 1.6, "three hypotheses for α(m)", size=SMALL, color=MUTED, italic=True)
 shapes = [
-    ("carnitine", "rises, then falls", lambda u: 2.4 * u * math.exp(-1.5 * u) / 0.65),
-    ("linear", "straight line", lambda u: 0.95 * u),
-    ("saturable", "levels off", lambda u: 1.25 * u / (0.28 + u)),
+    ("carnitine", "rises, then falls", lambda u: 2.4 * u * math.exp(-1.5 * u) / 0.65, ""),
+    ("linear", "straight line", lambda u: 0.95 * u, 'stroke-dasharray="0.3 0.75"'),
+    ("saturable", "levels off", lambda u: 1.25 * u / (0.28 + u), 'stroke-dasharray="1.1 0.7"'),
 ]
-for i, (lab, sub, f) in enumerate(shapes):
-    ox, oy, ow, oh = BX + 70.5 + 15.8 * i, hy, 12.6, 9.0
-    rect(ox, oy, ow, oh, "#ffffff", "#c6ced8", 0.25, rx=0.8)
-    pts = []
-    for k in range(41):
-        u = k / 40
-        v = min(f(u), 1.0)
-        pts.append(f"{ox + 1.0 + (ow - 2.0) * u:.2f},{oy + oh - 1.0 - (oh - 2.4) * v:.2f}")
-    path("M" + " L".join(pts), stroke=OTH, w=0.5,
-         extra='stroke-dasharray="1.0 0.7"' if i == 2 else ("" if i == 0 else 'stroke-dasharray="0.25 0.7"'))
-    text(ox + ow / 2, oy + oh + 2.6, lab, size=FS_S, anchor="middle", weight=600)
-    text(ox + ow / 2, oy + oh + 4.9, sub, size=FS_S, anchor="middle", color=MUTED)
+for i, (lab, sub, f, dash) in enumerate(shapes):
+    ox, oy, ow, oh = BX + 75.0 + 14.6 * i, hy, 12.8, 9.0
+    rect(ox, oy, ow, oh, "#ffffff", "#d3d9e0", 0.25, rx=1.2)
+    line(ox + 1.2, oy + oh - 1.1, ox + ow - 1.0, oy + oh - 1.1, "#c6ced8", 0.2)
+    line(ox + 1.2, oy + oh - 1.1, ox + 1.2, oy + 1.0, "#c6ced8", 0.2)
+    pts = [f"{ox + 1.4 + (ow - 2.6) * (k / 40):.2f},{oy + oh - 1.3 - (oh - 2.6) * min(f(k / 40), 1.0):.2f}" for k in range(41)]
+    path("M" + " L".join(pts), stroke=OTH, w=0.55, extra=dash)
+    text(ox + ow / 2, oy + oh + 2.7, lab, size=SMALL, anchor="middle", weight=700)
+    text(ox + ow / 2, oy + oh + 5.0, sub, size=SMALL, anchor="middle", color=MUTED)
 
 # ---------------------------------------------------------------------- (c) the experiment
 panel(CX, R2Y, SW, R2H, "c", "Infusions as the experiment")
@@ -340,7 +430,7 @@ text(FX + SW / 2, R2Y + 55.4, "plus a short data specification", size=FS_S, colo
 
 # ------------------------------------------------------------------------------------------
 svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W:g} {H:g}" width="{W:g}mm" height="{H:g}mm" '
-       f'font-family="Inter, Helvetica, Arial, sans-serif">' + "".join(parts) + "</svg>")
+       f'font-family="Inter, Helvetica, Arial, sans-serif"><defs>' + "".join(defs) + "</defs>" + "".join(parts) + "</svg>")
 (OUT / "fig_overview.svg").write_text(svg)
 html = (f'<!doctype html><html><head><meta charset="utf-8"><style>@page{{size:{W:g}mm {H:g}mm;margin:0}}'
         f'html,body{{margin:0;padding:0;background:#fff}}svg{{display:block}}</style></head><body>{svg}</body></html>')
