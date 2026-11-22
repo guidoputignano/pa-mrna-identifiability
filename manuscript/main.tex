@@ -174,7 +174,7 @@ data give an upper bound on capacity but no lower bound, and denser sampling doe
 estimate precise. (e) The delivered enzyme jumps at each infusion and decays between them. An
 interval is safe for every patient, whatever $\theta$, if the trough stays above the critical
 capacity; the ceiling (own plus delivered enzyme never above normal) caps the dose. Both depend on
-the enzyme's half-life and the dose, not on $\theta$. (f) What the routine record can and cannot
+the enzyme's half-life and the dose, not on $\theta$ (the ceiling is set for a patient at 5\% of normal). (f) What the routine record can and cannot
 identify; how late an infusion can be is a model result (M), not a measurement. Schematic, not to
 scale.}
 \end{figure}
@@ -209,7 +209,7 @@ line.
 
 \subsection*{The infusions are the identification experiment}
 Over each dose cycle the delivered enzyme jumps at the infusion and decays, and the metabolite
-moves the opposite way (Fig.~\ref{fig:sampling}a). That movement carries the information: in the
+moves the opposite way (Fig.~\ref{fig:sampling}a). The enzyme's swing carries the information: in the
 linear-clearance model the infusions change how strongly the record depends on $\theta$ about 42
 times more than the marker's own movement along the enzyme's saturation curve does. The therapy
 does the identifying; the schedule decides whether the record captures it. We judge each design by
@@ -259,7 +259,7 @@ increment and the marker over successive infusions, with monthly draws across do
 draws at the dose interval, which all fall at one phase. (b) Where 25 draws of each schedule
 land in the dose cycle: at the 14-day dose interval every draw falls at one phase, including when
 sampling starts on therapy; a 14.5-day step reaches 25 of 28 phases (89\% of one lap; over a full
-two-year record, 51 visits, it laps 1.8 times); monthly (30.4-day) and phase-spread schedules
+two-year record, 51 visits, it laps 1.8 times); monthly (30.4-day) and phase-spread (visits aimed at evenly spaced points of the cycle) schedules
 cover the cycle. Both panels are at normal capacity. \note{Redraw as one two-panel figure at
 print size.}}
 \end{figure}
@@ -277,9 +277,9 @@ The value of $\theta$ did not hold. Under the algebraic structure as published $
 identifiable (three of four plausible ways of adding the diet load to it leave it so; one restores
 it). Fitting our model to its records returned $\hat\theta$ 1.3--2.0 times too high at our dose and
 4--20 times too high at a dose calibrated to the falls the trial reports (with our priors on $k_e$
-and the unrecorded load; several times more without them), while the fit missed the data by under
+and the unrecorded load; several times more without them), while the fit can miss the data by under
 a fifth of the measurement noise: nothing signals the error. Under the turnover structure $\theta$
-is identifiable, and our model misses the data by two to three times the noise, a mismatch that
+is identifiable, and on the recommended schedules our model misses the data by two to three times the noise, a mismatch that
 shows.
 
 The two families are cheap to tell apart. In the algebraic structure the marker falls the moment
@@ -366,7 +366,7 @@ marker variability in PA below about 10\% (lower group; bar drawn at 5\%).}
 
 \subsection*{Change within one patient is identifiable, as a difference}
 Whether a patient's capacity has changed between two periods is a different question, and a more
-tractable one. The constants that block the absolute level ($k_e$, the bias in the recorded load,
+tractable one. The constants that block the absolute level ($k_e$, the unrecorded load,
 $K_m$) are shared by both periods and shift both estimates by about the same amount, so they cancel
 in the difference $\hat\theta_2-\hat\theta_1$ (Fig.~\ref{fig:routes}, lower group). With two
 periods of 104 weekly draws the difference has a standard deviation of 20\um, 0.13 of the
@@ -430,7 +430,7 @@ patient's half-life to about 5.5\% (standard deviation of the log 0.055), althou
 side of a crossing a nearby value lies needs 23--155 patients pooled, more than the sixteen the
 trial enrolled~\cite{trial_phase12}, and only if they all share one half-life; and from a turnover
 study in human hepatocytes. Lengthening the interval is therefore a matter of measuring the
-half-life, not capacity, although a value close to a crossing will be hard to place from the
+half-life and the delivered dose, not capacity, although a half-life close to a crossing will be hard to place from the
 trial's own record.
 
 \begin{figure}[tbp]
@@ -482,10 +482,10 @@ steeply.
 In the least favourable setting (the dose capped at the ceiling, $D=2672$\um, the least
 favourable carnitine constants and a 3.5-day half-life) the peak doubles after about 2.5 days of
 delay, or about 4.3 days at a 4.3-day half-life. Across the eight combinations we examined (assumed
-or capped dose, nominal or least favourable constants, half-life 3.5 or 4.3 days; Supplementary
+dose or $D=2672$\um, nominal or least favourable constants, half-life 3.5 or 4.3 days; Supplementary
 Table S2), the trough test of the previous section fails at a shorter delay than the peak takes to
 double in six, all but the assumed dose at 4.3 days, and in the least favourable setting it fails
-even with the infusion on time for patients with little or no enzyme of their own. A ten times faster carnitine response ($k=10$; Methods) changes these figures modestly
+even with the infusion on time for patients with little or no enzyme of their own. A ten times faster carnitine response ($k=10$; Methods) shortens doubling delays by under a day and raises late-infusion illness peaks by about 30\%
 (Supplementary Section S7).
 
 A day's delay therefore costs little in the model, while postponing an infusion by more than a day
@@ -534,7 +534,7 @@ delivers and how the biomarker responds; we ask what the routine record identifi
 patient. Breath testing with 1-$^{13}$C-propionate, long used to measure propionate oxidation in
 these disorders~\cite{breath_test_original} and proposed as a surrogate endpoint for
 liver-directed therapies in methylmalonic acidaemia~\cite{breath_test_mma}, may be most useful
-here for measuring the delivered increment, a known input, rather than capacity, which it reads
+here for measuring the delivered increment, which the analysis needs as a known input, rather than capacity, which it reads
 only through an uncalibrated scale. In pharmacometrics, identifiability is usually checked for a
 given design~\cite{nlme_identifiability,pd_identifiability}, and optimal experiment design, there
 and in system identification, chooses inputs such as doses together with sampling
@@ -546,7 +546,7 @@ The work has limitations. All records are simulated, on constants that are partl
 The linear-clearance model gives the non-enzymatic route 84\% of the load at 5\% of normal, more
 than the urinary output of propionate metabolites measured in PA, a few per cent of estimated
 production~\cite{thompson1990fasting}. The analysis concerns the stable patient between crises.
-The prior on $k_e$ behind the 82--627\% band has no published source. The within-patient result was computed in the linear-clearance model only, with a
+The prior on $k_e$ behind the 82--627\% band has no published source. The within-patient result was simulated in the linear-clearance model only, with a
 Cram\'er--Rao check in the saturable-clearance model (0.088 relative to $\theta$). The model has no
 propionyl-CoA state, so propionylcarnitine and 2-methylcitrate are not represented. The critical
 capacity rests on unmeasured carnitine constants (a factor of 2.1 across their ranges). The ``peak
@@ -578,8 +578,8 @@ multiple of it (monthly, or visits booked every 14.5 days over the whole record)
 with dose and lot; intake as eaten, to better than about 10\%; antibiotic weeks; no first-hour
 draw in the steady-state fit \\
 For the interval & hepatic PCC half-life and delivered increment, against Table~\ref{tab:spec} \\
-For monitoring & the marker's serial variability in PA (needs $<$ about 10\%); regimen and
-antibiotic status fixed between comparison windows \\
+For monitoring & the marker's serial variability in PA (needs $<$ about 10\%);
+regimen, kidney function and antibiotic status steady between the two periods \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -633,14 +633,14 @@ a sensitivity case.
 $\theta=3000$\um\ (normal) and load 323\um.
 
 \emph{Saturable-clearance model.} $\alpha=V_e m/(K_e+m)$ with $V_e=400$\um\ (its maximal rate,
-not the linear $k_e$) and $K_e=300$\,\textmu M. When both exits saturate, $(\theta,K_m)$ and
+not the linear $k_e$) and $K_e=300$\,\textmu M; the constructed operating point of the Results has $V_e=100$\um, below the untreated load, and a managed load of 220\um. When both exits saturate, $(\theta,K_m)$ and
 $(V_e,K_e)$ can be exchanged exactly unless an input varies one exit selectively; the infusions do
 so (Supplementary Section S1).
 \note{Check every constant against src/common/params.py and paper 02\_model, 03\_dynamic.}
 
 \subsection*{Measurement and noise model}
 The plasma marker carries a 5\% assay coefficient of variation. The recorded load carries a 5\%
-error and a 10\% day-to-day variation. An unrecorded load offset $b$ has a prior of 5\% of $L$,
+error and a 10\% day-to-day variation. The unrecorded load $L_0$, entering the fits as an offset $b$, has a prior of 5\% of $L$,
 and $k_e$ a log-normal prior with standard deviation 0.8 on the log scale (a factor of 2.2); no
 prior is placed on $\theta$ or $K_m$. Draws within the post-infusion settling window (about the
 first hour) are excluded from the steady-state fit.
@@ -659,7 +659,7 @@ with their ranges. The target is $\operatorname{sd}(\ln\hat\theta)=0.20$.
 \subsection*{Sampling design}
 Schedules compared: draws at the 14-day dose interval, every 14.5 days, monthly (30.4 days),
 two-monthly, and every two days. A schedule whose draws advance by $\epsilon$ in the dose cycle at
-each visit covers the cycle of length $T$ once after $n$ visits when $n\epsilon\ge T$ (the lap
+each visit covers the cycle of length $T$ once after $n$ visits when $n\epsilon\ge T$ and $\epsilon$ is small compared with $T$ (the lap
 rule): for 14.5-day bookings, $\epsilon=0.5$\,d and $T=14$\,d, so 28 visits make one lap and the
 51 visits of a two-year record make 1.8. We also report the visits needed to reach the target and
 the sensitivity to dose calibration and intake accuracy. Draws in the first hour after an
@@ -714,7 +714,7 @@ limit.
 \note{Source: t55.}
 
 \subsection*{Within-patient change}
-Two windows of 104 draws over two years each were simulated, with $k_e$, $b$ and $K_m$ shared
+Two windows of 104 draws evenly spaced over two years each (every 7.09 days, so that they drift through the dose cycle) were simulated, with $k_e$, $b$ and $K_m$ shared
 between them, and analysed with a difference test and a log-ratio test, using 400 simulated pairs
 per scenario.
 \note{Sources: t22, t24, t30, t42, t56.}
