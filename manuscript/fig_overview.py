@@ -1,216 +1,353 @@
-"""
-Overview figure for the manuscript: what was done and what was found, at a glance.
-Schematic only (no data); every statement on it is a result stated in the text.
-Writes manuscript/fig/fig_overview.pdf and .png.  Run: python -W error fig_overview.py
+"""Figure 1 (overview), drawn as an SVG at print size (180 mm wide) and rendered to PDF/PNG.
+
+The figure is hand-built SVG so that strokes, fonts and spacing are controlled exactly; it is
+rendered with the pre-installed Chromium through Playwright. Units in the SVG are millimetres.
+Schematic only: every statement on it is a result stated in the text.
+
+Run:  python3 fig_overview.py      -> fig/fig_overview.svg, .html, .pdf, .png
 """
 from pathlib import Path
+import math
 
-import numpy as np
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from matplotlib.patches import Circle, FancyBboxPatch, Rectangle, Polygon, Ellipse, FancyArrowPatch, Wedge
-
-BLUE, ORANGE, GREEN, YELLOW = "#2a78d6", "#eb6834", "#1baf7a", "#eda100"
-INK, MUTED, GRID, RED = "#1a1a1a", "#5a5a5a", "#d9d8d3", "#c0392b"
-LIGHT = "#f4f3ef"
-plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 6.5})
-OUT = Path(__file__).resolve().parent / "fig"
+HERE = Path(__file__).resolve().parent
+OUT = HERE / "fig"
 OUT.mkdir(exist_ok=True)
 
+W, H = 180.0, 134.0
+# palette (one meaning per colour, used consistently in every panel)
+INK, MUTED, LINE, PANEL = "#1f2933", "#5f6b7a", "#aab4bf", "#f3f5f8"
+ENZ, ENZ_L = "#16866f", "#d6efe9"          # enzyme exit (own + delivered)
+DEL = "#2f6fdf"                            # delivered mRNA / infusions
+OTH, OTH_L = "#e07a2f", "#fbe3d1"          # other (carnitine/urine) route
+MET, MET_L = "#d9a21b", "#fbefc9"          # metabolite pool
+RED, GOOD = "#cf3f3f", "#2e9e5b"
+BLOOD, BLOOD_L = "#c0392b", "#f6d6d2"
 
-def panel(ax, letter, title):
-    ax.set_xlim(0, 10); ax.set_ylim(0, 10); ax.set_aspect("equal"); ax.axis("off")
-    ax.add_patch(FancyBboxPatch((0.1, 0.1), 9.8, 9.8, boxstyle="round,pad=0,rounding_size=0.5",
-                                fc=LIGHT, ec="none", zorder=0))
-    ax.text(0.5, 9.35, letter, fontsize=8.5, fontweight="bold", color=INK, va="top")
-    ax.text(1.25, 9.33, title, fontsize=7.2, fontweight="bold", color=INK, va="top")
+FS = 2.25      # body text (mm), about 6.4 pt
+FS_S = 1.95    # small text, about 5.5 pt
+FS_T = 2.6     # panel titles, about 7.4 pt
 
-
-def arrow(ax, x0, y0, x1, y1, color=INK, lw=1.0, ms=7, style="-|>"):
-    ax.add_patch(FancyArrowPatch((x0, y0), (x1, y1), arrowstyle=style, mutation_scale=ms, color=color,
-                                 lw=lw, shrinkA=0, shrinkB=0, zorder=3))
-
-
-def person(ax, x, y, s=1.0):
-    ax.add_patch(Circle((x, y + 1.55 * s), 0.42 * s, fc="#e9c9a8", ec=INK, lw=0.6, zorder=3))
-    ax.add_patch(FancyBboxPatch((x - 0.62 * s, y - 0.2 * s), 1.24 * s, 1.35 * s,
-                                boxstyle="round,pad=0,rounding_size=0.45", fc=BLUE, ec=INK, lw=0.6, zorder=3))
+parts = []
 
 
-def iv_bag(ax, x, y):
-    ax.plot([x, x], [y - 2.9, y + 0.9], color=MUTED, lw=0.9, zorder=2)            # pole
-    ax.plot([x - 0.35, x + 0.35], [y + 0.9, y + 0.9], color=MUTED, lw=0.9, zorder=2)
-    ax.add_patch(FancyBboxPatch((x - 0.5, y - 0.9), 1.0, 1.6, boxstyle="round,pad=0,rounding_size=0.3",
-                                fc="#dbe9fb", ec=BLUE, lw=0.8, zorder=3))
-    ax.add_patch(Rectangle((x - 0.5, y - 0.9), 1.0, 0.75, fc=BLUE, alpha=0.35, ec="none", zorder=3))
-    ax.text(x, y + 0.05, "mRNA", ha="center", va="center", fontsize=4.8, color=BLUE, fontweight="bold", zorder=4)
+def add(s):
+    parts.append(s)
 
 
-def liver(ax, x, y, s=1.0):
-    ax.add_patch(Ellipse((x + 0.25 * s, y), 2.1 * s, 1.05 * s, angle=-12, fc="#b5583a", ec="none", zorder=3))
-    ax.add_patch(Ellipse((x - 0.75 * s, y + 0.12 * s), 1.1 * s, 0.75 * s, angle=15, fc="#b5583a", ec="none", zorder=3))
+def text(x, y, s, size=FS, color=INK, anchor="start", weight=400, italic=False, lh=1.22):
+    """Multi-line text; lines separated by '\n'. y is the baseline of the first line."""
+    style = f'font-size:{size}px;fill:{color};font-weight:{weight};' + ("font-style:italic;" if italic else "")
+    lines = s.split("\n")
+    tsp = "".join(
+        f'<tspan x="{x:.2f}" dy="{0 if i == 0 else size * lh:.2f}">{ln}</tspan>' for i, ln in enumerate(lines))
+    add(f'<text x="{x:.2f}" y="{y:.2f}" text-anchor="{anchor}" style="{style}">{tsp}</text>')
 
 
-def tube(ax, x, y, h=0.9):
-    ax.add_patch(FancyBboxPatch((x - 0.13, y), 0.26, h, boxstyle="round,pad=0,rounding_size=0.12",
-                                fc="white", ec=INK, lw=0.5, zorder=3))
-    ax.add_patch(FancyBboxPatch((x - 0.13, y), 0.26, h * 0.55, boxstyle="round,pad=0,rounding_size=0.12",
-                                fc=RED, ec="none", zorder=4))
+def line(x1, y1, x2, y2, color=INK, w=0.3, dash=None, cap="round"):
+    d = f' stroke-dasharray="{dash}"' if dash else ""
+    add(f'<line x1="{x1:.2f}" y1="{y1:.2f}" x2="{x2:.2f}" y2="{y2:.2f}" stroke="{color}" '
+        f'stroke-width="{w}" stroke-linecap="{cap}"{d}/>')
 
 
-def drop(ax, x, y, s=0.32, color=BLUE):
-    ax.add_patch(Circle((x, y), s, fc=color, ec="none", zorder=4))
-    ax.add_patch(Polygon([[x - s * 0.93, y + s * 0.37], [x + s * 0.93, y + s * 0.37], [x, y + s * 2.1]],
-                         closed=True, fc=color, ec="none", zorder=4))
+def path(d, fill="none", stroke=INK, w=0.3, extra=""):
+    add(f'<path d="{d}" fill="{fill}" stroke="{stroke}" stroke-width="{w}" stroke-linejoin="round" '
+        f'stroke-linecap="round" {extra}/>')
 
 
-def tick_icon(ax, x, y, ok=True, s=0.38):
-    if ok is None:                                   # a model result, not a measurement
-        ax.add_patch(Circle((x, y), s, fc="white", ec=MUTED, lw=0.9, zorder=4))
-        ax.text(x, y, "M", ha="center", va="center", fontsize=5.4, color=MUTED, fontweight="bold", zorder=5)
-        return
-    ax.add_patch(Circle((x, y), s, fc=GREEN if ok else RED, ec="none", zorder=4))
-    if ok:
-        ax.plot([x - 0.18, x - 0.04, x + 0.2], [y, y - 0.15, y + 0.17], color="white", lw=1.1, zorder=5,
-                solid_capstyle="round")
+def rect(x, y, w, h, fill, stroke="none", sw=0.3, rx=0.0):
+    add(f'<rect x="{x:.2f}" y="{y:.2f}" width="{w:.2f}" height="{h:.2f}" rx="{rx}" fill="{fill}" '
+        f'stroke="{stroke}" stroke-width="{sw}"/>')
+
+
+def circle(cx, cy, r, fill, stroke="none", sw=0.3):
+    add(f'<circle cx="{cx:.2f}" cy="{cy:.2f}" r="{r:.2f}" fill="{fill}" stroke="{stroke}" stroke-width="{sw}"/>')
+
+
+def arrow(x1, y1, x2, y2, color=INK, w=0.35, head=1.4):
+    """Straight arrow with a filled triangular head drawn as a polygon (prints reliably)."""
+    ang = math.atan2(y2 - y1, x2 - x1)
+    bx, by = x2 - head * math.cos(ang), y2 - head * math.sin(ang)
+    line(x1, y1, bx, by, color, w, cap="butt")
+    px, py = -math.sin(ang), math.cos(ang)
+    hw = max(head * 0.45, w * 0.9)
+    add(f'<polygon points="{x2:.2f},{y2:.2f} {bx + px * hw:.2f},{by + py * hw:.2f} '
+        f'{bx - px * hw:.2f},{by - py * hw:.2f}" fill="{color}"/>')
+
+
+def drop(cx, cy, s=1.0, color=DEL):
+    path(f"M{cx:.2f},{cy - 1.9 * s:.2f} C{cx + 0.2 * s:.2f},{cy - 1.2 * s:.2f} {cx + 1.1 * s:.2f},{cy - 0.6 * s:.2f} "
+         f"{cx + 1.1 * s:.2f},{cy + 0.25 * s:.2f} A{1.1 * s:.2f},{1.1 * s:.2f} 0 1 1 {cx - 1.1 * s:.2f},{cy + 0.25 * s:.2f} "
+         f"C{cx - 1.1 * s:.2f},{cy - 0.6 * s:.2f} {cx - 0.2 * s:.2f},{cy - 1.2 * s:.2f} {cx:.2f},{cy - 1.9 * s:.2f} Z",
+         fill=color, stroke="none")
+
+
+def tube(cx, y, s=1.0):
+    """Blood collection tube, top at y."""
+    w, h = 1.5 * s, 5.0 * s
+    rect(cx - w / 2 - 0.25 * s, y - 0.7 * s, w + 0.5 * s, 0.9 * s, "#8a96a3", rx=0.2)
+    path(f"M{cx - w / 2:.2f},{y:.2f} V{y + h - w / 2:.2f} A{w / 2:.2f},{w / 2:.2f} 0 0 0 {cx + w / 2:.2f},{y + h - w / 2:.2f} "
+         f"V{y:.2f} Z", fill="#ffffff", stroke="#8a96a3", w=0.22)
+    path(f"M{cx - w / 2 + 0.15:.2f},{y + h * 0.42:.2f} V{y + h - w / 2:.2f} A{w / 2 - 0.15:.2f},{w / 2 - 0.15:.2f} 0 0 0 "
+         f"{cx + w / 2 - 0.15:.2f},{y + h - w / 2:.2f} V{y + h * 0.42:.2f} Z", fill=BLOOD, stroke="none")
+
+
+def badge(cx, cy, kind, r=1.9):
+    """Result badge: ok (tick), no (cross), model ('M')."""
+    if kind == "ok":
+        circle(cx, cy, r, GOOD)
+        path(f"M{cx - 0.85:.2f},{cy + 0.05:.2f} L{cx - 0.2:.2f},{cy + 0.7:.2f} L{cx + 0.95:.2f},{cy - 0.7:.2f}",
+             stroke="#ffffff", w=0.45)
+    elif kind == "no":
+        circle(cx, cy, r, RED)
+        line(cx - 0.7, cy - 0.7, cx + 0.7, cy + 0.7, "#ffffff", 0.45)
+        line(cx - 0.7, cy + 0.7, cx + 0.7, cy - 0.7, "#ffffff", 0.45)
     else:
-        ax.plot([x - 0.15, x + 0.15], [y - 0.15, y + 0.15], color="white", lw=1.1, zorder=5)
-        ax.plot([x - 0.15, x + 0.15], [y + 0.15, y - 0.15], color="white", lw=1.1, zorder=5)
+        circle(cx, cy, r, "#ffffff", MUTED, 0.3)
+        text(cx, cy + 0.75, "M", size=2.1, color=MUTED, anchor="middle", weight=700)
 
 
-fig = plt.figure(figsize=(7.2, 4.9))
-gs = fig.add_gridspec(2, 3, wspace=0.04, hspace=0.06, left=0.01, right=0.99, top=0.99, bottom=0.01)
-ax = [[fig.add_subplot(gs[r, c]) for c in range(3)] for r in range(2)]
+def panel(x, y, w, h, letter, title):
+    rect(x, y, w, h, PANEL, rx=1.6)
+    text(x + 2.6, y + 5.0, letter, size=3.3, weight=700)
+    text(x + 6.3, y + 4.9, title, size=FS_T, weight=600)
 
-# (a) the therapy and the data it generates ------------------------------------------------
-a = ax[0][0]
-panel(a, "a", "Therapy and routine data")
-iv_bag(a, 2.0, 7.0)
-a.plot([2.0, 2.6, 3.4], [6.1, 5.4, 5.6], color=BLUE, lw=0.8, zorder=2)      # drip line
-person(a, 4.1, 5.0, 1.0)
-liver(a, 7.3, 6.8, 1.0)
-a.text(7.3, 7.75, "liver makes PCC", ha="center", fontsize=5.6, color=INK)
-arrow(a, 4.9, 6.1, 6.1, 6.7, color=MUTED, lw=0.7, ms=6)
-a.text(7.3, 5.75, "own capacity θ\n+ delivered enzyme Δ(t)", ha="center", va="top", fontsize=5.3, color=MUTED)
-# timeline
-a.plot([0.8, 9.3], [2.2, 2.2], color=INK, lw=0.7)
-for k, xd in enumerate(np.linspace(1.3, 8.7, 6)):
-    drop(a, xd, 2.75, s=0.22)
-for xt in (2.1, 4.5, 7.0):
-    tube(a, xt, 1.0, 0.8)
-a.text(9.3, 3.55, "infusion every 2 weeks", fontsize=5.6, color=BLUE, ha="right")
-a.text(9.3, 0.55, "blood draws, diet record", fontsize=5.6, color=RED, ha="right")
 
-# (b) the model ---------------------------------------------------------------------------
-b = ax[0][1]
-panel(b, "b", "One balance, two exits")
-# tank
-b.add_patch(FancyBboxPatch((2.4, 2.7), 4.2, 4.3, boxstyle="round,pad=0,rounding_size=0.35", fc="white",
-                           ec=INK, lw=0.8, zorder=2))
-b.add_patch(Rectangle((2.45, 2.75), 4.1, 2.6, fc="#f6d9a8", ec="none", zorder=2))
-b.text(4.5, 4.0, "metabolite\nlevel m", ha="center", va="center", fontsize=5.8, color=INK, zorder=3)
-arrow(b, 4.5, 8.0, 4.5, 6.6, color=INK, lw=1.0)
-b.text(4.85, 7.55, "load: protein, odd-chain\nfatty acids, gut bacteria", ha="left", va="center", fontsize=5.0)
-# exits
-arrow(b, 6.6, 3.3, 8.3, 3.3, color=GREEN, lw=2.2, ms=8)
-b.text(8.35, 3.95, "enzyme\nθ + Δ(t)", ha="center", va="bottom", fontsize=5.6, color=GREEN, fontweight="bold")
-arrow(b, 2.4, 3.3, 0.7, 3.3, color=ORANGE, lw=4.0, ms=9)
-b.text(1.2, 4.0, "other route\n(carnitine,\nurine)", ha="center", va="bottom", fontsize=5.3, color=ORANGE,
-       fontweight="bold")
-# inset: three hypotheses for the other route, one mini-plot each
-mm = np.linspace(0, 1, 100)
-shapes = [("carnitine: rises,\nthen falls", 2.2 * mm * np.exp(-1.6 * mm) * 1.9, "-"),
-          ("linear", 0.95 * mm, "--"),
-          ("saturable", 1.25 * mm / (0.3 + mm), ":")]
-for i, (lab, yy, ls) in enumerate(shapes):
-    ins = b.inset_axes([0.08 + 0.29 * i, 0.10, 0.24, 0.12])
-    ins.plot(mm, yy, color=ORANGE, lw=1.1, ls=ls)
-    ins.set_xticks([]); ins.set_yticks([]); ins.set_ylim(0, 1.1)
-    for sp in ins.spines.values():
-        sp.set_color(MUTED); sp.set_linewidth(0.5)
-    ins.set_facecolor("white")
-    ins.text(0.5, -0.12, lab, fontsize=4.7, color=ORANGE, ha="center", va="top", transform=ins.transAxes)
-b.text(5.0, 2.35, "three hypotheses for the other route", fontsize=4.8, color=MUTED, ha="center")
+# ------------------------------------------------------------------------------------------
+# layout
+G = 2.6
+R1H, R2H = 71.0, H - 71.0 - G
+AX, AW = 0.0, 57.0
+BX, BW = AW + G, W - AW - G
+SW = (W - 3 * G) / 4
+CX, DX, EX, FX = 0.0, SW + G, 2 * (SW + G), 3 * (SW + G)
+R2Y = R1H + G
 
-# (c) sampling: the infusions are the experiment -------------------------------------------
-c = ax[0][2]
-panel(c, "c", "The infusions are the experiment")
-for cx, cy, lab, spread, col in ((2.75, 5.3, "draws every 14 days\n(on infusion days)", False, RED),
-                                 (7.25, 5.3, "draws spread over\nthe dose cycle", True, GREEN)):
-    c.add_patch(Circle((cx, cy), 1.75, fc="white", ec=INK, lw=0.7, zorder=2))
-    drop(c, cx, cy + 1.95, s=0.16)
-    c.text(cx - 0.3, cy + 2.05, "infusion", ha="right", va="center", fontsize=4.8, color=BLUE)
-    angles = np.linspace(90, 90 - 330, 12) if spread else np.full(12, 90.0)
-    for i, ang in enumerate(angles):
-        r = 1.35 if spread else 1.35 - 0.0 * i
-        tx, ty = cx + r * np.cos(np.radians(ang)), cy + r * np.sin(np.radians(ang))
-        c.add_patch(Circle((tx, ty), 0.13, fc=RED, ec="white", lw=0.3, zorder=4))
-    c.text(cx, cy - 2.3, lab, ha="center", va="top", fontsize=5.4, color=INK)
-    tick_icon(c, cx + 1.45, cy + 1.45, ok=spread, s=0.33)
-c.text(5.0, 8.3, "where blood draws land in the 14-day cycle", ha="center", fontsize=5.4, color=MUTED)
-c.text(5.0, 0.75, "same point of the cycle every time: little information.\nBook every 14.5 days; record doses and intake.",
-       ha="center", va="bottom", fontsize=5.2, color=INK)
+# ---------------------------------------------------------------------- (a) therapy and data
+panel(AX, 0, AW, R1H, "a", "Therapy and routine data")
+bx, by = AX + 7.0, 11.0
+line(bx, by - 1.6, bx, by + 21.5, "#9aa5b1", 0.35)                     # pole
+line(bx - 2.2, by - 1.6, bx + 2.2, by - 1.6, "#9aa5b1", 0.35)
+rect(bx - 3.0, by, 6.0, 8.6, "#e8f0fd", rx=1.0)
+rect(bx - 3.0, by + 3.6, 6.0, 5.0, "#bcd2f7", rx=0.0)
+rect(bx - 3.0, by, 6.0, 8.6, "none", DEL, 0.3, rx=1.0)
+text(bx, by + 2.6, "mRNA", size=1.75, color=DEL, anchor="middle", weight=700)
+text(bx, by + 6.9, "LNP", size=1.6, color=DEL, anchor="middle", weight=600)
+path(f"M{bx},{by + 8.6} C{bx},{by + 13} {bx + 6},{by + 12.5} {bx + 10.2},{by + 11.3}", stroke=DEL, w=0.3)
+px, py = AX + 21.0, 10.2
+circle(px, py + 2.6, 2.5, "#f1c9a5")
+path(f"M{px - 4.0},{py + 15.5} V{py + 9.6} C{px - 4.0},{py + 6.7} {px - 2.3},{py + 5.6} {px},{py + 5.6} "
+     f"C{px + 2.3},{py + 5.6} {px + 4.0},{py + 6.7} {px + 4.0},{py + 9.6} V{py + 15.5} Z", fill="#3b6fd1", stroke="none")
+lx, ly = AX + 41.5, 15.0
+path(f"M{lx - 9.0},{ly - 0.6} C{lx - 8.4},{ly - 4.2} {lx - 2.0},{ly - 4.6} {lx + 3.0},{ly - 3.8} "
+     f"C{lx + 7.2},{ly - 3.1} {lx + 9.4},{ly - 2.2} {lx + 8.6},{ly - 0.4} C{lx + 7.6},{ly + 1.8} {lx + 3.2},{ly + 3.6} "
+     f"{lx - 1.4},{ly + 4.4} C{lx - 5.6},{ly + 5.0} {lx - 9.6},{ly + 2.8} {lx - 9.0},{ly - 0.6} Z",
+     fill="#b9573b", stroke="none")
+path(f"M{lx - 1.0},{ly - 4.2} C{lx - 0.4},{ly - 1.0} {lx - 0.8},{ly + 1.6} {lx - 2.0},{ly + 4.3}",
+     stroke="#8f3f28", w=0.25)
+path(f"M{px + 2.4},{py + 10.0} C{px + 6},{py + 9.5} {lx - 12},{ly + 3.5} {lx - 9.4},{ly + 1.2}",
+     stroke=MUTED, w=0.22, extra='stroke-dasharray="0.6 0.6"')
+text(lx, ly + 8.6, "the liver makes PCC", size=FS, anchor="middle")
+text(lx, ly + 12.0, "own capacity θ", size=FS, color=ENZ, anchor="middle", weight=600)
+text(lx, ly + 14.9, "+ delivered enzyme Δ(t)", size=FS, color=DEL, anchor="middle", weight=600)
+ty = 47.0
+x0, x1 = AX + 4.0, AX + AW - 4.0
+line(x0, ty, x1, ty, INK, 0.3)
+days = 56.0
+for d in range(0, 57, 7):
+    xx = x0 + (x1 - x0) * d / days
+    line(xx, ty, xx, ty + 0.9, INK, 0.25)
+for d in (0, 14, 28, 42, 56):
+    xx = x0 + (x1 - x0) * d / days
+    drop(xx, ty - 2.6, 0.95)
+text(x0, ty - 6.6, "infusion every 2 weeks, each one dated", size=FS, color=DEL, weight=600)
+for d in (5, 19, 33, 47):
+    xx = x0 + (x1 - x0) * d / days
+    tube(xx, ty + 2.6, 0.95)
+text(x0, ty + 12.6, "blood draws (metabolite level)", size=FS, color=BLOOD, weight=600)
+text(x0, ty + 15.7, "and a record of intake as eaten", size=FS, color=MUTED)
+text(x1, ty + 3.6, "days", size=FS_S, color=MUTED, anchor="end")
 
-# (d) capacity in severe PA -----------------------------------------------------------------
-d = ax[1][0]
-panel(d, "d", "Capacity in severe PA")
-# A + B bars
-d.add_patch(Rectangle((1.0, 6.2), 8.0 * 0.84, 1.0, fc=ORANGE, ec="none", zorder=3))
-d.add_patch(Rectangle((1.0 + 8.0 * 0.84, 6.2), 8.0 * 0.16, 1.0, fc=GREEN, ec="none", zorder=3))
-d.text(1.2, 6.7, "other route 84%", va="center", fontsize=5.6, color="white", fontweight="bold", zorder=4)
-d.text(9.0, 7.45, "enzyme 16%", ha="right", fontsize=5.6, color=GREEN, fontweight="bold")
-d.text(5.0, 5.55, "a 1% error in the large share\nis a 5% error in the small one", ha="center", va="top",
-       fontsize=5.5, color=INK)
-# profile sketch
-x = np.linspace(0, 1, 200)
-yprof = np.where(x < 0.72, 0.03, (x - 0.72) ** 2 * 60)
-d.plot(1.0 + 7.6 * x, 1.6 + np.minimum(yprof, 2.3), color=INK, lw=1.1, zorder=3)
-d.plot([1.0, 8.6], [1.6, 1.6], color=MUTED, lw=0.5)
-d.axvline  # noqa
-d.text(1.6, 1.85, "no lower bound", fontsize=5.3, color=MUTED)
-d.text(8.6, 1.35, "candidate capacity →", fontsize=4.8, color=MUTED, ha="right", va="top")
-d.text(8.0, 3.95, "upper bound", fontsize=5.3, color=MUTED, ha="right")
-tick_icon(d, 8.9, 9.0, ok=False, s=0.33)
-d.text(0.55, 1.6, "fit worse →", fontsize=4.6, color=MUTED, rotation=90, va="bottom")
-d.text(5.0, 0.2, "only an upper bound, while the other\nroute is known only roughly", ha="center", va="bottom",
-       fontsize=5.2, color=INK)
+# ---------------------------------------------------------------------- (b) biology -> model
+panel(BX, 0, BW, R1H, "b", "From biology to model: one balance, two exits")
+cx0, cy0, cw, ch = BX + 4.0, 12.0, 58.0, 33.0
+text(cx0 + 0.6, cy0 - 1.4, "liver cell", size=FS_S, color=MUTED, italic=True)
+rect(cx0, cy0, cw, ch, "#ffffff", "#c6ced8", 0.3, rx=3.0)
+text(cx0 + 2.5, cy0 + 5.3, "protein (amino acids),\nodd-chain fatty acids,\ngut bacteria", size=FS_S, color=INK)
+pcx, pcy = cx0 + 21.0, cy0 + 18.0
+add(f'<ellipse cx="{pcx}" cy="{pcy}" rx="8.6" ry="5.0" fill="{MET_L}" stroke="{MET}" stroke-width="0.35"/>')
+text(pcx, pcy - 0.4, "propionyl-CoA", size=FS, anchor="middle", weight=600)
+text(cx0 + 2.5, pcy + 8.4, "toxic when\nit builds up", size=FS_S, color=MUTED, italic=True)
+arrow(cx0 + 9.0, cy0 + 11.5, pcx - 5.0, pcy - 4.2, MET, 0.4, 1.3)
+mx, my = cx0 + 44.5, cy0 + 9.5
+add(f'<ellipse cx="{mx}" cy="{my}" rx="11.2" ry="5.6" fill="{ENZ_L}" stroke="{ENZ}" stroke-width="0.35"/>')
+text(mx, my + 2.4, "own θ + delivered Δ", size=1.8, anchor="middle", color=ENZ)
+text(mx, my - 0.9, "PCC", size=FS, anchor="middle", weight=700, color=ENZ)
+text(mx, my + 8.2, "mitochondrion", size=FS_S, anchor="middle", color=MUTED, italic=True)
+arrow(pcx + 8.0, pcy - 2.0, mx - 10.6, my + 1.8, ENZ, 0.55, 1.5)
+text(mx + 4.0, my - 6.1, "→ energy", size=FS_S, color=ENZ, anchor="start")
+ccx, ccy = cx0 + 44.0, cy0 + 25.5
+rect(ccx - 12.0, ccy - 3.4, 24.0, 6.8, OTH_L, OTH, 0.35, rx=3.2)
+text(ccx, ccy - 0.3, "propionylcarnitine", size=FS, anchor="middle", weight=600, color="#9c4a12")
+text(ccx, ccy + 2.4, "(+ carnitine)", size=FS_S, anchor="middle", color="#9c4a12")
+arrow(pcx + 7.4, pcy + 2.8, ccx - 12.2, ccy - 0.6, OTH, 0.55, 1.5)
+vy = cy0 + ch + 2.6
+rect(cx0, vy, cw, 4.2, BLOOD_L, rx=2.1)
+text(cx0 + 2.0, vy + 2.95, "blood: metabolite marker (3-hydroxypropionate)", size=FS_S, color=BLOOD)
+arrow(pcx - 1.0, pcy + 5.0, pcx - 1.0, vy - 0.2, MET, 0.35, 1.1)
+arrow(ccx + 4.0, ccy + 3.4, ccx + 4.0, vy - 0.2, OTH, 0.35, 1.1)
+kx, ky = cx0 + cw - 5.0, vy + 9.6
+path(f"M{kx},{ky - 3.3} C{kx + 3.1},{ky - 3.5} {kx + 3.5},{ky + 3.4} {kx},{ky + 3.3} C{kx - 1.8},{ky + 3.3} "
+     f"{kx - 2.3},{ky + 1.7} {kx - 1.1},{ky + 0.8} C{kx - 0.5},{ky + 0.3} {kx - 0.5},{ky - 0.3} {kx - 1.1},{ky - 0.8} "
+     f"C{kx - 2.3},{ky - 1.7} {kx - 1.8},{ky - 3.3} {kx},{ky - 3.3} Z", fill="#c97a6a", stroke="none")
+path(f"M{kx - 0.6},{ky} C{kx - 2.0},{ky} {kx - 2.6},{ky + 1.2} {kx - 3.4},{ky + 3.6}", stroke="#c97a6a", w=0.4)
+arrow(kx + 0.6, vy + 4.3, kx + 0.6, ky - 3.6, OTH, 0.35, 1.0)
+text(kx - 4.2, ky + 0.9, "kidney → urine", size=FS_S, color="#9c4a12", anchor="end")
+text(cx0 + 1.0, ky + 5.6, "in the kidney, acylcarnitines compete with carnitine for reabsorption", size=FS_S, color=MUTED)
+gx = BX + 64.4
+path(f"M{gx},{25.5} l1.8,2.2 l-1.8,2.2", stroke=MUTED, w=0.45)
+text(gx + 0.9, 33.6, "model", size=FS_S, color=MUTED, anchor="middle", italic=True)
+tx0 = BX + 82.0
+tw, th_ = 19.0, 23.0
+tyy = 14.5
+path(f"M{tx0},{tyy} V{tyy + th_ - 2.5} Q{tx0},{tyy + th_} {tx0 + 2.5},{tyy + th_} H{tx0 + tw - 2.5} "
+     f"Q{tx0 + tw},{tyy + th_} {tx0 + tw},{tyy + th_ - 2.5} V{tyy}", fill="#ffffff", stroke=INK, w=0.4)
+path(f"M{tx0 + 0.2},{tyy + 9.0} H{tx0 + tw - 0.2} V{tyy + th_ - 2.5} Q{tx0 + tw - 0.2},{tyy + th_ - 0.2} "
+     f"{tx0 + tw - 2.5},{tyy + th_ - 0.2} H{tx0 + 2.5} Q{tx0 + 0.2},{tyy + th_ - 0.2} {tx0 + 0.2},{tyy + th_ - 2.5} Z",
+     fill=MET_L, stroke="none")
+text(tx0 + tw / 2, tyy + 15.6, "metabolite", size=FS, anchor="middle", weight=600)
+text(tx0 + tw / 2, tyy + 18.7, "level m", size=FS, anchor="middle", weight=600)
+arrow(tx0 + tw / 2, tyy - 7.0, tx0 + tw / 2, tyy + 4.5, INK, 0.5, 1.5)
+text(tx0 + tw / 2 + 1.5, tyy - 4.2, "load L(t) + L₀", size=FS, anchor="start")
+arrow(tx0 + tw, tyy + th_ - 5.0, tx0 + tw + 8.0, tyy + th_ - 5.0, ENZ, 1.1, 2.2)
+text(tx0 + tw + 1.0, tyy + th_ - 12.2, "enzyme", size=FS, color=ENZ, weight=700)
+text(tx0 + tw + 1.0, tyy + th_ - 9.1, "(θ + Δ) g(m)", size=FS, color=ENZ, weight=600)
+arrow(tx0, tyy + th_ - 5.0, tx0 - 8.0, tyy + th_ - 5.0, OTH, 1.1, 2.2)
+text(tx0 - 1.0, tyy + th_ - 12.2, "other route", size=FS, color=OTH, weight=700, anchor="end")
+text(tx0 - 1.0, tyy + th_ - 9.1, "α(m)", size=FS, color=OTH, weight=600, anchor="end")
+hy = 48.0
+text(BX + 91.5, hy - 1.8, "three hypotheses for the other route α(m)", size=FS_S, color=MUTED, anchor="middle")
+shapes = [
+    ("carnitine", "rises, then falls", lambda u: 2.4 * u * math.exp(-1.5 * u) / 0.65),
+    ("linear", "straight line", lambda u: 0.95 * u),
+    ("saturable", "levels off", lambda u: 1.25 * u / (0.28 + u)),
+]
+for i, (lab, sub, f) in enumerate(shapes):
+    ox, oy, ow, oh = BX + 70.5 + 15.8 * i, hy, 12.6, 9.0
+    rect(ox, oy, ow, oh, "#ffffff", "#c6ced8", 0.25, rx=0.8)
+    pts = []
+    for k in range(41):
+        u = k / 40
+        v = min(f(u), 1.0)
+        pts.append(f"{ox + 1.0 + (ow - 2.0) * u:.2f},{oy + oh - 1.0 - (oh - 2.4) * v:.2f}")
+    path("M" + " L".join(pts), stroke=OTH, w=0.5,
+         extra='stroke-dasharray="1.0 0.7"' if i == 2 else ("" if i == 0 else 'stroke-dasharray="0.25 0.7"'))
+    text(ox + ow / 2, oy + oh + 2.6, lab, size=FS_S, anchor="middle", weight=600)
+    text(ox + ow / 2, oy + oh + 4.9, sub, size=FS_S, anchor="middle", color=MUTED)
 
-# (e) the therapeutic window ----------------------------------------------------------------
-e = ax[1][1]
-panel(e, "e", "The therapeutic window")
-t = np.linspace(0, 42, 600)
-lam = np.log(2) / 4.3
-peaks = np.array([0, 14, 28])
-enz = np.zeros_like(t)
-for p0 in peaks:
-    enz += np.where(t >= p0, np.exp(-lam * (t - p0)), 0.0)
-enz = enz / enz.max()
-X = 1.0 + 8.0 * t / 42.0
-Y = 2.2 + 4.6 * enz
-e.add_patch(Rectangle((1.0, 2.2 + 4.6 * 0.06), 8.0, 4.6 * 0.94, fc=GREEN, alpha=0.10, ec="none", zorder=1))
-e.plot(X, Y, color=GREEN, lw=1.2, zorder=3)
-e.plot([1.0, 9.0], [2.2 + 4.6, 2.2 + 4.6], color=RED, lw=0.8, ls="--")
-e.plot([1.0, 9.0], [2.2 + 4.6 * 0.06, 2.2 + 4.6 * 0.06], color=INK, lw=0.8, ls="--")
-e.text(9.0, 7.0, "ceiling: own + delivered never above normal", ha="right", va="bottom", fontsize=5.2, color=RED)
-e.text(1.0, 2.25, "critical capacity", ha="left", va="top", fontsize=5.2, color=INK)
-e.text(9.0, 1.75, "enzyme over three infusions", fontsize=5.2, color=GREEN, va="top", ha="right")
-e.text(5.0, 0.35, "interval safe if the trough clears the line:\nneeds half-life and dose, not θ",
-       ha="center", va="bottom", fontsize=5.3, color=INK)
+# ---------------------------------------------------------------------- (c) the experiment
+panel(CX, R2Y, SW, R2H, "c", "Infusions as the experiment")
+text(CX + SW / 2, R2Y + 9.6, "where blood draws fall in the 14-day cycle", size=FS_S, color=MUTED, anchor="middle")
+for k, (ox, spread) in enumerate(((CX + 11.0, False), (CX + 31.6, True))):
+    oy, r = R2Y + 26.0, 8.2
+    circle(ox, oy, r, "#ffffff", "#c6ced8", 0.3)
+    for d in range(14):
+        a = math.radians(90 - d * 360 / 14)
+        line(ox + (r - 0.9) * math.cos(a), oy - (r - 0.9) * math.sin(a),
+             ox + r * math.cos(a), oy - r * math.sin(a), LINE, 0.25)
+    drop(ox, oy - r - 2.1, 0.85)
+    if spread:
+        for j in range(13):
+            a = math.radians(90 - j * 360 / 13 - 8)
+            circle(ox + (r - 2.6) * math.cos(a), oy - (r - 2.6) * math.sin(a), 0.75, BLOOD)
+        badge(ox + r * 0.86, oy - r * 0.86, "ok", 1.6)
+    else:
+        circle(ox, oy - r + 2.6, 0.75, BLOOD)
+        text(ox, oy - r + 6.4, "all 13", size=FS_S, color=BLOOD, weight=600, anchor="middle")
+        badge(ox + r * 0.86, oy - r * 0.86, "no", 1.6)
+text(CX + 11.0, R2Y + 38.6, "every 14 days:\nalways the same\npoint", size=FS_S, anchor="middle")
+text(CX + 31.6, R2Y + 38.6, "every 14.5 days:\nthe whole cycle\nis covered", size=FS_S, anchor="middle")
+text(CX + SW / 2, R2Y + 52.6, "Book draws off the dose day;\nrecord every dose and the intake.", size=FS_S,
+     anchor="middle", weight=600)
 
-# (f) what the trial can measure -------------------------------------------------------------
-f = ax[1][2]
-panel(f, "f", "What the record can identify")
-rows = [(True, "the enzyme half-life,\nfrom dated infusions"),
-        (True, "change within one patient, as a\ndifference, if the marker is stable"),
-        (False, "absolute capacity\nin severe PA"),
-        (None, "how late an infusion can be:\na model result, not a measurement")]
-for i, (ok, lab) in enumerate(rows):
-    yy = 7.8 - 1.65 * i
-    tick_icon(f, 1.2, yy, ok=ok, s=0.36)
-    f.text(1.9, yy, lab, va="center", fontsize=5.6, color=INK)
-f.text(5.0, 0.35, "plus a short data specification", ha="center", fontsize=5.3, color=MUTED)
+# ---------------------------------------------------------------------- (d) capacity in severe PA
+panel(DX, R2Y, SW, R2H, "d", "Capacity in severe PA")
+badge(DX + SW - 3.4, R2Y + 3.8, "no", 1.6)
+text(DX + 3.0, R2Y + 10.4, "who clears the load (5% of normal)", size=FS_S, color=MUTED)
+bx0, bw0, byy = DX + 3.0, SW - 6.0, R2Y + 12.6
+rect(bx0, byy, bw0 * 0.84, 4.6, OTH, rx=0.6)
+rect(bx0 + bw0 * 0.84 + 0.25, byy, bw0 * 0.16 - 0.25, 4.6, ENZ, rx=0.6)
+text(bx0 + 1.2, byy + 3.1, "other route 84%", size=FS, color="#ffffff", weight=700)
+text(bx0 + bw0, byy + 7.6, "own enzyme 16%", size=FS_S, color=ENZ, anchor="end", weight=700)
+text(DX + SW / 2, R2Y + 26.0, "a 1% error in the large share\nis a 5% error in the small one", size=FS_S,
+     anchor="middle")
+gx0, gy0, gw, gh = DX + 5.0, R2Y + 46.5, SW - 9.0, 12.0
+line(gx0, gy0, gx0 + gw, gy0, MUTED, 0.25)
+line(gx0, gy0, gx0, gy0 - gh, MUTED, 0.25)
+pts = []
+for k in range(61):
+    u = k / 60
+    v = 0.02 if u < 0.62 else min(((u - 0.62) / 0.3) ** 2, 1.0)
+    pts.append(f"{gx0 + gw * u:.2f},{gy0 - 0.5 - (gh - 1.5) * v:.2f}")
+path("M" + " L".join(pts), stroke=INK, w=0.5)
+text(gx0 + 1.2, gy0 - 2.0, "no lower bound", size=FS_S, color=MUTED)
+text(gx0 + gw * 0.62 - 1.0, gy0 - gh + 1.8, "upper bound", size=FS_S, color=MUTED, anchor="end")
+add(f'<text x="{gx0 - 1.2:.2f}" y="{gy0 - gh / 2:.2f}" text-anchor="middle" transform="rotate(-90 {gx0 - 1.2:.2f} '
+    f'{gy0 - gh / 2:.2f})" style="font-size:{FS_S}px;fill:{MUTED}">fit worse</text>')
+text(gx0 + gw, gy0 + 2.6, "candidate capacity", size=FS_S, color=MUTED, anchor="end")
+text(DX + SW / 2, R2Y + 55.4, "only an upper bound on θ", size=FS_S, anchor="middle", weight=600)
 
-fig.savefig(OUT / "fig_overview.pdf")
-fig.savefig(OUT / "fig_overview.png", dpi=220)
+# ---------------------------------------------------------------------- (e) therapeutic window
+panel(EX, R2Y, SW, R2H, "e", "The therapeutic window")
+ex0, ew, ey_top, ey_bot = EX + 3.0, SW - 6.0, R2Y + 14.0, R2Y + 37.0
+crit = 0.07
+
+
+def yy(v):
+    return ey_bot - (ey_bot - ey_top) * v
+
+
+rect(ex0, yy(1.0), ew, yy(crit) - yy(1.0), ENZ_L)
+line(ex0, yy(1.0), ex0 + ew, yy(1.0), RED, 0.35, dash="1.0 0.7")
+line(ex0, yy(crit), ex0 + ew, yy(crit), INK, 0.35, dash="1.0 0.7")
+text(ex0 + ew, yy(1.0) - 1.1, "ceiling: never above normal", size=FS_S, color=RED, anchor="end")
+text(ex0, yy(crit) + 2.6, "critical capacity", size=FS_S, color=INK)
+lam = math.log(2) / 4.3
+ts = [i * 42 / 300 for i in range(301)]
+vals = [sum(math.exp(-lam * (t - p)) for p in (0, 14, 28) if t >= p) for t in ts]
+vmax = max(vals)
+pts = [f"{ex0 + ew * t / 42:.2f},{yy(v / vmax * 0.985):.2f}" for t, v in zip(ts, vals)]
+path("M" + " L".join(pts), stroke=ENZ, w=0.55)
+tr = vals[-1] / vmax * 0.985
+arrow(ex0 + ew - 1.0, yy(tr) + 4.6, ex0 + ew - 1.0, yy(tr) + 0.9, INK, 0.3, 0.9)
+text(ex0 + ew - 2.0, yy(tr) + 5.0, "trough", size=FS_S, anchor="end")
+text(ex0 + 1.0, ey_bot + 6.4, "delivered enzyme over three infusions", size=FS_S, color=ENZ)
+text(EX + SW / 2, R2Y + 50.0, "safe for every patient if the trough\nclears the line: this needs the\nhalf-life and the dose, not θ",
+     size=FS_S, anchor="middle", weight=600)
+
+# ---------------------------------------------------------------------- (f) what the record identifies
+panel(FX, R2Y, SW, R2H, "f", "What the record identifies")
+rows = [("ok", "the enzyme half-life,", "from dated infusions"),
+        ("ok", "change within one patient,", "if the marker is stable"),
+        ("no", "absolute capacity", "in severe PA"),
+        ("model", "how late an infusion can be:", "a model result")]
+for i, (k, a1, a2) in enumerate(rows):
+    ry = R2Y + 13.0 + 9.4 * i
+    badge(FX + 5.0, ry, k, 1.8)
+    text(FX + 8.4, ry - 0.5, a1, size=FS_S, weight=600)
+    text(FX + 8.4, ry + 2.1, a2, size=FS_S, color=MUTED)
+text(FX + SW / 2, R2Y + 55.4, "plus a short data specification", size=FS_S, color=MUTED, anchor="middle",
+     italic=True)
+
+# ------------------------------------------------------------------------------------------
+svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W:g} {H:g}" width="{W:g}mm" height="{H:g}mm" '
+       f'font-family="Inter, Helvetica, Arial, sans-serif">' + "".join(parts) + "</svg>")
+(OUT / "fig_overview.svg").write_text(svg)
+html = (f'<!doctype html><html><head><meta charset="utf-8"><style>@page{{size:{W:g}mm {H:g}mm;margin:0}}'
+        f'html,body{{margin:0;padding:0;background:#fff}}svg{{display:block}}</style></head><body>{svg}</body></html>')
+(OUT / "fig_overview.html").write_text(html)
+
+import subprocess  # noqa: E402
+
+subprocess.run(["node", str(HERE / "render_svg.js"), str(OUT / "fig_overview.html"), str(OUT / "fig_overview.pdf"),
+                str(OUT / "fig_overview.png"), f"{W:g}", f"{H:g}"], check=True)
 print("wrote", OUT / "fig_overview.pdf")

@@ -10,7 +10,7 @@
 %  unstructured, no references; <= 8 display items; ~60 references (not strict); legends
 %  <= 350 words; Supplementary Information as one PDF; Data and Code availability statements;
 %  LLM use documented in Methods.
-%  Display items (8): Figs 1-6, Tables 1-2. The line-geometry figure is Supplementary Fig. S1.
+%  Display items (9): Figs 1-6, Tables 1-3 (Table 3, the model quantities, sits in Methods).
 %  Build: pdflatex main && bibtex main && pdflatex main && pdflatex main
 % =============================================================================
 \documentclass[11pt]{article}
@@ -25,7 +25,9 @@
 \usepackage{lineno}
 \usepackage{setspace}
 \usepackage{enumitem}
+\usepackage{xr-hyper}
 \usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
+\externaldocument[S-]{supplementary}
 
 \graphicspath{{fig/}{../results/figures/}{../audit/brief_2026-10-01/pi_note/fig/}}
 
@@ -42,23 +44,22 @@
 \linenumbers
 \onehalfspacing
 
-\title{The infusion is the experiment: identifying the therapeutic window of mRNA therapy in
-propionic acidaemia}
-\author{Guido Putignano$^{1,*}$ \and Alessandro Astolfi$^{1}$\\[6pt]
+\title{Can routine infusions reveal the therapeutic window of mRNA therapy in propionic
+acidaemia?}
+\author{Guido Putignano$^{1,\dagger,*}$ \and Alessandro Astolfi$^{1,\dagger}$\\[6pt]
 \small $^{1}$King Abdullah University of Science and Technology (KAUST), Thuwal 23955-6900,
 Saudi Arabia\\
-\small $^{*}$Corresponding author \note{e-mail; ORCID for both authors; division at KAUST;
-check whether either author lists a second affiliation (A.A.\ may also list Imperial College
-London)}}
+\small $^{\dagger}$These authors contributed equally to this work.\\
+\small $^{*}$Corresponding author \note{e-mail}\\[4pt]
+\small ORCID: G.P.\ \href{https://orcid.org/0000-0003-2450-6025}{0000-0003-2450-6025};
+A.A.\ \href{https://orcid.org/0000-0002-4331-454X}{0000-0002-4331-454X}
+\note{division at KAUST; whether either author lists a second affiliation}}
 \date{}
 
 \begin{document}
 \maketitle
 
-\note{Title: 15 words (limit 20). Alternatives: ``Can routine infusions reveal the therapeutic
-window of mRNA therapy in propionic acidaemia?'' (13); ``Spacing mRNA infusions in propionic
-acidaemia: what the routine record can and cannot identify'' (14); ``Reading the therapeutic
-window of mRNA therapy for propionic acidaemia from routine clinical data'' (14).}
+\note{Title: 13 words (limit 20).}
 
 % -----------------------------------------------------------------------------
 \begin{abstract}
@@ -121,12 +122,12 @@ than normal activity), not as a measured toxicity limit. The intuitive way to pl
 the window is to measure their residual capacity $\theta$, the enzyme they still make themselves,
 and dose accordingly. That capacity is not measured routinely, and nothing the trial records measures it directly.
 
-Yet the trial may already contain the measurement. Engineers characterise an unknown system by
+The trial may, however, already contain the information needed. Engineers characterise an unknown system by
 pushing it with a known input and watching how it responds. Each infusion is such a push: a
 recorded dose of mRNA, given on a recorded date, that acts only on the enzyme route. Each blood
 draw records how the metabolite responded at some point in the dose cycle, a point set by the
-booking schedule. The question is whether this experiment, as it is run, reveals $\theta$, and
-how it could be made more informative.
+booking schedule. The question is whether this experiment reveals $\theta$, and how it could
+be made more informative.
 
 The question has two layers~\cite{profile_likelihood,nlme_identifiability}. Structural, or global,
 identifiability asks whether, with perfect noise-free data, only one value of $\theta$ would
@@ -137,18 +138,18 @@ useful. A parameter can pass the first test and fail the second: it is determine
 but lost in the noise. For our model, structural identifiability holds when the marker's whole
 time course is followed, but not for a patient seen at a single steady state; from routine draws,
 which see the marker after it has settled, it holds only because the recorded intake varies from
-day to day (Supplementary Section S1). This paper answers the practical question.
+day to day (Supplementary Section~\ref{S-si:s1}). This paper answers the practical question.
 
 For this purpose we developed a metabolite-balance model of PA (Fig.~\ref{fig:overview}b). The
 metabolite comes in with the load, from protein, odd-chain fatty acids and gut bacteria, and
 leaves through two exits: the enzyme, made up of the patient's own capacity $\theta$ and the enzyme
 delivered by the infusions, and a non-enzymatic route through conjugation to carnitine and loss in
 urine. To our knowledge it is the first model of this therapy in which residual capacity is an
-explicit parameter, separate from the delivered enzyme; the published models of mRNA-3927
-describe the delivered enzyme and the biomarker response~\cite{pkpd_translational,gao2025acop}.
-\note{Verify this priority claim against Attarwala et al.\ 2023 and Gao et al.\ 2025 before
-submission: does either carry a baseline-activity term that a reader could take for $\theta$?
-If so, reword to ``in which residual capacity is estimated from the routine record''.}
+explicit parameter, separate from the delivered enzyme: the translational PK/PD model of
+mRNA-3927 has no term for the patient's own enzyme~\cite{pkpd_translational}.
+\note{Checked against Attarwala et al.\ 2023 (open access, PMC10066765): PCC protein is produced
+only from the mRNA, and the baseline parameters $E_0$ are the part of each biomarker that PCC
+cannot suppress. Still to check: the Gao et al.\ 2025 poster (please share the PDF).}
 
 We ask in turn how blood should be sampled, whether that sampling identifies residual capacity in
 severe PA, what the record identifies if it does not, and what the choice of interval requires
@@ -183,16 +184,14 @@ scale.}
 \section*{Results}
 
 \subsection*{One balance, three hypotheses for the other exit}
-All three models share one balance (Methods, Eq.~\eqref{eq:balance}; Fig.~\ref{fig:overview}b).
-The metabolite, plasma 3-hydroxypropionate in the model, is produced by the load and removed by
-the enzyme, $(\theta+\Delta(t))\,g(m)$, which saturates at high levels, and by the non-enzymatic
-route $\alpha(m)$. How $\alpha$ behaves in PA is not established, so we give this one disputed term
-three forms, each used for a stated job rather than as successive approximations.
+All three models share one balance (Fig.~\ref{fig:overview}b); its biological basis, equations and
+constants are set out in \hyperref[sec:model]{Methods (Model)}, and we describe here what each
+hypothesis is for.
+How the non-enzymatic route $\alpha(m)$ behaves in PA is not established, so we give this one
+disputed term three forms, each used for a stated job rather than as successive approximations.
 
-In the \emph{carnitine model} the route rises with the metabolite, then falls, because
-acylcarnitines compete with carnitine for reabsorption in the kidney (shown in vitro for the rat
-renal carnitine transporter~\cite{octn2_renal_transport}) and the free carnitine pool drains faster
-as the metabolite accumulates. This creates a tipping point beyond which the patient cannot
+In the \emph{carnitine model} the route rises with the metabolite, then falls, because the free
+carnitine pool drains faster as the metabolite accumulates (Methods). This creates a tipping point beyond which the patient cannot
 return to a stable state, and it defines the critical capacity, the least enzyme activity at which
 a patient at the baseline load still has a stable state. We use it for the dosing interval and
 for late infusions.
@@ -204,15 +203,16 @@ mostly on how large a share of the load the enzyme carries, which differs betwee
 
 In the \emph{saturable-clearance model} the route has a maximum speed, so both exits level off and
 can be told apart only because they bend at different levels and because the infusions vary one
-of them (Supplementary Section S1). We use it to test which conclusions depend on the straight
+of them (Supplementary Section~\ref{S-si:s1}). We use it to test which conclusions depend on the straight
 line.
 
 \subsection*{The infusions are the identification experiment}
 Over each dose cycle the delivered enzyme jumps at the infusion and decays, and the metabolite
-moves the opposite way (Fig.~\ref{fig:sampling}a). The enzyme's swing carries the information: in the
-linear-clearance model the infusions change how strongly the record depends on $\theta$ about 42
-times more than the marker's own movement along the enzyme's saturation curve does. The therapy
-does the identifying; the schedule decides whether the record captures it. We judge each design by
+moves the opposite way (Fig.~\ref{fig:sampling}a). The information comes from this swing in the delivered enzyme: in the linear-clearance model the
+infusions change how strongly the record depends on $\theta$ about 42 times more than the marker's
+own movement along the enzyme's saturation curve does. Most of what the record can say about
+$\theta$ therefore comes from the infusions, and the sampling schedule determines how much of it
+is captured. We judge each design by
 the standard deviation of the logarithm of the estimate $\hat\theta$ and take 0.20, about
 $\pm20\%$, as the target.
 
@@ -224,7 +224,7 @@ estimate about 27 times less precise than monthly draws, and it never reaches th
 blood-draw visits every 14.5 days instead of 14 moves each draw half a day later in the cycle;
 over two years (51 visits) the draws sweep the cycle almost twice and give 0.16. Monthly draws, 25
 over two years, each 2.4 days later in the cycle than the last, give 0.17. Over the record, the
-draws must between them cover the whole cycle at least once (the lap rule; Methods). These figures
+draws must between them cover the whole cycle at least once (the lap rule; \hyperref[sec:sampling]{Methods}). These figures
 assume $k_e$ known in advance to within about a factor of 2.2 (the target still holds up to a
 factor of 2.67; with no such prior, $\theta$ is not identified) and the amount of enzyme each
 infusion delivers known; about a dozen visits then suffice.
@@ -239,12 +239,11 @@ nor imputed: the accuracy of each entry matters, while day-to-day variation help
 should be recorded, because antibiotics suppress the gut-derived part of the load. The
 half-saturation constant $K_m$ need not be known in advance; the record recovers it to 6--7\% at
 every capacity.
-\note{The storyline listed a 7--16-fold gain from carrying the dosing record as a regressor; its
-source was not found among the paper's generated numbers. Restore only with a source.}
+
 
 The dosing schedule itself should not be altered to help identification: stretching the interval
 to 28 days at the same delivered amount per day would improve precision by 6.5\% but cut the
-enzyme left before the next infusion by 87\% (Methods). Draws from the first hour after an
+enzyme left before the next infusion by 87\% (\hyperref[sec:sampling]{Methods}). Draws from the first hour after an
 infusion, while the marker is still adjusting, should not be pooled with the routine draws.
 
 These rules reach the target only between 82\% and 627\% of normal capacity, as the next sections
@@ -252,16 +251,19 @@ show. In severe patients they still serve the half-life and the monitoring of ch
 
 \begin{figure}[tbp]
 \centering
-\includegraphics[width=0.48\linewidth]{fig_D0_dosetrain.pdf}\hfill
-\includegraphics[width=0.48\linewidth]{fig_E1_phaseclock.pdf}
+\begin{minipage}{0.86\linewidth}
+\textbf{a}\\[-2pt]
+\includegraphics[width=\linewidth]{fig_D0_dosetrain.pdf}\\[4pt]
+\textbf{b}\\[-2pt]
+\includegraphics[width=\linewidth]{fig_E1_phaseclock.pdf}
+\end{minipage}
 \caption{\label{fig:sampling}The dose train as the identification experiment. (a) The delivered
 increment and the marker over successive infusions, with monthly draws across dose cycles and
 draws at the dose interval, which all fall at one phase. (b) Where 25 draws of each schedule
 land in the dose cycle: at the 14-day dose interval every draw falls at one phase, including when
 sampling starts on therapy; a 14.5-day step reaches 25 of 28 phases (89\% of one lap; over a full
 two-year record, 51 visits, it laps 1.8 times); monthly (30.4-day) and phase-spread (visits aimed at evenly spaced points of the cycle) schedules
-cover the cycle. Both panels are at normal capacity. \note{Redraw as one two-panel figure at
-print size.}}
+cover the cycle. Both panels are at normal capacity.}
 \end{figure}
 
 \subsection*{The sampling rules hold across published model structures; the value of
@@ -270,20 +272,19 @@ To test whether the rules depend on our model, we generated records with the two
 pharmacokinetic/pharmacodynamic model of Attarwala et al.~\cite{pkpd_translational}, in which the
 marker responds instantly to the delivered enzyme, and the turnover model of Gao et
 al.~\cite{gao2025acop}, in which it follows the enzyme with a delay, as ours does, and analysed them
-with our model (Supplementary Table S1). The sampling advice held under both: the ranking of
+with our model (Supplementary Table~\ref{S-stab:structures}). The sampling advice held under both: the ranking of
 schedules was unchanged, and the two recommended designs agreed to within about 3\%.
 
-The value of $\theta$ did not hold. Under the algebraic structure as published $\theta$ is not
+The estimate of $\theta$, by contrast, depended on the structure. Under the algebraic structure as published $\theta$ is not
 identifiable (three of four plausible ways of adding the diet load to it leave it so; one restores
 it). Fitting our model to its records returned $\hat\theta$ 1.3--2.0 times too high at our dose and
 4--20 times too high at a dose calibrated to the falls the trial reports (with our priors on $k_e$
 and the unrecorded load; several times more without them), while the fit can miss the data by under
-a fifth of the measurement noise: nothing signals the error. Under the turnover structure $\theta$
-is identifiable, and on the recommended schedules our model misses the data by two to three times the noise, a mismatch that
-shows.
+a fifth of the measurement noise, so that nothing in the fit signals the error. Under the turnover structure $\theta$
+is identifiable, and on the recommended schedules our model misses the data by two to three times the noise, a mismatch large enough to be noticed.
 
-The two families are cheap to tell apart. In the algebraic structure the marker falls the moment
-the enzyme arrives; in ours it has barely moved a few minutes later. One blood draw about 3 minutes
+The two families can be told apart with one extra blood sample. In the algebraic structure the marker falls the moment
+the enzyme arrives; in ours it has barely moved a few minutes later. A draw about 3 minutes
 after an infusion therefore separates the two by 16.3 standard deviations of the 5\% assay noise
 (9.7 at 15 minutes, 0.68 at one hour). It rules out a family of structures, not every
 alternative. The design rules can be trusted under the structures tested, while any estimate of
@@ -293,8 +294,8 @@ $\theta$ is relative to the assumed structure.
 Across capacities, the monthly design reaches the target only between 82\% and 627\% of normal
 (Fig.~\ref{fig:identifiability}a), with its best precision, 0.123, at 212\%. At 5\% of normal,
 typical of severe PA, it is 3.07, fifteen times the target. Sampling fifteen times
-more densely moves the lower edge only from 82\% to 75\%: the limit is the physiology, not the
-schedule.
+more densely moves the lower edge only from 82\% to 75\%, so more frequent blood draws cannot make
+up for the small share of the load that the patient's own enzyme carries.
 
 Below about half of normal, a higher estimate of capacity is offset almost exactly by a lower $k_e$
 (Fig.~\ref{fig:identifiability}b), so the data cannot tell the two apart. The profile likelihood at
@@ -328,7 +329,7 @@ of the load and the other route 84\%, and the enzyme's share is what is left aft
 other route's. A 1\% error in the large share is therefore a 5\% error in the small one, as when a
 shared bill is split by subtraction and every error in the largest item lands on the smallest. The
 two estimates are correlated at $-0.99$: any $\theta$ from zero to twice the true value is matched
-by moving $k_e$ only about 20\% either way (Supplementary Fig.~S1). Measuring the other exit does not close the gap: an
+by moving $k_e$ only about 20\% either way (Supplementary Fig.~\ref{S-sfig:pencil}). Measuring the other exit does not close the gap: an
 intravenous $^{13}$C$_3$-propionate tracer that measures $k_e$ (to 5.4\%) leaves 0.45; adding an
 isotope-dilution measurement of the load, which alone barely helps (3.04), gives 0.44; and even
 exact knowledge of $k_e$ and of the unrecorded load leaves 0.29.
@@ -342,12 +343,12 @@ cell activity predicts whole-body capacity varies between patients: in the only 
 measured both in the same patients, in methylmalonic acidaemia~\cite{breath_test_mma}, this limits
 the precision to about 0.65 (0.50--0.80, depending on the assumed spread between patients). The
 breath test has the same problem, because the share of labelled propionate that reappears in
-breath is not calibrated for each patient. There is no third way: in the model the enzyme affects
-the body only through the metabolite it removes, which a test must either infer from levels,
-needing the other exit, or read directly, needing a calibration.
+breath is not calibrated for each patient. We found no third route: in the model the enzyme affects the body only through the metabolite it
+removes, which a test must either infer from levels, needing the other exit, or read directly,
+needing a calibration.
 
-How far the target is missed depends on the clearance structure; that it is missed without an
-unmeasured constant does not. In the saturable-clearance model, at a constructed operating point
+The size of the shortfall depends on the clearance structure, but in every structure we tested
+the target is reached only if a constant that has not been measured is supplied. In the saturable-clearance model, at a constructed operating point
 where the enzyme carries a larger share of the load, the precision is 0.29 (0.92 at that model's
 nominal constants), and the target is touched only when the route's maximal rate $V_e$ is supplied
 by the intravenous tracer and its half-saturation is known to about 30\%.
@@ -395,10 +396,10 @@ edge, the ceiling.
 
 The lower edge is met by every patient, whatever $\theta$, if the delivered enzyme alone stays
 above the critical capacity at the trough, its lowest point just before the next infusion
-(Methods, Eq.~\eqref{eq:trough}). For a given interval and dose this is a condition on one
+(\hyperref[sec:trough]{Methods}, Eq.~\eqref{eq:trough}). For a given interval and dose this is a condition on one
 quantity, the half-life of the PCC protein: the longer the delivered enzyme lasts, the more of it
 is left at the trough, so above a threshold, the crossing half-life, the interval is safe without
-knowing $\theta$. At the assumed dose (Methods), scaled so that every interval delivers the same
+knowing $\theta$. At the assumed dose (\hyperref[sec:model]{Methods}), scaled so that every interval delivers the same
 amount per day (a 21-day infusion is 1.5 times a 14-day one), the crossings are 2.62, 2.75 and 3.55
 days for intervals of 14, 15 and 21 days (Table~\ref{tab:spec}; Fig.~\ref{fig:margin}). Over the
 ranges we assumed for the unmeasured carnitine constants, the 21-day crossing spans 3.29--3.95
@@ -419,9 +420,9 @@ crossing is then only 64--71\% (56--60\% at the least favourable constants, 34--
 dose).
 
 Two qualifications apply. Against a stricter threshold that also allows for an illness, taken from
-the linear-clearance model (994\um; Methods), the crossings at the assumed dose are about 5.0, 5.2
+the linear-clearance model (994\um; \hyperref[sec:trough]{Methods}), the crossings at the assumed dose are about 5.0, 5.2
 and 6.3 days, and at 4.3 days the choice again depends on $\theta$. And estimating $\theta$ instead does not rescue the 21-day interval, even with both tracer
-measurements (Supplementary Section S6).
+measurements (Supplementary Section~\ref{S-si:s6}).
 
 The half-life, unlike $\theta$, can be measured: from the sponsor's population
 model~\cite{gao2025acop}, which may contain a human protein-decay term whose parameters are not
@@ -469,8 +470,8 @@ We simulated a late or skipped infusion in the carnitine model (half-life 4.3 da
 nominal constants) and recorded the highest metabolite level reached, as a multiple of the usual
 peak (Fig.~\ref{fig:tolerance}). Without illness, each day of delay adds about 10\% to the peak,
 which doubles after 6.5--9 days for patients with 0--5\% of normal capacity of their own. A skipped
-infusion raises the peak three to five times, with no lasting effect: the first cycle after
-resumption peaks about 7\% above usual, and the next is back within 1\%.
+infusion raises the peak three to five times, with no lasting effect (Supplementary
+Section~\ref{S-si:s7}).
 
 During an illness, modelled for illustration as 1.5 times the baseline load for 14 days from the
 day the infusion is due, the peak rises about 2.5 times even when the infusion is on time, four to
@@ -482,15 +483,14 @@ steeply.
 In the least favourable setting (the dose capped at the ceiling, $D=2672$\um, the least
 favourable carnitine constants and a 3.5-day half-life) the peak doubles after about 2.5 days of
 delay, or about 4.3 days at a 4.3-day half-life. Across the eight combinations we examined (assumed
-dose or $D=2672$\um, nominal or least favourable constants, half-life 3.5 or 4.3 days; Supplementary
-Table S2), the trough test of the previous section fails at a shorter delay than the peak takes to
+dose or $D=2672$\um, nominal or least favourable constants, half-life 3.5 or 4.3 days; Supplementary Table~\ref{S-stab:delays}), the trough test of the previous section fails at a shorter delay than the peak takes to
 double in six, all but the assumed dose at 4.3 days, and in the least favourable setting it fails
-even with the infusion on time for patients with little or no enzyme of their own. A ten times faster carnitine response ($k=10$; Methods) shortens doubling delays by under a day and raises late-infusion illness peaks by about 30\%
-(Supplementary Section S7).
+even with the infusion on time for patients with little or no enzyme of their own. A ten times faster carnitine response ($k=10$; \hyperref[sec:late]{Methods}) shortens doubling delays by under a day and raises late-infusion illness peaks by about 30\%
+(Supplementary Section~\ref{S-si:s7}).
 
 A day's delay therefore costs little in the model, while postponing an infusion by more than a day
 during an illness raises the peak steeply; whether to infuse during an illness remains a clinical
-decision. Dated delays have a second use: each is a natural experiment on the half-life.
+decision. Dated delays also carry information about the half-life.
 
 \begin{figure}[tbp]
 \centering
@@ -508,8 +508,9 @@ of normal; the illness curves stop where the metabolite passes the model's valid
 % =============================================================================
 \section*{Discussion}
 
-A therapy given as repeated infusions is an identification experiment that runs whether or not
-anyone analyses it. Simple rules carry its information into the record: sample across the dose
+Each infusion of an mRNA therapy is a known, dated input to the enzyme route, so the routine
+record of a treated patient already contains an identification experiment. Simple rules carry
+its information into the record: sample across the dose
 cycle, never at the dose interval, and record doses and intake accurately. With them residual
 capacity is measurable only near or above normal (82--627\% of normal), well above the range seen
 in PA; in severe PA no schedule or available measurement recovers it, because the patient's own
@@ -547,8 +548,7 @@ The linear-clearance model gives the non-enzymatic route 84\% of the load at 5\%
 than the urinary output of propionate metabolites measured in PA, a few per cent of estimated
 production~\cite{thompson1990fasting}. The analysis concerns the stable patient between crises.
 The prior on $k_e$ behind the 82--627\% band has no published source. The within-patient result was simulated in the linear-clearance model only, with a
-Cram\'er--Rao check in the saturable-clearance model (0.088 relative to $\theta$). The model has no
-propionyl-CoA state, so propionylcarnitine and 2-methylcitrate are not represented. The critical
+Cram\'er--Rao check in the saturable-clearance model (0.088 relative to $\theta$). The model has no propionyl-CoA state. The critical
 capacity rests on unmeasured carnitine constants (a factor of 2.1 across their ranges). The ``peak
 doubled'' yardstick, the illness and the conjugation rate $k$ are assumptions, and the immune
 response to fewer, larger infusions is outside the model. These are model-informed specifications
@@ -556,9 +556,10 @@ for an investigational drug, not clinical recommendations.
 
 The open points can be settled by measurement: the hepatic half-life of PCC, the delivered
 increment, the marker's serial variability in PA and a paired ex vivo and in vivo study of enzyme
-activity; the method itself can be applied to the trial's own dated record. In severe PA, residual
-capacity stays out of reach, but as long as the half-life lies above the crossing the interval
-decision does not need it: the half-life, the delivered dose and a well-kept record do.
+activity; the method itself can be applied to the trial's own dated record. In severe PA residual
+capacity cannot be measured from the record, but as long as the half-life lies above the
+crossing, the interval decision can rest instead on the half-life, the delivered dose and a
+well-kept record.
 
 \begin{table}[tbp]
 \centering\small
@@ -587,8 +588,27 @@ regimen, kidney function and antibiotic status steady between the two periods \\
 % =============================================================================
 \section*{Methods}
 
-\subsection*{Model}
-The metabolite level $m(t)$ (plasma 3-hydroxypropionate) obeys
+\subsection*{Model}\phantomsection\label{sec:model}
+\emph{Biological basis.} Propionyl-CoA is formed in the liver from the catabolism of the amino
+acids isoleucine, valine, methionine and threonine, from odd-chain fatty acids and from propionate
+made by gut bacteria~\cite{propionate_sources,pa_guidelines}. PCC, a mitochondrial enzyme,
+carboxylates it to methylmalonyl-CoA, which is converted further to succinyl-CoA and enters the
+tricarboxylic acid cycle~\cite{pa_guidelines}. When PCC is deficient, propionyl-CoA accumulates
+and is diverted to other products: 3-hydroxypropionate and 2-methylcitrate, which are measured in
+plasma, and propionylcarnitine, formed by conjugation with carnitine and lost in
+urine~\cite{pa_guidelines,carnitine_excretion_pa}. Acylcarnitines also compete with free carnitine
+for reabsorption in the kidney (shown in vitro for the rat renal carnitine
+transporter~\cite{octn2_renal_transport}), so a rising propionyl load drains the carnitine pool as
+well. The model condenses this pathway into one balance (Fig.~\ref{fig:overview}b): a single
+metabolite pool $m$, read as plasma 3-hydroxypropionate, fed by the propiogenic load and emptied
+by two exits, PCC (the patient's own capacity $\theta$ plus the enzyme $\Delta(t)$ made from the
+infused mRNA) and a non-enzymatic route $\alpha(m)$ that stands for carnitine conjugation and
+urinary loss. Propionyl-CoA itself, 2-methylcitrate and the separate kinetics of each product are
+not represented. All quantities, with their values and what each value rests on, are listed in
+Table~\ref{tab:params}; the full registry, with provenance, is Supplementary
+Table~\ref{S-stab:params}.
+
+\emph{Balance equation.} The metabolite level $m(t)$ obeys
 \begin{equation}
 \label{eq:balance}
 \dot m = L(t) + L_0 - \bigl(\theta+\Delta(t)\bigr)\,g(m) - \alpha(m),
@@ -599,8 +619,7 @@ with recorded load $L(t)$, unrecorded load $L_0$, residual capacity $\theta$ (no
 $\Delta(t)=D\sum_{k:\,t_k\le t} e^{-\lambda(t-t_k)}$ over past infusions at times $t_k$ ($D$ the
 jump at each fortnightly dose, assumed to be 6000\um, twice normal capacity, and not measured; we
 call it the assumed dose) with $\lambda=\ln2/t_{1/2}$ ($t_{1/2}=3.5$\,d in the identifiability and
-sampling analyses), and the non-enzymatic
-clearance $\alpha(m)$. The three hypotheses are
+sampling analyses), and the non-enzymatic clearance $\alpha(m)$. The three hypotheses are
 \begin{gather}
 \alpha_{\mathrm{carn}}(m)=\frac{R_0\,u}{u+\rho},\qquad
 u=\frac{m}{K_c+m},\qquad\rho=\rho_0\Bigl(1+\frac{m}{M_i}\Bigr);\\
@@ -620,25 +639,63 @@ doubles it, $R_0$ the constant replenishment and $k$ the conjugation rate. The c
 enters both equations with the same coefficient (one propionyl group leaves with one carnitine).
 Setting $\dot c=0$ gives $\alpha_{\mathrm{carn}}$ with $\rho_0=\delta_0/k$; the reduction is exact
 at every fixed point, so steady states, the tipping point and the critical capacity are computed
-on it, while dynamic simulations (late infusions) integrate the two-state system. The constants
-are $K_m=100$\,\textmu M, $K_c=100$\,\textmu M, $M_i=300$\,\textmu M and $\rho_0=0.5$, with
-$R_0$ set so that the non-enzymatic route alone peaks at 500\um\ against a baseline load of
-600\um, so that a patient with $\theta=0$ cannot be maintained; $R_0$ is re-derived whenever
-$K_c$, $M_i$ or $\rho_0$ moves. The intrinsic critical capacity $\thci$ is the value of $\theta$
-at which the stable state disappears at the baseline load (150.8\um). The model is used below
-$m\approx5.5M_i=1650$\,\textmu M. The conjugation rate is $k=1$, the model default, with $k=10$ as
-a sensitivity case.
+on it, while dynamic simulations (late infusions) integrate the two-state system. $R_0$ is set
+so that the non-enzymatic route alone peaks at 500\um\ against a baseline load of 600\um, so that
+a patient with $\theta=0$ cannot be maintained, and is re-derived whenever $K_c$, $M_i$ or
+$\rho_0$ moves. The intrinsic critical capacity $\thci$ is the value of $\theta$ at which the
+stable state disappears at the baseline load (150.8\um). The model is used below
+$m\approx5.5M_i=1650$\,\textmu M.
 
-\emph{Linear-clearance model.} $\alpha=k_e m$ with $k_e=5$\,d$^{-1}$, at the operating point
-$\theta=3000$\um\ (normal) and load 323\um.
+\emph{Linear-clearance model.} $\alpha=k_e m$, at the operating level $\bar m=10$\,\textmu M and
+normal capacity, where the enzyme route carries 273 of a load of 323\um.
 
-\emph{Saturable-clearance model.} $\alpha=V_e m/(K_e+m)$ with $V_e=400$\um\ (its maximal rate,
-not the linear $k_e$) and $K_e=300$\,\textmu M; the constructed operating point of the Results has $V_e=100$\um, below the untreated load, and a managed load of 220\um. When both exits saturate, $(\theta,K_m)$ and
-$(V_e,K_e)$ can be exchanged exactly unless an input varies one exit selectively; the infusions do
-so (Supplementary Section S1).
-\note{Check every constant against src/common/params.py and paper 02\_model, 03\_dynamic.}
+\emph{Saturable-clearance model.} $\alpha=V_e m/(K_e+m)$, with $V_e$ its maximal rate (not the
+linear $k_e$). When both exits saturate, $(\theta,K_m)$ and $(V_e,K_e)$ can be exchanged exactly
+unless an input varies one exit selectively; the infusions do so (Supplementary
+Section~\ref{S-si:s1}).
 
-\subsection*{Measurement and noise model}
+\begin{table}[tbp]
+\centering\footnotesize
+\caption{\label{tab:params}Model quantities, their values and what each value rests on. Assumed:
+chosen for illustration, with no measurement in patients; derived: fixed by other entries. The
+full registry, with the provenance of every entry, is Supplementary Table~\ref{S-stab:params}.}
+\begin{tabular}{@{}p{0.11\linewidth}p{0.33\linewidth}p{0.17\linewidth}p{0.32\linewidth}@{}}
+\toprule
+symbol & meaning & value & basis \\
+\midrule
+\multicolumn{4}{@{}l}{\emph{All models}}\\
+$\theta$ & residual capacity of the enzyme route & 3000\um\ (normal); $\le150$\um\ in PA & normal: assumed scale; PA: residual activity below 5\% of control~\cite{pcc_residual_activity} \\
+$K_m$ & half-saturation of the enzyme route, plasma level & 100\,\textmu M & assumed; not PCC's in vitro constant, 0.29\,mM~\cite{pcc_liver_kinetics} \\
+$D$ & jump in delivered enzyme at each fortnightly dose & 6000\um & assumed; marker falls by about two thirds at peak, more than the trial's reported falls~\cite{trial_phase12} \\
+$t_{1/2}$ & half-life of the delivered PCC & 3.5\,d (design); about 4.3\,d (likely hepatic) & 3.5\,d from the translational model~\cite{pkpd_translational}; 4.3\,d from mouse liver comparators~\cite{kim2012}; 3.6\,d in human fibroblasts~\cite{chandler1985} \\
+$T$ & interval between infusions & 14\,d & trial schedule~\cite{trial_phase12,gao2025acop} \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{Linear-clearance model (identifiability and sampling)}}\\
+$k_e$ & rate of the non-enzymatic route & 5\,d$^{-1}$ & assumed; no human measurement; a methylmalonic acid analogue bounds it from above~\cite{ke_mma_analogue} \\
+$\bar m$, $L$ & operating level; load at that level & 10\,\textmu M; 323\um & assumed; murine scale~\cite{pkpd_translational}, within 1.6-fold of the newborn cut-off~\cite{dbs_3hp_cutoff} \\
+$s_{\ln k_e}$ & prior on $k_e$ (sd of the log) & 0.8 (a factor of 2.2) & assumed; the target needs a factor of 2.67 or better \\
+CV & assay variability of the marker & 5\% & assumed \\
+$\sigma_L/L$ & error in the recorded load; its day-to-day variation & 5\%; 10\% & assumed; no weighed-intake study in PA \\
+$L_0$ (offset $b$) & unrecorded load, prior & 5\% of $L$ & assumed \\
+$m_{\mathrm{tol}}$ & tolerable metabolite level (illness threshold) & 40\,\textmu M & assumed convention \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{Carnitine model (dosing interval and late infusions)}}\\
+$s_{\mathrm{base}}$ & baseline propiogenic load & 600\um & assumed scale; sources of propionate measured~\cite{propionate_sources} \\
+$K_c$ & half-saturation of carnitine conjugation & 100\,\textmu M (25--800) & assumed; unmeasured \\
+$M_i$ & level at which acylcarnitine competition doubles carnitine loss & 300\,\textmu M (150--1200) & assumed; unmeasured; mechanism shown in vitro~\cite{octn2_renal_transport} \\
+$\rho_0$ & basal carnitine loss relative to conjugation & 0.5 (0.35--1) & assumed; below 1 from the direction of urinary carnitine data~\cite{carnitine_excretion_pa} \\
+$R_0$ & carnitine replenishment & 1122\um & derived: the route alone peaks at 500\um\ against a load of 600\um \\
+$k$ & conjugation rate & 1\,d$^{-1}$ (10 as a sensitivity case) & assumed; cancels from the steady state \\
+$\thci$ & intrinsic critical capacity & 150.8\um & derived \\
+-- & illness & 1.5 times the baseline load for 14 days & assumed, illustrative~\cite{muscle_catabolism} \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{Saturable-clearance model}}\\
+$V_e$, $K_e$ & maximal rate and half-saturation of the route & 400\um, 300\,\textmu M; constructed point 100\um\ at a load of 220\um & assumed \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{Measurement and noise model}\phantomsection\label{sec:noise}
 The plasma marker carries a 5\% assay coefficient of variation. The recorded load carries a 5\%
 error and a 10\% day-to-day variation. The unrecorded load $L_0$, entering the fits as an offset $b$, has a prior of 5\% of $L$,
 and $k_e$ a log-normal prior with standard deviation 0.8 on the log scale (a factor of 2.2); no
@@ -646,7 +703,7 @@ prior is placed on $\theta$ or $K_m$. Draws within the post-infusion settling wi
 first hour) are excluded from the steady-state fit.
 \note{Check against src/ core.py and paper 07\_design.}
 
-\subsection*{Identifiability analysis}
+\subsection*{Identifiability analysis}\phantomsection\label{sec:ident}
 We computed Fisher information and Cram\'er--Rao bounds on the log scale for
 $(\ln\theta,\ln K_m,b,\ln k_e)$, and profile likelihoods for
 $\theta$~\cite{profile_likelihood}. Because the Cram\'er--Rao bound is a local, symmetric
@@ -656,7 +713,7 @@ fail~\cite{boundary_lrt,boundary_bootstrap}. Results are medians over 24 simulat
 with their ranges. The target is $\operatorname{sd}(\ln\hat\theta)=0.20$.
 \note{Add curvature\_measures if nonlinearity diagnostics are reported in the SI.}
 
-\subsection*{Sampling design}
+\subsection*{Sampling design}\phantomsection\label{sec:sampling}
 Schedules compared: draws at the 14-day dose interval, every 14.5 days, monthly (30.4 days),
 two-monthly, and every two days. A schedule whose draws advance by $\epsilon$ in the dose cycle at
 each visit covers the cycle of length $T$ once after $n$ visits when $n\epsilon\ge T$ and $\epsilon$ is small compared with $T$ (the lap
@@ -671,7 +728,7 @@ precision for a 65\% cut in the trough, and a 28-day interval at the same delive
 6.5\% for an 87\% cut, about thirteen to one against the patient either way.
 \note{Sources: paper 06\_excitation, 07\_design.}
 
-\subsection*{Comparison with published model structures}
+\subsection*{Comparison with published model structures}\phantomsection\label{sec:structures}
 Records were generated with the algebraic $I_{\max}$ structure of Attarwala et
 al.~\cite{pkpd_translational} and with the turnover structure of Gao et
 al.~\cite{gao2025acop}, and analysed with the linear-clearance model. We compared the
@@ -681,7 +738,7 @@ trial~\cite{trial_phase12}, and computed how far one post-infusion draw at 3 min
 and one hour separates the two families.
 \note{Expand from paper A1\_supplementary (rem:structure\_relative) and 11\_scope.}
 
-\subsection*{Dosing interval: the trough condition}
+\subsection*{Dosing interval: the trough condition}\phantomsection\label{sec:trough}
 For a dose train of interval $\tau$ delivering the same amount per day as the fortnightly
 schedule, the increment at the trough is
 \begin{equation}
@@ -704,7 +761,7 @@ metabolite level of 40\,\textmu M (994\um), the crossings are longer, about 5.0,
 record allowed for jitter in infusion dates, missed doses and a supply gap.
 \note{Sources: t44, t46, t52, t53, t54. Define the illness-amplitude threshold as in the paper.}
 
-\subsection*{Late infusions}
+\subsection*{Late infusions}\phantomsection\label{sec:late}
 In the two-state carnitine model (Eq.~\eqref{eq:carn}), eight on-time infusions were followed by
 one late or skipped infusion and then by infusions every 14 days from it. The peak was taken over
 a window to 3 days after the late dose or, during illness, to the infusion after it. The delay at
@@ -713,36 +770,38 @@ corners of the carnitine constants, at $k=1$ and $k=10$, and stopped curves at t
 limit.
 \note{Source: t55.}
 
-\subsection*{Within-patient change}
+\subsection*{Within-patient change}\phantomsection\label{sec:change}
 Two windows of 104 draws evenly spaced over two years each (every 7.09 days, so that they drift through the dose cycle) were simulated, with $k_e$, $b$ and $K_m$ shared
 between them, and analysed with a difference test and a log-ratio test, using 400 simulated pairs
 per scenario.
 \note{Sources: t22, t24, t30, t42, t56.}
 
-\subsection*{Use of large language models}
-\note{Required by the journal; write it yourselves and keep it accurate. A starting point to edit:
-``Claude (Anthropic), used through Claude Code, assisted with writing and running analysis
-scripts, with checking reported numbers against script outputs and with drafting and editing the
-text. The authors reviewed all code and text and verified every number against the scripts'
-outputs.'' Add the versions used.}
-
-\subsection*{Software and reproducibility}
-\note{Python (NumPy, SciPy), symbolic checks; repository with run scripts and outputs; every
-number generated by a script.}
+\subsection*{Software and reproducibility}\phantomsection\label{sec:software}
+All simulations and analyses were written in Python 3.11 with NumPy, SciPy and Matplotlib.
+Structural identifiability was checked symbolically with SymPy, StructuralIdentifiability.jl
+(Julia), DAISY and SIAN (Maple). Every number in the text is produced by a script in the
+repository (Code availability), which also stores each script's output; Supplementary
+Section~\ref{S-si:s8} lists the script behind each headline number.
 
 % =============================================================================
 \section*{Data availability}
-\note{All data are simulated; deposit the generated records and outputs (e.g.\ Zenodo, with
-DOI).}
+This study used no patient data. All records analysed were simulated with the code described
+below; the simulated records and the outputs behind every figure and table are included in the
+repository.
 
 \section*{Code availability}
-\note{Repository and archived release with DOI; licence.}
+All code is available at
+\url{https://github.com/guidoputignano/system-identification-pa}. An archived release with a DOI
+will be deposited at Zenodo on acceptance.
+\note{Make the repository public and add a licence (for example MIT) before submission; update
+the URL if the repository is renamed.}
 
 \section*{Author contributions}
-\note{CRediT statement.}
+G.P.\ and A.A.\ contributed equally to this work. Both authors conceived the study, developed the
+model and the analysis, interpreted the results, and wrote and revised the manuscript.
 
 \section*{Competing interests}
-\note{Statement.}
+The authors declare no competing interests.
 
 \section*{Supplementary Information (outline)}
 \note{\begin{itemize}[nosep]

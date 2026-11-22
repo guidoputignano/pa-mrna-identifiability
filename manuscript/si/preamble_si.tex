@@ -1,0 +1,28 @@
+% Shared preamble for the Supplementary Information (included by supplementary.tex
+% and by any private test master). Section files in si/ contain no preamble.
+\usepackage[a4paper,margin=2.3cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
+\graphicspath{{fig/}{si/fig/}{../results/figures/}{../audit/brief_2026-10-01/pi_note/fig/}}
+\newcommand{\um}{\,\textmu M/d}
+\newcommand{\uM}{\,\textmu M}
+\newcommand{\thci}{\theta_{\mathrm{crit}}^{\mathrm{int}}}
+\newcommand{\dtr}{\Delta_{\mathrm{tr}}}
+\newcommand{\sdl}[1]{\operatorname{sd}(\ln #1)}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\theequation}{S\arabic{equation}}
+\captionsetup{font=small,labelfont=bf,labelsep=period}
+\captionsetup[figure]{name=Supplementary Figure}
+\captionsetup[table]{name=Supplementary Table}
