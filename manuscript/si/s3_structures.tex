@@ -1,0 +1,317 @@
+\section{Comparison with published model structures}
+\label{si:s3}
+
+Every estimate of residual capacity is made within a model. This section asks which of our
+conclusions survive when the records are generated not by our metabolite balance but by the two
+published pharmacokinetic/pharmacodynamic structures for mRNA-3927, and analysed, as a trial
+analyst would, with our linear-clearance model. The sampling advice survives; the value of
+$\hat\theta$ does not; and one blood draw a few minutes after an infusion tells our family of
+structures from the algebraic one. Supplementary Table~\ref{stab:structures} collects the
+numbers. All records are at normal capacity ($\theta=3000$\um).
+
+\subsection{The structures compared}
+\label{si:s3:structures}
+
+In our model the marker is the state of a flux balance: it relaxes towards the level at which
+the load is cleared by the enzyme, $(\theta+\Delta)\,m/(K_m+m)$, and by the non-enzymatic route,
+with a time constant of about 0.8\,h (Section~\ref{si:s2:firsthour}). Between infusions it is in
+quasi-steady state and obeys Eq.~\eqref{seq:qss}.
+% src: results/numbers/design.tex:110; manuscript/main.tex:591-602
+
+\emph{The algebraic structure} of Attarwala et al.~\cite{pkpd_translational} describes the
+synthesis of PCC protein from plasma mRNA with an indirect-response model and an effect
+compartment, and makes each marker a direct function of the enzyme, with no state of its own:
+\begin{equation}
+\label{seq:algebraic}
+m \;=\; E_0+\mathrm{base}\Bigl(1-\frac{I_{\max}\,E}{\mathrm{IC}_{50}+E}\Bigr),
+\end{equation}
+where $E$ is the enzyme, $E_0$ a floor that the therapy cannot remove, base the part of the
+marker it can suppress, $I_{\max}$ the maximal inhibition and $\mathrm{IC}_{50}$ the enzyme level
+of half-maximal effect. Two of its constants transfer to our setting unchanged: $I_{\max}$, fixed
+at 0.999 in the original fit, and the ratio $E_0/\mathrm{base}=0.0987/60.1$. Its
+$\mathrm{IC}_{50}$ (37.5\,\textmu g/g) is a liver protein concentration, whereas $\theta$ is a flux
+capacity, and the conversion between the two is not published, so $\mathrm{IC}_{50}$ on our
+enzyme axis was calibrated as described below.
+% src: audit/PHASE5_ROBUSTNESS.md:24-38,360-371,431-442,467-472; paper/claims.csv:42
+
+\emph{The turnover structure} is the indirect-inhibition model that Gao et al.\ used for
+3-hydroxy\-propionate and 2-methyl\-citrate in selecting the dose~\cite{gao2025acop}, a class also
+named in the Methods of Baek et al.~\cite{mrna_moa}. In it the marker is a state whose
+production the enzyme inhibits and whose loss is first order,
+\begin{equation}
+\label{seq:turnover}
+\dot m \;=\; k_{\mathrm{in}}\Bigl(1-\frac{I_{\max}\,E}{\mathrm{IC}_{50}+E}\Bigr)-k_{\mathrm{out}}\,m .
+\end{equation}
+Neither source publishes its equations or parameter values, so we wrote down this standard form,
+used the same $I_{\max}$, and calibrated $\mathrm{IC}_{50}$ and $k_{\mathrm{out}}$ to our operating
+point.
+% src: audit/PHASE5_ROBUSTNESS.md:68-90,401-422; audit/k2_structures.py:1-52; paper/claims.csv:42
+
+In both structures we set $E=\theta+\Delta(t)$, with the dose train of Section~\ref{si:s2:setting}
+($D=6000$\um\ every 14 days, half-life 3.5\,d), so the comparison concerns how the marker
+responds to the enzyme, not the pharmacokinetics of the mRNA. Neither published structure
+contains a substrate load: the algebraic structure was fitted in mice on a fixed diet, and the
+turnover structure is described only by name. Where the load enters is therefore our assumption.
+In the turnover structure we took it as the marker's production rate, $k_{\mathrm{in}}=L+b$. In the
+algebraic structure we scaled the whole marker by $(L+b)/L$, so that at fixed enzyme the marker is
+proportional to the substrate supply; Section~\ref{si:s3:load} examines the alternatives.
+% src: audit/k2_structures.py:21-33,100-103; audit/PHASE5_ROBUSTNESS.md:454-463
+
+Each structure was calibrated against itself. The untreated marker was placed at our operating
+level (10\uM\ at $\theta=3000$\um), and $\mathrm{IC}_{50}$ was chosen so that the marker falls by a
+target fraction between the untreated enzyme and the steady-state peak of the treated enzyme, a
+3.13-fold increase. Each target is met by two values of $\mathrm{IC}_{50}$, and both were kept. A
+60\% fall stands for our assumed dose, which gives 66\% at the peak; 30\% and 20\% stand for a dose
+calibrated to the mean falls in 3-hydroxypropionate reported in the trial, the largest of which is
+29\%~\cite{trial_phase12}. For the 60\% target the two roots are $\mathrm{IC}_{50}=63.75$ and
+1167\um\ in the algebraic structure and 22.93 and 1230\um\ in the turnover structure. The two roots
+can imply very different marker memories: at the 30\% target, $k_{\mathrm{out}}$ of the turnover
+structure is either 0.058\,d$^{-1}$ (a marker half-life of 12 days) or 25.8\,d$^{-1}$ (39 minutes).
+The published inhibition shape also limits how far the marker can fall for this increase in
+enzyme, at most 65.65\% in the turnover structure and 64.13\% in the algebraic structure with its
+published floor, whatever $\mathrm{IC}_{50}$. Our assumed dose gives 64.9\% at the first peak and
+66.4\% at the steady-state peak, beyond what either published shape can produce, which is an
+independent sign that the assumed dose is high (Section~\ref{si:s2:record}).
+% src: audit/k2_structures.py:120-167; audit/PHASE5_ROBUSTNESS.md:264-288,474-494,526-529; results/tables/tab_S_dosesens.tex:5
+
+\subsection{Records and fits}
+\label{si:s3:fits}
+
+Records of 12 visits were generated on five schedules: at the dose interval from the start of
+therapy, at the dose interval for a patient already on therapy, every 14.5 days, monthly and
+phase-spread, with intake varying 0, 2 or 10\% from day to day and 8 intake records for each
+setting. Each record was fitted with the linear-clearance model by variable projection, under the
+priors of the main analysis (standard deviation 0.8 on $\ln k_e$, 5\% of the load on $b$; none on
+$\theta$ or $K_m$). Noiseless records isolate the misfit due to structure; records with the 5\%
+assay noise show what an analyst would see. Misfit is reported as the root-mean-square residual in
+units of the ordinate noise, $\sigma=22.0$\um. For a correct model fitted to 12 noisy draws with four
+parameters, the expected value is $\sqrt{8/12}=0.816$. As a control, our model fitted to its own
+records recovers $\theta$ exactly on every schedule (residual below $3\times10^{-13}\sigma$), except
+at the dose interval for a patient already on therapy at a constant load, where the design is
+exactly singular (Section~\ref{si:s2:aliasing}) and $\hat\theta$ goes to the estimator's lower
+bound.
+% src: audit/PHASE5_ROBUSTNESS.md:498-509,598-602,637-650; audit/k2_structures.py:433-520; results/numbers/design.tex:107
+
+\begin{table}[htbp]
+\centering\small\setlength{\tabcolsep}{4pt}
+\caption{\label{stab:structures}Records generated by the published structures and analysed with
+the linear-clearance model, at normal capacity, 12 visits per record. Algebraic: the $I_{\max}$
+structure of Attarwala et al.~\cite{pkpd_translational}; turnover: the indirect-inhibition
+structure of Gao et al.~\cite{gao2025acop}; calibration, the marker fall between the untreated
+enzyme and the treated peak to which $\mathrm{IC}_{50}$ (\textmu M/d, on our enzyme axis) was
+fitted. (a)~Noiseless records at a constant load: recovered $\hat\theta/\theta$ on each schedule
+(dose int., at the dose interval from the start of therapy) and the residual of the monthly fit in
+units of $\sigma$; 0 (bound), $\hat\theta$ at the estimator's lower bound; ranges cover both
+$\mathrm{IC}_{50}$ roots. (b)~Records with 5\% assay noise, constant load, 60\% calibration:
+$\sdl{\hat\theta}$, median over 8 records; sing., singular information at every record.
+(c)~Four ways of adding the load to the algebraic structure, with $f=1-I_{\max}E/(\mathrm{IC}_{50}+E)$
+and $u=(L+b)/L$, at a 60\% calibration ($\mathrm{IC}_{50}=63.75$) and 10\% day-to-day intake
+variation: whether $\theta$ is identifiable in the generating structure; residual of the fit
+(monthly, phase-spread) on noiseless records and with noise (expected 0.816 for a correct model);
+$\hat\theta/\theta$ on noiseless monthly records with our priors and without them (medians over 8
+records).}
+\begin{tabular}{@{}llcccccc@{}}
+\toprule
+\multicolumn{8}{@{}l}{(a) recovered capacity and residual, noiseless records}\\
+\midrule
+generator & calibration & $\mathrm{IC}_{50}$ & dose int. & 14.5\,d & monthly & phase-spread & residual \\
+\midrule
+linear-clearance (control) & -- & -- & 1 & 1 & 1 & 1 & 0.000 \\
+algebraic & 60\% & 63.75 & 2.03 & 1.53 & 1.34 & 1.32 & 0.180 \\
+algebraic & 60\% & 1167 & 1.34 & 1.31 & 1.29 & 1.29 & 0.016 \\
+algebraic & 30\% & both & 4.30--11.4 & 4.29--6.67 & 4.29--4.81 & 4.29--4.67 & 0.001--0.248 \\
+algebraic & 20\% & both & 7.30--20.5 & 7.29--11.7 & 7.29--8.30 & 7.29--8.04 & 0.000--0.179 \\
+turnover & 60\% & 22.93 & 0 (bound) & $2.3\times10^{7}$ & $2.3\times10^{7}$ & $2.3\times10^{7}$ & 1.961 \\
+turnover & 60\% & 1230 & 0 (bound) & $1.7\times10^{7}$ & 12.1 & 16.7 & 2.469 \\
+\midrule
+\multicolumn{8}{@{}l}{(b) precision with assay noise, $\sdl{\hat\theta}$}\\
+\midrule
+generator & calibration & $\mathrm{IC}_{50}$ & dose int. & 14.5\,d & monthly & phase-spread & \\
+\midrule
+linear-clearance (control) & -- & -- & 7.20 & 0.2885 & 0.1893 & 0.1894 & \\
+algebraic & 60\% & 63.75 & 4.99 & 0.2861 & 0.1894 & 0.1900 & \\
+algebraic & 60\% & 1167 & 8.96 & 0.2912 & 0.1952 & 0.1955 & \\
+turnover & 60\% & 22.93 & sing. & sing. & sing. & sing. & \\
+turnover & 60\% & 1230 & 355 & sing. & 0.694 & 1.053 & \\
+\bottomrule
+\end{tabular}
+
+\vspace{1.2ex}
+\begin{tabular}{@{}llccccc@{}}
+\toprule
+\multicolumn{7}{@{}l}{(c) where the load enters the algebraic structure}\\
+\midrule
+ & & $\theta$ & residual, & residual, & \multicolumn{2}{c}{$\hat\theta/\theta$} \\
+\cmidrule(l){6-7}
+load enters & marker & identifiable & noiseless & with noise & with priors & without \\
+\midrule
+not at all (as published) & $E_0+\mathrm{base}\,f$ & no & 1.06, 1.27 & 1.23, 1.59 & 1.41 & inadmissible \\
+whole marker & $(E_0+\mathrm{base}\,f)\,u$ & no & 0.18, 0.18 & 0.80, 0.84 & 1.34 & 7.35 \\
+suppressible part only & $E_0+\mathrm{base}\,u\,f$ & yes & 0.22, 0.24 & 0.82, 0.88 & 1.35 & 7.73 \\
+floor only & $E_0\,u+\mathrm{base}\,f$ & no & 0.95, 1.15 & 1.14, 1.48 & 1.41 & 4.81 \\
+separate additive source & $E_0+\mathrm{base}\,f+\gamma u$ & no & 0.93, 1.13 & 1.13, 1.46 & 1.75 & 8.91 \\
+\bottomrule
+\end{tabular}
+% src: audit/PHASE5_ROBUSTNESS.md:522-529,549-556,577-585,1067-1090,1117-1134,1146-1156; audit/k8_recheck.py:221-255
+\end{table}
+
+\subsection{The sampling advice transfers}
+\label{si:s3:design}
+
+The ranking of schedules is the same under every structure tested. With assay noise, the monthly
+and phase-spread designs, the two schedules that cover the dose cycle within 12 visits, give
+0.189--0.196 under our model and under both calibrations of the algebraic structure, agreeing to
+within about 3\% (Supplementary Table~\ref{stab:structures}b). The 14.5-day schedule, which covers
+only 43\% of a lap in 12 visits, gives 0.286--0.291 under all three, and the dose-interval schedule
+5.0--9.0. Under the turnover structure the precision is either unavailable (singular information)
+or 0.69--1.05, but within the usable cells the ranking is unchanged. Results at 2\% and 10\%
+day-to-day intake variation differ from these by less than 2\% on the covering schedules.
+% src: audit/PHASE5_ROBUSTNESS.md:573-596; results/numbers/lattice.tex:13
+
+The degeneracy behind the aliasing rule also survives. On the dose-interval schedule for a patient
+already on therapy, the profile of the fit in $K_m$ stays flat across the whole range scanned
+(0.3 to $3\times10^4$\uM) for every generator, so the failure of that schedule is a property of a
+record whose draws all share one phase, not of our parametrisation. Breaking the period lock
+bounds $K_m$ under our model and under the algebraic structure, but under the latter the bounded
+interval is in the wrong place: 117--165\uM\ against a true 100\uM\ at the 60\% calibration.
+% src: audit/PHASE5_ROBUSTNESS.md:604-635
+
+\subsection{The value of \texorpdfstring{$\hat\theta$}{theta} does not transfer}
+\label{si:s3:value}
+
+Fitted to records of the algebraic structure, our model returns $\hat\theta$ 1.3--2.0 times the
+truth at the 60\% calibration (1.29--1.34 on monthly draws), 4.3--11.4 times at 30\% and
+7.3--20.5 times at 20\% (Supplementary Table~\ref{stab:structures}a). $K_m$ moves with it: at the 30\%
+calibration the fitted $K_m$ is 462--979\uM\ against a true 100\uM. Yet the noiseless residual of
+the monthly fit is at most 0.25$\sigma$ at any calibration, at the 60\% calibration it is below a
+fifth of $\sigma$ on every schedule (0.000--0.18), and with noise the residual is 0.78--0.88$\sigma$, against the 0.816
+expected of a correct model. The residual does not grow with the bias; it is smallest at the doses
+where the bias is largest. Nothing in the fit signals the error.
+% src: audit/PHASE5_ROBUSTNESS.md:522-571
+
+These figures depend on our priors, which shrink the bias rather than prevent it. On the same
+noiseless monthly records, removing the priors on $k_e$ and on the unrecorded load raises
+$\hat\theta/\theta$ from 1.34--1.75 to 4.8--8.9 across the ways of adding the load (5.5--8.4 with a
+second estimator), so the values above are the favourable case. Every admissible fit lies above
+the truth, so the direction of the bias does not depend on the estimator or the priors.
+% src: audit/PHASE5_ROBUSTNESS.md:1146-1166; audit/k8_recheck.py:221-255
+
+The reason is structural. With $E=\theta+\Delta$ and $q=1-I_{\max}$, Eq.~\eqref{seq:algebraic} at a
+fixed load is a M\"obius function of the increment,
+\begin{equation}
+\label{seq:moebius}
+m(\Delta)=\frac{P\Delta+U}{\Delta+V},\qquad
+P=E_0+\mathrm{base}\,q,\quad U=P\theta+(E_0+\mathrm{base})\,\mathrm{IC}_{50},\quad
+V=\mathrm{IC}_{50}+\theta ,
+\end{equation}
+so a record determines three numbers $(P,U,V)$, while the structure has four free parameters at
+fixed $I_{\max}$. For any $\theta$ between 0 and $V$, setting $\mathrm{IC}_{50}=V-\theta$,
+$\mathrm{base}=(U-PV)/\bigl(I_{\max}(V-\theta)\bigr)$ and $E_0=P-q\,\mathrm{base}$ reproduces the
+record exactly. Walking this family, $\theta$ runs from 3.06 to 3033\um, a factor of 990, while the
+record changes by at most $1.4\times10^{-14}$ in relative terms, with or without variation in the
+load. Under this structure $\theta$ is not imprecise but not identifiable, at any design and any
+number of visits; our estimator reports one point of the family, chosen by our parametrisation and
+priors. The same count applies to our model: its quasi-steady map,
+$\Delta(m)=A/m+B+Cm$ with $A=K_m(L+b)$, $B=L+b-\theta-k_eK_m$ and $C=-k_e$, carries three numbers
+for four parameters at a constant load, and day-to-day variation in the recorded load supplies the
+fourth (Section~\ref{si:s1}). The algebraic structure carries a free marker floor $E_0$ alongside a
+free amplitude base, which use up that fourth number; fixing $E_0=0$ or measuring
+$\mathrm{IC}_{50}$ independently makes $\theta$ identifiable again.
+% src: paper/sections/A1_supplementary.tex:84-101,115-123; audit/PHASE5_ROBUSTNESS.md:828-857,893-913,939-1014,1194-1230
+
+\subsection{Where the load enters}
+\label{si:s3:load}
+
+Because the algebraic structure has no load, whether $\theta$ is identifiable under it turns on a
+choice its source does not make. Supplementary Table~\ref{stab:structures}c lists four plausible
+ways of adding the load, with the structure as published (no load) for reference. At a varying
+recorded load, three of the four leave $\theta$ unidentifiable (the whole marker scaled by the
+load, the load lifting only the floor $E_0$, or the load as a separate additive source), and one
+restores it: a load that lifts only the suppressible part base. On the definitions of the original
+model (base, the marker amenable to suppression; $E_0$, the level not affected by the therapy) the
+last is arguably the most natural reading, but that is our judgement. At a constant load every
+choice leaves $\theta$ unidentifiable.
+% src: audit/PHASE5_ROBUSTNESS.md:1067-1115; paper/sections/A1_supplementary.tex:103-113
+
+The bias is above 1 for every choice (1.34--1.75 on noiseless monthly records,
+Supplementary Table~\ref{stab:structures}c; 1.32--1.76 on medians of noisy monthly and
+phase-spread fits), but its visibility is not. The residual stays near or below a fifth of $\sigma$ when the load
+scales the whole marker (0.18) or only its suppressible part (0.22--0.24), and with noise it is
+then indistinguishable from the 0.816 of a correct model (0.80--0.88). When the load enters
+through the floor, as an additive source, or not at all, the noiseless residual is about one
+$\sigma$ (0.93--1.27) and the residual with noise 1.13--1.59, which an analyst could detect as an
+excess over the expected value.
+% src: audit/PHASE5_ROBUSTNESS.md:1117-1144,1152-1156
+
+\subsection{The turnover structure}
+\label{si:s3:turnover}
+
+Under the turnover structure $\theta$ is identifiable at a constant load with no outside
+information. Its forcing term in Eq.~\eqref{seq:turnover} is again a ratio of first-degree
+functions of the increment, $(q\Delta+W)/(\Delta+V)$ with $W=q\theta+\mathrm{IC}_{50}$ and
+$V=\theta+\mathrm{IC}_{50}$, but with no free scale in front of it, since $k_{\mathrm{in}}$ is the
+recorded load; so $W$ and $V$ give $\theta=(V-W)/I_{\max}$, and because the marker is a state its
+transients fix $k_{\mathrm{out}}$ separately. Moving $\theta$ away from the truth while holding $V$
+and re-optimising $k_{\mathrm{out}}$, the nearest admissible alternative (2970\um) fits $2.8\times10^9$
+times worse than the truth. The marker state supplies the fourth number, and there is no free
+marker scale to use it up.
+% src: audit/PHASE5_ROBUSTNESS.md:844-857,915-933,976-1000
+
+Our model cannot absorb this structure, and the recommended schedules show it. On the 14.5-day,
+monthly and phase-spread schedules the noiseless residual is 2.0--2.6$\sigma$ and $\hat\theta$ runs
+away, to 12 to $2.3\times10^{7}$ times the truth, into the limit where the enzymatic term becomes
+indistinguishable from the linear route. On the dose-interval schedules the residual is small
+(0.13--0.62$\sigma$ from the start of therapy) and $\hat\theta$ collapses to zero instead. Draws at the
+dose interval therefore hide a turnover truth and report no capacity, while draws across the cycle
+expose it.
+% src: audit/PHASE5_ROBUSTNESS.md:522-547
+
+\subsection{One draw after an infusion}
+\label{si:s3:draw}
+
+Our model and the algebraic structure can share the whole steady map and still differ in time. In
+ours the marker is a state that relaxes towards its new level with time constant
+$\bigl((\theta+\Delta)\,g'(m)+k_e\bigr)^{-1}$, $g(m)=m/(K_m+m)$, about 0.8\,h before an infusion and
+shorter after it; in the algebraic structure the marker follows the enzyme instantly. Just after an
+infusion the delivered enzyme jumps to its peak: the algebraic marker drops at once to its new
+level, while ours has barely moved. To isolate this difference we calibrated an algebraic marker
+to agree with our model at both ends of the transient, the trough before the infusion and the
+settled level after it, so that the two share the steady map exactly and differ only in how they
+travel between levels. With a 5\% assay coefficient of variation applied at each draw's level, one
+draw separates them by 16.3 standard deviations 3 minutes after the infusion, 9.7 at 15 minutes,
+4.4 at 30 minutes, 0.68 at one hour and 0.01 at two hours. A single draw gives at least three
+standard deviations at any assay precision up to 20\%; at a deliberately poor 40\% it takes five
+draws spread over the first hour. These values are for the linear-clearance model at normal
+capacity.
+% src: results/numbers/structure.tex:4-9; paper/sections/08_specification.tex:71-100; audit/t7_structure_transient.py:118-215
+
+The window is, if anything, earlier in the carnitine model. Over one hour carnitine moves only
+2.9\% of the way to its new value, so during the transient the conjugation route acts at the
+pre-infusion carnitine level, and the relaxation time at matched capacity is 0.555\,h (0.587\,h
+with carnitine eliminated at equilibrium) against 0.81\,h in the linear-clearance model. Draw
+times designed on the linear-clearance model would therefore sample late; draws in the first 15
+minutes carry almost all of the information. Such a draw belongs outside the steady-state fit
+(Section~\ref{si:s2:firsthour}) but inside the protocol.
+% src: results/numbers/structure.tex:3,10-11; results/numbers/design.tex:110; paper/sections/08_specification.tex:93-100
+
+The draw rules out a family of structures rather than identifying one. It rejects the algebraic structure and any
+other in which the marker has no relaxation of its own, under which $\theta$ is not identifiable
+from a marker record at any design. It does not separate our model from a structure whose marker
+is also a state but whose steady map differs; we did not compute it for the turnover structure,
+against which the routine record itself already shows the misfit
+(Section~\ref{si:s3:turnover}).
+% src: paper/sections/08_specification.tex:84-91; paper/sections/11_scope.tex:295-306; audit/t7_structure_transient.py:166-186
+
+\subsection{What follows}
+\label{si:s3:follows}
+
+Across the structures tested, the design rules hold: sample across the dose cycle, never at the
+dose interval, and the monthly and phase-spread schedules give the same precision to within about
+3\%. A value of $\hat\theta$ is a statement about a model as much as about a patient. Under the
+algebraic structure $\theta$ is not identifiable, a fit of our model returns it 1.3 to 20.5 times too
+high with priors and several times higher without them, and in the most natural ways of adding the
+load the fit gives no warning. Goodness of fit cannot detect a wrong structure that fits well, so
+the check has to come from outside the routine record. The draw about 3 minutes after an infusion
+(Tier~1 of the main text's data specification) is that check for the algebraic family. The same
+caveat applies to the $K_m$ the record recovers (Section~\ref{si:s2:record}).
+% src: paper/sections/A1_supplementary.tex:125-136; paper/sections/11_scope.tex:295-306; audit/PHASE5_ROBUSTNESS.md:522-602
