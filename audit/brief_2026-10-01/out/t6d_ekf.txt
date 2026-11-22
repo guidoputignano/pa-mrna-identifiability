@@ -1,0 +1,131 @@
+====================================================================================================
+  ITEM 5. THE ONE-PASS EKF + RTS OF t6: DIAGNOSIS AND FIXED VARIANTS
+====================================================================================================
+
+  0. REPRODUCTION ON t6'S DRAWS (default_rng(1), first 80 replicates, y then x0)
+   bench A: t6.est_ekf on these draws: bias +0.146, RMSE 1.650, robust 1.629;  t6 printed: +0.146, 1.650, 1.629
+            this file's copy of the filter equals t6.est_ekf to 0.0e+00 (max |dx|)
+            box-plot of ln(th_hat/th) as t6 draws it: quartiles -1.40 / +1.14, whiskers -4.51 to +2.94; max |e| 4.51
+   bench B: t6.est_ekf on these draws: bias -0.016, RMSE 3.248, robust 1.072;  t6 printed: -0.016, 3.248, 1.072
+            this file's copy of the filter equals t6.est_ekf to 0.0e+00 (max |dx|)
+            box-plot of ln(th_hat/th) as t6 draws it: quartiles -0.50 / +1.01, whiskers -2.56 to +2.26; max |e| 26.47
+   t6's printed rows for comparison:
+     bench A: (c) NLS on the ODE              2.82e+04     +1.120    4.258    4.381   0.0%     +0.002    2.255
+     bench A: (c) iterated EKF smoother            nan     +0.111    1.480    1.447   0.0%     -0.002    0.355
+     bench B: (c) NLS on the ODE              1.85e+02     -0.011    0.079    0.085   0.0%     +0.002    0.019
+     bench B: (c) iterated EKF smoother            nan     -0.013    0.328    0.082   0.0%     +0.003    0.940
+   NOTE t6.run_bench starts NLS from [truth, truth +- offsets]: its NLS sees the true
+   parameters as a start. The Kalman estimators start from the drawn prior centre.
+
+  1. COMPONENT CHECKS
+   bench A: theta 150, 49 samples, CV 5%
+     (1) init: d ln m0/dp at truth [-0.1729 -0.8877  0.1123  0.0033] (central diff. max rel. err 1.9e-09)
+         ln m_ss(drawn centre) - ln m0(true): sd over the draws 0.991, max |.| 4.511; t6's P0 gives it sd 0.30, independent of p
+         the tied prior gives sd(ln m0) = sqrt(J S J') = 0.840 (median over the drawn centres)
+     (2) q = 1e-10: random-walk sd accumulated over the record 6.9e-05
+     (3) log-state Jacobian F[0,:] against central differences of ln m1, 4 points: max rel. err 9.4e-06
+     (4) noiseless data at the truth: EKF+RTS sd(ln th) 1.40970 vs FIM+prior, m0 free 1.40970;  tied P0 1.39261 vs FIM+prior, m0 tied 1.39261
+         estimate error there +7.1e-10 and +9.3e-09
+         RTS: max over the 80 records of |smoothed p at t0 - filtered p at t_n| 7.6e-05
+     (5) _step's silent failure branch (returns F = 0) taken 0 times in 80 records
+         iterated measurement update (5 iterations) vs t6: max |d ln th_hat| 0.0e+00
+   bench B: theta 600, 193 samples, CV 1%
+     (1) init: d ln m0/dp at truth [-0.5367 -0.5996  0.4004  0.0035] (central diff. max rel. err 5.1e-10)
+         ln m_ss(drawn centre) - ln m0(true): sd over the draws 1.357, max |.| 3.959; t6's P0 gives it sd 0.30, independent of p
+         the tied prior gives sd(ln m0) = sqrt(J S J') = 1.143 (median over the drawn centres)
+     (2) q = 1e-10: random-walk sd accumulated over the record 1.4e-04
+     (3) log-state Jacobian F[0,:] against central differences of ln m1, 4 points: max rel. err 3.4e-04
+     (4) noiseless data at the truth: EKF+RTS sd(ln th) 0.08922 vs FIM+prior, m0 free 0.08922;  tied P0 0.08846 vs FIM+prior, m0 tied 0.08846
+         estimate error there +2.1e-09 and -1.1e-07
+         RTS: max over the 80 records of |smoothed p at t0 - filtered p at t_n| 9.6e-04
+     (5) _step's silent failure branch (returns F = 0) taken 0 times in 80 records
+         iterated measurement update (5 iterations) vs t6: max |d ln th_hat| 1.5e-06
+   RESULT: every check passed (Jacobian to 1e-3, RTS shift of p below 1e-2, no
+   integrator failure, IEKF update equal to 1e-5, and the asserted information
+   identity at the truth). With h(x) = x[0] linear in the state, an IEKF
+   measurement update cannot differ from t6's update except by rounding.
+
+  2. WHERE THE ERROR COMES FROM (bench B, t6's filter, t6's draws)
+   reported sd(ln th) median 0.018; actual RMSE 3.248; median |error|/reported sd 24.9
+   corr(error ln th, error ln Km) over the 80 records +0.798
+   records with |error ln th| > 2: 9; their errors (ln th, ln ke, ln Km, L0), and ln th - ln Km:
+      +26.47  +0.19  +29.21    -74.3    -2.74
+       -2.92  +0.31   +0.31    -60.3    -3.23
+       +4.60  +0.02   +5.98    -63.3    -1.38
+       +2.26  -0.20   +2.26     -4.5    +0.00
+       +4.21  +1.80   +7.92   -331.6    -3.71
+       -2.16  +0.24   -4.36     +1.2    +2.20
+       -4.34  +0.26   -4.34    -53.8    -0.00
+       -2.02  +0.34   -1.53    +13.4    -0.49
+       -2.56  +0.14  -17.76    -31.7   +15.20
+   of those 9: ln Km error > +2 (towards the linear limit, K_m >> m) in 4, < -2 (towards the saturated limit) in 3; of all 80 records: 5 and 24
+   started AT THE TRUTH, same data, prior width scaled (not fair comparators: the
+   prior is centred on the truth):
+   variant                                         bias    RMSE  robust  |e|>1  rep. sd RMSE/sd   steps
+   t6 EKF at truth, prior sd x 0.1               -0.003   0.028   0.026     0%    0.052    0.5     192
+   t6 EKF at truth, prior sd x 0.3               +0.030   0.093   0.085     0%    0.069    1.4     192
+   t6 EKF at truth, prior sd x 0.5               +0.104   0.261   0.171     0%    0.052    5.1     192
+   t6 EKF at truth, prior sd x 1.0               +0.041   0.503   0.336     5%    0.051    9.8     192
+   (d) cubature filter at truth, prior sd x 1    +0.254   1.186   1.360    42%    0.213    5.6     192
+
+  3. TUNING on separate draws (default_rng(2), 40 records, bench B), chosen by robust spread
+   variant                                         bias    RMSE  robust  |e|>1  rep. sd RMSE/sd   steps
+   (b) anneal: total 0.05 x prior var over first 25%  +0.329   1.793   0.864    32%    0.046   38.8     192
+   (b) anneal: total 0.05 x prior var over first 50%  -0.009   2.315   0.836    28%    0.110   21.1     192
+   (b) anneal: total 0.05 x prior var over first 80%  +0.032   5.320   1.287    42%    0.271   19.6     192
+   (b) anneal: total 0.2 x prior var over first 25%  +0.584 174.814   0.846    35%    0.067 2625.7     192
+   (b) anneal: total 0.2 x prior var over first 50%  +0.145  11.691   0.896    30%    0.105  111.6     192
+   (b) anneal: total 0.2 x prior var over first 80%  -0.092  92.048   1.007    35%    0.414  222.1     192
+   (b) anneal: total 1.0 x prior var over first 25%  +0.061   7.024   0.795    28%    0.061  114.2     192
+   (b) anneal: total 1.0 x prior var over first 50%  -0.347  11.548   1.116    28%    0.113  102.1     192
+   (b) anneal: total 1.0 x prior var over first 80%  -0.434  64.251   0.863    32%    0.579  111.0     192
+   (c) lag-1 iterated transition, 3 iterations   -0.347   3.119   1.128    40%    0.021  151.2     576
+   (c) lag-1 iterated transition, 5 iterations   -0.326   1.666   1.074    40%    0.017   97.3     960
+   chosen: (b) total 1.0 x prior var over first 25%; (c) 5 iterations
+
+  4. EVALUATION on t6's draws (80 records per bench). ln(th_hat/th): median bias,
+     RMSE, robust = half the 16-84% range, share with |error| > 1, median reported sd,
+     RMSE / reported sd, transition evaluations per record
+
+   BENCH A: FIM+prior sd(ln th) 1.393 (m0 tied), 1.410 (m0 free); FIM sd, no prior 383.313
+   variant                                         bias    RMSE  robust  |e|>1  rep. sd RMSE/sd   steps
+   t6 EKF+RTS (diag P0, q 1e-10)                 +0.146   1.650   1.629    56%    0.760    2.2      48
+   t6 EKF, q = 0, filtered end                   +0.146   1.650   1.629    56%    0.760    2.2      48
+   (c0) t6 + iterated measurement update         +0.146   1.650   1.629    56%    0.760    2.2      48
+   (a) tied P0                                   -0.058   1.569   1.539    55%    0.749    2.1      48
+   (a') tied P0 + iterated update on y0          +0.121   2.146   1.644    60%    0.770    2.8      48
+   (b) (a') + annealed parameter noise           -0.025   1.646   1.576    52%    1.094    1.5      48
+   (c) (a') + lag-1 iterated transition          +0.356   1.751   1.724    68%    0.668    2.6     240
+   (b)+(c)                                       +0.861   2.137   2.164    79%    0.954    2.2     240
+   (d) cubature filter, tied prior               -0.480   1.570   1.385    49%    0.992    1.6      48
+   prior centre alone (no data)                  +0.016   1.713   1.631    55%    1.500    1.1       0
+   t6 EKF started at the truth                   +0.001   0.485   0.395     6%    0.696    0.7      48
+   t6 printed: NLS on the ODE                    +1.120   4.258   4.381
+   t6 printed: iterated EKF smoother             +0.111   1.480   1.447
+
+   BENCH B: FIM+prior sd(ln th) 0.088 (m0 tied), 0.089 (m0 free); FIM sd, no prior 0.089
+   variant                                         bias    RMSE  robust  |e|>1  rep. sd RMSE/sd   steps
+   t6 EKF+RTS (diag P0, q 1e-10)                 -0.016   3.248   1.072    41%    0.018  178.6     192
+   t6 EKF, q = 0, filtered end                   -0.016   3.250   1.072    41%    0.018  178.7     192
+   (c0) t6 + iterated measurement update         -0.016   3.248   1.072    41%    0.018  178.6     192
+   (a) tied P0                                   -0.291   1.822   1.015    32%    0.026   71.2     192
+   (a') tied P0 + iterated update on y0          +0.025   6.403   1.043    35%    0.020  326.4     192
+   (b) (a') + annealed parameter noise           -0.012   3.828   0.890    32%    0.066   58.3     192
+   (c) (a') + lag-1 iterated transition          -0.376   2.403   0.659    22%    0.024   99.5     960
+   (b)+(c)                                       +0.683   2.850   1.519    62%    0.036   79.7     960
+   (d) cubature filter, tied prior               +0.057   1.379   0.900    29%    0.114   12.1     192
+   prior centre alone (no data)                  -0.034   1.458   1.353    48%    1.500    1.0       0
+   t6 EKF started at the truth                   +0.041   0.503   0.336     5%    0.051    9.8     192
+   t6 printed: NLS on the ODE                    -0.011   0.079   0.085
+   t6 printed: iterated EKF smoother             -0.013   0.328   0.082
+   t6.est_ieks re-linearises all 192 transitions per pass, up to 60 passes (up to 11712 evaluations)
+
+  5. VERDICT
+   best one-pass variant on bench B by robust spread: (c) (a') + lag-1 iterated transition
+     robust 0.659, RMSE 2.403, |e|>1 in 22%; against FIM+prior 0.088, t6 NLS RMSE 0.079, t6 IEKS robust 0.082
+     prior centre alone: RMSE 1.458, robust 1.353
+   criterion for 'fair': robust <= 1.5 x FIM+prior sd AND RMSE <= 2 x NLS RMSE -> NOT MET
+   one-pass variants with RMSE above the prior centre's on bench B: 8 of 9
+   t6's filter started at the truth: RMSE 0.503, robust 0.336 (prior centre error removed entirely)
+  wrote fig/t6d_ekf.png
+exit 0

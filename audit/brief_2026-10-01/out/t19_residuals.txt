@@ -1,0 +1,60 @@
+================================================================================================
+  ITEM 10.  RESIDUAL DIAGNOSTICS: IS THE MM SPECIFICATION RIGHT?
+================================================================================================
+
+  CAVEAT FIRST: all data is simulated from the one-compartment MM model,
+  so MM residuals are white by construction. This is a POWER analysis of
+  the diagnostic, not a test of the model. A real test needs real data.
+
+  (0) SANITY: residuals under the TRUE MM model are structureless.
+      monthly record, test rejection rate at 5% (should be ~5%):
+        vs marker 0.0%, vs time 7.0%, vs load 4.0%
+
+  (1) SATURABLE NON-ENZYMATIC CLEARANCE (k_e m -> Vne m/(Kne+m)).
+      monthly record (n=25): nearly blind.
+        Kne = 150: power vs marker 0%, vs time 2%, vs load 2%
+        Kne = 60: power vs marker 0%, vs time 3%, vs load 4%
+      Dense excursion: the residual-slope test is SIZE-INVALID at large N --
+      a noisy nonlinear regressor (errors-in-variables) inflates the false
+      positive rate. Compare the TRUE-MM rejection (should be ~5%) at each N:
+        5-min sampling (N=577):  TRUE-MM false positive vs time 100%, vs load 100%  <- the null
+           Kne=150: vs time 100%, vs load 100%
+           Kne=60: vs time 100%, vs load 100%
+        hourly sampling (N=49):  TRUE-MM false positive vs time 0%, vs load 0%  <- the null
+           Kne=150: vs time 0%, vs load 0%
+           Kne=60: vs time 64%, vs load 64%
+      So at the dense N the '100%' is mostly the EIV artifact; at the coarse,
+      size-valid N only STRONG saturation (Kne=60) genuinely rejects above the
+      null, while MILD saturation (Kne=150) is still undetected.
+
+  (2) LOAD MISMATCH: a 10%/20% linear drift of true load off its record,
+      beyond the constant bias b the model allows.
+      drift 10%: monthly power vs marker 0%, vs time 90%, vs load 7%
+      drift 20%: monthly power vs marker 0%, vs time 100%, vs load 6%
+
+  (3) SECOND COMPARTMENT: a slow exchange pool. At STEADY STATE the
+      input-output balance is unchanged, so the monthly record is BLIND
+      to it; it only shows in a transient as a second relaxation phase.
+      exchange rate kx = 0.5/d: peak |d ln m| gap single vs two-pool = 5% of the decay rate (0% at steady state; grows in the transient)
+      exchange rate kx = 2.0/d: peak |d ln m| gap single vs two-pool = 15% of the decay rate (0% at steady state; grows in the transient)
+
+  VERDICT (power of residual diagnostics, by mechanism and design):
+   - The residual-vs-MARKER test is degenerate here: the MM fit is itself
+     a marker model, so it removes marker-linear structure by construction
+     (0% even under a real misspecification). The vs-TIME and vs-LOAD
+     tests carry the power.
+   - SECOND COMPARTMENT: the monthly record is BLIND (identical steady-state
+     balance); it shows only in a transient's second decay phase.
+   - SATURABLE non-enzymatic clearance: the monthly record is nearly BLIND
+     (narrow on-therapy m-range looks linear; power ~5% at n=25). A load
+     EXCURSION carries the signal, BUT the residual-slope test is size-invalid
+     at large N (EIV inflates the true-MM false positive to ~100%). At a
+     size-valid N only STRONG saturation is genuinely detected; MILD
+     saturation (Kne=150) is not. The excursion is necessary, not sufficient.
+   - LOAD MISMATCH (a time-varying drift): the monthly record CAN catch it,
+     via residual-vs-time (88-100% power at a 10-20% drift). The constant
+     bias b absorbs only a constant offset, not a trend.
+   - So the load-record assumption is partly checkable now; a second
+     compartment and saturable clearance are not, short of a transient or
+     excursion. And with NO real data, this remains a power analysis, not
+     a test of the specification.

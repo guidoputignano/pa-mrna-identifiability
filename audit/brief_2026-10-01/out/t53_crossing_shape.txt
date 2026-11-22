@@ -1,0 +1,104 @@
+============================================================================================
+  ROUND 19. THE 21-DAY CROSSING UNDER MODEL C'S UNMEASURED SHAPE CONSTANTS
+============================================================================================
+
+  repo constants (K_c=100, M_i=300, rho_0=0.5): theta_crit_int = 150.775
+    crossing half-life: 14-day 2.617 d   15-day 2.754 d   21-day 3.5452 d
+
+  ONE AT A TIME (model_C/run.py shape_sensitivity, R0 re-derived each time):
+    constant   value theta_crit 21-d crossing  3.6 d clears?  4.3 d clears?
+         K_c      25      186.5        3.735d             NO            yes
+         K_c      50      167.3        3.636d             NO            yes
+         K_c     100      150.8        3.545d            yes            yes
+         K_c     200      137.4        3.468d            yes            yes
+         K_c     400      127.2        3.406d            yes            yes
+         K_c     800      119.5        3.358d            yes            yes
+         M_i     150      171.4        3.657d             NO            yes
+         M_i     212      160.3        3.598d            yes            yes
+         M_i     300      150.8        3.545d            yes            yes
+         M_i     424      142.8        3.500d            yes            yes
+         M_i     600      136.0        3.460d            yes            yes
+         M_i     849      130.3        3.425d            yes            yes
+         M_i    1200      125.5        3.396d            yes            yes
+       rho_0    0.35      149.7        3.539d            yes            yes
+       rho_0     0.4      150.1        3.542d            yes            yes
+       rho_0     0.5      150.8        3.545d            yes            yes
+       rho_0     0.7      151.5        3.550d            yes            yes
+       rho_0     0.9      152.0        3.552d            yes            yes
+       rho_0     1.0      152.1        3.553d            yes            yes
+
+  JOINT SWEEP over collapse_check's ranges (K_c 25-794, M_i 100-1259, rho_0 0.35-1.0;
+  300 sampled sets with a finite threshold, seed 0):
+    theta_crit_int            110.9 ..  235.6   (median 136.4)
+    14-day crossing           2.420 ..  2.962 d
+    15-day crossing           2.550 ..  3.111 d
+    21-day crossing           3.302 ..  3.968 d (median 3.462)
+    sampled sets in which the half-life clears the 21-day line:
+        measured 3.6 d       80%
+        liver estimate 4.3 d 100%
+    sampled sets in which 3.6 d clears the 14- and 15-day lines: 100% / 100%
+
+  THE EIGHT CORNERS OF THE BOX (R0 re-derived at each):
+       K_c    M_i rho_0 theta_crit   14-d   15-d   21-d  3.6 d clears 21 d?
+      25.1    100  0.35      246.1  3.001  3.151  4.014  NO
+      25.1    100  1.00      262.1  3.058  3.209  4.083  NO
+      25.1   1259  0.35      138.8  2.561  2.696  3.476  yes
+      25.1   1259  1.00      144.3  2.587  2.723  3.509  yes
+     794.3    100  0.35      132.9  2.533  2.666  3.441  yes
+     794.3    100  1.00      133.2  2.534  2.668  3.443  yes
+     794.3   1259  0.35      109.7  2.414  2.543  3.294  yes
+     794.3   1259  1.00      109.8  2.414  2.544  3.294  yes
+    box: theta_crit 109.7..262.1; worst 14-day 3.058 d, 15-day 3.209 d;
+         21-day 3.294..4.083 d; 3.6 d clears at 6 of 8 corners, 4.3 d at 8 of 8.
+
+    collapse: 12 random shape sets at a held calibration give theta_crit 113.5..158.1, factor 1.39
+  For comparison, the repo's own collapse_check (12 draws) spans theta_crit 113.5..158.1, a factor 1.39;
+  the 300 draws above span a factor 2.12, the box corners 2.39. Twelve draws understate the joint spread.
+
+  R-P's 'about 65-70 % likely to hold' recomputed at the crossing (centre 4.3 d; R-P's wide band
+  sd(ln) 0.53 and tight band sd(ln) 0.35):
+    repo constants             crossing 3.545 d -> P(liver half-life above it) = 64% wide, 71% tight
+    largest sampled crossing   crossing 3.968 d -> P(liver half-life above it) = 56% wide, 59% tight
+    worst box corner           crossing 4.083 d -> P(liver half-life above it) = 54% wide, 56% tight
+
+  THE PAPER'S OWN RANGES (tab_C_shape: K_c 25-800, M_i 150-1200, rho_0 0.35-1), corners,
+  R0 re-derived; crossings at the booked D = 6000 and at the largest admissible D = 2672:
+      K_c   M_i rho_0 theta_crit   D=6000: 14-d  15-d  21-d    D=2672: 14-d  15-d  21-d
+       25   150  0.35      218.2           2.90  3.04  3.89            3.76  3.93  4.91
+       25   150  1.00      232.1           2.95  3.10  3.95            3.84  4.01  5.01
+       25  1200  0.35      139.8           2.57  2.70  3.48            3.23  3.39  4.29
+       25  1200  1.00      145.5           2.59  2.73  3.52            3.27  3.43  4.34
+      800   150  0.35      127.1           2.50  2.64  3.41            3.14  3.29  4.18
+      800   150  1.00      127.3           2.51  2.64  3.41            3.14  3.29  4.18
+      800  1200  0.35      109.9           2.41  2.54  3.29            3.00  3.15  4.02
+      800  1200  1.00      110.0           2.42  2.55  3.30            3.00  3.15  4.02
+    nominal constants                    2.62  2.75  3.55            3.31  3.47  4.39
+    corners: theta_crit 109.9..232.1, a factor 2.11 (the paper's remark: 'inside a factor of 1.4')
+    ranges over the corners, D=6000: 14-d 2.41-2.95, 15-d 2.54-3.10, 21-d 3.29-3.95
+                             D=2672: 14-d 3.00-3.84, 15-d 3.15-4.01, 21-d 4.02-5.01
+    3.6 d clears the 21-day line (D=6000) at 6 of 8 corners; 4.3 d at 8 of 8
+    P(liver half-life above the 21-d, nominal, D=6000 crossing 3.55 d) = 64% wide, 71% tight
+    P(liver half-life above the 21-d, worst corner, D=6000 crossing 3.95 d) = 56% wide, 60% tight
+    P(liver half-life above the 21-d, nominal, D=2672 crossing 4.39 d) = 48% wide, 48% tight
+    P(liver half-life above the 14-d, worst corner, D=2672 crossing 3.84 d) = 58% wide, 63% tight
+    P(liver half-life above the 15-d, worst corner, D=2672 crossing 4.01 d) = 55% wide, 58% tight
+
+  THE PAPER'S CEILING APPLIED AT EACH INTERVAL (peak enzyme <= normal for the 5 % patient):
+  trough = 2850 exp(-lambda tau); crossing = tau ln2 / ln(2850/theta_crit). Same-rate scaling of
+  D = 2672 to 15 or 21 days exceeds this ceiling, so its 15- and 21-day crossings are optimistic.
+    14-day: nominal 3.30 d; over the paper's corners 2.98-3.87 d; P(liver above, nominal) 69% wide, 77% tight
+    15-day: nominal 3.54 d; over the paper's corners 3.19-4.15 d; P(liver above, nominal) 64% wide, 71% tight
+    21-day: nominal 4.95 d; over the paper's corners 4.47-5.80 d; P(liver above, nominal) 39% wide, 34% tight
+
+  READING. The 14- and 15-day conclusions do not depend on Model C's unmeasured
+  shape: even at the worst corner of the box their crossings are about 3.06 and 3.21 d,
+  under the measured 3.6 d. (They still need the liver half-life above those values.)
+  The 21-day conclusion at 3.6 d does depend on the shape. The crossing moves from about
+  3.29 to 4.08 d across the box (3.30-3.97 d over the 300 sampled sets), which is
+  wider than the 0.055 d (1.5 %) by which 3.6 d clears the line at K_c = 100. One constant
+  at a time, 3.6 d fails at K_c <= 50 or at M_i = 150; jointly it clears in 80 % of the
+  sampled sets and at 6 of the 8 corners. The liver estimate of 4.3 d clears the line
+  everywhere in the box. So the knife-edge has two blades: the true liver half-life, which
+  the data requests address, and the carnitine channel's shape, which no data in the
+  repository addresses.
+

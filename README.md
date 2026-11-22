@@ -221,3 +221,7 @@ The depletion mechanism in the dynamic model is a hypothesis. A plain two-state 
 model gives saturation, not decline; decline requires that replenishment itself be impaired
 as the metabolite accumulates. The check is whether free carnitine collapses during
 decompensation, which is measured routinely.
+
+## Licence
+
+The code in this repository is released under the MIT licence; see [LICENSE](LICENSE).

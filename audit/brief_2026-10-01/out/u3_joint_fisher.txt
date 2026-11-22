@@ -1,0 +1,158 @@
+# Output of audit/u3_joint_fisher.py (repo script, marker+breath joint Fisher), run unchanged this session.
+==========================================================================
+ANCHOR.  this script's marker block against g_design_common
+==========================================================================
+
+  9 comparisons, constant load and 10% load CV over 8 seeds
+  largest absolute difference: 0.000e+00
+  this script at the paper's own design: 0.1696
+  g_design_common at the same:           0.1696
+
+==========================================================================
+PART A.  where the breath row points, against where the record is
+==========================================================================
+
+  the record's information has an exact null direction (the
+  fibre, audit/u1) and a second, nearly-null one. What decides
+  whether breath helps is whether its row has weight on the
+  SECOND. Cosines in the scaled coordinates (ln theta, ln K_m,
+  b/L, ln k_e), with ln c projected out of the breath contrast.
+
+  theta =   3000   lambda: [4.96e-13 6.35e-04 1.19e+02 1.10e+04]
+      |cos(breath contrast,   null (fibre))| = 0.6508
+      |cos(breath contrast, second weakest)| = 0.3877
+      breath contrast = [-0.8104  0.2654  0.45    0.2654]
+  theta =    600   lambda: [-1.34e-13  6.33e-02  1.77e+02  9.00e+03]
+      |cos(breath contrast,   null (fibre))| = 0.8489
+      |cos(breath contrast, second weakest)| = 0.0820
+      breath contrast = [-0.6697  0.0114  0.7425  0.0114]
+  theta =    300   lambda: [1.61e-12 1.29e-01 2.14e+02 8.38e+03]
+      |cos(breath contrast,   null (fibre))| = 0.6322
+      |cos(breath contrast, second weakest)| = 0.2544
+      breath contrast = [-0.4806 -0.1982  0.8309 -0.1982]
+
+  READING. Weight on the null direction is what closes the fibre.
+  Weight on the second is what buys precision, and audit/u1 part D
+  showed an exact K_m (pure null direction) buys about 5%.
+
+==========================================================================
+PART B.  the joint precision against k, and the smallest k
+==========================================================================
+
+  breath CV 5% per reading, 25 monthly marker draws, constant recorded load
+      theta      conv       k=0      k=1      k=2      k=4      k=8     k=16     k=32     k=64   min k
+    ------------------------------------------------------------------------------------------------
+       3000  modelled     0.170    0.170    0.169    0.168    0.167    0.165    0.160    0.153       0
+       3000  measured     0.170    0.170    0.169    0.168    0.167    0.165    0.161    0.154       0
+        600  modelled     0.817    0.817    0.576    0.471    0.366    0.275    0.203    0.151      34
+        600  measured     0.817    0.817    0.578    0.473    0.369    0.279    0.208    0.157      36
+        300  modelled     1.612    1.612    0.823    0.629    0.469    0.349    0.263    0.206      70
+        300  measured     1.612    1.612    0.820    0.625    0.465    0.343    0.256    0.197      62
+
+  breath CV 10% per reading, 25 monthly marker draws, constant recorded load
+      theta      conv       k=0      k=1      k=2      k=4      k=8     k=16     k=32     k=64   min k
+    ------------------------------------------------------------------------------------------------
+       3000  modelled     0.170    0.170    0.169    0.169    0.169    0.168    0.167    0.165       0
+       3000  measured     0.170    0.170    0.169    0.169    0.169    0.168    0.167    0.165       0
+        600  modelled     0.817    0.817    0.730    0.666    0.576    0.471    0.366    0.275     133
+        600  measured     0.817    0.817    0.731    0.667    0.578    0.473    0.369    0.279     141
+        300  modelled     1.612    1.612    1.230    1.035    0.823    0.629    0.469    0.349     279
+        300  measured     1.612    1.612    1.228    1.032    0.820    0.625    0.465    0.343     246
+
+  breath CV 14% per reading, 25 monthly marker draws, constant recorded load
+      theta      conv       k=0      k=1      k=2      k=4      k=8     k=16     k=32     k=64   min k
+    ------------------------------------------------------------------------------------------------
+       3000  modelled     0.170    0.170    0.170    0.169    0.169    0.169    0.168    0.167       0
+       3000  measured     0.170    0.170    0.170    0.169    0.169    0.169    0.168    0.167       0
+        600  modelled     0.817    0.817    0.769    0.728    0.664    0.573    0.468    0.363     261
+        600  measured     0.817    0.817    0.769    0.729    0.665    0.575    0.470    0.366     277
+        300  modelled     1.612    1.612    1.379    1.225    1.028    0.817    0.623    0.465     547
+        300  measured     1.612    1.612    1.378    1.223    1.026    0.814    0.620    0.461     482
+
+==========================================================================
+PART B2.  the smallest k against the marker record's own length
+==========================================================================
+
+  monthly draws, constant recorded load, full likelihood.
+  k = 0 means the record already meets the gate. A dash means the
+  gate is not reached at 4000 breath readings.
+
+  breath CV 5%
+     n visits  years   theta=3000   theta=600   theta=300
+    --------------------------------------------------------
+           13    1.1            0          34          78
+           25    2.1            0          34          70
+           50    4.2            0          34          67
+          100    8.3            0          31          54
+          200   16.6            0          29          47
+
+  breath CV 10%
+     n visits  years   theta=3000   theta=600   theta=300
+    --------------------------------------------------------
+           13    1.1            0         134         312
+           25    2.1            0         133         279
+           50    4.2            0         132         266
+          100    8.3            0         123         213
+          200   16.6            0         114         185
+
+  breath CV 14%
+     n visits  years   theta=3000   theta=600   theta=300
+    --------------------------------------------------------
+           13    1.1            0         262         610
+           25    2.1            0         261         547
+           50    4.2            0         259         521
+          100    8.3            0         240         416
+          200   16.6            0         224         362
+
+
+==========================================================================
+PART C.  the same at the specification's 10% load CV, 24 seeds
+==========================================================================
+
+  medians with the seed range in brackets, breath CV 10%,
+  full likelihood ('modelled') only.
+
+  theta = 3000
+    k =   0     0.1699 [0.1684, 0.1709]   <- gate
+    k =   2     0.1698 [0.1682, 0.1708]   <- gate
+    k =   4     0.1696 [0.1681, 0.1706]   <- gate
+    k =   8     0.1693 [0.1677, 0.1703]   <- gate
+    k =  16     0.1687 [0.1671, 0.1697]   <- gate
+    k =  32     0.1675 [0.1659, 0.1685]   <- gate
+
+  theta = 600
+    k =   0     0.8107 [0.7753, 0.8199]
+    k =   2     0.7249 [0.6989, 0.7319]
+    k =   4     0.6618 [0.6415, 0.6673]
+    k =   8     0.5733 [0.5596, 0.5772]
+    k =  16     0.4688 [0.4607, 0.4713]
+    k =  32     0.3645 [0.3601, 0.3659]
+
+  theta = 300
+    k =   0     1.5830 [1.4285, 1.6424]
+    k =   2     1.2157 [1.1353, 1.2454]
+    k =   4     1.0248 [0.9714, 1.0444]
+    k =   8     0.8176 [0.7852, 0.8292]
+    k =  16     0.6248 [0.6058, 0.6318]
+    k =  32     0.4655 [0.4543, 0.4706]
+
+
+==========================================================================
+PART D.  breath alone, and the marker record alone, side by side
+==========================================================================
+
+  'breath alone' drops the marker block entirely, so the record
+  supplies nothing: that is the regime where the author's ratio
+  propagation lives, and it needs A, B and C from somewhere.
+  Reported as the joint number with n = 0 marker draws and the
+  same priors, which is why it is finite at all.
+
+      theta   record only   breath k=8 only   joint k=8  joint k=32
+    ----------------------------------------------------------------
+       3000         0.170               inf       0.169       0.167
+        600         0.817               inf       0.576       0.366
+        300         1.612               inf       0.823       0.469
+
+==========================================================================
+ANCHOR verdict: largest gap to g_design_common = 0.000e+00
+==========================================================================

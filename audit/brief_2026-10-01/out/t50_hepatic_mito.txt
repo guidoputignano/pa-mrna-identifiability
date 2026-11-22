@@ -1,0 +1,41 @@
+============================================================================================
+  ROUND 17. THE HEPATIC CORRECTION RUNS THE OTHER WAY (PCC is mitochondrial-matrix)
+============================================================================================
+
+  Compartment anchors (half-lives): fibroblast proteome median ~1.7 d; human fibroblast
+  PCC 3.6 d (slow tail); whole-liver median 2.4-3.6 d; liver-MITOCHONDRIAL median 4.26 d
+  (Kim 2012, PCC's compartment); human bulk-liver FSR ~4 d. Best estimate for human
+  hepatic PCC: 3.0-6.0 d, central ~4.3 d -- ABOVE the 3.5452 d crossing.
+
+  P(human hepatic PCC half-life < 3.5452 d crossing):
+
+                                estimate   P(below) MC   P(below) analytic
+      central 4.3 d, wide band sd(ln)=0.53          36%                36%
+      central 4.3 d, tight band sd(ln)=0.35          29%                29%
+      round-16 bridge centre r=1 -> 3.6 d (for contrast)          49%                49%
+
+  P(below) across the 3-6 d band endpoints (wide band sd=0.53):
+         central   P(below)    21d step
+           3.0d       62%   needs theta (Dtr21=71 vs 151)
+           3.6d       49%  free-for-all (Dtr21=161 vs 151)
+           4.3d       36%  free-for-all (Dtr21=316 vs 151)
+           5.0d       26%  free-for-all (Dtr21=518 vs 151)
+           6.0d       16%  free-for-all (Dtr21=873 vs 151)
+
+  READING: with the mitochondrial-compartment anchor the central estimate is ~4.3 d, above
+  the crossing, so P(hepatic below the crossing) is ~30% (29-36% over the band widths), not
+  ~50-65%. The 21-day safe-for-all step is therefore MORE likely to hold (~65-70%) than
+  round 15's "toward every threshold" framing implied -- the directional claim there was
+  wrong because it used the whole-liver median rather than the mitochondrial-matrix one, and
+  PCC is a matrix enzyme. BUT the band still straddles: a hepatic half-life below the 3.545 d
+  crossing (the lower part of the plausible 3-6 d band) still puts the 21-day step in the
+  needs-theta regime, and P(hepatic < crossing) is ~30% at the central 4.3 d, rising toward
+  ~50% only if the true value is near the 3.6 d fibroblast anchor. So the
+  correction reverses the direction without settling the side -- the decision is now more
+  likely free than round 15 said, but is still not resolved by the literature. The bridge
+  narrows the question (compartment context + four converging anchors put it in 3-6 d) but
+  does not settle it (no PCC-specific number in any supplementary table; within-tissue
+  spread 2-4 orders; cross-tissue R^2 only 0.3-0.65), so a MEDIAN-based ratio is only weakly
+  transferable to one protein. As in round 16, the only route that settles the side is to
+  READ lambda from the trial record (round 12: 7-18 sigma).
+

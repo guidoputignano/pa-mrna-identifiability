@@ -1,0 +1,42 @@
+============================================================================================
+  ITEM 4. THE PAPER'S AFFINE CONDITION (eq:affine), RUN ON THE REPO'S DATA
+============================================================================================
+
+  Test: sup_{m in M} |C(m) - (a+bm)| <= epsilon, (a,b) least-squares, epsilon the
+  per-draw flux measurement noise. PASS means the clearance is affine to assay
+  resolution over the band (the degeneracy holds exactly); FAIL means a quadratic
+  term is resolvable (curvature carries information the affine fit misses).
+
+  MODEL A (linear clearance; the paper's working model):
+    assay resolution epsilon (median per-draw flux noise) = 21.7
+    dosed record     m in [4, 35]     : sup|C-affine| =     1.5  ( 0.07 x eps)  PASS
+    up to resting bal m in [4, 250]   : sup|C-affine| =    26.1  ( 1.20 x eps)  FAIL
+    (Model A's k_e*m is exactly linear, so only the enzyme term g(m) curves;
+     over the low record band it is nearly affine.)
+
+  MODEL B (saturating clearance, ceiling k_e=100, managed L=220):
+    assay resolution epsilon = 14.4;  resting-balance m = 1273
+    dosed record      m in [3, 52]    : sup|C-affine| =     3.7  (   0.3 x eps)  PASS
+    record -> resting m in [3, 1273]  : sup|C-affine| =   108.0  (   7.5 x eps)  FAIL
+    near resting bal  m in [636, 1273]: sup|C-affine| =     2.4  (   0.2 x eps)  PASS
+
+  READING:
+  - In the DOSED RECORD (m ~ [3, 52]) the clearance is affine to within the assay
+    resolution: the paper's condition eq:affine PASSES, so the degeneracy the whole
+    identifiability analysis rests on genuinely holds on the data the model is fit
+    to. This is the first time the paper's own checkable condition has been
+    evaluated on the repo's records, and it confirms the premise.
+  - Over the full span from the record UP TO the resting balance (m ~ [3, 1273])
+    the condition FAILS by ~7x epsilon: that band crosses the saturation KNEE,
+    where C bends hardest, so a record wandering across it WOULD carry curvature
+    information and the FIM/degeneracy analysis would not apply. (The far
+    saturated tail alone, m ~ [636, 1273], is itself nearly flat and so passes --
+    the non-affinity is at the knee, not in the plateau. The failing object is the
+    transition the operating point would traverse, which is what matters.) The
+    record does not traverse it, because the dose train holds the operating point
+    low -- which is exactly why the affine premise is safe in the record despite
+    the factor-75 gap to the resting balance.
+  - So the affine hypothesis is not an assumption taken on faith here: it is
+    checkable, it has been checked, and it passes where the data live and fails
+    where they do not.
+

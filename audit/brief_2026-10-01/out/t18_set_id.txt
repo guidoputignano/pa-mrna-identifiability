@@ -1,0 +1,44 @@
+============================================================================================
+  ITEM 16.  SET IDENTIFICATION: WHAT IS RECOVERABLE WHEN THETA IS NOT
+============================================================================================
+
+  (A) THE ONE-SIDED BOUND ON THETA (set identification).
+      Untreated balance theta g(m) + k_e m = L: L = 322.73, m = 54.02,
+      L/m = 5.974/d. theta_max = (L - k_e,lo m)(K_m,hi + m)/m.
+                               k_e floor     Km<=100     Km<=150     Km<=500   Km<=10000
+               k_e >= 0 (non-negativity)       30.7%       40.6%      110.3%     2002.1%
+             k_e >= 1.04 (prior 95% low)       25.3%       33.5%       91.1%     1652.7%
+      With K_m from the record (pinned to ~6%), the usable bound is
+      theta <= 30.7% (non-negativity) / 22.4% (k_e prior). The LOWER
+      bound is 0: no record rules out a near-complete deficiency.
+      => The defensible deliverable is a CEILING on capacity, not a point.
+
+  (B) WHAT THE MONTHLY RECORD PINS, AND WHAT IT DOES NOT (median/24 seeds).
+      NOT recoverable (all proportional to theta):
+        sd(ln theta)                       = 3.045
+        sd(ln a),   a = theta g(m)^2       = 3.131
+        sd(ln flux theta*g(m0), untreated) = 3.085
+        sd(ln s),   s = fraction oxidised  = 3.078
+      RECOVERABLE (independent of theta's ill-conditioning):
+        sd(ln K_m)                         = 0.062   (~6%)
+        sd(ln b),   b = theta g'(m)+k_e    = 0.277   (the relaxation
+                    rate lambda at the operating point, ~28%)
+        best (ln theta, ln k_e) combination= 0.084   along
+                    [-0.22 ln theta -0.98 ln k_e] (k_e-dominated)
+      So the record identifies the LOCAL CLEARANCE CURVE (its slope b and
+      K_m), hence k_e, but not the capacity theta: the enzyme's own
+      curvature a = theta g^2 is swamped at this operating point. Neither
+      the flux nor the fraction oxidised is a reparameterisation that
+      escapes theta -- they ARE theta, up to the pinned g and L.
+
+  (C) COMPLETE-DEFICIENCY CHECK (asked in Task 5, answered here).
+      distinct theta across the 24 records: [150.0] -- all at 5% of normal.
+      NONE is a complete-deficiency (theta ~ 0) patient: the repository's
+      records are 24 intake draws of ONE simulated 5% patient (README).
+      If a theta ~ 0 patient existed at an untreated steady state, then
+      theta g ~ 0 and the balance gives k_e = L/m directly, with no
+      confounding -- a tight k_e prior at no procedural cost. But in the
+      parent model (models.ParamsC) a theta = 0 patient has NO steady
+      state (R0 is set so the alternative route alone peaks at 500 against
+      a baseline load of 600), so there is no such record to read, and the
+      counterfactual cannot be realised within this model.

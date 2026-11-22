@@ -1,0 +1,548 @@
+% =============================================================================
+%  Supplementary Section S6: dosing interval specification.
+%  Order: the trough of a dose train; the trough condition and the crossing half-life;
+%  the ceiling; crossings over the carnitine constants; evidence on the half-life;
+%  uncertainty in the half-life; a threshold that allows for illness; estimating theta
+%  instead; reading the half-life from the dated record.
+%  Sources: audit/brief_2026-10-01/pi_note/pi_note.tex (Result 4), figure_guide.tex
+%  (Figure 4), out/t44, t45, t46, t48, t50, t52, t53, t54; REPORT.md R-J to R-S.
+% =============================================================================
+\section{Dosing interval specification}
+\label{si:s6}
+
+This section derives the condition behind the dosing specification of the main text and
+reports the numbers on which it rests. The threshold, troughs and crossings use the carnitine
+model at its baseline load of 600\um\ (Section~\ref{si:s1-carn}). The threshold is the intrinsic
+critical capacity $\thci$, the least enzyme capacity at which a patient at that load still has a
+stable state (Eq.~\eqref{seq:s1-thcint}); at the nominal carnitine constants it is 150.8\um,
+about 5\% of normal. Residual capacity $\theta$ (normal 3000\um) enters only as an additive term,
+and the question throughout is when it can be left out of the decision. Two parts use the
+linear-clearance model instead: the threshold that allows for illness, and the estimates from
+simulated records in the last two subsections, whose records are generated in that model and
+judged against the carnitine model's threshold.
+% src: audit/brief_2026-10-01/out/t53_crossing_shape.txt:5 (theta_crit_int 150.775); manuscript/main.tex:386-389; audit/brief_2026-10-01/t45_on_therapy.py:88, t46_timing.py:63, core.py:63-65 (records anchored in the linear-clearance model, "A"); t46_timing.py:33-35 (theta_crit from the carnitine model)
+
+% -----------------------------------------------------------------------------
+\subsection{The trough of a dose train}
+\label{si:s6:trough}
+
+Let infusions be given every $\tau$ days, at $t_k=k\tau$. We hold the amount delivered per day
+equal to that of the fortnightly schedule, so that the jump in delivered capacity at each
+infusion is $D_\tau=D\,\tau/14$, with $D=6000$\um\ the assumed fortnightly jump; a 21-day
+infusion is then 1.5 times a 14-day one. By Eq.~\eqref{seq:s1-delta}, just before the
+infusion at $t=n\tau$, after $n$ infusions at $t_0,\dots,t_{n-1}$, the delivered increment is
+\begin{equation}
+\label{seq:s6-partial}
+\Delta\bigl((n\tau)^{-}\bigr)\;=\;D_\tau\sum_{j=1}^{n}x^{j}\;=\;D_\tau\,\frac{x\,(1-x^{n})}{1-x},
+\qquad x=e^{-\lambda\tau},\qquad \lambda=\frac{\ln2}{t_{1/2}} .
+\end{equation}
+The factor $x^{n}$ shrinks by $x$ with every infusion ($x=1/16$ at 14 days and a 3.5-day
+half-life), so the train settles within a few infusions to a periodic pattern with trough and
+peak
+\begin{equation}
+\label{seq:s6-trough}
+\dtr(\tau)\;=\;D\,\frac{\tau}{14}\,\frac{e^{-\lambda\tau}}{1-e^{-\lambda\tau}},\qquad
+\Delta_{\mathrm{pk}}(\tau)\;=\;D\,\frac{\tau}{14}\,\frac{1}{1-e^{-\lambda\tau}}
+\;=\;\dtr(\tau)\,e^{\lambda\tau}.
+\end{equation}
+The trough is reached just before each infusion and the peak just after it. Their ratio,
+$e^{\lambda\tau}=2^{\tau/t_{1/2}}$, depends only on how many half-lives the interval spans. The
+mean over a cycle, $D_\tau/(\lambda\tau)=D/(14\lambda)$, is the same at every interval, so
+lengthening the interval at the same daily amount lowers the trough and raises the peak without
+changing the average delivered enzyme. At a 3.5-day half-life the fortnightly train has
+$\dtr(14)=400$\um\ and $\Delta_{\mathrm{pk}}(14)=6400$\um, which reproduce to the decimal the
+dose train evaluated numerically in our code.
+% src: audit/brief_2026-10-01/out/t44_interval_decision.txt:4-5 (400.0, 6400.0 reproduce the repository's train); manuscript/main.tex:741-748 (eq:trough); REPORT.md:875 (reproduce delta() numerically to the decimal)
+
+The same-amount-per-day convention is a choice. If every infusion kept the size $D$ whatever
+the interval, the trough would be $14/\tau$ times the one above: at a 3.5-day half-life,
+324\um\ instead of 347\um\ at 15 days, and 2000 instead of 1000\um\ at 7 days, so the fixed size
+gives the smaller trough at every interval longer than 14 days and the larger one at every
+shorter interval.
+% src: audit/brief_2026-10-01/out/t44_interval_decision.txt:17-21 (rate vs fixed: 7 d 1000.0/2000.0; 15 d 347.4/324.3); the factor 14/tau is the ratio of D x/(1-x) to eq. seq:s6-trough
+
+Because $\dtr$ falls steeply as $\lambda$ rises, the trough is very sensitive to the half-life
+(Supplementary Table~\ref{stab:s6-trough}). Over half-lives from 2 to 7 days the fortnightly
+trough runs from 47 to 2000\um, a factor of 42, and at a 3.5-day half-life the 21-day trough
+(143\um) already lies below $\thci$.
+% src: audit/brief_2026-10-01/out/t44_interval_decision.txt:140-147 (47.2 -> 2000.0, factor 42); out/t48_lambda_literature.txt:40 (Dtr21 143 at 3.5 d)
+
+\begin{table}[tbp]
+\centering
+\small
+\caption{\label{stab:s6-trough}Delivered capacity left at the trough, $\dtr(\tau)$ (\um), at
+the assumed dose ($D=6000$\um\ per fortnight, scaled to the same amount per day at each
+interval), from Eq.~\eqref{seq:s6-trough}. The threshold it must clear for a patient with no
+enzyme of their own is $\thci=150.8$\um\ (nominal carnitine constants). Rows are the ends of the
+plausible range of the hepatic half-life (3 and 6\,d), the assumed design value used in the
+identifiability and sampling analyses (3.5\,d), the human fibroblast value (3.6\,d), the likely
+hepatic value (4.3\,d) and an intermediate value (5\,d).}
+\begin{tabular}{@{}llccc@{}}
+\toprule
+$t_{1/2}$ (d) & role & 14 days & 15 days & 21 days \\
+\midrule
+3.0 & lower end of the plausible range & 246 & 207 & 71 \\
+3.5 & assumed design value & 400 & 347 & 143 \\
+3.6 & human fibroblasts~\cite{chandler1985} & 434 & 379 & 161 \\
+4.3 & likely hepatic value & 702 & 629 & 316 \\
+5.0 & & 1006 & 918 & 518 \\
+6.0 & upper end of the plausible range & 1485 & 1380 & 873 \\
+\bottomrule
+\end{tabular}
+\end{table}
+% src: audit/brief_2026-10-01/out/t44_interval_decision.txt:142-144 (Dtr14 245.9, 400.0, 1006.0); out/t48_lambda_literature.txt:40-41 (3.5 d 400/347/143; 3.6 d 434/379/161); out/t50_hepatic_mito.txt:19-23 (Dtr21 71, 161, 316, 518, 873); pi_note/pi_note.tex:431 (Dtr14 702 at 4.3 d). Cells 3.0 d/15 d (207), 4.3 d/15 d (629), 5.0 d/15 d (918), 6.0 d/14 d (1485) and 6.0 d/15 d (1380) are evaluations of eq. seq:s6-trough at the stated inputs (not printed by a script); every printed cell is reproduced by the same evaluation.
+
+% -----------------------------------------------------------------------------
+\subsection{The trough condition and the crossing half-life}
+\label{si:s6:crossing}
+
+At constant load a stable state exists while the enzyme capacity exceeds $\thci$
+(Section~\ref{si:s1-carn}). Under therapy the capacity is $\theta+\Delta(t)$, which is lowest at
+the trough, so we require
+\begin{equation}
+\label{seq:s6-condition}
+\theta+\dtr(\tau)\;>\;\thci .
+\end{equation}
+A patient who meets Eq.~\eqref{seq:s6-condition} has a stable state at baseline load at every
+point of the dose cycle. The condition is quasi-static. It asks whether a stable state would
+exist if the capacity reached at the trough were held, and it does not follow the metabolite
+through the cycle. Supplementary Section~\ref{si:s7} integrates the two-state system through
+late infusions and compares the two criteria.
+
+Because $\theta\ge0$, an interval keeps every patient maintainable, whatever $\theta$, when the
+delivered enzyme alone clears the threshold, $\dtr(\tau)>\thci$. The margin of a patient with no
+enzyme of their own, $\mu(\tau)=\dtr(\tau)-\thci$, is the quantity plotted in the main text's
+margin figure. When it is negative, the interval is safe only for patients whose own capacity
+exceeds $\theta_{\mathrm{need}}(\tau)=\thci-\dtr(\tau)$, and the decision then needs $\theta$,
+which the routine record does not supply in severe PA (main text and Supplementary
+Section~\ref{si:s4}).
+
+For fixed $\tau$ and $D$, $\dtr$ increases strictly with the half-life, so there is exactly one
+half-life, the crossing $t_{1/2}^{\ast}(\tau)$, at which $\dtr(\tau)=\thci$. Writing
+$x=e^{-\lambda\tau}$, Eq.~\eqref{seq:s6-trough} gives $x=\thci/(\thci+D\tau/14)$, and hence
+\begin{equation}
+\label{seq:s6-cross}
+t_{1/2}^{\ast}(\tau)\;=\;\frac{\tau\,\ln2}{\ln\!\bigl(1+D\tau/(14\,\thci)\bigr)} .
+\end{equation}
+No iteration is needed. Above the crossing the interval is safe for every patient without
+knowing $\theta$; below it, whether the interval is safe depends on $\theta$. The crossing depends on the dose and the threshold only through their ratio
+$D/\thci$, and it lengthens as the dose falls or the threshold rises. At $D=6000$\um\ and the
+nominal constants it is 2.62, 2.75 and 3.55 days for intervals of 14, 15 and 21 days.
+% src: audit/brief_2026-10-01/out/t53_crossing_shape.txt:5-6 (2.617, 2.754, 3.5452 d); eq. seq:s6-cross is the closed form of the same root and reproduces these values
+
+At the assumed design half-life of 3.5 days, used in the identifiability and sampling analyses,
+the 15-day trough (347\um) clears $\thci$ by 197\um, so moving from 14 to 15 days would need no
+measurement of $\theta$. The 21-day trough (143\um) falls 7.9\um\ short, so the 21-day interval
+would be safe only for patients with at least 7.9\um\ of their own (0.26\% of normal), a level
+that the record cannot confirm.
+% src: audit/brief_2026-10-01/out/t46_timing.txt:5-6 (mu_long = theta_base - 7.9), :64-65 (347.4 > 150.8, margin +196.6); out/t54_dose_timing.txt:94 (theta_need 7.9, 0.26 %)
+
+% -----------------------------------------------------------------------------
+\subsection{The ceiling, and why the assumed dose breaks it}
+\label{si:s6:ceiling}
+
+The upper edge of the therapeutic window is the ceiling defined in Section~\ref{si:s1-eq}, a
+plausibility condition of the model that caps the delivered peak at $3000-150=2850$\um\ for a
+patient at 5\% of normal.
+% src: manuscript/main.tex:117-121,753-755 (ceiling as plausibility condition; delivered peak at most 2850)
+
+The assumed dose breaks this ceiling two- to threefold. On the fortnightly schedule at a 3.5-day
+half-life it takes a patient at 5\% of normal to $(150+6400)/3000=2.18$ times normal activity
+just after an infusion. At 4.3 days the delivered peak alone is about 6700\um\ (2.2 times
+normal) at 14 days and about 9300\um\ (3.1 times normal) at 21 days (Supplementary
+Table~\ref{stab:s6-rules}). The assumed dose also gives a larger fall in the marker than the
+trial reports (Supplementary Section~\ref{si:s2:record}; Supplementary Table~\ref{stab:params},
+row $D$). The ceiling and the reported falls are two independent reasons to think the assumed
+dose too high.
+% src: paper/sections/11_scope.tex:155-158 (2.18 times normal at 5 %; D = 2672); out/t44_interval_decision.txt:5 (6400); src/common/params.py:307-321 (D row: 62-66 %, trial falls -29, -3, -20, +5, -20 %, given in s2_sampling.tex and the registry); audit/brief_2026-10-01/pi_note/figure_guide.tex:478-484 (tops 6700 and 9300; 2.2x and 3.1x normal)
+
+Capping the dose at the ceiling means lowering the jump at each interval and half-life until the
+periodic peak equals 2850\um, $D_\tau^{\mathrm{cap}}=2850\,(1-e^{-\lambda\tau})$. On the
+fortnightly schedule at 3.5 days this is $D=2672$\um, the capped dose used in Supplementary
+Section~\ref{si:s7}; at 4.3 days it is about 2750\um\ for a 21-day interval, against 9000\um\ at
+the assumed dose. With the peak fixed, the trough is $2850\,e^{-\lambda\tau}$ and the crossing
+becomes
+\begin{equation}
+\label{seq:s6-capcross}
+t_{1/2}^{\ast,\mathrm{cap}}(\tau)\;=\;\frac{\tau\,\ln2}{\ln\bigl(2850/\thci\bigr)} ,
+\end{equation}
+which no longer depends on $D$. Equivalently, at the ceiling an interval keeps every patient
+maintainable only if it spans fewer than $\log_2(2850/\thci)$ half-lives, 4.24 at the nominal
+constants, so that the crossings are $14/4.24=3.30$, $15/4.24=3.54$ and $21/4.24=4.95$ days.
+% src: audit/brief_2026-10-01/out/t53_crossing_shape.txt:86-91 (trough = 2850 exp(-lambda tau); crossing = tau ln2/ln(2850/theta_crit); 3.30/3.54/4.95); paper/sections/11_scope.tex:158 (D = 2672); pi_note/figure_guide.tex:491-493 (about 2750 for a 21-day interval, against 9000)
+
+At a half-life of 4.3 days the two edges of the window can hold together at 14 days, where a
+peak at the ceiling still leaves 298\um\ at the trough. At 21 days they cannot. The delivered
+enzyme falls about thirtyfold over that interval, so a peak at the ceiling leaves 97\um, and a
+trough of 151\um\ would need a peak of about 4450\um. The assumed dose keeps the 21-day trough
+high only because its peak breaks the ceiling.
+% src: audit/brief_2026-10-01/pi_note/figure_guide.tex:470-495 (298, 97, 4450; thirtyfold over 21 days)
+
+\begin{table}[tbp]
+\centering
+\small
+\caption{\label{stab:s6-rules}The two edges of the therapeutic window at a half-life of 4.3\,d,
+in delivered capacity (\um). Peak: just after an infusion, in the periodic state. Trough: just
+before the next. The lower edge asks whether the trough clears $\thci=150.8$\um\ (a patient with
+no enzyme of their own; nominal carnitine constants); the upper edge asks whether the peak stays
+within the ceiling of 2850\um\ set for a patient at 5\% of normal. Assumed dose: 6000\um\ per
+fortnight, 9000\um\ per 21-day infusion. Capped: the largest dose whose peak stays at the
+ceiling.}
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+interval & dose & peak & trough & trough above $\thci$? & peak within the ceiling? \\
+\midrule
+14 days & assumed & about 6700 & 702 & yes & no (2.2 times normal) \\
+14 days & capped & 2850 & 298 & yes & yes \\
+21 days & assumed & about 9300 & 316 & yes & no (3.1 times normal) \\
+21 days & capped & 2850 & 97 & no & yes \\
+\bottomrule
+\end{tabular}
+\end{table}
+% src: audit/brief_2026-10-01/pi_note/figure_guide.tex:474-485 (table: tops 6700, 2850, 9300, 2850; bottoms 702, 298, 316, 97)
+
+% -----------------------------------------------------------------------------
+\subsection{Crossings over the unmeasured carnitine constants}
+\label{si:s6:corners}
+
+The threshold $\thci$ depends on the three unmeasured shape constants of the carnitine route,
+$K_c$, $M_i$ and $\rho_0$. At the eight corners of their assumed ranges, with $R_0$ re-derived at
+each corner (Eq.~\eqref{seq:s1-R0}), it spans 109.9--232.1\um, a factor of 2.1
+(Section~\ref{si:s1-carn}; Supplementary Table~\ref{stab:s6-corners}). It is highest at
+$K_c=25$\uM\ and $M_i=150$\uM, where the route peaks at the lowest metabolite level, and lowest
+at the opposite corner. We call the corner with the highest threshold ($K_c=25$\uM,
+$M_i=150$\uM, $\rho_0=1$) the least favourable for the trough condition.
+% src: audit/brief_2026-10-01/out/t53_crossing_shape.txt:64-76 (corners of the assumed ranges, R0 re-derived; theta_crit 109.9..232.1, factor 2.11); paper/sections/03_dynamic.tex:99-106 (R0 calibration); s1_model.tex seq:s1-R0 (peak at m* = sqrt(K_c M_i))
+
+Across the corners the crossings at the assumed dose span 2.41--2.95, 2.54--3.10 and
+3.29--3.95 days for 14, 15 and 21 days, and at the capped dose 2.98--3.87, 3.19--4.15 and
+4.47--5.80 days. One constant at a time, the 21-day crossing at the assumed dose passes 3.6 days
+when $K_c\le50$\uM\ (3.64--3.74 days) or $M_i=150$\uM\ (3.66 days). The fibroblast value of
+3.6 days clears the 21-day crossing at six of the eight corners, and 4.3 days clears it at all
+eight. The spread over the corners is a range over assumed values and carries no probability,
+because nothing measured puts a distribution on these constants.
+% src: audit/brief_2026-10-01/out/t53_crossing_shape.txt:77-79 (D = 6000 ranges; 3.6 d at 6 of 8, 4.3 d at 8 of 8), :89-91 (capped ranges), :10-11,16 (one at a time: 3.735, 3.636, 3.657 d); REPORT.md:1159 (the share of sampled sets is not a probability)
+
+\begin{table}[tbp]
+\centering
+\small
+\caption{\label{stab:s6-corners}Intrinsic critical capacity and crossing half-lives (days) at
+the eight corners of the assumed ranges of the carnitine constants, with $R_0$ re-derived at
+each corner, and at the nominal constants. Assumed dose: $D=6000$\um\ per fortnight, scaled to
+the same amount per day (Eq.~\eqref{seq:s6-cross}). Capped: the dose lowered at each interval and
+half-life so that the peak of a patient at 5\% of normal stays at normal capacity
+(Eq.~\eqref{seq:s6-capcross}). An interval is safe for every patient, whatever $\theta$, when the
+hepatic half-life exceeds the entry.}
+\begin{tabular}{@{}rrrcccccccc@{}}
+\toprule
+& & & & \multicolumn{3}{c}{assumed dose} & & \multicolumn{3}{c}{capped at the ceiling} \\
+\cmidrule(lr){5-7}\cmidrule(l){9-11}
+$K_c$ (\textmu M) & $M_i$ (\textmu M) & $\rho_0$ & $\thci$ (\um) & 14\,d & 15\,d & 21\,d & & 14\,d & 15\,d & 21\,d \\
+\midrule
+25 & 150 & 0.35 & 218.2 & 2.90 & 3.04 & 3.89 & & 3.78 & 4.05 & 5.66 \\
+25 & 150 & 1 & 232.1 & 2.95 & 3.10 & 3.95 & & 3.87 & 4.15 & 5.80 \\
+25 & 1200 & 0.35 & 139.8 & 2.57 & 2.70 & 3.48 & & 3.22 & 3.45 & 4.83 \\
+25 & 1200 & 1 & 145.5 & 2.59 & 2.73 & 3.52 & & 3.26 & 3.50 & 4.89 \\
+800 & 150 & 0.35 & 127.1 & 2.50 & 2.64 & 3.41 & & 3.12 & 3.34 & 4.68 \\
+800 & 150 & 1 & 127.3 & 2.51 & 2.64 & 3.41 & & 3.12 & 3.34 & 4.68 \\
+800 & 1200 & 0.35 & 109.9 & 2.41 & 2.54 & 3.29 & & 2.98 & 3.19 & 4.47 \\
+800 & 1200 & 1 & 110.0 & 2.42 & 2.55 & 3.30 & & 2.98 & 3.19 & 4.47 \\
+\addlinespace
+\multicolumn{3}{@{}l}{nominal (100, 300, 0.5)} & 150.8 & 2.62 & 2.75 & 3.55 & & 3.30 & 3.54 & 4.95 \\
+\bottomrule
+\end{tabular}
+\end{table}
+% src: audit/brief_2026-10-01/out/t53_crossing_shape.txt:67-75 (corners: theta_crit and D = 6000 crossings), :89-91 (capped nominal 3.30/3.54/4.95 and ranges 2.98-3.87, 3.19-4.15, 4.47-5.80). Capped per-corner entries: eq. seq:s6-capcross (t53:87) evaluated at each corner's theta_crit from model_C.run.theta_crit_intrinsic (R0 re-derived), as t53 does for its ranges; extremes reproduce t53:89-91.
+
+% -----------------------------------------------------------------------------
+\subsection{Evidence on the half-life}
+\label{si:s6:halflife}
+
+No hepatic half-life of PCC has been measured in humans. Supplementary
+Table~\ref{stab:s6-halflife} collects what bears on it. The one human measurement is 3.6 days,
+from a [$^{3}$H]biotin pulse--chase in cultured fibroblasts (degradation rate
+0.19\,d$^{-1}$)~\cite{chandler1985}. PCC is an enzyme of the mitochondrial matrix, so for the liver
+the apt comparator is the median turnover of mouse liver mitochondrial proteins, 4.26
+days~\cite{kim2012}, rather than the whole-liver median, 2.4--3.6 days across labelling
+studies~\cite{rolfs2021}, which includes faster-turning compartments. Studies of the
+delivered enzyme in mouse liver give 5.3--6.7 days for human PCC~\cite{jiang2020dual}.
+% src: audit/brief_2026-10-01/pi_note/pi_note.tex:382-390 (3.6 d; matrix enzyme; 4.26 d; whole liver 2.4-3.6 d; 3.8 d intrinsic, about 7 d terminal, 3-5 d; 5.3-6.7 d); REPORT.md:1004 (k_deg = 0.19/d, [3H]biotin pulse-chase); out/t50_hepatic_mito.txt:5-8
+
+The translational pharmacokinetic/pharmacodynamic model of mRNA-3927~\cite{pkpd_translational}
+does not supply a single half-life. In it the PCC protein sits in a two-compartment layer,
+fitted in mice. Its degradation constant, 0.0075\,h$^{-1}$, corresponds to 3.8 days if read as
+a single exponential, while the model's stated protein half-life is about 7 days. The local
+half-life of that layer is therefore not constant. It passes 3.5 days about five days after a
+dose and reaches 9.0 days by the end of a fortnightly interval. What matters for the trough
+condition is the delivered capacity at the end of a fortnightly interval, which is reached
+before the terminal phase dominates. Matching the periodic trough of the two-compartment layer
+with a single exponential gives 4.8 or 3.1 days under two reconstructions of its equations
+(elimination from the central compartment only, or from both), which we had to reconstruct
+because the exact equations were not available to us. The translational model therefore points
+to about 3--5 days rather than 7.
+% src: src/common/params.py:283-299 (k_deg = 0.0075/h; two-compartment; ~7 d; local half-life passes 3.5 d at about five days after a dose and reaches 9.0 d by the end of a fortnightly interval); paper/refs.sources:149-164 (PD half, including k_deg, fitted in Pcca-/- mice and not scaled; ~7 d stated as the protein's half-life); audit/brief_2026-10-01/out/t48_lambda_literature.txt:5-30 (3.8 d intrinsic; terminal 11.8 / 3.9 d under the two reconstructions; trough-matched 4.8 / 3.1 d); REPORT.md:1428 (exact 2-comp equations unavailable, Suppl Table S1; mapping computed on two reconstructions)
+
+From these comparators we take about 4.3 days as the likely hepatic value, plausibly 3--6
+days. It is an estimate from comparators and has not been measured. The sponsor's population model~\cite{gao2025acop} was re-estimated
+on human data with an indirect-response structure and may contain a human protein-decay term,
+but its parameters are not public; its abstract reports only the clearance (0.266\,L/h) and
+volume (13.9\,L) of the mRNA.
+% src: audit/brief_2026-10-01/pi_note/pi_note.tex:389-391 (about 4.3 d, plausibly 3-6 d), :403-406 (Gao: re-estimated on human data, indirect response, parameters not public); REPORT.md:1076 (CL = 0.266 L/h, V = 13.9 L; turnover term not public)
+
+\begin{table}[tbp]
+\centering
+\footnotesize
+\caption{\label{stab:s6-halflife}Evidence on the half-life of the delivered PCC protein. None
+of these is a measurement in human liver; the likely hepatic value, about 4.3\,d (plausibly
+3--6\,d), is an estimate from the comparators.}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.2\linewidth}>{\raggedright\arraybackslash}p{0.3\linewidth}>{\raggedright\arraybackslash}p{0.15\linewidth}>{\raggedright\arraybackslash}p{0.27\linewidth}@{}}
+\toprule
+source & system and method & half-life (d) & bearing on the hepatic value \\
+\midrule
+Chandler and Ballard~\cite{chandler1985} & human fibroblast lines; [$^{3}$H]biotin pulse--chase,
+degradation rate 0.19\,d$^{-1}$ & 3.6 & the only human measurement of PCC turnover; not liver \\
+Kim et al.~\cite{kim2012} & mouse liver mitochondria; metabolic labelling, proteome median &
+4.26 & the compartment of PCC, a matrix enzyme \\
+Rolfs et al.~\cite{rolfs2021} and other labelling studies & mouse whole liver; proteome median &
+2.4--3.6 & includes faster-turning compartments; a less apt comparator \\
+Attarwala et al.~\cite{pkpd_translational} & translational PK/PD model of mRNA-3927; PK fitted
+in mice, rats and monkeys, two-compartment protein layer fitted in mice & 3.8 (intrinsic); about
+7 (stated); 3.1--4.8 (trough-matched) & not a single exponential; the trough at fortnightly
+spacing sees about 3--5\,d \\
+Jiang et al.~\cite{jiang2020dual} & delivered human PCC in mouse liver & 5.3--6.7 & the delivered
+enzyme itself, in mouse \\
+Gao et al.~\cite{gao2025acop} & population model re-estimated on trial data; indirect-response
+structure & not public & may contain a human protein-decay term \\
+\bottomrule
+\end{tabular}
+\end{table}
+% src: audit/brief_2026-10-01/pi_note/pi_note.tex:382-406; REPORT.md:1004-1008 (Chandler k_deg 0.19/d; Attarwala 0.0075/h, 3.8 d, ~7 d; Jiang 5.3-6.7 d), :1064 (matrix enzyme; 4.26 d; whole liver 2.4-3.6 d), :1076 (Gao); out/t48_lambda_literature.txt:12-18 (3.1 / 4.8 d); paper/refs.sources:149-154 (PK across mouse, rat, monkey; PD half fitted in mice)
+
+\paragraph{The specification at 4.3 days.} At the assumed dose all three intervals are then safe
+for every patient whatever the carnitine constants, since the highest crossing over the corners
+is 3.95 days; at the nominal constants the 21-day margin is about $+165$\um. At the capped dose
+the 14- and 15-day intervals remain safe, narrowly at the least favourable constants (crossings
+3.87 and 4.15 days; margins of about $+150$ and $+100$\um\ at the nominal constants). The 21-day
+interval at the capped dose is not safe for every patient at any corner (crossings 4.47--5.80
+days). At the nominal constants its trough is 97\um, 54\um\ short of $\thci$, so a patient would
+need about 1.8\% of normal capacity of their own, which the record cannot confirm.
+% src: audit/brief_2026-10-01/pi_note/pi_note.tex:390-397 (4.3 d: safe at the booked increment; capped 14/15 narrowly, 3.87 and 4.15 d; 21 d 4.47-5.80 d; about 1.8 %); figure_guide.tex:506-517 (+165; 97; 1.8 %; +150 and +100). The shortfall is 150.77 - 2850 x 2^(-21/4.3) = 150.77 - 96.54 = 54.2 uM/d (figure_guide's '55' rounds 151 - 97 from rounded inputs); margins +164.8 (21 d, assumed), +147.6 and +103.2 (14 and 15 d, capped) by the same evaluation.
+
+% -----------------------------------------------------------------------------
+\subsection{Uncertainty in the half-life}
+\label{si:s6:prob}
+
+Because 4.3 days rests on comparators, we also treated the hepatic half-life as log-normal
+about 4.3 days, with a standard deviation of the log of 0.35 (with which the plausible range of
+3--6 days spans about one standard deviation either side of 4.3 days) or 0.53. The probability
+that it exceeds a crossing $t_{1/2}^{\ast}$ is $\Phi\bigl(\ln(4.3/t_{1/2}^{\ast})/s\bigr)$, with $s$
+the standard deviation of the log and $\Phi$ the standard normal distribution function
+(Supplementary Table~\ref{stab:s6-prob}). At the assumed dose the nominal 21-day crossing is
+cleared with probability 64--71\%, and the crossing at the least favourable constants with
+56--60\%. At the capped dose the 21-day crossing (4.95 days) lies above 4.3 days, so the
+probability falls to 34--39\%, and here the wider distribution gives the higher value.
+% src: audit/brief_2026-10-01/out/t53_crossing_shape.txt:80-81 (64/71 %; 56/60 % at 3.95 d), :89-91 (capped: 69/77, 64/71, 39/34 %); out/t50_hepatic_mito.txt:12-14 (complement: 36 % / 29 % below 3.5452 d); pi_note/pi_note.tex:397-401
+
+\begin{table}[tbp]
+\centering
+\small
+\caption{\label{stab:s6-prob}Probability that the hepatic half-life exceeds a crossing, with
+the half-life log-normal about 4.3\,d. Least favourable: the corner $K_c=25$\uM, $M_i=150$\uM,
+$\rho_0=1$ of the assumed carnitine ranges.}
+\begin{tabular}{@{}llccc@{}}
+\toprule
+interval and dose & constants & crossing (d) & $s=0.53$ & $s=0.35$ \\
+\midrule
+21 days, assumed dose & nominal & 3.55 & 64\% & 71\% \\
+21 days, assumed dose & least favourable & 3.95 & 56\% & 60\% \\
+14 days, capped & nominal & 3.30 & 69\% & 77\% \\
+15 days, capped & nominal & 3.54 & 64\% & 71\% \\
+21 days, capped & nominal & 4.95 & 39\% & 34\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+% src: audit/brief_2026-10-01/out/t53_crossing_shape.txt:80-81,89-91
+
+% -----------------------------------------------------------------------------
+\subsection{A threshold that allows for illness}
+\label{si:s6:illness}
+
+The intrinsic threshold describes a patient at baseline load. A stricter threshold can be
+defined in the linear-clearance model, which has no tipping point, as the capacity at which an
+illness load holds the marker at a tolerable level (Eq.~\eqref{seq:s1-thcritlin}). With the
+illness load at 1.5 times that model's baseline load of 323\um\ and a tolerable level of
+40\uM, it is 994\um. The fortnightly trough exceeds it only for half-lives above about 5.0 days
+(it is 400\um\ at 3.5 days and 702\um\ at 4.3 days). Against this threshold, Eq.~\eqref{seq:s6-cross}
+gives crossings at the assumed dose of about 5.0, 5.2 and 6.3 days for 14, 15 and 21 days, so at
+the likely 4.3 days every interval again depends on $\theta$.
+% src: audit/brief_2026-10-01/out/t44_interval_decision.txt:40 (theta_crit = 994.3 at fold 1.5); pi_note/pi_note.tex:426-434 (994; above Dtr(14) below about 5.0 d; 400 and 702; crossings about 5.0, 5.2, 6.3 d); s1_model.tex seq:s1-thcritlin (430 at f = 1, 994 at f = 1.5)
+
+We report this threshold as a qualification and do not base the specification on it. It is
+taken from a
+different model from the one that defines the trough condition, its tolerable level is a
+convention, and its value moves with the assumed illness amplitude (430\um\ without illness,
+994\um\ at 1.5 times the load). The intrinsic threshold, by contrast, follows from the carnitine
+model alone and needs no tolerable level.
+% src: s1_model.tex:198-215 (430 at f = 1, 994 at f = 1.5; threshold by convention); audit/brief_2026-10-01/out/t44_interval_decision.txt:30-40 (s_pk/m_tol convention; 429.5 and 994.3)
+
+% -----------------------------------------------------------------------------
+\subsection{Estimating \texorpdfstring{$\theta$}{theta} instead}
+\label{si:s6:theta}
+
+When the half-life lies below a crossing, the alternative is to estimate each patient's $\theta$
+and lengthen the interval only for patients whose estimated margin
+$\hat\mu(\tau)=\hat\theta+\dtr(\tau;\hat\lambda)-\thci$ is confidently positive. We tested this in
+two ways, both at 21 days and with $\lambda$ estimated from the same record, as it would be in
+practice.
+
+By simulation, with nonlinear least-squares fits of $(\theta,K_m,b,k_e,\lambda)$ to records of
+weekly draws on therapy, simulated in the linear-clearance model at the assumed dose and a
+3.5-day half-life with jittered and missed infusions (the routine record alone), the standard
+deviation of $\hat\mu(21)$ stays between 109 and 162\um, comparable to $\thci$ itself, from six
+months to five years of draws, for patients at 20, 65 and 150\um. It does not shrink with record
+length, and the 5th percentile of $\hat\mu$ stays below zero at every capacity and length, so a
+one-sided lower bound never clears zero. $\hat\theta$ is heavy-tailed on the natural scale at
+these capacities, so a one-sided bound on the margin is set by the tail of the estimate, which
+does not tighten as its log-scale spread falls.
+% src: audit/brief_2026-10-01/out/t46_timing.txt:12-34 (NLS mu_hat: sd 141-162 at 150, 121-139 at 65, 109-126 at 20; p5 below 0 throughout; does not tighten); t46_timing.py:55-88 (records anchored in the linear-clearance model, D = 6000 schedule with 2 d jitter and 8 % misses, lambda = ln2/3.5, lambda free in the fit); REPORT.md:976 (one-sided bound is tail-dominated; read natural-scale decisions by simulation)
+
+With both tracer measurements of Supplementary Section~\ref{si:s4} (the intravenous tracer, giving
+$k_e$ to 5.4\%, and the isotope-dilution measurement of the load turnover, to 10\% of the load)
+added to the 25 monthly draws of the recommended design (records simulated in the
+linear-clearance model at the assumed dose and a 3.5-day half-life), Fisher information gives a
+standard deviation of the 21-day margin of 92--95\um\ at every capacity from 0.17 to 5\% of normal, and still
+74--79\um\ with $k_e$ and the unrecorded load known exactly. We applied a one-sided 95\% rule
+(lengthen when $\hat\mu-1.645\,\operatorname{sd}(\hat\mu)>0$) to a population with $\theta$
+log-uniform between 0.17 and 5\% of normal (Supplementary Table~\ref{stab:s6-certify}). At a
+3.5-day half-life and the nominal constants, where the 21-day interval is in truth safe for 87\% of
+this population, the tracers certify 12\% of patients. One patient's estimate certifies the
+interval half the time only at about 5.5\% of normal, and 80\% of the time at about 8.2\%, at or
+above the top of the range in which the question arises. A check with simulated fits agreed with
+these Fisher-information values to within about one to two percentage points. The routine record
+without tracers is not included, because without them $K_m$ is unconstrained and the prior on
+$k_e$ is wide, so the linear-Gaussian approximation does not hold for it.
+% src: audit/brief_2026-10-01/out/t54_dose_timing.txt:75-107 (margin sd 92-95 and 74-79; certification rule; population; 87 %, 12 %, 5.5 % / 8.2 %; record alone not shown); t54_dose_timing.py:24-30 (log-uniform 0.17-5 %; simulated-fit check within about 1-2 points), :85-110 (cov5 on core.record, linear-clearance records), :208 (tracer 0.054, load turnover 0.10); si/s4_routes.tex:163-164 (10 %, 5.4 %)
+
+\begin{table}[tbp]
+\centering
+\footnotesize
+\caption{\label{stab:s6-certify}Certifying a 21-day interval patient by patient from an estimate
+of $\theta$, with $\lambda$ estimated from the same record (25 monthly draws plus the stated
+measurements, records simulated in the linear-clearance model; Fisher information, one-sided
+95\% rule; threshold and troughs from the carnitine model). Population: $\theta$ log-uniform over
+0.17--5\% of normal. $\theta_{\mathrm{need}}=\thci-\dtr(21)$; truly safe: share of the population
+with $\theta>\theta_{\mathrm{need}}$. Certified: share of all patients; of the safe: share of the
+truly safe; false-safe: share of the truly unsafe who are certified. Last column: capacity at
+which one patient's estimate certifies the interval half the time and 80\% of the time. Tracers:
+$k_e$ to 5.4\% and the load turnover to 10\%. Exact: $k_e$ and the unrecorded load known. The
+third setting scales $D=2672$ to the same amount per day, so its 21-day peak exceeds the ceiling.}
+\begin{tabular}{@{}p{0.22\linewidth}llcccc@{}}
+\toprule
+setting ($\theta_{\mathrm{need}}$; truly safe) & measurements & certified & of the safe &
+false-safe & capacity, 50\% / 80\% \\
+\midrule
+3.5\,d, $D=6000$, nominal & tracers & 12\% & 13\% & 4.8\% & 5.5\% / 8.2\% of normal \\
+(7.9\um; 87\%) & exact & 14\% & 16\% & 4.7\% & 4.6\% / 6.8\% \\
+\addlinespace
+3.5\,d, $D=6000$, least favourable & tracers & 3\% & 9\% & 1.3\% & 8.2\% / 10.9\% \\
+(89.2\um; 15\%) & exact & 2\% & 10\% & 1.0\% & 7.3\% / 9.5\% \\
+\addlinespace
+4.3\,d, $D=2672$ scaled, nominal & tracers & 11\% & 13\% & 4.7\% & 5.9\% / 8.7\% \\
+(10.3\um; 79\%) & exact & 13\% & 15\% & 4.7\% & 5.0\% / 7.5\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+% src: audit/brief_2026-10-01/out/t54_dose_timing.txt:94-107
+
+% -----------------------------------------------------------------------------
+\subsection{Reading the half-life from the dated record}
+\label{si:s6:record}
+
+The half-life, unlike $\theta$, is identified by the routine record on therapy, because the
+marker's response to each dated infusion depends on $\lambda$ directly. We simulated, in the
+linear-clearance model, two years of the record of a patient at 5\% of normal on the assumed dose
+at a 3.5-day half-life, with the irregularities of real dosing: infusion dates
+jittered with a standard deviation of 2 days, 8\% of infusions missed and one 28-day supply gap.
+With $\ln\lambda$ as a fifth unknown alongside $\theta$, $K_m$, $b$ and $k_e$, Fisher information
+gives $\sdl{\lambda}=0.055$ with monthly draws (25 over two years), 0.046 fortnightly (52), 0.037
+weekly (104) and 0.023 on alternate days (365). The irregularities also help $\theta$
+($\sdl{\hat\theta}$ falls from 3.05 for a regular train to 2.28 with all three, monthly), but
+freeing $\lambda$ costs precision on $\theta$, from 2.28 to 3.45 with monthly draws (1.69 to 3.01
+fortnightly, 1.27 to 2.45 weekly, 0.75 to 1.61 on alternate days), because the two share part of
+the response to each dose. Since $\theta$ is not identified in severe PA either way, little that
+the decision could use is given up.
+% src: audit/brief_2026-10-01/out/t45_on_therapy.txt:14-18 (3.05 -> 2.90 -> 2.45 -> 2.28; jitter sd 2 d, 8 % missed, 28 d gap), :45-50 (sd ln lambda 0.055/0.046/0.037/0.023; theta 2.28->3.45, 1.69->3.01, 1.27->2.45, 0.75->1.61); t45_on_therapy.py:35-39,88 (lambda ln2/3.5, D 6000, theta 150, linear-clearance anchor); REPORT.md:920-931
+
+Over the length of the record, $\sdl{\lambda}$ is 0.094, 0.067 and 0.053 after six months of
+monthly, fortnightly and weekly draws, and 0.055--0.058 after two years of monthly draws,
+depending on the simulated record. A precision of 25\%, about the distance from 3.5 days to the
+nominal 14-day crossing, is reached by six months at every cadence; 5\% takes 48, 24 and 12
+months at monthly, fortnightly and weekly draws. Six months of monthly draws already separate a
+half-life of 3.6 days from one of 7 days by 7 standard deviations.
+% src: audit/brief_2026-10-01/out/t46_timing.txt:42-52 (0.094/0.067/0.053 at 6 months; 0.058 at 24 months monthly; 25 % by 6 mo; 5 % by 48/24/12 mo); out/t45_on_therapy.txt:47 (0.055); pi_note/pi_note.tex:408-410 (0.094; 0.055-0.058; 7 sigma); out/t48_lambda_literature.txt:94 (d' = 7.0 at 6 mo monthly); out/t44_interval_decision.txt:150-153 (25 % margin between 3.5 d and 2.62 d)
+
+Precision on $\lambda$ is not the same as placing $\lambda$ on one side of a crossing. A half-life of
+3.6 days lies $\ln(3.6/3.5452)=0.015$ from the nominal 21-day crossing, 43 times closer than 7 days
+is to 3.6 days ($\ln(7/3.6)=0.665$). Supplementary Table~\ref{stab:s6-record} gives the expected
+separation $z=\lvert\ln(t_{1/2}/t_{1/2}^{\ast})\rvert/\sdl{\lambda}$, with the standard deviation
+evaluated at the true half-life, and the chance $\Phi(z-2)$ that one noisy record places the value
+on the correct side at two standard deviations. One patient's record never places a 3.6-day truth
+on a side of the nominal crossing. At best it sits 0.58 standard deviations away after five years of
+weekly draws, inside a two-standard-deviation band around the crossing that is never narrower than
+3.36--3.74 days. A 4.3-day truth is placed above the nominal crossing with 83\% probability after a
+year of monthly draws, but above the highest corner crossing at the assumed dose (3.95 days) with
+only 24\% (88\% after five years of weekly draws).
+% src: audit/brief_2026-10-01/out/t52_knife_resolution.txt:5-7 (0.665; 0.0153; 43x), :12-30 (z, P, dead zones), :32-34 (best 0.58 sigma), :47,63 (vs 3.95 d: 24 % at 12 mo monthly; 88 % at 60 mo weekly); pi_note/pi_note.tex:411-419
+
+Pooling patients helps only if they share one half-life. If they do, a 3.6-day truth could be placed
+at two standard deviations with 77 patients at 50\% power, or 155 at 80\%, from a year of monthly
+draws each; with 35 or 71 from a year of weekly draws; and with 23 or 46 from two years of weekly
+draws. These 23--155 patients exceed the sixteen the trial enrolled~\cite{trial_phase12}. Between-patient
+spread in hepatic PCC turnover is unmeasured; any spread raises these numbers or turns the pooled
+value into a population mean that no single patient has.
+% src: audit/brief_2026-10-01/out/t52_knife_resolution.txt:65-68 (77/155, 35/71, 23/46); REPORT.md:1435 (pooling assumes identical lambda; spread raises counts or answers a population mean); manuscript/main.tex:421 (sixteen enrolled)
+
+These record-based numbers are Fisher-information values and have not been checked with
+simulated fits. The Gaussian
+approximation for $\ln\lambda$ was checked at 3.5 days, and the chances $\Phi(z-2)$ are one-sided
+decisions that we have not simulated. Two further routes could supply the hepatic value: the protein
+decay term of the sponsor's population model~\cite{gao2025acop}, if released, and a direct measurement
+of PCC turnover in human hepatocytes by pulse--chase or dynamic SILAC, with the caveat that cultured
+cells can turn proteins over differently from the liver in vivo. For the delivered increment, the
+paired breath tests of the main text's data specification establish the same-day repeatability on
+which a measurement of $D$ before and after an infusion depends. Dated delays in the record, the
+subject of Supplementary Section~\ref{si:s7}, are part of what identifies $\lambda$.
+% src: REPORT.md:1435 (FIM, not simulated; Gaussian regime confirmed at 3.5 d only; Phi(z-2) not simulated); pi_note/pi_note.tex:404-406,420-425 (Gao; hepatocyte pulse-chase or dynamic SILAC, caveat; Tier 2 breath tests for D), :543-548 (a late infusion is also a measurement)
+
+\begin{table}[tbp]
+\centering
+\footnotesize
+\caption{\label{stab:s6-record}Can one patient's record place the half-life on a side of the
+21-day crossing? Fisher information for $(\ln\theta,\ln K_m,b,\ln k_e,\ln\lambda)$ on the
+on-therapy record of a patient at 5\% of normal at the assumed dose, simulated in the
+linear-clearance model, with dosing irregularities (jitter, missed
+infusions, a supply gap), re-evaluated at each true half-life. $z$: expected separation from the
+crossing in standard deviations. $P$: chance $\Phi(z-2)$ that one record places a 4.3-day truth
+above the crossing at two standard deviations, against the nominal crossing (3.55\,d) and the
+highest corner crossing at the assumed dose (3.95\,d). Last column: true half-lives that one record
+cannot place on either side of the nominal crossing at two standard deviations.}
+\begin{tabular}{@{}lcccccccc@{}}
+\toprule
+& & \multicolumn{2}{c}{truth 3.6\,d} & & \multicolumn{3}{c}{truth 4.3\,d} & \\
+\cmidrule(lr){3-4}\cmidrule(lr){6-8}
+cadence & months & $\sdl{\lambda}$ & $z$ & & $z$ (3.55) & $P$ (3.55) & $P$ (3.95) & band (d) \\
+\midrule
+monthly & 6 & 0.095 & 0.16 & & 1.93 & 47\% & 12\% & 2.93--4.28 \\
+monthly & 12 & 0.067 & 0.23 & & 2.97 & 83\% & 24\% & 3.10--4.05 \\
+monthly & 24 & 0.057 & 0.27 & & 3.47 & 93\% & 32\% & 3.16--3.98 \\
+monthly & 60 & 0.045 & 0.34 & & 4.36 & 99\% & 47\% & 3.24--3.88 \\
+fortnightly & 6 & 0.067 & 0.23 & & 2.92 & 82\% & 24\% & 3.10--4.05 \\
+fortnightly & 24 & 0.047 & 0.33 & & 4.18 & 99\% & 44\% & 3.23--3.89 \\
+weekly & 6 & 0.053 & 0.29 & & 3.71 & 96\% & 36\% & 3.19--3.94 \\
+weekly & 12 & 0.045 & 0.34 & & 4.43 & 99\% & 48\% & 3.24--3.88 \\
+weekly & 24 & 0.037 & 0.42 & & 5.27 & 100\% & 63\% & 3.30--3.81 \\
+weekly & 60 & 0.027 & 0.58 & & 7.22 & 100\% & 88\% & 3.36--3.74 \\
+\bottomrule
+\end{tabular}
+\end{table}
+% src: audit/brief_2026-10-01/out/t52_knife_resolution.txt:12-30 (sd at 3.6 d, z at 3.6 d, z and P at 4.3 d, dead zones), :46-63 (P vs 3.95 d)

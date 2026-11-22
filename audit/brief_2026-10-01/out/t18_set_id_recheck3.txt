@@ -1,0 +1,34 @@
+========================================================================================
+  RECHECK3  ITEM 16  (independent of t18_set_id.py)
+========================================================================================
+
+  [0] primitive cross-checks (my code vs core):
+      my_mss vs core.m_ss (untreated):  54.023057732  54.023057732
+      my_fim == core.fim(perdraw):      True
+
+  (A) ONE-SIDED BOUND  theta_max = (L - k_e,lo m)(K_m,hi + m)/m
+      L = 322.73  m = 54.02  L/m = 5.974/d  (k_e,lo prior95 = 1.042)
+                           k_e floor    Km<=100    Km<=150    Km<=500  Km<=10000
+                            k_e >= 0      30.7%      40.6%     110.3%    2002.1%
+                         k_e >= 1.04      25.3%      33.5%      91.1%    1652.7%
+      claim: Km<=100 -> 30.7% (k_e>=0), 25.3% (k_e>=1.04).
+      mine : Km<=100 -> 30.7% (k_e>=0), 25.3% (k_e>=1.04).
+
+  (B) WHAT THE MONTHLY RECORD PINS (median over 24 seeds)
+      NOT recoverable:
+        sd(ln theta)         = 3.045   (claim 3.045)
+        sd(ln a=theta g^2)   = 3.131   (claim 3.131)
+        sd(ln flux=theta g)  = 3.085   (claim 3.085)
+        sd(ln share)         = 3.078   (claim 3.078)
+      RECOVERABLE:
+        sd(ln K_m)           = 0.062   (claim 0.062)
+        sd(ln b=theta g'+ke) = 0.277   (claim 0.277)
+        best (lnth,lnke) sd  = 0.084   (claim 0.084)
+        combo direction      = [-0.22 ln theta -0.98 ln k_e]  (claim -0.22/-0.98)
+      |k_e weight| 0.98 vs |theta weight| 0.22  -> k_e-dominated
+      ranges over seeds: sd(lnK_m) [0.058,0.066]  sd(ln b) [0.223,0.306]  best [0.079,0.093]  sd(ln theta) [2.65,3.24]
+
+  (C) COMPLETE-DEFICIENCY CHECK
+      distinct theta across 24 records: [150.0]
+      count of records: 24  all theta == 150 (5% of 3000): True
+      any theta ~ 0 (complete deficiency)? False

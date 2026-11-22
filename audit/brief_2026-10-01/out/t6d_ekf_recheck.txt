@@ -1,0 +1,92 @@
+====================================================================================================
+  RECHECK OF t6d_ekf.py (item 5), on a closed-form transition, no shared code
+====================================================================================================
+  footing: L = 322.7273, L0 = 161.3636, prior sd0 = [ 0.3    1.5    0.8    1.    80.682]
+
+  0. CLOSED-FORM FLOW against scipy Radau (rtol 1e-12) on the true trajectories
+   bench A: m0 = 54.0231, m from 26.07 to 54.02; max rel. one-step difference 3.8e-15
+   bench B: m0 = 34.0586, m from 15.90 to 296.34; max rel. one-step difference 4.1e-15
+
+  1. INFORMATION BOUNDS for ln theta, from Richardson differences of the closed form
+   bench A: no prior 383.312;  FIM+prior, m0 tied 1.39261;  FIM+prior, m0 free 1.40970;  cond(FIM, no prior) 1.8e+10
+   bench B: no prior 0.089;  FIM+prior, m0 tied 0.08846;  FIM+prior, m0 free 0.08922;  cond(FIM, no prior) 2.7e+07
+
+  2. t6's CONFIGURATION (diag P0, q = 1e-10, RTS time-0 estimate), rebuilt here, 80 records; t6's draws (default_rng(1), y then x0)
+   estimator                                         bias    RMSE  robust  |e|>1
+   bench A: EKF+RTS, t6 configuration              +0.146   1.650   1.629    56%  median rep. sd 0.760; boot 95% RMSE [1.39, 1.90], robust [1.36, 1.98]; 1 s
+   bench A: prior centre alone                     +0.016   1.713   1.631    55%  boot 95% RMSE [1.39, 2.02], robust [1.30, 1.89]
+   bench B: EKF+RTS, t6 configuration              -0.016   3.248   1.072    41%  median rep. sd 0.018; boot 95% RMSE [1.09, 5.34], robust [0.85, 1.48]; 3 s
+   bench B: prior centre alone                     -0.034   1.458   1.353    48%  boot 95% RMSE [1.22, 1.69], robust [1.06, 1.73]
+   bench B, the largest |error| records: #2: +26.47, #33: +4.60, #62: -4.34, #45: +4.21
+   share of the bench-B EKF sum of squared errors from ONE record: 83.0%
+   bench B: EKF+RTS without that one record        -0.024   1.346   1.075    41%
+   bench B: prior centre alone without that record  -0.026   1.372   1.303    47%
+   bench B: corr(error ln th, error ln Km) +0.798; records with |e| > 2: 9
+   bench B, NEW seeds (20261001): EKF+RTS          -0.120   1.477   1.506    36%
+   bench B, NEW seeds: prior centre alone          -0.325   1.168   1.088    40%
+   paired bootstrap, t6's draws, EKF minus prior centre: RMSE difference 95% [-0.29, +3.79], robust difference 95% [-0.66, +0.13]
+   RTS: max |smoothed p(t0) - filtered p(t_n)| over 20 records 1.9e-04
+
+  3. t6's EKF STARTED AT THE TRUTH on bench B (t6's draws), parameter prior sds scaled;
+     reference: sd of the LINEARISED MAP with the prior centre fixed at the truth,
+     (I_d + I_p)^-1 I_d (I_d + I_p)^-1, m0 free (what a correct estimator would give)
+   estimator                                         bias    RMSE  robust  |e|>1  lin. MAP sd
+   EKF at the truth, prior sd x 0.1                -0.003   0.028   0.026     0%       0.0325
+   EKF at the truth, prior sd x 0.3                +0.030   0.093   0.085     0%       0.0744
+   EKF at the truth, prior sd x 0.5                +0.104   0.261   0.171     0%       0.0837
+   EKF at the truth, prior sd x 1.0                +0.041   0.503   0.336     5%       0.0884
+
+  4. VARIANT (a), TIED P0, filtered end point (as t6d reports it), t6's draws, bench B
+   estimator                                         bias    RMSE  robust  |e|>1
+   tied P0 (rebuilt)                               -0.291   1.822   1.015    32%  boot 95% RMSE [1.18, 2.41], robust [0.79, 1.39]
+   paired bootstrap, tied minus prior centre: RMSE difference 95% [-0.31, +1.02], robust difference 95% [-0.72, +0.14]
+   seconds so far 26
+
+  5. SCALED UNSCENTED FILTER WITH A CENTRE POINT (not run by t6d), tied prior, bench B
+   estimator                                         bias    RMSE  robust  |e|>1
+   UKF alpha 0.01, beta 2, kappa 0.0               +0.255   1.912   0.791    35%
+   UKF alpha 0.5, beta 2, kappa 0.0                +0.255   1.426   0.833    35%
+   UKF alpha 1.0, beta 2, kappa 1.0                +0.146   1.027   0.680    25%
+
+  6. ONE-PASS PARTICLE FILTER (Liu-West), tied prior, posterior mean of ln th, bench B
+     shrinkage a tuned on SEPARATE draws (default_rng(7), 12 records, N = 20000) by RMSE
+   estimator                                         bias    RMSE  robust  |e|>1
+   tuning: a = 0.98                                -0.055   0.598   0.482     8%
+   tuning: a = 0.995                               +0.007   0.667   0.332    17%
+   tuning: a = 0.998                               -0.012   0.555   0.326     8%
+   chosen a = 0.998
+   PF, N = 20000, a = 0.998, first 80 of t6's draws  -0.022   0.393   0.184     4%  boot 95% RMSE [0.25, 0.54], robust [0.14, 0.25]; median resamplings 29; 50 s
+   PF, N = 50000, a = 0.998, first 40 of t6's draws  -0.045   0.362   0.148     5%  boot 95% RMSE [0.16, 0.52], robust [0.10, 0.28]; median resamplings 32; 69 s
+      t6's EKF on the same 40 records              +0.120   4.370   0.992    40%
+      prior centre on the same 40 records          -0.010   1.342   1.068    40%
+   seconds so far 180
+
+  7. NLS (no priors, as t6) STARTED ONLY AT THE DRAWN PRIOR CENTRE, bench B, t6's draws
+   estimator                                         bias    RMSE  robust  |e|>1
+   NLS from the prior centre, first 40 records     -0.007   0.085   0.090     0%  46 s (both rows)
+   NLS from the truth, same 40 records             -0.007   0.085   0.090     0%
+   records where the centre start ends > 0.05 from the truth start in ln th: 0 of 40
+
+  8. FAIRNESS against this file's own bound and NLS-from-centre, bench B
+   EKF+RTS, t6 configuration        robust 1.072 (12.1 x bound), RMSE 3.248 (38.2 x NLS-from-centre) -> not fair
+   tied P0                          robust 1.015 (11.5 x bound), RMSE 1.822 (21.4 x NLS-from-centre) -> not fair
+   PF N = 20000                     robust 0.184 (2.1 x bound), RMSE 0.393 (4.6 x NLS-from-centre) -> not fair
+   PF N = 50000 (40 records)        robust 0.148 (1.7 x bound), RMSE 0.362 (4.3 x NLS-from-centre) -> not fair
+   UKF alpha 0.01                   robust 0.791 (8.9 x bound), RMSE 1.912 (22.5 x NLS-from-centre) -> not fair
+   UKF alpha 0.5                    robust 0.833 (9.4 x bound), RMSE 1.426 (16.8 x NLS-from-centre) -> not fair
+   UKF alpha 1.0                    robust 0.680 (7.7 x bound), RMSE 1.027 (12.1 x NLS-from-centre) -> not fair
+
+  9. COMPONENT CLAIMS, on this file's code
+   bench A: ln m_ss(drawn centre) - ln m0(true): sd 0.991, max |.| 4.511; tied prior sd(ln m0) median 0.840
+   bench A: noiseless at the truth, EKF+RTS sd(ln th) 1.40970 (diag P0), 1.39261 (tied); bounds 1.40970, 1.39261
+   bench B: ln m_ss(drawn centre) - ln m0(true): sd 1.357, max |.| 3.959; tied prior sd(ln m0) median 1.143
+   bench B: noiseless at the truth, EKF+RTS sd(ln th) 0.08922 (diag P0), 0.08847 (tied); bounds 0.08922, 0.08846
+   IEKF update with h(x) = x[0], 5 iterations vs one update, 200 random cases: max |dx| 8.9e-16
+   bench B, t6 EKF: of the 9 records with |e ln th| > 2, ln Km error > +2 in 4, < -2 in 3; of all 80: 5 and 24
+   bench B samples 193, transitions per pass 192
+   bench B, t6 EKF: quartiles -0.50 / +1.01, 1.5-IQR whiskers -2.56 to +2.26
+   bench B, t6 configuration with q = 0, filtered end  -0.016   3.250   1.072    41%
+   random-walk sd from q = 1e-10 over the record: B 1.4e-04, A 6.9e-05
+
+  total runtime 229 s
+exit 0

@@ -1,0 +1,158 @@
+====================================================================================================
+  RECHECK OF t11_fim_check.py (item 6). No import of core, dyn, t*.py. Simulated patients only.
+====================================================================================================
+FOOTING (re-derived)
+  L = 322.7273; m at normal 10.0000; m at 5% untreated 54.0231; s = 0.1630; sigma = 22.1774; max |balance residual| 4.1e-12
+
+CHECK 1. Information matrices re-derived in linear coordinates, against printed values
+  (a) Task 5 scenarios, median over the repository's intake seeds 0..23
+     scenario                             here  printed (t5/t11)
+     current design                     3.0673            3.0673
+     flux 10%                           0.1120            0.1120
+     flux 20%                           0.2064            0.2064
+     k_e exact                          0.3879            0.3879
+     k_e to 5%                          0.4447            0.4447
+     k_e exact + load exact             0.2044            0.2044
+     flux 20% + k_e 1.2 + load 2%       0.1989            0.1989
+  (b) cohort FIM (full matrix, direct inverse), t2's seeds 0..N-1
+     N =  1: sd ln theta_1 3.0820 (t2 printed 3.082); sd ln k_e 0.6910; sandwich (centres held) 1.5377
+     N = 16: sd ln theta_1 1.3313 (t2 printed 1.331); sd ln k_e 0.2878; sandwich (centres held) 1.2243
+     N = 64: sd ln theta_1 0.8058 (t2 printed 0.806); sd ln k_e 0.1591; sandwich (centres held) 0.7672
+  [0 s]
+
+CHECK 2. COHORT MONTE CARLO ON THE INVESTIGATOR'S OWN DRAWS, WITH AN INDEPENDENT ESTIMATOR
+  (draws re-created from the seed scheme stated in t11/t2: intake seed 1000k+i, noise seed
+  10000+1000k+i, prior centres from default_rng(0) in t2's order; estimator: own code, Nelder-Mead)
+
+  investigator's draws: N = 1, 200 replicates
+     FIM sd ln theta_1 (rms over own records) 3.035; pooled 3.035; sandwich (centres held) 1.581; FIM sd ln k_e 0.677
+     patient 0, bound 1e-3: RMSE 6.947 [6.256, 7.537]  robust 6.589 [6.530, 6.623]  median +0.377  at bound 33.5%
+     bound 1e-02: patient 0 RMSE 5.626, robust 5.437, P84 +1.259; pooled RMSE 5.626, pooled robust 5.437; 0.5 (P84 - ln(bound/theta)) = 5.437
+     bound 1e-03: patient 0 RMSE 6.947, robust 6.589, P84 +1.259; pooled RMSE 6.947, pooled robust 6.589; 0.5 (P84 - ln(bound/theta)) = 6.589
+     bound 1e-05: patient 0 RMSE 9.599, robust 8.891, P84 +1.259; pooled RMSE 9.599, pooled robust 8.891; 0.5 (P84 - ln(bound/theta)) = 8.891
+     pooled constrained: RMSE ln 6.947 [cohort-bootstrap [6.256, 7.537]], robust ln 6.589 [6.530, 6.623], median ln +0.377; linear RMSE 1.689, mean linear err +0.662 [0.458, 0.889]
+     cohorts with a patient at the bound 33.5%; patient-fits at the bound 33.50%
+     unconstrained (pooled, linear): sd 3.268 [2.788, 3.754], robust 3.034, mean -0.373, theta_hat < 0 in 33.5% (Gaussian prediction Phi(-1/FIM) = 37.1%)
+     linear surrogate on the same draws (pooled): sd 3.173, robust 3.181
+     ln k_e error: FIM +-1.96 sd = +-1.327; c3 P2.5/P50/P97.5 -1.610/-0.095/+0.301; un P2.5/P50/P97.5 -1.610/-0.095/+1.031;
+  [38 s]
+
+  investigator's draws: N = 64, 200 replicates
+     FIM sd ln theta_1 (rms over own records) 0.781; pooled 0.781; sandwich (centres held) 0.743; FIM sd ln k_e 0.153
+     patient 0, bound 1e-3: RMSE 1.330 [0.558, 1.983]  robust 0.521 [0.464, 0.579]  median +0.124  at bound 1.0%
+     bound 1e-02: patient 0 RMSE 1.129, robust 0.521, P84 +0.609; pooled RMSE 1.248, pooled robust 0.550; 0.5 (P84 - ln(bound/theta)) = 5.112
+     bound 1e-03: patient 0 RMSE 1.330, robust 0.521, P84 +0.609; pooled RMSE 1.473, pooled robust 0.550; 0.5 (P84 - ln(bound/theta)) = 6.264
+     bound 1e-05: patient 0 RMSE 1.755, robust 0.521, P84 +0.609; pooled RMSE 1.946, pooled robust 0.550; 0.5 (P84 - ln(bound/theta)) = 8.566
+     pooled constrained: RMSE ln 1.473 [cohort-bootstrap [1.345, 1.593]], robust ln 0.550 [0.520, 0.585], median ln +0.154; linear RMSE 0.671, mean linear err +0.233 [0.167, 0.306]
+     cohorts with a patient at the bound 41.0%; patient-fits at the bound 1.23%
+     unconstrained (pooled, linear): sd 0.832 [0.773, 0.886], robust 0.838, mean +0.033, theta_hat < 0 in 11.8% (Gaussian prediction Phi(-1/FIM) = 10.0%)
+     linear surrogate on the same draws (pooled): sd 0.831, robust 0.842
+     ln k_e error: FIM +-1.96 sd = +-0.299; c3 P2.5/P50/P97.5 -0.355/-0.027/+0.087; un P2.5/P50/P97.5 -0.355/-0.017/+0.277;
+     first 60 replicates (= t2's table E): RMSE 0.494, robust 0.455, median +0.119
+  [393 s]
+
+CHECK 3. COHORT MONTE CARLO ON INDEPENDENT DRAWS (own seed stream, fresh intake)
+
+  own draws: N = 1, 400 replicates
+     FIM sd ln theta_1 (rms over own records) 3.044; pooled 3.044; sandwich (centres held) 1.577; FIM sd ln k_e 0.679
+     patient 0, bound 1e-3: RMSE 7.586 [7.151, 8.020]  robust 6.576 [6.516, 6.610]  median -0.132  at bound 40.0%
+     bound 1e-02: patient 0 RMSE 6.141, robust 5.425, P84 +1.235; pooled RMSE 6.141, pooled robust 5.425; 0.5 (P84 - ln(bound/theta)) = 5.425
+     bound 1e-03: patient 0 RMSE 7.586, robust 6.576, P84 +1.235; pooled RMSE 7.586, pooled robust 6.576; 0.5 (P84 - ln(bound/theta)) = 6.576
+     bound 1e-05: patient 0 RMSE 10.485, robust 8.879, P84 +1.235; pooled RMSE 10.485, pooled robust 8.879; 0.5 (P84 - ln(bound/theta)) = 8.879
+     pooled constrained: RMSE ln 7.586 [cohort-bootstrap [7.151, 8.020]], robust ln 6.576 [6.516, 6.610], median ln -0.132; linear RMSE 1.626, mean linear err +0.454 [0.300, 0.603]
+     cohorts with a patient at the bound 40.0%; patient-fits at the bound 40.00%
+     unconstrained (pooled, linear): sd 3.100 [2.828, 3.365], robust 3.068, mean -0.620, theta_hat < 0 in 40.0% (Gaussian prediction Phi(-1/FIM) = 37.1%)
+     linear surrogate on the same draws (pooled): sd 3.027, robust 3.043
+     ln k_e error: FIM +-1.96 sd = +-1.331; c3 P2.5/P50/P97.5 -1.417/-0.005/+0.299; un P2.5/P50/P97.5 -1.417/+0.001/+1.065;
+     GN sd at the MAP, patient 0 (not at bound): median 0.959, P10 0.289, P90 4.618 (n = 240); FIM 3.044
+  [470 s]
+
+  own draws: N = 16, 200 replicates
+     FIM sd ln theta_1 (rms over own records) 1.351; pooled 1.350; sandwich (centres held) 1.239; FIM sd ln k_e 0.291
+     patient 0, bound 1e-3: RMSE 2.371 [1.459, 3.068]  robust 0.800 [0.677, 0.999]  median +0.172  at bound 3.5%
+     bound 1e-03: patient 0 RMSE 2.371, robust 0.800, P84 +0.880; pooled RMSE 2.325, pooled robust 0.860; 0.5 (P84 - ln(bound/theta)) = 6.399
+     pooled constrained: RMSE ln 2.325 [cohort-bootstrap [2.120, 2.512]], robust ln 0.860 [0.791, 0.922], median ln +0.165; linear RMSE 1.091, mean linear err +0.411 [0.284, 0.544]
+     cohorts with a patient at the bound 39.5%; patient-fits at the bound 3.28%
+     unconstrained (pooled, linear): sd 1.336 [1.223, 1.446], robust 1.360, mean +0.104, theta_hat < 0 in 21.0% (Gaussian prediction Phi(-1/FIM) = 22.9%)
+     linear surrogate on the same draws (pooled): sd 1.318, robust 1.339
+     ln k_e error: FIM +-1.96 sd = +-0.570; c3 P2.5/P50/P97.5 -0.856/-0.022/+0.148; un P2.5/P50/P97.5 -0.856/-0.001/+0.393; others P2.5/P50/P97.5 -0.856/-0.022/+0.148;
+     MECHANISM TEST, patient 0 in linear theta (theta_hat/theta - 1):
+       all constrained:            robust 0.962 [0.790, 1.186], sd 0.989, mean +0.415
+       others constrained, 0 free: robust 0.962 [0.790, 1.186], sd 0.998, mean +0.409, theta_0 < 0 in 3.5%
+       none constrained:           robust 1.297 [1.111, 1.526], sd 1.316, mean +0.107
+       FIM sd (linear = ln at the truth): 1.351
+     GN sd at the MAP, patient 0 (not at bound): median 0.756, P10 0.393, P90 1.782 (n = 193); FIM 1.351
+  [504 s]
+
+  own draws: N = 64, 200 replicates
+     FIM sd ln theta_1 (rms over own records) 0.781; pooled 0.780; sandwich (centres held) 0.743; FIM sd ln k_e 0.153
+     patient 0, bound 1e-3: RMSE 1.772 [0.984, 2.447]  robust 0.523 [0.442, 0.581]  median +0.038  at bound 2.0%
+     bound 1e-02: patient 0 RMSE 1.466, robust 0.523, P84 +0.539; pooled RMSE 1.216, pooled robust 0.541; 0.5 (P84 - ln(bound/theta)) = 5.078
+     bound 1e-03: patient 0 RMSE 1.772, robust 0.523, P84 +0.539; pooled RMSE 1.434, pooled robust 0.541; 0.5 (P84 - ln(bound/theta)) = 6.229
+     bound 1e-05: patient 0 RMSE 2.400, robust 0.523, P84 +0.539; pooled RMSE 1.892, pooled robust 0.541; 0.5 (P84 - ln(bound/theta)) = 8.531
+     pooled constrained: RMSE ln 1.434 [cohort-bootstrap [1.321, 1.552]], robust ln 0.541 [0.508, 0.572], median ln +0.081; linear RMSE 0.627, mean linear err +0.154 [0.091, 0.218]
+     cohorts with a patient at the bound 48.5%; patient-fits at the bound 1.16%
+     unconstrained (pooled, linear): sd 0.767 [0.695, 0.838], robust 0.711, mean -0.020, theta_hat < 0 in 9.0% (Gaussian prediction Phi(-1/FIM) = 10.0%)
+     linear surrogate on the same draws (pooled): sd 0.771, robust 0.711
+     ln k_e error: FIM +-1.96 sd = +-0.299; c3 P2.5/P50/P97.5 -0.405/-0.009/+0.090; un P2.5/P50/P97.5 -0.405/+0.008/+0.279; others P2.5/P50/P97.5 -0.405/-0.009/+0.090; self P2.5/P50/P97.5 -0.405/+0.008/+0.229;
+     MECHANISM TEST, patient 0 in linear theta (theta_hat/theta - 1):
+       all constrained:            robust 0.556 [0.472, 0.623], sd 0.601, mean +0.141
+       others constrained, 0 free: robust 0.556 [0.472, 0.623], sd 0.606, mean +0.138, theta_0 < 0 in 2.0%
+       only patient 0 constrained: robust 0.704 [0.614, 0.817], sd 0.699, mean +0.003
+       none constrained:           robust 0.704 [0.614, 0.817], sd 0.764, mean -0.034
+       FIM sd (linear = ln at the truth): 0.781
+       ln theta_1 robust: all constrained 0.523; only patient 0 constrained 0.909
+     centres held at the truth: patient 0 robust ln 0.512, median +0.035
+     profile at theta_1 = 150 e^-11.5 (the investigator's grid floor): -log L rise over the MAP below chi2/2 = 1.921 (interval open towards 0) in 49.0% of 200 cohorts [0.420, 0.560]; linear-Gaussian prediction P(theta_hat/theta < 1.96 FIM) = 75.1%
+     GN sd at the MAP, patient 0 (not at bound): median 0.593, P10 0.367, P90 1.151 (n = 196); FIM 0.781
+  [1119 s]
+
+CHECK 4. IS THE PROJECTED MAP THE GLOBAL OPTIMUM? Full-dimensional L-BFGS-B, truth-free starts
+       N  reps  max (proj - full) cost  full lower by > 1e-6
+       1   100                1.07e-14                     0
+      16    30                2.84e-14                     0
+      64    30               -2.27e-13                     0
+  [1155 s]
+
+CHECK 5. LINEAR-GAUSSIAN SURROGATE, N = 64: whitened error of theta_1 must be N(0, 1) exactly
+  (conditional on the records, w is N(0, I) and the GN step is N(0, inv F): no approximation)
+     investigator's draws k = 0..1999   reps  2000: whitened sd 0.964  95% band [0.969, 1.031]  mean -0.014
+     own independent draws              reps  6000: whitened sd 0.987  95% band [0.982, 1.018]  mean -0.004
+  [1180 s]
+
+CHECK 6. TASK 5 SCENARIOS AT 5%: MC MAP on independent draws (fresh intake each replicate),
+  400 replicates per scenario, common random numbers across scenarios, ratios to the FIM rms
+  over the replicates' own records. Measurements simulated about the truth (as t11 and t2 do).
+     flux 10%                       FIM median(0..23) 0.1120, rms own 0.1120 | ln RMSE 0.1156 [0.1070, 0.1245] (1.033) | robust 0.1093 [0.0991, 0.1207] (0.977) | lin RMSE 0.1137 [0.1057, 0.1217] (1.016) | median +0.0042 | at bound 0.0%
+     flux 20%                       FIM median(0..23) 0.2064, rms own 0.2064 | ln RMSE 0.2252 [0.2033, 0.2504] (1.091) | robust 0.2031 [0.1777, 0.2324] (0.984) | lin RMSE 0.2095 [0.1944, 0.2254] (1.015) | median +0.0098 | at bound 0.0%
+     k_e exact                      FIM median(0..23) 0.3879, rms own 0.3947 | ln RMSE 1.0288 [0.5471, 1.4837] (2.606) | robust 0.4130 [0.3585, 0.4816] (1.046) | lin RMSE 0.4186 [0.3929, 0.4452] (1.061) | median +0.0840 | at bound 0.5%
+       profile open towards theta -> 0 (rise at the floor < 1.921) in 27.5% [0.233, 0.318]; linear-Gaussian prediction Phi(1.96 - 1/FIM) = 26.8%; investigator: 6/24 = 25.0%
+     k_e to 5%                      FIM median(0..23) 0.4447, rms own 0.4505 | ln RMSE 1.4748 [0.8793, 1.9984] (3.274) | robust 0.4928 [0.4349, 0.5679] (1.094) | lin RMSE 0.4624 [0.4326, 0.4932] (1.027) | median +0.0318 | at bound 1.2%
+       profile open towards theta -> 0 (rise at the floor < 1.921) in 38.2% [0.335, 0.430]; linear-Gaussian prediction Phi(1.96 - 1/FIM) = 38.6%; investigator: 6/24 = 25.0%
+     k_e exact + load exact         FIM median(0..23) 0.2044, rms own 0.2031 | ln RMSE 0.2076 [0.1936, 0.2223] (1.022) | robust 0.2094 [0.1875, 0.2319] (1.031) | lin RMSE 0.2029 [0.1902, 0.2157] (0.999) | median +0.0087 | at bound 0.0%
+     flux 20% + k_e 1.2 + load 2%   FIM median(0..23) 0.1989, rms own 0.1989 | ln RMSE 0.2166 [0.1927, 0.2422] (1.089) | robust 0.2009 [0.1836, 0.2222] (1.010) | lin RMSE 0.2015 [0.1859, 0.2177] (1.013) | median +0.0034 | at bound 0.0%
+  paired comparison (same random numbers): combo minus 'k_e exact + load exact'
+     ln RMSE difference +0.0090 [-0.018, 0.034]; FIM difference -0.0055
+     combo ln RMSE 0.2166, P(bootstrap RMSE <= 0.20) = 0.076
+     ln RMSE / FIM over the four scenarios without bound hits: 1.033, 1.091, 1.022, 1.089
+     linear RMSE / FIM, all six: 1.016, 1.015, 1.061, 1.027, 0.999, 1.013
+     rank by FIM:     ['flux 10%', 'flux 20% + k_e 1.2 + load 2%', 'k_e exact + load exact', 'flux 20%', 'k_e exact', 'k_e to 5%']
+     rank by MC RMSE: ['flux 10%', 'k_e exact + load exact', 'flux 20% + k_e 1.2 + load 2%', 'flux 20%', 'k_e exact', 'k_e to 5%']
+  [1331 s]
+
+CHECK 7. TASK 5 PROFILE WIDTHS IN ln theta: the investigator's 24 draws against independent draws
+  (investigator's draws re-created: intake seed s, then default_rng(90000 + s): 26 noise normals,
+  then the flux, k_e and load-bias errors). Own profile: step out, then bisection.
+     the 24 flux-reading errors (standard units) on those draws: median +0.764, mean +0.394, 16 of 24 positive; P(median of 24 N(0,1) >= this) = 0.0014 (normal approximation)
+     flux 10%                       investigator's draws   n = 24: median PL width / FIM width 0.957 (range 0.869-1.155); median MAP +0.068
+     flux 10%                       own independent draws  n = 40: median PL width / FIM width 1.008 (range 0.820-1.184); median MAP -0.001
+                                    linear-Gaussian ln-width ratio with theta_hat at the truth: 1.017
+     flux 20%                       investigator's draws   n = 24: median PL width / FIM width 0.916 (range 0.776-1.496); median MAP +0.143
+     flux 20%                       own independent draws  n = 40: median PL width / FIM width 1.045 (range 0.682-1.585); median MAP -0.008
+                                    linear-Gaussian ln-width ratio with theta_hat at the truth: 1.061
+     flux 20% + k_e 1.2 + load 2%   investigator's draws   n = 24: median PL width / FIM width 0.935 (range 0.780-1.503); median MAP +0.112
+     flux 20% + k_e 1.2 + load 2%   own independent draws  n = 40: median PL width / FIM width 1.036 (range 0.685-1.520); median MAP +0.009
+                                    linear-Gaussian ln-width ratio with theta_hat at the truth: 1.056
+  [1472 s]
+
+  total runtime 1472 s

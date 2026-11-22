@@ -1,0 +1,295 @@
+====================================================================================================
+  RECHECK OF t10_factorial.py BY AN INDEPENDENT ROUTE (no shared code)
+====================================================================================================
+
+====================================================================================================
+  (a) THE 2^4 FACTORIAL, RECOMPUTED (RK4 + complex step; own effects and Shapley)
+====================================================================================================
+  footing: L = 322.7273, L0 = 161.3636; m at 5% untreated 54.0231, at 20% 34.0586; drug kernel rise 6.6987 /d, peak 13.0 h
+  RK4 step check, sd no priors at h = 0.5 / 1 / 5 min: TB-A 383.3125 / 383.3125 / 383.3125;  TB-B 0.08927 / 0.08927 / 0.08927
+
+  cell (cap,samp,CV,exc)    mine, none        t10      rel    mine, rung      t10      rel
+  (0, 0, 0, 0)                383.3125   383.3133 -2.2e-06        4.1260   4.1260 +4.4e-06
+  (0, 0, 0, 1)                  3.1140     3.1140 -1.3e-05        0.5651   0.5651 -4.8e-05
+  (0, 0, 1, 0)                 76.6625    76.6627 -2.7e-06        1.3931   1.3931 -2.3e-06
+  (0, 0, 1, 1)                  0.6228     0.6228 -1.3e-05        0.1181   0.1181 -1.4e-04
+  (0, 1, 0, 0)                199.6755   199.6758 -1.7e-06        2.9875   2.9875 -1.0e-06
+  (0, 1, 0, 1)                  1.6088     1.6088 -2.6e-05        0.2929   0.2929 -4.3e-05
+  (0, 1, 1, 0)                 39.9351    39.9352 -2.8e-06        0.7397   0.7397 -5.6e-05
+  (0, 1, 1, 1)                  0.3218     0.3218 -1.5e-04        0.0674   0.0674 -3.9e-04
+  (1, 0, 0, 0)                280.2237   280.2237 -1.2e-07        0.9753   0.9753 -8.1e-06
+  (1, 0, 0, 1)                  0.8666     0.8666 +2.6e-05        0.1316   0.1316 +2.0e-04
+  (1, 0, 1, 0)                 56.0447    56.0447 +5.9e-07        0.5815   0.5815 -2.1e-05
+  (1, 0, 1, 1)                  0.1733     0.1733 +1.4e-04        0.0520   0.0520 +7.8e-04
+  (1, 1, 0, 0)                148.3284   148.3284 -2.8e-07        0.8854   0.8854 -5.1e-05
+  (1, 1, 0, 1)                  0.4464     0.4464 -8.1e-05        0.0785   0.0785 -5.6e-04
+  (1, 1, 1, 0)                 29.6657    29.6657 -8.9e-07        0.3531   0.3531 +7.7e-05
+  (1, 1, 1, 1)                  0.0893     0.0893 -3.0e-04        0.0435   0.0435 -3.1e-04
+  (2.1 s)
+
+  [no priors] log10 sd(B) - log10 sd(A) = -3.6328; main-effect share of the variance 99.3%, two-way 0.7%
+     main effects (mine | t10): capacity -0.3444 | -0.3444, sampling -0.2836 | -0.2836, assay CV -0.6990 | -0.6990, excursion -2.3038 | -2.3038
+     largest two-way terms: capacity x excursion -0.2118, sampling x excursion -0.0039, capacity x sampling +0.0014
+     Shapley (mine | t10): capacity -0.3450 (9.5%) | -0.3450, sampling -0.2843 (7.8%) | -0.2843, assay CV -0.6990 (19.2%) | -0.6990, excursion -2.3045 (63.4%) | -2.3045
+
+  [k_e 0.8 + K_m 0.062] log10 sd(B) - log10 sd(A) = -1.9772; main-effect share of the variance 98.0%, two-way 1.6%
+     main effects (mine | t10): capacity -0.4507 | -0.4507, sampling -0.1882 | -0.1882, assay CV -0.4599 | -0.4599, excursion -0.9831 | -0.9831
+     largest two-way terms: capacity x assay CV +0.1391, capacity x sampling +0.0479, assay CV x excursion -0.0345
+     Shapley (mine | t10): capacity -0.4366 (22.1%) | -0.4366, sampling -0.1618 (8.2%) | -0.1618, assay CV -0.4279 (21.6%) | -0.4279, excursion -0.9509 (48.1%) | -0.9509
+
+  sd(ln K_m) the monthly record alone gives, over seeds 0..23 (median [min, max]):
+     theta   150, k_e prior 0.8 : 0.0617 [0.0570, 0.0659]
+     theta   150, k_e prior None: 0.0735 [0.0628, 0.0890]
+     theta   600, k_e prior 0.8 : 0.0606 [0.0561, 0.0646]
+     theta   600, k_e prior None: 0.0810 [0.0663, 0.1000]
+     (t10 printed 0.0617 at 5% and 0.0606 at 20%, both with the k_e prior)
+     using the 20% record's own 0.0606 instead of 0.062 in the 8 cells at 20% moves log10 sd by at most 0.0074 [t10 0.0074]
+
+====================================================================================================
+  (b) THE 5% GRID, RECOMPUTED (same axes as t10; own FIM, own record, own ordering and Pareto)
+====================================================================================================
+  5280 grid points in 2.0 s
+  passing points: 1422 of 5280 (t10 printed 1422)
+  passing by safety class x CV (mine | t10):
+     class 0:    0 |    0     0 |    0     0 |    0    36 |   36
+     class 1:    0 |    0     9 |    9    33 |   33    71 |   71
+     class 2:    5 |    5    30 |   30    59 |   59    84 |   84
+     class 3:   20 |   20    52 |   52    77 |   77    84 |   84
+     class 4:   27 |   27    64 |   64    78 |   78    89 |   89
+     class 5:   37 |   37    67 |   67    83 |   83   102 |  102
+     class 6:   37 |   37    75 |   75    91 |   91   112 |  112
+
+  key values (mine; t10's printed value in brackets):
+     x4 hourly 48 h, L0 1% alone, CV 5%             0.2054  [0.2054]
+     x6 hourly 48 h, L0 1% alone, CV 5%             0.1757  [0.1757]
+     x4 hourly 72 h, L0 1% alone, CV 5%             0.1815  [0.182]
+     x4 30 min 48 h, L0 1% alone, CV 5%             0.1742  [0.174]
+     drug 2850 15m/72h CV 0.5% none alone           0.1942  [0.1942]
+     drug 1500 5m/72h CV 0.5% none alone            0.1235  [0.1235]
+     withdraw 50% 5m/48h CV 0.5% L0 1% alone        0.1950  [0.195]
+     x2 15m/72h CV 5% L0 1% joined                  0.1989  [0.1989]
+     x3 5m/72h CV 5% +K_m alone                     0.1933  [0.1933]
+     x4 5m/48h CV 5% none joined                    0.1987  [0.1987]
+     x6 15m/72h CV 5% +K_m alone                    0.1977  [0.1977]
+     x8 15m/72h CV 5% +K_m alone                    0.1725  [0.1725]
+     x1.5 5m/72h CV 2% none joined                  0.1998  [0.1998]
+     drug 2850 15m/72h CV 5% L0 1% alone            1.4809  [1.481]
+     drug 2850 15m/72h CV 5% L0 1% joined           1.2599  [1.26]
+
+  class 0 (no added substrate): the best sd anywhere in the grid, per CV, over all rungs and modes
+     drug 450        CV 5%: 0.690  CV 2%: 0.428  CV 1%: 0.292  CV 0.5%: 0.219
+     drug 1500       CV 5%: 0.746  CV 2%: 0.380  CV 1%: 0.220  CV 0.5%: 0.119
+     drug 2850       CV 5%: 0.898  CV 2%: 0.419  CV 1%: 0.219  CV 0.5%: 0.112
+     withdraw 25%    CV 5%: 0.423  CV 2%: 0.266  CV 1%: 0.235  CV 0.5%: 0.224
+     withdraw 50%    CV 5%: 0.344  CV 2%: 0.300  CV 1%: 0.256  CV 0.5%: 0.183
+     the best class-0 sd at CV 5, 2 or 1% is 0.2194
+
+  ordering (i) safety > knowledge > CV > N: first three distinct excursions
+     drug 2850     15 min/72 h (N 289), CV 0.5%, none alone: 0.1942
+     drug 1500      5 min/72 h (N 865), CV 0.5%, none alone: 0.1235
+     withdraw 50%   5 min/48 h (N 577), CV 0.5%, +L0 1% alone: 0.1950
+
+  ordering (ii) CV > safety > knowledge > N: first three distinct excursions
+     load x2       15 min/72 h (N 289), CV 5%, +L0 1% joined: 0.1989
+     load x3        5 min/72 h (N 865), CV 5%, +K_m 0.062 alone: 0.1933
+     load x4        5 min/48 h (N 577), CV 5%, none joined: 0.1987
+
+  Pareto set over (class, knowledge, CV, N): 27 non-dominated of 452 distinct vectors (t10 printed 27 of 452); class-0 members: (0, 0, 3, 289)
+
+  load x1.5, fewest samples reaching 0.20 with free knowledge (rungs none/k_e/K_m, alone or joined):
+     CV 5%: none; best 0.4423
+     CV 2%: 865 (5 min/72 h) sd 0.1997
+     CV 1%: 289 (15 min/72 h) sd 0.1752
+     CV 0.5%: 73 (60 min/72 h) sd 0.1727
+     [t10: none (0.442); 865 5m/72h 0.200; 289 15m/72h 0.183; 73 60m/72h 0.180]
+
+  drug 2850 with kappa uncertain (15 min / 72 h, CV 0.5%, no priors, alone):
+     kappa to 12%: 0.3450;  kappa free: 0.3701  [t10 0.3450, 0.3701]
+     kappa 12%, free knowledge, CV 0.5%: fewest samples 865 (5 min/72 h) sd 0.1820  [t10 865 5m/72h 0.182]
+
+====================================================================================================
+  (b') PROBES t10 DID NOT RUN: the load hold confound, record-seed dependence, the K_m prior
+====================================================================================================
+  In t10's grid (as in t7_design.washout) the load is held for the FIRST HALF of the experiment,
+  so T = 24/48/72 h holds it 12/24/36 h. Separating sampling duration from load exposure:
+     design                              T 48 h hold 24 h  T 72 h hold 36 h  T 72 h hold 24 h
+     x4 hourly, L0 1% alone, CV 5%                 0.2054            0.1815            0.1885
+     x2 15 min, L0 1% joined, CV 5%                0.2133            0.1989            0.2090
+     x3 5 min, +K_m alone, CV 5%                   0.2635            0.1933            0.2046
+     x6 15 min, +K_m alone, CV 5%                  0.2929            0.1977            0.2039
+     x8 15 min, +K_m alone, CV 5%                  0.2655            0.1725            0.1753
+
+  The grid's load excursions with the hold CAPPED at 24 h (T = 24 h keeps 12 h), the same exposure
+  at 48 and 72 h: passing points at CV 5% by class, and ordering (ii)'s first three at CV 5%
+     passing at CV 5%, classes 1..6 (hold capped): 0, 4, 17, 27, 36, 37   [t10, hold T/2: 0, 5, 20, 27, 37, 37]
+     1. load x2     5 min/48 h (N 577), +L0 1% alone: 0.1926
+     2. load x3     5 min/72 h (N 865), none joined: 0.1933
+     3. load x4     5 min/48 h (N 577), none joined: 0.1987
+
+  The joined designs use ONE record (intake seed 0). The borderline joined passes over seeds 0..23:
+     x2 15m/72h CV 5% L0 1% joined      seed 0 0.1989; median 0.1993 [0.1980, 0.2004]; pass in 21/24 seeds
+     x4 5m/48h CV 5% none joined        seed 0 0.1987; median 0.1983 [0.1972, 0.1994]; pass in 24/24 seeds
+     x1.5 5m/72h CV 2% none joined      seed 0 0.1998; median 0.2001 [0.1992, 0.2009]; pass in 7/24 seeds
+     x3 60m/72h CV 5% L0 1% joined      seed 0 0.1955; median 0.1958 [0.1946, 0.1968]; pass in 24/24 seeds
+     x4 60m/48h CV 5% L0 1% joined      seed 0 0.1941; median 0.1944 [0.1933, 0.1952]; pass in 24/24 seeds
+
+  The '+K_m from the record (0.062)' rung, used alone, adds the record's MARGINAL sd(ln K_m),
+  computed with the k_e prior in force, and then applies the k_e prior again. Against the proper
+  joint analysis (transient joined to the record, k_e prior once), for the alone passes at 5% CV:
+     x3 5m/72h    alone with K_m 0.062 + k_e 0.8: 0.1933;  joined, k_e 0.8 once: 0.1826
+     x6 15m/72h   alone with K_m 0.062 + k_e 0.8: 0.1977;  joined, k_e 0.8 once: 0.1840
+     x8 15m/72h   alone with K_m 0.062 + k_e 0.8: 0.1725;  joined, k_e 0.8 once: 0.1619
+
+====================================================================================================
+  (c) MONTE CARLO WITH AN INDEPENDENT ESTIMATOR (batched LM, complex-step Jacobian, new seeds)
+====================================================================================================
+  Priors are pseudo-observations with centres drawn at truth + sd N(0,1) per replicate; joined designs
+  redraw the record's ordinate noise and its load-bias centre (record intake seed 0, as t10/t7).
+  Starts: the truth, truth +- t6's offsets, one random start, and the prior centres when there are
+  priors; the lowest cost wins. Integrator step 5 min (data and fit), checked against 1 min via the FIM.
+
+  (c1) new draws, more replicates than t10's 40
+
+  [0] drug 2850, 15 min / 72 h, CV 0.5%, no priors, alone
+     FIM sd at h = 5 min 0.1942 (h = 1 min 0.1942); 300 replicates, seed 7001, 18 s
+     best of all starts:       RMSE 0.2037 [90% boot 0.1849, 0.2221]  robust 0.1833  median bias -0.0045  MC/FIM 1.049
+     best excluding the truth: RMSE 0.2037 [0.1849, 0.2221]; same optimum as all-starts in 100% of replicates
+     from the truth only:      RMSE 0.2037
+     remaining Gauss-Newton step in ln theta < 1e-3 at the chosen optimum: 100% of replicates
+     an efficient Gaussian estimator would give MC/FIM in [0.93, 1.07] (5-95%) at 300 replicates
+     t10 printed: FIM 0.1942, MC RMSE 0.1686 [0.144, 0.193], MC/FIM 0.87 (40 reps)
+
+  [1] drug 1500, 5 min / 72 h, CV 0.5%, no priors, alone
+     FIM sd at h = 5 min 0.1235 (h = 1 min 0.1235); 150 replicates, seed 7002, 14 s
+     best of all starts:       RMSE 0.1312 [90% boot 0.1138, 0.1486]  robust 0.1181  median bias -0.0049  MC/FIM 1.062
+     best excluding the truth: RMSE 0.1312 [0.1138, 0.1486]; same optimum as all-starts in 100% of replicates
+     from the truth only:      RMSE 0.1312
+     remaining Gauss-Newton step in ln theta < 1e-3 at the chosen optimum: 100% of replicates
+     an efficient Gaussian estimator would give MC/FIM in [0.90, 1.09] (5-95%) at 150 replicates
+     t10 printed: FIM 0.1235, MC RMSE 0.1127 [0.094, 0.130], MC/FIM 0.91 (40 reps)
+
+  [2] withdraw 50%, 5 min / 48 h, CV 0.5%, k_e 0.8 + K_m 0.062 + L0 1%, alone
+     FIM sd at h = 5 min 0.1950 (h = 1 min 0.1950); 150 replicates, seed 7003, 19 s
+     best of all starts:       RMSE 0.1994 [90% boot 0.1790, 0.2194]  robust 0.1821  median bias -0.0116  MC/FIM 1.023
+     best excluding the truth: RMSE 0.1994 [0.1790, 0.2194]; same optimum as all-starts in 100% of replicates
+     from the truth only:      RMSE 0.1994
+     remaining Gauss-Newton step in ln theta < 1e-3 at the chosen optimum: 100% of replicates
+     an efficient Gaussian estimator would give MC/FIM in [0.90, 1.09] (5-95%) at 150 replicates
+     t10 printed: FIM 0.1950, MC RMSE 0.2370 [0.198, 0.273], MC/FIM 1.22 (40 reps)
+
+  [3] load x2, 15 min / 72 h, CV 5%, k_e 0.8 + L0 1%, joined to the record
+     FIM sd at h = 5 min 0.1989 (h = 1 min 0.1989); 300 replicates, seed 7004, 15 s
+     best of all starts:       RMSE 0.2165 [90% boot 0.2008, 0.2315]  robust 0.2100  median bias +0.0124  MC/FIM 1.088
+     best excluding the truth: RMSE 0.2165 [0.2008, 0.2315]; same optimum as all-starts in 100% of replicates
+     from the truth only:      RMSE 0.2165
+     remaining Gauss-Newton step in ln theta < 1e-3 at the chosen optimum: 100% of replicates
+     an efficient Gaussian estimator would give MC/FIM in [0.93, 1.07] (5-95%) at 300 replicates
+     t10 printed: FIM 0.1989, MC RMSE 0.2369 [0.181, 0.291], MC/FIM 1.19 (40 reps)
+
+  [4] load x3, 5 min / 72 h, CV 5%, k_e 0.8 + K_m 0.062, alone
+     FIM sd at h = 5 min 0.1933 (h = 1 min 0.1933); 150 replicates, seed 7005, 15 s
+     best of all starts:       RMSE 0.2107 [90% boot 0.1907, 0.2304]  robust 0.2177  median bias +0.0283  MC/FIM 1.090
+     best excluding the truth: RMSE 0.2107 [0.1907, 0.2304]; same optimum as all-starts in 100% of replicates
+     from the truth only:      RMSE 0.2107
+     remaining Gauss-Newton step in ln theta < 1e-3 at the chosen optimum: 100% of replicates
+     an efficient Gaussian estimator would give MC/FIM in [0.90, 1.09] (5-95%) at 150 replicates
+     t10 printed: FIM 0.1933, MC RMSE 0.2033 [0.167, 0.238], MC/FIM 1.05 (40 reps)
+
+  (c2) t10's own 40 replicate draws (seeds 52000 + 1000 id + rep, its draw order) refitted with
+       this file's estimator, to separate estimator behaviour from the luck of 40 draws
+
+  [0] drug 2850, 15 min / 72 h, CV 0.5%, no priors, alone  [t10's draws]
+     FIM sd at h = 5 min 0.1942 (h = 1 min 0.1942); 40 replicates, seed 0, 8 s
+     best of all starts:       RMSE 0.1686 [90% boot 0.1436, 0.1930]  robust 0.1812  median bias +0.0129  MC/FIM 0.868
+     best excluding the truth: RMSE 0.1686 [0.1436, 0.1930]; same optimum as all-starts in 100% of replicates
+     from the truth only:      RMSE 0.1686
+     remaining Gauss-Newton step in ln theta < 1e-3 at the chosen optimum: 100% of replicates
+     an efficient Gaussian estimator would give MC/FIM in [0.81, 1.18] (5-95%) at 40 replicates
+     t10 printed: FIM 0.1942, MC RMSE 0.1686 [0.144, 0.193], MC/FIM 0.87 (40 reps)
+
+  [1] drug 1500, 5 min / 72 h, CV 0.5%, no priors, alone  [t10's draws]
+     FIM sd at h = 5 min 0.1235 (h = 1 min 0.1235); 40 replicates, seed 0, 8 s
+     best of all starts:       RMSE 0.1127 [90% boot 0.0940, 0.1303]  robust 0.1194  median bias +0.0131  MC/FIM 0.912
+     best excluding the truth: RMSE 0.1127 [0.0940, 0.1303]; same optimum as all-starts in 100% of replicates
+     from the truth only:      RMSE 0.1127
+     remaining Gauss-Newton step in ln theta < 1e-3 at the chosen optimum: 100% of replicates
+     an efficient Gaussian estimator would give MC/FIM in [0.81, 1.18] (5-95%) at 40 replicates
+     t10 printed: FIM 0.1235, MC RMSE 0.1127 [0.094, 0.130], MC/FIM 0.91 (40 reps)
+
+  [2] withdraw 50%, 5 min / 48 h, CV 0.5%, k_e 0.8 + K_m 0.062 + L0 1%, alone  [t10's draws]
+     FIM sd at h = 5 min 0.1950 (h = 1 min 0.1950); 40 replicates, seed 0, 11 s
+     best of all starts:       RMSE 0.2370 [90% boot 0.1996, 0.2734]  robust 0.2553  median bias +0.0418  MC/FIM 1.216
+     best excluding the truth: RMSE 0.2370 [0.1996, 0.2734]; same optimum as all-starts in 100% of replicates
+     from the truth only:      RMSE 0.2370
+     remaining Gauss-Newton step in ln theta < 1e-3 at the chosen optimum: 100% of replicates
+     an efficient Gaussian estimator would give MC/FIM in [0.81, 1.18] (5-95%) at 40 replicates
+     t10 printed: FIM 0.1950, MC RMSE 0.2370 [0.198, 0.273], MC/FIM 1.22 (40 reps)
+
+  [3] load x2, 15 min / 72 h, CV 5%, k_e 0.8 + L0 1%, joined to the record  [t10's draws]
+     FIM sd at h = 5 min 0.1989 (h = 1 min 0.1989); 40 replicates, seed 0, 8 s
+     best of all starts:       RMSE 0.2369 [90% boot 0.1803, 0.2901]  robust 0.2203  median bias +0.0110  MC/FIM 1.191
+     best excluding the truth: RMSE 0.2369 [0.1803, 0.2901]; same optimum as all-starts in 100% of replicates
+     from the truth only:      RMSE 0.2369
+     remaining Gauss-Newton step in ln theta < 1e-3 at the chosen optimum: 100% of replicates
+     an efficient Gaussian estimator would give MC/FIM in [0.81, 1.18] (5-95%) at 40 replicates
+     t10 printed: FIM 0.1989, MC RMSE 0.2369 [0.181, 0.291], MC/FIM 1.19 (40 reps)
+
+  [4] load x3, 5 min / 72 h, CV 5%, k_e 0.8 + K_m 0.062, alone  [t10's draws]
+     FIM sd at h = 5 min 0.1933 (h = 1 min 0.1933); 40 replicates, seed 0, 10 s
+     best of all starts:       RMSE 0.2033 [90% boot 0.1658, 0.2383]  robust 0.2014  median bias -0.0290  MC/FIM 1.052
+     best excluding the truth: RMSE 0.2033 [0.1658, 0.2383]; same optimum as all-starts in 100% of replicates
+     from the truth only:      RMSE 0.2033
+     remaining Gauss-Newton step in ln theta < 1e-3 at the chosen optimum: 100% of replicates
+     an efficient Gaussian estimator would give MC/FIM in [0.81, 1.18] (5-95%) at 40 replicates
+     t10 printed: FIM 0.1933, MC RMSE 0.2033 [0.167, 0.238], MC/FIM 1.05 (40 reps)
+
+  (c3) TB-B and its reverse cell 'sampling at A', no priors (t10's part (a) Monte Carlo)
+
+  TB-B (20%, 15 min, CV 1%, x6), new draws
+     FIM sd at h = 5 min 0.0893 (h = 1 min 0.0893); 200 replicates, seed 7006, 8 s
+     best of all starts:       RMSE 0.0884 [90% boot 0.0806, 0.0960]  robust 0.0801  median bias +0.0028  MC/FIM 0.991
+     best excluding the truth: RMSE 0.0884 [0.0806, 0.0960]; same optimum as all-starts in 100% of replicates
+     from the truth only:      RMSE 0.0884
+     remaining Gauss-Newton step in ln theta < 1e-3 at the chosen optimum: 100% of replicates
+     an efficient Gaussian estimator would give MC/FIM in [0.92, 1.08] (5-95%) at 200 replicates
+     t10 printed: FIM 0.089, MC RMSE 0.100 [0.080, 0.119] (30 reps); t6 printed NLS RMSE 0.079 (80 reps)
+
+  TB-B, t10's own 30 draws (seeds 36000 + rep)
+     FIM sd at h = 5 min 0.0893 (h = 1 min 0.0893); 30 replicates, seed 0, 5 s
+     best of all starts:       RMSE 0.1001 [90% boot 0.0800, 0.1186]  robust 0.1080  median bias +0.0241  MC/FIM 1.122
+     best excluding the truth: RMSE 0.1001 [0.0800, 0.1186]; same optimum as all-starts in 100% of replicates
+     from the truth only:      RMSE 0.1001
+     remaining Gauss-Newton step in ln theta < 1e-3 at the chosen optimum: 100% of replicates
+     an efficient Gaussian estimator would give MC/FIM in [0.79, 1.21] (5-95%) at 30 replicates
+     t10 printed: MC RMSE 0.100
+
+  TB-B with hourly sampling (sampling at A), new draws
+     FIM sd at h = 5 min 0.1733 (h = 1 min 0.1733); 200 replicates, seed 7007, 9 s
+     best of all starts:       RMSE 0.1705 [90% boot 0.1535, 0.1879]  robust 0.1642  median bias -0.0185  MC/FIM 0.983
+     best excluding the truth: RMSE 0.1705 [0.1535, 0.1879]; same optimum as all-starts in 100% of replicates
+     from the truth only:      RMSE 0.1705
+     remaining Gauss-Newton step in ln theta < 1e-3 at the chosen optimum: 100% of replicates
+     an efficient Gaussian estimator would give MC/FIM in [0.92, 1.08] (5-95%) at 200 replicates
+     t10 printed: FIM 0.173, MC RMSE 0.205 [0.154, 0.252] (20 reps)
+
+  (c4) 'B, excursion at A' (20%, 15 min, CV 1%, diet out; FIM sd 29.7): t10's MC RMSE 1.303 (20 reps).
+       The same t10 draws (seeds 40000 + rep) fitted here, converged, to show whether 1.303 measures
+       the data or the estimator:
+
+  B, excursion at A, t10's 20 draws
+     FIM sd at h = 5 min 29.6657 (h = 1 min 29.6657); 20 replicates, seed 0, 11 s
+     best of all starts:       RMSE 1.2003 [90% boot 1.0431, 1.3441]  robust 1.2175  median bias +0.7286  MC/FIM 0.040
+     best excluding the truth: RMSE 1.2003 [1.0431, 1.3441]; same optimum as all-starts in 100% of replicates
+     from the truth only:      RMSE 0.2918
+     remaining Gauss-Newton step in ln theta < 1e-3 at the chosen optimum: 0% of replicates
+     an efficient Gaussian estimator would give MC/FIM in [0.74, 1.25] (5-95%) at 20 replicates
+     t10 printed: FIM 29.666, MC RMSE 1.303 [1.194, 1.405], off >2x 100%
+
+  SUMMARY (c): FIM | t10 MC (40) | this file, new draws (n) | this file on t10's draws
+     [0] 0.1942 | 0.1686 | 0.2037 [0.1849, 0.2221] MC/FIM 1.049 (n 300) | 0.1686
+     [1] 0.1235 | 0.1127 | 0.1312 [0.1138, 0.1486] MC/FIM 1.062 (n 150) | 0.1127
+     [2] 0.1950 | 0.2370 | 0.1994 [0.1790, 0.2194] MC/FIM 1.023 (n 150) | 0.2370
+     [3] 0.1989 | 0.2369 | 0.2165 [0.2008, 0.2315] MC/FIM 1.088 (n 300) | 0.2369
+     [4] 0.1933 | 0.2033 | 0.2107 [0.1907, 0.2304] MC/FIM 1.090 (n 150) | 0.2033
+
+  total runtime 171 s

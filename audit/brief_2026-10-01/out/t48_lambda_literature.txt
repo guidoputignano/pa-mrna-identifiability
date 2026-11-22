@@ -1,0 +1,107 @@
+============================================================================================
+  ROUND 15. lambda RE-GROUNDED ON LITERATURE: a measured human 3.6 d, a mouse 7 d
+============================================================================================
+
+  ITEM 1. WHICH lambda DOES THE TROUGH SEE? The human value (Chandler 1985) is a single
+  exponential (3.6 d) -- there is no two-compartment subtlety in it. The mouse Attarwala
+  model is 2-compartment; the trough sits at 14 d, deep in terminal decline, so it sees the
+  SLOW (terminal) rate, not the intrinsic k_deg. The exact 2-comp equations are not public
+  (Suppl Table S1 unavailable), so two bracketing symmetric reconstructions are shown; the
+  paper's stated effective terminal is ~7 d.
+
+                   2-comp reconstruction  terminal t_half
+           elimination from central only           11.8 d
+             elimination from both comps            3.9 d
+         paper stated effective terminal           ~7.0 d
+       intrinsic ln2/k_deg (1-comp view)            3.8 d
+      effective single-exp t_half matching the STEADY-STATE trough (central-only recon): 4.8 d
+      effective single-exp t_half matching the STEADY-STATE trough (both-comp recon): 3.1 d
+      READING, and a correction to the "trough sees ~7 d" intuition. The effective single
+      exponential that reproduces the mouse model's STEADY-STATE trough is ~3-5 d under both
+      reconstructions -- BELOW the paper's 7-d terminal, not at it. The reason: the 14-day
+      interval samples the decay before terminal dominance sets in, so the accumulated trough
+      falls faster than the terminal rate alone implies. Mapping the mouse model into the
+      repo's single-exponential increment via the decision-relevant quantity (the trough)
+      therefore gives ~3-5 d, which CONVERGES with the human single-exp value (3.6 d) rather
+      than the 7-d terminal. So reporting the decision "at 7 d" (below) uses the naive terminal
+      mapping and OVERSTATES the trough; the proper mapping of either source lands at ~3-5 d
+      -- right at the thresholds. The exact 2-comp value is structure-dependent (equations
+      unpublished), so the three stated points (3.6 / 3.8 / 7 d) are carried forward with 7 d
+      flagged as the optimistic end.
+
+============================================================================================
+  ITEM 2. THE DECISION AT 3.6 / 3.8 / 7 d, AND WHERE EACH HEADLINE FAILS
+============================================================================================
+
+  theta_crit^int = 150.8 (Model C, convention-free); theta_crit^rout = 429.5 (fold 1.0).
+  Delta_trough and Model-C safe-for-all status (Delta_trough(tau) > theta_crit^int):
+
+        t_half    Dtr14    Dtr15    Dtr21    14d  15d  21d  note
+          3.5d      400      347      143    ok   ok  FAIL  repo's old ASSUMED value
+          3.6d      434      379      161    ok   ok   ok   human fibroblast (primary)
+          3.8d      506      446      200    ok   ok   ok   ln2/k_deg (mouse intrinsic)
+          7.0d     2000     1882     1286    ok   ok   ok   mouse effective terminal
+
+  Half-life at which each headline FAILS (flips), and the margin at the human 3.6 d:
+                                                      headline  fails below  margin at 3.6 d
+                                  Model C: 14-day safe for all       2.62 d         +37.6%
+                                  Model C: 15-day safe for all       2.75 d         +30.7%
+                  Model C: 21-day safe for all (floor theta=0)       3.55 d          +1.5%
+      coarse grid 14-vs-10 resolvable at record 3.05 (fold 1.0)       3.32 d          +8.3%
+
+  READING: the correction runs the WRONG WAY. The repo's old 3.5 d sat just BELOW the
+  21-day floor (3.55 d), so round 13 found 21-day needs theta (and the record cannot supply
+  it); the human-measured 3.6 d sits just ABOVE it, flipping 21-day to "free for all" -- but
+  by only ~1.5%, a knife-edge. The Model-C 14-/15-day safe-for-all headlines clear 3.6 d by a
+  comfortable ~30-37%; the coarse-grid resolvability clears by only ~8%. And human HEPATIC
+  PCC very likely turns over FASTER than fibroblast (liver is the fastest-turnover tissue,
+  Rolfs 2021), so the true hepatic half-life may sit at or below 3.6 d -- toward every
+  threshold, not away. The honest statement is a margin, not a pass: at 3.6 d the 14-/15-day
+  steps hold, the coarse grid barely holds, and the 21-day step is on its boundary.
+
+============================================================================================
+  ITEM 3. SENSITIVITY OVER THE 3-FOLD BAND (t_half 1.2-11.5 d; 10-fold worst case)
+============================================================================================
+
+        t_half   Dtr(14)    14d  15d  21d coarse
+          1.2d         2   FAIL FAIL FAIL   FAIL
+          2.0d        47   FAIL FAIL FAIL   FAIL
+          2.6d       152     ok FAIL FAIL   FAIL
+          2.8d       181     ok FAIL FAIL   FAIL
+          3.3d       341     ok   ok FAIL   FAIL
+          3.5d       417     ok   ok   ok     ok
+          3.6d       434     ok   ok   ok     ok
+          5.0d      1006     ok   ok   ok     ok
+          7.0d      2000     ok   ok   ok     ok
+         11.5d      4527     ok   ok   ok     ok
+
+  READING: EVERY headline flips inside the 3-fold base-case band (1.2-11.5 d): 14-day at
+  2.62, 15-day at 2.75, coarse-grid at 3.32, 21-day at 3.55 d. The within-species-and-method
+  spread alone is ~3-fold (2.7-8.5 d), so this is measurement spread, not cross-species
+  conservatism. Per the source's own rule, a conclusion that flips inside the 3-fold band
+  makes lambda the DOMINANT model uncertainty -- which it now is for every interval headline.
+  The 15-day step (round 13's "free for all") is NOT exempt: it fails below 2.75 d, inside
+  the band, so even it is lambda-conditional, though it holds at all three literature points.
+
+============================================================================================
+  ITEM 5. THE RECORD'S lambda IS NOW A TEST: can it tell 3.6 d from 7 d?
+============================================================================================
+
+  Hypotheses are ln-separated by: 3.6 vs 7 d -> 0.665; 3.6 vs 3.8 d -> 0.054.
+  Separation in sigma (d' = |ln ratio| / sd(ln lambda)) at the on-therapy record's precision:
+
+                record   sd(ln lam)  d'(3.6 vs 7)  d'(3.6 vs 3.8)
+          6 mo monthly        0.094           7.0             0.6
+         12 mo monthly        0.067           9.9             0.8
+          12 mo weekly        0.045          14.6             1.2
+          24 mo weekly        0.037          18.2             1.5
+
+  READING: with the human (3.6 d) and mouse-terminal (7 d) values nearly 2x apart and the
+  on-therapy record pinning lambda to ~5-9% within the first year (round 12), the record
+  separates the two hypotheses at ~7-15 sigma -- it can decisively tell which regime a real
+  patient is in. So round 12's self-calibration is better stated as a PREDICTION the trial's
+  own marker record could settle: measure lambda from the dose-timing response and it will
+  say whether human hepatic PCC turns over near 3.6 d (headlines on the edge) or near 7 d
+  (headlines comfortable). The 3.6-vs-3.8 d distinction is NOT resolvable (<1.5 sigma), and
+  need not be -- both sit on the same side of the knife-edge pattern. The decision does not
+  need lambda assumed; it needs lambda READ, and the record reads it.

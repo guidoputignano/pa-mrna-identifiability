@@ -1,0 +1,295 @@
+====================================================================================================
+  FOLLOW-UP ITEM 6. THE FIM AGAINST THE LIKELIHOOD AND THE MONTE CARLO
+====================================================================================================
+  Repository footing (n4 via core): theta = 150 (5%), K_m = 100, k_e = 5, L = 322.73,
+  25 monthly draws, dose train known, sigma = n4's, k_e prior 0.8, b prior 0.05 L.
+  There is no patient data: every 'patient' below is simulated.
+
+====================================================================================================
+  PART 1.0  THE ESTIMATOR: variable projection reproduces t2_cohort's joint MAP
+====================================================================================================
+  (i) t2's table E rerun with this estimator (same seeds, same draws, same bounds):
+        N  reps  MC RMSE  MC robust  median err  >4.5x off  ke RMSE   t2 printed (RMSE, robust, median, >4.5x, ke)   match
+        1   200    6.947      6.589      +0.377      38.0%    0.591   6.947, 6.589, +0.377, 38.0%, 0.591             yes
+        4   150    4.067      1.635      +0.204      20.7%    0.462   4.067, 1.635, +0.204, 20.7%, 0.462             yes
+       16   100    1.455      0.898      +0.147       4.0%    0.289   1.455, 0.898, +0.147, 4.0%, 0.289              yes
+       64    60    0.494      0.455      +0.119       0.0%    0.143   0.494, 0.455, +0.119, 0.0%, 0.143              yes
+
+  (ii) against t2_cohort.joint_map itself on the same replicate (it draws the same
+       prior centres from an identically seeded generator):
+        N  reps  max |d ln theta_1|  max |d ln k_e|  t2 s/fit
+        1    20            6.64e-05        1.59e-05      0.01
+        2    20            2.25e-05        1.33e-05      0.01
+        4    20            2.88e-05        1.15e-05      0.02
+        8    20            5.43e-05        5.38e-05      0.02
+       16    20            7.50e-05        2.22e-05      0.06
+       32    20            7.12e-06        8.51e-06      0.21
+       64    20            1.44e-06        4.06e-07      0.93
+  [42 s]
+
+====================================================================================================
+  PART 1 (a, b)  THE COHORT MONTE CARLO, N = 1 ... 64, 200 replicates each
+====================================================================================================
+  Footing: t2_cohort.mc exactly (omega = 0, all patients at 5%, priors as pseudo-
+  observations with centres drawn about the truth, seeds 1000k + i). Patient 0 is
+  t2's target; 'pooled' uses all N exchangeable patients of every replicate.
+     N =  1 done [62 s]
+     N =  2 done [84 s]
+     N =  4 done [105 s]
+     N =  8 done [126 s]
+     N = 16 done [148 s]
+     N = 32 done [175 s]
+     N = 64 done [210 s]
+
+  (a) THE ARBITRARY LOWER BOUND ON theta. Patient 0, same replicates, three bounds
+       N   bound    RMSE  robust  median  at bound  pooled RMSE  pooled robust  ln(bound/theta)
+       1   1e-02   5.626   5.437  +0.377     33.5%        5.626          5.437            -9.62
+       1   1e-03   6.947   6.589  +0.377     33.5%        6.947          6.589           -11.92
+       1   1e-05   9.599   8.891  +0.377     33.5%        9.599          8.891           -16.52
+       2   1e-02   4.417   5.403  +0.373     19.5%        4.316          5.413            -9.62
+       2   1e-03   5.403   6.554  +0.373     19.5%        5.285          6.565           -11.92
+       2   1e-05   7.398   8.857  +0.373     19.5%        7.245          8.867           -16.52
+       4   1e-02   3.316   1.458  +0.261     10.5%        3.290          1.452            -9.62
+       4   1e-03   4.026   1.458  +0.261     10.5%        4.004          1.452           -11.92
+       4   1e-05   5.474   1.458  +0.261     10.5%        5.458          1.452           -16.52
+       8   1e-02   2.532   1.202  -0.042      5.5%        2.594          1.169            -9.62
+       8   1e-03   3.023   1.202  -0.042      5.5%        3.120          1.170           -11.92
+       8   1e-05   4.042   1.202  -0.042      5.5%        4.204          1.170           -16.52
+      16   1e-02   1.449   0.877  +0.143      1.5%        1.940          0.868            -9.62
+      16   1e-03   1.687   0.877  +0.143      1.5%        2.312          0.868           -11.92
+      16   1e-05   2.193   0.877  +0.143      1.5%        3.086          0.868           -16.52
+      32   1e-02   1.522   0.687  +0.077      2.0%        1.594          0.714            -9.62
+      32   1e-03   1.819   0.687  +0.077      2.0%        1.892          0.714           -11.92
+      32   1e-05   2.435   0.687  +0.077      2.0%        2.515          0.714           -16.52
+      64   1e-02   1.129   0.521  +0.124      1.0%        1.248          0.550            -9.62
+      64   1e-03   1.330   0.521  +0.124      1.0%        1.473          0.550           -11.92
+      64   1e-05   1.755   0.521  +0.124      1.0%        1.946          0.550           -16.52
+
+  (b-i) FIM against the constrained MAP (bound 1e-3, t2's), patient 0
+       N  FIM t2  FIM own    RMSE          95% CI  robust          95% CI  median    mean  at bnd  >4.5x robust/FIM
+       1   3.082    3.035   6.947 [ 6.25,  7.58]   6.589 [ 6.53,  6.62]  +0.377  -3.506   33.5%  38.0%       2.17
+       2   2.706    2.673   5.403 [ 4.67,  6.12]   6.554 [ 2.25,  6.60]  +0.373  -2.135   19.5%  28.0%       2.45
+       4   2.375    2.217   4.026 [ 3.23,  4.73]   1.458 [ 1.17,  2.41]  +0.261  -1.170   10.5%  19.5%       0.66
+       8   1.842    1.746   3.023 [ 2.23,  3.74]   1.202 [ 0.94,  1.37]  -0.042  -0.755    5.5%  14.0%       0.69
+      16   1.331    1.340   1.687 [ 0.84,  2.37]   0.877 [ 0.79,  0.98]  +0.143  -0.132    1.5%   5.5%       0.65
+      32   1.036    1.016   1.819 [ 1.03,  2.49]   0.687 [ 0.59,  0.79]  +0.077  -0.211    2.0%   4.0%       0.68
+      64   0.806    0.781   1.330 [ 0.55,  1.98]   0.521 [ 0.46,  0.58]  +0.124  -0.056    1.0%   2.5%       0.67
+     FIM t2: t2_cohort.cohort on seeds 0..N-1 (t2's column); FIM own: rms over the
+     replicates of the FIM on each replicate's own records. 95% CI: bootstrap over replicates.
+
+  (b-ii) pooled over all N patients, constrained MAP, and the same quantity in LINEAR theta
+     (theta_hat/theta - 1, which is bounded below by -1 and so does not depend on the bound)
+       N  FIM own  RMSE ln  robust ln  median ln  cohorts w/ a  RMSE lin  mean lin  median lin
+                                                   pt at bound
+       1    3.035    6.947      6.589     +0.377         33.5%     1.689    +0.662      +0.458
+       2    2.674    5.285      6.565     +0.336         35.5%     1.627    +0.652      +0.400
+       4    2.219    4.004      1.452     +0.198         37.5%     1.402    +0.535      +0.219
+       8    1.748    3.120      1.170     +0.024         40.5%     1.207    +0.381      +0.025
+      16    1.341    2.312      0.868     +0.191         42.0%     1.067    +0.405      +0.211
+      32    1.016    1.892      0.714     +0.110         44.5%     0.806    +0.254      +0.117
+      64    0.781    1.473      0.550     +0.154         41.0%     0.671    +0.233      +0.167
+
+  (b-iii) THE SAME DRAWS WITHOUT THE POSITIVITY CONSTRAINT, AND A LINEAR-GAUSSIAN SURROGATE
+     unconstrained: theta_i real-valued (no bound); its error is theta_hat/theta - 1 and the
+     FIM's linear-theta sd equals its ln-theta sd at the truth. surrogate: one Gauss-Newton
+     step from the truth on the same noise and prior draws, exactly linear-Gaussian.
+       N  FIM own  uncon sd  uncon rob  uncon mean  theta<0  surr sd  surr rob  constraint  max|d| where
+                     pooled     pooled      pooled   pooled   pooled    pooled       binds   it does not
+       1    3.035     3.268      3.034      -0.373    33.5%    3.173     3.181       33.5%       1.5e-05
+       2    2.674     2.836      2.916      -0.305    33.8%    2.781     3.050       35.5%       5.6e-05
+       4    2.219     2.092      2.083      -0.052    31.8%    2.061     2.050       37.5%       3.1e-05
+       8    1.748     1.742      1.820      -0.144    30.9%    1.750     1.816       40.5%       6.3e-05
+      16    1.341     1.449      1.470      -0.030    26.7%    1.471     1.501       42.0%       5.5e-06
+      32    1.016     1.049      1.095      -0.031    18.2%    1.060     1.104       44.5%       1.7e-06
+      64    0.781     0.832      0.838      +0.033    11.8%    0.831     0.842       41.0%       5.3e-07
+     constraint binds: replicates where the unconstrained optimum has some theta_i < 1e-3;
+     in every other replicate the constrained MAP must equal the unconstrained one.
+
+  (b-iv) k_e, the shared parameter: FIM against the MC
+       N  FIM sd  +1.96 sd  MC RMSE    P2.5     P50   P97.5  uncon RMSE  uncon P2.5  uncon P97.5  surr sd
+       1   0.677    +1.327    0.591  -1.610  -0.095  +0.301       0.700      -1.610       +1.031    0.704
+       2   0.595    +1.166    0.569  -1.522  -0.125  +0.241       0.668      -1.522       +0.942    0.617
+       4   0.491    +0.962    0.441  -1.146  -0.064  +0.209       0.508      -1.146       +0.710    0.457
+       8   0.383    +0.750    0.357  -0.946  +0.010  +0.167       0.420      -0.946       +0.553    0.382
+      16   0.289    +0.566    0.293  -0.863  -0.014  +0.151       0.344      -0.863       +0.491    0.317
+      32   0.211    +0.414    0.188  -0.511  -0.006  +0.112       0.228      -0.511       +0.332    0.222
+      64   0.153    +0.299    0.141  -0.355  -0.027  +0.087       0.171      -0.355       +0.277    0.165
+
+  (b-v) LIKE FOR LIKE? Prior centres drawn about the truth (as above) against centres held
+     AT the truth (core.profile's and t1's convention). With centres held, the right linear
+     comparison is the sandwich inv(F) (F - P_prior) inv(F), not inv(F).
+       N     FIM  sandwich  MC robust, drawn  MC robust, held  median held
+       1   3.035     1.581             6.589            6.364       -0.006
+       2   2.673     1.756             6.554            6.405       -0.074
+       4   2.217     1.726             1.458            1.370       +0.103
+       8   1.746     1.512             1.202            1.066       -0.152
+      16   1.340     1.230             0.877            0.862       +0.057
+      32   1.016     0.959             0.687            0.740       +0.003
+      64   0.781     0.743             0.521            0.540       +0.090
+
+  (b-vi) the Gauss-Newton information at the MAP instead of at the truth, patient 0
+       N  FIM at truth  GN at MAP: median     P10     P90     n
+       1         3.035              0.847   0.321   4.087   133
+       2         2.673              1.060   0.376   4.543   161
+       4         2.217              0.986   0.414   3.394   179
+       8         1.746              0.996   0.437   3.278   189
+      16         1.340              0.774   0.410   1.928   197
+      32         1.016              0.670   0.400   1.365   196
+      64         0.781              0.557   0.351   1.096   198
+  [212 s]
+
+====================================================================================================
+  PART 1 (b)  IS THE MAP THE GLOBAL OPTIMUM? Dense full-box grid and 20 starts
+====================================================================================================
+  Standard fit: 41 x 61 grid in (ln K_m, ln k_e), k_e within 6 prior sd of its centre,
+  6 local refinements. Check: 161 x 241 grid over the WHOLE box of t2's bounds
+  (K_m 5..5000, k_e 1e-3..500), 20 refinements. (theta_i, b_i) are exact for any (K_m, k_e).
+       N  reps  max cost gain  gains > 1e-6  max |d ln theta_1|
+       1    30       6.16e-13             0            9.80e-06
+       2    30       2.45e-13             0            1.17e-06
+       4    30       3.55e-13             0            7.14e-06
+       8    30       7.53e-13             0            1.18e-05
+      16    30       5.12e-12             0            9.44e-06
+      32    30       1.71e-13             0            2.48e-07
+      64    30       2.27e-13             0            5.88e-07
+  [245 s]
+
+====================================================================================================
+  PART 1 (b)  PROFILE LIKELIHOOD OF theta_1 IN THE JOINT FIT, N = 64
+====================================================================================================
+  12 cohorts (t2's replicates k = 0..11); every other parameter, including the other
+  63 thetas, re-optimised at each fixed theta_1. 95%: drop of chi2_1(0.95)/2 in -log L.
+  ln units relative to the truth. FIM interval: MAP +- 1.96 FIM sd (own records).
+       k     MAP   PL lo   PL hi  PL width  FIM width  GN@MAP width  PL/FIM  up/down  covers  lin half  FIM sd
+       0  +0.016   -3.81   +0.72    4.530      3.159         2.017    1.43     0.18     yes     0.519   0.806
+       1  -0.847  -11.50<  +0.57   12.074      3.027         4.744    3.99     0.13     yes     0.453   0.772
+       2  -0.489  -11.50<  +0.75   12.251      3.078         3.300    3.98     0.11     yes     0.540   0.785
+       3  +0.084   -2.05   +0.94    2.993      3.000         2.763    1.00     0.40     yes     0.623   0.765
+       4  +1.222   +0.62   +1.59    0.966      3.076         0.898    0.31     0.62      no     0.775   0.785
+       5  -1.114  -11.50<  +0.41   11.914      3.042         5.712    3.92     0.15     yes     0.386   0.776
+       6  -0.163   -4.65   +0.59    5.234      3.074         1.986    1.70     0.17     yes     0.457   0.784
+       7  -0.493  -11.50<  +0.70   12.202      3.053         3.250    4.00     0.11     yes     0.515   0.779
+       8  +0.138   -1.25   +0.75    1.996      3.057         1.510    0.65     0.44     yes     0.465   0.780
+       9  +0.958   +0.07   +1.42    1.357      3.073         1.176    0.44     0.52      no     0.785   0.784
+      10  +0.514   -1.51   +1.18    2.689      3.061         1.855    0.88     0.33     yes     0.770   0.781
+      11  +0.231  -11.50<  +1.05   12.553      3.070         2.451    4.09     0.07     yes     0.731   0.783
+     median PL width 4.882, FIM width 3.065, ratio 1.57 (range 0.31-4.09); GN-at-MAP width 2.234; upper/lower half-width median 0.18
+     linear theta: PL (theta_hi - theta_lo)/(3.92 theta) median 0.529 against the FIM sd 0.782 (ratio 0.67)
+     '<' marks an interval still open at the grid floor ln theta - ln 150 = -11.5 (theta = 0.0015).
+     covers the truth in 10 of 12; open at the grid floor in 5, at the top in 0; disjoint pieces in 0
+  [271 s]
+
+====================================================================================================
+  PART 1 (c)  VALIDATING THE MC MACHINERY: the linear-Gaussian surrogate, 2000 replicates
+====================================================================================================
+  Same draws (t2's records, noise, prior centres) fed through the model LINEARISED at the
+  truth, with no bounds. Its estimate is exactly Gaussian with covariance inv(FIM), so the
+  whitened error (error / FIM sd on that replicate's records) must have sd 1.
+       N  reps  FIM rms   MC sd  whitened sd th_1  95% range for 1  whitened sd k_e  mean, whitened
+       1  2000    3.035   3.070             1.012  [0.969, 1.031]            1.012          +0.032
+      16  2000    1.347   1.329             0.988  [0.969, 1.031]            0.982          -0.021
+      64  2000    0.780   0.752             0.964  [0.969, 1.031]            0.970          -0.014
+      64  6000    0.780   0.773             0.991  [0.982, 1.018]            0.983          +0.001   (replicates 2000..7999, new prior-centre stream)
+      64  8000                              0.984  [0.985, 1.015]   (both N = 64 blocks together)
+  The 95% range is the Gaussian sampling range of an sd estimated from that many replicates.
+  [364 s]
+
+====================================================================================================
+  PART 1  WHAT THE NUMBERS ABOVE SAY (every qualitative word below is computed)
+====================================================================================================
+  N = 1. Bounds 1e-2 / 1e-3 / 1e-5: robust 5.44 / 6.59 / 8.89, RMSE 5.63 / 6.95 / 9.60;
+     at the 1e-3 bound: 33.5% of fits. Robust spread rises as the bound is lowered (x 1.64 from 1e-2 to 1e-5).
+     Unconstrained theta (same draws): sd(theta_hat/theta - 1) = 3.268 against the FIM's 3.035 (within the +-10% band), theta_hat < 0 in 33.5%.
+  N = 64. Patient-0 RMSE over 200 replicates 1.330 (t2 printed 0.494 from 60 replicates); pooled over the 64 patients 1.473;
+     pooled RMSE with bounds 1e-2 / 1e-3 / 1e-5: 1.248 / 1.473 / 1.946; cohorts with a patient at the 1e-3 bound: 41.0%.
+     So the ln-theta RMSE is above the FIM (0.781) and depends on the bound.
+     Robust spread: patient 0 0.521, pooled 0.550: below the FIM; median error +0.154 (pooled), linear-theta RMSE 0.671 (below the FIM).
+     Without the positivity constraint: sd 0.832, robust 0.838 (within / within the FIM); linear surrogate 0.831 (within).
+     The constraint changes the estimate in 41.0% of cohorts. k_e's 97.5% point: +0.087 constrained, +0.277 unconstrained, FIM +0.299; 2.5% point -0.355 / -0.355 / -0.299.
+     Profile likelihood, N = 64, 12 cohorts: width / FIM width median 1.57 (range 0.31-4.09); upper/lower half-width median 0.18; open at the floor in 5.
+  MACHINERY. Linear-Gaussian surrogate, whitened sd of theta_1: N=1 1.012 (inside +-0.031), N=16 0.988 (inside +-0.031), N=64 0.964 (OUTSIDE +-0.031), N=64 all blocks 0.984 (OUTSIDE +-0.015).
+  WHICH BOUND. With the prior centres drawn about a fixed truth, inv(FIM) is the Cramer-Rao bound
+     of the augmented experiment for UNBIASED estimators (the surrogate above is that case). Mean
+     error in linear theta at N = 64: constrained MAP +0.233, unconstrained +0.033; at N = 1: +0.662 / -0.373.
+     A van Trees (Bayesian) bound would need the truth drawn from a proper prior on every
+     parameter; here the truth is fixed and ln theta_i, ln K_m carry no prior, so none is computed.
+
+====================================================================================================
+  PART 2  TASK 5's TOP SCENARIOS AT 5% (t5_value.sd5 footing), FIM vs PROFILE vs MC MAP
+====================================================================================================
+  One simulated patient (theta = 150, K_m = 100, k_e = 5), monthly record, dose train on.
+  Flux scenarios add the untreated baseline draw and one direct flux reading (t5's row).
+  'exact' is t5's 1e-4. Every measurement is simulated with its centre drawn about the
+  truth (pseudo-observation). MC: 240 replicates = 10 per intake seed 0..23, common random
+  numbers across scenarios. Profile: one measurement set per intake seed 0..23.
+
+  (i) the FIM: t5_value.sd5 recomputed, and the MAP's own model differentiated at the truth
+     scenario                                sd5     here  own-Jacobian FIM, max rel diff
+     current design (reference)           3.0673   3.0673                         4.4e-16
+     (c) flux reading to 10%              0.1120   0.1120                         3.8e-16
+     (c) flux reading to 20%              0.2064   0.2064                         3.8e-16
+     (a) k_e exact                        0.3879   0.3879                         4.4e-16
+     (a) k_e to 5%                        0.4447   0.4447                         4.4e-16
+     (d) k_e exact + load exact           0.2044   0.2044                         4.1e-16
+     (d) flux 20% + k_e 1.2 + load 2%     0.1989   0.1989                         1.0e-15
+
+  (ii) Monte Carlo MAP, ln theta_hat - ln theta
+     scenario                               FIM  FIM rms    RMSE          95% CI  robust          95% CI  median  at bnd  RMSE/FIM  rob/FIM lin RMSE lin mean  min err
+     current design (reference)          3.0673   3.0657  7.1018 [6.4502,7.6527]  6.5981 [6.5597,6.6359] +0.3075   35.0%     2.317    2.152   1.7308  +0.6492   -11.92
+     (c) flux reading to 10%             0.1120   0.1120  0.1175 [0.1072,0.1286]  0.1130 [0.0987,0.1309] -0.0016    0.0%     1.049    1.008   0.1172  +0.0020    -0.33
+     (c) flux reading to 20%             0.2064   0.2064  0.2266 [0.2028,0.2511]  0.2179 [0.1868,0.2344] -0.0060    0.0%     1.098    1.056   0.2149  -0.0014    -0.74
+     (a) k_e exact                       0.3879   0.3932  1.4912 [0.6819,2.1383]  0.4485 [0.3881,0.4943] -0.0422    1.2%     3.792    1.141   0.4171  -0.0197   -11.92
+     (a) k_e to 5%                       0.4447   0.4491  1.6715 [0.9502,2.3343]  0.4899 [0.4285,0.5903] -0.0166    1.7%     3.722    1.091   0.4677  -0.0025   -11.92
+     (d) k_e exact + load exact          0.2044   0.2032  0.2154 [0.1922,0.2402]  0.1971 [0.1748,0.2243] +0.0063    0.0%     1.060    0.970   0.2020  +0.0017    -0.80
+     (d) flux 20% + k_e 1.2 + load 2%    0.1989   0.1989  0.2205 [0.1966,0.2438]  0.2017 [0.1763,0.2312] -0.0078    0.0%     1.109    1.014   0.2073  -0.0022    -0.75
+     lin: theta_hat/theta - 1, which the bound cannot reach below -1. min err: the worst ln error.
+  [391 s]
+
+  (iii) profile likelihood, 95% interval for ln theta (k_e, K_m, b re-optimised), 24 seeds
+       ln units relative to the truth; FIM width = 2 x 1.96 x the seed's own FIM sd
+     scenario                            med lo  med hi  med width  FIM width  PL/FIM        range  down/1.96  up/1.96  lin half  covers  open  med MAP
+     (c) flux reading to 10%             -0.159  +0.265     0.4211     0.4391   0.957 0.869-1.155     0.1149   0.1000    0.1140   24/24     0   +0.068
+     (c) flux reading to 20%             -0.277  +0.443     0.7406     0.8092   0.916 0.776-1.496     0.2197   0.1581    0.2093   24/24     0   +0.143
+     (a) k_e exact                       -1.115  +0.629     1.7412     1.5206   1.156 0.656-8.000     0.6230   0.2653    0.3816   23/24     6   +0.106
+     (a) k_e to 5%                       -1.338  +0.707     2.0563     1.7432   1.175 0.621-6.968     0.7103   0.2841    0.4382   23/24     6   +0.144
+     (d) k_e exact + load exact          -0.353  +0.405     0.7595     0.8011   0.966 0.797-1.562     0.2247   0.1628    0.2054   24/24     0   +0.083
+     (d) flux 20% + k_e 1.2 + load 2%    -0.315  +0.413     0.7282     0.7796   0.935 0.780-1.503     0.2180   0.1535    0.1997   24/24     0   +0.112
+     down/1.96, up/1.96: (MAP - lower end)/1.96 and (upper end - MAP)/1.96, each to set against
+     the FIM sd. lin half: (theta_hi - theta_lo)/(3.92 theta), the interval's half-width in
+     linear theta. open: interval still open at the grid floor (ln theta - ln 150 = -11.5,
+     theta = 0.0015) or top (+2.0), or split in pieces.
+     The current design's profile is in t1 (1d): no lower end at all, so it is not repeated.
+  [511 s]
+
+  (iv) SUMMARY: ranking, ratio to the FIM, and whether the FIM is a lower bound
+     scenario                               FIM  PL w/3.92  PL lin  MC RMSE  MC robust  lin RMSE   ranks: FIM  PL  PLlin  RMSE  rob  lin
+     (c) flux reading to 10%             0.1120     0.1074  0.1140   0.1175     0.1130    0.1172           1   1      1     1    1    1
+     (c) flux reading to 20%             0.2064     0.1889  0.2093   0.2266     0.2179    0.2149           4   3      4     4    4    4
+     (a) k_e exact                       0.3879     0.4442  0.3816   1.4912     0.4485    0.4171           5   5      5     5    5    5
+     (a) k_e to 5%                       0.4447     0.5246  0.4382   1.6715     0.4899    0.4677           6   6      6     6    6    6
+     (d) k_e exact + load exact          0.2044     0.1938  0.2054   0.2154     0.1971    0.2020           3   4      3     2    2    2
+     (d) flux 20% + k_e 1.2 + load 2%    0.1989     0.1858  0.1997   0.2205     0.2017    0.2073           2   2      2     3    3    3
+     PL w/3.92: median ln-theta profile width / 3.92; PL lin: median linear-theta half-width.
+     ranking under profile width    identical to the FIM's: no
+     ranking under profile, linear  identical to the FIM's: yes
+     ranking under MC RMSE          identical to the FIM's: no
+     ranking under MC robust        identical to the FIM's: no
+     ranking under linear RMSE      identical to the FIM's: no
+     order flips between FIM and MC RMSE: '(d) k_e exact + load exact' (0.2044 / 0.2154) vs '(d) flux 20% + k_e 1.2 + load 2%' (0.1989 / 0.2205)
+
+     Is the FIM sd a lower bound? Each MC measure / the FIM rms, with its bootstrap 95% CI;
+     'below' means the whole CI is under 1 (the FIM is NOT a lower bound for that measure),
+     'above' the whole CI over 1, 'at' a CI containing 1.
+     (c) flux reading to 10%            ln RMSE 1.049 [0.957, 1.147] at; robust 1.008 [0.881, 1.168] at; lin RMSE 1.046 [0.951, 1.146] at
+     (c) flux reading to 20%            ln RMSE 1.098 [0.982, 1.216] at; robust 1.056 [0.905, 1.136] at; lin RMSE 1.041 [0.946, 1.137] at
+     (a) k_e exact                      ln RMSE 3.792 [1.734, 5.438] above; robust 1.141 [0.987, 1.257] at; lin RMSE 1.061 [0.970, 1.149] at
+     (a) k_e to 5%                      ln RMSE 3.722 [2.116, 5.197] above; robust 1.091 [0.954, 1.314] at; lin RMSE 1.041 [0.949, 1.130] at
+     (d) k_e exact + load exact         ln RMSE 1.060 [0.946, 1.182] at; robust 0.970 [0.860, 1.104] at; lin RMSE 0.994 [0.910, 1.084] at
+     (d) flux 20% + k_e 1.2 + load 2%   ln RMSE 1.109 [0.989, 1.226] at; robust 1.014 [0.886, 1.162] at; lin RMSE 1.042 [0.952, 1.138] at
+     at or under the 0.20 gate by FIM: ['(c) flux reading to 10%', '(d) flux 20% + k_e 1.2 + load 2%']
+     by MC RMSE: ['(c) flux reading to 10%']
+     by profile half-width: ['(c) flux reading to 10%', '(c) flux reading to 20%', '(d) k_e exact + load exact', '(d) flux 20% + k_e 1.2 + load 2%']
+     reference, the current design: FIM 3.0673, MC RMSE 7.102, robust 6.598, 35.0% of fits at the theta >= 1e-3 bound
+  wrote fig/t11_fim_check.png
+
+  total runtime 512 s

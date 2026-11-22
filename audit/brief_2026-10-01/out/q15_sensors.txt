@@ -1,0 +1,236 @@
+# Output of audit/q15_sensors.py (repo script, Phase-10 sensor pricing), run unchanged this session.
+# Copied so REPORT.md's multi-observable citations trace to a file in out/.
+========================================================================================================
+  PHASE 10 STEPS 2 TO 4: THE FIVE SURVIVING CANDIDATES, PRICED
+========================================================================================================
+
+========================================================================================================
+  STEP 2. EACH SENSOR ALONE, AGAINST ITS OWN PRECISION
+========================================================================================================
+  sd(ln theta), median over 24 load seeds, `*` at or inside the 0.20 gate. The
+  first row of each block is the record with no sensor at all. Each sensor is then
+  swept over the precision it might deliver, everything else left as the record
+  has it.
+
+  CAPACITY 5% OF NOMINAL
+    sensor                                  precision     monthlyweekly 7.3 d   every 2 d
+    no sensor, record alone                             3.068       2.194       1.424    
+    candidate 2, ex vivo PCC activity            none   3.068       2.194       1.424    
+    candidate 2, ex vivo PCC activity             50%   0.493       0.488       0.472    
+    candidate 2, ex vivo PCC activity             30%   0.299       0.297       0.294    
+    candidate 2, ex vivo PCC activity             20%   0.200*      0.199*      0.198*   
+    candidate 2, ex vivo PCC activity             10%   0.100*      0.100*      0.100*   
+    candidate 2, ex vivo PCC activity              5%   0.050*      0.050*      0.050*   
+    candidate 2, ex vivo PCC activity              2%   0.020*      0.020*      0.020*   
+    candidate 2, ex vivo PCC activity           exact   0.000*      0.000*      0.000*   
+
+    candidate 8/10, k_e sensor             0.80 (prior)   3.068       2.194       1.424    
+    candidate 8/10, k_e sensor                    50%   2.124       1.766       1.287    
+    candidate 8/10, k_e sensor                    30%   1.366       1.247       1.044    
+    candidate 8/10, k_e sensor                    20%   0.968       0.902       0.815    
+    candidate 8/10, k_e sensor                    10%   0.597       0.524       0.483    
+    candidate 8/10, k_e sensor                     5%   0.454       0.356       0.299    
+    candidate 8/10, k_e sensor                     2%   0.405       0.288       0.214    
+    candidate 8/10, k_e sensor                  exact   0.395       0.273       0.193*   
+
+    candidate 9, propionate turnover             none   3.068       2.194       1.424    
+    candidate 9, propionate turnover              50%   3.068       2.194       1.423    
+    candidate 9, propionate turnover              30%   3.068       2.192       1.423    
+    candidate 9, propionate turnover              20%   3.066       2.190       1.421    
+    candidate 9, propionate turnover              10%   3.060       2.179       1.414    
+    candidate 9, propionate turnover               5%   3.046       2.155       1.391    
+    candidate 9, propionate turnover               2%   3.029       2.125       1.339    
+    candidate 9, propionate turnover            exact   3.022       2.111       1.305    
+
+
+  CAPACITY 10% OF NOMINAL
+    sensor                                  precision     monthlyweekly 7.3 d   every 2 d
+    no sensor, record alone                             1.581       1.224       0.842    
+    candidate 2, ex vivo PCC activity            none   1.581       1.224       0.842    
+    candidate 2, ex vivo PCC activity             50%   0.477       0.463       0.430    
+    candidate 2, ex vivo PCC activity             30%   0.295       0.291       0.283    
+    candidate 2, ex vivo PCC activity             20%   0.198*      0.197*      0.195*   
+    candidate 2, ex vivo PCC activity             10%   0.100*      0.100*      0.099*   
+    candidate 2, ex vivo PCC activity              5%   0.050*      0.050*      0.050*   
+    candidate 2, ex vivo PCC activity              2%   0.020*      0.020*      0.020*   
+    candidate 2, ex vivo PCC activity           exact   0.000*      0.000*      0.000*   
+
+    candidate 8/10, k_e sensor             0.80 (prior)   1.581       1.224       0.842    
+    candidate 8/10, k_e sensor                    50%   1.066       0.935       0.730    
+    candidate 8/10, k_e sensor                    30%   0.679       0.634       0.558    
+    candidate 8/10, k_e sensor                    20%   0.484       0.450       0.419    
+    candidate 8/10, k_e sensor                    10%   0.305       0.261       0.240    
+    candidate 8/10, k_e sensor                     5%   0.239       0.180*      0.148*   
+    candidate 8/10, k_e sensor                     2%   0.217       0.148*      0.107*   
+    candidate 8/10, k_e sensor                  exact   0.213       0.142*      0.097*   
+
+    candidate 9, propionate turnover             none   1.581       1.224       0.842    
+    candidate 9, propionate turnover              50%   1.581       1.224       0.842    
+    candidate 9, propionate turnover              30%   1.581       1.223       0.842    
+    candidate 9, propionate turnover              20%   1.580       1.222       0.841    
+    candidate 9, propionate turnover              10%   1.577       1.216       0.836    
+    candidate 9, propionate turnover               5%   1.571       1.206       0.823    
+    candidate 9, propionate turnover               2%   1.563       1.191       0.793    
+    candidate 9, propionate turnover            exact   1.560       1.186       0.773    
+
+
+  CAPACITY 20% OF NOMINAL
+    sensor                                  precision     monthlyweekly 7.3 d   every 2 d
+    no sensor, record alone                             0.812       0.707       0.549    
+    candidate 2, ex vivo PCC activity            none   0.812       0.707       0.549    
+    candidate 2, ex vivo PCC activity             50%   0.426       0.408       0.370    
+    candidate 2, ex vivo PCC activity             30%   0.281       0.276       0.263    
+    candidate 2, ex vivo PCC activity             20%   0.194*      0.192*      0.188*   
+    candidate 2, ex vivo PCC activity             10%   0.099*      0.099*      0.098*   
+    candidate 2, ex vivo PCC activity              5%   0.050*      0.050*      0.050*   
+    candidate 2, ex vivo PCC activity              2%   0.020*      0.020*      0.020*   
+    candidate 2, ex vivo PCC activity           exact   0.000*      0.000*      0.000*   
+
+    candidate 8/10, k_e sensor             0.80 (prior)   0.812       0.707       0.549    
+    candidate 8/10, k_e sensor                    50%   0.532       0.495       0.431    
+    candidate 8/10, k_e sensor                    30%   0.338       0.318       0.298    
+    candidate 8/10, k_e sensor                    20%   0.245       0.223       0.213    
+    candidate 8/10, k_e sensor                    10%   0.164*      0.131*      0.118*   
+    candidate 8/10, k_e sensor                     5%   0.136*      0.094*      0.074*   
+    candidate 8/10, k_e sensor                     2%   0.127*      0.081*      0.056*   
+    candidate 8/10, k_e sensor                  exact   0.126*      0.078*      0.051*   
+
+    candidate 9, propionate turnover             none   0.812       0.707       0.549    
+    candidate 9, propionate turnover              50%   0.812       0.707       0.549    
+    candidate 9, propionate turnover              30%   0.812       0.706       0.548    
+    candidate 9, propionate turnover              20%   0.812       0.706       0.548    
+    candidate 9, propionate turnover              10%   0.811       0.704       0.545    
+    candidate 9, propionate turnover               5%   0.808       0.700       0.537    
+    candidate 9, propionate turnover               2%   0.805       0.694       0.518    
+    candidate 9, propionate turnover            exact   0.804       0.691       0.506    
+
+
+========================================================================================================
+  STEP 3. THE COMBINATIONS, AND WHICH ARE REDUNDANT
+========================================================================================================
+  Two sensors at a plausible precision each, against the same two alone. A pair
+  whose joint result equals the better of the two alone is REDUNDANT: the second
+  sensor bought nothing. Monthly and every 2 d, at 5 and 10% capacity.
+
+  Precisions used: candidate 2 at 20% (an ex vivo assay's repeatability),
+  candidate 8 at 5.4% (P.8's four micro-dose studies, alpha's closure assumed
+  free), candidate 9 at 10% (a turnover study at the load record's own CV).
+
+  CAPACITY 5%
+    combination                  monthly     every 2 d
+    record alone             3.068         1.424      
+    c2 only, 20%             0.200*        0.198*     
+    c8 only, 5.4%            0.463         0.313      
+    c9 only, 10%             3.060         1.414      
+    c2 + c8                  0.184*        0.168*     
+    c2 + c9                  0.200*        0.198*     
+    c8 + c9                  0.449         0.307      
+    c2 + c8 + c9             0.183*        0.168*     
+
+  CAPACITY 10%
+    combination                  monthly     every 2 d
+    record alone             1.581         0.842      
+    c2 only, 20%             0.198*        0.195*     
+    c8 only, 5.4%            0.243         0.155*     
+    c9 only, 10%             1.577         0.836      
+    c2 + c8                  0.154*        0.122*     
+    c2 + c9                  0.198*        0.195*     
+    c8 + c9                  0.237         0.152*     
+    c2 + c8 + c9             0.153*        0.121*     
+
+========================================================================================================
+  STEP 4. WHAT EACH SENSOR BUYS PER UNIT OF PRECISION
+========================================================================================================
+  The elasticity: how far sd(ln theta) falls when a sensor goes from its
+  no-sensor value to a good one. This is the ranking that matters, because the
+  sensors cost very different amounts and a large fall from a cheap sensor beats a
+  small fall from four tracer studies. Monthly, the trial's own record.
+
+      cap sensor, and the move priced                      from       to   factor
+       5% candidate 2, ex vivo: none to 20%               3.068    0.200    15.37
+       5% candidate 2, ex vivo: none to 10%               3.068    0.100    30.70
+       5% candidate 8, k_e: 0.80 prior to 5.4%            3.068    0.463     6.63
+       5% candidate 9, turnover: none to 10%              3.068    3.060     1.00
+       5% candidate 9, turnover: none to exact            3.068    3.022     1.02
+
+      10% candidate 2, ex vivo: none to 20%               1.581    0.198     7.97
+      10% candidate 2, ex vivo: none to 10%               1.581    0.100    15.84
+      10% candidate 8, k_e: 0.80 prior to 5.4%            1.581    0.243     6.50
+      10% candidate 9, turnover: none to 10%              1.581    1.577     1.00
+      10% candidate 9, turnover: none to exact            1.581    1.560     1.01
+
+      20% candidate 2, ex vivo: none to 20%               0.812    0.194     4.18
+      20% candidate 2, ex vivo: none to 10%               0.812    0.099     8.18
+      20% candidate 8, k_e: 0.80 prior to 5.4%            0.812    0.138     5.89
+      20% candidate 9, turnover: none to 10%              0.812    0.811     1.00
+      20% candidate 9, turnover: none to exact            0.812    0.804     1.01
+
+
+========================================================================================================
+  4b. WHAT THE TWO-YEAR RECORD IS WORTH ON TOP OF THE EX VIVO ASSAY
+========================================================================================================
+  Step 2 shows sd(ln theta) tracking candidate 2's own precision almost exactly,
+  which says the record is contributing little. This measures how little. An ex
+  vivo assay ALONE gives sd(ln theta) equal to its own precision, with no record
+  at all. The record's marginal value is the gap between that and the joint
+  figure. It is the question the whole project is about, asked the other way
+  round.
+
+      cap   assay  assay alone                   monthly              weekly 7.3 d                 every 2 d
+       5%     30%       0.3000        0.2986 (  0.5%)        0.2972 (  0.9%)        0.2936 (  2.1%)
+       5%     20%       0.2000        0.1996 (  0.2%)        0.1992 (  0.4%)        0.1981 (  1.0%)
+       5%     10%       0.1000        0.0999 (  0.1%)        0.0999 (  0.1%)        0.0998 (  0.2%)
+      10%     30%       0.3000        0.2947 (  1.8%)        0.2914 (  2.9%)        0.2826 (  5.8%)
+      10%     20%       0.2000        0.1984 (  0.8%)        0.1974 (  1.3%)        0.1946 (  2.7%)
+      10%     10%       0.1000        0.0998 (  0.2%)        0.0997 (  0.3%)        0.0993 (  0.7%)
+      20%     30%       0.3000        0.2814 (  6.2%)        0.2762 (  7.9%)        0.2632 ( 12.3%)
+      20%     20%       0.2000        0.1942 (  2.9%)        0.1924 (  3.8%)        0.1879 (  6.0%)
+      20%     10%       0.1000        0.0993 (  0.7%)        0.0990 (  1.0%)        0.0984 (  1.6%)
+
+  The bracket is how much the two-year record improves on the assay by itself. A
+  figure near zero means the record adds nothing to a patient who has had the
+  assay, which is a statement about the record, not about the assay.
+
+========================================================================================================
+  4c. CANDIDATE 10's OWN FLOOR, WHICH IS NOT THE ASSAY
+========================================================================================================
+  Timed urine measures `f_renal * k_e`, not `k_e`. Its precision on ln k_e is the
+  assay's precision and the uncertainty in `f_renal` in quadrature, so `f_renal`
+  sets a floor no urine collection improves on. R1 gives no `f_renal` for 3-HP;
+  the rows below are what different states of knowledge about it would imply.
+
+    f_renal known to              floor on ln k_e       5% cap, monthly      10% cap, monthly      20% cap, monthly
+    a factor of 3 (95% interval)            0.275                 1.268                 0.631                 0.315
+    +/- 20%                                 0.201                 0.972                 0.486                 0.246
+    a factor of 2 (95% interval)            0.174                 0.870                 0.435                 0.223
+    +/- 5%                                  0.054                 0.463                 0.243                 0.138
+    exactly, which R1 does not              0.020                 0.405                 0.217                 0.127
+
+  Gate is 0.20. The comparison is against candidate 8, which measures `k_e`
+  directly and has no `f_renal` in it at all.
+
+========================================================================================================
+  STEP 5. THE TWO VERDICTS CONFIRMED BY FITTING
+========================================================================================================
+  The standing house rule. Two verdicts in steps 2 to 4 rest on Fisher figures,
+  so both are refitted before being reported: that candidate 9 buys essentially
+  nothing, and that the record adds almost nothing on top of candidate 2. Spread
+  is robust (1.4826 x MAD), with the collapse count beside it, 96 records per
+  cell, `centre` nuisance convention.
+
+      cap configuration                        Fisher   fitted  fitted/Fisher  collapses
+      10% record alone                          1.581    1.340          0.847      29/96
+/home/user/system-identification-pa/audit/q15_sensors.py:303: RuntimeWarning: overflow encountered in exp
+  th, K, ke, b = np.exp(q[0]), np.exp(q[1]), np.exp(q[2]), q[3]
+      10% record + c9 exact turnover            1.560    1.196          0.767      28/96
+      10% record + c2 at 20%                    0.198    0.203          1.022       0/96
+      10% record + c2 at 20% + c9 exact         0.198    0.209          1.056       0/96
+
+      20% record alone                          0.812    0.713          0.878      20/96
+      20% record + c9 exact turnover            0.804    0.736          0.915      21/96
+      20% record + c2 at 20%                    0.194    0.188          0.967       0/96
+      20% record + c2 at 20% + c9 exact         0.194    0.193          0.993       0/96
+
+  If the c9 rows match the rows above them under fitting as they do under Fisher,
+  the verdict stands on both footings and candidate 9 is dropped on measurement,
+  not on a bound.

@@ -1,0 +1,33 @@
+============================================================================================
+  ITEM 9.  WHAT THE LIKELIHOOD CONDITIONS ON
+============================================================================================
+  one 5%-capacity record, 25 monthly draws; anchored load L = 322.73
+
+  (1) THE LOAD IS PER-DRAW, NOT ONE CONSTANT.
+      recorded loads L(t_k): min 254.7, median 317.0, max 368.0 (sd 26.9 = 8.3% of L)
+      each marker m(t_k) solves the balance at ITS OWN load and increment:
+        m(t_k): min 4.33, median 13.49, max 34.67
+      m recomputed from (load_k, inc_k) matches r['m'] to 0.0e+00: the record IS this coupling
+
+  (2) THE DRUG DOSE IS A PER-DRAW KNOWN INCREMENT Delta(t_k).
+      increment on the enzyme channel: min 468.7, median 1950.4, max 6000.0
+      it enters the mean as (theta + Delta_k) g(m_k): see core.flux_rows col 0 = theta g, and _resid 'pred = (th + inc)*g + ke*m + b'
+      doubling the booked dose doubles the increment: max ratio 2.000
+
+  (3) WHAT *IS* ONE UNKNOWN CONSTANT: THE LOAD-RECORD BIAS b.
+      flux_rows has four columns ('ln theta', 'ln K_m', 'b', 'ln k_e').
+      the b-column is constant across draws: unique values [1.]
+      b is a single systematic offset between recorded and true load,
+      with a prior sd = 5% of L = 16.14 (flux units).
+      The per-draw scatter (CV 10%) is RECORDED, so it is conditioned on,
+      not estimated: it moves m_k around and is already in the design.
+
+  (4) CONSEQUENCE FOR THE 3.07.
+      sd(ln theta) on the per-draw record (the 3.07):        3.060
+      same record with the load held flat (no draw spread):  3.136
+      same record with the bias b pinned (L known exactly):  3.029
+
+  VERDICT: the likelihood conditions on L(t_k) and Delta(t_k) per draw.
+  The L-m covariation is already inside the 3.07. The ONLY load
+  information not yet used is a reduction of the systematic bias b
+  below its 5% prior -- that is item 13's 'measure L to X%'.

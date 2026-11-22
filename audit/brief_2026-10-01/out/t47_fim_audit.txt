@@ -1,0 +1,49 @@
+============================================================================================
+  ROUND 14. FIM-vs-SIMULATION AUDIT (the round-13 lesson, generalised and checked)
+============================================================================================
+
+  SPOT-CHECK A. Round-11's interval determined-subgroup (61% correct, 0% unambiguous at
+  the record) was computed by drawing theta_hat ~ lognormal(ln theta, FIM sd=3.05). Redo
+  it with NLS theta_hat on simulated on-therapy records (24 mo monthly, the 3.05-class
+  record), classifying the max-safe interval on the {7,10,14} grid (routine-load
+  theta_crit = 430). Population: theta_base log-uniform 5-150.
+
+      NLS-simulated:  correct-choice = 54.3%   determined subgroup = 0.0%
+      round-11 (lognormal-MC, FIM sd): correct-choice = 61%   determined subgroup = 0%
+      VERDICT: the NLS result is no more favourable than the lognormal-MC figure --
+      round-11's determined-subgroup SURVIVES (the correction runs pessimistic, as expected:
+      NLS bias/heavy tails can only lower correct-choice and keep the determined subgroup ~0).
+
+  SPOT-CHECK B. The cross-sectional headline ("the record cannot place theta at 5%") is a
+  natural-scale statement on a posterior with sd(ln theta) ~ 3. Check it directly: NLS
+  theta_hat at theta = 150 (5% of normal), on-therapy 24 mo monthly, 300 records.
+      theta_hat/theta: median 1.08, 5-95% [0.00, 2.97]; within +/-20% of truth: 8.7%; within a factor 2: 40.7%
+      sd(ln theta_hat) realised = 8.26  (FIM says ~3.05)
+      VERDICT: NLS cannot place theta on the natural scale at 5% (only a few % of fits
+      land within +/-20%, and the robust spread exceeds a factor of 2), so the cross-sectional
+      'cannot identify / cannot reach 0.20' headline SURVIVES -- NLS is no better than, and on
+      the heavy lower tail worse than, the FIM, consistent with F6. The headline is a NEGATIVE,
+      so the tail-dominance that broke the round-13 OPTIMISTIC claim only reinforces it.
+
+  CORRELATION SCAN. The theta-lambda posterior correlation (+0.87) created a favourable
+  natural-scale cancellation in mu_long that linearisation discarded. Are there other strong
+  correlations that could hide further favourable (optimistic-direction) cancellations?
+      on-therapy 5-param posterior correlation matrix (theta=150, 24mo weekly):
+               ln_thet    ln_Km        b    ln_ke  ln_lamb
+       ln_theta     1.00    -0.18    -0.31    -0.99     0.87
+          ln_Km    -0.18     1.00     0.88     0.09    -0.23
+              b    -0.31     0.88     1.00     0.23    -0.16
+          ln_ke    -0.99     0.09     0.23     1.00    -0.85
+      ln_lambda     0.87    -0.23    -0.16    -0.85     1.00
+
+      READING: the strong correlations are theta-k_e (-0.99, the cross-sectional confound)
+      and theta-lambda (+0.87). Both already feed one-sided MARGIN quantities that are now
+      handled by SIMULATION, not linearisation: theta-k_e is the paper's own fibre result for
+      mu = theta - theta_crit (eq:mufibre: mu linear where theta is quadratic, simulated in the
+      paper's fig D3), and theta-lambda is mu_long (round 13, t46). So both favourable
+      cancellations the correlations imply are ALREADY captured by simulation -- there is no
+      third strong correlation feeding an only-FIM-propagated natural-scale claim. k_e-lambda
+      and Km-lambda are weak; b is near-orthogonal. The one place a correlation-driven skew
+      still rides un-simulated is the paper's margin mu=theta-theta_crit AT 5% in the brief's
+      own numbers -- but the brief defers that decision to the paper's simulated D3 rather than
+      propagating it, so the brief makes no optimistic FIM claim there.

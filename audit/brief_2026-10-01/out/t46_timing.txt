@@ -1,0 +1,90 @@
+============================================================================================
+  ROUND 13. WHEN: TIMING OF 21-DAY ELIGIBILITY (by simulation) AND lambda (by FIM)
+============================================================================================
+
+  The 21-day lengthening margin is mu_long = theta_base + Delta_trough(21) - theta_crit^int
+  = theta_base + 143 - 151 = theta_base - 7.9. The one-sided test lengthens
+  only when the lower 95% bound on mu_long clears 0, so a patient needs theta_base resolved
+  to sd(ln theta) < ln(theta_base/7.9)/1.645 -- e.g. 0.81 at theta_base=30,
+  1.28 at 65, 1.79 at 150 (the top of the disease range). That is
+  near the MANAGED-load precision (0.29), an order below what a passive record delivers.
+
+  ITEM 1. DOES THE 21-DAY MARGIN BECOME RESOLVABLE? (NLS mu_hat vs record length, weekly)
+      theta_base  mu_true  months  median mu_hat       p5  sd(mu_hat)  P(mu_hat>0)
+             150     +142       6            163      -18         141          86%
+             150     +142      24            170      -11         162          86%
+             150     +142      60            157       -7         162          86%
+              65      +57       6             78      -33         121          74%
+              65      +57      24             78      -15         139          76%
+              65      +57      60             71      -14         135          74%
+              20      +12       6             48      -35         109          70%
+              20      +12      24             28      -19         126          66%
+              20      +12      60             24      -16         119          62%
+
+  READING: the NLS margin estimate does NOT tighten with record length. sd(mu_hat) stays
+  ~105-165 uM/d -- comparable to theta_crit^int (151) itself -- from 6 months out to
+  5 years, and its lower (p5) tail stays below 0 at every capacity, so the one-sided lower
+  bound never cleanly clears 0 and does not improve with time. This RESOLVES the FIM
+  ambiguity noted in the header: the log-normal MC's optimism (a positive lower bound at 2
+  years) was an artefact of ignoring NLS estimator bias and heavy tails; the delta method's
+  "never" is closer to the truth. 21-day lengthening is NOT supportable from the passive
+  on-therapy record at any horizon -- it requires theta resolved to ~0.3 (managed-load
+  precision), which passive observation does not reach (the on-therapy lambda-free sd(ln
+  theta) bottoms out near ~1.8 even at 5 years weekly, and worse for deeper disease). The
+  eligibility therefore does NOT accrue with time; there is no crossing time to report.
+  (This also supersedes t45 item 3, whose 51-73% lengthen fractions used a representative,
+  lambda-fixed FIM sd and so were badly optimistic.)
+
+============================================================================================
+  ITEM 2. DOES lambda CROSS EARLIER?  sd(ln lambda) vs record length (FIM)
+============================================================================================
+
+       months      monthly  fortnightly       weekly
+            6        0.094        0.067        0.053
+           12        0.067        0.056        0.045
+           24        0.058        0.046        0.037
+           36        0.052        0.040        0.033
+           48        0.047        0.036        0.029
+           60        0.045        0.035        0.026
+
+        spec reached by (months)       monthly  fortnightly       weekly
+                   lambda to 25%          6 mo         6 mo         6 mo
+                    lambda to 5%         48 mo        24 mo        12 mo
+
+  READING: lambda -- the binding constant (it governs the trough) -- is pinned LONG before
+  any eligibility, and uniformly across the cohort (sd(ln lambda) is ~theta_base-indep).
+  The ~25% (Model-C) spec is met by ~3-6 months at every cadence; the ~5% (routine-load)
+  spec within the first year at weekly. So the constant the decision turns on arrives first;
+  theta (per-patient, for the eligibility test) accrues slowly and only for high capacities.
+
+============================================================================================
+  ITEM 3. THE 15-DAY STEP NEEDS NO RECORD AND NO WAITING
+============================================================================================
+
+  Delta_trough(15) = 347.4 > theta_crit^int = 150.8, so even theta_base = 0 clears
+  the bar at 15 d (margin +196.6 uM/d). The 15-day step is safe at INITIATION --
+  no record, no observation period, no measurement -- for every patient. It is the only
+  recommendation in the report available on day one; it should be stated separately in the
+  decision section as the zero-evidence, zero-wait burden reduction.
+
+============================================================================================
+  ITEM 4. WHEN TO REVIEW?  (for 21-d: there is nothing to review for)
+============================================================================================
+
+  The review-schedule question presumes eligibility accrues with record length, so that
+  there is an optimal time to re-examine. Item 1 shows it does NOT: the 21-day margin stays
+  unresolvable at every horizon, so no review interval unlocks it -- reviewing a passive
+  record for 21-day eligibility is waste at any time, early or late. There is no interior
+  optimum because there is no accrual.
+
+  The time-structured recommendations that DO hold, in order of availability:
+    - day 0:  step 14 -> 15 d for EVERY patient (item 3; trough dominates theta_crit, no
+              record, no waiting).
+    - ~6-12 months: lambda is confirmed from the accumulated dosing record (item 2), which
+              corroborates the trial PK and secures the constant the whole decision turns on.
+    - 21-day step: only via the ACTIVE managed-load protocol (which reaches sd ~0.29), not
+              via passive observation of any length. If 21 d is wanted, it is a protocol
+              change to make prospectively, not an eligibility to wait for.
+  A genuine review-cost optimisation would need a per-visit cost the repository does not
+  supply; but for the 21-day step that is moot, since the signal never arrives.
+

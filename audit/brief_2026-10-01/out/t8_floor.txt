@@ -1,0 +1,430 @@
+============================================================================================
+  FOLLOW-UP ITEM 1. THE 0.39 FLOOR: sd(ln theta_hat) AT 5% WITH k_e KNOWN EXACTLY
+============================================================================================
+
+--------------------------------------------------------------------------------------------
+  (a) DECOMPOSITION OF Var(ln theta_hat | k_e exact), monthly 25 draws
+--------------------------------------------------------------------------------------------
+  checks: inv(F[keep,keep]) = P00 - P03^2/P33 to 1.4e-13 (relative); with the k_e prior, n4.sd_ln_theta to 1.1e-13
+  vanishing sigma (seed 0, both terms scaled by 1e-2, 1e-4): sd = 1.114e-02, 1.115e-04; taken as 0 at zero noise
+  sigma's two terms at 5%: load scatter 0.05 L = 16.136, assay C'(m_bar) 0.05 m_bar = 15.214, total 22.177 (flux units)
+
+  The 16 subsets: sd(ln theta_hat) with k_e exact and the listed factors removed
+  (sqrt of the median variance over 24 records)
+    removed                                 5%       10%       20%       50%      100%
+    {}                                  0.3879    0.2086    0.1230    0.0821    0.0811
+    {b}                                 0.2979    0.1686    0.1073    0.0788    0.0802
+    {K_m}                               0.3786    0.2067    0.1229    0.0764    0.0633
+    {scatter}                           0.3139    0.1630    0.0909    0.0564    0.0553
+    {assay}                             0.3237    0.1723    0.0991    0.0627    0.0598
+    {b, K_m}                            0.1943    0.1032    0.0584    0.0325    0.0240
+    {b, scatter}                        0.2044    0.1134    0.0709    0.0524    0.0544
+    {b, assay}                          0.2168    0.1248    0.0806    0.0589    0.0589
+    {K_m, scatter}                      0.2750    0.1479    0.0872    0.0559    0.0491
+    {K_m, assay}                        0.2897    0.1609    0.0974    0.0615    0.0520
+    {scatter, assay}                    0.0000    0.0000    0.0000    0.0000    0.0000
+    {b, K_m, scatter}                   0.1333    0.0694    0.0386    0.0216    0.0163
+    {b, K_m, assay}                     0.1413    0.0764    0.0439    0.0243    0.0176
+    {b, scatter, assay}                 0.0000    0.0000    0.0000    0.0000    0.0000
+    {K_m, scatter, assay}               0.0000    0.0000    0.0000    0.0000    0.0000
+    {b, K_m, scatter, assay}            0.0000    0.0000    0.0000    0.0000    0.0000
+    median sd, nothing removed          0.3879    0.2086    0.1230    0.0821    0.0811
+
+  Shapley shares of Var(ln theta | k_e) (game on the median variances; sums to 100%)
+  and, in parentheses, the median [min-max] of each record's own Shapley share
+     pct       Var                             b                         K_m                     scatter                       assay
+       5   0.15047   29.2% (29.6% [28.0%-32.0%])  9.3% ( 9.4% [ 8.8%-10.2%]) 32.5% (32.1% [30.6%-33.2%]) 29.1% (28.8% [27.5%-29.7%])
+      10   0.04350   27.2% (27.8% [25.8%-30.5%])  8.9% ( 9.0% [ 8.5%- 9.5%]) 34.8% (34.5% [32.7%-35.7%]) 29.1% (28.8% [27.4%-29.7%])
+      20   0.01512   23.6% (24.2% [21.8%-27.6%])  9.5% ( 9.3% [ 8.9%- 9.9%]) 37.5% (37.3% [35.4%-38.4%]) 29.4% (29.2% [27.9%-29.9%])
+      50   0.00673   16.2% (16.7% [14.2%-20.8%]) 16.3% (15.6% [13.5%-17.9%]) 37.6% (37.5% [36.5%-38.0%]) 29.9% (29.8% [29.1%-30.2%])
+     100   0.00658   10.9% (11.0% [ 9.2%-14.5%]) 26.6% (26.0% [23.1%-28.6%]) 33.7% (33.9% [33.6%-34.0%]) 28.8% (28.9% [28.7%-29.1%])
+    the two sigma terms together: 5%: 61.6%, 10%: 63.8%, 20%: 66.9%, 50%: 67.5%, 100%: 62.5%
+
+  Order-dependent figures: each factor's reduction of Var as a share of Var(none)
+    removed FIRST = V({}) - V({i});  removed LAST = V(all but i) - V(all);
+    [min, max] over all 24 removal orders; Shapley = the mean over the 24 orders
+    5% of normal (Var 0.15047, sd 0.3879)
+      factor       first     last      min      max  Shapley
+      b            41.0%     0.0%     0.0%    70.2%    29.2%
+      K_m           4.7%     0.0%     0.0%    33.9%     9.3%
+      scatter      34.5%    13.3%    13.3%    69.6%    32.5%
+      assay        30.4%    11.8%    11.8%    65.5%    29.1%
+      order b 41.0% -> K_m 33.9% -> scatter 13.3% -> assay 11.8%
+      order assay 30.4% -> scatter 69.6% -> K_m 0.0% -> b 0.0%
+      order K_m 4.7% -> b 70.2% -> assay 11.8% -> scatter 13.3%
+    10% of normal (Var 0.04350, sd 0.2086)
+      factor       first     last      min      max  Shapley
+      b            34.7%     0.0%     0.0%    73.7%    27.2%
+      K_m           1.8%     0.0%     0.0%    40.9%     8.9%
+      scatter      38.9%    13.4%    13.4%    68.3%    34.8%
+      assay        31.7%    11.1%    11.1%    61.1%    29.1%
+      order b 34.7% -> K_m 40.9% -> scatter 13.4% -> assay 11.1%
+      order assay 31.7% -> scatter 68.3% -> K_m 0.0% -> b 0.0%
+      order K_m 1.8% -> b 73.7% -> assay 11.1% -> scatter 13.4%
+    20% of normal (Var 0.01512, sd 0.1230)
+      factor       first     last      min      max  Shapley
+      b            23.8%     0.0%     0.0%    77.3%    23.6%
+      K_m           0.1%     0.0%     0.0%    53.6%     9.5%
+      scatter      45.4%    12.7%    12.7%    65.0%    37.5%
+      assay        35.0%     9.9%     9.9%    54.6%    29.4%
+      order b 23.8% -> K_m 53.6% -> scatter 12.7% -> assay 9.9%
+      order assay 35.0% -> scatter 65.0% -> K_m 0.0% -> b 0.0%
+      order K_m 0.1% -> b 77.3% -> assay 9.9% -> scatter 12.7%
+    50% of normal (Var 0.00673, sd 0.0821)
+      factor       first     last      min      max  Shapley
+      b             7.8%     0.0%     0.0%    71.0%    16.2%
+      K_m          13.2%     0.0%     0.0%    76.4%    16.3%
+      scatter      52.8%     8.8%     8.8%    58.4%    37.6%
+      assay        41.6%     6.9%     6.9%    47.2%    29.9%
+      order b 7.8% -> K_m 76.4% -> scatter 8.8% -> assay 6.9%
+      order assay 41.6% -> scatter 58.4% -> K_m 0.0% -> b 0.0%
+      order K_m 13.2% -> b 71.0% -> assay 6.9% -> scatter 8.8%
+    100% of normal (Var 0.00658, sd 0.0811)
+      factor       first     last      min      max  Shapley
+      b             2.3%     0.0%     0.0%    52.1%    10.9%
+      K_m          39.2%     0.0%     0.0%    89.0%    26.6%
+      scatter      53.5%     4.7%     4.7%    54.5%    33.7%
+      assay        45.5%     4.0%     4.0%    46.5%    28.8%
+      order b 2.3% -> K_m 89.0% -> scatter 4.7% -> assay 4.0%
+      order assay 45.5% -> scatter 54.5% -> K_m 0.0% -> b 0.0%
+      order K_m 39.2% -> b 52.1% -> assay 4.0% -> scatter 4.7%
+
+  Mobius dividends of the switch-on game (variance with ONLY the factors in T present),
+  as shares of Var(none). Singletons are main effects, the rest interactions; they sum
+  to 100%. b and K_m have zero main effect: without per-visit noise there is no variance,
+  whatever b's prior and however unknown K_m is.
+    T (present)                             5%       10%       20%       50%      100%
+    {b}                                   0.0%      0.0%      0.0%      0.0%      0.0%
+    {K_m}                                 0.0%      0.0%      0.0%      0.0%      0.0%
+    {scatter}                            13.3%     13.4%     12.7%      8.8%      4.7%
+    {assay}                              11.8%     11.1%      9.9%      6.9%      4.0%
+    {b, K_m}                              0.0%      0.0%      0.0%      0.0%      0.0%
+    {b, scatter}                         42.5%     46.1%     50.0%     47.4%     36.4%
+    {b, assay}                           38.5%     39.2%     40.4%     39.5%     32.7%
+    {K_m, scatter}                       17.9%     22.4%     30.2%     42.7%     48.1%
+    {K_m, assay}                         16.0%     18.5%     23.4%     33.8%     41.0%
+    {scatter, assay}                     -0.0%      0.0%     -0.0%     -0.0%      0.0%
+    {b, K_m, scatter}                    -4.1%    -13.6%    -27.9%    -40.4%    -34.7%
+    {b, K_m, assay}                      -0.8%     -7.7%    -19.1%    -33.0%    -31.1%
+    {b, scatter, assay}                 -10.8%    -11.6%    -13.1%    -15.8%    -17.0%
+    {K_m, scatter, assay}                -0.0%      0.0%      0.0%     -0.0%     -0.0%
+    {b, K_m, scatter, assay}            -24.3%    -17.8%     -6.5%     10.2%     16.0%
+
+--------------------------------------------------------------------------------------------
+  (b) n-DEPENDENCE AT 5% OF NORMAL WITH k_e EXACT
+--------------------------------------------------------------------------------------------
+  delta_cont (the dose train continued) equals design.run.delta to 2.2e-16 (relative) before day 2786.
+  NOTE. design.run.delta stops after 200 doses, the last on day 2786. On n4's GRID
+  that is monthly draw number 92 (t = 2766.4 d); draw 93 sits 10.8 d after it (increment 753.9), and from
+  draw 94 on the increment is below 1.83, i.e. off therapy. So prefixes of core.GRID longer than ~93 draws
+  add UNTREATED draws. Both versions are shown: 'n4 GRID' as-is, and 'therapy continued'.
+  rec() reproduces core.record (monthly, every 2 d, the 600-draw GRID, every 7.3 d) to 1.8e-14
+  prefix property (the 25-draw record is the first 25 draws of the 50-draw one): True
+
+  (i) longer monthly records, n4 GRID as-is (untreated after draw ~93): sd(ln theta_hat)
+        n                     k_e exact  k_e + b exact (scatter kept)   k_e + load measured exactly               k_e + K_m exact           k_e + K_m + b exact
+        6                        0.7046                        0.6495                        0.4455                        0.6636                        0.4171
+        8                        0.6620                        0.6055                        0.4154                        0.6510                        0.4038
+       12                        0.5116                        0.4440                        0.3046                        0.5093                        0.2858
+       16                        0.4899                        0.4189                        0.2874                        0.4897                        0.2625
+       25                        0.3879                        0.2979                        0.2044                        0.3786                        0.1943
+       36                        0.3547                        0.2452                        0.1682                        0.3292                        0.1596
+       50                        0.3325                        0.2131                        0.1462                        0.2928                        0.1379
+       75                        0.2976                        0.1727                        0.1185                        0.2434                        0.1106
+      100                        0.2633                        0.1146                        0.0786                        0.1718                        0.0846
+      150                        0.2342                        0.0555                        0.0381                        0.1022                        0.0487
+      200                        0.2225                        0.0421                        0.0288                        0.0888                        0.0377
+      300                        0.2061                        0.0312                        0.0214                        0.0791                        0.0281
+      400                        0.1939                        0.0261                        0.0179                        0.0746                        0.0234
+      600                        0.1762                        0.0209                        0.0143                        0.0706                        0.0184
+    n*Var at n = 25, 100, 600:
+      k_e exact                        3.762    6.931   18.623
+      k_e + b exact (scatter kept)     2.219    1.312    0.262
+      k_e + load measured exactly      1.044    0.618    0.123
+      k_e + K_m exact                  3.584    2.953    2.993
+      k_e + K_m + b exact              0.943    0.716    0.203
+
+  (i) longer monthly records, therapy continued: sd(ln theta_hat)
+        n                     k_e exact  k_e + b exact (scatter kept)   k_e + load measured exactly               k_e + K_m exact           k_e + K_m + b exact
+        6                        0.7046                        0.6495                        0.4455                        0.6636                        0.4171
+        8                        0.6620                        0.6055                        0.4154                        0.6510                        0.4038
+       12                        0.5116                        0.4440                        0.3046                        0.5093                        0.2858
+       16                        0.4899                        0.4189                        0.2874                        0.4897                        0.2625
+       25                        0.3879                        0.2979                        0.2044                        0.3786                        0.1943
+       36                        0.3547                        0.2452                        0.1682                        0.3292                        0.1596
+       50                        0.3325                        0.2131                        0.1462                        0.2928                        0.1379
+       75                        0.2976                        0.1727                        0.1185                        0.2434                        0.1106
+      100                        0.2767                        0.1466                        0.1005                        0.2107                        0.0948
+      150                        0.2527                        0.1218                        0.0835                        0.1762                        0.0780
+      200                        0.2319                        0.1042                        0.0715                        0.1525                        0.0671
+      300                        0.2059                        0.0852                        0.0585                        0.1251                        0.0548
+      400                        0.1857                        0.0738                        0.0506                        0.1083                        0.0474
+      600                        0.1624                        0.0601                        0.0412                        0.0888                        0.0386
+     1200                        0.1229                        0.0425                        0.0292                        0.0629                        0.0273
+     2400                        0.0906                        0.0300                        0.0206                        0.0445                        0.0193
+     6000                        0.0587                        0.0189                        0.0130                        0.0282                        0.0122
+    n*Var at n = 25, 100, 600, 6000:
+      k_e exact                        3.762    7.654   15.828   20.639
+      k_e + b exact (scatter kept)     2.219    2.148    2.166    2.153
+      k_e + load measured exactly      1.044    1.011    1.019    1.013
+      k_e + K_m exact                  3.584    4.439    4.729    4.770
+      k_e + K_m + b exact              0.943    0.898    0.896    0.890
+
+  local slope d ln sd / d ln n, therapy continued (-0.5 is 1/sqrt(n); 0 is a floor)
+         n1-n2                     k_e exact  k_e + b exact (scatter kept)   k_e + load measured exactly               k_e + K_m exact           k_e + K_m + b exact
+         25-50                        -0.222                        -0.483                        -0.483                        -0.371                        -0.494
+        50-100                        -0.265                        -0.540                        -0.540                        -0.475                        -0.541
+       100-200                        -0.255                        -0.492                        -0.492                        -0.467                        -0.497
+       200-400                        -0.321                        -0.498                        -0.498                        -0.494                        -0.503
+       400-600                        -0.330                        -0.506                        -0.506                        -0.490                        -0.503
+      600-1200                        -0.402                        -0.499                        -0.499                        -0.497                        -0.500
+     1200-2400                        -0.440                        -0.504                        -0.504                        -0.498                        -0.504
+     2400-6000                        -0.475                        -0.501                        -0.501                        -0.499                        -0.501
+
+  what the data teach about b (k_e exact): posterior sd(b) / prior sd(b) = 0.05 L
+    6 monthly, therapy continued     0.9922
+    25 monthly, therapy continued    0.9588
+    100 monthly, therapy continued   0.8525
+    365 every 2 d                    0.6379
+    600 monthly, therapy continued   0.5520
+    2400 monthly, therapy continued  0.3129
+    6000 monthly, therapy continued  0.2034
+
+  (ii) denser sampling within two years (therapy on throughout): sd(ln theta_hat)
+     dt (d)     n                     k_e exact  k_e + b exact (scatter kept)   k_e + load measured exactly               k_e + K_m exact           k_e + K_m + b exact
+       30.4    25                        0.3879                        0.2979                        0.2044                        0.3786                        0.1943
+       14.5    51                        0.3418                        0.2331                        0.1599                        0.3119                        0.1430
+        7.3   100                        0.2728                        0.1454                        0.0997                        0.2097                        0.0936
+        2.0   365                        0.1947                        0.0837                        0.0574                        0.1189                        0.0537
+        1.0   730                        0.1507                        0.0560                        0.0384                        0.0814                        0.0360
+
+  fits of sd(n) = sqrt(floor^2 + c^2/n) (least squares on sd, floor >= 0)
+    scenario                       design                                floor        c  worst res
+    k_e exact                      monthly n4 GRID, n 6-600             0.1870   1.7320     0.0268
+    k_e exact                      monthly therapy cont., n 6-600       0.1889   1.7323     0.0393
+    k_e exact                      2 years, dt 30.4-1 d, n 25-730       0.1613   1.9119     0.0292
+    k_e + b exact (scatter kept)   monthly n4 GRID, n 6-600             0.0000   1.5598     0.0718
+    k_e + b exact (scatter kept)   monthly therapy cont., n 6-600       0.0000   1.5952     0.0415
+    k_e + b exact (scatter kept)   2 years, dt 30.4-1 d, n 25-730       0.0116   1.5329     0.0182
+    k_e + load measured exactly    monthly n4 GRID, n 6-600             0.0000   1.0700     0.0493
+    k_e + load measured exactly    monthly therapy cont., n 6-600       0.0000   1.0943     0.0285
+    k_e + load measured exactly    2 years, dt 30.4-1 d, n 25-730       0.0079   1.0516     0.0125
+    k_e + K_m exact                monthly n4 GRID, n 6-600             0.0000   1.7852     0.0652
+    k_e + K_m exact                monthly therapy cont., n 6-600       0.0880   1.7688     0.0638
+    k_e + K_m exact                2 years, dt 30.4-1 d, n 25-730       0.0517   1.9853     0.0292
+    k_e + K_m + b exact            monthly n4 GRID, n 6-600             0.0000   1.0173     0.0442
+    k_e + K_m + b exact            monthly therapy cont., n 6-600       0.0000   1.0332     0.0385
+    k_e + K_m + b exact            2 years, dt 30.4-1 d, n 25-730       0.0062   0.9805     0.0055
+
+  out of sample: the therapy-continued fit over n 6-600, extrapolated, against the FIM
+    scenario                               n=1200 fit/FIM        n=2400 fit/FIM        n=6000 fit/FIM
+    k_e exact                               0.1954/0.1229         0.1922/0.0906         0.1902/0.0587
+    k_e + b exact (scatter kept)            0.0460/0.0425         0.0326/0.0300         0.0206/0.0189
+    k_e + load measured exactly             0.0316/0.0292         0.0223/0.0206         0.0141/0.0130
+    k_e + K_m exact                         0.1018/0.0629         0.0952/0.0445         0.0910/0.0282
+    k_e + K_m + b exact                     0.0298/0.0273         0.0211/0.0193         0.0133/0.0122
+
+  asymptotic coefficient c_inf = sqrt(n Var) at n = 6000, therapy continued:
+    k_e exact                      c_inf = 4.5431
+    k_e + b exact (scatter kept)   c_inf = 1.4674
+    k_e + load measured exactly    c_inf = 1.0066
+    k_e + K_m exact                c_inf = 2.1841
+    k_e + K_m + b exact            c_inf = 0.9433
+
+  draws needed to reach sd(ln theta_hat) <= 0.20 (median over 24 records)
+  monthly, therapy continued: records are nested prefixes, so each record's variance
+  falls monotonically with n and a bisection is exact. Within two years, at spacing
+  730/n d: records are not nested and the dose phases alias, so every n from 2 to 800 is
+  scanned; 'first' is the smallest passing n, 'stays' the n from which every larger n passes.
+    k_e exact                      monthly: n =  328 ( 27.3 years);  two years: first n = 320 (every 2.28 d, sd 0.1999), stays from n = 324 (every 2.25 d, sd 0.1999)
+    k_e + b exact (scatter kept)   monthly: n =   58 (  4.8 years);  two years: first n = 55 (every 13.27 d, sd 0.1990), stays from n = 105 (every 6.95 d, sd 0.1352)
+    k_e + load measured exactly    monthly: n =   29 (  2.4 years);  two years: first n = 25 (every 29.20 d, sd 0.1976), stays from n = 53 (every 13.77 d, sd 0.1408)
+    k_e + K_m exact                monthly: n =  114 (  9.5 years);  two years: first n = 111 (every 6.58 d, sd 0.1997), stays from n = 111 (every 6.58 d, sd 0.1997)
+    k_e + K_m + b exact            monthly: n =   24 (  2.0 years);  two years: first n = 21 (every 34.76 d, sd 0.1914), stays from n = 53 (every 13.77 d, sd 0.1203)
+
+--------------------------------------------------------------------------------------------
+  (c) REQUIREMENTS FOR sd(ln theta_hat) <= 0.20 AT 5% OF NORMAL (therapy on, 2-year record)
+--------------------------------------------------------------------------------------------
+  k_e precision = sd(ln k_e) = ln(1 + p); load-bias precision = the b prior as a fraction
+  of L; load scatter = the per-visit load-record term of sigma; the 5% assay CV is kept.
+  '*' marks a cell at or below 0.20.
+
+    730 daily:  rows k_e precision / load scatter, columns load-bias precision
+         k_e  scatter    b exact       b 1%       b 2%       b 5%
+       exact        0    0.0384*    0.0622*    0.0871*    0.1104*
+       exact       1%    0.0392*    0.0629*    0.0883*    0.1125*
+       exact       2%    0.0417*    0.0648*    0.0914*    0.1186*
+       exact       5%    0.0560*    0.0761*    0.1065*    0.1507*
+          1%        0    0.0583*    0.0764*    0.0981*    0.1197*
+          1%       1%    0.0589*    0.0770*    0.0991*    0.1217*
+          1%       2%    0.0606*    0.0786*    0.1019*    0.1273*
+          1%       5%    0.0712*    0.0880*    0.1155*    0.1575*
+          2%        0    0.0950*    0.1077*    0.1248*    0.1433*
+          2%       1%    0.0953*    0.1081*    0.1256*    0.1450*
+          2%       2%    0.0964*    0.1092*    0.1277*    0.1497*
+          2%       5%    0.1036*    0.1162*    0.1388*    0.1762*
+          5%        0    0.2095     0.2176     0.2298     0.2444 
+          5%       1%    0.2100     0.2181     0.2305     0.2456 
+          5%       2%    0.2115     0.2194     0.2322     0.2492 
+          5%       5%    0.2182     0.2255     0.2400     0.2678 
+
+    365 every 2 d:  rows k_e precision / load scatter, columns load-bias precision
+         k_e  scatter    b exact       b 1%       b 2%       b 5%
+       exact        0    0.0574*    0.0775*    0.1067*    0.1476*
+       exact       1%    0.0587*    0.0786*    0.1079*    0.1503*
+       exact       2%    0.0623*    0.0816*    0.1114*    0.1576*
+       exact       5%    0.0837*    0.0995*    0.1296*    0.1947*
+          1%        0    0.0719*    0.0889*    0.1155*    0.1544*
+          1%       1%    0.0730*    0.0898*    0.1167*    0.1568*
+          1%       2%    0.0760*    0.0925*    0.1198*    0.1638*
+          1%       5%    0.0943*    0.1086*    0.1368*    0.1998*
+          2%        0    0.1035*    0.1162*    0.1383*    0.1726*
+          2%       1%    0.1042*    0.1169*    0.1392*    0.1748*
+          2%       2%    0.1064*    0.1189*    0.1418*    0.1811*
+          2%       5%    0.1202*    0.1318*    0.1561*    0.2140 
+          5%        0    0.2165     0.2239     0.2380     0.2628 
+          5%       1%    0.2171     0.2244     0.2386     0.2642 
+          5%       2%    0.2185     0.2257     0.2403     0.2684 
+          5%       5%    0.2270     0.2337     0.2495     0.2917 
+
+    100 every 7.3 d:  rows k_e precision / load scatter, columns load-bias precision
+         k_e  scatter    b exact       b 1%       b 2%       b 5%
+       exact        0    0.0997*    0.1135*    0.1436*    0.2255 
+       exact       1%    0.1020*    0.1155*    0.1454*    0.2282 
+       exact       2%    0.1083*    0.1212*    0.1505*    0.2357 
+       exact       5%    0.1454*    0.1553*    0.1806*    0.2728 
+          1%        0    0.1091*    0.1219*    0.1504*    0.2301 
+          1%       1%    0.1112*    0.1237*    0.1521*    0.2327 
+          1%       2%    0.1171*    0.1291*    0.1569*    0.2400 
+          1%       5%    0.1520*    0.1615*    0.1860*    0.2765 
+          2%        0    0.1330*    0.1438*    0.1688*    0.2430 
+          2%       1%    0.1347*    0.1454*    0.1703*    0.2455 
+          2%       2%    0.1396*    0.1499*    0.1746*    0.2524 
+          2%       5%    0.1700*    0.1786*    0.2011     0.2871 
+          5%        0    0.2377     0.2442     0.2604     0.3162 
+          5%       1%    0.2388     0.2452     0.2614     0.3181 
+          5%       2%    0.2418     0.2480     0.2643     0.3233 
+          5%       5%    0.2610     0.2667     0.2825     0.3505 
+
+    25 monthly:  rows k_e precision / load scatter, columns load-bias precision
+         k_e  scatter    b exact       b 1%       b 2%       b 5%
+       exact        0    0.2044     0.2110     0.2289     0.3139 
+       exact       1%    0.2089     0.2154     0.2330     0.3175 
+       exact       2%    0.2220     0.2281     0.2449     0.3278 
+       exact       5%    0.2979     0.3025     0.3156     0.3879 
+          1%        0    0.2091     0.2155     0.2331     0.3171 
+          1%       1%    0.2135     0.2198     0.2372     0.3206 
+          1%       2%    0.2263     0.2323     0.2489     0.3308 
+          1%       5%    0.3011     0.3057     0.3187     0.3904 
+          2%        0    0.2224     0.2285     0.2452     0.3263 
+          2%       1%    0.2265     0.2325     0.2490     0.3298 
+          2%       2%    0.2387     0.2444     0.2602     0.3397 
+          2%       5%    0.3105     0.3149     0.3276     0.3977 
+          5%        0    0.2965     0.3015     0.3147     0.3830 
+          5%       1%    0.2997     0.3046     0.3177     0.3860 
+          5%       2%    0.3091     0.3138     0.3265     0.3944 
+          5%       5%    0.3678     0.3716     0.3824     0.4447 
+
+  The loosest passing combinations on that grid (Pareto set: nothing passes that is
+  looser in one requirement and no tighter in any other):
+               draws    k_e  b prior  scatter       sd
+     100 every 7.3 d     2%       2%       2%   0.1746
+     100 every 7.3 d     2%       1%       5%   0.1786
+     100 every 7.3 d     1%       2%       5%   0.1860
+       365 every 2 d     2%       5%       2%   0.1811
+       365 every 2 d     2%       2%       5%   0.1561
+       365 every 2 d     1%       5%       5%   0.1998
+           730 daily     2%       5%       5%   0.1762
+
+  Outside the grid: 25 monthly draws with K_m ALSO known exactly (a fifth requirement)
+         k_e  scatter    b exact       b 1%       b 2%       b 5%
+       exact        0    0.1333*    0.1749*    0.2247     0.2750 
+       exact       1%    0.1362*    0.1775*    0.2280     0.2804 
+       exact       2%    0.1448*    0.1849*    0.2373     0.2958 
+       exact       5%    0.1943*    0.2280     0.2859     0.3786 
+          1%        0    0.1395*    0.1799*    0.2289     0.2787 
+          1%       1%    0.1423*    0.1824*    0.2321     0.2841 
+          1%       2%    0.1505*    0.1896*    0.2412     0.2992 
+          1%       5%    0.1986*    0.2318     0.2891     0.3813 
+          2%        0    0.1565*    0.1941*    0.2409     0.2894 
+          2%       1%    0.1591*    0.1964*    0.2439     0.2945 
+          2%       2%    0.1664*    0.2030     0.2525     0.3091 
+          2%       5%    0.2109     0.2428     0.2983     0.3889 
+          5%        0    0.2421     0.2706     0.3096     0.3532 
+          5%       1%    0.2438     0.2722     0.3119     0.3573 
+          5%       2%    0.2488     0.2768     0.3183     0.3692 
+          5%       5%    0.2805     0.3063     0.3544     0.4374 
+
+  Continuous requirements, by bisection (None = not reached even at the tightest end):
+               draws    k_e  sd at b 5%, sc 5%    b needed (sc 5%)    sc needed (b 5%)           both at X
+           730 daily  exact             0.1507  >= 20% (range end)               9.11%               7.48%
+           730 daily     1%             0.1575  >= 20% (range end)               8.64%               7.22%
+           730 daily     2%             0.1762  >= 20% (range end)               7.23%               6.39%
+           730 daily     5%             0.2678                None                None                None
+       365 every 2 d  exact             0.1947               5.44%               5.38%               5.20%
+       365 every 2 d     1%             0.1998               5.02%               5.02%               5.01%
+       365 every 2 d     2%             0.2140               4.00%               3.85%               4.42%
+       365 every 2 d     5%             0.2917                None                None                None
+     100 every 7.3 d  exact             0.2728               2.62%                None               3.24%
+     100 every 7.3 d     1%             0.2765               2.47%                None               3.11%
+     100 every 7.3 d     2%             0.2871               1.96%                None               2.72%
+     100 every 7.3 d     5%             0.3505                None                None                None
+          25 monthly  exact             0.3879                None                None                None
+          25 monthly     1%             0.3904                None                None                None
+          25 monthly     2%             0.3977                None                None                None
+          25 monthly     5%             0.4447                None                None                None
+
+  The loosest k_e precision (as ln(1+p), reported as p) for a given load specification:
+               draws      b 5%, sc 5% (now)           b 1%, sc 5%           b 1%, sc 1%            load exact
+           730 daily                  2.91%                 4.32%                 4.50%                 4.74%
+       365 every 2 d                  1.02%                 4.07%                 4.34%                 4.56%
+     100 every 7.3 d           exact misses                 2.87%                 3.74%                 3.98%
+          25 monthly           exact misses          exact misses          exact misses          exact misses
+
+--------------------------------------------------------------------------------------------
+  (d) THE k_e VARIANCE SHARE 1 - Var(ln th | k_e)/Var(ln th), monthly 25 draws
+--------------------------------------------------------------------------------------------
+         pct    theta      s       sd    sd|ke  share (median)       [min, max]  1-(sd|ke/sd)^2
+        1.00     30.0  0.036  14.7529   1.8433          98.40% [97.92%,98.65%]          98.44%
+        1.26     37.8  0.045  11.7528   1.4687          98.40% [97.93%,98.65%]          98.44%
+        1.58     47.5  0.056   9.3690   1.1712          98.40% [97.94%,98.64%]          98.44%
+        2.00     59.9  0.070   7.4745   0.9350          98.40% [97.96%,98.63%]          98.44%
+        2.51     75.4  0.087   5.9685   0.7474          98.40% [97.97%,98.62%]          98.43%
+        3.16     94.9  0.107   4.7707   0.5986          98.40% [97.99%,98.61%]          98.43%
+        3.98    119.4  0.133   3.8185   0.4806          98.39% [98.01%,98.59%]          98.42%
+        5.00    150.0  0.163   3.0673   0.3879          98.38% [98.03%,98.56%]          98.40%
+        5.01    150.4  0.163   3.0604   0.3870          98.38% [98.03%,98.56%]          98.40%
+        6.31    189.3  0.200   2.4553   0.3130          98.35% [98.05%,98.52%]          98.37%
+        7.94    238.3  0.242   1.9713   0.2546          98.30% [98.01%,98.47%]          98.33%
+       10.00    300.0  0.292   1.5830   0.2086          98.23% [97.93%,98.41%]          98.26%
+       12.59    377.7  0.347   1.2702   0.1726          98.10% [97.80%,98.31%]          98.15%
+       15.85    475.5  0.408   1.0176   0.1446          97.93% [97.59%,98.16%]          97.98%
+       19.95    598.6  0.472   0.8126   0.1232          97.68% [97.25%,97.92%]          97.70%
+       25.12    753.6  0.537   0.6466   0.1070          97.26% [96.72%,97.54%]          97.26%
+       31.62    948.7  0.601   0.5127   0.0953          96.55% [95.90%,96.91%]          96.55%
+       39.81   1194.3  0.662   0.4063   0.0871          95.40% [94.59%,95.88%]          95.40%
+       50.12   1503.6  0.718   0.3220   0.0820          93.52% [92.50%,94.20%]          93.51%
+       63.10   1892.9  0.767   0.2564   0.0795          90.40% [89.11%,91.40%]          90.39%
+       79.43   2383.0  0.809   0.2067   0.0792          85.31% [83.69%,86.76%]          85.30%
+       82.40   2472.0  0.815   0.2000   0.0794          84.25% [82.58%,85.78%]          84.24%
+      100.00   3000.0  0.845   0.1699   0.0811          77.24% [75.31%,79.27%]          77.22%
+      125.89   3776.8  0.875   0.1445   0.0851          65.40% [63.25%,68.03%]          65.36%
+      158.49   4754.7  0.899   0.1292   0.0912          50.24% [48.11%,53.40%]          50.16%
+      199.53   5985.8  0.919   0.1229   0.0997          34.18% [32.43%,37.23%]          34.19%
+      251.19   7535.7  0.935   0.1246   0.1110          20.52% [19.27%,22.85%]          20.64%
+      316.23   9486.8  0.948   0.1336   0.1260          11.09% [10.32%,12.53%]          11.06%
+      398.11  11943.2  0.959   0.1492   0.1450           5.52% [ 5.12%, 6.31%]           5.50%
+      501.19  15035.6  0.967   0.1714   0.1692           2.59% [ 2.40%, 2.99%]           2.58%
+      630.96  18928.7  0.974   0.2009   0.1997           1.17% [ 1.09%, 1.36%]           1.17%
+      794.33  23829.8  0.979   0.2389   0.2383           0.52% [ 0.48%, 0.60%]           0.51%
+     1000.00  30000.0  0.983   0.2872   0.2869           0.22% [ 0.21%, 0.26%]           0.22%
+
+    the user's arithmetic 1 - (0.39/3.07)^2 = 0.9839
+    at 5%:  median per-record share 0.9838; from the median sds 1 - (0.3879/3.0673)^2 = 0.9840
+    at the band edge theta = 2472 (82.4% of normal): median share 0.8425; from the median sds 0.8424; sd there 0.2000
+    |user's figure - median share at 5%| = 0.0001 (asserted < 0.005)
+    the share rises between neighbouring capacities in 3 of 32 steps, by at most 1.51e-05 (between 1.58% and 2.00%); its largest fall is 0.1607
+    the share first falls below 90% between 63.1% and 79.4% of normal
+    the share first falls below 50% between 158.5% and 199.5% of normal
+    the share first falls below 10% between 316.2% and 398.1% of normal
+  wrote fig/t8_floor.png

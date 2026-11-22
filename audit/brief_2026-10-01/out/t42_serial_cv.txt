@@ -1,0 +1,44 @@
+============================================================================================
+  ROUND 10 ITEM 1. R-D AGAINST THE SERIAL-CV ANCHOR (Thompson: C3 CVi 26.4%, 8.2-61.1)
+============================================================================================
+
+  Weekly contrast (n=104/window) as the per-draw marker CV rises from the
+  repo's ~5% assay to the empirical serial CV:
+        per-draw marker CV   contrast sd   draws for 0.20          detect +/-
+             repo assay 5%         0.133               46         +45% / -31%
+           serial low 8.2%         0.176               81         +64% / -39%
+         serial mean 26.4%         0.475              588        +279% / -74%
+         serial high 61.1%         1.080             3033       +1961% / -95%
+
+  READING: at the repo's 5% assay the weekly contrast is ~0.13 (R-D). At the only
+  empirical serial CV (26.4%, healthy adults), the SAME 104-draw window gives a
+  contrast of ~0.48, and reaching 0.20 needs of order ~590 draws per window --
+  not deliverable in a monitoring programme. At the low end of the range (8.2%) it
+  is ~0.18 at 104 draws (borderline); at the high end (61.1%) it is hopeless.
+  So R-D's 0.13 is a best-case floor at an assay CV far below the only measured
+  serial variability.
+
+  Draws per window for a 0.20 contrast, across the serial-CV range:
+         serial CV    draws/window
+              8.2%              81
+             15.0%             208
+             26.4%             588
+             40.0%            1315
+             61.1%            3033
+
+  TWO-SIDED UNCERTAINTY (stated honestly, as the anchor is weak in both directions):
+  - The 26.4% is HEALTHY ADULTS, same-day, UNSTANDARDISED, on a small labile plasma
+    C3 pool -- it captures feeding/activity swing and likely OVERSTATES the week-to-
+    week stable-state CV a standardised PA clinic would see.
+  - But PA patients have grossly elevated C3 (thousands of nmol/L vs ~450), and a
+    larger, less labile pool may vary LESS in relative (CV) terms -- so the true PA
+    serial CV could be below 26.4%.
+  - No PA serial CV exists in any published dataset (the two candidate papers hold
+    only summary statistics or control-scaled Z-scores; the one cohort with the raw
+    data, Moderna n=50, withdrew follow-up biomarkers "due to high variability").
+  So R-D should be given as a RANGE over serial CV, not a point at ~0.13: the
+  monitoring result is deliverable (<~0.20 at ~100-200 draws) only if the true PA
+  serial CV is near the LOW end (<~10%); at the measured mean it is not. The
+  decisive measurement -- a standardised within-patient CV in stable PA -- has
+  never been made, and it is the single number the monitoring claim turns on.
+

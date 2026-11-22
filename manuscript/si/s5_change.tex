@@ -1,0 +1,351 @@
+% =============================================================================
+%  Supplementary Section S5: Change within one patient.
+%  Order: setting; why the shared constants cancel in a difference; precision
+%  and draws per window (stab:s5windows); simulated pairs (stab:s5pairs); why
+%  the ratio fails; conditions (stab:s5conditions); other instruments and the
+%  saturable-clearance model; what would test the result.
+% =============================================================================
+\section{Change within one patient}
+\label{si:s5}
+
+Supplementary Section~\ref{si:s4} showed that no available measurement fixes the level of
+residual capacity $\theta$ at 5\% of normal. This section asks a different question: whether
+capacity has changed between two periods of one patient's record. We explain why the constants
+that block the level cancel in a difference (Section~\ref{si:s5:cancel}), give the precision and
+its dependence on the number of draws (Section~\ref{si:s5:precision}), report fits to simulated
+pairs of records (Section~\ref{si:s5:pairs}), explain why the change must be read as an amount
+rather than a percentage (Section~\ref{si:s5:ratio}), and list the conditions under which the
+result holds (Sections~\ref{si:s5:conditions}--\ref{si:s5:test}).
+
+% -----------------------------------------------------------------------------
+\subsection{Setting}
+\label{si:s5:setting}
+
+The setting is that of Supplementary Section~\ref{si:s4:setting}: the linear-clearance model, in
+which each settled draw satisfies
+$(\theta+\Delta_i)\,g(m_i)+k_e m_i=L_i+b$, with $m_i$ the marker level, $\Delta_i$ the delivered
+increment, $g(m)=m/(K_m+m)$, $k_e$ the rate constant of the non-enzymatic route, $L_i$ the load
+recorded for that day and $b$ the unrecorded load offset. The patient starts at 5\% of normal,
+$\theta_1=150$\um, on the assumed fortnightly dose train ($D=6000$\um, half-life 3.5\,d), with a
+10\% day-to-day variation in intake, a 5\% assay coefficient of variation and a 5\% load-record
+error, each draw at its own noise level. Each estimate comes from a window of 104 draws at
+evenly spaced times over two years, one every 7.09 days, so that successive draws move through
+the dose cycle. Within a window $\theta$ is taken as constant; between the two windows it may
+change, from $\theta_1$ to $\theta_2$. The half-saturation $K_m$, the offset $b$ and the rate
+constant $k_e$ are patient constants, shared by the two windows, while each window has its own
+intake record, its own draws and its own noise. The quantity of interest is the difference
+$\hat\theta_2-\hat\theta_1$, in \um.
+% src: audit/brief_2026-10-01/t56_contrast_mc.py:1-20 (two windows of 104 draws over 730 d, D = 6000, 10% load variation, per-draw noise; K_m, b, k_e shared), :31,61 (N 104, WIN 730, linspace: 730/103 = 7.09 d); manuscript/main.tex:778-787
+
+% -----------------------------------------------------------------------------
+\subsection{Why the shared constants cancel in a difference}
+\label{si:s5:cancel}
+
+Read at the observed level $m_i$, an error $\delta k_e$ in the rate constant or $\delta b$ in
+the load offset is absorbed by a shift in the capacity estimate of
+\begin{equation}
+\label{seq:s5shift}
+\delta\hat\theta\;=\;-\,\delta k_e\,(K_m+m_i)\;+\;\delta b\,\frac{K_m+m_i}{m_i}.
+\end{equation}
+The shift is an amount, in \um, set by the marker level and not by $\theta$. On therapy the
+delivered enzyme dominates the enzyme route (at the assumed dose $\theta+\Delta$ is about 14
+times $\theta$ at 5\% of normal), so the two windows visit nearly the same marker levels and
+their estimates are shifted by nearly the same amount. The shift then cancels in the difference
+$\hat\theta_2-\hat\theta_1$ whatever the change. The half-saturation $K_m$, also shared, enters
+both windows in nearly the same way for the same reason.
+% src: REPORT.md:1206 (d theta = -d k_e (K_m + m) at a fixed level; additive shifts cancel in the difference); out/t56_contrast_mc.txt:18-21; out/t25_drug_cv_marker.txt:5-9 (theta + Delta = 14.0 x theta at the booked dose)
+
+In the logarithm of the ratio the shift does not cancel. A common shift $\delta$ moves the log
+ratio by about
+\begin{equation}
+\label{seq:s5logshift}
+\ln\hat\theta_2-\ln\hat\theta_1\;\approx\;\delta\Bigl(\frac{1}{\theta_2}-\frac{1}{\theta_1}\Bigr),
+\end{equation}
+which vanishes only when nothing has changed. At 5\% of normal, moreover, $\delta$ is of the
+order of $\theta$ itself, because the record does not bound the level from below, so the
+first-order statement~\eqref{seq:s5logshift} does not hold and the log ratio has heavy tails
+(Section~\ref{si:s5:ratio}).
+% src: REPORT.md:1206 (common shift moves ln ratio by about Delta (1/theta2 - 1/theta1)); out/t56_contrast_mc.txt:14-21
+
+The multiplicative constants of the direct readings behave the other way. The scale $\kappa$ of
+an ex vivo assay and the recovery $c$ of a breath test multiply the reading, so they cancel in
+the ratio of two readings rather than in their difference. Each patient constant cancels on the
+scale on which it acts, provided it is the same in both windows. A change within one patient
+therefore escapes the obstacles of Supplementary Section~\ref{si:s4}, because the constant that
+each route to the level would have to import is a patient constant.
+% src: REPORT.md:573 (one mechanism: additive in the difference, multiplicative in the ratio), :30
+
+% -----------------------------------------------------------------------------
+\subsection{Precision and the number of draws}
+\label{si:s5:precision}
+
+Linearised at 5\% of normal, the Fisher information of two windows of 104 draws gives a
+standard deviation of 0.133 for $\ln\theta_2-\ln\theta_1$, which at $\theta=150$\um\ is 20.0\um\
+for $\theta_2-\theta_1$. Relative to the patient's capacity this is 0.13, below the target of
+0.20; it is the only quantity in our analysis at 5\% of normal that reaches the target from the
+marker alone. Below, Fisher values of the contrast are given in this relative form; multiplied by
+150 they give the standard deviation of the difference in \um.
+% src: out/t56_contrast_mc.txt:4 (median 0.133; 20.0 uM/d); out/t22_longitudinal.txt:24-28; REPORT.md:571,1206
+
+The precision is set by the number of draws in each window. With draws spread over two years, 25
+draws per window give 0.26, 52 give 0.19, 104 give 0.13 and 365 give 0.07. At a fixed number of
+draws the calendar span of the window barely matters (Supplementary Table~\ref{stab:s5windows}),
+and about 45 draws per window reach 0.20. Two short, dense windows, such as six months of daily
+draws (0.10), therefore serve at least as well as two years of weekly draws (0.13), and a longer
+gap between the windows only allows more drift (Section~\ref{si:s5:conditions}). Short windows also limit the
+bias from assuming $\theta$ constant within a window, which grows with the span of the window
+rather than with its number of draws.
+% src: out/t22_longitudinal.txt:17-25 (0.264, 0.191, 0.133, 0.067); out/t24_contrast_stress.txt:5-13 (span vs draws; ~45 draws; 6-month daily 0.096); REPORT.md:583,598-600 (drift bias -rT/2 scales with span)
+
+\begin{table}[htbp]
+\centering\small
+\caption{\label{stab:s5windows}Fisher standard deviation of the within-patient contrast,
+$\ln\theta_2-\ln\theta_1$ (equal to $\operatorname{sd}(\hat\theta_2-\hat\theta_1)/150$), at 5\%
+of normal in the linear-clearance model. (a)~Against the number of draws per window, spread over
+two years. (b)~Against the calendar span of each window and the sampling frequency, with $n$ the
+number of draws per window; panel~(b) has 24 monthly draws in two years, hence 0.281 against the
+0.264 of 25 draws in panel~(a).}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\multicolumn{5}{@{}l}{(a) draws per window, over two years}\\
+\midrule
+draws per window & 25 & 52 & 104 & 365 \\
+contrast & 0.264 & 0.191 & 0.133 & 0.067 \\
+\midrule
+\multicolumn{5}{@{}l}{(b) span of each window and sampling frequency}\\
+\midrule
+span & monthly & weekly & daily & \\
+6 months & 0.568 ($n=6$) & 0.278 ($n=26$) & 0.096 ($n=180$) & \\
+1 year & 0.388 ($n=12$) & 0.187 ($n=52$) & 0.067 ($n=365$) & \\
+2 years & 0.281 ($n=24$) & 0.133 ($n=104$) & 0.047 ($n=730$) & \\
+\bottomrule
+\end{tabular}
+\end{table}
+% src: out/t22_longitudinal.txt:21-25; out/t24_contrast_stress.txt:5-9
+
+% -----------------------------------------------------------------------------
+\subsection{Simulated pairs of records}
+\label{si:s5:pairs}
+
+Because the Fisher value is a linearisation, and at 5\% of normal the estimate from one window
+can reach zero, we fitted simulated pairs of records. For each scenario, 400 pairs were generated
+with the true capacity in the second window set to a multiple of that in the first (1, 1.2, 0.8,
+1.45 or 0.7), the marker recomputed at the new capacity and the patient's load scale unchanged.
+Each pair was fitted jointly by least squares from several starting points, with $\theta$ free in
+each window, $K_m$, $b$ and $k_e$ tied between the windows, and $\theta\ge10^{-3}$\um. As in the
+Fisher calculation, each window contributes its own copy of the priors, so the shared $k_e$ and
+$b$ carry effective prior standard deviations of $0.8/\sqrt2$ on $\ln k_e$ and $0.05L/\sqrt2$.
+Two tests at the two-sided 5\% level were applied: a difference test, rejecting no change when
+$|\hat\theta_2-\hat\theta_1|>1.96\times20.0$\um, and a log-ratio test, rejecting when
+$|\ln\hat\theta_2-\ln\hat\theta_1|>1.96\times0.133$.
+% src: audit/brief_2026-10-01/t56_contrast_mc.py:7-17 (footing; priors added to both tied copies: 0.8/sqrt2, 0.05L/sqrt2; theta >= 1e-3; multi-start; window 2 at ratio x theta1 with the load scale unchanged), :35 (REPS 400); out/t56_contrast_mc.txt:4-5 (tests)
+
+The difference behaves as the Fisher value predicts (Supplementary Table~\ref{stab:s5pairs}). It
+is nearly unbiased with or without a change, its standard deviation is 19.4--21.3\um\ in every
+scenario, and the test on it raises false alarms in 5\% of pairs with no change. With a standard
+deviation of 20\um, a change of $2.80\times20=56$\um\ either way, 37\% of the capacity of a patient
+at 5\% of normal, is detected with 80\% power. A rise of 45\% (67.5\um) is detected in 91\% of
+pairs and a fall of 30\% (45\um) in 64\%; changes of 20\% (30\um) are detected in about a third of
+pairs. Read as the standard deviation of a log ratio, the same Fisher value would suggest 80\%
+power both for a rise of 45\% and for a fall of 30\%. The simulation shows the fall detected less
+often, because the record measures a change of fixed size in \um, and a 30\% fall is a smaller
+amount than a 45\% rise.
+% src: out/t56_contrast_mc.txt:7-12 (table), :22-24 (2.80 x 20 = 56 uM/d, 37%); REPORT.md:1196-1206; out/t24_contrast_stress.txt:52-58 (+45%/-31% from the Fisher value)
+
+\begin{table}[htbp]
+\centering\small\setlength{\tabcolsep}{4pt}
+\caption{\label{stab:s5pairs}Simulated pairs of records at 5\% of normal ($\theta_1=150$\um),
+linear-clearance model, two windows of 104 draws each, 400 pairs per scenario. Floor: pairs in
+which at least one window's estimate lies at the lower bound, $10^{-3}$\um. Outside: fitted log
+ratios outside $\pm1.96\times0.133$ of the truth, which should be 5\%. Difference: mean and
+standard deviation of $\hat\theta_2-\hat\theta_1$ (\um). Rejections: share of pairs in which each
+test rejects no change at the two-sided 5\% level; with no change this is the false-alarm rate.}
+\begin{tabular}{@{}cccccccc@{}}
+\toprule
+& true change & & & \multicolumn{2}{c}{difference} & \multicolumn{2}{c}{rejections} \\
+\cmidrule(lr){5-6}\cmidrule(l){7-8}
+$\theta_2/\theta_1$ & (\um) & floor & outside & mean & sd & difference test & log-ratio test \\
+\midrule
+1.00 & 0 & 23\% & 34\% & $+1.0$ & 20.2 & 5\% & 34\% \\
+1.20 & $+30$ & 20\% & 30\% & $+31.2$ & 21.3 & 37\% & 42\% \\
+0.80 & $-30$ & 23\% & 34\% & $-30.3$ & 19.6 & 33\% & 45\% \\
+1.45 & $+67.5$ & 24\% & 41\% & $+66.9$ & 19.9 & 91\% & 66\% \\
+0.70 & $-45$ & 28\% & 48\% & $-46.0$ & 19.4 & 64\% & 61\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+% src: out/t56_contrast_mc.txt:7-12; REPORT.md:1198-1204
+
+% -----------------------------------------------------------------------------
+\subsection{Why the change must be read as an amount}
+\label{si:s5:ratio}
+
+The ratio $\hat\theta_2/\hat\theta_1$ fails at 5\% of normal. In 20--28\% of pairs the estimate
+of at least one window falls to the lower bound, because the record does not bound $\theta$ from below
+(main text, Fig.~3c), and the shared constants then pull the other estimate towards zero as well.
+The ratio of two numbers near zero can take any value. With no change, the middle of the fitted
+log ratios roughly follows the Fisher value (a robust standard deviation of 0.174 against 0.133),
+but their central 95\% spans $-10.0$ to $+10.3$, and 34\% of them fall outside the range that
+should hold 95\%. A test on the log ratio therefore raises false alarms in about a third of
+pairs, and under a true change its rejections mix detections with these false alarms. A
+percentage change would need the level of $\theta$, which the record does not provide; what the
+record measures is the change in \um.
+% src: out/t56_contrast_mc.txt:7-8 (floor 0.20-0.28; robust sd 0.174; [-10.04, +10.33]; outside 0.34), :14-22; REPORT.md:1206
+
+% -----------------------------------------------------------------------------
+\subsection{Conditions}
+\label{si:s5:conditions}
+
+The contrast of 0.13 is a floor computed under two assumptions: that each marker value scatters
+by 5\% around the model's prediction for that draw, and that the patient constants are exactly
+the same in both windows. Supplementary Table~\ref{stab:s5conditions} shows how the contrast
+degrades when either assumption fails, and how two events between the windows act on it.
+% src: REPORT.md:605; out/t30_monitoring_confounders.txt:5-7
+
+\paragraph{Per-draw scatter of the marker.} The 5\% is the assay's coefficient of variation. In
+a patient the relevant quantity is the scatter of each value around the model's prediction for
+that draw, after the predictable swings over the dose cycle and with the recorded intake are
+accounted for. No such value has been published for 3-hydroxypropionate, propionylcarnitine (C3)
+or the C3/C2 ratio in stable PA. The one measured serial variability of a related marker, serum
+C3 within a day in healthy adults, averages 26.4\% (range 8.2--61.1\%)~\cite{thompson2012c3}. At
+that value the contrast is 0.475, about 71\um, and about 590 draws per window would be needed to
+reach 0.20. In methylmalonic acidaemia the between-visit coefficient of variation of serum
+methylmalonic acid is higher still, $31\pm25\%$~\cite{breath_test_mma}. The healthy-adult value is
+a weak anchor in both directions: it was measured within one day, without standardised sampling,
+on a small and labile plasma pool, which may overstate the scatter in a standardised clinic, while
+the much larger C3 pool of PA may vary less in relative terms. Because the variance of the
+contrast scales as the square of the coefficient of variation divided by the number of draws, a
+10\% scatter needs about 100 draws per window, and the target is met by windows of feasible size
+only if the scatter in PA is below about 10\%. A natural history study that sampled 50 patients
+every six months for 36 months restricted its biomarker analysis to baseline, citing high
+variability during follow-up~\cite{natural_history}.
+% src: out/t42_serial_cv.txt:5-11 (0.133/46, 0.176/81, 0.475/588, 1.080/3033), :21-27, :29-38 (two-sided uncertainty of the anchor); REPORT.md:605,607 (no published within-patient CV in stable PA; Thompson 2012: 26.4%, 8.2-61.1%; natural history n = 50, 6-monthly to 36 months, analysis restricted to baseline), :649 (CV^2/n; ~100 at 10%); pi_note/pi_note.tex:297-303 (MMA serum MMA 31 +/- 25%, Manoli 2021; <~10%); paper/claims.csv:19 (C20, natural_history: visits every 6 months to month 36)
+
+\paragraph{Drift in the patient constants.} The cancellation is exact only while $k_e$ and the
+calibration of the load are the same in both windows. A drift in $\ln k_e$ of 0.03 between the
+windows raises the contrast to 0.18, and a drift of 0.06 raises it to 0.28, about 42\um; the
+contrast stays below 0.20 up to a drift of about 0.035. Over a week $k_e$, which includes the
+renal clearance of the marker, is effectively fixed. Over a year in a growing child, whose renal
+clearance scales with body size, or with declining kidney function, a drift of 0.05--0.10 is
+plausible. A shift in the marker's calibration equal to 1.5\% of the load, as a change in
+carnitine dose or in sampling conditions (fed or fasted state, time since the last dose) could
+produce, raises the contrast to 0.204, about 30\um; the contrast stays below 0.20 up to a shift of
+about 1.4\% of the load. Monitoring is therefore reliable over intervals of weeks to a few months
+on a stable regimen with standardised sampling, and degrades over a year or across a change of
+regimen.
+% src: out/t30_monitoring_confounders.txt:9-29 (0.182 at 0.03, 0.280 at 0.06; 0.204 at 0.015 L); out/t24_contrast_stress.txt:15-36 (breakpoints ~0.035 and ~0.014 L; k_e fixed over a week; 0.05-0.1 over a year in a growing child); REPORT.md:596,1206 (0.28 -> 42 uM/d); pi_note/pi_note.tex:303-307 (42 uM/d; 30 uM/d)
+
+\paragraph{Recorded changes in dose.} A change in the infused dose that is recorded enters the
+model as a known change in $\Delta$ and does not mimic a change in $\theta$. The contrast stays
+unbiased, at a cost in precision: 0.133 with the same dose in both windows and 0.184 if the dose
+doubles in the second. An uncertain delivered dose would instead leak into $\hat\theta$, so the
+date, dose and lot of every infusion must be recorded.
+% src: out/t25_drug_cv_marker.txt:11-20 (same dose 0.133, double dose on window 2 0.184; uncertain dose leaks); REPORT.md:647
+
+\paragraph{Unrecorded antibiotic courses.} Gut bacteria supply a substantial part of the load
+(Supplementary Section~\ref{si:s1-bio}), and metronidazole lowered urinary propionate metabolites
+by 41\% on average (12--76\%; Supplementary Section~\ref{si:s2:record}). A course that starts after
+the first window and continues through the second lowers the load without the record showing it.
+Read at the nominal recorded load, the lower marker values then look like higher capacity. In the
+linear response, an unrecorded fall in load of 10\%, 20\% and 41\% shifts
+$\ln\hat\theta_2-\ln\hat\theta_1$ by $+1.1$, $+2.0$ and $+2.9$, so that the course mimics a rise
+of one to three times the patient's whole capacity, about 9 to 22 times the standard deviation of
+the contrast (0.133). The shift is always towards apparent improvement.
+Because antibiotics tend to be started when there is clinical concern, an unrecorded course would
+make a deteriorating patient look better. Antibiotic status must therefore be recorded and held
+fixed across the two windows. Within one window, an unrecorded antibiotic cycle also biases the
+estimate of the level itself downwards (Supplementary Section~\ref{si:s2:record}).
+% src: gut share (22.2 +/- 8.5%, params.py:496-505) and metronidazole fall (41%, 12-76%, claims.csv:50) cited in s1_model.tex (si:s1-bio) and s2_sampling.tex (si:s2:record); out/t24_contrast_stress.txt:38-50 (+1.14, +2.01, +2.94); REPORT.md:642 (always towards improvement; quoted as 8-20x the 0.13, recomputed 1.14/0.133 = 8.6, 2.94/0.133 = 22.1), :1206 (one to three times the whole capacity)
+
+\begin{table}[htbp]
+\centering\small\setlength{\tabcolsep}{5pt}
+\caption{\label{stab:s5conditions}Conditions on the within-patient contrast at 5\% of normal,
+linear-clearance model, two windows of 104 draws. Contrast: Fisher standard deviation of
+$\ln\theta_2-\ln\theta_1$, equal to $\operatorname{sd}(\hat\theta_2-\hat\theta_1)/150$; the
+baseline, with a 5\% per-draw scatter and the constants exactly shared, is 0.133 (20\um). Draws:
+draws per window needed for a contrast of 0.20. Per-draw scatter: coefficient of variation of each
+marker value about the model's prediction; 8.2, 26.4 and 61.1\% are the range and mean of the
+within-day variability of serum C3 in healthy adults~\cite{thompson2012c3}. Drifts are changes
+between the windows that the fit treats as shared. The antibiotic row gives a bias rather than a
+standard deviation: the linear-response shift of $\ln\hat\theta_2-\ln\hat\theta_1$, which is also the
+apparent rise as a multiple of $\theta$.}
+\begin{tabular}{@{}llcc@{}}
+\toprule
+condition & value & contrast & draws \\
+\midrule
+per-draw scatter of the marker & 5\% (assay) & 0.133 & 46 \\
+& 8.2\% & 0.176 & 81 \\
+& 15\% & -- & 208 \\
+& 26.4\% & 0.475 & 588 \\
+& 40\% & -- & 1315 \\
+& 61.1\% & 1.080 & 3033 \\
+\addlinespace
+drift in $\ln k_e$ between windows & 0.02 & 0.157 & \\
+& 0.03 & 0.182 & \\
+& 0.05 & 0.245 & \\
+& 0.06 & 0.280 & \\
+& 0.10 & 0.426 & \\
+& 0.20 & 0.767 & \\
+\addlinespace
+shift in calibration (fraction of load) & 0.01 & 0.176 & \\
+& 0.015 & 0.204 & \\
+& 0.02 & 0.226 & \\
+& 0.03 & 0.254 & \\
+& 0.05 & 0.276 & \\
+\addlinespace
+recorded dose doubled in window 2 & & 0.184 & \\
+\addlinespace
+unrecorded antibiotic course through window 2 & load fall 10\% & bias $+1.14$ & \\
+(linear response) & load fall 20\% & bias $+2.01$ & \\
+& load fall 41\% & bias $+2.94$ & \\
+\bottomrule
+\end{tabular}
+\end{table}
+% src: out/t42_serial_cv.txt:7-11,21-27; out/t24_contrast_stress.txt:16-28,38-45; out/t30_monitoring_confounders.txt:9-25; out/t25_drug_cv_marker.txt:12
+
+% -----------------------------------------------------------------------------
+\subsection{Other instruments and the saturable-clearance model}
+\label{si:s5:other}
+
+Measuring the shared constants does not improve the contrast, because they already cancel: the
+intravenous tracer and the load turnover of Supplementary Section~\ref{si:s4:other} tighten what
+the difference removes. An ex vivo PCC assay at 20\% repeatability in each window would give a
+contrast of $\sqrt2\times0.20\approx0.28$, worse than the record's 0.13. A direct reading in vivo,
+such as the breath test, is different: its obstacle for the level, a recovery that varies between
+patients, cancels in the ratio of two readings from one patient. In our model its signal, the
+fraction of the load oxidised, changes by 0.89\% for a 1\% change in capacity at the untreated
+steady state at 5\% of normal, so at an assumed within-subject coefficient of variation of 8\% one
+reading per window would give a contrast of 0.127, comparable to 104 blood draws. The calculation
+does not include the delivered enzyme, which on therapy carries most of the load
+(Supplementary Section~\ref{si:s4:split}). No within-subject coefficient of variation of
+the breath test has been published for PA, and the recovery would itself have to stay constant
+between the windows, although it may change with diet, gut flora or antibiotics. The value is
+therefore a design target, which a measurement of the test's within-subject repeatability in PA
+would have to confirm.
+% src: out/t26_multiobservable.txt:42-47 (sensors add nothing; ex vivo sqrt2 x 0.20 ~ 0.28); out/t31_breath_contrast.txt:5-18 (untreated operating point L 322.7, m 54.0, S 0.163; elasticity 0.888; 8% one reading 0.127), :35-43 (CV assumed, not measured); pi_note/figure_guide.tex:272-276 (own enzyme about 6% of the load on therapy); REPORT.md:618-631 (CV_S a sweep; c drifts with diet, gut flora, antibiotic course), :731
+
+In the saturable-clearance model, where the enzyme carries a larger share of the load, the
+Fisher value of the contrast is 0.088 at the nominal constants and 0.078 at the constructed
+operating point of Supplementary Section~\ref{si:s4:sat}, against 0.133 in the linear-clearance
+model on the same footing (0.132 at the managed load of 220\um). The shared constants, now
+including the maximal rate $V_e$ and half-saturation $K_e$ of the non-enzymatic route, again
+shift both windows' estimates by an amount. We did not simulate pairs in that model, so the
+reading of the change as a difference rests there on the Fisher calculation alone.
+% src: out/t33_model_b.txt:56-64 (0.133 vs 0.088; shared Km, b, ke, Ke); out/t35_managed_load.txt:41-50 (0.132 vs 0.078); out/t36_reconcile_remark15.txt:54-62 (b shared; B better on both axes); manuscript/main.tex:532-533 (simulated in the linear-clearance model only)
+
+% -----------------------------------------------------------------------------
+\subsection{What would test the result}
+\label{si:s5:test}
+
+The contrast rests on the shared constants cancelling, which is a property of the model. Its
+checkable consequence is the marker's own serial variability within a stable patient. With draws
+taken at a fixed point of the dose cycle, the model predicts a within-patient standard deviation
+of $\ln m$ of about 0.12 (a coefficient of variation of about 12\%), from the 10\% day-to-day
+variation in intake (0.099 alone) and the 5\% assay (0.050 alone); with draws at random points of
+the cycle it predicts about 0.64, dominated by the cycle. If stable patients sampled at a fixed
+point of the cycle vary materially more than 12\%, either $\theta$ is not constant between visits
+or a nuisance does not cancel, and in either case the contrast is optimistic. Measuring this
+serial variability in PA, with the sampling time relative to the infusion, fed state, carnitine
+dose and renal function recorded at each draw, is the measurement that monitoring needs first
+(main text, Table~2).
+% src: out/t25_drug_cv_marker.txt:44-58 (0.636 random phase; 0.121 synchronised; load 0.099, assay 0.050); REPORT.md:651; out/t30_monitoring_confounders.txt:41-52; manuscript/main.tex:383,564-565 (measured first; Table 2, monitoring row)

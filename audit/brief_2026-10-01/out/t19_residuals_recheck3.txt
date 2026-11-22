@@ -1,0 +1,55 @@
+====================================================================================
+  RECHECK3 of ITEM 10 -- residual-diagnostic power (independent rebuild)
+====================================================================================
+  L0=322.727  M0(m_ref)=16.132  SG=16.136  SB=16.136
+
+(a) SANITY: true MM data -> residuals white, reject ~ nominal 5%
+    monthly reject @5%: vs marker 0.0%, vs time 6.8%, vs load 4.0%  (mean t: mk -0.29 tm +0.07 ld +0.37)
+
+(b) SATURABLE NON-ENZYMATIC CLEARANCE: monthly (blind) vs excursion (detects)
+    Kne=150:
+      monthly:   vs marker 0%, vs time 8%, vs load 3%  (mean residual-vs-marker t=-0.35)
+      excursion: vs marker 0%, vs time 100%, vs load 100%
+    Kne=60:
+      monthly:   vs marker 0%, vs time 5%, vs load 3%  (mean residual-vs-marker t=-0.46)
+      excursion: vs marker 0%, vs time 100%, vs load 100%
+
+(c) LOAD DRIFT (zero-mean, b cannot absorb): monthly residual-vs-time power
+    drift 10%: vs marker 0%, vs time 85%, vs load 5%
+    drift 20%: vs marker 0%, vs time 100%, vs load 7%
+
+(d) SECOND COMPARTMENT: invisible at steady state, grows in transient
+    kx=0.5/d: peak |d ln m| gap = 5% of decay rate; near-steady-state gap = 0.6%
+    kx=2.0/d: peak |d ln m| gap = 15% of decay rate; near-steady-state gap = 1.1%
+
+--------------------------------------------------------------------------------
+  ADVERSARIAL PROBES (break-it tests beyond the reproduced numbers)
+--------------------------------------------------------------------------------
+  EXCURSION NULL SIZE: under the TRUE MM model the dense excursion (N=577, 5%
+  assay) rejects vs-time 100%, vs-load 100% -- i.e. the excursion test's FALSE
+  POSITIVE rate is ~100%, not nominal. So its reported ~100% "power" to detect
+  saturable clearance is not a valid detection: the same test rejects the
+  correctly-specified MM model equally.
+
+  CAUSE = errors-in-variables / Jensen bias in the noisy nonlinear regressor,
+  amplified by N:
+     cv 5.0% -> 100% ;  cv 2.0% -> 23% ;  cv 0.5% -> 0% ;  cv 0.1% -> 0%
+     N=577 -> 100% ; N=73 -> 7% ; N=25 -> 0% ; N=13 -> 0%   (true-MM null)
+  The deterministic MM steady-state curve is fit with ZERO residual (RMS 0.000),
+  so the rejection is purely the 5%-noise EIV effect at large N.
+
+  GENUINE STRUCTURAL SIGNAL (noise-free MM fit residual on the excursion):
+     true MM    : RMS 0.000 flux  (baseline, perfectly fittable)
+     sat Kne=150: RMS 0.741 flux  << noise SG=16.1  -> signal negligible
+     sat Kne=60 : RMS 40.1  flux  >> noise SG=16.1  -> large real signal (m up to 737)
+
+  AT A SIZE-VALID SAMPLE (stride 8, N=73; true-MM null ~9%):
+     true MM  vs-time  9%   (calibrated)
+     Kne=150  vs-time  0%   -> NOT genuinely detected (its 100% at N=577 is artifact)
+     Kne=60   vs-time 64%   -> GENUINELY detected (real power above the null)
+
+  CONCLUSION: monthly blindness to saturable clearance is solid and well
+  calibrated (N=25 null ~5%). The excursion GENUINELY detects STRONG saturation
+  (Kne=60) but NOT mild saturation (Kne=150, pure artifact), and at the script's
+  N=577 the reported "~100%" conflates detection with a ~100% false-positive
+  rate the report does not disclose. Claims (a), (c), (d) are clean and calibrated.

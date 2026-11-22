@@ -1,0 +1,79 @@
+==============================================================================================
+  ROUND 8 ITEM 1. 'B BETTER FOR theta' vs REMARK 15 ('fails a fortiori under B')
+==============================================================================================
+
+  (a) THE MECHANISM IS THE SHARE. sd(ln theta) ~ (1-s)/s (the clearance the
+      nuisances carry, relative to the enzyme's). s: 0.163 (A) -> 0.372 (B).
+      (1-s)/s: 5.135 (A) -> 1.688 (B); ratio 3.042
+      observed sd ratio 3.045/0.923 = 3.299
+      -> the share explains 92% of the improvement; the
+      residual ~8% is the second nuisance Ke and the shifted operating point.
+      So the marginal gain is almost entirely the higher enzyme share.
+
+  (b) THE CONDITION NUMBER DEGRADES -- the paper's direction (fig:B2).
+      cond(col-normalised sensitivity), monthly record at 5%:
+        A (4 cols):            8.977e+01
+        B (5 cols, Ke free):   1.641e+03   (18x worse)
+        B (4 cols, Ke pinned): 7.460e+01   (<= A: the degradation is
+                               ENTIRELY the Ke column -- the exchange direction)
+      Same DIRECTION as the paper's 450x; the magnitude differs because the
+      paper's figure is the DYNAMIC sensitivity matrix at a 10% excursion, this
+      is the monthly equation-error FIM. Both say: adding the saturating channel's
+      Ke, collinear with (theta,Km) once both bend, wrecks the joint conditioning.
+
+  (c) WHY THE MARGINAL sd IMPROVES ANYWAY: IT IS PRIOR-REGULARISED.
+      The ill-conditioning lives in the NUISANCE subspace (the ke<->Ke exchange).
+      Priors on the nuisances absorb it, so theta's marginal variance is protected.
+      Strip the priors and B is catastrophic, exactly as the paper says:
+        A, ke prior 0.8:               3.060
+        A, NO ke prior:                5.908
+        B, ke 0.8 + Ke pinned:         0.923   (t33 headline)
+        B, ke 0.8 + Ke free 0.5:       1.041
+        B, NO priors, Ke free:         55.509   <- the exchange
+                                       degeneracy: 55, far WORSE than A's 5.9.
+
+  RECONCILIATION (and a finding about the parent paper):
+    - The paper's 'fails a fortiori under B' and fig:B2 are about the DATA/JOINT
+      problem: conditioning (450x) and the exact (theta,Km)<->(ke,Ke) exchange.
+      Confirmed here -- stripped of priors, B's theta-CRB blows up to 55 vs A's 5.9.
+    - t33's '0.92 < 3.05' is the MARGINAL, PRIOR-REGULARISED CRB on theta, which
+      IMPROVES under B because the higher enzyme share gives theta more leverage
+      while the ill-conditioning stays in the (prior-pinned) nuisance subspace.
+    - These are the two objects Remark 3 said were not related. This result RELATES
+      them, in the direction OPPOSITE to Remark 15: the marginal precision on the
+      one parameter of interest improves even as the joint conditioning degrades.
+      So 'A is the most favourable case' holds for CONDITIONING and JOINT
+      identifiability, but NOT for the marginal CRB on theta once the nuisances
+      carry reasonable priors -- a narrow but real correction to the a-fortiori
+      claim, bearing on the paper's stated reason for working in A.
+
+==============================================================================================
+  ROUND 8 ITEM 4. NO ASYMMETRY (a v11 bug), AND corr(theta, ke) vs SHARE
+==============================================================================================
+
+  (asymmetry withdrawn) v11 reported the contrast WORSENING under B (0.133 -> 0.167)
+    while cross-sectional improved, and asked why. There is NO asymmetry: the 0.167
+    was a BUG -- the Model-B contrast did not share the load-bias b between windows
+    (b is a patient constant and cancels, exactly as in t24/R-D). Sharing b, the
+    corrected Model-B contrast is 0.088 < A's 0.133: B is BETTER on BOTH axes. The
+    explanation is the single share mechanism of item 1 -- a higher enzyme share
+    tightens theta both cross-sectionally (marginal CRB) and per-window (so the
+    contrast, which keeps the independent per-window theta information, improves
+    too). No competing effect; the v11 asymmetry does not exist.
+
+  (corr vs share) theta-ke correlation at several capacities, A and B:
+      prediction: corr -> -1 as s -> 0 (the channels become indistinguishable);
+      B has higher s at each capacity, so a WEAKER (less negative) correlation.
+
+        capacity   A: share    A: corr   B: share    B: corr
+            20%       0.472     -0.987      0.773     -0.814
+            10%       0.292     -0.990      0.586     -0.843
+             5%       0.163     -0.991      0.372     -0.853
+             2%       0.070     -0.992      0.171     -0.855
+
+      Confirmed: in BOTH models corr(theta, ke) deepens toward -1 as capacity (and
+      share) fall, and at each capacity B's higher share gives a less-negative
+      correlation. The -0.82 reported at 5% under B sits on this curve. The
+      correlation is a function of the share, which is why it is weaker under the
+      model with the larger enzyme share -- the same mechanism as (a).
+

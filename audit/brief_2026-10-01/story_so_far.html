@@ -1,0 +1,390 @@
+<title>PCC Capacity Study Recap</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: one reading column, figures on light plates, a verdict list up front, a numbered round timeline. */
+:root {
+  --paper: #f4f6f9;
+  --surface: #ffffff;
+  --ink: #17202b;
+  --muted: #546072;
+  --rule: #d6dce4;
+  --accent: #2466b8;
+  --accent-soft: #e2ecf8;
+  --bad: #b3431a;
+  --bad-soft: #fbe8df;
+  --mid: #855a00;
+  --mid-soft: #faefd6;
+  --good: #0d7451;
+  --good-soft: #dcf1e7;
+  --plate: #ffffff;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-head: "IBM Plex Sans Condensed", "IBM Plex Sans", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f141a; --surface: #161d26; --ink: #e4e9ef; --muted: #9aa6b4; --rule: #29333f;
+    --accent: #7db0ee; --accent-soft: #19283a; --bad: #f2916b; --bad-soft: #3a2017;
+    --mid: #e6b955; --mid-soft: #332811; --good: #55cf9d; --good-soft: #11301f; --plate: #f6f7f9;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f141a; --surface: #161d26; --ink: #e4e9ef; --muted: #9aa6b4; --rule: #29333f;
+  --accent: #7db0ee; --accent-soft: #19283a; --bad: #f2916b; --bad-soft: #3a2017;
+  --mid: #e6b955; --mid-soft: #332811; --good: #55cf9d; --good-soft: #11301f; --plate: #f6f7f9;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 16.5px;
+  line-height: 1.62;
+  padding-block: 40px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 44px; }
+section { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+h1, h2, h3 { font-family: var(--f-head); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(2rem, 6vw, 2.75rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 1.6rem; font-weight: 600; }
+h3 { font-size: 1.12rem; font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+a { color: var(--accent); }
+strong { font-weight: 600; }
+.eyebrow {
+  font-family: var(--f-mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted);
+}
+.sec-label { font-family: var(--f-mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.dek { font-size: 1.15rem; color: var(--muted); max-width: 62ch; }
+.meta { font-family: var(--f-mono); font-size: 0.8rem; color: var(--muted); }
+header { display: flex; flex-direction: column; gap: 14px; }
+.scope {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 6px;
+  padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; font-size: 0.95rem;
+}
+.scope p { max-width: none; }
+.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: 0.93em; }
+
+/* verdicts */
+.verdicts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--rule); }
+.verdicts li {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr); gap: 8px 22px;
+  padding: 18px 0; border-bottom: 1px solid var(--rule);
+}
+.you { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.you q { font-style: italic; color: var(--muted); quotes: "\201C" "\201D"; }
+.chip {
+  align-self: flex-start; font-family: var(--f-mono); font-size: 0.72rem; font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px;
+}
+.chip.bad { color: var(--bad); background: var(--bad-soft); }
+.chip.mid { color: var(--mid); background: var(--mid-soft); }
+.chip.good { color: var(--good); background: var(--good-soft); }
+.chip::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; margin-right: 6px; vertical-align: 1px; }
+.what { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.what p { font-size: 0.97rem; }
+.where { font-family: var(--f-mono); font-size: 0.76rem; color: var(--muted); }
+@media (max-width: 620px) { .verdicts li { grid-template-columns: minmax(0, 1fr); } }
+
+.bottomline {
+  border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; font-size: 1.05rem;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+/* model box */
+.model { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.eq { font-family: var(--f-mono); font-size: 1.02rem; overflow-x: auto; white-space: nowrap; padding-bottom: 2px; }
+.terms { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; margin: 0; font-size: 0.95rem; }
+.terms dt { font-family: var(--f-mono); color: var(--accent); }
+.terms dd { margin: 0; min-width: 0; }
+
+.tablebox { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.93rem; min-width: 520px; }
+th, td { text-align: left; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-family: var(--f-mono); font-size: 0.74rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+td.n { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (max-width: 620px) {
+  table { min-width: 0; }
+  thead { display: none; }
+  table, tbody, tr, td { display: block; width: 100%; }
+  tr { padding: 10px 0; border-bottom: 1px solid var(--rule); }
+  td { border: 0; padding: 2px 0; display: grid; grid-template-columns: 9.5em minmax(0, 1fr); gap: 10px; }
+  td::before { content: attr(data-label); font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); padding-top: 2px; }
+  td.n { white-space: normal; }
+}
+
+/* timeline */
+.rounds { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.rounds li { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 14px; padding: 12px 0; border-top: 1px solid var(--rule); }
+.rounds li:last-child { border-bottom: 1px solid var(--rule); }
+.rk { font-family: var(--f-mono); font-size: 0.8rem; color: var(--accent); padding-top: 2px; }
+.rk span { display: block; color: var(--muted); font-size: 0.72rem; }
+.rounds h3 { font-size: 1.02rem; margin-bottom: 3px; }
+.rounds p { font-size: 0.95rem; color: var(--ink); }
+
+/* figures */
+figure { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.plate { background: var(--plate); border: 1px solid var(--rule); border-radius: 6px; padding: 10px; }
+.plate img { display: block; width: 100%; height: auto; max-width: 100%; }
+figcaption { font-size: 0.9rem; color: var(--muted); max-width: 70ch; }
+figcaption b { color: var(--ink); font-weight: 600; }
+
+.steps { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 10px; }
+.steps li { padding-left: 4px; }
+.note { font-size: 0.9rem; color: var(--muted); }
+footer { font-size: 0.85rem; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 16px; display: flex; flex-direction: column; gap: 6px; }
+footer p { max-width: none; }
+code { font-family: var(--f-mono); font-size: 0.88em; }
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Propionic acidemia · PCC enzyme capacity · rounds 1–19</div>
+  <h1>PCC Capacity Study Recap</h1>
+  <p class="dek">What the study asked, what it found, and where it stopped, in plain language. It starts by checking your own summary point by point.</p>
+  <div class="meta">15 November 2026 · built from REPORT.md and the scripts' printed outputs · checked in four independent verification passes</div>
+</header>
+
+<div class="scope">
+  <p><strong>What these numbers are.</strong> This is a design study on a simulated model, not an analysis of patients. Most numbers come from one simulated patient whose enzyme works at 5% of normal, with 25 monthly blood draws over two years while on therapy. Where a number uses other capacities, other draw schedules or a simulated population, the text says so. The "24 records" in the early rounds are 24 diet histories of that one patient. The results describe the managed, stable state between crises. They say nothing about an untreated or decompensating patient.</p>
+</div>
+
+<!-- 1 -->
+<section id="your-summary">
+  <div class="sec-label">1 · Your summary, checked</div>
+  <h2>Is your summary right?</h2>
+  <p>Two independent reviewers graded each of your five statements against the report and agreed on every verdict. A later check judged two of those verdicts too strict for what you meant (statements 3 and 5), so they are relaxed here. Your words are quoted as you wrote them.</p>
+
+  <ol class="verdicts">
+    <li>
+      <div class="you"><q>the problem was on resolution of this adding more sensors. Like sensor fusion was the key for it.</q><span class="chip bad">Not right</span></div>
+      <div class="what">
+        <p>Sensor fusion was tested and it did not solve the problem. The two sensors that measure the nuisance quantities, a tracer for the other clearance route and a load-turnover test, took the uncertainty on capacity from <span class="num">3.05</span> to <span class="num">0.44</span>. That is seven times better, but still more than twice the <span class="num">0.20</span> target, and <span class="num">0.29</span> even with both quantities known exactly. An enzyme assay on the patient's cells reaches <span class="num">0.20</span> only if its calibration factor κ is assumed known, and even then it measures test-tube activity. Round 6 found that test-tube activity predicts whole-body capacity only loosely, which leaves an error of about <span class="num">0.65</span>. So no set of sensors reaches the target for the quantity the model needs.</p>
+        <span class="where">Rounds 4–6 · R-G</span>
+      </div>
+    </li>
+    <li>
+      <div class="you"><q>We were also interested to quantify the uncertainty and we have used the pencil plotting</q><span class="chip mid">Partly right</span></div>
+      <div class="what">
+        <p>Quantifying the uncertainty was the goal from round 1. The number, <span class="num">3.05</span>, comes from the Fisher information. Simulating the same record gave an even wider spread on the log scale (about 7, though the exact size depends on how the simulation treats estimates that fall to zero), which confirmed the negative result. The pencil plot came at the very end, in round 18. It is a picture of <em>why</em> capacity cannot be pinned down and an independent check of the earlier numbers. It changed none of them.</p>
+        <span class="where">Round 1 onward; pencil in round 18 · R-Q</span>
+      </div>
+    </li>
+    <li>
+      <div class="you"><q>we decreased the uncertainty in a way that the system could have been evaluated</q><span class="chip mid">Partly right</span></div>
+      <div class="what">
+        <p>Half of this holds. The uncertainty on the patient's capacity θ narrowed along the way (the extra sensors took it from <span class="num">3.05</span> to <span class="num">0.44</span>, and Model B at a constructed point gives <span class="num">0.29</span>), but it never reached the target: no route the data support gets to <span class="num">0.20</span>. What changed was <strong>λ</strong>, how fast the drug's enzyme boost fades, and the dosing decision turned out to need λ rather than θ. λ went from an assumption to a measured human value (3.6 days, in skin cells), and simulated on-therapy records could pin it. The liver value, which is the one that matters, is still unmeasured (best estimate about 4.3 days, plausible 3–6). Under Model C that makes the 14- and 15-day intervals decidable for every patient, if the liver half-life is above about 3.2 days. The 21-day interval stays open (section 6). Change within one patient could also be tracked in the model, but only if real patients' marker variability is low, which nobody has measured, and only over short intervals on a stable regimen with standardised sampling. All of this came before the pencil plot, not after it.</p>
+        <span class="where">Rounds 3 and 11–19 · R-D, R-J to R-S</span>
+      </div>
+    </li>
+    <li>
+      <div class="you"><q>we measured how long did we need to wait before being able to understand if a patient may need less injection than before</q><span class="chip mid">Partly right</span></div>
+      <div class="what">
+        <p>Right question, but the answer is not one waiting time. Round 13 asked it on simulated records, and later rounds refined it. The 15-day interval needs no waiting under Model C, for any of its unmeasured constants, as long as the liver half-life is above about 3.2 days (the measured 3.6 clears it; the liver value itself is unmeasured). λ is pinned to ±25% within 6 months, and to ±5% in 1–4 years depending on how often blood is drawn. In round 13's case, where the half-life was assumed to be 3.5 days (below the 21-day line), estimating one patient's capacity from the passive record never makes the 21-day interval available. Whether λ settles the 21-day question depends on where the true liver value sits and where the line sits. Near 4.3 days, a year of monthly draws gives an 80% chance of a clear answer if the line is where Model C's repository constants put it; if Model C's unmeasured constants move the line up to about 4.1 days, the chance is at most 47% even after five years of weekly draws. Near the measured 3.6 days, no single patient's record ever gives a clear answer (section 6).</p>
+        <span class="where">Round 13 · R-L, refined in R-N to R-S</span>
+      </div>
+    </li>
+    <li>
+      <div class="you"><q>We shared the difference between the current dosage and something a little more permissive</q><span class="chip good">Right</span></div>
+      <div class="what">
+        <p>Yes. "Dosage" here means how often: the comparison was the current injection every 14 days against more permissive intervals of 15 and 21 days, at the same total amount of drug. A longer interval means fewer, larger injections, not less drug.</p>
+        <span class="where">Rounds 11–17 · R-J, R-L</span>
+      </div>
+    </li>
+  </ol>
+
+  <div class="bottomline">
+    <p><strong>In one sentence:</strong> the patient's enzyme capacity was never measured well enough, so the study changed the question. The interval decision needs the drug's protein half-life instead. That settles the 14- and 15-day intervals under Model C, given a liver half-life above about 3.2 days. The 21-day interval sits on a knife-edge that depends on the liver half-life, which has not been measured, and on Model C constants that have not been measured either.</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section id="the-model">
+  <div class="sec-label">2 · The system</div>
+  <h2>The model, the three versions, and the drug</h2>
+  <p>At steady state, the propionate load a patient takes in is cleared by two routes: the defective enzyme (PCC) and everything else.</p>
+  <div class="model">
+    <div class="eq">load = (θ + Δ(t)) · g(m) + k<sub>e</sub> · m,&nbsp;&nbsp; g(m) = m / (K<sub>m</sub> + m)</div>
+    <dl class="terms">
+      <dt>m</dt><dd>the marker, the metabolite level measured in each blood draw</dd>
+      <dt>θ</dt><dd>enzyme capacity, the patient's own PCC working capacity. Normal is <span class="num">3000</span>; the study patient has <span class="num">150</span> (5%).</dd>
+      <dt>k<sub>e</sub></dt><dd>the other clearance route, everything that removes the metabolite apart from PCC (<span class="num">5</span> in the model)</dd>
+      <dt>K<sub>m</sub></dt><dd>the level at which the enzyme runs at half speed (<span class="num">100</span>)</dd>
+      <dt>Δ(t)</dt><dd>the drug's boost to enzyme capacity (below)</dd>
+    </dl>
+  </div>
+
+  <h3>Three versions of "everything else"</h3>
+  <p>When the report says "the parent paper", it means your paper in this repository, not another model. The repository has three versions of the other clearance route, because nobody has measured it in patients.</p>
+  <div class="tablebox">
+    <table>
+      <thead><tr><th>Model</th><th>The other clearance route</th><th>What this study used it for</th></tr></thead>
+      <tbody>
+        <tr><td data-label="Model">A</td><td data-label="Route">linear, no upper limit</td><td data-label="Used for">the capacity numbers in sections 4–5 (your paper's identifiability model)</td></tr>
+        <tr><td data-label="Model">B</td><td data-label="Route">saturating, has a ceiling</td><td data-label="Used for">a check: same verdict, smaller numbers (0.29–0.92 instead of 3.05)</td></tr>
+        <tr><td data-label="Model">C</td><td data-label="Route">limited by carnitine; can tip into crisis</td><td data-label="Used for">a check of the capacity verdict (same answer), and the dosing safety line in section 6 (151 µM/d)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>None of them has been measured in patients, and two have known problems. Model A's unlimited route clears about 84% of the load at 5% capacity, while measured non-enzyme disposal in PA is about 4–8 times lower, so the report calls A's structure wrong for the disease range. Every capacity number on this page carries that assumption, and your paper states it (claim C23). Model B has the shape the literature supports, but its repository constants have no recorded source and put its ceiling above the load, so it never produces a crisis, which does not match severe PA. Its 0.92 comes from those constants; its 0.29 from a constructed, literature-consistent point. Model C has the literature-consistent shape, but several of its constants are marked arbitrary or assumed. The capacity verdict keeps its direction in all three: the target is not reached. Model A overstates the difficulty compared with Model B; under Model C with its channel constants unknown, the spread is wider still (about 16–20). The dosing conclusions rest on Model C, so they inherit its unmeasured constants (section 6). So your sense that the other models did not work is partly right.</p>
+
+  <h3>The drug and its symbols</h3>
+  <p>The drug, mRNA-3927, makes the liver produce working PCC. That extra enzyme jumps after each injection and fades as the protein is broken down.</p>
+  <dl class="terms">
+    <dt>Δ(t)</dt><dd>the extra enzyme capacity from the drug at time t (µM/d)</dd>
+    <dt>λ</dt><dd>how fast that extra enzyme fades (per day)</dd>
+    <dt>ln2/λ</dt><dd>its half-life in days. The one human measurement is <span class="num">3.6</span> days (λ ≈ 0.19 per day); the repository had assumed 3.5.</dd>
+    <dt>τ</dt><dd>days between injections: 14 now; 15 and 21 considered. Total drug is held fixed, so a longer τ means larger injections.</dd>
+    <dt>Δ<sub>trough</sub>(τ)</dt><dd>the extra enzyme left just before the next injection, the lowest point of the cycle</dd>
+    <dt>θ<sub>crit</sub></dt><dd>the total capacity below which a patient cannot stay stable at their usual load (<span class="num">151 µM/d</span> in Model C)</dd>
+    <dt>μ</dt><dd>the safety margin at the lowest point: θ + Δ<sub>trough</sub>(τ) − θ<sub>crit</sub></dd>
+  </dl>
+  <p>If Δ<sub>trough</sub>(τ) alone exceeds θ<sub>crit</sub>, the margin is positive even for a patient with no enzyme of their own, so that interval is safe for everyone without measuring θ.</p>
+  <p>Uncertainty is quoted as <span class="num">sd(ln θ)</span>, the spread on a log scale. The target <span class="num">0.20</span> means roughly ±20%. <span class="num">0.69</span> means a factor of 2 either way. <span class="num">3.05</span>, the study's baseline, means a factor of about 21 either way, which is no measurement at all.</p>
+</section>
+
+<!-- 3 -->
+<section id="timeline">
+  <div class="sec-label">3 · What happened, in order</div>
+  <h2>Nineteen rounds</h2>
+  <ol class="rounds">
+    <li><div class="rk">Rounds 1–2<span>Tasks 1–7, F1–F6</span></div><div><h3>Can the blood record measure capacity?</h3><p>No. At 5% of normal the record gives <span class="num">3.05</span> against a target of <span class="num">0.20</span>, about 15 times too wide. More draws, pooling records, better estimators and short test experiments all fall short at clinical precision. The one test design that passes needs a research-grade assay and the drug's scale known exactly.</p></div></li>
+    <li><div class="rk">Round 3<span>R9–R16, R-A to R-D</span></div><div><h3>Why not, and what survives</h3><p>The information about θ only appears when the metabolite is pushed toward saturation, past the model's crisis threshold, so no safe design gets there. Two things survive: a ceiling (capacity is at most about 31% of normal) and <strong>change within one patient</strong>, which reaches <span class="num">0.13</span> in the model because the unknown constants cancel.</p></div></li>
+    <li><div class="rk">Rounds 4–10<span>R-G, R-H, R-I</span></div><div><h3>More sensors, other models, the literature</h3><p>Sensor fusion, a saturating model (B) and a carnitine model (C) all fall short for the same reason. Round 6's literature also showed that an enzyme assay on the patient's cells measures test-tube activity, which predicts whole-body capacity only loosely. The general result: every route to absolute capacity needs one constant that has never been measured in humans.</p></div></li>
+    <li><div class="rk">Round 11<span>R-J</span></div><div><h3>The question changes</h3><p>Which interval to book is a condition on the trough just before the next dose. The drug's boost dominates it, so the decision turns on λ, not on θ.</p></div></li>
+    <li><div class="rk">Rounds 12–14<span>R-K, R-L, R-M</span></div><div><h3>Reading λ, and timing each step</h3><p>Simulated on-therapy records pin λ to about ±5.5% in two years (Fisher information). Round 13 timed each step (section 6). Round 14 set a method rule: read log-scale spreads from the Fisher information, check yes/no safety decisions by simulation.</p></div></li>
+    <li><div class="rk">Rounds 15–17<span>R-N, R-O, R-P</span></div><div><h3>λ is measured, and it sits on the knife-edge</h3><p>A human value exists: 3.6 days, from skin cells. Under Model C the 21-day decision flips at 3.5452 days. The liver value is unmeasured; the best estimate is about 4.3 days. The study ends on data requests.</p></div></li>
+    <li><div class="rk">Round 18<span>R-Q</span></div><div><h3>The pencil geometry</h3><p>The PI's picture of each blood draw as a line. It shows why capacity cannot be pinned, checks several earlier numbers from an independent direction, and changes none.</p></div></li>
+    <li><div class="rk">Round 19<span>R-R, R-S, this page</span></div><div><h3>This recap, and two corrections</h3><p>Writing it turned up two places where rounds 15–17 claimed more than the numbers support: what the trial record can settle, and how firm the 21-day line is. Both are corrected in the report and explained in section 6.</p></div></li>
+  </ol>
+  <p class="note">REPORT.md does not label rounds 4 and 5 separately; their work is filed under round 3's close-out and R-G.</p>
+</section>
+
+<!-- 4 -->
+<section id="the-problem">
+  <div class="sec-label">4 · The problem</div>
+  <h2>Where it started: 3.05 against a target of 0.20</h2>
+  <p>With monthly blood draws, a patient at 5% of normal capacity cannot be told apart from a patient with a weaker enzyme and a faster other clearance route. The two produce the same blood levels. Statistically, θ and k<sub>e</sub> are correlated at −0.99, and not knowing k<sub>e</sub> accounts for about 98% of the uncertainty in θ.</p>
+  <figure>
+    <div class="plate"><img src="fig/t1_identifiability.png" alt="Three panels: the uncertainty on capacity against capacity, the correlation between capacity and the other clearance route, and the likelihood for a 5 percent patient showing a ceiling but no floor."></div>
+    <figcaption><b>Where the study started (Model A).</b> (a) With monthly draws the uncertainty at 5% of normal is about 15 times the 0.20 target; only between 82% and 627% of normal does the record reach it (a sweep across capacities). (b) At low capacity the estimate trades off almost perfectly against k<sub>e</sub>. (c) The evidence cannot rule out near-zero capacity, but it does set a ceiling: about 22% of normal using the prior on k<sub>e</sub>, about 30% without it. This early script prints 3.07; later scripts give 3.05 for the same quantity.</figcaption>
+  </figure>
+  <p>Round 18's pencil plot shows the same problem as geometry. Each blood draw gives one straight line of possible (θ, k<sub>e</sub>) pairs, like a compass bearing to an unknown position. On the dosed record every bearing comes from almost the same direction, because every line has slope −1/(K<sub>m</sub> + m) and m stays far below K<sub>m</sub>. The lines barely cross, and the position smears along a long sliver.</p>
+  <figure>
+    <div class="plate"><img src="fig/r18_pencil.png" alt="Two panels of straight lines in the capacity versus clearance plane. Left, the dosed record: lines nearly parallel, a long thin uncertainty sliver. Right, a wide excursion: lines fan out and meet near the true point."></div>
+    <figcaption><b>Why the record cannot pin capacity.</b> Left: the simulated dosed record, 25 near-parallel bearings and a long sliver (sd(ln θ) = 2.7 with K<sub>m</sub> held fixed). Right: draws spread over a much wider range of marker levels give different angles, and the lines meet near the truth (0.40). Getting that angle requires marker levels past the model's crisis threshold. That threshold is a modelling construct; where the real clinical limit sits is an open question.</figcaption>
+  </figure>
+</section>
+
+<!-- 5 -->
+<section id="every-fix">
+  <div class="sec-label">5 · Everything that was tried</div>
+  <h2>Every fix tried, on one scale</h2>
+  <p>Over rounds 1–10 the study tried more draws, pooled records, better estimators, test experiments, extra sensors, and two other model structures. The chart puts the sensor results and the within-patient result on the same scale.</p>
+  <figure>
+    <div class="plate"><img src="fig/story_routes.png" alt="Horizontal bar chart on a log scale. Marker record alone 3.05; adding a load-turnover sensor 3.04; adding a k_e tracer 0.45; both together 0.44; both known exactly 0.29; adding an ex vivo enzyme assay with its calibration assumed 0.20; all three sensors with calibration assumed 0.18; ex vivo assay with calibration unknown 3.05; ex vivo assay against healthy controls, read as whole-body capacity, about 0.65. Change within one patient: 0.13 in the model's best case, 0.475 at the one measured serial variability."></div>
+    <figcaption><b>Sensor fusion helps, but not enough.</b> All values are Model A, for one simulated patient at 5% of normal. The two nuisance sensors take the uncertainty from 3.05 to 0.44. The enzyme assay reaches 0.20 only with its calibration factor κ assumed known (hatched), and even then it measures test-tube activity. Read against healthy controls, κ cancels, but as a measure of whole-body capacity the error is about 0.65 (indicative, from the one same-subject study, in MMA, 11 patients). The bottom group is a different quantity: a change within one patient. Sources: <code>t26</code>, <code>t27</code>, <code>t29</code>; <code>t22</code>, <code>t42</code>.</figcaption>
+  </figure>
+
+  <h3>Could κ be assumed, or found out?</h3>
+  <p>κ is the scale factor between an enzyme reading on the patient's cells and their whole-body capacity. Assuming it gives you back whatever you assumed: an error in κ goes straight into θ. Finding it out needs patients whose capacity is already known by another method, which is circular, because no method measures capacity. Patients with no enzyme give no information (zero times any κ is zero). Genotype gives a range, not a number. Carriers help only for one subunit: PCCA carriers sit near half of normal, but PCCB carriers look normal.</p>
+  <p>Comparing the patient with healthy controls cancels κ, but the answer is then test-tube activity as a fraction of normal, not whole-body capacity. To work for whole-body capacity, the link between the two would have to explain about 90% of the variation between patients; the one study that measured both found about a third, but it was in a related disease (MMA), had 11 patients and used an indirect assay, so the figure is indicative only. The study that would settle it has never been done in PA: the cell assay and the ¹³C-propionate breath test, run in the same 20–30 PA patients.</p>
+
+  <h3>The general result</h3>
+  <p>Any measurement can tell you about θ in only two ways. It can go through the mass balance, which needs the shape of the other clearance route. Or it can read the enzyme or its flux directly (a cell assay, a breath test), which needs a calibration constant. Either way one constant is needed that has never been measured in humans. The report argues this and checks it against three models and ten sensors. It is why sensor fusion stalls.</p>
+
+  <h3>What "change within one patient" means</h3>
+  <p>It means comparing the same patient's capacity θ in two time windows: is it different in the second than in the first? The report does not claim θ changes. It shows that a change could be measured far more precisely than the level, because the unknown constants (k<sub>e</sub>, K<sub>m</sub>, κ, the load-record bias) belong to the patient and cancel when you compare the patient with themself. The report names the use: detecting a disease-modifying change in the patient's own θ, or slow change over years tracked as a series of short-window comparisons. It does not measure whether the drug's boost is holding up: the model treats the boost as known from the recorded dose, so doses must be recorded too, because an unrecorded change in the delivered dose would read as a change in θ. The gut microbiome is not what is being measured. Through antibiotics it is the largest single thing that can fake a change (below); slow drift in kidney function or carnitine dose can fake smaller ones.</p>
+  <p>How precise: two windows of 104 weekly draws each (two years per window) give <span class="num">0.13</span>, that is, the change is known to about 20 µM/d, enough to detect a change of about 56 µM/d either way, about a third of a 5% patient's capacity (the change is measured as a difference in µM/d, not as a percentage). Windows of 52 draws give 0.19, and 25 monthly draws give 0.26. What matters is the number of draws per window, not calendar time: about 45 draws per window reach 0.20, for example a six-week burst of daily draws. Three cautions. First, this is the model's best case, assuming 5% scatter per draw. At the only measured serial variability (26.4%, in healthy adults) the same design gives <span class="num">0.475</span>, so monitoring works only if real PA patients' marker variability is below about 10%, which nobody has measured. Second, it assumes the patient's constants do not drift between windows, which is doubtful over a year: in a growing child kidney function changes the other clearance route, and a change in carnitine dose shifts the marker's calibration. A 6% drift in the other clearance already gives 0.28, and a calibration shift of 1.5% of the load gives 0.20, so the report limits the claim to short intervals on a stable regimen with standardised sampling. Short, dense windows are the design to use, not two-year ones. Third, the one cohort that measured these markers repeatedly (Moderna, 50 patients) set the follow-up values aside as too variable to use. The report calls the 0.13 empirically untested and probably optimistic.</p>
+
+  <h3>What "record antibiotic status" means</h3>
+  <p>For each blood draw, note whether the patient was taking antibiotics, which one, and the start and stop dates. Gut bacteria make part of the propionate load. Antibiotics such as metronidazole suppress them, so the load and the marker fall, and an analysis that does not know this reads the fall as more enzyme. An unrecorded course between two windows fakes a capacity rise of one to three times the patient's whole capacity. It always looks like improvement, and antibiotics are often started when a patient is getting worse. Recording the course lets those draws be set aside. It costs nothing, because it is a note in the record, not a test. One caveat: this size of effect applies to organic-acid markers like 3-HP, the model's marker; propionylcarnitine (C3) moves much less.</p>
+</section>
+
+<!-- 6 -->
+<section id="dosing">
+  <div class="sec-label">6 · The question that mattered</div>
+  <h2>From "how much enzyme?" to "how often to inject?"</h2>
+  <p>In round 11 the study turned to the decision the therapy actually forces: which interval between injections to book. The drug's boost is large compared with the patient's own capacity. Just before the next dose, the boost on a 14-day schedule is still <span class="num">400 µM/d</span>, against the patient's own <span class="num">150</span>.</p>
+  <p>Under the parent paper's carnitine model (Model C), the safety line is <span class="num">151 µM/d</span>. The 14-day boost clears it for every patient, whatever their own capacity, as long as λ's half-life is above 2.62 days (about 3.06 days at the least favourable corner of the ranges allowed for Model C's constants; the measured 3.6 clears both). The report calls this a weaker claim than it sounds, because the drug removes the decision rather than resolving it. It is also testable: the fortnightly schedule should control every patient, which can be checked against the trial's reported fall of about 70% in C3. Choosing a personal interval among 7, 10 and 14 days from the record is not possible: under Model A's convention it is right 61% of the time against a 52% base rate, with no patient clearly decided.</p>
+
+  <h3>How long do we have to wait?</h3>
+  <p>This is your question 4, answered by round 13 on simulated records and refined by rounds 15–19.</p>
+  <figure>
+    <div class="plate"><img src="fig/story_wait.png" alt="Timeline from 0 to 60 months. 15-day interval for every patient, under Model C if the liver half-life is above about 3.2 days: day 0. Know lambda to 25 percent: 6 months. Know lambda to 5 percent: 12 months weekly, 24 months every two weeks, 48 months monthly. Tell 3.6 days from 7 days: 6 months. Which side of the 21-day line if the liver value is about 4.3 days: an 80 percent chance at 6 months weekly or 12 months monthly, against the line at Model C's repository constants (at most 47 percent at its worst setting). If it is about 3.6 days: never. 21 days for one patient by estimating capacity from the passive record, in the 3.5-day case: never."></div>
+    <figcaption><b>What arrives, and when.</b> The 15-day step needs no waiting under Model C (its line is at most about 3.21 days across the ranges allowed for Model C's constants; the measured 3.6 clears it). λ's precision comes from the Fisher information: ±25% within 6 months, ±5% in 1–4 years depending on draw frequency. In round 13's case (half-life assumed 3.5 days, below the line), estimating one patient's capacity from the passive record never makes the 21-day step available: the estimate of the margin stays about ±140 µM/d wide from 6 months to 5 years, and the report says an active managed-load protocol would be needed instead. Whether λ settles the 21-day question depends on where the true liver half-life sits and on where Model C's unmeasured constants put the line (below); the 4.3-day row is against the line at Model C's repository constants. Sources: <code>t46</code>, <code>t52</code>.</figcaption>
+  </figure>
+
+  <h3>Where it ended: one half-life on a knife-edge</h3>
+  <p>In round 15 the study found a human measurement of λ: PCC turns over with a half-life of <strong>3.6 days</strong> in human skin cells (Chandler &amp; Ballard, 1985). The repository had assumed 3.5 days, scaled from rodent data: close, by luck. Under Model C at its repository constants, the 21-day interval is safe for every patient without knowing their capacity only if the half-life is above <strong>3.5452 days</strong>. The assumed value is just below that line; the measured value is just above it.</p>
+  <figure>
+    <div class="plate"><img src="fig/r18_knife.png" alt="Safety margin for the 21-day interval plotted against the PCC protein half-life from 3 to 6 days. The curve crosses zero at 3.5452 days. The assumed 3.5 days sits just below zero at minus 8; the measured 3.6 days sits just above at plus 10."></div>
+    <figcaption><b>The whole dosing decision on one axis.</b> Above zero, every patient can go 21 days without anyone measuring their capacity. Below zero, the 21-day step would need each patient's capacity, which cannot be measured. The measured 3.6 days clears the line by 0.055 days, 1.5% in half-life, a margin of +10 µM/d. The 14-day margin (dashed) stays positive across this range. Drawn at Model C's repository constants (K<sub>c</sub> = 100); see the second correction below.</figcaption>
+  </figure>
+  <p>The value that matters is the <strong>liver's</strong>, and it has not been measured. Round 17's best estimate is about <strong>4.3 days</strong> (plausible range 3–6 days). It comes from an analogy: PCC sits inside mitochondria, and in mouse liver the median mitochondrial protein turns over in 4.26 days (Kim, 2012), a little slower than the 3.6 days measured for PCC in human skin cells. That is a median across many proteins, in another species, applied to one protein. So the resulting "about 65–70% likely to be safe for everyone" is a rough guide, not a measured probability, and it holds at Model C's repository constants; at the least favourable constants it drops to about 55–60% (R-S).</p>
+
+  <h3>Two corrections from this round</h3>
+  <p><strong>1. What the trial record can settle (R-R).</strong> Rounds 16–17 said the trial's on-therapy record would settle which side of the 21-day line a patient is on. Telling a 3.6-day half-life from a 7-day one takes about 6 months. But the measured 3.6 days is only 0.055 days from the line, against 3.4 days from 7 days, so that is a much harder question. Near 4.3 days, one patient's record gives an 80% chance of a clear answer within a year of monthly draws, or 6 months of weekly ones, against the line at Model C's repository constants. If Model C's unmeasured constants put the line at its highest (4.08 days), even a 4.3-day truth is hard to place: about an 11% chance after a year of monthly draws, and at most 47% after five years of weekly ones. Near 3.6 days it never does: the band of half-lives one record cannot place is 3.10–4.05 days after a year of monthly draws, and still 3.36–3.74 days after five years of weekly draws. Pooling patients could do it with roughly 23 to 155 patients, depending on draw frequency, record length and how sure you want to be, but only if λ is the same in everyone, which is also unmeasured.</p>
+  <p><strong>2. How firm the line is (R-S).</strong> The 3.5452-day line is computed at Model C's repository constants, and your own code labels one of them (K<sub>c</sub>) "arbitrary". Across the ranges the repository allows for those constants, the line moves between about <strong>3.29 and 4.08 days</strong> (at the corners of the ranges; 3.30–3.97 days over 300 sampled combinations). When all three constants vary together, the measured 3.6 days clears it in 80% of the sampled combinations (a sensitivity sweep, not a probability). Changing one constant at a time, it fails at K<sub>c</sub> ≤ 50 and at M<sub>i</sub> = 150, so it is not K<sub>c</sub> alone that can flip it. The 4.3-day liver estimate clears the line everywhere in the ranges (worst case 4.08 days). The 14- and 15-day lines stay at or below about 3.06 and 3.21 days, so those conclusions hold as long as the liver half-life is above those values.</p>
+  <p>So the 21-day question has two unknowns. One is the liver half-life: the trial record can place it on a side of the line only if it is clear of it, and near 3.6 days only a pooled estimate could, if λ is the same in every patient. The other is Model C's constants, which no data in the repository addresses.</p>
+</section>
+
+<!-- 7 -->
+<section id="next">
+  <div class="sec-label">7 · What is left</div>
+  <h2>What is still open, and is it ready to write up?</h2>
+  <p>The questions this study set out to answer have been taken as far as the repository and the literature allow. Two kinds of thing are still open: data that could be requested or collected, and model work the report names but places outside this study.</p>
+  <ol class="steps">
+    <li><strong>The marker's within-patient variability in stable patients.</strong> This decides whether monitoring works; the report calls it the most valuable outstanding measurement for monitoring. You asked the authors of the 2020 Orphanet Journal of Rare Diseases paper (15:68) for it on 5 October, with a one-number fallback, and have no reply yet. In my judgement (the report does not rank the requests) this is the one most likely to be answered, since it asks academics for retrospective data, so a short follow-up is worth sending.</li>
+    <li><strong>The trial's on-therapy marker record (NCT04159103) and the Gao et al. model parameters (Moderna).</strong> These would read λ in humans. The report treats these two emails as the right next step, and the trial record as the best, and only accessible, route to a human λ; the Gao table is not public and counts only as a cross-check. My own judgement, not the report's: a sponsor may be slow to share patient-level data on an unapproved drug, so send both, but don't plan around a quick reply. And even with the record, a liver half-life near 3.6 days could not be placed per patient (section 6).</li>
+    <li><strong>A paired study:</strong> the enzyme assay on patients' cells and the ¹³C-propionate breath test in the same 20–30 PA patients. This is new work, not a request. It would settle whether a cell assay can stand in for whole-body capacity.</li>
+    <li><strong>Record antibiotic status</strong>, starting now (section 5).</li>
+    <li><strong>Check Model C's prediction</strong> against the trial's reported C3 fall. If any patient is under-controlled on the 14-day schedule, the model's safety line or λ is off.</li>
+  </ol>
+  <h3>Model work the report leaves open</h3>
+  <ol class="steps">
+    <li><strong>Identifiability under a calibrated bounded clearance.</strong> The capacity numbers come from Model A. Model B was checked at its repository constants, at a constructed point and over a grid; Model C at its repository constants and with its channel constants varied one at a time. The capacity verdict kept its direction; the change-within-one-patient figure was redone under Model B but not under Model C. Redoing the identifiability under Model B or C with a literature-calibrated ceiling and the crisis boundary treated explicitly is the open model-side step; the report places it outside this study but says the literature makes it the one that matters.</li>
+    <li><strong>A propionyl-CoA state in the model (the pool C3 reads).</strong> The report calls this extension the main open item: without it, five of the ten candidate sensors, C3 among them, cannot be expressed. Its own scoping says measuring C3 would most likely move the capacity problem rather than solve it.</li>
+    <li><strong>Model C's shape constants (K<sub>c</sub>, M<sub>i</sub>, ρ₀).</strong> They move the 21-day line between about 3.29 and 4.08 days, and no data in the repository can fix them. Until something does, the 21-day conclusion is conditional on them (section 6).</li>
+    <li><strong>Repository documents not yet read.</strong> The report lists documents it found but did not read; one of them (PHASE11_MARGIN_NUISANCE.md) may reframe the verdict.</li>
+  </ol>
+  <h3>Is it ready to write up?</h3>
+  <p>The report does not address publication, so this is my reading, not a finding. I think it is close: it can be written up as a modelling and identifiability paper without any of this data, if every claim is stated as conditional on the model, but the first model-work item above is the one a reviewer is most likely to ask for. The strongest results are these. Absolute enzyme capacity cannot be read from marker records without one constant never measured in humans, across three models and ten sensors. Change within one patient escapes this in the model, if real variability is below about 10% and the two windows are close together on a stable regimen. Under Model C, the interval decision needs the protein half-life, not capacity: 14 and 15 days hold across Model C's unmeasured constants as long as the liver half-life is above about 3.1–3.2 days (the measured 3.6 clears that), while 21 days stays open for two stated reasons. Under Model A's convention even the 14-day trough falls short of the safety line (section 8), so these are Model C results. And there are two method lessons: when the Fisher information can be trusted, and the pencil geometry.</p>
+  <p>A reviewer is likely to ask about the single simulated patient, and about the clearance model behind the capacity numbers: 3.05 and the 0.13 change figure are Model A results, and the literature contradicts Model A's unlimited other route. Under the literature-consistent Model B every verdict keeps its direction but the numbers shrink (0.29 at a constructed literature-consistent point, 0.92 at its unsourced repository constants, instead of 3.05), and Model B's own constants have no recorded source. A reviewer will also ask about Model C's unmeasured constants, the within-patient variability and the liver half-life. The paper should state each of these openly. Dosing statements should read as what the decision would need, not as a recommendation for an investigational drug. Before submitting, fold in the report's corrections to your paper; its changed-claims table lists them. In my view the data would turn conditionals into answers but is not a prerequisite.</p>
+</section>
+
+<!-- 8 -->
+<section id="reading-the-report">
+  <div class="sec-label">8 · Reading REPORT.md</div>
+  <h2>A few notes for the full report</h2>
+  <div class="tablebox">
+    <table>
+      <thead><tr><th>Quantity</th><th>What it measures</th><th>Best realistic value</th><th>Target met?</th></tr></thead>
+      <tbody>
+        <tr><td data-label="Quantity">sd(ln θ)</td><td data-label="What it measures">the patient's capacity level, one snapshot</td><td class="n" data-label="Best realistic value">3.05 (record); 0.44 (sensors)</td><td data-label="Target met?">No</td></tr>
+        <tr><td data-label="Quantity">sd(ln θ₂ − ln θ₁)</td><td data-label="What it measures">change within one patient</td><td class="n" data-label="Best realistic value">0.13 (model) to 0.475</td><td data-label="Target met?">Only in the model, if variability is low and the windows are short on a stable regimen</td></tr>
+        <tr><td data-label="Quantity">sd(ln λ)</td><td data-label="What it measures">the drug boost's decay rate</td><td class="n" data-label="Best realistic value">0.055 (2 yr, monthly)</td><td data-label="Target met?">Yes for the 14- and 15-day steps, in the model (Fisher information): ±25% within 6 months, ±5% in 1–4 years. For the 21-day line only if the liver value is clear of it: never near 3.6 days; near 4.3 days, an 80% chance within a year of monthly draws against the line at Model C's repository constants, but only about 11% after a year of monthly draws, and at most 47% after five years of weekly ones, if its unmeasured constants push the line up to 4.08 days (section 6).</td></tr>
+        <tr><td data-label="Quantity">margin spread</td><td data-label="What it measures">the 21-day safety margin for one patient, via θ</td><td class="n" data-label="Best realistic value">±~140 µM/d, flat</td><td data-label="Target met?">Never, from the passive record</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>Which method produced a number.</strong> Spreads on a log scale (every sd(ln θ), sd(ln λ)) are read from the Fisher information. At 5% capacity, simulating the same record gives an even wider log-scale spread for θ (about 7, though the exact size depends on how estimates that fall to zero are handled), which only strengthens the negative. Yes/no safety decisions and margins in µM/d are read from simulation. Round 14 adopted this rule after two Fisher-information-based ways of propagating the same 21-day margin disagreed by about 450 µM/d (−440 against +19); simulation sided with the pessimistic one.</p>
+  <p><strong>Same quantity, different printed values.</strong> 3.05, 3.07 and 3.08 are the same baseline from different scripts and noise conventions. 3.05 is the headline.</p>
+  <p><strong>Which model.</strong> The capacity numbers are Model A, whose unlimited clearance the report flags as conflicting with the PA literature (R-H). The dosing results use Model C's safety line: 151 µM/d at its repository constants, about 110–262 µM/d across the ranges allowed for its unmeasured constants (R-S). Under Model A's own conventions the line is higher (430 µM/d at routine load), and the 14-day trough of 400 no longer clears it.</p>
+</section>
+
+<footer>
+  <p>Built from <code>audit/brief_2026-10-01/REPORT.md</code> (sections R-A to R-S and the original tasks) and the printed outputs in <code>out/</code>. Five figures: <code>t1_identifiability</code>, <code>r18_pencil</code>, <code>story_routes</code>, <code>story_wait</code>, <code>r18_knife</code>.</p>
+  <p>Checked in four passes. First, six readers summarised the report and adversarial checkers corrected 100 points in those summaries; a completeness review of that pass found one error in the report itself (R-R). Then five reviewers checked this page, its charts and the correction, and 41 findings confirmed by independent adjudicators were fixed. A third pass on the revised page confirmed 22 more, also fixed. A fourth pass, on the report and this page, confirmed 16 more, mostly about how far the 21-day results depend on Model C's unmeasured constants; those are fixed too. A second error in the report (R-S) turned up while answering your questions about which model the conclusions rest on.</p>
+</footer>
+
+</div>

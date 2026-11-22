@@ -1,0 +1,304 @@
+================================================================================================
+  RECHECK OF t8_floor.py: independent footing, FIM by complex step + Frisch-Waugh, Monte Carlo
+================================================================================================
+
+------------------------------------------------------------------------------------------------
+  (0) FOOTING REBUILT FROM THE STATED MODEL
+------------------------------------------------------------------------------------------------
+  L = 322.7273; m at normal = 10.0000; m_bar at 5% = 54.0231; s = theta g / L at 5% = 0.1630
+  sigma terms at 5%: scatter 0.05 L = 16.136; assay C'(m_bar) 0.05 m_bar = 15.214; total 22.177
+  dose train capped at 200 doses: last dose day 2786; monthly draws on or before it: 92; increment at draw 93 (t = 2796.8) = 753.9; max increment from draw 94 on = 1.831
+  capped and continued trains agree before day 2786 to 0.0e+00 (relative)
+  dose increment range over 2 years every 2 d: 557.2 to 6400.0
+
+------------------------------------------------------------------------------------------------
+  (a) Var(ln theta | k_e exact), 25 monthly draws: subsets, Shapley, orders, Mobius
+------------------------------------------------------------------------------------------------
+  Var(ln theta | k_e exact) at 5% (median over 24 records) = 0.15047, sd = 0.3879
+  with both noise terms scaled by 1e-08: largest Var over subsets = 8.63e-17
+  subset sds (k_e exact + the listed factors removed):
+            5%       10%       20%       50%      100%   removed
+        0.3879    0.2086    0.1230    0.0821    0.0811   {}
+        0.2979    0.1686    0.1073    0.0788    0.0802   {b}
+        0.3786    0.2067    0.1229    0.0764    0.0633   {K_m}
+        0.3139    0.1630    0.0909    0.0564    0.0553   {scatter}
+        0.3237    0.1723    0.0991    0.0627    0.0598   {assay}
+        0.1943    0.1032    0.0584    0.0325    0.0240   {b, K_m}
+        0.2044    0.1134    0.0709    0.0524    0.0544   {b, scatter}
+        0.2168    0.1248    0.0806    0.0589    0.0589   {b, assay}
+        0.2750    0.1479    0.0872    0.0559    0.0491   {K_m, scatter}
+        0.2897    0.1609    0.0974    0.0615    0.0520   {K_m, assay}
+        0.0000    0.0000    0.0000    0.0000    0.0000   {scatter, assay}
+        0.1333    0.0694    0.0386    0.0216    0.0163   {b, K_m, scatter}
+        0.1413    0.0764    0.0439    0.0243    0.0176   {b, K_m, assay}
+        0.0000    0.0000    0.0000    0.0000    0.0000   {b, scatter, assay}
+        0.0000    0.0000    0.0000    0.0000    0.0000   {K_m, scatter, assay}
+        0.0000    0.0000    0.0000    0.0000    0.0000   {b, K_m, scatter, assay}
+
+  Shapley shares (median game), by enumeration of orders and from Mobius dividends:
+     pct                  b               K_m           scatter             assay   sigma total   |orders - Mobius|
+       5              29.2%              9.3%             32.5%             29.1%        61.6%   1.4e-16
+      5% Mobius dividends (share of Var):  {scatter} 13.3%, {assay} 11.8%, {b, scatter} 42.5%, {b, assay} 38.5%, {K_m, scatter} 17.9%, {K_m, assay} 16.0%, {b, K_m, scatter} -4.1%, {b, K_m, assay} -0.8%, {b, scatter, assay} -10.8%, {b, K_m, scatter, assay} -24.3%
+      10              27.2%              8.9%             34.8%             29.1%        63.8%   1.6e-16
+      20              23.6%              9.5%             37.5%             29.4%        66.9%   2.3e-16
+      50              16.2%             16.3%             37.6%             29.9%        67.5%   6.4e-17
+     100              10.9%             26.6%             33.7%             28.8%        62.5%   9.9e-17
+
+  Sensitivity of the attribution to the game: b prior tied to the scatter term
+  (core.fim's default coupling, load_frac moves both): removing 'scatter' then also
+  makes b exact. Var with both together removed vs separately:
+    b exact + scatter 0 (load measured exactly): sd 0.2044; share of Var removed 72.2%; assay alone then carries 27.8%
+  Elasticity of Var to each source at the footing (d ln Var / d ln source):
+    b prior sd   0.734
+    scatter      0.676
+    assay CV     0.601
+
+------------------------------------------------------------------------------------------------
+  (b) n-DEPENDENCE AT 5% WITH k_e EXACT
+------------------------------------------------------------------------------------------------
+        n        k_e exact        + b exact     + load exact      + K_m exact  + K_m + b exact   (monthly, therapy continued)
+        6           0.7046           0.6495           0.4455           0.6636           0.4171
+        8           0.6620           0.6055           0.4154           0.6510           0.4038
+       12           0.5116           0.4440           0.3046           0.5093           0.2858
+       16           0.4899           0.4189           0.2874           0.4897           0.2625
+       25           0.3879           0.2979           0.2044           0.3786           0.1943
+       36           0.3547           0.2452           0.1682           0.3292           0.1596
+       50           0.3325           0.2131           0.1462           0.2928           0.1379
+       75           0.2976           0.1727           0.1185           0.2434           0.1106
+      100           0.2767           0.1466           0.1005           0.2107           0.0948
+      150           0.2527           0.1218           0.0835           0.1762           0.0780
+      200           0.2319           0.1042           0.0715           0.1525           0.0671
+      300           0.2059           0.0852           0.0585           0.1251           0.0548
+      400           0.1857           0.0738           0.0506           0.1083           0.0474
+      600           0.1624           0.0601           0.0412           0.0888           0.0386
+     1200           0.1229           0.0425           0.0292           0.0629           0.0273
+     2400           0.0906           0.0300           0.0206           0.0445           0.0193
+     6000           0.0587           0.0189           0.0130           0.0282           0.0122
+    repository's capped train (untreated after day 2786), n = 100: k_e exact 0.2633
+    repository's capped train (untreated after day 2786), n = 600: k_e exact 0.1762
+
+  n * Var (median sd squared times n):
+    k_e exact          n=25:   3.762  n=100:   7.654  n=600:  15.828  n=6000:  20.639
+    + b exact          n=25:   2.219  n=100:   2.148  n=600:   2.166  n=6000:   2.153
+    + load exact       n=25:   1.044  n=100:   1.011  n=600:   1.019  n=6000:   1.013
+    + K_m exact        n=25:   3.584  n=100:   4.439  n=600:   4.729  n=6000:   4.770
+    + K_m + b exact    n=25:   0.943  n=100:   0.898  n=600:   0.896  n=6000:   0.890
+  local slopes d ln sd / d ln n:
+    25-50: k_e exact -0.222  + b exact -0.483  + load exact -0.483  + K_m exact -0.371  + K_m + b exact -0.494
+    400-600: k_e exact -0.330  + b exact -0.506  + load exact -0.506  + K_m exact -0.490  + K_m + b exact -0.503
+    2400-6000: k_e exact -0.475  + b exact -0.501  + load exact -0.501  + K_m exact -0.499  + K_m + b exact -0.501
+
+  floor fit on sd (nonlinear LS), n 6-600: floor 0.1889, c 1.7323; predicts at 6000 0.1902 vs FIM 0.0587
+  floor fit on sd^2 (linear LS), n 6-600: floor^2 0.04053 (floor 0.2013), c 1.7006; predicts at 6000 0.2025
+
+  closed-form asymptotics: expected information per draw, monthly sampling, therapy in
+  steady state, dose phase on its 35-point lattice (30.4 mod 14 = 2.4, gcd 0.4 d),
+  load by 60-node Gauss-Hermite. c_inf = sqrt(lim n Var).
+    phase 0 at the dose peak: c_inf, b free (no prior) 4.6166; b exact 1.4677
+      expected-information sd with the b prior: n=25: 0.3923, n=100: 0.2740, n=600: 0.1610, n=6000: 0.0585, n=60000: 0.0188; sqrt(6000) x sd(6000) = 4.5303
+    phase 0 just before the dose: c_inf, b free (no prior) 4.6304; b exact 1.4162
+      expected-information sd with the b prior: n=25: 0.3848, n=100: 0.2717, n=600: 0.1609, n=6000: 0.0586, n=60000: 0.0189; sqrt(6000) x sd(6000) = 4.5419
+    record-based sqrt(n Var) at n = 6000: k_e exact 4.5431, b exact 1.4674, load exact 1.0066
+
+  posterior sd(b) / prior sd(b), k_e exact:
+    25 monthly       0.9588
+    365 every 2 d    0.6379
+    6000 monthly     0.2034
+
+  denser sampling within two years (therapy on):
+    dt  30.4 n   25  k_e exact 0.3879  + b exact 0.2979  + load exact 0.2044  + K_m exact 0.3786  + K_m + b exact 0.1943
+    dt  14.5 n   51  k_e exact 0.3418  + b exact 0.2331  + load exact 0.1599  + K_m exact 0.3119  + K_m + b exact 0.1430
+    dt   7.3 n  100  k_e exact 0.2728  + b exact 0.1454  + load exact 0.0997  + K_m exact 0.2097  + K_m + b exact 0.0936
+    dt   2.0 n  365  k_e exact 0.1947  + b exact 0.0837  + load exact 0.0574  + K_m exact 0.1189  + K_m + b exact 0.0537
+    dt   1.0 n  730  k_e exact 0.1507  + b exact 0.0560  + load exact 0.0384  + K_m exact 0.0814  + K_m + b exact 0.0360
+
+  monthly draws (therapy continued) needed for 0.20, own bisection:
+    k_e exact         n = 328 (sd 0.1999; at n-1 0.2001); 27.3 years
+    + b exact         n = 58 (sd 0.1970; at n-1 0.2002); 4.8 years
+    + load exact      n = 29 (sd 0.1945; at n-1 0.2011); 2.4 years
+    + K_m exact       n = 114 (sd 0.1999; at n-1 0.2000); 9.5 years
+    + K_m + b exact   n = 24 (sd 0.1949; at n-1 0.2065); 2.0 years
+
+  within two years at spacing 730/n, k_e exact, scan n = 300-800:
+    first passing n = 320 (sd 0.1999); last failing n = 323 (sd 0.2003); max sd over n 330-800 = 0.1993
+
+------------------------------------------------------------------------------------------------
+  (c) REQUIREMENT CELLS AT 5% (two-year records)
+------------------------------------------------------------------------------------------------
+    c 365 ke1              0.1998
+    c 730 ke2              0.1762
+    c 730 ke5 best         0.2095
+    c 365 ke2 b2           0.1561
+    c 100 ke2 b2 sc2       0.1746
+    c 25 kmex ke2 b1 sc1   0.1964
+  k_e 5% across the 64-cell (b, scatter) grid at each design: minimum sd
+     730 draws: min 0.2095
+     365 draws: min 0.2165
+     100 draws: min 0.2377
+      25 draws: min 0.2965
+    loosest k_e precision, 365 draws, load as recorded: sd(ln k_e) = 0.01017, p = 0.0102
+    loosest k_e precision, 730 draws, load as recorded: sd(ln k_e) = 0.02868, p = 0.0291
+    100 every 7.3 d, k_e exact, scatter 5%: b prior needed 0.0262 L
+
+------------------------------------------------------------------------------------------------
+  (d) k_e VARIANCE SHARE 1 - Var(ln th | k_e)/Var(ln th), 25 monthly draws
+------------------------------------------------------------------------------------------------
+         pct        sd    sd|ke    share
+        1.00   14.7529   1.8433   98.40%
+        1.26   11.7528   1.4687   98.40%
+        1.58    9.3690   1.1712   98.40%
+        2.00    7.4745   0.9350   98.40%
+        2.51    5.9685   0.7474   98.40%
+        3.16    4.7707   0.5986   98.40%
+        3.98    3.8185   0.4806   98.39%
+        5.00    3.0673   0.3879   98.38%
+        5.01    3.0604   0.3870   98.38%
+        6.31    2.4553   0.3130   98.35%
+        7.94    1.9713   0.2546   98.30%
+       10.00    1.5830   0.2086   98.23%
+       12.59    1.2702   0.1726   98.10%
+       15.85    1.0176   0.1446   97.93%
+       19.95    0.8126   0.1232   97.68%
+       25.12    0.6466   0.1070   97.26%
+       31.62    0.5127   0.0953   96.55%
+       39.81    0.4063   0.0871   95.40%
+       50.12    0.3220   0.0820   93.52%
+       63.10    0.2564   0.0795   90.40%
+       79.43    0.2067   0.0792   85.31%
+       82.40    0.2000   0.0794   84.25%
+      100.00    0.1699   0.0811   77.24%
+      125.89    0.1445   0.0851   65.40%
+      158.49    0.1292   0.0912   50.24%
+      199.53    0.1229   0.0997   34.18%
+      251.19    0.1246   0.1110   20.52%
+      316.23    0.1336   0.1260   11.09%
+      398.11    0.1492   0.1450    5.52%
+      501.19    0.1714   0.1692    2.59%
+      630.96    0.2009   0.1997    1.17%
+      794.33    0.2389   0.2383    0.52%
+     1000.00    0.2872   0.2869    0.22%
+    share first below 90% between 63.1% and 79.43%
+    share first below 50% between 158.49% and 199.53%
+    share first below 10% between 316.23% and 398.11%
+
+------------------------------------------------------------------------------------------------
+  (e) ROBUSTNESS: a disjoint seed set (1000-1023) and per-draw noise
+------------------------------------------------------------------------------------------------
+    design                                    seeds 0-23        [min, max]  seeds 1000-23  per-draw sigma
+    25 monthly, k_e exact                         0.3879  [0.3703, 0.4260]         0.3933          0.3844
+    25 monthly, k_e + load exact                  0.2044  [0.1935, 0.2123]         0.2046          0.1933
+    25 monthly, k_e + K_m + b exact               0.1943  [0.1877, 0.2035]         0.1956          0.1898
+    365 every 2 d, k_e exact                      0.1947  [0.1849, 0.2063]         0.1929          0.1935
+    365 every 2 d, k_e 1%                         0.1998  [0.1903, 0.2110]         0.1980          0.1986
+    730 daily, k_e 2%                             0.1762  [0.1718, 0.1797]         0.1763          0.1745
+    100 every 7.3 d, k_e 2%, b 2%, sc 2%          0.1746  [0.1687, 0.1789]         0.1748          0.1716
+    fraction of the 24 records at or below 0.20, 25 monthly, k_e exact: 0.00
+    fraction of the 24 records at or below 0.20, 365 every 2 d, k_e exact: 0.83
+    k_e share, seeds 1000-1023: 5% 0.9829; band edge 0.8418
+    25 draws, k_e + load exact, by spacing 28.0/29.2/30.0/30.4/31.0/32.0 d: 32.5942 / 0.1976 / 0.2317 / 0.2044 / 0.2047 / 0.2158
+
+------------------------------------------------------------------------------------------------
+  (f) MONTE CARLO: MAP fits with k_e fixed at the truth, b drawn from its prior
+------------------------------------------------------------------------------------------------
+  Replicates per record are listed; 6 starts per fit unless stated. Bootstrap standard
+  errors (400 resamples of the fits) are given for the RMSE and the 16-84% half-width.
+    design                                    fits  CRB med  CRB rms    MC rmse (se)    bias  16-84 half (se) |err|>ln2  bound   time
+    25 monthly, k_e exact                     1200   0.3879   0.3932   0.6428 (0.0699) -0.1051   0.3937 (0.0133)     0.090  0.003    18s
+    25 monthly, k_e + load exact               600   0.2044   0.2032   0.2175 (0.0072) -0.0219   0.2062 (0.0078)     0.007  0.000     7s
+    328 monthly (cont.), k_e exact             600   0.1999   0.2005   0.2030 (0.0068) -0.0185   0.1960 (0.0085)     0.003  0.000    11s
+    365 every 2 d, k_e exact                  2400   0.1947   0.1947   0.2193 (0.0049) -0.0324   0.1994 (0.0045)     0.011  0.000    44s
+    730 daily, k_e exact                       600   0.1507   0.1503   0.1505 (0.0050) -0.0125   0.1468 (0.0060)     0.000  0.000    11s
+
+  start-set check, 365 every 2 d, k_e exact, records 0-5 x 20 replicates: 6 starts vs a
+  40-start grid (ln theta offsets -5..+3.5, ln K_m offsets -2..+2), same simulated data
+    fits where 40 starts found a lower cost by > 1e-6: 0 of 120; RMSE 6 starts 0.2000, 40 starts 0.2000
+
+------------------------------------------------------------------------------------------------
+  (g) DOES THE 200-DOSE CAP (F8) TOUCH REPORT.md TASK 3? band edge, k_e prior 0.8
+------------------------------------------------------------------------------------------------
+  REPORT Task 3 fits sd(n) = sqrt(floor^2 + c^2/n) over n = 8..400 on GRID prefixes at
+  theta = 2472. Draws beyond ~93 there are untreated. Same fit, capped vs continued train:
+    capped (repository GRID)   sd(400) 0.1833; floor 0.1834, c 0.4014; floor share at n = 25 83.9%; n Var|k_e at 25/100/400: 0.1576/0.1475/0.1569
+    therapy continued          sd(400) 0.1829; floor 0.1832, c 0.4030; floor share at n = 25 83.8%; n Var|k_e at 25/100/400: 0.1576/0.1777/0.1965
+
+------------------------------------------------------------------------------------------------
+  COMPARISON WITH THE INVESTIGATOR'S PRINTED VALUES
+------------------------------------------------------------------------------------------------
+    quantity                    claimed    recheck   rel diff
+    scatter term                 16.136     16.136   2.25e-05
+    assay term                   15.214     15.214  -2.04e-05
+    sigma                        22.177     22.177   1.96e-05
+    Var|ke 5%                   0.15047    0.15047  -1.54e-05
+    sd|ke 5% 25m                 0.3879     0.3879   4.24e-06
+    S{b}                         0.2979     0.2979   2.41e-05
+    S{K_m}                       0.3786     0.3786   6.14e-05
+    S{scatter}                   0.3139     0.3139  -1.02e-04
+    S{assay}                     0.3237     0.3237  -1.10e-04
+    S{b,K_m}                     0.1943     0.1943  -2.01e-04
+    S{b,scatter}                 0.2044     0.2044  -1.77e-04
+    S{b,K_m,scatter}             0.1333     0.1333  -2.79e-04
+    S{b,K_m,assay}               0.1413     0.1413   3.18e-04
+    Sh b                          0.292      0.292  -2.15e-04
+    Sh K_m                        0.093      0.093  -5.10e-03
+    Sh scatter                    0.325      0.325  -1.16e-03
+    Sh assay                      0.291      0.291  -2.97e-04
+    first b                       0.410      0.410   4.42e-04
+    first K_m                     0.047      0.047   5.68e-03
+    max b                         0.702      0.702  -9.56e-05
+    max K_m                       0.339      0.339   5.48e-05
+    D{b,scatter}                  0.425      0.425  -4.20e-05
+    D{b,assay}                    0.385      0.385  -8.42e-04
+    D{all}                       -0.243     -0.243  -8.50e-04
+    Sh100 b                       0.109      0.109   2.85e-03
+    Sh100 K_m                     0.266      0.266  -1.39e-03
+    cont 100                     0.2767     0.2767  -1.27e-04
+    cont 600                     0.1624     0.1624   1.17e-04
+    cont 6000                    0.0587     0.0587  -8.40e-04
+    bex 25                       0.2979     0.2979   2.10e-05
+    bex 6000                     0.0189     0.0189   2.32e-03
+    loadex 25                    0.2044     0.2044  -1.80e-04
+    kmex 6000                    0.0282     0.0282  -1.30e-04
+    grid 100                     0.2633     0.2633  -9.41e-05
+    grid 600                     0.1762     0.1762  -1.33e-04
+    nVar bex 6000                 2.153      2.153   9.42e-05
+    slope 25-50                  -0.222     -0.222  -1.77e-03
+    slope 400-600                -0.330     -0.330  -9.83e-04
+    slope 2400-6000              -0.475     -0.475   7.04e-04
+    floor                        0.1889     0.1889  -1.25e-04
+    c                            1.7323     1.7323   2.18e-05
+    pred 6000                    0.1902     0.1902  -2.15e-05
+    c_inf bex                    1.4674     1.4677   2.23e-04
+    c_inf ke                     4.5431     4.5431  -7.68e-06
+    c_inf loadex                 1.0066     1.0066   2.02e-05
+    bratio 25                    0.9588     0.9588   2.82e-05
+    bratio 365                   0.6379     0.6379   6.16e-05
+    bratio 6000                  0.2034     0.2034  -8.04e-05
+    dense 365                    0.1947     0.1947   8.17e-05
+    dense 730                    0.1507     0.1507  -2.67e-04
+    dense 100                    0.2728     0.2728   8.68e-06
+    n monthly ke                    328        328   0.00e+00
+    n monthly bex                    58         58   0.00e+00
+    n monthly loadex                 29         29   0.00e+00
+    n monthly kmex                  114        114   0.00e+00
+    n monthly kmbex                  24         24   0.00e+00
+    first 2y ke                     320        320   0.00e+00
+    stays 2y ke                     324        324   0.00e+00
+    c 365 ke1                    0.1998     0.1998  -1.10e-04
+    c 730 ke2                    0.1762     0.1762  -1.89e-04
+    c 730 ke5 best               0.2095     0.2095  -6.68e-05
+    c 365 ke2 b2                 0.1561     0.1561   1.79e-04
+    c 100 ke2 b2 sc2             0.1746     0.1746  -1.78e-04
+    c 25 kmex ke2 b1 sc1         0.1964     0.1964  -2.50e-04
+    p 365 now                    0.0102     0.0102   2.06e-03
+    p 730 now                    0.0291     0.0291  -7.73e-05
+    b need 100 keex              0.0262     0.0262   1.61e-03
+    share 1%                     0.9840     0.9840   2.51e-05
+    sd 5% 25m                    3.0673     3.0673   1.30e-05
+    share 5%                     0.9838     0.9838  -1.79e-05
+    share 50.12%                 0.9352     0.9352  -4.87e-05
+    share edge                   0.8425     0.8425  -4.89e-05
+    share 100%                   0.7724     0.7724  -5.58e-05
+    share 1000%                  0.0022     0.0022   1.58e-02
+  largest relative difference: 1.58e-02
+
+  runtime 153 s

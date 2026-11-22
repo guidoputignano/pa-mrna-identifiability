@@ -1,0 +1,169 @@
+============================================================================================
+  VALIDATION: the trough formula reproduces the repository's own numbers
+============================================================================================
+  repo train_trough_frac 0.134*theta=3000 = 402 uM/d;  formula Delta_trough(14) = 400.0
+  repo train_peak_frac   2.13 *theta=3000 = 6390;      formula Delta_peak(14)   = 6400.0
+  paper sec 7 'a 28-day interval ... 87% cut in the trough' (same rate): formula = 88% cut
+  paper sec 7 'shortening to seven days DOUBLES the trough'  (same rate): formula = 2.50x
+
+============================================================================================
+  ITEM 1. TOLERANCE ON theta TO CHOOSE BETWEEN ADJACENT INTERVALS
+============================================================================================
+
+  Trough increment and the convention-FREE capacity GAP between adjacent
+  intervals, under both dosing regimes (the gap is the ABSOLUTE tolerance;
+  it does not use theta_crit):
+
+       tau (d)  Delta_trough rate(b)   Delta_trough fixed(a)
+             7                1000.0                  2000.0
+            10                 686.2                   960.6
+            14                 400.0                   400.0
+            15                 347.4                   324.3
+
+         adjacent pair    gap rate(b) uM/d   gap fixed(a) uM/d
+              14 vs 15                52.6                75.7
+              14 vs 10               286.2               560.6
+               14 vs 7               600.0              1600.0
+
+  Relative tolerance sd(ln theta) = gap / theta*, theta* = theta_crit - Delta_trough
+  of the LONGER interval of the pair (the boundary patient's residual capacity).
+  theta_crit rests on the unmeasured s_pk/m_tol convention, so it is reported at the
+  routine-load reading (fold 1.0, the "drug dominates" regime the user names) and the
+  conservative illness reading (fold 1.5, the repo default). Primary regime: same-rate (b).
+
+  --- Model A, fold=1.0: theta_crit = 429.5; booked-boundary theta* = 29.5; (theta+Delta_trough)/theta* = 14.5x
+            pair   gap(b)   req sd(b)   deriv-formula   req sd(a)
+        14 vs 15       53        0.64            0.84        0.72
+        14 vs 10      286        9.69           10.72       18.98
+         14 vs 7      600       20.31           18.77       54.15
+
+  --- Model A, fold=1.5: theta_crit = 994.3; booked-boundary theta* = 594.3; (theta+Delta_trough)/theta* = 1.7x
+            pair   gap(b)   req sd(b)   deriv-formula   req sd(a)
+        14 vs 15       53        0.08            0.11        0.11
+        14 vs 10      286        0.48            0.53        0.94
+         14 vs 7      600        1.01            0.93        2.69
+
+  READING: the user's linearisation dtau = dtheta/(lambda Delta_trough) is a tangent
+  approximation, good to tens of per cent but not exact: against the same-rate column it
+  OVERSTATES the tolerance at the fine and mid grids (deriv/req ~1.31 at 14v15, ~1.11 at
+  14v10) and UNDERSTATES at the coarse 14v7 (~0.92), because Delta_trough is convex in tau
+  and the secant (the true capacity gap) departs from the tangent in both directions as the
+  step widens. The qualitative message is unchanged -- the coarse tolerances are large --
+  but the exact gaps, not the tangent, are what the table reports. Under the routine-load
+  reading the drug dominates theta_crit at the trough and every tolerance is large; under
+  the conservative fold-1.5 reading the drug no longer dominates and the fine grid tightens
+  to ~0.08-0.13. The fixed-amplitude regime (a) gives wider gaps, so same-rate (b) is
+  conservative.
+
+============================================================================================
+  ITEM 2. REQUIRED TOLERANCE (same-rate b) vs WHAT THE RECORD DELIVERS
+============================================================================================
+
+  Achievable: record 3.05, managed 0.29, contrast 0.13-0.48.
+
+  --- Model A, fold=1.0 (theta_crit=430):
+            pair    req sd   determined by...
+        14 vs 15      0.64   managed 0.29, contrast -- and anything tighter
+        14 vs 10      9.69   record 3.05, managed 0.29, contrast -- and anything tighter
+         14 vs 7     20.31   record 3.05, managed 0.29, contrast -- and anything tighter
+
+  --- Model A, fold=1.5 (theta_crit=994):
+            pair    req sd   determined by...
+        14 vs 15      0.08   NOTHING achievable (needs tighter than contrast)
+        14 vs 10      0.48   managed 0.29, contrast -- and anything tighter
+         14 vs 7      1.01   managed 0.29, contrast -- and anything tighter
+
+  HEADLINE, with its honest limit. This is a GRID-RESOLUTION tolerance: how far apart
+  two adjacent intervals sit in theta-space. In that sense the coarse grid (14 vs 10,
+  14 vs 7) is determined at the record 3.05 under the routine-load reading and needs no
+  new measurement -- the intervals are far apart. That is NOT the same as every patient's
+  choice being determined: a PA population straddles the one safety boundary
+  theta_crit - Delta_trough(14), and a patient sitting on it is undecidable at any sd
+  (item 3). The two reconcile under Model C, where the convention-free theta_crit is low
+  enough that Delta_trough(14) alone clears it and the boundary leaves the admissible
+  range. So "the therapeutic decision needs no new measurement" holds cleanly where the
+  drug trough dominates theta_crit (Model C, routine load) and softens to a boundary
+  problem under the conservative fold-1.5 Model-A reading.
+
+============================================================================================
+  ITEM 3. THE WHOLE POSTERIOR, NOT JUST THE FIBRE (fraction determined, regime b)
+============================================================================================
+
+  The sd's are the brief's FULL-uncertainty numbers: 3.05 already bundles the fibre
+  (K_m), the k_e prior, the load-bias b and the assay noise (prior-free NLS record sd);
+  0.29 is the managed posterior. So this IS the proper version, not just along the fibre.
+  Population: theta_base log-uniform over 0.17%-5% of normal; grid {7,10,14} d.
+
+                          model / convention      sd  correct-choice   unambiguous
+            Model A, routine load (fold 1.0)    3.05          60.9%         0.0%
+            Model A, routine load (fold 1.0)    0.29          93.3%        72.0%
+            Model A, illness load (fold 1.5)    3.05          77.6%         0.0%
+            Model A, illness load (fold 1.5)    0.29         100.0%       100.0%
+        Model C, intrinsic margin (no m_tol)    3.05         100.0%       100.0%
+        Model C, intrinsic margin (no m_tol)    0.29         100.0%       100.0%
+
+  READING: the operative number for a per-patient booking is the DETERMINED SUBGROUP --
+  the fraction whose choice no measurement could change (true theta more than Z*sd from
+  the nearest boundary). At the record sd 3.05 that subgroup is 0% under Model A (no
+  patient is far enough from the single safety boundary; correct-choice is only 61%/78%,
+  barely above the ~52% base rate), rising to 72% (fold 1.0) / 100% (fold 1.5) only at
+  the managed 0.29. So for an individual booking at the record precision the interval
+  choice is NOT settled without measurement: the wide interval gaps (item 2) describe the
+  grid, not a patient sitting near the boundary. Item 2 (how far apart the intervals are)
+  and item 3 (whether a given patient's choice is pinned) answer different questions, and
+  the per-patient one is the operative one.
+
+  Model C reads 100% for a different and WEAKER reason than "the boundary is well
+  resolved": theta_crit^int = 150.8 < Delta_trough(14) = 400, so NO patient is near
+  the boundary at all -- every patient clears tau=14 regardless of residual capacity. It
+  determines the decision by REMOVING it. That is a testable consequence: Model C predicts
+  the uniform fortnightly regimen is adequate for every PA patient, checkable against the
+  trial's own marker reductions (the ~70% C3 fall reported for mRNA-3927) -- if some
+  patients are inadequately controlled at the booked interval, the intrinsic margin is too
+  low or lambda is shorter than assumed. The decision survives the full uncertainty where
+  the PARAMETER never does, but under Model A only at the managed precision, and under
+  Model C only because the drug removes the boundary -- not because theta is resolved.
+
+============================================================================================
+  ITEM 4. lambda IS THE SIXTH UNMEASURED CONSTANT -- AND ITS TOLERANCE IS THE SPEC
+============================================================================================
+
+  PROVENANCE: design/run.py sets LAMBDA = ln2/3.5 /day, labelled ASSUMED -- "Nothing
+  measures it." common/params.py calls it "Partly corroborated, and only early": the
+  sole support is a translational PK model's k_deg = 0.0075/h for PCC protein, fitted in
+  mouse/rat/monkey and allometrically scaled, inside a two-compartment model whose own
+  protein half-life is ~7 d. lambda is not a human measurement, and it enters the trough
+  -- and so every result above -- directly.
+
+  Delta_trough(14), same-rate, and the fold-1.0 14-vs-15 required sd, across half-life:
+
+       half-life (d)  lambda (/d)  Delta_trough(14)   req sd 14v15
+                 2.0       0.3466              47.2           0.03
+                 3.0       0.2310             245.9           0.17
+                 3.5       0.1980             400.0           0.64
+                 5.0       0.1386            1006.0            inf
+                 7.0       0.0990            2000.0            inf
+
+  Delta_trough(14) swings a factor of 42 across a 2-7 d half-life, so 'the drug term
+  dominates theta_crit' is TRUE at one end and FALSE at the other.
+
+  THE lambda TOLERANCE, stated as a specification (like the 19% flux and the 30% K_e):
+      - Model C headline (every patient clears tau=14, 100% determined) holds while
+        Delta_trough(14) > theta_crit^int = 151: half-life > 2.62 d, i.e. ~25% margin below the
+        assumed 3.5 d (lambda not more than ~34% above assumed).
+      - Coarse 14-vs-10 determined at the record 3.05 (fold 1.0) holds only for
+        half-life > 3.32 d -- lambda within ~5% of assumed. This boundary is
+        knife-edge (theta* ~ 30 at fold 1.0), so the fold-1.0 coarse headline is FRAGILE
+        to lambda; the robust version is Model C's ~25% margin.
+
+  READING: the round-11 conclusion is therefore conditional on an unmeasured human
+  constant, exactly like kappa (ex vivo), c (breath), K_e (Model-B shape), the Model-C
+  shape constants, and phi (plasma/pool partition). lambda is the SIXTH instance -- and
+  the first that gates the DECISION rather than the estimate of theta. The specification
+  the report ends on is not a sd(ln theta) at all: it is 'measure the human decay rate
+  lambda of the therapeutic increment to within ~5-25% (tighter for the routine-load
+  coarse grid, looser for the convention-free Model-C claim).' WHAT WOULD MEASURE IT: the
+  mRNA-3927 programme already did dose selection by population PK/PD modelling
+  (dose_selection_poster), so the trial's own PK data should contain lambda -- the decay
+  of PCC activity / the marker response between doses. It is the one number the whole
+  decision turns on, and it has been measured; it is just not in this repository.

@@ -1,0 +1,58 @@
+================================================================================================
+  CLOSE-OUT A. SATURATION REGIME, THE INTEGRAL COLLAPSE, EXCURSION = SATURATION
+================================================================================================
+
+  (1) THE SATURATION REGIME ACROSS CAPACITY (K_m = 100).
+      The enzyme is sub-saturated through the disease range; it only
+      approaches g -> 1 at very low capacity or under a big load excursion.
+       capacity  untreated m   m/K_m  g=m/(Km+m)  eps=Km/(Km+m)    on-therapy g (24 recs)
+            1%         62.24    0.62       0.384          0.616  0.041-0.327 (med 0.127)
+            5%         54.02    0.54       0.351          0.649  0.040-0.304 (med 0.121)
+           10%         45.72    0.46       0.314          0.686  0.039-0.278 (med 0.115)
+           20%         34.06    0.34       0.254          0.746  0.037-0.235 (med 0.104)
+           50%         18.25    0.18       0.154          0.846  0.033-0.158 (med 0.082)
+          100%         10.00    0.10       0.091          0.909  0.028-0.101 (med 0.059)
+      At 5%: lambda = theta g'(m) + k_e = 5.632 = 1.126 k_e;
+      the theta term is 11% of lambda -- NOT negligible.
+
+  (2) WHY THE INTEGRAL ESTIMATORS COLLAPSE ON TB-A.
+      (b) 'saturated' assumes g = 1, so theta enters only as L0 - theta and
+      is structurally unidentifiable. (b')/(b'') use the proper
+      g = m/(K_m+m), but theta's regressor is INT g: it is identifiable only
+      when g VARIES across the record. When g is small and nearly flat, the
+      INT g column is collinear with the constant (tau) and INT m columns.
+      TB-A (theta=150): g spans 0.207-0.351 (range 0.144); design cond[tau,∫g,∫m] = 2.1e+04;
+             noiseless (b') theta-hat = 153.5 against truth 150  (RECOVERED)
+      TB-B (theta=600): g spans 0.137-0.748 (range 0.611); design cond[tau,∫g,∫m] = 3.2e+03;
+             noiseless (b') theta-hat = 599.6 against truth 600  (RECOVERED)
+      NUANCE (correcting the brief's framing): (b')/(b'') are NOT g=1-
+      misspecified -- they use the proper g and RECOVER theta noiselessly even
+      on TB-A. Their TB-A collapse is ILL-CONDITIONING: cond ~2e4, so the 5%
+      assay noise is amplified ~2e4-fold and theta blows up. g is nearly flat
+      (0.21-0.35), so the ∫g column barely separates. On TB-B the excursion
+      sweeps g to 0.75, cond falls ~7x, and theta survives the noise. Only (b)
+      assumes g=1 (a ~1/0.35 ~ 3 misspecification at 5%), and it cannot
+      identify theta regardless. So: ill-conditioning from sub-saturation, not
+      a misspecified flux, is what sinks the integral estimators on TB-A.
+
+  (3) IS 'NEEDS AN EXCURSION' THE SAME AS 'NEEDS SATURATION'?
+      Load multiple f -> peak marker, peak g, design cond, transient sd(ln theta)
+      (theta=5%, dense 5-min 48 h, k_e prior 0.8 + K_m from record + L0 to 1%):
+          f   peak m  peak g   cond[τ,∫g,∫m]   sd(ln θ)  admissible
+       0.50     54.0   0.351         2.1e+04      0.347  yes
+       1.00     54.0   0.351         1.3e+18      2.273  yes
+       1.18     64.2   0.391         5.3e+05      0.682  yes
+       1.50     83.2   0.454         1.0e+05      0.322  NO
+       2.00    113.2   0.531         4.4e+04      0.220  NO
+       2.30    131.4   0.568         3.4e+04      0.196  NO
+       3.00    174.6   0.636         2.6e+04      0.168  NO
+       6.00    363.7   0.784         2.3e+04      0.143  NO
+      theta becomes identifiable (sd and cond both fall) as the excursion
+      drives the peak g UP from its sub-saturated baseline ~0.35. Clearing
+      0.20 needs f ~ 2.3 (peak g ~ 0.57, marker ~131, well above K_m=100) --
+      the enzyme pushed toward saturation, though not all the way to g=1. That
+      f ~ 2.3 is ~2x past the 1.177x admissible edge. So 'needs an excursion'
+      and 'needs to drive the enzyme toward saturation' are ONE constraint:
+      theta's integral regressor ∫g only separates when g is swept upward, and
+      sweeping it means adding substrate past the crisis fold. The dynamic
+      route fails for the same reason it would be unsafe.

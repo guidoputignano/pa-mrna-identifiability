@@ -1,0 +1,65 @@
+============================================================================================
+  TASK 5. VALUE OF ADDITIONAL MEASUREMENTS AT 5% OF NORMAL
+============================================================================================
+
+  current design: 3.0673;  plus one untreated baseline draw: 2.3070
+
+  (a) k_e known to a factor F (1 sd);  [95% reading: F at 1.96 sd]
+      F = 1.05  sd(ln k_e) = 0.0488  ->  0.4447   [0.4033]
+      F = 1.10  sd(ln k_e) = 0.0953  ->  0.5757   [0.4443]
+      F = 1.20  sd(ln k_e) = 0.1823  ->  0.8950   [0.5682]
+      F = 1.30  sd(ln k_e) = 0.2624  ->  1.2099   [0.7102]
+      F = 1.50  sd(ln k_e) = 0.4055  ->  1.7678   [0.9907]
+      F = 1.75  sd(ln k_e) = 0.5596  ->  2.3240   [1.3017]
+      F = 2.00  sd(ln k_e) = 0.6931  ->  2.7564   [1.5696]
+      exact k_e: 0.3879
+
+  (b) load measured to X% (bias prior and per-visit scatter both X%)
+      X =    1%  ->  2.6954
+      X =    2%  ->  2.7673
+      X =    5%  ->  3.0673
+      X =   10%  ->  3.4052
+      X =   20%  ->  3.7466
+      exact load: 2.6685
+
+  (c) one direct enzymatic-flux reading at an untreated visit, Y%
+      Y =    5%  ->  0.0705   (three readings averaged: 0.0508)
+      Y =   10%  ->  0.1120   (three readings averaged: 0.0715)
+      Y =   15%  ->  0.1585   (three readings averaged: 0.0965)
+      Y =   20%  ->  0.2064   (three readings averaged: 0.1233)
+      Y =   25%  ->  0.2548   (three readings averaged: 0.1508)
+      Y =   30%  ->  0.3032   (three readings averaged: 0.1787)
+
+  (d) combinations
+      k_e 1.2 + load 2%                -> 0.8317
+      k_e 1.05 + load 1%               -> 0.3046
+      k_e exact + load exact           -> 0.2044
+      flux 20% + k_e 2.0               -> 0.2063
+      flux 20% + k_e 1.5               -> 0.2053
+      flux 30% + k_e 1.5               -> 0.3003
+      flux 30% + load 2%               -> 0.3007
+      flux 20% + k_e 1.2 + load 2%     -> 0.1989
+      flux 30% + k_e 1.2 + load 2%     -> 0.2855
+
+  RANKING: the loosest measurement that alone reaches sd(ln theta) = 0.20
+      (a) k_e:            never, not even exact
+      (b) load:           never, not even exact
+      (c) enzymatic flux: Y <= 19.3% (one reading)
+      (c)+(a): with the flux at 30%, no k_e precision reaches the gate; exact k_e gives 0.2256
+      elasticity d ln sd(ln th) / d ln (measurement sd), at a practical value:
+        (a) at F = 1.2:   0.791
+        (b) at X = 5%:    0.154
+        (c) at Y = 15%:   0.898
+
+  COMPLETE DEFICIENCY. The repository holds no patient records: every 'record' is
+  simulated (README: parameter values are illustrative, not fitted). So no theta ~ 0
+  record exists to read k_e from. What one WOULD give, if such a patient were at an
+  untreated steady state (model A): k_e = (L - b)/m, so its error is the anchor's
+  load bias (5% recorded) and assay error averaged over its own draws, and it
+  transfers to another patient only through the between-patient sd omega:
+      anchor with  1 draws (k_e to 0.071): w=0.0: 0.500, w=0.1: 0.669, w=0.2: 1.011, w=0.33: 1.506
+      anchor with 25 draws (k_e to 0.051): w=0.0: 0.450, w=0.1: 0.634, w=0.2: 0.989, w=0.33: 1.492
+  And in the parent model (models.ParamsC) a theta = 0 patient has NO steady state:
+  R0 is set so the alternative route alone peaks at 500 against a baseline load of
+  600. A complete-deficiency patient is not at a steady state to be read.
+  wrote fig/t5_value.png

@@ -1,0 +1,44 @@
+============================================================================================
+  ITEM 3. THE BREATH TEST AS THE MONITORING INSTRUMENT
+============================================================================================
+
+  At 5% capacity (repo model, convention A): fraction oxidised S = 0.163
+    operating point L = 322.7, m = 54.0
+    sensitivity  d ln S / d ln theta = 0.888
+    (so a 1% change in whole-body capacity moves the breath signal by ~0.89%.
+     S is read DIRECTLY in vivo -- no in-vitro/in-vivo mapping, unlike t29.)
+
+  WITHIN-PATIENT CONTRAST sd(ln theta_2 - ln theta_1), breath test:
+    per window: sd = CV_S / (|elasticity| * sqrt(n_reads));  contrast = sqrt(2) * that
+    (c, k_e, K_m all cancel between windows -- patient constants)
+
+        CV_S per reading  n=1     n=3     n=6     
+                   5%       0.080*   0.046*   0.033* 
+                   8%       0.127*   0.074*   0.052* 
+                  10%       0.159*   0.092*   0.065* 
+
+  marker-based contrast for comparison (R-D): 0.26 monthly / 0.13 weekly / 0.07 daily
+
+  READING: at a plausible ~8% within-subject repeatability, a SINGLE breath
+  reading per window gives a contrast of ~0.13 -- matching 104 weekly blood
+  draws -- and 3-6 readings beat it (~0.05-0.07). The breath test reaches the
+  monitoring target with a handful of readings rather than a dense draw schedule,
+  AND it reads in-vivo capacity directly, so it is immune to BOTH the calibration
+  problem (c cancels in the contrast) and the in-vitro mapping (t29) that sink the
+  ex vivo route cross-sectionally.
+
+  DETECTABLE CHANGE at 80% power (min |Delta ln theta| = 2.80 * contrast):
+    CV_S 8%, 1 reads/window: contrast 0.127 -> detect +43% / -30%
+    CV_S 8%, 3 reads/window: contrast 0.074 -> detect +23% / -19%
+    CV_S 5%, 3 reads/window: contrast 0.046 -> detect +14% / -12%
+
+  CAVEAT (flagged): the per-reading CV_S is a LITERATURE-informed sweep, not a
+  repo-measured or even a published within-subject figure -- Shchelochkov's
+  'good intrasubject reproducibility' and Thompson's 'reproducible' are
+  qualitative. The elasticity 0.89 IS from the repo model at 5%. The headline --
+  breath beats the marker for monitoring and dodges both calibration problems --
+  holds unless the true within-subject CV_S is much worse than ~10% (at 15% a
+  single reading gives ~0.24, still a few reads reach target). This is a material
+  revision to R-D: IF a within-subject CV_S is measured, the monitoring
+  instrument should probably be the breath test, not plasma 3-HP.
+
