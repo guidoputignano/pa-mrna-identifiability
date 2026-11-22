@@ -270,8 +270,7 @@ To test whether the rules depend on our model, we generated records with the two
 pharmacokinetic/pharmacodynamic model of Attarwala et al.~\cite{pkpd_translational}, in which the
 marker responds instantly to the delivered enzyme, and the turnover model of Gao et
 al.~\cite{gao2025acop}, in which it follows the enzyme with a delay, as ours does, and analysed them
-with our model (Supplementary Table~\ref{S-stab:structures}). The sampling advice held under both: the ranking of
-schedules was unchanged, and the two recommended designs agreed to within about 3\%.
+with our model (Supplementary Table~\ref{S-stab:structures}). The sampling advice held under both: the ranking of schedules was unchanged, and under the algebraic structure the two recommended designs (monthly and phase-spread draws) gave the same precision as under our model to within about 3\%.
 
 The estimate of $\theta$, by contrast, depended on the structure. Under the algebraic structure as published $\theta$ is not
 identifiable (three of four plausible ways of adding the diet load to it leave it so; one restores
@@ -328,7 +327,7 @@ other route's. A 1\% error in the large share is therefore a 5\% error in the sm
 shared bill is split by subtraction and every error in the largest item lands on the smallest. The
 two estimates are correlated at $-0.99$: any $\theta$ from zero to twice the true value is matched
 by moving $k_e$ only about 20\% either way (Supplementary Fig.~\ref{S-sfig:pencil}). Measuring the other exit does not close the gap: an
-intravenous $^{13}$C$_3$-propionate tracer that measures $k_e$ (to 5.4\%) leaves 0.45; adding an
+intravenous $^{13}$C$_3$-3-hydroxypropionate tracer that measures $k_e$ (to 5.4\%) leaves 0.45; adding an
 isotope-dilution measurement of the load, which alone barely helps (3.04), gives 0.44; and even
 exact knowledge of $k_e$ and of the unrecorded load leaves 0.29.
 
@@ -457,7 +456,7 @@ We simulated a late or skipped infusion in the carnitine model (half-life 4.3 da
 nominal constants) and recorded the highest metabolite level reached, as a multiple of the usual
 peak (Fig.~\ref{fig:tolerance}). Without illness, each day of delay adds about 10\% to the peak,
 which doubles after 6.5--9 days for patients with 0--5\% of normal capacity of their own. A skipped
-infusion raises the peak three to five times, with no lasting effect (Supplementary
+infusion raises the peak 2.7 to 5.1 times (5.1 with no enzyme of their own, 2.7 at 5\% of normal), with no lasting effect (Supplementary
 Section~\ref{S-si:s7}).
 
 During an illness, modelled for illustration as 1.5 times the baseline load for 14 days from the
@@ -468,7 +467,7 @@ little without illness, but during an illness each day of delay after the first 
 steeply.
 
 In the least favourable setting (the dose capped at the ceiling, $D=2672$\um, the least
-favourable carnitine constants and a 3.5-day half-life) the peak doubles after about 2.5 days of
+favourable carnitine constants and a 3.5-day half-life) the peak doubles after about 2.4 days of
 delay, or about 4.3 days at a 4.3-day half-life. Across the eight combinations we examined (assumed
 dose or $D=2672$\um, nominal or least favourable constants, half-life 3.5 or 4.3 days; Supplementary Table~\ref{S-stab:delays}), the trough test of the previous section fails at a shorter delay than the peak takes to
 double in six, all but the assumed dose at 4.3 days, and in the least favourable setting it fails
@@ -655,7 +654,7 @@ $t_{1/2}$ & half-life of the delivered PCC & 3.5\,d (design); about 4.3\,d (like
 $T$ & interval between infusions & 14\,d & trial schedule~\cite{trial_phase12,gao2025acop} \\
 \addlinespace
 \multicolumn{4}{@{}l}{\emph{Linear-clearance model (identifiability and sampling)}}\\
-$k_e$ & rate of the non-enzymatic route & 5\,d$^{-1}$ & assumed; no human measurement; dialytic clearance of methylmalonic acid, an analogue, bounds it from above at 4.4\,d$^{-1}$ (70\,kg)~\cite{ke_mma_analogue}, 13\% below the value used \\
+$k_e$ & rate of the non-enzymatic route & 5\,d$^{-1}$ & assumed; no human measurement; dialytic clearance of methylmalonic acid, an analogue, bounds it from above at 4.4\,d$^{-1}$ (70\,kg)~\cite{ke_mma_analogue}; the value used is 13\% above it \\
 $\bar m$, $L$ & operating level; load at that level & 10\,\textmu M; 323\um & assumed; the murine 3-HP pool, 60.1\,\textmu M~\cite{pkpd_translational}, is within 1.6-fold of the newborn cut-off, 38.1\,\textmu M~\cite{dbs_3hp_cutoff} \\
 $s_{\ln k_e}$ & prior on $k_e$ (sd of the log) & 0.8 (a factor of 2.2) & assumed; the target needs a factor of 2.67 or better \\
 CV & assay variability of the marker & 5\% & assumed \\
@@ -789,8 +788,7 @@ used 400 simulated pairs.
 \subsection*{Software and reproducibility}\phantomsection\label{sec:software}
 All simulations and analyses were written in Python 3.11 with NumPy, SciPy and Matplotlib.
 Structural identifiability was checked with StructuralIdentifiability.jl (Julia 1.10) and symbolically
-with SymPy; input files for SIAN (Maple) and DAISY (REDUCE) are included in the repository. Every number in the text is produced by a script in the
-repository (Code availability), which also stores each script's output; Supplementary
+with SymPy; input files for SIAN (Maple) and DAISY (REDUCE) are included in the repository. Every computed number in the text is produced by a script in the repository (Code availability) or follows by stated arithmetic from its output, and the repository stores each script's output; Supplementary
 Section~\ref{S-si:s8} lists the script behind each headline number.
 
 % =============================================================================

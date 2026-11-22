@@ -26,16 +26,17 @@ the enzyme term. Eight infusions every 14 days settle the dose cycle. The next i
 $d$ days late, or skipped (the following infusion arriving 28 days after the last on-time one), and
 infusions resume every 14 days counted from the late one.
 
-\paragraph{Usual and gap peaks.} The usual peak is the highest metabolite level over a regular
-14-day cycle, reached just before each on-time infusion; for a patient with no enzyme of their own at
-the assumed dose, nominal constants and a 4.3-day half-life it is 40.4\uM. The gap peak is the highest
+\paragraph{Usual and gap peaks.} The usual peak is the highest metabolite level in the regular
+14-day cycle before the last on-time infusion, reached just before that infusion; for a patient with
+no enzyme of their own at the assumed dose, nominal constants, $k=1$\,d$^{-1}$ and a 4.3-day
+half-life it is 40.4\uM. The gap peak is the highest
 level from the last on-time infusion until 3 days after the late one. During an illness the window
 runs on to the infusion after the late one, because the end of the illness can bring a later peak,
 when the raised load meets the next trough of the delivered enzyme. Results are reported as the gap
 peak divided by the usual peak of the same setting, so that each setting is judged against its own
-yardstick; the usual peaks of a patient with no enzyme of their own range from 21 to 342\uM\ across
-the corners of the carnitine constants, doses and half-lives.
-% src: audit/brief_2026-10-01/t55_infusion_tolerance.py:11-19 (8 doses; late or skipped; window to 3 d after the late dose, extended during illness to the next dose); out/t55_infusion_tolerance.txt:65 (usual 40.4 uM), :111-153 (usual peaks 21.4-342.0 uM); REPORT.md:1169,1183 (window correction: end of illness meets the next trough)
+yardstick; at $k=1$\,d$^{-1}$ the usual peaks of a patient with no enzyme of their own range from 21
+to 342\uM\ across the corners of the carnitine constants, doses and half-lives.
+% src: audit/brief_2026-10-01/t55_infusion_tolerance.py:11-19 (8 doses; late or skipped; window to 3 d after the late dose, extended during illness to the next dose), :133 (usual = max over [pre[-2], pre[-1]), the cycle before the last on-time dose); pi_note/pi_note.tex:452-454 (usual peak reached just before each on-time infusion); manuscript/main.tex:770 (cycle before the last on-time infusion); out/t55_infusion_tolerance.txt:65 (usual 40.4 uM), :111-153 (usual peaks 21.4-342.0 uM, k = 1); REPORT.md:1169 (usual peak reached just before each on-time dose), :1188 (usual peaks 21-342 uM across the corners)
 
 \paragraph{Illness.} For illustration, an intercurrent illness raises the load to 1.5 times
 baseline (900\um) for 14 days, starting on the day the infusion is due.
@@ -53,7 +54,7 @@ which is negative (the condition fails with the infusion on time) when $\dtr(14)
 and infinite when $\theta\ge\thci$.
 \item \emph{Peak doubling.} The gap peak must stay below twice the usual peak, a yardstick chosen
 because the model does not define a harmful metabolite level. The delay at which the peak doubles
-was found by bisection to 0.025\,d.
+was found by bisection to within 0.025\,d.
 \item \emph{Separatrix.} The gap peak must stay below the unstable steady state of the carnitine
 model at the patient's usual trough capacity, $\theta+\dtr(14)$, beyond which the metabolite would
 keep rising on its own, or below the validity limit if that is lower.
@@ -61,49 +62,52 @@ keep rising on its own, or below the validity limit if that is lower.
 The model is used below $m\approx5.5\,M_i$ (Section~\ref{si:s1-carn}): 1650\uM\ at the nominal
 $M_i=300$\uM\ and 825\uM\ at $M_i=150$\uM. Peaks beyond this limit are flagged and not quoted as
 multiples.
-% src: audit/brief_2026-10-01/t55_infusion_tolerance.py:21-35 (three criteria; d_q = ln(Delta_tr(14)/(theta_crit - theta))/lambda; bisection; separatrix at the usual trough capacity or the validity limit, whichever lower), :14-19 (5.5 M_i: 1650 / 825 uM; illness 1.5 x baseline for 14 d from the due day); out/t55_infusion_tolerance.txt:4,60; manuscript/main.tex:766-770 (bisection to 0.025 d)
+% src: audit/brief_2026-10-01/t55_infusion_tolerance.py:21-35 (three criteria; d_q = ln(Delta_tr(14)/(theta_crit - theta))/lambda; bisection; separatrix at the usual trough capacity or the validity limit, whichever lower), :156-171 (bisection tol 0.05, midpoint within 0.025 d), :14-19 (5.5 M_i: 1650 / 825 uM; illness 1.5 x baseline for 14 d from the due day); out/t55_infusion_tolerance.txt:4,60; manuscript/main.tex:773 (bisection to within 0.025 d)
 
 \paragraph{Settings.} Doses: the assumed $D=6000$\um\ and $D=2672$\um, the fortnightly dose capped at
 the ceiling at a 3.5-day half-life (Supplementary Section~\ref{si:s6:ceiling}; at 4.3 days it slightly
 exceeds the ceiling). Carnitine constants: nominal, and the eight corners of the assumed ranges with
-$R_0$ re-derived at each. Half-lives: 3.5 days (the value of the identifiability and sampling
-analyses) and 4.3 days (the likely hepatic value). Residual capacities: 0, 1, 2.5 and 5\% of normal
+$R_0$ re-derived at each. Half-lives: 3.5 days (the assumed design value of the identifiability and
+sampling analyses) and 4.3 days (the likely hepatic value). Residual capacities: 0, 1, 2.5 and 5\% of normal
 (0, 30, 75 and 150\um). Conjugation rate: $k=1$\,d$^{-1}$, the model default, and $k=10$\,d$^{-1}$,
 close to the limit in which carnitine follows the metabolite instantly (Supplementary
 Table~\ref{stab:s1-kcost}). Because 5\% of normal (150\um) lies only 0.8\um\ below the nominal
 $\thci$, the trough slack of that patient is very sensitive to $\theta$ (31.5 days at $\theta=150$\um,
 21 days at 145\um\ at a 3.5-day half-life); the dynamic criteria are not.
-% src: audit/brief_2026-10-01/t55_infusion_tolerance.py:6-8,37-42 (k = 1 default; 5 % row 0.8 uM/d below theta_crit; 31.5 d at 150, 21 d at 145; worst corner K_c 25, M_i 150, rho_0 1; D = 2672 admissible at 5 %); pi_note/pi_note.tex:513-514 (D = 2672 slightly exceeds the ceiling at 4.3 d); out/t55_infusion_tolerance.txt:8-9
+% src: audit/brief_2026-10-01/t55_infusion_tolerance.py:6-8,35-40 (k = 1 default; 5 % row 0.8 uM/d below theta_crit; 31.5 d at 150, 21 d at 145, which eq. seq:s7-dq gives at 3.5 d; worst corner K_c 25, M_i 150, rho_0 1; D = 2672 admissible at 5 %); pi_note/pi_note.tex:515-516 (D = 2672 slightly exceeds the ceiling at 4.3 d: peak 2672/(1 - 2^(-14/4.3)) = 2984 > 2850); out/t55_infusion_tolerance.txt:8-9
 
 % -----------------------------------------------------------------------------
 \subsection{Without illness}
 \label{si:s7:noill}
 
-At the assumed dose, nominal constants and a 4.3-day half-life, each day of delay multiplies the
-peak by a nearly constant factor of about 1.1, so the absolute rise grows with the length of the gap.
+At the assumed dose, nominal constants, $k=1$\,d$^{-1}$ and a 4.3-day half-life, each day of delay
+multiplies the peak by a nearly constant factor of about 1.1, so the absolute rise grows with the
+length of the gap.
 For a patient with no enzyme of their own the peak is 1.1, 1.2 and 1.4 times its usual value one, two
 and three days late, 1.9 and 2.1 times six and seven days late, and 5.1 times when the infusion is
 skipped; at 2.5\% of normal the same delays give 1.1, 1.2, 1.3, 1.8, 1.9 and 3.4 times. The peak
 doubles after 6.5, 6.9, 7.5 and 8.8 days at 0, 1, 2.5 and 5\% of normal (5.3, 5.9, 6.8 and 8.8 days at
 a 3.5-day half-life).
-% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:179 (0 %: 1.0 1.1 1.2 1.4 1.5 1.7 1.9 2.1 ... 5.1), :182 (2.5 %: 1.0 1.1 1.2 1.3 1.5 1.6 1.8 1.9 ... 3.4), :13-20 (2x, k = 1: 5.3/5.9/6.8/8.8 at 3.5 d; 6.5/6.9/7.5/8.8 at 4.3 d); pi_note/figure_guide.tex:549-551
+% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:179 (0 %: 1.0 1.1 1.2 1.4 1.5 1.7 1.9 2.1 ... 5.1), :182 (2.5 %: 1.0 1.1 1.2 1.3 1.5 1.6 1.8 1.9 ... 3.4), :13-20 (2x, k = 1: 5.3/5.9/6.8/8.8 at 3.5 d; 6.5/6.9/7.5/8.8 at 4.3 d); pi_note/figure_guide.tex:559-561,593-595 (1.1, 1.2, 1.4, 1.9, 2.1; near-constant factor about 1.1)
 
 A skipped infusion raises the peak 5.1, 4.2, 3.4 and 2.7 times at 0, 1, 2.5 and 5\% of normal at
 4.3 days, and 10.2, 6.6, 4.0 and 2.6 times at 3.5 days. Once infusions resume, the metabolite returns
-to its usual cycle in every run. After a skipped infusion the first resumed cycle peaks 1.068 times
-the usual level and the next 1.007 times; after a seven-day delay, 1.050 and 1.005 times; after a
-three-day delay, 1.028 and 1.003 times. In the model a late or skipped infusion therefore leaves no
-lasting effect, although this does not show that the gap itself was harmless.
-% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:64-71 (skipped 10.2/5.1, 6.6/4.2, 4.0/3.4, 2.6/2.7; back = usual), :174-177 (1.068/1.007; 1.050/1.005; 1.028/1.003); out/t54_dose_timing.txt:109-113 (the next dose restores the cycle, which does not show the gap was harmless)
+to its usual cycle in every setting computed. For a patient with no enzyme of their own at 4.3 days,
+after a skipped infusion the first resumed cycle peaks 1.068 times the usual level and the next
+1.007 times; after a seven-day delay, 1.050 and 1.005 times; after a three-day delay, 1.028 and
+1.003 times. In the model a late or skipped infusion therefore leaves no lasting effect, although
+this does not show that the gap itself was harmless.
+% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:64-71 (skipped 10.2/5.1, 6.6/4.2, 4.0/3.4, 2.6/2.7), :62-104 ('back' column: last cycle peak equals the usual peak, to within 1 uM, in every row), :173-177 (booked dose, nominal, k = 1, 4.3 d, no own enzyme: 1.068/1.007; 1.050/1.005; 1.028/1.003); out/t54_dose_timing.txt:109-113 (the next dose restores the cycle, which does not show the gap was harmless)
 
-The trough condition gives longer slack than the doubling at this setting: for a patient with no
-enzyme of their own it fails after 9.5 days at 4.3 days and 4.9 days at 3.5 days. A skipped infusion
+At the assumed dose and nominal constants, for a patient with no enzyme of their own, the trough
+condition fails after 9.5 days at 4.3 days, later than the peak doubles (6.5 days), and after 4.9
+days at 3.5 days, before the peak doubles (5.3 days). A skipped infusion
 leaves 73.4\um\ of delivered enzyme at the end of the 28-day gap at 4.3 days, so the trough condition
 then holds only for patients above 77.3\um\ of their own (2.6\% of normal); at 3.5 days 25.0\um\ is
 left and the condition needs more than 125.8\um\ (4.2\%). At $D=2672$ the corresponding values are
 32.7\um\ and 118.1\um\ (3.9\%) at 4.3 days, and 11.1\um\ and 139.6\um\ (4.7\%) at 3.5 days.
 Supplementary Fig.~\ref{sfig:s7-slack} shows how both slacks change with the half-life.
-% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:13,17 (trough 4.9 d at 3.5 d, 9.5 d at 4.3 d); out/t54_dose_timing.txt:33-39 (skipped dose: 25.0 -> 125.8 (4.2 %); 73.4 -> 77.3 (2.6 %); 11.1 -> 139.6 (4.7 %); 32.7 -> 118.1 (3.9 %))
+% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:13,17 (0 %: trough 4.9 d and 2x 5.3 d at 3.5 d; trough 9.5 d and 2x 6.5 d at 4.3 d); out/t54_dose_timing.txt:33-39 (skipped dose: 25.0 -> 125.8 (4.2 %); 73.4 -> 77.3 (2.6 %); 11.1 -> 139.6 (4.7 %); 32.7 -> 118.1 (3.9 %))
 
 \begin{figure}[tbp]
 \centering
@@ -119,12 +123,11 @@ because their own capacity lies only 0.8\um\ below $\thci$. (b) Days until the m
 level in the gap reaches twice its usual on-therapy peak, without illness; solid lines $k=1$\,d$^{-1}$
 (the model default), dashed lines $k=10$\,d$^{-1}$. Vertical lines: the human fibroblast half-life,
 3.6\,d (dotted), and the likely hepatic value, 4.3\,d (dashed). A skipped infusion is 14 days late.
-Read across at a given half-life: the trough slack rises steeply with the half-life (at 4.3\,d,
-about 9 to 14 days for 0 to 2.5\% of normal), whereas the doubling delay stays between about 4 and
-10 days over half-lives of 3 to 6\,d and depends more on the patient's own capacity than on the
-half-life.}
+The trough slack rises steeply with the half-life (at 4.3\,d, about 9 to 14 days for 0 to 2.5\% of
+normal), whereas the doubling delay changes more slowly, staying between about 4 and 10 days over
+half-lives of 3 to 6\,d.}
 \end{figure}
-% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:155-171 (figure data, capped at 28 d; q 5 %: 24.9 d at 3.00 d, 28.2 d at 3.25 d; 2x between 3.9 and 10.0 d over 3-6 d; q at 4.25-4.50 d: 9.2-10.7, 10.6-12.2, 13.5-15.2), :17-19 (4.3 d trough 9.5/10.9/13.8 d); audit/brief_2026-10-01/pi_note/fig/pi_tolerance_slack.png (panel titles, legends, vertical lines)
+% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:155-171 (figure data, booked dose, nominal constants; capped at 28 d; q 5 %: 24.9 d at 3.00 d, 28.2 d at 3.25 d; 2x between 3.9 and 10.0 d over 3-6 d, k = 1 and k = 10; q at 4.25-4.50 d: 9.2-10.7, 10.6-12.2, 13.5-15.2), :17-19 (4.3 d trough 9.5/10.9/13.8 d); audit/brief_2026-10-01/pi_note/fig/pi_tolerance_slack.png (panel titles, legends, vertical lines; no model names in the figure)
 
 % -----------------------------------------------------------------------------
 \subsection{By setting}
@@ -132,25 +135,28 @@ half-life.}
 
 Supplementary Table~\ref{stab:delays} gives the three slacks for every dose, half-life and capacity,
 at the nominal constants and at the corner with the highest critical capacity ($K_c=25$\uM,
-$M_i=150$\uM, $\rho_0=1$; $\thci=232.1$\um). That corner is the least favourable for the trough
-condition in every setting, and for the doubling at $D=2672$. At the assumed dose, however, other
-corners bring the doubling sooner, so Supplementary Table~\ref{stab:s7-corners} gives both slacks at
-all eight corners for a patient with no enzyme of their own.
-% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:106-153 (per-corner minima; (25, 150, 1) sets the trough columns and the D = 2672 doubling); REPORT.md:1183
+$M_i=150$\uM, $\rho_0=1$; $\thci=232.1$\um). Having the highest threshold, that corner is the least
+favourable for the trough condition in every setting. For the doubling, computed at all eight
+corners only for a patient with no enzyme of their own at $k=1$\,d$^{-1}$, it is also the least
+favourable at $D=2672$, but at the assumed dose other corners bring the doubling sooner.
+Supplementary Table~\ref{stab:s7-corners} therefore gives both slacks at all eight corners for
+that patient.
+% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:106-153 (per-corner values, no own enzyme, k = 1; (25, 150, 1) sets the trough columns and the D = 2672 doubling); t55_infusion_tolerance.py:231-244; REPORT.md:1188
 
 Taking, for a patient with no enzyme of their own, the shortest slack over the corners for each
 criterion separately, the trough condition fails before the peak doubles in six of the eight
 combinations of dose, constants and half-life, all but the assumed dose at 4.3 days (9.5 against 6.5
 days at the nominal constants, 6.9 against 4.5 days at the least favourable). In the least favourable
-setting, $D=2672$ with the least favourable constants and a 3.5-day half-life, the peak doubles after
-2.4 days and the trough condition already fails with the infusion on time for patients with 0 or 1\%
-of normal; at a 4.3-day half-life the peak doubles after 4.3 days and the trough condition fails after
-1.8 days. In every case computed the peak doubles before the metabolite reaches the validity limit or
-the separatrix at the usual trough capacity (compare the doubling and separatrix columns of
-Supplementary Table~\ref{stab:delays}). Once the capacity at the end of the gap has fallen below
+setting, $D=2672$ with the least favourable constants and a 3.5-day half-life, the peak of a patient
+with no enzyme of their own doubles after 2.4 days, and the trough condition already fails with the
+infusion on time for patients with 0 or 1\% of normal; at a 4.3-day half-life the peak of that
+patient doubles after 4.3 days and the trough condition fails after 1.8 days. In every setting of
+Supplementary Table~\ref{stab:delays}, at both values of $k$, the peak doubles before the metabolite
+reaches the validity limit or the separatrix at the usual trough capacity (compare its doubling and
+separatrix columns). Once the capacity at the end of the gap has fallen below
 $\thci$, however, there is no separatrix, and the metabolite rises on its own until the infusion
 arrives.
-% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:120,131,142,153 (minima: 2x 4.5/trough 6.9; 4.0/2.7; 4.3/1.8; 2.4/fails on time), :11-53 (all settings; 2x < sep throughout), :46-47 (fails on time at 0 and 1 %); pi_note/pi_note.tex:495-503,523-529; REPORT.md:1179-1185
+% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:120,131,142,153 (minima: 2x 4.5/trough 6.9; 4.0/2.7; 4.3/1.8; 2.4/fails on time), :11-53 (all settings; 2x < sep throughout, k = 1 and k = 10), :46-47 (fails on time at 0 and 1 %), :50 (4.3 d, 0 %: trough 1.8, 2x 4.3); pi_note/pi_note.tex:495-503,523-536 (no tipping point once below the critical capacity); REPORT.md:1179-1188
 
 \begingroup
 \footnotesize
@@ -223,7 +229,7 @@ $t_{1/2}$ & capacity & trough & $k=1$ & $k=10$ & $k=1$ & $k=10$ \\
  & 5\% & 8.3 & 9.1 & 8.5 & 20.5 & 18.4 \\
 \end{longtable}
 \endgroup
-% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:11-53 (all four blocks; 'worst constants' = K_c 25, M_i 150, rho_0 1 per t55_infusion_tolerance.py:39-40,64-67); out/t53_crossing_shape.txt:68 (theta_crit 232.1 at that corner)
+% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:11-53 (all four blocks; 'worst constants' = K_c 25, M_i 150, rho_0 1 per t55_infusion_tolerance.py:38-40,67-71); out/t53_crossing_shape.txt:68 (theta_crit 232.1 at that corner)
 
 \begin{table}[tbp]
 \centering
@@ -232,9 +238,9 @@ $t_{1/2}$ & capacity & trough & $k=1$ & $k=10$ & $k=1$ & $k=10$ \\
 \caption{\label{stab:s7-corners}Days an infusion can be late at each corner of the assumed carnitine
 ranges, for a patient with no enzyme of their own, $k=1$\,d$^{-1}$, without illness ($R_0$
 re-derived at each corner). 2$\times$: until the gap peak reaches twice that corner's usual peak.
-Trough: until the trough condition fails; ``on time'': it fails with the infusion on time. The last
-row, the shortest value in each column, gives the least favourable constants of the main text; the
-corner that sets it differs between columns.}
+Trough: until the trough condition fails; ``on time'': it fails with the infusion on time. Last row:
+the shortest value in each column; the corner that sets it differs between columns, and only at
+$D=2672$ is it the corner $K_c=25$\uM, $M_i=150$\uM, $\rho_0=1$ in every column.}
 \begin{tabular}{@{}rrrcccccccc@{}}
 \toprule
 & & & \multicolumn{4}{c}{assumed dose, $D=6000$\um} & \multicolumn{4}{c}{capped dose, $D=2672$\um} \\
@@ -270,23 +276,25 @@ the infusion is due, so with the infusion on time it ends just as the delivered 
 trough, and the raised load meets the enzyme's low point. A one-day delay does not raise the peak at
 $k=1$; it slightly lowers it (from 2.63 to 2.47 times at 0\%, and from 2.49 to 2.38 times at 2.5\% of
 normal), because the illness then ends a day before the enzyme's low point. From the second day on,
-each day of delay costs far more than without illness: three days late the peak is 4.7, 4.5, 4.1 and
-3.7 times its usual value, and a week late 21.0, 18.2, 14.7 and 10.3 times.
-% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:64-71 (ill on time 2.6/2.6/2.5/2.4; 3 d 4.7/4.5/4.1/3.7; 7 d 21.0/18.2/14.7/10.3 at 4.3 d), :184,186 (2.627 -> 2.467; 2.492 -> 2.375); pi_note/pi_note.tex:476-484; figure_guide.tex:590-596
+each day of delay raises the peak far more than without illness. Three days late the peak is 4.7,
+4.5, 4.1 and 3.7 times its usual value, and a week late 21.0, 18.2, 14.7 and 10.3 times.
+% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:64-71 (ill on time 2.6/2.6/2.5/2.4; 3 d 4.7/4.5/4.1/3.7; 7 d 21.0/18.2/14.7/10.3 at 4.3 d), :184,186 (2.627 -> 2.467; 2.492 -> 2.375); pi_note/pi_note.tex:484-490; figure_guide.tex:598-604
 
 At a 3.5-day half-life the same illness raises the on-time peak 4.1 to 3.2 times (0 to 5\% of normal),
 three days late 7.9 to 5.4 times, and a week late 29.5 times at 2.5\% and 21.8 times at 5\% of normal,
-while for patients with no or almost no enzyme of their own it takes the metabolite past the validity
-limit. Postponing the infusion until the illness is over, 14 days late, takes the metabolite past the
-validity limit in every setting computed. At the least favourable constants and the assumed dose the
-on-time illness peak is 4.3 to 3.4 times usual at 4.3 days and 12.4 to 7.0 times at 3.5 days.
-% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:64-71 (3.5 d: on time 4.1/3.9/3.6/3.2; 3 d 7.9/7.3/6.5/5.4; 7 d 36.7!/33.9!/29.5/21.8), :64-104 (ill, 14 d late: '!' in every row), :75-82 (worst corner: on time 12.4-7.0 at 3.5 d, 4.3-3.4 at 4.3 d); pi_note/pi_note.tex:485-488
+while for patients with 0 or 1\% of normal it takes the metabolite past the validity limit.
+Postponing the infusion until the illness is over, 14 days late, takes the metabolite past the
+validity limit in every setting computed. At the least favourable constants and the assumed dose
+($k=1$\,d$^{-1}$) the on-time illness peak is 4.3 to 3.4 times usual at 4.3 days and 12.4 to 7.0
+times at 3.5 days (0 to 5\% of normal).
+% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:64-71 (3.5 d: on time 4.1/3.9/3.6/3.2; 3 d 7.9/7.3/6.5/5.4; 7 d 36.7!/33.9!/29.5/21.8), :64-104 (ill, 14 d late: '!' in every row), :75-82 (worst corner: on time 12.4-7.0 at 3.5 d, 4.3-3.4 at 4.3 d); pi_note/pi_note.tex:491-493
 
-At the capped dose the illness dominates. With infusions on time the peak already rises 6.4 to 4.1
-times at 4.3 days and 11.7 to 7.2 times at 3.5 days (0 to 5\% of normal), of the same order as three
-days late (8.3 to 5.7 times at 4.3 days; 9.5 to 7.3 times at 3.5 days). At 3.5 days, below 5\% of
-normal, the on-time peak is even the higher of the two.
-% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:84-93 (D = 2672: on time 11.7/10.9/9.4/7.2 at 3.5 d, 6.4/5.8/5.1/4.1 at 4.3 d; 3 d late 9.5/9.2/8.6/7.3 and 8.3/7.8/6.9/5.7); REPORT.md:1185
+At the capped dose ($D=2672$\um, nominal constants, $k=1$\,d$^{-1}$) most of the rise comes from the
+illness itself. With infusions on time the peak already rises 6.4 to 4.1 times at 4.3 days and 11.7
+to 7.2 times at 3.5 days (0 to 5\% of normal), of the same order as three days late (8.3 to 5.7
+times at 4.3 days; 9.5 to 7.3 times at 3.5 days). At 3.5 days, below 5\% of normal, the on-time
+peak is even the higher of the two.
+% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:84-93 (D = 2672: on time 11.7/10.9/9.4/7.2 at 3.5 d, 6.4/5.8/5.1/4.1 at 4.3 d; 3 d late 9.5/9.2/8.6/7.3 and 8.3/7.8/6.9/5.7); pi_note/pi_note.tex:501-504; REPORT.md:1190
 
 \begingroup
 \footnotesize
@@ -361,36 +369,42 @@ capacity & $t_{1/2}$ & usual (\textmu M) & skipped & ill, on time & ill, 3\,d la
 The conjugation rate $k$ cancels from every steady state of the carnitine model but sets how fast the
 carnitine pool follows the metabolite (Section~\ref{si:s1-carn}), and nothing in the model fixes it.
 At $k=10$\,d$^{-1}$ the doubling delays shorten by less than a day in every setting of Supplementary
-Table~\ref{stab:delays} (by 0.2--0.9 days). Late infusions during an illness give peaks about 30\%
-higher: three days late 6.3, 5.8 and 5.2 times the usual peak at 0, 1 and 2.5\% of normal, against
-4.7, 4.5 and 4.1 times at $k=1$, and a week late 27.2, 23.8 and 19.1 times, against 21.0, 18.2 and
-14.7 times (assumed dose, nominal constants, 4.3 days). On-time illness peaks change little, 2.8 to
-2.5 times at $k=10$ against 2.6 to 2.4 at $k=1$ (0 to 5\% of normal). A one-day delay during illness,
-which slightly lowers the peak at $k=1$, raises it by 14--15\% at $k=10$ (from 2.77 to 3.17 times at
-0\% and from 2.60 to 2.99 times at 2.5\% of normal). The direction is the expected one: at $k=1$ the
-pool lags the metabolite by about a day and stays fuller than its steady-state value during a short
-rise, which supports the non-enzymatic route, whereas at $k=10$ it is depleted almost as fast as the
-metabolite rises (Supplementary Table~\ref{stab:s1-kcost}).
-% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:11-53 (2x at k = 1 vs k = 10: differences 0.0-0.9 d; the 5 % D = 2672 3.5 d row is 13.1 at both), :95-104 (k = 10: on time 2.8/2.7/2.6/2.5; 3 d 6.3/5.8/5.2/4.4; 7 d 27.2/23.8/19.1/12.9), :185,187 (2.774 -> 3.174, +14 %; 2.603 -> 2.988, +15 %); REPORT.md:1183 (k = 10 shortens the doubling by under a day; illness multiples about 30 % higher); s1_model.tex:491-512 (tau_c 0.92 d at k = 1; fuller pool tolerates larger excursions)
+Table~\ref{stab:delays}: by 0.2--0.9 days, except for the patient at 5\% of normal at $D=2672$ and a
+3.5-day half-life, whose doubling delay is 13.1 days at both values of $k$. At the assumed dose,
+nominal constants and a 4.3-day half-life, late infusions during an illness give peaks about 30\%
+higher for patients with 0 to 2.5\% of normal: three days late 6.3, 5.8 and 5.2 times the usual peak
+at 0, 1 and 2.5\% of normal, against 4.7, 4.5 and 4.1 times at $k=1$, and a week late 27.2, 23.8 and
+19.1 times, against 21.0, 18.2 and 14.7 times. At a 3.5-day half-life the three-day-late peaks are
+about 45\% higher (Supplementary Table~\ref{stab:s7-illness}). On-time illness peaks change little,
+2.8 to 2.5 times at $k=10$ against 2.6 to 2.4 at $k=1$ (0 to 5\% of normal, 4.3 days). A one-day
+delay during illness, which slightly lowers the peak at $k=1$, raises it by 14--15\% at $k=10$ (from
+2.77 to 3.17 times at 0\% and from 2.60 to 2.99 times at 2.5\% of normal). The difference follows
+from how fast carnitine responds. At $k=1$ the pool lags the metabolite by about a day and stays
+fuller than its steady-state value during a short rise, which supports the non-enzymatic route,
+whereas at $k=10$ it stays close to its steady-state value, which falls as the metabolite rises
+(Supplementary Table~\ref{stab:s1-kcost}).
+% src: audit/brief_2026-10-01/out/t55_infusion_tolerance.txt:11-53 (2x at k = 1 vs k = 10: differences 0.2-0.9 d except the 5 % D = 2672 3.5 d row, 13.1 at both), :95-104 (k = 10: on time 2.8/2.7/2.6/2.5; 3 d 6.3/5.8/5.2/4.4; 7 d 27.2/23.8/19.1/12.9; 3.5 d, 3 d late 11.3/10.6/9.5/7.7 against 7.9/7.3/6.5/5.4 at k = 1 (:64-70), ratios 1.43-1.46), :185,187 (2.774 -> 3.174, +14 %; 2.603 -> 2.988, +15 %); REPORT.md:1188 (k = 10 shortens the doubling by under a day; illness multiples about 30 % higher); s1_model.tex:497-515 (tau_c 0.92 d at k = 1; fuller pool tolerates larger excursions); s1 seq:s1-reduced (c* = R0/(k[u + rho]) falls as m rises)
 
 % -----------------------------------------------------------------------------
 \subsection{What the results do and do not say}
 \label{si:s7:reading}
 
-Without illness, a delay of a day or two raises the modelled peak by about 10 to 25\%, and about a week
-doubles it; a one-day delay during an illness barely changes the peak at $k=1$. During an illness each
-further day costs far more. These statements rest on choices that no measurement fixes. Twice the
-usual peak is a yardstick, not a threshold of harm, because the model does not say which metabolite
-level is harmful. The illness is illustrative, and its placement, starting on the day the infusion is
-due, sets the size of the on-time peak, which arises when the end of the illness meets the next
-trough. The conjugation rate is assumed, and the results also depend on the half-life, the delivered
-dose and the carnitine constants, none of which is measured in patients. They are statements about the
-model, not clinical recommendations; whether an infusion is given during an intercurrent illness is a
-clinical decision.
-% src: audit/brief_2026-10-01/pi_note/figure_guide.tex:604-616 (10 to 25 %; about a week doubles; yardstick; k; not a recommendation); pi_note/pi_note.tex:531-541,571-574 (yardstick; illness placed on the due day; k assumed)
+At the assumed dose, nominal constants and a 4.3-day half-life, and without illness, a delay of a day
+or two raises the modelled peak by about 10 to 25\%, and about a week doubles it; during an illness a
+one-day delay slightly lowers the peak at $k=1$, and each further day raises it far more than without
+illness. These statements rest on choices that no measurement fixes. Twice the usual peak is a
+yardstick rather than a threshold of harm, because the model does not say which metabolite level is
+harmful. The illness is illustrative, and its placement, starting on the day the infusion is due,
+sets the size of the on-time peak, which arises when the end of the illness meets the next trough.
+The conjugation rate is assumed, and the results also depend on the half-life, the delivered dose and
+the carnitine constants, none of which is measured in patients. They are statements about the model
+and are not clinical recommendations; whether an infusion is given during an intercurrent illness is
+a clinical decision.
+% src: audit/brief_2026-10-01/pi_note/figure_guide.tex:608-621 (10 to 25 %; about a week doubles; yardstick; k; not a recommendation); pi_note/pi_note.tex:531-542,571-574 (yardstick; illness placed on the due day; k assumed); out/t55_infusion_tolerance.txt:184 (2.627 -> 2.467 at k = 1)
 
-A late infusion is also a measurement. The marker's response to the dated dose train, irregularities
-included, is what identifies the half-life from the on-therapy record (Supplementary
-Section~\ref{si:s6:record}). Dated infusions and marker draws around unplanned delays are therefore data
-that the dosing specification needs, pooled across patients where the half-life lies near a crossing.
-% src: audit/brief_2026-10-01/pi_note/pi_note.tex:543-548
+Late infusions also carry information about the half-life. The marker's response to the dated dose
+train, irregularities included, is what identifies the half-life from the on-therapy record
+(Supplementary Section~\ref{si:s6:record}). Dated infusions and marker draws around unplanned delays
+are therefore data that the dosing specification needs, pooled across patients where the half-life
+lies near a crossing.
+% src: audit/brief_2026-10-01/pi_note/pi_note.tex:544-548; manuscript/main.tex:478 (dated delays also carry information about the half-life)

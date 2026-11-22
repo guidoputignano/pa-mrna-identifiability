@@ -32,17 +32,17 @@ $g(m)=m/(K_m+m)$, and by a non-enzymatic route $k_e m$. The constants are the ha
 $K_m=100$\uM, the rate constant $k_e=5$\,d$^{-1}$ and a recorded load $L=323$\um, on a scale on
 which normal capacity is 3000\um; 5\% of normal is $\theta=150$\um. The unrecorded load enters
 the fits as an offset $b$ on the recorded load.
-% src: src/common/models.py:68-74 (ParamsA theta 3000, Km 100, ke 5); manuscript/main.tex:611-621,649-650; pi_note/pi_note.tex:126-131
+% src: src/common/models.py:68-74 (ParamsA theta 3000, Km 100, ke 5); manuscript/main.tex:631-634,659; pi_note/pi_note.tex:126-131
 
 The record is the monthly design of the main text: 25 draws over two years on the
-fortnightly dose train (a jump $D=6000$\um\ at each infusion, assumed, and a half-life of
-3.5\,d), with intake varying by 10\% from day to day and recorded with a 5\% error, and a 5\%
-assay coefficient of variation. The prior on $k_e$ is log-normal with a standard deviation of
+fortnightly dose train (a jump $D=6000$\um\ at each infusion and a half-life of 3.5\,d, both
+assumed design values), with intake varying by 10\% from day to day and recorded with a 5\%
+error, and a 5\% assay coefficient of variation. The prior on $k_e$ is log-normal with a standard deviation of
 0.8 on the log scale (a factor of 2.2), the prior on $b$ has a standard deviation of 5\% of
 the load, and no prior is placed on $\theta$ or $K_m$. Precision is the Cram\'er--Rao bound on
 $\sdl{\hat\theta}$, the standard deviation of the logarithm of the estimate, as a median over
 24 simulated intake records, against the target of 0.20.
-% src: pi_note/pi_note.tex:129-135; manuscript/main.tex:698-703,707-713
+% src: pi_note/pi_note.tex:129-135; manuscript/main.tex:603-604,684-694,701-702
 
 At 5\% of normal these bounds are optimistic. Given $K_m$ and $k_e$, the likelihood is close
 to Gaussian in $\theta$ rather than in $\ln\theta$, so it extends to $\theta=0$ and the profile
@@ -58,7 +58,7 @@ Consider first a patient at 5\% of normal without therapy, at steady state, so t
 that comes in also leaves. The load of 323\um\ settles the marker at 54.0\uM. At that level the
 enzyme removes 53\um, a share $s=\theta g(m)/L=0.163$ of the load, and the non-enzymatic route
 removes 270\um, the other 84\%. A blood draw measures the level; with the load known, the
-model then knows the total removed, but not how it is split between the two exits. The
+total removed follows, but not how it is split between the two exits. The
 enzyme's part is what is left when the other route's part is subtracted from the total. A
 1\% error in the other route's 270\um\ is 2.7\um, which is 5\% of the enzyme's 53\um. In
 general, a relative error in the non-enzymatic flux reaches $\theta$ multiplied by
@@ -79,14 +79,14 @@ clearance $C(m)=\theta g(m)+k_em$ divided by the enzyme's flux, against residual
 $\theta$ (\um), both axes logarithmic, at the same marker level; the dot marks the case of
 panel~a and the dotted line a factor of 1. At this fixed level the factor is
 $1+k_e(K_m+m)/\theta$. At steady state the total clearance equals the load, so the factor is
-the inverse of the enzyme's share $s$ of the load; it grows without bound as $\theta$ falls,
+the inverse of the enzyme's share of the load; it grows without bound as $\theta$ falls,
 and the amplification is therefore largest in the most severely affected patients.}
 \end{figure}
 % src: src/model_A/run.py:387-428 (theta 1500, m 20, slope = load_error_factor, ths 30-6000, amp = C/(theta g)); paper/sections/10_results.tex:28-42 (caption: factor 1.4, diverges as theta -> 0)
 
 Supplementary Table~\ref{stab:s4split} lists pairs $(\theta,k_e)$ that produce the same level
 from the same load. Any capacity from zero to twice the true value is matched by moving $k_e$
-by about 19\% either way. No measurement of $k_e$ in patients exists, and the prior used
+by about 20\% either way. No measurement of $k_e$ in patients exists, and the prior used
 throughout allows departures of about a factor of two.
 % src: audit/brief_2026-10-01/pi_note/figure_guide.tex:224-238
 
@@ -108,16 +108,17 @@ change in $k_e$ & $+19\%$ & $+10\%$ & -- & $-19\%$ & $-39\%$ \\
 
 On therapy the comparison is less favourable still. The delivered enzyme removes most of the
 load, so the patient's own enzyme carries only about 6\% of it, and over the levels a treated
-patient visits (about 4--35\uM, well below $K_m$) the enzyme's saturation curve is close to a
-straight line, which the non-enzymatic route's straight line imitates. On the noiseless profile
+patient visits on the monthly record (about 4--38\uM, well below $K_m$) the enzyme's
+saturation curve is close to a straight line, which the non-enzymatic route's straight line
+can reproduce. On the noiseless profile
 likelihood of the monthly record, removing the patient's enzyme altogether raises $k_e$ from
 5.0 to 6.1\,d$^{-1}$ and costs the fit almost nothing (Supplementary
 Section~\ref{si:s1-pencil}).
-% src: audit/brief_2026-10-01/pi_note/figure_guide.tex:272-281 (about 6% on therapy, 16% untreated; k_e 5.0 -> 6.1; 4-35 uM); out/t1_identifiability.txt:59 (k_e on the profile 6.108 at 0.01 x truth)
+% src: audit/brief_2026-10-01/pi_note/figure_guide.tex:272-281 (about 6% on therapy, 16% untreated; k_e 5.0 -> 6.1); pi_note/pi_note.tex:181 and out/t51_pencil_geometry.txt:6 (monthly record m 4.3-37.8); out/t1_identifiability.txt:59 (k_e on the profile 6.108 at 0.01 x truth)
 
 In the Fisher information of the monthly record the same arithmetic appears as a correlation
 of $-0.99$ between $\ln\hat\theta$ and $\ln\hat k_e$. The regression of $\ln\hat\theta$ on
-$\ln\hat k_e$ has slope $-4.44$, close to the $-5.13$ of the untreated arithmetic, and
+$\ln\hat k_e$ has slope $-4.44$, against $-(1-s)/s=-5.13$ in the untreated arithmetic, and
 uncertainty in $k_e$ accounts for 98\% of the variance of $\ln\hat\theta$. Knowing $k_e$ exactly
 would bring $\sdl{\hat\theta}$ from 3.07 to 0.39, whereas knowing $K_m$ exactly gives 2.89 and
 knowing $b$ exactly 3.05. The non-enzymatic route is therefore the binding unknown at this
@@ -140,7 +141,7 @@ The record alone gives 3.07 when all draws share one pooled noise level, the noi
 the main analysis (Supplementary Section~\ref{si:s2:setting}), and 3.05 when each draw carries
 its own noise level, set by that draw's marker level and recorded load. The route calculations
 use the second model, so their reference value is 3.05; the two differ only in how the noise is
-modelled.
+modelled (Supplementary Section~\ref{si:s8-how}).
 % src: out/t1_identifiability.txt:19 (per-draw ln-m noise instead of n4's single sigma: 5% -> 3.0454); out/t26_multiobservable.txt:5 (3.045); pi_note/pi_note.tex:243-245
 
 \begin{table}[htbp]
@@ -165,28 +166,28 @@ $+$ intravenous $^{13}$C$_3$ tracer & total clearance, hence $k_e$ & 5.4\% & 0.4
 $+$ both & & & 0.44 & -- \\
 $k_e$ exact (idealised) & & exact & 0.38 & not an instrument \\
 $k_e$ and unrecorded load exact (idealised) & & exact & 0.29 & not an instrument \\
-as above, per-draw load-record error also removed (idealised) & & exact & 0.19--0.20; simulated 0.215--0.218 & not an instrument \\
+as above, per-draw load-record error also removed (idealised) & & exact & 0.19--0.20 (by noise model); simulated 0.215--0.218 & not an instrument \\
 \addlinespace
 \multicolumn{5}{@{}l}{\emph{Direct readings of the enzyme}}\\
 \addlinespace[2pt]
 ex vivo PCC assay, $\kappa$ known & activity, $\kappa\theta$ & 20\% repeatability & 0.20 (0.25 at 25\%) & $\kappa$ \\
 ex vivo assay $+$ both tracers, $\kappa$ known & & as above & 0.18 & $\kappa$ \\
 ex vivo assay, $\kappa$ unknown & & 20\% & 3.05 & -- \\
-ex vivo ratio to healthy controls, read as in vitro activity & activity relative to controls & patient 10\%, 30--100 controls & 0.11--0.19 & answers a different question \\
+ex vivo ratio to healthy controls, read as in vitro activity & activity relative to controls & patient 10\%, 30--100 controls & 0.10--0.16 & answers a different question \\
 ex vivo ratio, read as whole-body $\theta$ & as above, with per-patient mapping error & $R^2=0.33$, spread 0.6--1.0 log units & 0.65 (0.50--0.80) & mapping with $R^2\ge0.89$--0.96 \\
 calibrated in vivo flux reading & flux $c\,\theta g(m)$ & $Y$, $Z$ & 0.20 if $\sqrt{Y^2+Z^2}\le19.3\%$ (18.4\% simulated) & $c$ \\
 1-$^{13}$C-propionate breath test as available & fraction oxidised, times $c$ & $c$ not calibrated per patient & no gain from one reading & $c$ \\
 \bottomrule
 \end{tabular}
 \end{table}
-% src: out/t26_multiobservable.txt:5-19 (3.045, 0.200, 0.454, 0.384, 3.041, 0.441, 0.291, 0.183, 0.182); out/t1_identifiability.txt:19 (3.07 vs 3.05); REPORT.md:161 (0.204; MC 0.215-0.218); pi_note/pi_note.tex:221-224 (0.19-0.20 CRB depending on the noise model; 0.215-0.218 simulated); out/t27_exvivo_kappa.txt:13,17 (0.200, 0.249, 3.045); out/t28_ratio_route.txt:23-27 (0.104-0.187); REPORT.md:34 (0.11-0.19); out/t29_mapping_scatter.txt:18 (0.503/0.654/0.802), :76-80 (R^2 needed 0.889-0.960); out/t16_flux_observable.txt:13-15 (19.3% / 18.4%); out/t26_multiobservable.txt:24-28 (breath recovery free)
+% src: out/t26_multiobservable.txt:5-19 (3.045, 0.200, 0.454, 0.384, 3.041, 0.441, 0.291, 0.183, 0.182); out/t1_identifiability.txt:19 (3.07 vs 3.05); REPORT.md:161 (0.204; MC 0.215-0.218); pi_note/pi_note.tex:221-224 (0.19-0.20 CRB depending on the noise model; 0.215-0.218 simulated); out/t27_exvivo_kappa.txt:13,17 (0.200, 0.249, 3.045); out/t28_ratio_route.txt:23-27 (patient 10%: 0.104-0.162 at N = 30-100; REPORT.md:34,709 quote 0.11-0.19, which needs N = 10 at the upper end); out/t29_mapping_scatter.txt:18 (0.503/0.654/0.802), :76-80 (R^2 needed 0.889-0.960); out/t16_flux_observable.txt:13-15 (19.3% / 18.4%); out/t26_multiobservable.txt:24-28 (breath recovery free)
 
 % -----------------------------------------------------------------------------
 \subsection{Measuring the non-enzymatic route and the load}
 \label{si:s4:other}
 
-\paragraph{The intravenous tracer.} A micro-dose of $^{13}$C$_3$-labelled marker given
-intravenously disappears at the total clearance at the prevailing level $m_0$,
+\paragraph{The intravenous tracer.} A micro-dose of $^{13}$C$_3$-3-hydroxypropionate, the
+labelled marker, given intravenously disappears at the total clearance at the prevailing level $m_0$,
 $k_e+\theta/(K_m+m_0)$, from which $k_e$ follows. We took its precision on $k_e$ as 5.4\%.
 That value is optimistic, because turning a measured clearance of 3-hydroxypropionate into the
 model's $k_e$ needs further assumptions about the overflow pathway that the calculation treats as
@@ -197,7 +198,7 @@ the record gives 0.38.
 \paragraph{The load.} Whole-body propionate turnover measured by isotope dilution gives the
 total appearance rate, $L+b$. At an assumed 10\% precision it is looser than the record's own
 5\% prior on $b$, and it leaves the record at 3.04. Together with the tracer it gives 0.44, the
-best value we found among measurements that need no unmeasured calibration, still more than
+best value among the measurements of the non-enzymatic route and of the load, still more than
 twice the target. The estimate is limited by $k_e$, and measuring the load barely changes it.
 % src: out/t26_multiobservable.txt:12,16,30-35 (3.041, 0.441; turnover looser than the 5% prior); REPORT.md:52
 
@@ -207,10 +208,11 @@ per-draw error of the load record and of the assay. Removing the load-record err
 brings the bound to 0.19--0.20, depending on the noise model, and simulated fits give
 0.215--0.218 (95\% interval 0.192--0.240), so even this case reaches the target without falling
 reliably below it. With $k_e$ exact and the load as recorded, a residual of 0.39 remains at 25
-draws, of which the load record contributes 62\% and the assay 29\%. It falls with the number
-of draws, more slowly than $1/\sqrt n$ at first because the record learns the load offset only
-gradually, and crosses 0.20 near 300 draws, about three a week for two years.
-% src: out/t26_multiobservable.txt:17 (0.291); REPORT.md:161 (0.204, MC 0.215-0.218), :249; out/t11_fim_check.txt:243 (MC RMSE 0.2154, 95% [0.1922, 0.2402]); pi_note/pi_note.tex:148-151,221-224 (0.39, 62%, 29%, ~300 draws; 0.19-0.20)
+draws with one pooled noise level (0.38 with each draw at its own), of which the load record
+contributes 62\% and the assay 29\%. It falls with the number of draws, more slowly than
+$1/\sqrt n$ at first because the record constrains the load offset only gradually, and crosses
+0.20 near 300 draws, about three a week for two years.
+% src: out/t26_multiobservable.txt:17 (0.291); REPORT.md:161 (0.204, MC 0.215-0.218), :249; out/t11_fim_check.txt:243 (MC RMSE 0.2154, 95% [0.1922, 0.2402]); pi_note/pi_note.tex:148-151,221-224 (0.39, 62%, 29%, ~300 draws; 0.19-0.20); REPORT.md:191 (0.39 split 62% load record, 29% assay, t8, pooled noise); out/t1_identifiability.txt:25 (|ke 0.3879 pooled); out/t26_multiobservable.txt:11 (0.384 per-draw)
 
 \paragraph{Other ways to learn $k_e$.} A deliberate 25\% reduction of intake estimates $k_e$
 to a standard deviation of about 0.2 on the log scale if the unrecorded load is known to 5\%
@@ -229,12 +231,14 @@ At a research-grade 0.5\% assay, an extra dose of the therapy raising the delive
 a peak of 1500\um, sampled every 5 minutes for 72 hours (865 samples) with the delivered
 increment known exactly, gives 0.124 (0.131 in simulated fits), and withdrawing half the diet with
 the unrecorded load known to 1\% gives 0.195 (0.199 simulated, straddling the target). Raising
-the load instead reaches the target at the clinical assay (0.193--0.199 for two- to fourfold
-loads), but every such load lies beyond the carnitine model's tipping point, which a patient at
-10\% of normal crosses at 1.18 times the baseline load, so these experiments are not admissible.
-Pooling does not help either: 24 patients at 5\% of normal who share one $k_e$ exactly give 1.17,
-and 1.82 if $k_e$ varies between them with a standard deviation of 0.33 on the log scale.
-% src: REPORT.md:317-364 (F3: 5280 designs; none without added substrate at 5% CV; drug 1500 N=865 0.124, MC 0.131; withdrawal 50% L0 to 1% 0.195, MC 0.199; load x2-x4 0.193-0.199; fold 1.177), :157-181 (scenario table), :274-285 (F2: 1.17 at omega 0, 1.82 at 0.33)
+the load instead reaches the target at the clinical assay by the Cram\'er--Rao bound
+(0.193--0.199 for two- to fourfold loads; simulated fits give 0.217 at a twofold and 0.211 at a
+threefold load, missing or straddling it), but every such load lies beyond the carnitine model's
+tipping point, which a patient at 10\% of normal crosses at 1.18 times the baseline load, so
+these experiments are not admissible. Pooling does not help either: 24 patients at 5\% of normal
+who share one value of $k_e$ give 1.17, and 1.82 if $k_e$ varies between them with a standard
+deviation of 0.33 on the log scale.
+% src: REPORT.md:317-364 (F3: 5280 designs; none without added substrate at 5% CV; drug 1500 N=865 0.124, MC 0.131; withdrawal 50% L0 to 1% 0.195, MC 0.199; load x2-x4 0.193-0.199; fold 1.177), :157-181 (scenario table; load x2 MC 0.217 fails, x3 MC 0.211 straddles), :274-285 (F2: 1.17 at omega 0, 1.82 at 0.33)
 
 % -----------------------------------------------------------------------------
 \subsection{Reading the enzyme directly}
@@ -249,9 +253,9 @@ measurements gives 0.18. With $\kappa$ uncertain by $Z=\operatorname{sd}(\ln\kap
 precision follows $\sqrt{Y^2+Z^2}$. At 20\% repeatability no uncertainty in $\kappa$ can be
 tolerated, and at 10\% repeatability $\kappa$ must be known to 0.173 on the log scale. No human
 study reports $\kappa$. Patients with no capacity of their own cannot calibrate it, since their
-activity is zero whatever $\kappa$ is, and no other source of independently known capacity
-exists. With $\kappa$ unknown the assay adds nothing to the record (3.05).
-% src: out/t27_exvivo_kappa.txt:5-9 (20% is repeatability; kappa unreported), :11-17 (0.200, 0.249, 0.299; free 3.045), :28-36 (hypot contour; 0.173 at 10%; none at 20%); out/t26_multiobservable.txt:19 (0.182); REPORT.md:687-697 (kappa; theta = 0 carries no kappa information)
+activity is zero whatever $\kappa$ is, and we know of no other source of independently known
+capacity. With $\kappa$ unknown the assay adds nothing to the record (3.05).
+% src: out/t27_exvivo_kappa.txt:5-9 (20% is repeatability; kappa unreported), :11-17 (0.200, 0.249, 0.299; free 3.045), :28-36 (hypot contour; 0.173 at 10%; none at 20%); out/t26_multiobservable.txt:19 (0.182); REPORT.md:687-698 (kappa; theta = 0 carries no kappa information; the repository identifies no source of known nonzero theta); out/t27_exvivo_kappa.txt:101-115
 
 \paragraph{Ratio to healthy controls.} Expressing the patient's activity as a ratio to the mean
 activity of healthy controls removes $\kappa$, because it multiplies patient and controls alike.
@@ -259,10 +263,10 @@ The precision is then set by the patient's reading and by the error of the contr
 $\sqrt{Y^2/n_r+\sigma_h^2/N}$ for $n_r$ readings of the patient and $N$ controls with
 between-control spread $\sigma_h$. No value of $\sigma_h$ for PCC activity is available, so it
 was varied from 30 to 70\%. With the patient read to 10\% and 30--100 controls this gives
-0.11--0.19. That number, however, answers a different question. It is the precision of in vitro
-residual activity as a fraction of control, whereas $\theta$ in our model is a whole-body flux
+0.10--0.16 (0.14--0.24 with 10 controls). That number, however, answers a different question.
+It is the precision of in vitro residual activity as a fraction of control, whereas $\theta$ in our model is a whole-body flux
 capacity.
-% src: out/t28_ratio_route.txt:5-13 (kappa cancels; sigma_healthy has no figure), :15-35 (0.104-0.187 at patient 10%); REPORT.md:699-709 (hypot(Y/sqrt(reads), sigma_h/sqrt N)), :34 (0.11-0.19)
+% src: out/t28_ratio_route.txt:5-13 (kappa cancels; sigma_healthy has no figure), :23-27 (patient 10%: N = 30-100 0.104-0.162; N = 10 0.138-0.242); REPORT.md:699-709 (hypot(Y/sqrt(reads), sigma_h/sqrt N)); REPORT.md:34,709 and t28:30 round this to 0.11-0.19, whose upper end needs N = 10
 
 \paragraph{Read as whole-body capacity.} Used as an estimate of $\theta$, the ratio carries a
 per-patient error that no ratio removes. Write
@@ -327,9 +331,9 @@ pair reaches the target at $S$ to 19.7\% with the load exact and 19.6\% with the
 labelled dose that is oxidised, multiplied by a recovery that is not calibrated for each
 patient. With that recovery unknown, one reading adds nothing to the record; carried as an
 unknown shared by several readings, about 70 readings at a 5\% reading precision would be
-needed at 10\% of normal, and more at 5\%. Its repeatability is documented in one series of repeated tests, in methylmalonic
-acidaemia, with a coefficient of variation of 6.9\% in controls and a mean of 14.0\% in patients
-(range 0.4--50.8\%)~\cite{breath_test_mma}. We found no instrument available today that meets the
+needed at 10\% of normal, and more at 5\%. Its only published repeatability, between visits in
+methylmalonic acidaemia (6.9\% in controls)~\cite{breath_test_mma}, is given for patients in
+Supplementary Section~\ref{si:s2:record}. We found no instrument available today that meets the
 specification of a calibrated flux reading.
 % src: out/t16_flux_observable.txt:41-51 (breath reads s with unknown recovery c; one reading worthless); out/t26_multiobservable.txt:24-28 (~70 readings at 10% capacity, more at 5%); paper/claims.csv:44 (6.9% controls; 14.0%, 0.4-50.8%, n=15); REPORT.md:32 (no human instrument for the flux specification)
 
@@ -347,14 +351,15 @@ read the flux itself, scaled by a transduction constant ($\kappa$ for the ex viv
 recovery $c$ for a breath test), which must then be known. A marker of an upstream pool, such as
 propionylcarnitine or 2-methylcitrate, would need both a calibration and the balance of that
 pool. Such markers cannot be priced in our model, which has no propionyl-CoA state, and five of
-the ten candidate observables we listed were set aside for that reason; each of the other five
-falls on one side or the other.
+the ten candidate observables we listed were set aside for that reason (the breath test among
+them, which we priced above only in a simplified form); each of the other five falls on one side
+or the other.
 % src: REPORT.md:23-28 (two kinds; no third; upstream pool needs both; ten-sensor panel), :657-668 (ten candidates, five dropped for want of a propionyl-CoA state); pi_note/pi_note.tex:252-258; figure_guide.tex:64-79
 
 The same conclusion follows from the physiology without the model. At steady state the net
 carboxylation flux equals the rate at which propiogenic substrate is disposed of, so a
-concentration reports the size of a pool set by inflow and outflow, not the throughput of one
-step, and no concentration can isolate the carboxylation step without a tracer.
+concentration reports the size of a pool set by inflow and outflow rather than the throughput
+of one step, and no concentration can isolate the carboxylation step without a tracer.
 % src: REPORT.md:32
 
 The carnitine model is the decisive test, because there the competing route has an observable
@@ -393,9 +398,8 @@ marker and free carnitine, one constant free: $K_c$, $\rho_0$, $M_i$, $R_0$, $k$
 % src: out/t41_model_c.txt:10-19; out/t43_plasma_pool.txt:11-18
 
 Every constant these routes need ($k_e$, $b$, $K_m$, $\kappa$, $c$, $V_e$, $K_e$) is a property
-of the patient, the same in two periods of one patient's record if nothing changes between them.
-This is why a change in capacity within one patient escapes the obstacle that blocks its level
-(Supplementary Section~\ref{si:s5}).
+of the patient, which is why a change in capacity within one patient escapes the obstacle that
+blocks its level (Supplementary Section~\ref{si:s5:cancel}).
 % src: REPORT.md:30,573
 
 % -----------------------------------------------------------------------------
@@ -406,15 +410,15 @@ The linear-clearance model gives the non-enzymatic route 84\% of the load at 5\%
 than the urinary output of propionate metabolites measured in PA, a few per cent of estimated
 production~\cite{thompson1990fasting}. A route of limited capacity is closer to the disease. We
 therefore repeated the analysis with $\alpha(m)=V_em/(K_e+m)$, where $V_e$ is the route's maximal
-rate and $K_e$ its half-saturation. Neither has a source or a row in the model's own provenance
-registry. Total clearance then rises towards $\theta+V_e$, and a steady state exists only while
-the load stays below that ceiling (Supplementary Section~\ref{si:s1-eq}).
-% src: manuscript/main.tex:547-549; REPORT.md:774 (Model B unregistered), :804; src/common/models.py:78-83 (ParamsB ke = V_max 400, Ke 300)
+rate and $K_e$ its half-saturation; the model, its nominal constants and the constructed
+operating point used below are defined in Supplementary Section~\ref{si:s1-eq}. Neither
+constant has a source or a row in the model's own provenance registry.
+% src: manuscript/main.tex:529-531; REPORT.md:774 (Model B unregistered), :804; src/common/models.py:78-83 (ParamsB ke = V_max 400, Ke 300)
 
-\paragraph{At the nominal constants.} With $V_e=400$\um\ and $K_e=300$\uM, the load that puts
-the marker at 10\uM\ at normal capacity is 285.6\um. That is below $V_e$, so a patient with no
-enzyme of their own could be maintained, which is not the severe phenotype. Untreated at 5\% of
-normal the marker settles at 243.7\uM, where the enzyme carries 0.372 of the load, against 0.163
+\paragraph{At the nominal constants.} With $V_e=400$\um\ and $K_e=300$\uM, the load that
+places the marker at 10\uM\ at normal capacity, 285.6\um, lies below $V_e$, so a patient with
+no enzyme of their own could be maintained.
+Untreated at 5\% of normal the marker settles at 243.7\uM, where the enzyme carries 0.372 of the load, against 0.163
 in the linear-clearance model (Supplementary Table~\ref{stab:s4sat}). Because the route
 saturates, it cannot absorb a rising marker as the straight line does, and the enzyme keeps a
 larger share at every low capacity (0.586 against 0.292 at 10\% of normal, 0.089 against 0.036 at
@@ -435,16 +439,18 @@ operating point.
 of Supplementary Section~\ref{si:s1-si} leads one to expect. For the sensitivities of the total
 clearance at normal capacity, the condition number at a 10\% excursion of the marker rises from
 $1.1\times10^5$ in the linear-clearance model to $4.8\times10^7$, about 450-fold
-(Supplementary Fig.~\ref{sfig:s4cond}). In the Fisher information of the monthly record at 5\%
-of normal it rises 18-fold, from 90 to $1.6\times10^3$, and the whole increase lies in the $K_e$
-column: with $K_e$ fixed the condition number is 75, no worse than in the linear-clearance model.
-The marginal precision on $\theta$ improves even so, because the priors on the non-enzymatic
+(Supplementary Fig.~\ref{sfig:s4cond}). For the column-normalised sensitivities of the monthly
+record at 5\% of normal (one row per draw, saturable-clearance model at its nominal constants),
+it rises 18-fold, from 90 to $1.6\times10^3$, and the whole increase lies in the $K_e$ column:
+with $K_e$ fixed the condition number is 75, no worse than in the linear-clearance model. The
+marginal precision on $\theta$ improves even so, because the priors on the non-enzymatic
 constants absorb the ill-conditioned directions. Without those priors (the prior on $b$ kept)
-and with $K_e$ free, $\sdl{\hat\theta}$ is 55.5 in the saturable-clearance model against 5.9 in
-the linear-clearance model without its prior on $k_e$. The statement that the linear-clearance
+and with $K_e$ free, $\sdl{\hat\theta}$ is 55.5 in the saturable-clearance model at its nominal
+constants (52.8 at the constructed point below) against 5.9 in the linear-clearance model
+without its prior on $k_e$. The statement that the linear-clearance
 model is the most favourable case for identification therefore holds for the joint
 conditioning, but not for the marginal precision on $\theta$, which follows the enzyme's share.
-% src: paper/sections/03_dynamic.tex:352-353 (1.1e5 -> 4.8e7, about 450); out/t36_reconcile_remark15.txt:13-18 (89.77, 1641, 74.60; 18x), :24-33 (A no k_e prior 5.908; B no priors, Ke free 55.509); audit/brief_2026-10-01/t33_model_b.py:100-115 (fim_B: b prior always kept); t38_model_dependent.py:52
+% src: paper/sections/03_dynamic.tex:352-353 (1.1e5 -> 4.8e7, about 450); out/t36_reconcile_remark15.txt:13-18 (89.77, 1641, 74.60; 18x; cond of the column-normalised flux-row sensitivity matrix, t36_reconcile_remark15.py:26-39), :24-33 (A no k_e prior 5.908; B no priors, Ke free 55.509, ParamsB record, t36_reconcile_remark15.py:38); out/t38_model_dependent.txt:19 (52.82 at V_e 100, L 220); audit/brief_2026-10-01/t33_model_b.py:100-115 (fim_B: b prior always kept); t38_model_dependent.py:52
 
 \begin{figure}[tbp]
 \centering
@@ -467,17 +473,16 @@ does not show the marginal precision on $\theta$, which improves in the saturabl
 % src: src/model_B/run.py:142-161 (m0 10, levels m0[1, 1+sp, 1+2sp, 1+3sp], A on 3 levels, B on 4; ParamsA, ParamsB); src/common/models.py:67-83,261-275; paper/sections/10_results.tex:203-219; paper/sections/03_dynamic.tex:352-353
 
 \paragraph{A constructed operating point.} Because the nominal constants do not represent severe
-PA, we also built an operating point that does. A maximal rate $V_e=100$\um\ lies below the
-untreated load of about 276\um, so a patient with no enzyme cannot be maintained. A managed load
-of 220\um, about 20\% lower, then gives a patient at 5\% of normal a steady state, with a critical
-capacity $L-V_e=120$\um\ (4.0\% of normal) and a margin of about 1\% of normal. Neither value is
-measured; both were chosen. Untreated, this patient would settle near the ceiling, at 1272.8\uM,
+PA, we also use the constructed operating point ($V_e=100$\um, below the untreated load, so that
+a patient with no enzyme cannot be maintained; managed load 220\um, at which a patient at 5\%
+of normal has a margin of about 1\% of normal). Neither value is measured; both were chosen.
+Untreated, this patient would settle at 1272.8\uM, close to where total clearance levels off,
 with an enzyme share of 0.632, but over the dosed record the marker stays between 3 and 52\uM.
 The precision is 0.29 with $K_e$ fixed and 0.32 with $K_e$ free under a 50\% prior, against 3.05
-for the linear-clearance model at the same managed load. Over ceilings of 50--200\um\ and managed
-loads of 180--240\um, wherever a steady state exists, it runs from 0.21 to 0.49 (median 0.38),
-above the target everywhere. It follows the ceiling, which sets the enzyme's share, and barely
-depends on the managed load.
+for the linear-clearance model at the same managed load. Over maximal rates $V_e$ of
+50--200\um\ and managed loads of 180--240\um, wherever a steady state exists, it runs from 0.21
+to 0.49 (median 0.38), above the target everywhere. It follows $V_e$, which sets the enzyme's
+share, and barely depends on the managed load.
 % src: out/t35_managed_load.txt:5-17 (V_e 100 below L0 276; L 220: theta_crit 4.0%, margin 1.00%), :41-50 (m 36.1/1272.8; record [3,52]; share 0.632; 3.046, 0.292, 0.317; contrast 0.132, 0.078); out/t38_model_dependent.txt:45-64 (choices; grid 0.21-0.49, median 0.38), :16-18 (0.29, 0.32)
 
 \begin{table}[htbp]
@@ -514,9 +519,10 @@ touched only by supplying two unmeasured constants (Supplementary Table~\ref{sta
 With the prior on $V_e$ tightened to 5.4\%, the precision the intravenous tracer provides for
 $k_e$ in the linear-clearance model, and $K_e$ fixed, the precision is 0.186. The calculation
 grants that precision directly on $V_e$, although in this model the tracer's clearance depends on
-both $V_e$ and $K_e$. Across the grid of ceilings and loads under these conditions it lies
-between 0.181 and 0.202, at the target everywhere and comfortably below it nowhere; with a looser
-prior of 0.2 on $\ln V_e$ it ranges from 0.183 to 0.228, and only the low ceilings pass. The
+both $V_e$ and $K_e$. Across the grid of maximal rates and loads under these conditions it lies
+between 0.181 and 0.202, within 0.002 of the target everywhere (at or below it in 10 of 13
+cells) and comfortably below it nowhere; with a looser prior of 0.2 on $\ln V_e$ it ranges from
+0.183 to 0.228, and only maximal rates up to 100\um\ pass. The
 result also needs $K_e$. The precision stays at or below 0.20 only while $K_e$ is known to about
 30\% (0.200 at a standard deviation of 0.30 on the log scale, 0.223 at 0.50, 9.3 with $K_e$
 free). No measurement of $K_e$ exists, and because the route lumps several processes with
