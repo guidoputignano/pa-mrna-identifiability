@@ -200,6 +200,22 @@ rule needs $\epsilon\ge6.3$\,h. When $\epsilon$ is not small compared with $T$, 
 jump around the cycle instead of sweeping it, and coverage has to be checked directly, which the
 phase-spread schedule does by construction.
 % src: results/numbers/phaseclock.tex:8-12; results/numbers/lattice.tex:11,16,18,19; results/numbers/design.tex:48,52; paper/sections/07_design.tex:125-140; manuscript/main.tex:705-711
+Supplementary Fig.~\ref{sfig:phaseclock} draws these coverage patterns for 25 visits of each
+schedule.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{fig_S_phaseclock.pdf}
+\caption{\label{sfig:phaseclock}Where the blood draws of each schedule fall in the 14-day dose
+cycle. Each dot is one draw, placed around the circle by the number of days since the last
+infusion (infusion at the top, time running clockwise) and outward by visit number (first visit
+innermost, black dot). Twenty-five draws per schedule, starting on the day of the first infusion,
+as in main-text Fig.~2b. Draws every 14 days all fall at the infusion and stack on one ray. Draws
+every 14.5 days fall half a day later at each visit and wind round 89\% of the cycle. Monthly
+draws, each 2.4 days later in the cycle than the last, and phase-spread draws, aimed at evenly
+spaced points of the cycle, cover all of it. Draw times are those of the analysis code
+(\texttt{audit/g\_design\_common.py}).}
+\end{figure}
 
 The rule marks where the cost of incomplete coverage stops falling, and below it the cost rises
 gradually. Holding $n$
