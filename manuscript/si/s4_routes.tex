@@ -144,7 +144,7 @@ modelled.
 % src: out/t1_identifiability.txt:19 (per-draw ln-m noise instead of n4's single sigma: 5% -> 3.0454); out/t26_multiobservable.txt:5 (3.045); pi_note/pi_note.tex:243-245
 
 \begin{table}[htbp]
-\centering\small\setlength{\tabcolsep}{3.5pt}
+\centering\small\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.12}
 \caption{\label{stab:s4routes}Every route to absolute residual capacity at 5\% of normal, in the
 linear-clearance model, added to the monthly record (25 draws over two years on therapy).
 Precision is $\sdl{\hat\theta}$, the Cram\'er--Rao bound with each draw at its own noise level,
@@ -153,13 +153,13 @@ except where marked. $Y$, precision of a direct reading; $Z$, uncertainty of its
 whole-body capacity; $c$, recovery of a flux reading. Last column: what the route needs that has
 not been measured in humans; a dash means that the route needs nothing further but misses the
 target.}
-\begin{tabular}{@{}p{0.29\linewidth}p{0.19\linewidth}p{0.17\linewidth}p{0.13\linewidth}p{0.16\linewidth}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.27\linewidth}>{\raggedright\arraybackslash}p{0.18\linewidth}>{\raggedright\arraybackslash}p{0.17\linewidth}>{\raggedright\arraybackslash}p{0.16\linewidth}>{\raggedright\arraybackslash}p{0.14\linewidth}@{}}
 \toprule
 route & what it reads & assumed precision & $\sdl{\hat\theta}$ & unmeasured constant needed \\
 \midrule
 \multicolumn{5}{@{}l}{\emph{Inference through the balance}}\\
 \addlinespace[2pt]
-record alone & marker level & 5\% assay, 5\% load record & 3.05 (3.07 with one pooled noise level) & -- \\
+record alone & marker level & 5\% assay, 5\% load record & 3.05 (3.07 with a pooled noise level) & -- \\
 $+$ isotope-dilution load turnover & total appearance rate $L+b$ & 10\% & 3.04 & -- \\
 $+$ intravenous $^{13}$C$_3$ tracer & total clearance, hence $k_e$ & 5.4\% & 0.45 & -- \\
 $+$ both & & & 0.44 & -- \\
@@ -174,8 +174,8 @@ ex vivo assay $+$ both tracers, $\kappa$ known & & as above & 0.18 & $\kappa$ \\
 ex vivo assay, $\kappa$ unknown & & 20\% & 3.05 & -- \\
 ex vivo ratio to healthy controls, read as in vitro activity & activity relative to controls & patient 10\%, 30--100 controls & 0.11--0.19 & answers a different question \\
 ex vivo ratio, read as whole-body $\theta$ & as above, with per-patient mapping error & $R^2=0.33$, spread 0.6--1.0 log units & 0.65 (0.50--0.80) & mapping with $R^2\ge0.89$--0.96 \\
-calibrated in vivo flux reading & flux $c\,\theta g(m)$ & $Y$, $Z$ & 0.20 when $\sqrt{Y^2+Z^2}\lesssim19\%$ & $c$ \\
-$^{13}$C-propionate breath test as available & fraction oxidised, times $c$ & $c$ not calibrated per patient & no gain from one reading & $c$ \\
+calibrated in vivo flux reading & flux $c\,\theta g(m)$ & $Y$, $Z$ & 0.20 if $\sqrt{Y^2+Z^2}\le19.3\%$ (18.4\% simulated) & $c$ \\
+1-$^{13}$C-propionate breath test as available & fraction oxidised, times $c$ & $c$ not calibrated per patient & no gain from one reading & $c$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -198,7 +198,7 @@ the record gives 0.38.
 total appearance rate, $L+b$. At an assumed 10\% precision it is looser than the record's own
 5\% prior on $b$, and it leaves the record at 3.04. Together with the tracer it gives 0.44, the
 best value we found among measurements that need no unmeasured calibration, still more than
-twice the target. It is $k_e$, not the load, that blocks the estimate.
+twice the target. The estimate is limited by $k_e$, and measuring the load barely changes it.
 % src: out/t26_multiobservable.txt:12,16,30-35 (3.041, 0.441; turnover looser than the 5% prior); REPORT.md:52
 
 \paragraph{The idealised limit.} Exact knowledge of $k_e$ and of the unrecorded load is not an
@@ -220,6 +220,21 @@ day for two years, reaches even 0.30. With the unrecorded load known to 1\% the 
 give $k_e$ to 0.06, and over two years $\sdl{\hat\theta}$ would then be 0.47 with monthly draws,
 0.38 with weekly draws and 0.31 with daily draws.
 % src: pi_note/pi_note.tex:152-156; out/t26_multiobservable.txt:36-38 (0.285 at 10%, 0.205 at 5%, 0.062 at 1%); out/t22_longitudinal.txt:5-15 (0.465, 0.383, 0.310)
+
+\paragraph{Deliberate perturbations and pooling.} Short, densely sampled experiments outside the
+routine record were also examined, over 5280 designs (sampling every 5--60 minutes for 24--72
+hours, assay coefficient of variation 0.5--5\%, a range of excursions). At the clinical 5\%
+assay no design that adds no propiogenic substrate reaches 0.20, even by the Cram\'er--Rao bound.
+At a research-grade 0.5\% assay, an extra dose of the therapy raising the delivered increment to
+a peak of 1500\um, sampled every 5 minutes for 72 hours (865 samples) with the delivered
+increment known exactly, gives 0.124 (0.131 in simulated fits), and withdrawing half the diet with
+the unrecorded load known to 1\% gives 0.195 (0.199 simulated, straddling the target). Raising
+the load instead reaches the target at the clinical assay (0.193--0.199 for two- to fourfold
+loads), but every such load lies beyond the carnitine model's tipping point, which a patient at
+10\% of normal crosses at 1.18 times the baseline load, so these experiments are not admissible.
+Pooling does not help either: 24 patients at 5\% of normal who share one $k_e$ exactly give 1.17,
+and 1.82 if $k_e$ varies between them with a standard deviation of 0.33 on the log scale.
+% src: REPORT.md:317-364 (F3: 5280 designs; none without added substrate at 5% CV; drug 1500 N=865 0.124, MC 0.131; withdrawal 50% L0 to 1% 0.195, MC 0.199; load x2-x4 0.193-0.199; fold 1.177), :157-181 (scenario table), :274-285 (F2: 1.17 at omega 0, 1.82 at 0.33)
 
 % -----------------------------------------------------------------------------
 \subsection{Reading the enzyme directly}
@@ -311,8 +326,8 @@ pair reaches the target at $S$ to 19.7\% with the load exact and 19.6\% with the
 \paragraph{The breath test.} The 1-$^{13}$C-propionate breath test reads the fraction of a
 labelled dose that is oxidised, multiplied by a recovery that is not calibrated for each
 patient. With that recovery unknown, one reading adds nothing to the record; carried as an
-unknown shared by several readings, about 70 readings would be needed at 10\% of normal, and more
-at 5\%. Its repeatability is documented in one series of repeated tests, in methylmalonic
+unknown shared by several readings, about 70 readings at a 5\% reading precision would be
+needed at 10\% of normal, and more at 5\%. Its repeatability is documented in one series of repeated tests, in methylmalonic
 acidaemia, with a coefficient of variation of 6.9\% in controls and a mean of 14.0\% in patients
 (range 0.4--50.8\%)~\cite{breath_test_mma}. We found no instrument available today that meets the
 specification of a calibrated flux reading.
@@ -429,7 +444,7 @@ and with $K_e$ free, $\sdl{\hat\theta}$ is 55.5 in the saturable-clearance model
 the linear-clearance model without its prior on $k_e$. The statement that the linear-clearance
 model is the most favourable case for identification therefore holds for the joint
 conditioning, but not for the marginal precision on $\theta$, which follows the enzyme's share.
-% src: paper/sections/03_dynamic.tex:352-353 (1.1e5 -> 4.8e7, about 450); out/t36_reconcile_remark15.txt:13-18 (89.77, 1641, 74.60; 18x), :24-33 (A no k_e prior 5.908; B no priors, Ke free 55.509); out/t38_model_dependent.py:20-23,52 (b prior kept in fim_B)
+% src: paper/sections/03_dynamic.tex:352-353 (1.1e5 -> 4.8e7, about 450); out/t36_reconcile_remark15.txt:13-18 (89.77, 1641, 74.60; 18x), :24-33 (A no k_e prior 5.908; B no priors, Ke free 55.509); audit/brief_2026-10-01/t33_model_b.py:100-115 (fim_B: b prior always kept); t38_model_dependent.py:52
 
 \begin{figure}[tbp]
 \centering
@@ -472,9 +487,11 @@ Nominal: the saturable-clearance model at $V_e=400$\um, $K_e=300$\uM, with the l
 the marker at 10\uM\ at normal capacity. Constructed: $V_e=100$\um, below the untreated load,
 and a managed load of 220\um. Precision is $\sdl{\hat\theta}$ for the monthly record with the
 priors of Section~\ref{si:s4:setting} unless stated; the prior on $V_e$ takes the place of the
-prior on $k_e$. Within-patient contrast: the Cram\'er--Rao standard deviation of
+prior on $k_e$. ``No prior on the route's constants'' removes the prior on $k_e$ in the
+linear-clearance model and those on $V_e$ and $K_e$ in the saturable-clearance model, keeping the
+prior on $b$. Within-patient contrast: the Cram\'er--Rao standard deviation of
 $\ln\theta_2-\ln\theta_1$ for two windows of 104 draws (Supplementary Section~\ref{si:s5}).}
-\begin{tabular}{@{}p{0.40\linewidth}ccc@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.40\linewidth}ccc@{}}
 \toprule
 & linear-clearance & saturable, nominal & saturable, constructed \\
 \midrule
